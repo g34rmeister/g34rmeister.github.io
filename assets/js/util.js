@@ -13,7 +13,12 @@
 		$a.each(function() {
 
 			var	$this = $(this),
-				indent = Math.max(0, $this.parents('li').length - 1),
+				text = $this.text().trim();
+
+			if (!text)
+				return;
+
+			var	indent = Math.max(0, $this.parents('li').length - 1),
 				href = $this.attr('href'),
 				target = $this.attr('target');
 
@@ -24,7 +29,7 @@
 					( (typeof href !== 'undefined' && href != '') ? ' href="' + href + '"' : '') +
 				'>' +
 					'<span class="indent-' + indent + '"></span>' +
-					$this.text() +
+					text +
 				'</a>'
 			);
 
