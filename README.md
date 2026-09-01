@@ -1,16 +1,22 @@
-## Hi there 👋
+# Gerald Lê — Personal Portfolio & Projects
 
-<!--
-**g34rmeister/g34rmeister** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, modern CSS variables, and vanilla JavaScript.
 
-Here are some ideas to get you started:
+🔗 **Live Site:** [https://g34rmeister.github.io](https://g34rmeister.github.io)
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🛠️ Tech Stack
+* **Markup & Styling:** HTML5, CSS3 (JetBrains Mono, Custom Variables, Flexbox/Grid)
+* **Scripts:** Vanilla JS, jQuery (Dropotron, Scrolly)
+* **Icons:** Font Awesome 5
+* **Deployment:** GitHub Pages
+
+## 📁 Repository Structure
+* `index.html` - Homepage
+* `about.html` - Biography & technical skills
+* `affiliations.html` - Academic & work experience
+* `portfolio.html` - Software & automation projects
+* `resume.html` - Interactive CV viewer
+* `contact.html` - Direct contact channels
+
+## 📄 License
+This template is based on [TXT by HTML5 UP](https://html5up.net) and licensed under [Creative Commons Attribution 3.0 (CCA 3.0)](LICENSE.txt).
