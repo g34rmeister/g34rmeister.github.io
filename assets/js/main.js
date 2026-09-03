@@ -1,74 +1,79 @@
-/*
-	TXT by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
-*/
+/**
+ * Modern Vanilla JS for Gerald Lê Portfolio
+ * Replaces jQuery + 5 legacy plugins (~114 KB) with zero-dependency native JS.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    const body = document.body;
 
-(function($) {
+    // 1. Remove preload animation block
+    window.addEventListener('load', () => {
+        setTimeout(() => body.classList.remove('is-preload'), 100);
+    });
 
-	var	$window = $(window),
-		$body = $('body'),
-		$nav = $('#nav');
+    // 2. Build Title Bar for Mobile
+    const logoEl = document.getElementById('logo');
+    const logoHtml = logoEl ? logoEl.innerHTML : 'Khánh Giang "Gerald" Lê';
+    
+    const titleBar = document.createElement('div');
+    titleBar.id = 'titleBar';
+    titleBar.innerHTML = `
+        <a href="#navPanel" class="toggle" aria-label="Toggle Navigation"></a>
+        <span class="title">${logoHtml}</span>
+    `;
+    body.appendChild(titleBar);
 
-	// Breakpoints.
-		breakpoints({
-			xlarge:  [ '1281px',  '1680px' ],
-			large:   [ '981px',   '1280px' ],
-			medium:  [ '737px',   '980px'  ],
-			small:   [ '361px',   '736px'  ],
-			xsmall:  [ null,      '360px'  ]
-		});
+    // 3. Build Mobile Nav Panel
+    const desktopNavLinks = document.querySelectorAll('#nav ul li a');
+    const navPanel = document.createElement('div');
+    navPanel.id = 'navPanel';
+    const panelNav = document.createElement('nav');
 
-	// Play initial animations on page load.
-		$window.on('load', function() {
-			window.setTimeout(function() {
-				$body.removeClass('is-preload');
-			}, 100);
-		});
+    desktopNavLinks.forEach(link => {
+        // Skip icon-only logo link in the mobile text drawer
+        const text = link.textContent.trim();
+        if (!text) return;
 
-	// Dropdowns.
-		$('#nav > ul').dropotron({
-			mode: 'fade',
-			noOpenerFade: true,
-			speed: 300,
-			alignment: 'center'
-		});
+        const a = document.createElement('a');
+        a.className = 'link depth-0';
+        a.href = link.getAttribute('href') || '#';
+        if (link.getAttribute('target')) a.target = link.getAttribute('target');
+        a.textContent = text;
+        
+        // Highlight active page link
+        if (link.parentElement && link.parentElement.classList.contains('current')) {
+            a.classList.add('active');
+        }
 
-	// Scrolly
-		$('.scrolly').scrolly({
-			speed: 1000,
-			offset: function() { return $nav.height() - 5; }
-		});
+        // Close drawer on link click
+        a.addEventListener('click', () => {
+            body.classList.remove('navPanel-visible');
+        });
 
-	// Nav.
+        panelNav.appendChild(a);
+    });
 
-		// Title Bar.
-			$(
-				'<div id="titleBar">' +
-					'<a href="#navPanel" class="toggle"></a>' +
-					'<span class="title">' + $('#logo').html() + '</span>' +
-				'</div>'
-			)
-				.appendTo($body);
+    navPanel.appendChild(panelNav);
+    body.appendChild(navPanel);
 
-		// Panel.
-			$(
-				'<div id="navPanel">' +
-					'<nav>' +
-						$('#nav').navList() +
-					'</nav>' +
-				'</div>'
-			)
-				.appendTo($body)
-				.panel({
-					delay: 500,
-					hideOnClick: true,
-					hideOnSwipe: true,
-					resetScroll: true,
-					resetForms: true,
-					side: 'left',
-					target: $body,
-					visibleClass: 'navPanel-visible'
-				});
+    // 4. Mobile Drawer Toggle & Dismiss Handlers
+    const toggleBtn = titleBar.querySelector('.toggle');
+    toggleBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        body.classList.toggle('navPanel-visible');
+    });
 
-})(jQuery);
+    // Close when clicking outside panel
+    document.addEventListener('click', (e) => {
+        if (body.classList.contains('navPanel-visible') && !navPanel.contains(e.target) && !titleBar.contains(e.target)) {
+            body.classList.remove('navPanel-visible');
+        }
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && body.classList.contains('navPanel-visible')) {
+            body.classList.remove('navPanel-visible');
+        }
+    });
+});
