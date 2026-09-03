@@ -10,17 +10,17 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => body.classList.remove('is-preload'), 100);
     });
 
-    // 2. Build Title Bar for Mobile with GL Logo
+    // 2. Build Title Bar for Mobile with Hamburger on Left & Centered GL Logo
     const titleBar = document.createElement('div');
     titleBar.id = 'titleBar';
     titleBar.innerHTML = `
-        <div class="titleBar-spacer"></div>
-        <a href="index.html" class="titleBar-logo" aria-label="Gerald Lê - Home">
-            <img src="images/logo.svg" alt="GL" class="titleBar-logo-img" />
-        </a>
         <a href="#navPanel" class="toggle" aria-label="Toggle Navigation">
             <i class="fas fa-bars"></i>
         </a>
+        <a href="index.html" class="titleBar-logo" aria-label="Gerald Lê - Home">
+            <img src="images/logo.svg" alt="GL" class="titleBar-logo-img" />
+        </a>
+        <div class="titleBar-spacer"></div>
     `;
     body.appendChild(titleBar);
 
