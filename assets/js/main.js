@@ -10,22 +10,33 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => body.classList.remove('is-preload'), 100);
     });
 
-    // 2. Build Title Bar for Mobile
-    const logoEl = document.getElementById('logo');
-    const logoHtml = logoEl ? logoEl.innerHTML : 'Khánh Giang "Gerald" Lê';
-    
+    // 2. Build Title Bar for Mobile with GL Logo
     const titleBar = document.createElement('div');
     titleBar.id = 'titleBar';
     titleBar.innerHTML = `
-        <a href="#navPanel" class="toggle" aria-label="Toggle Navigation"></a>
-        <span class="title">${logoHtml}</span>
+        <div class="titleBar-spacer"></div>
+        <a href="index.html" class="titleBar-logo" aria-label="Gerald Lê - Home">
+            <img src="images/logo.svg" alt="GL" class="titleBar-logo-img" />
+        </a>
+        <a href="#navPanel" class="toggle" aria-label="Toggle Navigation">
+            <i class="fas fa-bars"></i>
+        </a>
     `;
     body.appendChild(titleBar);
 
-    // 3. Build Mobile Nav Panel
+    // 3. Build Mobile Nav Panel with Brand Header
     const desktopNavLinks = document.querySelectorAll('#nav ul li a');
     const navPanel = document.createElement('div');
     navPanel.id = 'navPanel';
+
+    const panelHeader = document.createElement('div');
+    panelHeader.className = 'navPanel-header';
+    panelHeader.innerHTML = `
+        <img src="images/logo.svg" alt="GL" class="navPanel-logo" />
+        <span class="navPanel-title">Gerald Lê</span>
+    `;
+    navPanel.appendChild(panelHeader);
+
     const panelNav = document.createElement('nav');
 
     desktopNavLinks.forEach(link => {

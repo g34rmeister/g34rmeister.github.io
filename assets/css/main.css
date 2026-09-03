@@ -1072,7 +1072,7 @@ ul.menu li:first-child {
 		border-top-width: 0;
 	}
 	body {
-		padding-top: 44px;
+		padding-top: 50px;
 	}
 	body.homepage {
 		padding-top: 0;
@@ -1082,8 +1082,10 @@ ul.menu li:first-child {
 		padding-bottom: 1px;
 	}
 	#titleBar {
-		display: block;
-		height: 44px;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 50px;
 		left: 0;
 		position: fixed;
 		top: 0;
@@ -1091,50 +1093,54 @@ ul.menu li:first-child {
 		z-index: 10001;
 		background-color: var(--bg-main);
 		border-bottom: 1px solid var(--border-color);
+		padding: 0 16px;
+		box-sizing: border-box;
 	}
-	#titleBar .title {
-		display: block;
-		position: relative;
-		font-family: var(--font-mono);
-		font-weight: 600;
-		font-size: 0.9em;
-		line-height: 44px;
-		color: var(--text-main);
-		z-index: 1000;
-		text-align: center;
-		text-transform: none;
+	#titleBar .titleBar-spacer {
+		width: 36px;
+		height: 36px;
 	}
-	#titleBar .toggle {
-		text-decoration: none;
-		position: absolute;
-		left: 0;
-		top: 0;
-		width: 80px;
-		height: 44px;
-		z-index: 1001;
-	}
-	#titleBar .toggle:before {
-		display: inline-flex;
+	#titleBar .titleBar-logo {
+		display: flex;
 		align-items: center;
 		justify-content: center;
 		text-decoration: none;
-		position: absolute;
-		left: 0;
-		top: 0;
-		background: var(--accent);
-		border-right: 1px solid var(--border-color);
-		width: 44px;
-		height: 44px;
-		content: '\f0c9';
-		font-family: 'Font Awesome 5 Free';
-		font-weight: 900;
-		color: var(--accent-text);
-		text-align: center;
-		line-height: 1;
-		font-size: 15px;
+		height: 100%;
 	}
-	#titleBar .toggle:active:before {
-		background-color: var(--accent-hover);
+	#titleBar .titleBar-logo-img {
+		height: 30px;
+		width: 30px;
+		object-fit: contain;
+		display: block;
+		transition: transform var(--transition-fast), filter var(--transition-fast);
+	}
+	#titleBar .titleBar-logo:hover .titleBar-logo-img {
+		transform: scale(1.08);
+		filter: drop-shadow(0 0 8px var(--accent-glow));
+	}
+	#titleBar .toggle {
+		text-decoration: none;
+		width: 36px;
+		height: 36px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-main);
+		font-size: 19px;
+		border-radius: var(--radius);
+		border: 1px solid transparent;
+		background: transparent;
+		cursor: pointer;
+		transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+	}
+	#titleBar .toggle:hover,
+	#titleBar .toggle:active {
+		color: var(--accent);
+		background-color: var(--bg-surface);
+		border-color: var(--border-color);
+	}
+	#titleBar .toggle:before {
+		display: none;
 	}
 	#navPanel {
 		transform: translateX(-275px);
@@ -1180,6 +1186,33 @@ ul.menu li:first-child {
 	#navPanel .indent-1 { display: inline-block; width: 1em; }
 	#navPanel .indent-2 { display: inline-block; width: 2em; }
 	#navPanel .depth-0 { font-weight: 600; }
+	
+	#navPanel .navPanel-header {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 1.25em 1.25em;
+		border-bottom: 1px solid var(--border-color);
+		background-color: var(--bg-subtle);
+	}
+	#navPanel .navPanel-logo {
+		width: 28px;
+		height: 28px;
+		object-fit: contain;
+	}
+	#navPanel .navPanel-title {
+		font-family: var(--font-mono);
+		font-weight: 600;
+		font-size: 1em;
+		color: var(--text-main);
+		letter-spacing: -0.02em;
+	}
+	#navPanel .link.active {
+		color: var(--accent);
+		background-color: var(--bg-surface);
+		border-left: 3px solid var(--accent);
+		padding-left: calc(1.25em - 3px);
+	}
 	
 	body.navPanel-visible #page-wrapper { transform: translateX(275px); }
 	body.navPanel-visible #titleBar { transform: translateX(275px); }
