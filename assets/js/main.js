@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     body.appendChild(titleBar);
 
-    // 3. Build Mobile Nav Panel with Brand Header
+    // 3. Build Mobile Nav Panel with Brand Header & Close Button
     const desktopNavLinks = document.querySelectorAll('#nav ul li a');
     const navPanel = document.createElement('div');
     navPanel.id = 'navPanel';
@@ -32,8 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const panelHeader = document.createElement('div');
     panelHeader.className = 'navPanel-header';
     panelHeader.innerHTML = `
-        <img src="images/logo.svg" alt="GL" class="navPanel-logo" />
-        <span class="navPanel-title">Gerald Lê</span>
+        <div class="navPanel-brand">
+            <img src="images/logo.svg" alt="GL" class="navPanel-logo" />
+            <span class="navPanel-title">Gerald Lê</span>
+        </div>
+        <button type="button" class="navPanel-close" aria-label="Close Navigation">
+            <i class="fas fa-times"></i>
+        </button>
     `;
     navPanel.appendChild(panelHeader);
 
@@ -47,7 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const a = document.createElement('a');
         a.className = 'link depth-0';
         a.href = link.getAttribute('href') || '#';
-        if (link.getAttribute('target')) a.target = link.getAttribute('target');
+        if (link.getAttribute('target')) {
+            a.target = link.getAttribute('target');
+            a.rel = link.getAttribute('rel') || 'noopener noreferrer';
+        }
         a.textContent = text;
         
         // Highlight active page link
@@ -57,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Close drawer on link click
         a.addEventListener('click', () => {
-            body.classList.remove('navPanel-visible');
+            closeNav();
         });
 
         panelNav.appendChild(a);
@@ -66,25 +74,55 @@ document.addEventListener('DOMContentLoaded', () => {
     navPanel.appendChild(panelNav);
     body.appendChild(navPanel);
 
-    // 4. Mobile Drawer Toggle & Dismiss Handlers
+    // 4. Build Dimmed Backdrop Scrim
+    const backdrop = document.createElement('div');
+    backdrop.id = 'navPanel-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+    body.appendChild(backdrop);
+
+    // 5. Mobile Drawer State Controller
+    function openNav() {
+        body.classList.add('navPanel-visible');
+    }
+
+    function closeNav() {
+        body.classList.remove('navPanel-visible');
+    }
+
+    function toggleNav() {
+        if (body.classList.contains('navPanel-visible')) {
+            closeNav();
+        } else {
+            openNav();
+        }
+    }
+
+    // Toggle button handler
     const toggleBtn = titleBar.querySelector('.toggle');
     toggleBtn.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        body.classList.toggle('navPanel-visible');
+        toggleNav();
     });
 
-    // Close when clicking outside panel
-    document.addEventListener('click', (e) => {
-        if (body.classList.contains('navPanel-visible') && !navPanel.contains(e.target) && !titleBar.contains(e.target)) {
-            body.classList.remove('navPanel-visible');
-        }
+    // Close button inside drawer handler
+    const closeBtn = panelHeader.querySelector('.navPanel-close');
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeNav();
+        });
+    }
+
+    // Close when clicking backdrop
+    backdrop.addEventListener('click', () => {
+        closeNav();
     });
 
     // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && body.classList.contains('navPanel-visible')) {
-            body.classList.remove('navPanel-visible');
+            closeNav();
         }
     });
 });
