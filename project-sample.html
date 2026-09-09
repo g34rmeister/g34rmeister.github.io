@@ -13,19 +13,23 @@
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
-        <link rel="stylesheet" href="assets/css/main.css?v=1.9" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.1" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
     </head>
     <body class="is-preload">
         <div id="page-wrapper">
 
-            <!-- Header -->
-                <header id="header">
-                    <div class="logo container">
-                        <div>
-                            <h1><a href="index.html" id="logo">Khánh Giang "Gerald" Lê</a></h1>
-                        </div>
-                    </div>
-                </header>
 
             <!-- Nav -->
                 <nav id="nav">
@@ -35,6 +39,7 @@
                         <li><a href="about.html">About</a></li>
                         <li><a href="affiliations.html">Affiliations</a></li>
                         <li class="current"><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="robotics.html">Robotics</a></li>
                         <li><a href="contact.html">Contact</a></li>
                         <li><a href="resume.html" class="nav-resume-btn"><i class="fas fa-file-alt"></i> Resume</a></li>
                     </ul>
@@ -54,7 +59,7 @@
                                     </div>
 
                                 <!-- Project Header Row -->
-                                    <div class="project-header">
+                                    <div class="project-header reveal-on-scroll">
                                         <div class="project-header-top">
                                             <h1>telemetry-stream</h1>
                                             <div class="project-actions">
@@ -81,12 +86,12 @@
                                     </div>
 
                                 <!-- Hero Preview Media (16:9) -->
-                                    <div class="project-hero-media">
+                                    <div class="project-hero-media reveal-on-scroll">
                                         <img src="images/website.webp" alt="Telemetry Pipeline Architecture Diagram and Real-Time Dashboard Preview" style="aspect-ratio: 16/9; width: 100%; object-fit: cover; display: block;" />
                                     </div>
 
                                 <!-- Deep-Dive Case Study Content -->
-                                    <article class="project-case-study">
+                                    <article class="project-case-study reveal-on-scroll">
 
                                         <h2>// 01. Overview &amp; Motivation</h2>
                                         <p>
@@ -123,11 +128,11 @@
 
                                         <h2>// 04. Key Takeaways &amp; Future Directions</h2>
                                         <p>
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
+                                            Sed ut perspiciatis unde omnis ipsam error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.
                                         </p>
 
                                         <!-- Footer Navigation -->
-                                        <div class="subpage-cta" style="margin-top: 4rem;">
+                                        <div class="subpage-cta reveal-on-scroll" style="margin-top: 4rem;">
                                             <h3>Interested in learning more?</h3>
                                             <p>Check out more engineering projects or get in touch directly.</p>
                                             <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
@@ -158,7 +163,7 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/main.js?v=1.3" defer></script>
+            <script src="assets/js/main.js?v=2.9" defer></script>
 
     </body>
 </html>

@@ -1,0 +1,214 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    Flight Avionics & Telemetry Controller
+-->
+<html lang="en">
+    <head>
+        <title>Flight Avionics & Telemetry Controller - Gerald's Portfolio</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="High-reliability embedded avionics controller with 1 kHz IMU sampling, EKF2 state estimation, and MAVLink telemetry streaming." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.1" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <div id="page-wrapper">
+
+            <!-- Nav -->
+                <nav id="nav">
+                    <ul>
+                        <li class="nav-logo-item"><a href="index.html" class="nav-logo-link" title="Gerald Lê - Home"><img src="images/logo.svg" alt="GL" class="nav-logo-img" /></a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="affiliations.html">Affiliations</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li class="current"><a href="robotics.html">Robotics</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="resume.html" class="nav-resume-btn"><i class="fas fa-file-alt"></i> Resume</a></li>
+                    </ul>
+                </nav>
+
+            <!-- Main -->
+                <section id="main">
+                    <div class="container">
+                        <div class="row gtr-200">
+                            <div class="col-12">
+
+                                <!-- Back Link -->
+                                    <div>
+                                        <a href="robotics.html" class="back-link">
+                                            <span class="arrow">&lt;-</span> robotics
+                                        </a>
+                                    </div>
+
+                                <!-- Project Header Row -->
+                                    <div class="project-header reveal-on-scroll">
+                                        <div class="project-header-top">
+                                            <h1>flight-avionics-telemetry</h1>
+                                            <div class="project-actions">
+                                                <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-external">
+                                                    <i class="fab fa-github"></i> github <span class="arrow">/></span>
+                                                </a>
+                                                <a href="robotics.html" class="btn-external">
+                                                    <i class="fas fa-robot"></i> robotics hub <span class="arrow">/></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p class="project-tagline">
+                                            an embedded STM32H7-based flight controller with high-rate IMU logging, EKF2 state estimation, and MAVLink telemetry streaming.
+                                        </p>
+                                        <div class="tech-tags">
+                                            <span class="tag tag-mint">PX4 Autopilot</span>
+<span class="tag tag-mint">MAVLink</span>
+<span class="tag tag-sky">FreeRTOS</span>
+<span class="tag tag-sky">C++</span>
+<span class="tag">EKF2 State Estimation</span>
+<span class="tag">STM32H7</span>
+<span class="tag">SPI / I2C</span>
+                                        </div>
+                                    </div>
+
+                                <!-- Hero Preview Media (16:9) -->
+                                    <div class="project-hero-media reveal-on-scroll">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c121d;">
+    <defs>
+        <pattern id="grid-flight" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        </pattern>
+    </defs>
+    <rect width="800" height="450" fill="#0c121d"/>
+    <rect width="800" height="450" fill="url(#grid-flight)"/>
+
+    <!-- PCB Board Layout Outline -->
+    <rect x="180" y="70" width="440" height="310" rx="16" fill="#13271f" stroke="#10b981" stroke-width="2"/>
+    <circle cx="205" cy="95" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
+    <circle cx="595" cy="95" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
+    <circle cx="205" cy="355" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
+    <circle cx="595" cy="355" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
+
+    <!-- Traces on PCB -->
+    <path d="M 400 225 L 400 120 L 480 120" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
+    <path d="M 400 225 L 300 225 L 300 150" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
+    <path d="M 400 225 L 400 320 L 320 320" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
+    <path d="M 400 225 L 510 225 L 510 300" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
+
+    <!-- Main Microcontroller: STM32H7 -->
+    <rect x="340" y="165" width="120" height="120" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="400" y="220" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="13" font-weight="bold">STM32H743</text>
+    <text x="400" y="240" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">480MHz ARM M7</text>
+
+    <!-- Sensors -->
+    <rect x="260" y="110" width="60" height="50" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+    <text x="290" y="140" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="9">ICM-42688P</text>
+
+    <rect x="470" y="100" width="70" height="45" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
+    <text x="505" y="128" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="9">BARO BMP390</text>
+
+    <rect x="480" y="280" width="65" height="55" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="512" y="312" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="9">CAN TRANS</text>
+
+    <rect x="260" y="295" width="70" height="50" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+    <text x="295" y="325" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="9">FRAM 2MB</text>
+
+    <!-- HUD Overlay -->
+    <rect x="24" y="24" width="280" height="68" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
+    <text x="36" y="44" fill="#10b981" font-family="monospace" font-size="12" font-weight="bold">// AVIONICS_STATUS</text>
+    <text x="36" y="62" fill="#cbd5e1" font-family="monospace" font-size="11">EKF2 State Filter: Converged</text>
+    <text x="36" y="78" fill="#94a3b8" font-family="monospace" font-size="11">IMU Rate: 1000 Hz (SPI DMA)</text>
+
+    <rect x="510" y="360" width="266" height="66" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
+    <text x="522" y="380" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">// TELEMETRY_LINK</text>
+    <text x="522" y="398" fill="#cbd5e1" font-family="monospace" font-size="11">MAVLink v2: 57600 baud RF</text>
+    <text x="522" y="414" fill="#94a3b8" font-family="monospace" font-size="11">Packet Drop Rate: &lt; 0.02%</text>
+</svg>
+                                    </div>
+
+                                <!-- Deep-Dive Case Study Content -->
+                                    <article class="project-case-study reveal-on-scroll">
+
+
+                                        <h2>// 01. Overview &amp; Avionics Scope</h2>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. The Autonomous Telemetry &amp; Flight Controller is a high-reliability embedded hardware module built around the STM32H743 Cortex-M7 running at 480 MHz. Designed to bridge low-level motor actuation with high-level mission directives, the platform provides real-time state estimation, hardware-isolated failsafes, and multi-channel telemetry streaming.
+                                        </p>
+                                        <p>
+                                            Nullam sed mi ut arcu tincidunt ultrices. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. The flight controller operates FreeRTOS alongside PX4-compatible flight algorithms, handling flight attitude control with deterministic millisecond-level scheduling.
+                                        </p>
+
+                                        <h2>// 02. Real-Time Architecture &amp; DMA Sampling</h2>
+                                        <p>
+                                            Curabitur pellentesque nisi vel leo sollicitudin, sed fermentum dolor facilisis. Efficient sensor acquisition is critical in high-vibration drone environments:
+                                        </p>
+                                        <blockquote>
+                                            "In high-dynamic flight regimes, sensor jitter is the enemy of state estimation. Zero-copy circular DMA buffers eliminate CPU preemption delays during critical sensor reads."
+                                        </blockquote>
+                                        <ul style="list-style: square; padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
+                                            <li><strong>High-Rate IMU Acquisition:</strong> Dual ICM-42688P 6-axis IMUs sampled over dedicated SPI buses at 1 kHz with circular DMA buffers.</li>
+                                            <li><strong>EKF2 State Estimator:</strong> Extended Kalman Filter estimating orientation quaternion, Cartesian velocity, and barometric altitude with sensor bias tracking.</li>
+                                            <li><strong>Fail-Safe Architecture:</strong> Independent hardware watchdog timer ensuring automatic parachute or return-to-home actuation upon signal loss.</li>
+                                            <li><strong>Blackbox Logging:</strong> High-speed non-volatile FRAM logging flight metrics at 250 Hz for post-mission telemetry analytics.</li>
+                                        </ul>
+
+                                        <h2>// 03. Telemetry Stream &amp; Ground Station Interface</h2>
+                                        <p>
+                                            Aliquam erat volutpat. Fusce euismod diam at nulla laoreet, vel facilisis nisi dictum. Flight telemetry is packaged according to the MAVLink v2 protocol, compressing attitude, battery voltage, GPS coordinates, and motor RPM into lightweight binary frames streamed over 915 MHz radio telemetry transceivers.
+                                        </p>
+
+                                        <h2>// 04. Validation &amp; Real-World Testing</h2>
+                                        <p>
+                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Wind tunnel validation and outdoor multirotor flight trials proved consistent attitude stabilization in crosswinds up to 35 km/h with angular roll/pitch tracking error kept within 1.8 degrees.
+                                        </p>
+
+
+                                        <!-- Footer Navigation -->
+                                        <div class="subpage-cta reveal-on-scroll" style="margin-top: 4rem;">
+                                            <h3>Interested in robotics and autonomous systems?</h3>
+                                            <p>Explore more robotics hardware platforms or get in touch for technical discussions.</p>
+                                            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                                                <a href="robotics.html" class="button alt"><i class="fas fa-robot"></i> All Robotics Systems</a>
+                                                <a href="contact.html" class="button"><i class="fas fa-paper-plane"></i> Get In Touch</a>
+                                            </div>
+                                        </div>
+
+                                    </article>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated September 2026.</li>
+                                <li>All rights reserved.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/main.js?v=2.9" defer></script>
+
+    </body>
+</html>

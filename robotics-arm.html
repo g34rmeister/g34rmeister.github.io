@@ -1,0 +1,225 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    Robotic Arm Kinematics & Vision
+-->
+<html lang="en">
+    <head>
+        <title>Robotic Arm Kinematics & Vision - Gerald's Portfolio</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Technical deep-dive on a 6-DOF robotic manipulator combining MoveIt 2 motion planning and edge computer vision." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.1" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <div id="page-wrapper">
+
+            <!-- Nav -->
+                <nav id="nav">
+                    <ul>
+                        <li class="nav-logo-item"><a href="index.html" class="nav-logo-link" title="Gerald Lê - Home"><img src="images/logo.svg" alt="GL" class="nav-logo-img" /></a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="affiliations.html">Affiliations</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li class="current"><a href="robotics.html">Robotics</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="resume.html" class="nav-resume-btn"><i class="fas fa-file-alt"></i> Resume</a></li>
+                    </ul>
+                </nav>
+
+            <!-- Main -->
+                <section id="main">
+                    <div class="container">
+                        <div class="row gtr-200">
+                            <div class="col-12">
+
+                                <!-- Back Link -->
+                                    <div>
+                                        <a href="robotics.html" class="back-link">
+                                            <span class="arrow">&lt;-</span> robotics
+                                        </a>
+                                    </div>
+
+                                <!-- Project Header Row -->
+                                    <div class="project-header reveal-on-scroll">
+                                        <div class="project-header-top">
+                                            <h1>manipulator-6dof-kinematics</h1>
+                                            <div class="project-actions">
+                                                <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-external">
+                                                    <i class="fab fa-github"></i> github <span class="arrow">/></span>
+                                                </a>
+                                                <a href="robotics.html" class="btn-external">
+                                                    <i class="fas fa-robot"></i> robotics hub <span class="arrow">/></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p class="project-tagline">
+                                            a 6-degree-of-freedom robotic manipulator combining MoveIt 2 motion planning, edge vision object detection, and closed-loop position control.
+                                        </p>
+                                        <div class="tech-tags">
+                                            <span class="tag tag-mint">MoveIt 2</span>
+<span class="tag tag-mint">C++ 20</span>
+<span class="tag tag-sky">OpenCV</span>
+<span class="tag tag-sky">YOLOv8</span>
+<span class="tag">Inverse Kinematics</span>
+<span class="tag">STM32 MCU</span>
+<span class="tag">Joint Trajectory</span>
+                                        </div>
+                                    </div>
+
+                                <!-- Hero Preview Media (16:9) -->
+                                    <div class="project-hero-media reveal-on-scroll">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c121d;">
+    <defs>
+        <pattern id="grid-arm" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        </pattern>
+    </defs>
+    <rect width="800" height="450" fill="#0c121d"/>
+    <rect width="800" height="450" fill="url(#grid-arm)"/>
+
+    <!-- Base Mount -->
+    <rect x="180" y="380" width="160" height="30" rx="4" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <polygon points="210,380 260,330 310,380" fill="#334155" stroke="#64748b" stroke-width="1.5"/>
+
+    <!-- Joint J1 & Link 1 -->
+    <circle cx="260" cy="330" r="18" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+    <line x1="260" y1="330" x2="340" y2="200" stroke="#38bdf8" stroke-width="10" stroke-linecap="round"/>
+
+    <!-- Joint J2 & Link 2 -->
+    <circle cx="340" cy="200" r="16" fill="#0f172a" stroke="#10b981" stroke-width="3"/>
+    <line x1="340" y1="200" x2="480" y2="150" stroke="#10b981" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Joint J3 & Wrist (J4, J5, J6) -->
+    <circle cx="480" cy="150" r="14" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/>
+    <line x1="480" y1="150" x2="570" y2="190" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="570" cy="190" r="10" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+
+    <!-- End Effector Gripper & Target Object -->
+    <g transform="translate(570, 190) rotate(35)">
+        <rect x="0" y="-8" width="28" height="16" rx="2" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+        <line x1="28" y1="-12" x2="48" y2="-12" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+        <line x1="28" y1="12" x2="48" y2="12" stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+        <!-- Target Cube -->
+        <rect x="36" y="-8" width="16" height="16" rx="2" fill="rgba(245, 158, 11, 0.4)" stroke="#f59e0b" stroke-width="2"/>
+    </g>
+
+    <!-- Camera Vision Cone -->
+    <path d="M 520 80 L 640 180 L 560 260 Z" fill="rgba(56, 189, 248, 0.12)" stroke="#38bdf8" stroke-dasharray="3 3"/>
+    <circle cx="520" cy="80" r="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+    <text x="535" y="75" fill="#38bdf8" font-family="monospace" font-size="11">RGB-D EYE-IN-HAND</text>
+
+    <!-- Coordinate Frame Arrows -->
+    <g transform="translate(630, 230)">
+        <line x1="0" y1="0" x2="35" y2="0" stroke="#ef4444" stroke-width="2"/>
+        <polygon points="38,0 30,-4 30,4" fill="#ef4444"/>
+        <text x="42" y="4" fill="#ef4444" font-family="monospace" font-size="10">X_ee</text>
+
+        <line x1="0" y1="0" x2="0" y2="-35" stroke="#10b981" stroke-width="2"/>
+        <polygon points="0,-38 -4,-30 4,-30" fill="#10b981"/>
+        <text x="-4" y="-42" fill="#10b981" font-family="monospace" font-size="10">Z_ee</text>
+    </g>
+
+    <!-- HUD Overlay -->
+    <rect x="24" y="24" width="280" height="72" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
+    <text x="36" y="44" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">// KINEMATIC_SOLVER</text>
+    <text x="36" y="62" fill="#cbd5e1" font-family="monospace" font-size="11">IK Solver: Trac-IK (6-DOF)</text>
+    <text x="36" y="80" fill="#94a3b8" font-family="monospace" font-size="11">Position Error: +/- 0.42 mm</text>
+
+    <rect x="490" y="360" width="286" height="66" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
+    <text x="502" y="380" fill="#10b981" font-family="monospace" font-size="12" font-weight="bold">// VISION_INFERENCE</text>
+    <text x="502" y="398" fill="#cbd5e1" font-family="monospace" font-size="11">YOLOv8-Nano: 68 FPS (TensorRT)</text>
+    <text x="502" y="414" fill="#94a3b8" font-family="monospace" font-size="11">Pose: 6D Bounding Box Estimated</text>
+</svg>
+                                    </div>
+
+                                <!-- Deep-Dive Case Study Content -->
+                                    <article class="project-case-study reveal-on-scroll">
+
+
+                                        <h2>// 01. Overview &amp; Mechanical Architecture</h2>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. The 6-DOF Robotic Manipulator project explores the intersection of spatial geometry, dynamic path planning, and computer vision. Built with cycloidal reduction drives and precision brushless motors, the arm achieves smooth articulation with a payload capacity of 3.2 kg at maximum radial extension.
+                                        </p>
+                                        <p>
+                                            Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta. The wrist module integrates an eye-in-hand depth sensor that actively aligns end-effector orientation with target workpieces during dynamic pick-and-place cycles.
+                                        </p>
+
+                                        <h2>// 02. Kinematic Modeling &amp; MoveIt 2 Integration</h2>
+                                        <p>
+                                            Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Cras convallis leo sed tellus volutpat. Kinematic calculations leverage standard Denavit-Hartenberg (D-H) parameter matrices and numerical Jacobian inversions:
+                                        </p>
+                                        <blockquote>
+                                            "Manipulator dexterity requires deterministic singularity avoidance. Near mathematical boundaries, damped least-squares approaches balance joint velocity limits against Cartesian trajectory fidelity."
+                                        </blockquote>
+                                        <ul style="list-style: square; padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
+                                            <li><strong>Inverse Kinematics:</strong> Trac-IK dual-solver combining sequential quadratic programming (SQP) with genetic algorithms to reliably converge in under 0.8 ms.</li>
+                                            <li><strong>Motion Planning Pipeline:</strong> MoveIt 2 OMPL planners (RRT-Connect, BiTRRT) generating collision-free joint trajectories within cluttered test environments.</li>
+                                            <li><strong>Trajectory Smoothing:</strong> Time-optimal path parameterization (TOPP-RA) smoothing velocity and acceleration profiles across all 6 axes.</li>
+                                            <li><strong>End-Effector Control:</strong> Soft pneumatic gripper actuated via miniature solenoid valves with integrated force sensing.</li>
+                                        </ul>
+
+                                        <h2>// 03. Edge Vision &amp; 6D Pose Estimation</h2>
+                                        <p>
+                                            Curabitur sodales ligula in libero. Sed dignissim lacinia nunc. An edge-mounted camera streams RGB-D frames to an onboard inference engine running a lightweight YOLOv8 model optimized via NVIDIA TensorRT. Upon bounding box confirmation, point cloud clustering extracts surface normals and Euclidean centroids to solve for the full 6D grasp transformation matrix.
+                                        </p>
+
+                                        <h2>// 04. Precision Benchmarks &amp; Lessons Learned</h2>
+                                        <p>
+                                            Morbi pellentesque convallis lectus, vitae lacinia arcu dictum eu. Repeated cycle testing demonstrated 0.42 mm point repeatability across 10,000 continuous pick-and-place actions. The implementation highlighted the vital importance of thermal compensation in cycloidal gears and closed-loop current feedback for reliable continuous manipulation.
+                                        </p>
+
+
+                                        <!-- Footer Navigation -->
+                                        <div class="subpage-cta reveal-on-scroll" style="margin-top: 4rem;">
+                                            <h3>Interested in robotics and autonomous systems?</h3>
+                                            <p>Explore more robotics hardware platforms or get in touch for technical discussions.</p>
+                                            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                                                <a href="robotics.html" class="button alt"><i class="fas fa-robot"></i> All Robotics Systems</a>
+                                                <a href="contact.html" class="button"><i class="fas fa-paper-plane"></i> Get In Touch</a>
+                                            </div>
+                                        </div>
+
+                                    </article>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated September 2026.</li>
+                                <li>All rights reserved.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/main.js?v=2.9" defer></script>
+
+    </body>
+</html>

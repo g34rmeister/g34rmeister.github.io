@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    AGV Navigation & SLAM Architecture
+-->
+<html lang="en">
+    <head>
+        <title>AGV Navigation & SLAM Architecture - Gerald's Portfolio</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Case study on an autonomous ground vehicle utilizing ROS 2 Nav2, 2D LiDAR SLAM, and embedded motor control." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.1" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <div id="page-wrapper">
+
+            <!-- Nav -->
+                <nav id="nav">
+                    <ul>
+                        <li class="nav-logo-item"><a href="index.html" class="nav-logo-link" title="Gerald Lê - Home"><img src="images/logo.svg" alt="GL" class="nav-logo-img" /></a></li>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="affiliations.html">Affiliations</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li class="current"><a href="robotics.html">Robotics</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="resume.html" class="nav-resume-btn"><i class="fas fa-file-alt"></i> Resume</a></li>
+                    </ul>
+                </nav>
+
+            <!-- Main -->
+                <section id="main">
+                    <div class="container">
+                        <div class="row gtr-200">
+                            <div class="col-12">
+
+                                <!-- Back Link -->
+                                    <div>
+                                        <a href="robotics.html" class="back-link">
+                                            <span class="arrow">&lt;-</span> robotics
+                                        </a>
+                                    </div>
+
+                                <!-- Project Header Row -->
+                                    <div class="project-header reveal-on-scroll">
+                                        <div class="project-header-top">
+                                            <h1>agv-slam-navigation</h1>
+                                            <div class="project-actions">
+                                                <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-external">
+                                                    <i class="fab fa-github"></i> github <span class="arrow">/></span>
+                                                </a>
+                                                <a href="robotics.html" class="btn-external">
+                                                    <i class="fas fa-robot"></i> robotics hub <span class="arrow">/></span>
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <p class="project-tagline">
+                                            an open-architecture differential drive AGV featuring 2D LiDAR SLAM, ROS 2 Nav2 stack, and real-time obstacle avoidance.
+                                        </p>
+                                        <div class="tech-tags">
+                                            <span class="tag tag-mint">ROS 2 Humble</span>
+<span class="tag tag-mint">Nav2</span>
+<span class="tag tag-sky">LiDAR SLAM</span>
+<span class="tag tag-sky">Python</span>
+<span class="tag">Differential Drive</span>
+<span class="tag">STM32 MCU</span>
+<span class="tag">Gazebo</span>
+                                        </div>
+                                    </div>
+
+                                <!-- Hero Preview Media (16:9) -->
+                                    <div class="project-hero-media reveal-on-scroll">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c121d;">
+    <defs>
+        <pattern id="grid-agv" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
+        </pattern>
+        <radialGradient id="lidar-cone" cx="400" cy="225" r="280" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(16, 185, 129, 0.35)"/>
+            <stop offset="60%" stop-color="rgba(16, 185, 129, 0.08)"/>
+            <stop offset="100%" stop-color="rgba(16, 185, 129, 0)"/>
+        </radialGradient>
+    </defs>
+    <rect width="800" height="450" fill="#0c121d"/>
+    <rect width="800" height="450" fill="url(#grid-agv)"/>
+
+    <!-- LiDAR FOV Sweep -->
+    <path d="M 400 225 L 680 70 A 320 320 0 0 0 120 70 Z" fill="url(#lidar-cone)"/>
+    <path d="M 400 225 L 680 70" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <path d="M 400 225 L 120 70" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+    <!-- Simulated Obstacles & Costmap hits -->
+    <rect x="180" y="90" width="40" height="40" rx="4" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="1.5"/>
+    <rect x="580" y="110" width="50" height="30" rx="4" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="200" cy="110" r="3" fill="#ef4444"/>
+    <circle cx="605" cy="125" r="3" fill="#ef4444"/>
+
+    <!-- Planned Waypoint Path -->
+    <path d="M 400 370 Q 400 300 400 225 T 460 140 T 400 60" fill="none" stroke="#38bdf8" stroke-width="2.5" stroke-dasharray="6 4"/>
+    <circle cx="400" cy="60" r="6" fill="#38bdf8"/>
+    <text x="415" y="64" fill="#38bdf8" font-family="monospace" font-size="12">WAYPOINT_04</text>
+
+    <!-- AGV Chassis -->
+    <g transform="translate(400, 225)">
+        <!-- Drive Wheels -->
+        <rect x="-100" y="-30" width="22" height="60" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+        <rect x="78" y="-30" width="22" height="60" rx="4" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/>
+        <circle cx="0" cy="70" r="12" fill="#334155" stroke="#94a3b8" stroke-width="1.5"/> <!-- Caster -->
+
+        <!-- Main Body -->
+        <rect x="-70" y="-80" width="140" height="160" rx="12" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+        
+        <!-- LiDAR Puck Center -->
+        <circle cx="0" cy="-20" r="22" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+        <circle cx="0" cy="-20" r="8" fill="#10b981"/>
+
+        <!-- Heading Vector -->
+        <line x1="0" y1="-20" x2="0" y2="-120" stroke="#10b981" stroke-width="2"/>
+        <polygon points="0,-128 -5,-116 5,-116" fill="#10b981"/>
+
+        <!-- Labels -->
+        <text x="0" y="30" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="11">AGV_CORE_V1</text>
+    </g>
+
+    <!-- HUD Overlay -->
+    <rect x="24" y="24" width="260" height="68" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
+    <text x="36" y="44" fill="#10b981" font-family="monospace" font-size="12" font-weight="bold">// TELEMETRY_STREAM</text>
+    <text x="36" y="62" fill="#cbd5e1" font-family="monospace" font-size="11">SLAM: Cartographer 2D (Active)</text>
+    <text x="36" y="78" fill="#94a3b8" font-family="monospace" font-size="11">LIN_VEL: 0.85 m/s | ANG_VEL: 0.04 r/s</text>
+
+    <rect x="520" y="360" width="256" height="66" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
+    <text x="532" y="380" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">// SENSOR_PAYLOAD</text>
+    <text x="532" y="398" fill="#cbd5e1" font-family="monospace" font-size="11">RPLiDAR A2M8: 12Hz @ 360 deg</text>
+    <text x="532" y="414" fill="#94a3b8" font-family="monospace" font-size="11">BNO055 IMU: 9-DOF Fused</text>
+</svg>
+                                    </div>
+
+                                <!-- Deep-Dive Case Study Content -->
+                                    <article class="project-case-study reveal-on-scroll">
+
+
+                                        <h2>// 01. Overview &amp; Operational Domain</h2>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. The Autonomous Ground Vehicle (AGV) architecture is designed for autonomous intra-facility logistics, material transfer, and spatial map generation. Utilizing a ruggedized differential drive chassis paired with an onboard Jetson Orin Nano companion computer, the system executes real-time simultaneous localization and mapping (SLAM).
+                                        </p>
+                                        <p>
+                                            Nullam sed mi ut arcu tincidunt ultrices. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. The platform continuously monitors wheel odometry, spatial laser point clouds, and inertial heading vectors to maintain sub-centimeter positioning accuracy even across feature-sparse hallway environments.
+                                        </p>
+
+                                        <h2>// 02. Navigation Stack &amp; Sensor Fusion</h2>
+                                        <p>
+                                            Curabitur pellentesque nisi vel leo sollicitudin, sed fermentum dolor facilisis. Phasellus quis ipsum tristique, gravida nisl eu, commodo sapien. Navigation is coordinated through the ROS 2 Nav2 framework operating over CycloneDDS:
+                                        </p>
+                                        <blockquote>
+                                            "Robust real-world autonomy relies not on ideal sensors, but on gracefully handling sensor uncertainty through probabilistic state estimation and multi-layered costmaps."
+                                        </blockquote>
+                                        <ul style="list-style: square; padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
+                                            <li><strong>Global Path Planning:</strong> NavFn and Smac Planner executing A* graph search across pre-computed 2D occupancy grids with inflation barriers.</li>
+                                            <li><strong>Local Trajectory Generation:</strong> Regulated Pure Pursuit (RPP) controller computing kinematically feasible velocity commands while enforcing dynamic obstacle deceleration.</li>
+                                            <li><strong>State Estimation:</strong> Dual Extended Kalman Filter fusing wheel tick encoders (100 Hz) with 9-DOF BNO055 orientation quaternion updates.</li>
+                                            <li><strong>Safety Watchdog:</strong> Dedicated hardware emergency-stop loop interrupting motor gate drivers directly if LiDAR proximity thresholds drop below 0.25 meters.</li>
+                                        </ul>
+
+                                        <h2>// 03. Low-Level Firmware &amp; Motor Actuation</h2>
+                                        <p>
+                                            Aliquam erat volutpat. Fusce euismod diam at nulla laoreet, vel facilisis nisi dictum. At the base embedded tier, an STM32 ARM Cortex-M4 microcontroller executes dual closed-loop PID velocity controllers at 1 kHz. Hall effect quadrature encoders provide continuous shaft position feedback to the brushed DC drive motors.
+                                        </p>
+                                        <p>
+                                            Inter-tier communication between the Jetson Linux host and the STM32 firmware utilizes a high-baud micro-ROS transport layer over UART, ensuring deterministic command latency under 2 milliseconds.
+                                        </p>
+
+                                        <h2>// 04. Benchmarking &amp; Key Takeaways</h2>
+                                        <p>
+                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Empirical testing across warehouse floor plans demonstrated average localization drift under 1.2% over 500-meter closed trajectories. Automatic recovery behaviors—including in-place rotation clearing and dynamic replanning—enabled the vehicle to reliably traverse high-traffic human corridors without manual intervention.
+                                        </p>
+
+
+                                        <!-- Footer Navigation -->
+                                        <div class="subpage-cta reveal-on-scroll" style="margin-top: 4rem;">
+                                            <h3>Interested in robotics and autonomous systems?</h3>
+                                            <p>Explore more robotics hardware platforms or get in touch for technical discussions.</p>
+                                            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                                                <a href="robotics.html" class="button alt"><i class="fas fa-robot"></i> All Robotics Systems</a>
+                                                <a href="contact.html" class="button"><i class="fas fa-paper-plane"></i> Get In Touch</a>
+                                            </div>
+                                        </div>
+
+                                    </article>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated September 2026.</li>
+                                <li>All rights reserved.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/main.js?v=2.9" defer></script>
+
+    </body>
+</html>
