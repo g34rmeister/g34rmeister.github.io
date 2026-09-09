@@ -18,9 +18,12 @@
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
-                var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                if (saved === 'light' || (!saved && prefersLight)) {
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
                     document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
                 }
             })();
         </script>
@@ -46,8 +49,7 @@
             <!-- Subpage Banner -->
                 <section id="subpage-banner">
                     <div class="content">
-                        <div class="page-title-badge"><i class="fas fa-terminal"></i> Biography &amp; Toolbox</div>
-                        <h2>// About Me</h2>
+                        <h2>About Me</h2>
                         <p>Background, academic journey, technical skills, and personal pursuits.</p>
                     </div>
                 </section>
@@ -72,7 +74,7 @@
 
                                 <!-- Technical Skills & Toolbox Matrix -->
                                     <section class="reveal-on-scroll">
-                                        <h2 class="major"><span>// Technical Toolbox</span></h2>
+                                        <h2 class="major"><span>Technical Toolbox</span></h2>
                                         <div class="skills-grid">
                                             <div class="skill-category reveal-on-scroll stagger-1">
                                                 <h3><i class="fas fa-code"></i> Programming Languages</h3>
@@ -139,15 +141,7 @@
                                         </ul>
                                     </section>
 
-                                <!-- Subpage CTA -->
-                                    <div class="subpage-cta reveal-on-scroll">
-                                        <h3>Want to see what I've built?</h3>
-                                        <p>Check out my featured projects and academic research collaborations.</p>
-                                        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                                            <a href="portfolio.html" class="button"><i class="fas fa-code"></i> View Portfolio</a>
-                                            <a href="contact.html" class="button alt"><i class="fas fa-envelope"></i> Get In Touch</a>
-                                        </div>
-                                    </div>
+
 
                             </div>
                         </div>
@@ -160,7 +154,6 @@
                         <div id="copyright">
                             <ul class="menu">
                                 <li>© Gerald Lê, last updated September 2026.</li>
-                                <li>All rights reserved.</li>
                             </ul>
                         </div>
                     </div>

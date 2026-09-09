@@ -204,6 +204,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const filterBtns = filterBar.querySelectorAll('.filter-btn');
         const projectCards = document.querySelectorAll('.content-card[data-category]');
 
+        // Compute and populate filter counts dynamically
+        filterBtns.forEach(btn => {
+            const filterValue = btn.getAttribute('data-filter');
+            let count = 0;
+            if (filterValue === 'all') {
+                count = projectCards.length;
+            } else {
+                projectCards.forEach(card => {
+                    if (card.getAttribute('data-category') === filterValue) count++;
+                });
+            }
+            const countSpan = btn.querySelector('.filter-count');
+            if (countSpan) countSpan.textContent = count;
+        });
+
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const filterValue = btn.getAttribute('data-filter');
@@ -227,58 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initPortfolioFilters();
 
-    // 9b. Interactive Robotics Category Navigation & Quick Filter
-    function initRoboticsCategoryNav() {
-        const catNav = document.querySelector('.robotics-category-nav');
-        if (!catNav) return;
-
-        const pills = catNav.querySelectorAll('.cat-pill');
-        const groups = document.querySelectorAll('.robotics-category-group[data-category]');
-
-        function setCategory(cat, doScroll = false) {
-            pills.forEach(p => {
-                const isActive = p.getAttribute('data-cat') === cat;
-                p.classList.toggle('active', isActive);
-                p.setAttribute('aria-selected', isActive ? 'true' : 'false');
-            });
-
-            groups.forEach(group => {
-                const groupCat = group.getAttribute('data-category');
-                if (cat === 'all' || groupCat === cat) {
-                    group.style.display = '';
-                    group.classList.remove('filter-hidden');
-                } else {
-                    group.style.display = 'none';
-                    group.classList.add('filter-hidden');
-                }
-            });
-
-            if (doScroll && cat !== 'all') {
-                const target = document.querySelector(`.robotics-category-group[data-category="${cat}"]`);
-                if (target) {
-                    const top = target.getBoundingClientRect().top + window.pageYOffset - 90;
-                    window.scrollTo({ top, behavior: 'smooth' });
-                }
-            }
-        }
-
-        pills.forEach(pill => {
-            pill.addEventListener('click', (e) => {
-                e.preventDefault();
-                const cat = pill.getAttribute('data-cat');
-                setCategory(cat, true);
-            });
-        });
-
-        if (window.location.hash) {
-            const hashCat = window.location.hash.replace('#cat-', '').replace('#', '');
-            const matchingPill = catNav.querySelector(`.cat-pill[data-cat="${hashCat}"]`);
-            if (matchingPill) {
-                setCategory(hashCat, false);
-            }
-        }
-    }
-    initRoboticsCategoryNav();
 
     // 10. Global Toast Notification System
     window.showToast = function(msg) {

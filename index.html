@@ -18,9 +18,12 @@
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
-                var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                if (saved === 'light' || (!saved && prefersLight)) {
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
                     document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
                 }
             })();
         </script>
@@ -64,7 +67,7 @@
                                 <!-- Highlight -->
                                     <section class="box highlight reveal-on-scroll" id="about-me-section">
                                         <header>
-                                            <h2>// About Me</h2>
+                                            <h2>About Me</h2>
                                         </header>
                                         <p class="about-text">
                                             I am a student at Louisiana State University pursuing a degree in Computer Science with a minor in Honors Research.
@@ -80,7 +83,7 @@
                             </div>
                             <div class="col-12">
                             <section class="box features reveal-on-scroll" id="affiliations-section">
-                                <h2 class="major"><span>// Affiliations</span></h2>
+                                <h2 class="major"><span>Affiliations</span></h2>
                                 <div>
                                     <div class="row">
                                         <div class="col-6 col-12-medium col-12-small">
@@ -118,7 +121,7 @@
                         </div>
                         <div class="col-12">
                             <section class="box features reveal-on-scroll" id="portfolio-section">
-                                <h2 class="major"><span>// Featured Projects</span></h2>
+                                <h2 class="major"><span>Featured Projects</span></h2>
                                 <div>
                                     <div class="row">
                                         <div class="col-4 col-6-medium col-12-small">
@@ -190,7 +193,6 @@
                             <div id="copyright">
                                 <ul class="menu">
                                     <li>© Gerald Lê, last updated September 2026.</li>
-                                    <li>All rights reserved.</li>
                                 </ul>
                             </div>
 

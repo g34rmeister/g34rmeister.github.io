@@ -18,9 +18,12 @@
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
-                var prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
-                if (saved === 'light' || (!saved && prefersLight)) {
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
                     document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
                 }
             })();
         </script>
@@ -46,8 +49,7 @@
             <!-- Subpage Banner -->
                 <section id="subpage-banner">
                     <div class="content">
-                        <div class="page-title-badge"><i class="fas fa-university"></i> Academics &amp; Experience</div>
-                        <h2>// Affiliations &amp; Experience</h2>
+                        <h2>Affiliations &amp; Experience</h2>
                         <p>Academic institutions, research organizations, and industry internships.</p>
                     </div>
                 </section>
@@ -60,7 +62,7 @@
 
                                 <!-- Academic Affiliations Cards -->
                                     <section class="box features reveal-on-scroll">
-                                        <h2 class="major"><span>// Academic Institutions</span></h2>
+                                        <h2 class="major"><span>Academic Institutions</span></h2>
                                         <div>
                                             <div class="row">
                                                 <!-- Ogden Honors College -->
@@ -108,7 +110,7 @@
 
                                 <!-- Industry Experience Detail -->
                                     <section class="reveal-on-scroll">
-                                        <h2 class="major"><span>// Industry Experience</span></h2>
+                                        <h2 class="major"><span>Industry Experience</span></h2>
                                         <div class="content-card">
                                             <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.5rem;">
                                                 <h3 style="margin-bottom: 0;"><i class="fas fa-briefcase" style="color: var(--accent); margin-right: 8px;"></i> Kuvare Company</h3>
@@ -133,15 +135,7 @@
                                         </div>
                                     </section>
 
-                                <!-- Subpage CTA -->
-                                    <div class="subpage-cta reveal-on-scroll">
-                                        <h3>Explore my technical projects</h3>
-                                        <p>See how I apply my coursework and experience to real-world code and game design.</p>
-                                        <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
-                                            <a href="portfolio.html" class="button"><i class="fas fa-code"></i> View Projects</a>
-                                            <a href="contact.html" class="button alt"><i class="fas fa-envelope"></i> Contact Me</a>
-                                        </div>
-                                    </div>
+
 
                             </div>
                         </div>
@@ -154,7 +148,6 @@
                         <div id="copyright">
                             <ul class="menu">
                                 <li>© Gerald Lê, last updated September 2026.</li>
-                                <li>All rights reserved.</li>
                             </ul>
                         </div>
                     </div>
