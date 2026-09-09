@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => body.classList.remove('is-preload'), 100);
     });
 
-    // 2. Build Title Bar for Mobile with Hamburger on Left & Centered Brand (Text + Logo)
+    // 2. Build Title Bar for Mobile with Hamburger & Brand (Gerald Lê + GL)
     const titleBar = document.createElement('div');
     titleBar.id = 'titleBar';
     titleBar.innerHTML = `
@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="titleBar-brand-title">Gerald Lê</span>
             <img src="images/logo.svg" alt="GL" class="titleBar-logo-img" />
         </a>
-        <div class="titleBar-spacer"></div>
     `;
     body.appendChild(titleBar);
 
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
     panelHeader.innerHTML = `
         <div class="navPanel-brand">
             <img src="images/logo.svg" alt="GL" class="navPanel-logo" />
-            <span class="navPanel-title">Gerald Lê</span>
         </div>
         <button type="button" class="navPanel-close" aria-label="Close Navigation">
             <i class="fas fa-times"></i>
@@ -229,6 +227,59 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initPortfolioFilters();
 
+    // 9b. Interactive Robotics Category Navigation & Quick Filter
+    function initRoboticsCategoryNav() {
+        const catNav = document.querySelector('.robotics-category-nav');
+        if (!catNav) return;
+
+        const pills = catNav.querySelectorAll('.cat-pill');
+        const groups = document.querySelectorAll('.robotics-category-group[data-category]');
+
+        function setCategory(cat, doScroll = false) {
+            pills.forEach(p => {
+                const isActive = p.getAttribute('data-cat') === cat;
+                p.classList.toggle('active', isActive);
+                p.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
+
+            groups.forEach(group => {
+                const groupCat = group.getAttribute('data-category');
+                if (cat === 'all' || groupCat === cat) {
+                    group.style.display = '';
+                    group.classList.remove('filter-hidden');
+                } else {
+                    group.style.display = 'none';
+                    group.classList.add('filter-hidden');
+                }
+            });
+
+            if (doScroll && cat !== 'all') {
+                const target = document.querySelector(`.robotics-category-group[data-category="${cat}"]`);
+                if (target) {
+                    const top = target.getBoundingClientRect().top + window.pageYOffset - 90;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                }
+            }
+        }
+
+        pills.forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cat = pill.getAttribute('data-cat');
+                setCategory(cat, true);
+            });
+        });
+
+        if (window.location.hash) {
+            const hashCat = window.location.hash.replace('#cat-', '').replace('#', '');
+            const matchingPill = catNav.querySelector(`.cat-pill[data-cat="${hashCat}"]`);
+            if (matchingPill) {
+                setCategory(hashCat, false);
+            }
+        }
+    }
+    initRoboticsCategoryNav();
+
     // 10. Global Toast Notification System
     window.showToast = function(msg) {
         let toast = document.getElementById('copyToast');
@@ -362,4 +413,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     initThemeEngine();
+
+    // 10. Robotics Category Navigation & Interactive Filtering
+    function initRoboticsCategoryNav() {
+        const catNav = document.querySelector('.robotics-category-nav');
+        if (!catNav) return;
+
+        const pills = catNav.querySelectorAll('.cat-pill');
+        const groups = document.querySelectorAll('.robotics-category-group');
+        if (!pills.length || !groups.length) return;
+
+        function applyFilter(category, updateUrl = true, shouldScroll = false) {
+            pills.forEach(p => {
+                const isMatch = (p.dataset.category === category) || (!category && p.dataset.category === 'all');
+                p.classList.toggle('active', isMatch);
+                p.setAttribute('aria-selected', isMatch ? 'true' : 'false');
+            });
+
+            groups.forEach(group => {
+                const groupCat = group.dataset.category;
+                if (!category || category === 'all' || groupCat === category) {
+                    group.style.display = '';
+                    group.classList.add('is-revealed');
+                } else {
+                    group.style.display = 'none';
+                }
+            });
+
+            if (updateUrl && category && category !== 'all') {
+                if (history.replaceState) {
+                    history.replaceState(null, '', `#cat-${category}`);
+                }
+            } else if (updateUrl && category === 'all') {
+                if (history.replaceState) {
+                    history.replaceState(null, '', window.location.pathname + window.location.search);
+                }
+            }
+
+            if (shouldScroll && category && category !== 'all') {
+                const targetGroup = document.getElementById(`cat-${category}`);
+                if (targetGroup) {
+                    targetGroup.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+        }
+
+        pills.forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cat = pill.dataset.category || 'all';
+                applyFilter(cat, true, true);
+            });
+        });
+
+        // Check URL hash on load
+        function checkHash() {
+            const hash = window.location.hash;
+            if (hash && hash.startsWith('#cat-')) {
+                const cat = hash.replace('#cat-', '');
+                applyFilter(cat, false, false);
+            }
+        }
+
+        window.addEventListener('hashchange', checkHash);
+        checkHash();
+    }
+    initRoboticsCategoryNav();
 });

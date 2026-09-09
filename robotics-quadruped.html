@@ -5,15 +5,16 @@
 -->
 <html lang="en">
     <head>
-        <title>Quadruped Locomotion Engine - Gerald's Portfolio</title>
+        <title>Quadruped Locomotion Engine // TigerBot Thesis - Gerald Lê</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Dynamic quadrupedal locomotion engine combining convex Model Predictive Control, Bezier swing leg trajectories, and PyBullet physics." />
+        <meta name="description" content="Dynamic quadrupedal locomotion engine combining convex Model Predictive Control, Bezier swing leg trajectories, and PyBullet physics as part of Gerald Lê's engineering thesis at LSU." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.1" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=1.2" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -30,167 +31,252 @@
     <body class="is-preload">
         <div id="page-wrapper">
 
-            <!-- Nav -->
-                <nav id="nav">
-                    <ul>
-                        <li class="nav-logo-item"><a href="index.html" class="nav-logo-link" title="Gerald Lê - Home"><span class="nav-brand-name">Gerald Lê</span><img src="images/logo.svg" alt="GL" class="nav-logo-img" /></a></li>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="affiliations.html">Affiliations</a></li>
-                        <li><a href="portfolio.html">Portfolio</a></li>
-                        <li class="current"><a href="robotics.html">Robotics</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="resume.html" class="nav-resume-btn"><i class="fas fa-file-alt"></i> Resume</a></li>
+            <!-- Dedicated Independent Thesis Navbar -->
+            <nav class="thesis-navbar" aria-label="Thesis Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="TigerBot Thesis Research">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">TigerBot Thesis</span>
+                            <span class="thesis-brand-sub">LSU Autonomous Robotics</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-cubes"></i> Fleet Hub</a></li>
+                        <li><a href="robotics-agv.html"><i class="fas fa-truck-monster"></i> Wheeled SLAM</a></li>
+                        <li><a href="robotics-arm.html"><i class="fas fa-hand-holding"></i> Manipulation</a></li>
+                        <li><a href="robotics-flight.html"><i class="fas fa-paper-plane"></i> Avionics</a></li>
+                        <li><a href="robotics-quadruped.html" class="active"><i class="fas fa-paw"></i> Locomotion</a></li>
+                        <li><a href="#thesis-cite"><i class="fas fa-quote-right"></i> BibTeX</a></li>
                     </ul>
-                </nav>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Thesis Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">TigerBot Thesis</span>
+                            <span class="thesis-brand-sub">LSU Autonomous Robotics</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-cubes"></i> Fleet Hub</a>
+                    <a href="robotics-agv.html"><i class="fas fa-truck-monster"></i> Wheeled SLAM</a>
+                    <a href="robotics-arm.html"><i class="fas fa-hand-holding"></i> Manipulation</a>
+                    <a href="robotics-flight.html"><i class="fas fa-paper-plane"></i> Avionics</a>
+                    <a href="robotics-quadruped.html" class="active"><i class="fas fa-paw"></i> Locomotion</a>
+                    <a href="#thesis-cite"><i class="fas fa-quote-right"></i> Thesis Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
 
             <!-- Main -->
                 <section id="main">
-                    <div class="container">
-                        <div class="row gtr-200">
-                            <div class="col-12">
+                    <div class="robotics-article-container">
 
-                                <!-- Back Link -->
-                                    <div>
-                                        <a href="robotics.html" class="back-link">
-                                            <span class="arrow">&lt;-</span> robotics
-                                        </a>
-                                    </div>
-
-                                <!-- Project Header Row -->
-                                    <div class="project-header reveal-on-scroll">
-                                        <div class="project-header-top">
-                                            <h1>quadruped-locomotion-engine</h1>
-                                            <div class="project-actions">
-                                                <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-external">
-                                                    <i class="fab fa-github"></i> github <span class="arrow">/></span>
-                                                </a>
-                                                <a href="robotics.html" class="btn-external">
-                                                    <i class="fas fa-robot"></i> robotics hub <span class="arrow">/></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <p class="project-tagline">
-                                            a dynamic quadrupedal gait simulation engine combining model predictive control, Bezier swing leg trajectories, and PyBullet physics.
-                                        </p>
-                                        <div class="tech-tags">
-                                            <span class="tag tag-mint">Model Predictive Control</span>
-<span class="tag tag-mint">PyBullet Physics</span>
-<span class="tag tag-sky">BLDC Actuation</span>
-<span class="tag tag-sky">CAN Bus 2.0B</span>
-<span class="tag">Python</span>
-<span class="tag">Inverse Kinematics</span>
-                                        </div>
-                                    </div>
-
-                                <!-- Hero Preview Media (16:9) -->
-                                    <div class="project-hero-media reveal-on-scroll">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c121d;">
-    <defs>
-        <pattern id="grid-quad" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-        </pattern>
-    </defs>
-    <rect width="800" height="450" fill="#0c121d"/>
-    <rect width="800" height="450" fill="url(#grid-quad)"/>
-
-    <!-- Ground Level -->
-    <line x1="100" y1="380" x2="700" y2="380" stroke="#475569" stroke-width="2"/>
-    <line x1="100" y1="385" x2="700" y2="385" stroke="#334155" stroke-width="1" stroke-dasharray="4 4"/>
-
-    <!-- Quadruped Body Skeleton -->
-    <!-- Torso -->
-    <rect x="280" y="160" width="240" height="60" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5"/>
-    <circle cx="400" cy="190" r="14" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
-    <text x="400" y="194" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="10">CoM</text>
-
-    <!-- Front Leg (Stance Phase) -->
-    <circle cx="490" cy="190" r="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
-    <line x1="490" y1="190" x2="550" y2="280" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="550" cy="280" r="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
-    <line x1="550" y1="280" x2="520" y2="380" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="520" cy="380" r="7" fill="#ef4444"/> <!-- Foot Contact -->
-
-    <!-- Ground Reaction Force Vector (GRF) -->
-    <line x1="520" y1="380" x2="500" y2="270" stroke="#ef4444" stroke-width="3"/>
-    <polygon points="500,265 495,278 506,276" fill="#ef4444"/>
-    <text x="460" y="320" fill="#ef4444" font-family="monospace" font-size="11">GRF_Z: 142N</text>
-
-    <!-- Rear Leg (Swing Phase with Bezier Curve) -->
-    <circle cx="310" cy="190" r="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
-    <line x1="310" y1="190" x2="250" y2="270" stroke="#38bdf8" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="250" cy="270" r="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
-    <line x1="250" y1="270" x2="280" y2="330" stroke="#10b981" stroke-width="6" stroke-linecap="round"/>
-    <circle cx="280" cy="330" r="7" fill="#38bdf8"/>
-
-    <!-- Swing Bezier Curve -->
-    <path d="M 210 380 Q 280 300 350 380" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4"/>
-    <text x="240" y="310" fill="#f59e0b" font-family="monospace" font-size="10">SWING_TRAJECTORY</text>
-
-    <!-- HUD Overlay -->
-    <rect x="24" y="24" width="280" height="70" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
-    <text x="36" y="44" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">// GAIT_CONTROLLER</text>
-    <text x="36" y="62" fill="#cbd5e1" font-family="monospace" font-size="11">Gait: Dynamic Trot (Period: 400ms)</text>
-    <text x="36" y="80" fill="#94a3b8" font-family="monospace" font-size="11">MPC Horizon: 10 steps (20ms dt)</text>
-
-    <rect x="490" y="360" width="286" height="66" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
-    <text x="502" y="380" fill="#10b981" font-family="monospace" font-size="12" font-weight="bold">// DYNAMICS_SOLVER</text>
-    <text x="502" y="398" fill="#cbd5e1" font-family="monospace" font-size="11">QP Solver: qpOASES (Converged)</text>
-    <text x="502" y="414" fill="#94a3b8" font-family="monospace" font-size="11">Torque Limits: Enforced &lt; 24 Nm</text>
-</svg>
-                                    </div>
-
-                                <!-- Deep-Dive Case Study Content -->
-                                    <article class="project-case-study reveal-on-scroll">
-
-
-                                        <h2>// 01. Overview &amp; Dynamic Locomotion</h2>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. The Quadruped Dynamic Locomotion Engine is a high-speed simulation and control framework designed to achieve stable, agile trotting and bound locomotion across uneven, compliant terrains. Powered by convex Model Predictive Control (MPC) paired with whole-body inverse dynamics, the platform recalculates optimal foot contact forces at 50 Hz.
-                                        </p>
-                                        <p>
-                                            Nullam sed mi ut arcu tincidunt ultrices. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Each of the 4 legs features 3 actuated degrees of freedom (hip roll, hip pitch, knee pitch), driven by quasi-direct drive (QDD) actuators offering low mechanical impedance and backdrivability.
-                                        </p>
-
-                                        <h2>// 02. Convex MPC &amp; Whole-Body Control</h2>
-                                        <p>
-                                            Curabitur pellentesque nisi vel leo sollicitudin, sed fermentum dolor facilisis. The control architecture separates high-level ground reaction force optimization from joint-level trajectory tracking:
-                                        </p>
-                                        <blockquote>
-                                            "Dynamic quadrupedal stability is not achieved by rigid joint stiffness, but by treating the robot as a simplified rigid body whose centroidal momentum is governed by optimal ground contact forces."
-                                        </blockquote>
-                                        <ul style="list-style: square; padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
-                                            <li><strong>Convex Model Predictive Control:</strong> Formulating centroidal momentum dynamics into a quadratic program (QP) solved in under 2.5 ms using qpOASES over a 10-step horizon.</li>
-                                            <li><strong>Swing Leg Kinematics:</strong> Cubic Bezier spline trajectory generation ensuring smooth foot lift-off and zero ground impact velocity during touchdown.</li>
-                                            <li><strong>Whole-Body Control (WBC):</strong> Hierarchical null-space projection prioritizing contact force limits, base posture, and foot placement.</li>
-                                            <li><strong>Terrain Adaptation:</strong> Heuristic Raibert footstep placement adjusted for linear body velocity and external lateral disturbances.</li>
-                                        </ul>
-
-                                        <h2>// 03. Physics Simulation in PyBullet</h2>
-                                        <p>
-                                            Aliquam erat volutpat. Fusce euismod diam at nulla laoreet, vel facilisis nisi dictum. Prior to physical actuation, the complete URDF model was simulated in PyBullet with custom contact constraint solvers. Synthetic obstacles, including ramps, steps, and random lateral impulse forces, validated the controller's recovery robustness.
-                                        </p>
-
-                                        <h2>// 04. Benchmarking &amp; Future Hardware Deployment</h2>
-                                        <p>
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. In simulation benchmarks, the quadruped achieved forward trot velocities up to 1.8 m/s with successful recovery from unexpected lateral impulses up to 45 N. Ongoing work focuses on porting the trajectory solver to real-time embedded Linux on an STM32MP1 processor.
-                                        </p>
-
-
-                                        <!-- Footer Navigation -->
-                                        <div class="subpage-cta reveal-on-scroll" style="margin-top: 4rem;">
-                                            <h3>Interested in robotics and autonomous systems?</h3>
-                                            <p>Explore more robotics hardware platforms or get in touch for technical discussions.</p>
-                                            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                                                <a href="robotics.html" class="button alt"><i class="fas fa-robot"></i> All Robotics Systems</a>
-                                                <a href="contact.html" class="button"><i class="fas fa-paper-plane"></i> Get In Touch</a>
-                                            </div>
-                                        </div>
-
-                                    </article>
-
+                        <!-- Article Masthead (TigerBot Academy Style) -->
+                        <header class="robotics-article-masthead reveal-on-scroll">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Thesis Fleet Hub</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <span>Legged Dynamics &amp; Control</span>
                             </div>
+
+                            <h1 class="robotics-article-headline">Quadruped Locomotion Engine: Convex Model Predictive Control &amp; Whole-Body Dynamics</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-calendar-alt"></i> Aug 28, 2026</span>
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald Lê</span>
+                                <span class="article-meta-item"><i class="fas fa-microchip"></i> Python + PyBullet + qpOASES</span>
+                                <span class="article-meta-item"><i class="far fa-clock"></i> 6 min read</span>
+                                <span class="badge-prototype">Simulation Benchmark</span>
+                            </div>
+                        </header>
+
+                        <!-- Hero Preview Media (16:9) -->
+                        <div class="article-hero-stage reveal-on-scroll">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c0817;">
+                                <defs>
+                                    <pattern id="grid-quad" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(253, 208, 35, 0.08)" stroke-width="1"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="800" height="450" fill="#0c0817"/>
+                                <rect width="800" height="450" fill="url(#grid-quad)"/>
+
+                                <!-- Ground Level -->
+                                <line x1="100" y1="380" x2="700" y2="380" stroke="#6b21a8" stroke-width="2"/>
+                                <line x1="100" y1="385" x2="700" y2="385" stroke="#4c1d95" stroke-width="1" stroke-dasharray="4 4"/>
+
+                                <!-- Quadruped Body Skeleton -->
+                                <!-- Torso -->
+                                <rect x="280" y="160" width="240" height="60" rx="10" fill="#1c0f33" stroke="#FDD023" stroke-width="2.5"/>
+                                <circle cx="400" cy="190" r="14" fill="#0c0817" stroke="#c084fc" stroke-width="2"/>
+                                <text x="400" y="194" text-anchor="middle" fill="#c084fc" font-family="monospace" font-size="10">CoM</text>
+
+                                <!-- Front Leg (Stance Phase) -->
+                                <circle cx="490" cy="190" r="12" fill="#0c0817" stroke="#FDD023" stroke-width="2"/>
+                                <line x1="490" y1="190" x2="550" y2="280" stroke="#FDD023" stroke-width="7" stroke-linecap="round"/>
+                                <circle cx="550" cy="280" r="10" fill="#0c0817" stroke="#c084fc" stroke-width="2"/>
+                                <line x1="550" y1="280" x2="520" y2="380" stroke="#c084fc" stroke-width="6" stroke-linecap="round"/>
+                                <circle cx="520" cy="380" r="7" fill="#ef4444"/> <!-- Foot Contact -->
+
+                                <!-- Ground Reaction Force Vector (GRF) -->
+                                <line x1="520" y1="380" x2="500" y2="270" stroke="#ef4444" stroke-width="3"/>
+                                <polygon points="500,265 495,278 506,276" fill="#ef4444"/>
+                                <text x="460" y="320" fill="#ef4444" font-family="monospace" font-size="11">GRF_Z: 142N</text>
+
+                                <!-- Rear Leg (Swing Phase with Bezier Curve) -->
+                                <circle cx="310" cy="190" r="12" fill="#0c0817" stroke="#FDD023" stroke-width="2"/>
+                                <line x1="310" y1="190" x2="250" y2="270" stroke="#FDD023" stroke-width="7" stroke-linecap="round"/>
+                                <circle cx="250" cy="270" r="10" fill="#0c0817" stroke="#c084fc" stroke-width="2"/>
+                                <line x1="250" y1="270" x2="280" y2="330" stroke="#c084fc" stroke-width="6" stroke-linecap="round"/>
+                                <circle cx="280" cy="330" r="7" fill="#FDD023"/>
+
+                                <!-- Swing Bezier Curve -->
+                                <path d="M 210 380 Q 280 300 350 380" fill="none" stroke="#FDD023" stroke-width="2" stroke-dasharray="4 4"/>
+                                <text x="240" y="310" fill="#FDD023" font-family="monospace" font-size="10">SWING_TRAJECTORY</text>
+
+                                <!-- HUD Overlay -->
+                                <rect x="24" y="24" width="280" height="70" rx="6" fill="rgba(12, 8, 23, 0.88)" stroke="rgba(253, 208, 35, 0.25)"/>
+                                <text x="36" y="44" fill="#FDD023" font-family="monospace" font-size="12" font-weight="bold">// GAIT_CONTROLLER</text>
+                                <text x="36" y="62" fill="#f8fafc" font-family="monospace" font-size="11">Gait: Dynamic Trot (Period: 400ms)</text>
+                                <text x="36" y="80" fill="#c084fc" font-family="monospace" font-size="11">MPC Horizon: 10 steps (20ms dt)</text>
+
+                                <rect x="490" y="360" width="286" height="66" rx="6" fill="rgba(12, 8, 23, 0.88)" stroke="rgba(168, 85, 247, 0.25)"/>
+                                <text x="502" y="380" fill="#c084fc" font-family="monospace" font-size="12" font-weight="bold">// DYNAMICS_SOLVER</text>
+                                <text x="502" y="398" fill="#f8fafc" font-family="monospace" font-size="11">QP Solver: qpOASES (Converged)</text>
+                                <text x="502" y="414" fill="#FDD023" font-family="monospace" font-size="11">Torque Limits: Enforced &lt; 24 Nm</text>
+                            </svg>
                         </div>
+
+                        <!-- Editorial Article Body (TigerBot Style) -->
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Overview &amp; Dynamic Locomotion</h2>
+                            <p>
+                                The Quadruped Dynamic Locomotion Engine is a high-speed simulation and control framework designed to achieve stable, agile trotting and bound locomotion across uneven, compliant terrains. Powered by convex Model Predictive Control (MPC) paired with whole-body inverse dynamics, the platform recalculates optimal foot contact forces at 50 Hz.
+                            </p>
+                            <p>
+                                Each of the 4 legs features 3 actuated degrees of freedom (hip roll, hip pitch, knee pitch), driven by quasi-direct drive (QDD) actuators offering low mechanical impedance and backdrivability.
+                            </p>
+
+                            <!-- Engineering Callout Box -->
+                            <div class="article-callout">
+                                <div class="article-callout-header"><i class="fas fa-bolt"></i> Engineering Axiom</div>
+                                <p>Dynamic quadrupedal stability is not achieved by rigid joint stiffness, but by treating the robot as a simplified rigid body whose centroidal momentum is governed by optimal ground contact forces.</p>
+                            </div>
+
+                            <h2 class="article-section-title">02. Convex MPC &amp; Whole-Body Control</h2>
+                            <p>
+                                The control architecture separates high-level ground reaction force optimization from joint-level trajectory tracking:
+                            </p>
+
+                            <!-- TigerBot-Style Structured Spec List with Bold Labels -->
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item">
+                                    <span class="spec-label">Convex Model Predictive Control:</span> Formulating centroidal momentum dynamics into a quadratic program (QP) solved in under 2.5 ms using qpOASES over a 10-step horizon.
+                                </li>
+                                <li class="article-spec-item">
+                                    <span class="spec-label">Swing Leg Kinematics:</span> Cubic Bezier spline trajectory generation ensuring smooth foot lift-off and zero ground impact velocity during touchdown.
+                                </li>
+                                <li class="article-spec-item">
+                                    <span class="spec-label">Whole-Body Control (WBC):</span> Hierarchical null-space projection prioritizing contact force limits, base posture, and foot placement.
+                                </li>
+                                <li class="article-spec-item">
+                                    <span class="spec-label">Terrain Adaptation:</span> Heuristic Raibert footstep placement adjusted for linear body velocity and external lateral disturbances.
+                                </li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Physics Simulation in PyBullet</h2>
+                            <p>
+                                Prior to physical actuation, the complete URDF model was simulated in PyBullet with custom contact constraint solvers. Synthetic obstacles, including ramps, steps, and random lateral impulse forces, validated the controller's recovery robustness.
+                            </p>
+
+                            <h2 class="article-section-title">04. Benchmarking &amp; Future Hardware Deployment</h2>
+                            <p>
+                                In simulation benchmarks, the quadruped achieved forward trot velocities up to 1.8 m/s with successful recovery from unexpected lateral impulses up to 45 N. Ongoing work focuses on porting the trajectory solver to real-time embedded Linux on an STM32MP1 processor.
+                            </p>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-flight.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous Platform</span>
+                                    <span class="article-nav-target">Flight Controller &amp; Avionics</span>
+                                </a>
+                                <a href="robotics-agv.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next Platform -&gt;</span>
+                                    <span class="article-nav-target">AGV Navigation &amp; SLAM</span>
+                                </a>
+                            </div>
+
+                            <!-- Thesis Citation & Academic Reference Section -->
+                            <div id="thesis-cite" class="thesis-citation-section">
+                                <div class="thesis-citation-card">
+                                    <div class="thesis-citation-header">
+                                        <div class="citation-title-wrap">
+                                            <i class="fas fa-quote-left citation-icon"></i>
+                                            <div>
+                                                <h3 class="citation-title">Thesis Citation &amp; Academic Reference</h3>
+                                                <div class="citation-sub">Louisiana State University &bull; Division of Computer Science &amp; Engineering</div>
+                                            </div>
+                                        </div>
+                                        <div class="citation-actions">
+                                            <div class="citation-format-tabs" role="tablist">
+                                                <button type="button" class="cite-tab-btn active" data-format="bibtex">BibTeX</button>
+                                                <button type="button" class="cite-tab-btn" data-format="ieee">IEEE / APA</button>
+                                            </div>
+                                            <button type="button" class="btn-copy-bibtex" id="btn-copy-bibtex" aria-label="Copy BibTeX citation to clipboard">
+                                                <i class="fas fa-copy"></i> <span>Copy BibTeX</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="citation-code-wrap">
+                                        <pre id="bibtex-code" class="cite-view"><code><span class="bib-type">@mastersthesis</span><span class="bib-brace">{</span><span class="bib-key">le2026autonomous</span><span class="bib-comma">,</span>
+  <span class="bib-field">author</span>       <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Gerald L&ecirc;</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">title</span>        <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Multi-Modal Autonomous Systems and Embedded Kinematic Architectures</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">school</span>       <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Louisiana State University</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">year</span>         <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">2026</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">type</span>         <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Honors Engineering Thesis</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">address</span>      <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Baton Rouge, LA, USA</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">howpublished</span> <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">\url{https://g34rmeister.github.io/robotics.html}</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">note</span>         <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Autonomous Ground Vehicles, 6-DOF Manipulators, Flight Avionics, and Quadruped Locomotion</span><span class="bib-brace">}</span>
+<span class="bib-brace">}</span></code></pre>
+                                        <div id="ieee-cite" class="cite-view cite-text-view" style="display: none;">
+                                            <p class="cite-text-line"><strong>IEEE:</strong> G. L&ecirc;, &ldquo;Multi-Modal Autonomous Systems and Embedded Kinematic Architectures,&rdquo; Undergraduate Honors Thesis, Dept. of Computer Science &amp; Engineering, Louisiana State University, Baton Rouge, LA, 2026. [Online]. Available: https://g34rmeister.github.io/robotics.html</p>
+                                            <p class="cite-text-line"><strong>APA:</strong> L&ecirc;, G. (2026). <em>Multi-Modal Autonomous Systems and Embedded Kinematic Architectures</em> (Undergraduate honors thesis). Louisiana State University, Baton Rouge, LA. https://g34rmeister.github.io/robotics.html</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </article>
+
                     </div>
                 </section>
 
@@ -209,7 +295,7 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/main.js?v=2.9" defer></script>
+            <script src="assets/js/robotics.js?v=1.0" defer></script>
 
     </body>
 </html>

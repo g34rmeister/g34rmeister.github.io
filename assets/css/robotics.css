@@ -1,0 +1,2140 @@
+/* ==========================================================================
+   Robotics Hub & Articles Stylesheet (assets/css/robotics.css)
+   Inspired by:
+     1. HLTV Esports Dashboard (Information-dense modular hub, hero spotlight,
+        categorized newsfeed, ranking/telemetry sidebar widgets).
+     2. TigerBot Academy (Clean editorial typography, masthead meta, structured
+        spec/milestone lists with bold labels, academic reading clarity).
+   Themed with authentic LSU Purple (#461D7C) and Gold (#FDD023)
+   Engineered for maximum legibility & WCAG AA/AAA contrast in Dark and Light modes.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. LSU Purple & Gold Design Tokens
+   -------------------------------------------------------------------------- */
+:root {
+    /* Official LSU Brand Identifiers */
+    --lsu-purple: #461D7C;
+    --lsu-purple-deep: #2c0e54;
+    --lsu-purple-mid: #6028a8;
+    --lsu-purple-light: #9d4edd;
+    --lsu-purple-electric: #b794f4;
+    --lsu-purple-lilac: #d8b4fe;
+
+    --lsu-gold: #FDD023;
+    --lsu-gold-bright: #ffe066;
+    --lsu-gold-glow: rgba(253, 208, 35, 0.4);
+    --lsu-gold-amber: #d97706;
+    --lsu-gold-dark: #92400e;       /* 5.4:1 contrast on white for body/subtext */
+
+    /* Robotics Scoped Tokens (Default: Dark Mode) */
+    --robotics-accent: #FDD023;              /* LSU Gold for key accents / icons / links */
+    --robotics-accent-hover: #ffe066;
+    --robotics-accent-glow: rgba(253, 208, 35, 0.35);
+    --robotics-secondary: #c084fc;          /* Vibrant purple for tags and secondary badges */
+    --robotics-card-bg: rgba(18, 12, 30, 0.78);
+    --robotics-card-border: rgba(168, 85, 247, 0.22);
+    --robotics-card-hover-border: rgba(253, 208, 35, 0.55);
+    --robotics-subtle-bg: rgba(70, 29, 124, 0.22);
+    --robotics-surface-bg: rgba(28, 18, 48, 0.85);
+    --robotics-stage-bg: #0c0817;
+    --robotics-text-gold: #FDD023;
+
+    /* Standalone System Fallbacks */
+    --font-mono: 'JetBrains Mono', monospace;
+    --radius: 6px;
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
+    --transition-fast: 0.15s ease;
+    --transition-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    --text-heading: #f8fafc;
+    --text-main: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: rgba(168, 85, 247, 0.22);
+}
+
+[data-theme="light"] {
+    /* Light Mode Overrides for Flawless Readability & High Contrast */
+    --robotics-accent: #461D7C;              /* Deep LSU Purple (11.8:1 WCAG AAA on white) */
+    --robotics-accent-hover: #2c0e54;
+    --robotics-accent-glow: rgba(70, 29, 124, 0.2);
+    --robotics-secondary: #92400e;          /* Rich Amber-Gold text (5.4:1 WCAG AA) */
+    --robotics-card-bg: #ffffff;
+    --robotics-card-border: rgba(70, 29, 124, 0.16);
+    --robotics-card-hover-border: #461D7C;
+    --robotics-subtle-bg: rgba(70, 29, 124, 0.05);
+    --robotics-surface-bg: #f8f6fc;
+    --robotics-stage-bg: #110c1e;           /* Schematic stages remain dark for crisp HUD SVGs */
+    --robotics-text-gold: #92400e;
+
+    /* Standalone System Fallbacks (Light) */
+    --card-shadow: 0 4px 16px rgba(70, 29, 124, 0.08);
+    --text-heading: #1e1b4b;
+    --text-main: #334155;
+    --text-muted: #475569;
+    --border-color: rgba(70, 29, 124, 0.16);
+}
+
+/* --------------------------------------------------------------------------
+   1. Shared Layout & Container Utilities
+   -------------------------------------------------------------------------- */
+/* Layout Overrides for Robotics/Thesis Pages */
+#main {
+    border-top: none !important;
+}
+
+.robotics-container {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    box-sizing: border-box;
+}
+
+.robotics-article-container {
+    width: 100%;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+    box-sizing: border-box;
+}
+
+/* Subpage CTA Button Overrides (Replace main.css green accent with LSU Gold & Purple) */
+.subpage-cta a.button {
+    background: rgba(70, 29, 124, 0.35);
+    border: 1px solid var(--lsu-gold);
+    color: var(--lsu-gold);
+    box-shadow: 0 0 10px rgba(253, 208, 35, 0.15);
+    transition: all var(--transition-fast);
+}
+
+.subpage-cta a.button:hover {
+    background: var(--lsu-gold);
+    color: #240d42;
+    border-color: var(--lsu-gold);
+    box-shadow: 0 0 16px var(--lsu-gold-glow);
+    transform: translateY(-2px);
+}
+
+.subpage-cta a.button.alt {
+    background: var(--robotics-subtle-bg);
+    border-color: var(--border-color);
+    color: var(--text-heading);
+    box-shadow: none;
+}
+
+.subpage-cta a.button.alt:hover {
+    background: rgba(70, 29, 124, 0.2);
+    border-color: var(--lsu-purple-light);
+    color: var(--text-heading);
+}
+
+[data-theme="light"] .subpage-cta a.button {
+    background: rgba(70, 29, 124, 0.08);
+    border-color: var(--lsu-purple);
+    color: var(--lsu-purple);
+    box-shadow: none;
+}
+
+[data-theme="light"] .subpage-cta a.button:hover {
+    background: var(--lsu-purple);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(70, 29, 124, 0.25);
+}
+
+[data-theme="light"] .subpage-cta a.button.alt {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(70, 29, 124, 0.2);
+    color: var(--text-heading);
+}
+
+[data-theme="light"] .subpage-cta a.button.alt:hover {
+    background: rgba(70, 29, 124, 0.08);
+    border-color: var(--lsu-purple);
+}
+
+/* Subpage Banner Enhancements for Robotics */
+body:has(.robotics-container) #subpage-banner .page-title-badge,
+.robotics-article-container ~ #subpage-banner .page-title-badge,
+#subpage-banner .page-title-badge {
+    border-color: rgba(253, 208, 35, 0.45);
+    color: var(--lsu-gold);
+    background: rgba(70, 29, 124, 0.4);
+    box-shadow: 0 0 12px rgba(253, 208, 35, 0.15);
+}
+
+[data-theme="light"] #subpage-banner .page-title-badge {
+    border-color: rgba(70, 29, 124, 0.35);
+    color: var(--lsu-purple);
+    background: rgba(70, 29, 124, 0.08);
+    box-shadow: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. Category Navigation Bar (LSU Purple & Gold Top Nav)
+   -------------------------------------------------------------------------- */
+.robotics-category-nav {
+    margin-bottom: 2rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: border-color var(--transition-smooth);
+}
+
+.category-nav-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+.category-nav-inner::-webkit-scrollbar {
+    display: none;
+}
+
+.category-nav-label {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--robotics-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.category-pills {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: nowrap;
+}
+
+.cat-pill {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.45rem 0.9rem;
+    border-radius: 4px;
+    background: var(--robotics-subtle-bg);
+    border: 1px solid var(--robotics-card-border);
+    color: var(--text-muted);
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+.cat-pill i {
+    font-size: 0.88em;
+    color: var(--robotics-secondary);
+    transition: color var(--transition-fast);
+}
+
+.cat-pill .cat-count {
+    font-size: 0.7rem;
+    padding: 0.1em 0.45em;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+}
+
+.cat-pill:hover {
+    color: var(--text-heading);
+    border-color: var(--lsu-gold);
+    background: rgba(253, 208, 35, 0.12);
+}
+
+.cat-pill:hover i {
+    color: var(--lsu-gold);
+}
+
+/* Active Pill: LSU Purple & Gold Glow */
+.cat-pill.active {
+    background: var(--lsu-purple) !important;
+    border-color: var(--lsu-gold) !important;
+    color: var(--lsu-gold) !important;
+    box-shadow: 0 0 14px var(--lsu-gold-glow);
+    font-weight: 700;
+}
+
+.cat-pill.active i {
+    color: var(--lsu-gold) !important;
+}
+
+.cat-pill.active .cat-count {
+    background: rgba(253, 208, 35, 0.25);
+    border-color: var(--lsu-gold);
+    color: #ffffff;
+}
+
+[data-theme="light"] .cat-pill.active {
+    background: var(--lsu-purple) !important;
+    border-color: var(--lsu-gold) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 14px rgba(70, 29, 124, 0.25);
+}
+
+[data-theme="light"] .cat-pill.active i {
+    color: var(--lsu-gold) !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. Robotics Hub Dashboard Grid (HLTV-Inspired Modular Architecture)
+   -------------------------------------------------------------------------- */
+.robotics-dashboard {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 1.75rem;
+    align-items: start;
+    margin-top: 0.5rem;
+    margin-bottom: 3.5rem;
+}
+
+@media screen and (max-width: 1080px) {
+    .robotics-dashboard {
+        grid-template-columns: 1fr 300px;
+        gap: 1.25rem;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .robotics-dashboard {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.robotics-main-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+    min-width: 0;
+}
+
+.robotics-sidebar-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-width: 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Hero Spotlight Card (Inspired by HLTV Feature / MVP Banner)
+   -------------------------------------------------------------------------- */
+.robotics-spotlight {
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.robotics-spotlight:hover {
+    border-color: var(--robotics-card-hover-border);
+    box-shadow: 0 8px 32px -4px var(--robotics-accent-glow);
+}
+
+/* Spotlight Header Bar */
+.spotlight-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 0.85rem 1.25rem;
+    background: var(--robotics-subtle-bg);
+    border-bottom: 1px solid var(--robotics-card-border);
+}
+
+.spotlight-tagline {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--robotics-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+/* Live / Active Pulsing Badge in LSU Gold */
+.badge-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(70, 29, 124, 0.45);
+    border: 1px solid var(--lsu-gold);
+    color: var(--lsu-gold);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+    text-transform: uppercase;
+    box-shadow: 0 0 8px rgba(253, 208, 35, 0.2);
+}
+
+[data-theme="light"] .badge-live {
+    background: rgba(70, 29, 124, 0.1);
+    border: 1px solid var(--lsu-purple);
+    color: var(--lsu-purple);
+    box-shadow: none;
+}
+
+.badge-live::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--lsu-gold);
+    box-shadow: 0 0 8px var(--lsu-gold);
+    animation: pulseDot 1.8s infinite ease-in-out;
+}
+
+[data-theme="light"] .badge-live::before {
+    background: var(--lsu-purple);
+    box-shadow: 0 0 8px var(--lsu-purple);
+}
+
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.badge-prototype {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(70, 29, 124, 0.35);
+    border: 1px solid var(--lsu-purple-light);
+    color: var(--lsu-purple-electric);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+}
+
+[data-theme="light"] .badge-prototype {
+    background: rgba(70, 29, 124, 0.08);
+    border: 1px solid rgba(70, 29, 124, 0.3);
+    color: var(--lsu-purple);
+}
+
+.badge-sim {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(253, 208, 35, 0.12);
+    border: 1px solid rgba(253, 208, 35, 0.35);
+    color: var(--lsu-gold);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+}
+
+[data-theme="light"] .badge-sim {
+    background: rgba(180, 83, 9, 0.08);
+    border: 1px solid rgba(180, 83, 9, 0.3);
+    color: var(--lsu-gold-dark);
+}
+
+/* Spotlight Navigation Tabs */
+.spotlight-tabs {
+    display: flex;
+    align-items: center;
+    background: var(--robotics-surface-bg);
+    border-bottom: 1px solid var(--robotics-card-border);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.spotlight-tabs::-webkit-scrollbar {
+    display: none;
+}
+
+.spotlight-tab {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.65rem 1.15rem;
+    text-decoration: none;
+    white-space: nowrap;
+    border-right: 1px solid var(--robotics-card-border);
+    border-bottom: 2px solid transparent;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.spotlight-tab:hover {
+    color: var(--text-heading);
+    background: var(--robotics-subtle-bg);
+}
+
+.spotlight-tab.active {
+    color: var(--lsu-gold);
+    background: rgba(70, 29, 124, 0.3);
+    border-bottom-color: var(--lsu-gold);
+    font-weight: 700;
+}
+
+[data-theme="light"] .spotlight-tab.active {
+    color: var(--lsu-purple);
+    background: rgba(70, 29, 124, 0.06);
+    border-bottom-color: var(--lsu-purple);
+}
+
+/* Spotlight Media Stage */
+.spotlight-stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    max-height: 380px;
+    background: var(--robotics-stage-bg);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spotlight-stage svg,
+.spotlight-stage img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Spotlight Body Content */
+.spotlight-body {
+    padding: 1.5rem;
+}
+
+.spotlight-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.02em;
+}
+
+.spotlight-title a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.spotlight-title a:hover {
+    color: var(--robotics-accent);
+}
+
+.spotlight-desc {
+    font-size: 0.95rem;
+    color: var(--text-main);
+    line-height: 1.6;
+    margin: 0 0 1.25rem 0;
+}
+
+/* Spotlight Quick Specs Grid */
+.spotlight-specs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: var(--robotics-surface-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: 4px;
+    margin-bottom: 1.25rem;
+}
+
+.spec-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.spec-metric-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+}
+
+.spec-metric-val {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--robotics-accent);
+}
+
+/* Spotlight Actions: LSU Gold Button */
+.spotlight-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.btn-read-case {
+    background: var(--lsu-gold) !important;
+    color: #240d42 !important;
+    border: 1px solid var(--lsu-gold) !important;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.65rem 1.25rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px var(--lsu-gold-glow);
+    transition: all var(--transition-fast);
+}
+
+.btn-read-case:hover {
+    background: var(--lsu-gold-bright) !important;
+    color: #17072d !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px var(--lsu-gold-glow);
+}
+
+.btn-secondary-gh {
+    background: var(--robotics-subtle-bg);
+    border: 1px solid var(--robotics-card-border);
+    color: var(--text-heading);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.65rem 1.15rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all var(--transition-fast);
+}
+
+.btn-secondary-gh:hover {
+    border-color: var(--lsu-gold);
+    color: var(--robotics-accent);
+    background: var(--robotics-surface-bg);
+}
+
+/* --------------------------------------------------------------------------
+   5. Categorized Robotics Feed (HLTV Newsfeed Style)
+   -------------------------------------------------------------------------- */
+.robotics-category-group {
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: border-color var(--transition-smooth), opacity var(--transition-smooth);
+}
+
+.robotics-category-group:hover {
+    border-color: var(--robotics-card-hover-border);
+}
+
+.category-group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.85rem 1.25rem;
+    background: var(--robotics-subtle-bg);
+    border-bottom: 1px solid var(--robotics-card-border);
+}
+
+.category-group-title {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-group-title i {
+    color: var(--robotics-accent);
+}
+
+.category-group-count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--robotics-surface-bg);
+    border: 1px solid var(--robotics-card-border);
+    padding: 0.15em 0.55em;
+    border-radius: 3px;
+}
+
+/* Feed Row Items */
+.robotics-feed-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.robotics-feed-row {
+    display: grid;
+    grid-template-columns: 95px 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--robotics-card-border);
+    text-decoration: none;
+    color: var(--text-main);
+    transition: background-color var(--transition-fast), border-left-color var(--transition-fast), transform var(--transition-fast);
+    border-left: 3px solid transparent;
+}
+
+.robotics-feed-row:last-child {
+    border-bottom: none;
+}
+
+.robotics-feed-row:hover {
+    background: var(--robotics-subtle-bg);
+    border-left-color: var(--lsu-gold);
+    color: var(--text-heading);
+}
+
+.robotics-feed-row:hover .feed-row-title {
+    color: var(--robotics-accent);
+}
+
+.robotics-feed-row:hover .feed-row-arrow {
+    transform: translateX(4px);
+    color: var(--lsu-gold);
+}
+
+[data-theme="light"] .robotics-feed-row:hover .feed-row-arrow {
+    color: var(--lsu-purple);
+}
+
+/* Feed Row Components */
+.feed-row-badge-wrap {
+    display: flex;
+    align-items: center;
+}
+
+.feed-tech-pill {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 0.25em 0.6em;
+    border-radius: 3px;
+    background: rgba(70, 29, 124, 0.35);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: var(--lsu-gold);
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+[data-theme="light"] .feed-tech-pill {
+    background: rgba(70, 29, 124, 0.08);
+    border: 1px solid rgba(70, 29, 124, 0.25);
+    color: var(--lsu-purple);
+}
+
+.robotics-feed-row:hover .feed-tech-pill {
+    border-color: var(--lsu-gold);
+    color: var(--lsu-gold);
+}
+
+[data-theme="light"] .robotics-feed-row:hover .feed-tech-pill {
+    border-color: var(--lsu-purple);
+    color: var(--lsu-purple);
+}
+
+.feed-row-main {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.feed-row-title {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    margin: 0;
+    line-height: 1.35;
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.feed-row-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.feed-row-tags {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 2px;
+}
+
+.feed-mini-tag {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    padding: 0.1em 0.45em;
+    border-radius: 2px;
+    background: var(--robotics-surface-bg);
+    border: 1px solid var(--robotics-card-border);
+    color: var(--text-muted);
+}
+
+.feed-row-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+.feed-row-arrow {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    transition: transform var(--transition-fast), color var(--transition-fast);
+}
+
+/* --------------------------------------------------------------------------
+   6. Sidebar Modules (HLTV Rankings & Telemetry Style)
+   -------------------------------------------------------------------------- */
+.sidebar-widget {
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: border-color var(--transition-smooth);
+}
+
+.sidebar-widget:hover {
+    border-color: var(--robotics-card-hover-border);
+}
+
+.sidebar-widget-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.15rem;
+    background: var(--robotics-subtle-bg);
+    border-bottom: 1px solid var(--robotics-card-border);
+}
+
+.sidebar-widget-title {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sidebar-widget-title i {
+    color: var(--robotics-accent);
+}
+
+/* Fleet Roster */
+.fleet-roster-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.roster-item {
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    padding: 0.75rem 1.15rem;
+    border-bottom: 1px solid var(--robotics-card-border);
+    text-decoration: none;
+    color: var(--text-main);
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.roster-item:last-child {
+    border-bottom: none;
+}
+
+.roster-item:hover {
+    background: var(--robotics-subtle-bg);
+}
+
+.roster-item:hover .roster-name {
+    color: var(--robotics-accent);
+}
+
+.roster-rank {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--lsu-gold);
+    text-align: center;
+}
+
+[data-theme="light"] .roster-rank {
+    color: var(--lsu-purple);
+}
+
+.roster-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.roster-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-heading);
+    transition: color var(--transition-fast);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-sub {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roster-status-pill {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15em 0.5em;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+.status-online {
+    background: rgba(253, 208, 35, 0.15);
+    border: 1px solid rgba(253, 208, 35, 0.45);
+    color: var(--lsu-gold);
+}
+
+[data-theme="light"] .status-online {
+    background: rgba(70, 29, 124, 0.1);
+    border: 1px solid rgba(70, 29, 124, 0.3);
+    color: var(--lsu-purple);
+}
+
+.status-active {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: var(--lsu-purple-electric);
+}
+
+[data-theme="light"] .status-active {
+    background: rgba(70, 29, 124, 0.1);
+    border: 1px solid rgba(70, 29, 124, 0.3);
+    color: var(--lsu-purple);
+}
+
+.status-sim {
+    background: rgba(253, 208, 35, 0.1);
+    border: 1px solid rgba(253, 208, 35, 0.3);
+    color: var(--lsu-gold);
+}
+
+[data-theme="light"] .status-sim {
+    background: rgba(180, 83, 9, 0.08);
+    border: 1px solid rgba(180, 83, 9, 0.25);
+    color: var(--lsu-gold-dark);
+}
+
+/* Telemetry Logs */
+.telemetry-log-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.telemetry-log-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid var(--robotics-card-border);
+    font-size: 0.8rem;
+}
+
+.telemetry-log-item:last-child {
+    border-bottom: none;
+}
+
+.telemetry-log-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.telemetry-log-label i {
+    font-size: 0.8em;
+    color: var(--robotics-secondary);
+}
+
+.telemetry-log-val {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--lsu-gold);
+    background: rgba(70, 29, 124, 0.25);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    padding: 0.1em 0.45em;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+[data-theme="light"] .telemetry-log-val {
+    color: var(--lsu-purple);
+    background: rgba(70, 29, 124, 0.08);
+    border: 1px solid rgba(70, 29, 124, 0.2);
+}
+
+/* Lab Hardware Stack */
+.hardware-stack-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.85rem 1rem;
+}
+
+.hardware-chip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.75rem;
+    border-radius: 4px;
+    background: var(--robotics-surface-bg);
+    border: 1px solid var(--robotics-card-border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+}
+
+.hardware-chip-name {
+    color: var(--text-heading);
+    font-weight: 600;
+}
+
+.hardware-chip-spec {
+    color: var(--robotics-accent);
+    font-size: 0.7rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. Editorial Article Layout (TigerBot Academy Inspiration)
+   -------------------------------------------------------------------------- */
+.robotics-article-masthead {
+    margin-bottom: 2.25rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 1px solid var(--robotics-card-border);
+}
+
+.article-breadcrumb-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.article-breadcrumb-link {
+    color: var(--robotics-accent);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color var(--transition-fast);
+}
+
+.article-breadcrumb-link:hover {
+    color: var(--robotics-accent-hover);
+    text-decoration: underline;
+}
+
+.article-breadcrumb-divider {
+    color: var(--robotics-card-border);
+}
+
+.robotics-article-headline {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+    color: var(--text-heading);
+    margin: 0 0 1rem 0;
+}
+
+@media screen and (max-width: 736px) {
+    .robotics-article-headline {
+        font-size: 1.65rem;
+    }
+}
+
+.robotics-article-meta-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.article-meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.article-meta-item i {
+    color: var(--robotics-accent);
+}
+
+/* Editorial Body & Typography */
+.robotics-article-body {
+    opacity: 1 !important;
+    transform: none !important;
+    font-size: 1.02rem;
+    line-height: 1.75;
+    color: var(--text-main);
+}
+
+.robotics-article-body p {
+    margin-bottom: 1.4rem;
+}
+
+/* TigerBot-Style Section Subheadings */
+.article-section-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: -0.02em;
+    margin: 2.5rem 0 1rem 0;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--robotics-card-border);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.article-section-title::before {
+    content: '//';
+    font-family: var(--font-mono);
+    color: var(--lsu-gold);
+    font-weight: 700;
+    font-size: 0.95em;
+}
+
+[data-theme="light"] .article-section-title::before {
+    color: var(--lsu-purple);
+}
+
+/* TigerBot Structured Spec / Milestone Bullet List */
+.article-spec-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.25rem 0 2rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+}
+
+.article-spec-item {
+    position: relative;
+    padding-left: 1.5rem;
+    line-height: 1.65;
+    color: var(--text-main);
+}
+
+.article-spec-item::before {
+    content: '•';
+    position: absolute;
+    left: 0.35rem;
+    top: 0;
+    color: var(--lsu-gold);
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+[data-theme="light"] .article-spec-item::before {
+    color: var(--lsu-purple);
+}
+
+.spec-label {
+    font-weight: 700;
+    color: var(--text-heading);
+    font-family: inherit;
+}
+
+/* Engineering Callout / Axiom Box */
+.article-callout {
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-left: 4px solid var(--lsu-gold);
+    border-radius: 4px;
+    padding: 1.15rem 1.35rem;
+    margin: 1.75rem 0;
+    box-shadow: var(--card-shadow);
+}
+
+[data-theme="light"] .article-callout {
+    border-left: 4px solid var(--lsu-purple);
+    background: #ffffff;
+}
+
+.article-callout-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--lsu-gold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.5rem;
+}
+
+[data-theme="light"] .article-callout-header {
+    color: var(--lsu-purple);
+}
+
+.article-callout p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text-main);
+}
+
+/* TigerBot Article Blockquote */
+.article-quote {
+    margin: 1.75rem 0;
+    padding: 1rem 1.5rem;
+    background: var(--robotics-subtle-bg);
+    border-left: 3px solid var(--lsu-gold);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-style: italic;
+    color: var(--text-main);
+}
+
+[data-theme="light"] .article-quote {
+    border-left: 3px solid var(--lsu-purple);
+}
+
+.article-quote p {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.65;
+}
+
+/* Article Hero Stage Container */
+.article-hero-stage {
+    margin: 1.75rem 0 2.25rem 0;
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--robotics-stage-bg);
+    box-shadow: var(--card-shadow);
+}
+
+.article-hero-stage svg,
+.article-hero-stage img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+}
+
+/* Article Navigation Bar (Next / Prev Platform Footer) */
+.article-footer-nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 3.5rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--robotics-card-border);
+}
+
+@media screen and (max-width: 600px) {
+    .article-footer-nav {
+        grid-template-columns: 1fr;
+    }
+}
+
+.article-nav-card {
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    text-decoration: none;
+    color: var(--text-main);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all var(--transition-fast);
+}
+
+.article-nav-card:hover {
+    border-color: var(--lsu-gold);
+    background: var(--robotics-subtle-bg);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(253, 208, 35, 0.15);
+}
+
+[data-theme="light"] .article-nav-card:hover {
+    border-color: var(--lsu-purple);
+    box-shadow: 0 6px 20px rgba(70, 29, 124, 0.15);
+}
+
+.article-nav-dir {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--lsu-gold);
+}
+
+[data-theme="light"] .article-nav-dir {
+    color: var(--lsu-purple);
+}
+
+.article-nav-target {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-heading);
+}
+
+/* --------------------------------------------------------------------------
+   8. Responsive Adjustments & Safe Area Controls
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 600px) {
+    .robotics-container,
+    .robotics-article-container {
+        padding: 0 1rem;
+    }
+
+    .robotics-feed-row {
+        grid-template-columns: 80px 1fr auto;
+        gap: 0.65rem;
+        padding: 0.85rem 0.9rem;
+    }
+
+    .feed-row-desc {
+        display: none; /* Keep clean high-density layout on mobile */
+    }
+
+    .feed-row-meta .badge-prototype,
+    .feed-row-meta .badge-sim {
+        display: none;
+    }
+
+    .spotlight-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-read-case,
+    .btn-secondary-gh {
+        width: 100%;
+        justify-content: center;
+        box-sizing: border-box;
+    }
+
+    .category-pills {
+        gap: 0.35rem;
+    }
+
+    .cat-pill {
+        padding: 0.35rem 0.65rem;
+        font-size: 0.74rem;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   9. Dedicated Independent Thesis Navigation Bar
+   -------------------------------------------------------------------------- */
+.thesis-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: rgba(12, 8, 23, 0.94);
+    border-bottom: 1px solid var(--robotics-card-border);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+[data-theme="light"] .thesis-navbar {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(70, 29, 124, 0.18);
+    box-shadow: 0 2px 14px rgba(70, 29, 124, 0.08);
+}
+
+.thesis-navbar-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0.65rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem;
+    box-sizing: border-box;
+}
+
+/* Brand Cluster */
+.thesis-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.thesis-brand-emblem {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    background: rgba(70, 29, 124, 0.45);
+    border: 1px solid var(--lsu-gold);
+    color: var(--lsu-gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    box-shadow: 0 0 10px rgba(253, 208, 35, 0.25);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+[data-theme="light"] .thesis-brand-emblem {
+    background: rgba(70, 29, 124, 0.1);
+    border-color: var(--lsu-purple);
+    color: var(--lsu-purple);
+    box-shadow: none;
+}
+
+.thesis-brand:hover .thesis-brand-emblem {
+    transform: scale(1.06);
+    box-shadow: 0 0 14px var(--lsu-gold-glow);
+}
+
+.thesis-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+}
+
+.thesis-brand-title {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    letter-spacing: 0.02em;
+}
+
+.thesis-brand-sub {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--robotics-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Desktop Links */
+.thesis-nav-links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 0.35rem;
+}
+
+.thesis-nav-links li a {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 0.42rem 0.75rem;
+    border-radius: 4px;
+    transition: all var(--transition-fast);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    border: 1px solid transparent;
+}
+
+.thesis-nav-links li a i {
+    font-size: 0.85em;
+    color: var(--robotics-secondary);
+    transition: color var(--transition-fast);
+}
+
+.thesis-nav-links li a:hover {
+    color: var(--text-heading);
+    background: rgba(253, 208, 35, 0.1);
+    border-color: rgba(253, 208, 35, 0.3);
+}
+
+.thesis-nav-links li a:hover i {
+    color: var(--lsu-gold);
+}
+
+.thesis-nav-links li a.active {
+    color: var(--lsu-gold);
+    background: rgba(70, 29, 124, 0.4);
+    border-color: rgba(253, 208, 35, 0.45);
+    box-shadow: 0 0 10px rgba(253, 208, 35, 0.15);
+}
+
+[data-theme="light"] .thesis-nav-links li a.active {
+    color: var(--lsu-purple);
+    background: rgba(70, 29, 124, 0.08);
+    border-color: var(--lsu-purple);
+    box-shadow: none;
+}
+
+/* Right Actions Cluster */
+.thesis-nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-shrink: 0;
+}
+
+.thesis-return-btn {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 0.38rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--robotics-subtle-bg);
+    color: var(--text-main);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.thesis-return-btn:hover {
+    border-color: var(--lsu-gold);
+    color: var(--lsu-gold);
+    background: rgba(253, 208, 35, 0.1);
+}
+
+[data-theme="light"] .thesis-return-btn:hover {
+    border-color: var(--lsu-purple);
+    color: var(--lsu-purple);
+    background: rgba(70, 29, 124, 0.08);
+}
+
+.thesis-theme-toggle {
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--robotics-subtle-bg);
+    color: var(--lsu-gold);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    transition: all var(--transition-fast);
+    outline: none;
+}
+
+[data-theme="light"] .thesis-theme-toggle {
+    color: var(--lsu-purple);
+}
+
+.thesis-theme-toggle:hover {
+    border-color: var(--lsu-gold);
+    transform: scale(1.05);
+}
+
+.thesis-mobile-toggle {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--robotics-subtle-bg);
+    color: var(--text-heading);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   10. Mobile Thesis Navigation Drawer
+   -------------------------------------------------------------------------- */
+@media screen and (max-width: 960px) {
+    .thesis-nav-links,
+    .thesis-return-text {
+        display: none;
+    }
+
+    .thesis-mobile-toggle {
+        display: inline-flex;
+    }
+}
+
+.thesis-mobile-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 290px;
+    max-width: 85vw;
+    background: #0f0a1c;
+    border-right: 1px solid var(--robotics-card-border);
+    z-index: 10001;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="light"] .thesis-mobile-drawer {
+    background: #ffffff;
+    border-right: 1px solid rgba(70, 29, 124, 0.18);
+    box-shadow: 4px 0 24px rgba(70, 29, 124, 0.12);
+}
+
+body.thesis-drawer-open .thesis-mobile-drawer {
+    transform: translateX(0);
+}
+
+.thesis-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--robotics-card-border);
+}
+
+.thesis-drawer-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--robotics-subtle-bg);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    outline: none;
+}
+
+.thesis-drawer-close:hover {
+    color: var(--lsu-gold);
+    border-color: var(--lsu-gold);
+}
+
+.thesis-drawer-links {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.thesis-drawer-links a {
+    font-family: var(--font-mono);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-main);
+    text-decoration: none;
+    padding: 0.75rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+    transition: all var(--transition-fast);
+}
+
+.thesis-drawer-links a i {
+    font-size: 0.9em;
+    color: var(--robotics-secondary);
+    width: 18px;
+    text-align: center;
+}
+
+.thesis-drawer-links a:hover,
+.thesis-drawer-links a.active {
+    background: rgba(70, 29, 124, 0.25);
+    border-left-color: var(--lsu-gold);
+    color: var(--lsu-gold);
+}
+
+.thesis-drawer-links .drawer-return {
+    margin-top: 1rem;
+    border-top: 1px solid var(--robotics-card-border);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+}
+
+.thesis-drawer-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--robotics-card-border);
+}
+
+.thesis-drawer-theme-btn {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    background: var(--robotics-subtle-bg);
+    color: var(--text-heading);
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    outline: none;
+}
+
+.thesis-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+body.thesis-drawer-open .thesis-drawer-backdrop {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --------------------------------------------------------------------------
+   11. Academic Thesis Masthead & Header
+   -------------------------------------------------------------------------- */
+.thesis-masthead {
+    width: 100%;
+    padding: 3rem 1.5rem 2.25rem 1.5rem;
+    background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(70, 29, 124, 0.35), transparent 75%), rgba(12, 8, 23, 0.8);
+    border-bottom: 1px solid var(--robotics-card-border);
+    box-sizing: border-box;
+}
+
+[data-theme="light"] .thesis-masthead {
+    background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(70, 29, 124, 0.12), transparent 75%), #ffffff;
+    border-bottom: 1px solid rgba(70, 29, 124, 0.16);
+}
+
+.thesis-masthead-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.thesis-meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.thesis-chip {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.28rem 0.8rem;
+    border-radius: 20px;
+    background: rgba(70, 29, 124, 0.4);
+    border: 1px solid rgba(253, 208, 35, 0.4);
+    color: var(--lsu-gold);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.02em;
+}
+
+[data-theme="light"] .thesis-chip {
+    background: rgba(70, 29, 124, 0.08);
+    border-color: rgba(70, 29, 124, 0.3);
+    color: var(--lsu-purple);
+}
+
+.thesis-main-title {
+    font-size: 2.15rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--text-heading);
+    margin: 0 0 0.85rem 0;
+    letter-spacing: -0.025em;
+    font-family: var(--font-mono);
+}
+
+@media screen and (max-width: 768px) {
+    .thesis-main-title {
+        font-size: 1.55rem;
+    }
+}
+
+.thesis-lead-abstract {
+    font-size: 1rem;
+    color: var(--text-main);
+    line-height: 1.65;
+    max-width: 940px;
+    margin: 0 0 1.5rem 0;
+}
+
+.thesis-masthead-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+}
+
+/* --------------------------------------------------------------------------
+   12. Interactive BibTeX Citation Card & Academic Reference
+   -------------------------------------------------------------------------- */
+.thesis-citation-section {
+    margin-top: 2rem;
+    margin-bottom: 3.5rem;
+    scroll-margin-top: 90px;
+}
+
+.thesis-citation-card {
+    background: var(--robotics-card-bg);
+    border: 1px solid var(--robotics-card-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--card-shadow);
+    transition: border-color var(--transition-smooth);
+}
+
+.thesis-citation-card:hover {
+    border-color: var(--robotics-card-hover-border);
+}
+
+.thesis-citation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.95rem 1.25rem;
+    background: var(--robotics-subtle-bg);
+    border-bottom: 1px solid var(--robotics-card-border);
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.citation-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.citation-icon {
+    font-size: 1.35rem;
+    color: var(--lsu-gold);
+}
+
+[data-theme="light"] .citation-icon {
+    color: var(--lsu-purple);
+}
+
+.citation-title {
+    font-family: var(--font-mono);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--text-heading);
+    margin: 0 0 2px 0;
+}
+
+.citation-sub {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+.citation-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+.citation-format-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.35);
+    border-radius: 4px;
+    padding: 2px;
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="light"] .citation-format-tabs {
+    background: rgba(70, 29, 124, 0.06);
+    border-color: rgba(70, 29, 124, 0.2);
+}
+
+.cite-tab-btn {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.28rem 0.65rem;
+    border-radius: 3px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.cite-tab-btn:hover {
+    color: var(--text-heading);
+}
+
+.cite-tab-btn.active {
+    background: var(--lsu-purple);
+    color: var(--lsu-gold);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .cite-tab-btn.active {
+    background: var(--lsu-purple);
+    color: #ffffff;
+}
+
+.btn-copy-bibtex {
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.42rem 0.9rem;
+    border-radius: 4px;
+    background: var(--lsu-purple);
+    border: 1px solid var(--lsu-gold);
+    color: var(--lsu-gold);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition-fast);
+    outline: none;
+    box-shadow: 0 0 8px rgba(253, 208, 35, 0.2);
+}
+
+[data-theme="light"] .btn-copy-bibtex {
+    background: var(--lsu-purple);
+    border-color: var(--lsu-purple);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(70, 29, 124, 0.2);
+}
+
+.btn-copy-bibtex:hover {
+    background: var(--lsu-gold);
+    color: #240d42;
+    border-color: var(--lsu-gold);
+    transform: translateY(-1px);
+    box-shadow: 0 0 14px var(--lsu-gold-glow);
+}
+
+[data-theme="light"] .btn-copy-bibtex:hover {
+    background: var(--lsu-gold);
+    color: #240d42;
+    border-color: var(--lsu-gold);
+}
+
+.citation-code-wrap {
+    padding: 1.25rem 1.5rem;
+    background: #080510;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-color) transparent;
+}
+
+.citation-code-wrap::-webkit-scrollbar {
+    height: 6px;
+}
+
+.citation-code-wrap::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+[data-theme="light"] .citation-code-wrap {
+    background: #f8fafc;
+    border-top: 1px solid rgba(70, 29, 124, 0.12);
+}
+
+.citation-code-wrap pre {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: #e2e8f0;
+    white-space: pre;
+}
+
+[data-theme="light"] .citation-code-wrap pre {
+    color: #1e293b;
+}
+
+/* Syntax Highlighting Tokens */
+.bib-type {
+    color: #FDD023;
+    font-weight: 700;
+}
+
+[data-theme="light"] .bib-type {
+    color: #b45309;
+    font-weight: 700;
+}
+
+.bib-key {
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+[data-theme="light"] .bib-key {
+    color: #0284c7;
+    font-weight: 600;
+}
+
+.bib-field {
+    color: #c084fc;
+}
+
+[data-theme="light"] .bib-field {
+    color: #461D7C;
+    font-weight: 600;
+}
+
+.bib-val {
+    color: #86efac;
+}
+
+[data-theme="light"] .bib-val {
+    color: #15803d;
+}
+
+.bib-brace, .bib-eq, .bib-comma {
+    color: #94a3b8;
+}
+
+[data-theme="light"] .bib-brace,
+[data-theme="light"] .bib-eq,
+[data-theme="light"] .bib-comma {
+    color: #64748b;
+}
+
+/* Plain Text Citation View */
+.cite-text-view {
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    line-height: 1.65;
+    color: var(--text-main);
+}
+
+.cite-text-view .cite-text-line {
+    margin: 0 0 0.75rem 0;
+    padding: 0.6rem 0.85rem;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 4px;
+    border-left: 3px solid var(--lsu-gold);
+}
+
+[data-theme="light"] .cite-text-view .cite-text-line {
+    background: rgba(70, 29, 124, 0.04);
+    border-left-color: var(--lsu-purple);
+    color: #1e293b;
+}
+
+.cite-text-view .cite-text-line:last-child {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 640px) {
+    .thesis-citation-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .citation-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+

@@ -5,15 +5,16 @@
 -->
 <html lang="en">
     <head>
-        <title>Flight Avionics & Telemetry Controller - Gerald's Portfolio</title>
+        <title>Flight Avionics &amp; Telemetry Controller // TigerBot Thesis - Gerald Lê</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="High-reliability embedded avionics controller with 1 kHz IMU sampling, EKF2 state estimation, and MAVLink telemetry streaming." />
+        <meta name="description" content="High-reliability embedded avionics controller with 1 kHz IMU sampling, EKF2 state estimation, and MAVLink telemetry streaming as part of Gerald Lê's engineering thesis at LSU." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.1" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=1.2" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -30,166 +31,249 @@
     <body class="is-preload">
         <div id="page-wrapper">
 
-            <!-- Nav -->
-                <nav id="nav">
-                    <ul>
-                        <li class="nav-logo-item"><a href="index.html" class="nav-logo-link" title="Gerald Lê - Home"><span class="nav-brand-name">Gerald Lê</span><img src="images/logo.svg" alt="GL" class="nav-logo-img" /></a></li>
-                        <li><a href="index.html">Home</a></li>
-                        <li><a href="about.html">About</a></li>
-                        <li><a href="affiliations.html">Affiliations</a></li>
-                        <li><a href="portfolio.html">Portfolio</a></li>
-                        <li class="current"><a href="robotics.html">Robotics</a></li>
-                        <li><a href="contact.html">Contact</a></li>
-                        <li><a href="resume.html" class="nav-resume-btn"><i class="fas fa-file-alt"></i> Resume</a></li>
+            <!-- Dedicated Independent Thesis Navbar -->
+            <nav class="thesis-navbar" aria-label="Thesis Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="TigerBot Thesis Research">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">TigerBot Thesis</span>
+                            <span class="thesis-brand-sub">LSU Autonomous Robotics</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-cubes"></i> Fleet Hub</a></li>
+                        <li><a href="robotics-agv.html"><i class="fas fa-truck-monster"></i> Wheeled SLAM</a></li>
+                        <li><a href="robotics-arm.html"><i class="fas fa-hand-holding"></i> Manipulation</a></li>
+                        <li><a href="robotics-flight.html" class="active"><i class="fas fa-paper-plane"></i> Avionics</a></li>
+                        <li><a href="robotics-quadruped.html"><i class="fas fa-paw"></i> Locomotion</a></li>
+                        <li><a href="#thesis-cite"><i class="fas fa-quote-right"></i> BibTeX</a></li>
                     </ul>
-                </nav>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Thesis Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">TigerBot Thesis</span>
+                            <span class="thesis-brand-sub">LSU Autonomous Robotics</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-cubes"></i> Fleet Hub</a>
+                    <a href="robotics-agv.html"><i class="fas fa-truck-monster"></i> Wheeled SLAM</a>
+                    <a href="robotics-arm.html"><i class="fas fa-hand-holding"></i> Manipulation</a>
+                    <a href="robotics-flight.html" class="active"><i class="fas fa-paper-plane"></i> Avionics</a>
+                    <a href="robotics-quadruped.html"><i class="fas fa-paw"></i> Locomotion</a>
+                    <a href="#thesis-cite"><i class="fas fa-quote-right"></i> Thesis Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
 
             <!-- Main -->
                 <section id="main">
-                    <div class="container">
-                        <div class="row gtr-200">
-                            <div class="col-12">
+                    <div class="robotics-article-container">
 
-                                <!-- Back Link -->
-                                    <div>
-                                        <a href="robotics.html" class="back-link">
-                                            <span class="arrow">&lt;-</span> robotics
-                                        </a>
-                                    </div>
-
-                                <!-- Project Header Row -->
-                                    <div class="project-header reveal-on-scroll">
-                                        <div class="project-header-top">
-                                            <h1>flight-avionics-telemetry</h1>
-                                            <div class="project-actions">
-                                                <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-external">
-                                                    <i class="fab fa-github"></i> github <span class="arrow">/></span>
-                                                </a>
-                                                <a href="robotics.html" class="btn-external">
-                                                    <i class="fas fa-robot"></i> robotics hub <span class="arrow">/></span>
-                                                </a>
-                                            </div>
-                                        </div>
-                                        <p class="project-tagline">
-                                            an embedded STM32H7-based flight controller with high-rate IMU logging, EKF2 state estimation, and MAVLink telemetry streaming.
-                                        </p>
-                                        <div class="tech-tags">
-                                            <span class="tag tag-mint">PX4 Autopilot</span>
-<span class="tag tag-mint">MAVLink</span>
-<span class="tag tag-sky">FreeRTOS</span>
-<span class="tag tag-sky">C++</span>
-<span class="tag">EKF2 State Estimation</span>
-<span class="tag">STM32H7</span>
-<span class="tag">SPI / I2C</span>
-                                        </div>
-                                    </div>
-
-                                <!-- Hero Preview Media (16:9) -->
-                                    <div class="project-hero-media reveal-on-scroll">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c121d;">
-    <defs>
-        <pattern id="grid-flight" width="40" height="40" patternUnits="userSpaceOnUse">
-            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/>
-        </pattern>
-    </defs>
-    <rect width="800" height="450" fill="#0c121d"/>
-    <rect width="800" height="450" fill="url(#grid-flight)"/>
-
-    <!-- PCB Board Layout Outline -->
-    <rect x="180" y="70" width="440" height="310" rx="16" fill="#13271f" stroke="#10b981" stroke-width="2"/>
-    <circle cx="205" cy="95" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
-    <circle cx="595" cy="95" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
-    <circle cx="205" cy="355" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
-    <circle cx="595" cy="355" r="8" fill="#0c121d" stroke="#10b981" stroke-width="1.5"/>
-
-    <!-- Traces on PCB -->
-    <path d="M 400 225 L 400 120 L 480 120" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
-    <path d="M 400 225 L 300 225 L 300 150" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
-    <path d="M 400 225 L 400 320 L 320 320" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
-    <path d="M 400 225 L 510 225 L 510 300" stroke="rgba(16, 185, 129, 0.4)" stroke-width="2" fill="none"/>
-
-    <!-- Main Microcontroller: STM32H7 -->
-    <rect x="340" y="165" width="120" height="120" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
-    <text x="400" y="220" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="13" font-weight="bold">STM32H743</text>
-    <text x="400" y="240" text-anchor="middle" fill="#94a3b8" font-family="monospace" font-size="10">480MHz ARM M7</text>
-
-    <!-- Sensors -->
-    <rect x="260" y="110" width="60" height="50" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
-    <text x="290" y="140" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="9">ICM-42688P</text>
-
-    <rect x="470" y="100" width="70" height="45" rx="4" fill="#0f172a" stroke="#10b981" stroke-width="1.5"/>
-    <text x="505" y="128" text-anchor="middle" fill="#10b981" font-family="monospace" font-size="9">BARO BMP390</text>
-
-    <rect x="480" y="280" width="65" height="55" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5"/>
-    <text x="512" y="312" text-anchor="middle" fill="#f59e0b" font-family="monospace" font-size="9">CAN TRANS</text>
-
-    <rect x="260" y="295" width="70" height="50" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
-    <text x="295" y="325" text-anchor="middle" fill="#38bdf8" font-family="monospace" font-size="9">FRAM 2MB</text>
-
-    <!-- HUD Overlay -->
-    <rect x="24" y="24" width="280" height="68" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
-    <text x="36" y="44" fill="#10b981" font-family="monospace" font-size="12" font-weight="bold">// AVIONICS_STATUS</text>
-    <text x="36" y="62" fill="#cbd5e1" font-family="monospace" font-size="11">EKF2 State Filter: Converged</text>
-    <text x="36" y="78" fill="#94a3b8" font-family="monospace" font-size="11">IMU Rate: 1000 Hz (SPI DMA)</text>
-
-    <rect x="510" y="360" width="266" height="66" rx="6" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)"/>
-    <text x="522" y="380" fill="#38bdf8" font-family="monospace" font-size="12" font-weight="bold">// TELEMETRY_LINK</text>
-    <text x="522" y="398" fill="#cbd5e1" font-family="monospace" font-size="11">MAVLink v2: 57600 baud RF</text>
-    <text x="522" y="414" fill="#94a3b8" font-family="monospace" font-size="11">Packet Drop Rate: &lt; 0.02%</text>
-</svg>
-                                    </div>
-
-                                <!-- Deep-Dive Case Study Content -->
-                                    <article class="project-case-study reveal-on-scroll">
-
-
-                                        <h2>// 01. Overview &amp; Avionics Scope</h2>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. The Autonomous Telemetry &amp; Flight Controller is a high-reliability embedded hardware module built around the STM32H743 Cortex-M7 running at 480 MHz. Designed to bridge low-level motor actuation with high-level mission directives, the platform provides real-time state estimation, hardware-isolated failsafes, and multi-channel telemetry streaming.
-                                        </p>
-                                        <p>
-                                            Nullam sed mi ut arcu tincidunt ultrices. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. The flight controller operates FreeRTOS alongside PX4-compatible flight algorithms, handling flight attitude control with deterministic millisecond-level scheduling.
-                                        </p>
-
-                                        <h2>// 02. Real-Time Architecture &amp; DMA Sampling</h2>
-                                        <p>
-                                            Curabitur pellentesque nisi vel leo sollicitudin, sed fermentum dolor facilisis. Efficient sensor acquisition is critical in high-vibration drone environments:
-                                        </p>
-                                        <blockquote>
-                                            "In high-dynamic flight regimes, sensor jitter is the enemy of state estimation. Zero-copy circular DMA buffers eliminate CPU preemption delays during critical sensor reads."
-                                        </blockquote>
-                                        <ul style="list-style: square; padding-left: 1.5rem; margin-bottom: 1.5rem; color: var(--text-muted);">
-                                            <li><strong>High-Rate IMU Acquisition:</strong> Dual ICM-42688P 6-axis IMUs sampled over dedicated SPI buses at 1 kHz with circular DMA buffers.</li>
-                                            <li><strong>EKF2 State Estimator:</strong> Extended Kalman Filter estimating orientation quaternion, Cartesian velocity, and barometric altitude with sensor bias tracking.</li>
-                                            <li><strong>Fail-Safe Architecture:</strong> Independent hardware watchdog timer ensuring automatic parachute or return-to-home actuation upon signal loss.</li>
-                                            <li><strong>Blackbox Logging:</strong> High-speed non-volatile FRAM logging flight metrics at 250 Hz for post-mission telemetry analytics.</li>
-                                        </ul>
-
-                                        <h2>// 03. Telemetry Stream &amp; Ground Station Interface</h2>
-                                        <p>
-                                            Aliquam erat volutpat. Fusce euismod diam at nulla laoreet, vel facilisis nisi dictum. Flight telemetry is packaged according to the MAVLink v2 protocol, compressing attitude, battery voltage, GPS coordinates, and motor RPM into lightweight binary frames streamed over 915 MHz radio telemetry transceivers.
-                                        </p>
-
-                                        <h2>// 04. Validation &amp; Real-World Testing</h2>
-                                        <p>
-                                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium. Wind tunnel validation and outdoor multirotor flight trials proved consistent attitude stabilization in crosswinds up to 35 km/h with angular roll/pitch tracking error kept within 1.8 degrees.
-                                        </p>
-
-
-                                        <!-- Footer Navigation -->
-                                        <div class="subpage-cta reveal-on-scroll" style="margin-top: 4rem;">
-                                            <h3>Interested in robotics and autonomous systems?</h3>
-                                            <p>Explore more robotics hardware platforms or get in touch for technical discussions.</p>
-                                            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                                                <a href="robotics.html" class="button alt"><i class="fas fa-robot"></i> All Robotics Systems</a>
-                                                <a href="contact.html" class="button"><i class="fas fa-paper-plane"></i> Get In Touch</a>
-                                            </div>
-                                        </div>
-
-                                    </article>
-
+                        <!-- Article Masthead (TigerBot Academy Style) -->
+                        <header class="robotics-article-masthead reveal-on-scroll">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Thesis Fleet Hub</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <span>Aerial Autonomy &amp; Avionics</span>
                             </div>
+
+                            <h1 class="robotics-article-headline">Embedded Flight Controller &amp; Telemetry: Deterministic FreeRTOS &amp; High-Rate Sensor Fusion</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-calendar-alt"></i> Sep 12, 2026</span>
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald Lê</span>
+                                <span class="article-meta-item"><i class="fas fa-microchip"></i> STM32H7 + FreeRTOS + PX4</span>
+                                <span class="article-meta-item"><i class="far fa-clock"></i> 7 min read</span>
+                                <span class="badge-prototype">Bench Validated</span>
+                            </div>
+                        </header>
+
+                        <!-- Hero Preview Media (16:9) -->
+                        <div class="article-hero-stage reveal-on-scroll">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c0817;">
+                                <defs>
+                                    <pattern id="grid-flight" width="40" height="40" patternUnits="userSpaceOnUse">
+                                        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(253, 208, 35, 0.08)" stroke-width="1"/>
+                                    </pattern>
+                                </defs>
+                                <rect width="800" height="450" fill="#0c0817"/>
+                                <rect width="800" height="450" fill="url(#grid-flight)"/>
+
+                                <!-- PCB Board Layout Outline (LSU Purple Mask with Gold Border) -->
+                                <rect x="180" y="70" width="440" height="310" rx="16" fill="#1c0f33" stroke="#FDD023" stroke-width="2"/>
+                                <circle cx="205" cy="95" r="8" fill="#0c0817" stroke="#FDD023" stroke-width="1.5"/>
+                                <circle cx="595" cy="95" r="8" fill="#0c0817" stroke="#FDD023" stroke-width="1.5"/>
+                                <circle cx="205" cy="355" r="8" fill="#0c121d" stroke="#FDD023" stroke-width="1.5"/>
+                                <circle cx="595" cy="355" r="8" fill="#0c121d" stroke="#FDD023" stroke-width="1.5"/>
+
+                                <!-- Traces on PCB in Lilac Purple -->
+                                <path d="M 230 180 L 320 180 L 350 210 L 400 210" fill="none" stroke="#a855f7" stroke-width="1.5"/>
+                                <path d="M 230 200 L 310 200 L 340 230 L 400 230" fill="none" stroke="#a855f7" stroke-width="1.5"/>
+                                <path d="M 400 240 L 460 240 L 490 270 L 570 270" fill="none" stroke="#a855f7" stroke-width="1.5"/>
+
+                                <!-- Main MCU (STM32H7) -->
+                                <rect x="340" y="175" width="120" height="100" rx="4" fill="#0c0817" stroke="#FDD023" stroke-width="2"/>
+                                <text x="400" y="220" text-anchor="middle" fill="#FDD023" font-family="monospace" font-size="12" font-weight="bold">STM32H743</text>
+                                <text x="400" y="238" text-anchor="middle" fill="#d8b4fe" font-family="monospace" font-size="10">480MHz ARM-M7</text>
+
+                                <!-- Sensor ICs -->
+                                <rect x="230" y="120" width="50" height="40" rx="2" fill="#180e2b" stroke="#c084fc" stroke-width="1.5"/>
+                                <text x="255" y="145" text-anchor="middle" fill="#c084fc" font-family="monospace" font-size="9">IMU 1</text>
+
+                                <rect x="230" y="290" width="50" height="40" rx="2" fill="#180e2b" stroke="#c084fc" stroke-width="1.5"/>
+                                <text x="255" y="315" text-anchor="middle" fill="#c084fc" font-family="monospace" font-size="9">IMU 2</text>
+
+                                <rect x="520" y="120" width="50" height="40" rx="2" fill="#180e2b" stroke="#FDD023" stroke-width="1.5"/>
+                                <text x="545" y="145" text-anchor="middle" fill="#FDD023" font-family="monospace" font-size="9">BARO</text>
+
+                                <rect x="520" y="290" width="50" height="40" rx="2" fill="#180e2b" stroke="#c084fc" stroke-width="1.5"/>
+                                <text x="545" y="315" text-anchor="middle" fill="#c084fc" font-family="monospace" font-size="9">FRAM</text>
+
+                                <!-- HUD Overlay -->
+                                <rect x="24" y="24" width="280" height="72" rx="6" fill="rgba(12, 8, 23, 0.88)" stroke="rgba(253, 208, 35, 0.25)"/>
+                                <text x="36" y="44" fill="#FDD023" font-family="monospace" font-size="12" font-weight="bold">// SENSOR_RATES</text>
+                                <text x="36" y="62" fill="#f8fafc" font-family="monospace" font-size="11">Dual IMU SPI: 1,000 Hz DMA</text>
+                                <text x="36" y="80" fill="#c084fc" font-family="monospace" font-size="11">EKF2 Attitude Loop: 250 Hz</text>
+
+                                <rect x="510" y="360" width="266" height="66" rx="6" fill="rgba(12, 8, 23, 0.88)" stroke="rgba(168, 85, 247, 0.25)"/>
+                                <text x="522" y="380" fill="#c084fc" font-family="monospace" font-size="12" font-weight="bold">// TELEMETRY_LINK</text>
+                                <text x="522" y="398" fill="#f8fafc" font-family="monospace" font-size="11">MAVLink v2: 57600 baud RF</text>
+                                <text x="522" y="414" fill="#FDD023" font-family="monospace" font-size="11">Packet Drop Rate: &lt; 0.02%</text>
+                            </svg>
                         </div>
+
+                        <!-- Editorial Article Body (TigerBot Style) -->
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Overview &amp; Avionics Scope</h2>
+                            <p>
+                                The Autonomous Telemetry &amp; Flight Controller is a high-reliability embedded hardware module built around the STM32H743 Cortex-M7 running at 480 MHz. Designed to bridge low-level motor actuation with high-level mission directives, the platform provides real-time state estimation, hardware-isolated failsafes, and multi-channel telemetry streaming.
+                            </p>
+                            <p>
+                                The flight controller operates FreeRTOS alongside PX4-compatible flight algorithms, handling flight attitude control with deterministic millisecond-level scheduling.
+                            </p>
+
+                            <!-- Engineering Callout Box -->
+                            <div class="article-callout">
+                                <div class="article-callout-header"><i class="fas fa-tachometer-alt"></i> Engineering Axiom</div>
+                                <p>In high-dynamic flight regimes, sensor jitter is the enemy of state estimation. Zero-copy circular DMA buffers eliminate CPU preemption delays during critical sensor reads.</p>
+                            </div>
+
+                            <h2 class="article-section-title">02. Real-Time Architecture &amp; DMA Sampling</h2>
+                            <p>
+                                Efficient sensor acquisition is critical in high-vibration drone environments:
+                            </p>
+
+                            <!-- TigerBot-Style Structured Spec List with Bold Labels -->
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item">
+                                    <span class="spec-label">High-Rate IMU Acquisition (Dual ICM-42688P):</span> Sampled over dedicated SPI buses at 1 kHz utilizing circular DMA buffers for zero-copy transfers.
+                                </li>
+                                <li class="article-spec-item">
+                                    <span class="spec-label">EKF2 State Estimator (250 Hz Loop):</span> Extended Kalman Filter estimating orientation quaternion, Cartesian velocity, and barometric altitude with active bias tracking.
+                                </li>
+                                <li class="article-spec-item">
+                                    <span class="spec-label">Fail-Safe Architecture (Independent Watchdog):</span> Dedicated hardware watchdog timer ensuring automatic parachute or return-to-home actuation upon signal loss.
+                                </li>
+                                <li class="article-spec-item">
+                                    <span class="spec-label">Blackbox Logging (Non-Volatile FRAM @ 250 Hz):</span> High-speed ferroelectric RAM logging mission-critical telemetry for rapid post-flight diagnostics.
+                                </li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Telemetry Stream &amp; Ground Station Interface</h2>
+                            <p>
+                                Flight telemetry is packaged according to the MAVLink v2 protocol, compressing attitude, battery voltage, GPS coordinates, and motor RPM into lightweight binary frames streamed over 915 MHz radio telemetry transceivers.
+                            </p>
+
+                            <h2 class="article-section-title">04. Validation &amp; Real-World Testing</h2>
+                            <p>
+                                Wind tunnel validation and outdoor multirotor flight trials proved consistent attitude stabilization in crosswinds up to 35 km/h with angular roll/pitch tracking error kept within 1.8 degrees.
+                            </p>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-arm.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous Platform</span>
+                                    <span class="article-nav-target">6-DOF Manipulator &amp; Vision</span>
+                                </a>
+                                <a href="robotics-quadruped.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next Platform -&gt;</span>
+                                    <span class="article-nav-target">Quadruped Locomotion Engine</span>
+                                </a>
+                            </div>
+
+                            <!-- Thesis Citation & Academic Reference Section -->
+                            <div id="thesis-cite" class="thesis-citation-section">
+                                <div class="thesis-citation-card">
+                                    <div class="thesis-citation-header">
+                                        <div class="citation-title-wrap">
+                                            <i class="fas fa-quote-left citation-icon"></i>
+                                            <div>
+                                                <h3 class="citation-title">Thesis Citation &amp; Academic Reference</h3>
+                                                <div class="citation-sub">Louisiana State University &bull; Division of Computer Science &amp; Engineering</div>
+                                            </div>
+                                        </div>
+                                        <div class="citation-actions">
+                                            <div class="citation-format-tabs" role="tablist">
+                                                <button type="button" class="cite-tab-btn active" data-format="bibtex">BibTeX</button>
+                                                <button type="button" class="cite-tab-btn" data-format="ieee">IEEE / APA</button>
+                                            </div>
+                                            <button type="button" class="btn-copy-bibtex" id="btn-copy-bibtex" aria-label="Copy BibTeX citation to clipboard">
+                                                <i class="fas fa-copy"></i> <span>Copy BibTeX</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="citation-code-wrap">
+                                        <pre id="bibtex-code" class="cite-view"><code><span class="bib-type">@mastersthesis</span><span class="bib-brace">{</span><span class="bib-key">le2026autonomous</span><span class="bib-comma">,</span>
+  <span class="bib-field">author</span>       <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Gerald L&ecirc;</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">title</span>        <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Multi-Modal Autonomous Systems and Embedded Kinematic Architectures</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">school</span>       <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Louisiana State University</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">year</span>         <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">2026</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">type</span>         <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Honors Engineering Thesis</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">address</span>      <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Baton Rouge, LA, USA</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">howpublished</span> <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">\url{https://g34rmeister.github.io/robotics.html}</span><span class="bib-brace">}</span><span class="bib-comma">,</span>
+  <span class="bib-field">note</span>         <span class="bib-eq">=</span> <span class="bib-brace">{</span><span class="bib-val">Autonomous Ground Vehicles, 6-DOF Manipulators, Flight Avionics, and Quadruped Locomotion</span><span class="bib-brace">}</span>
+<span class="bib-brace">}</span></code></pre>
+                                        <div id="ieee-cite" class="cite-view cite-text-view" style="display: none;">
+                                            <p class="cite-text-line"><strong>IEEE:</strong> G. L&ecirc;, &ldquo;Multi-Modal Autonomous Systems and Embedded Kinematic Architectures,&rdquo; Undergraduate Honors Thesis, Dept. of Computer Science &amp; Engineering, Louisiana State University, Baton Rouge, LA, 2026. [Online]. Available: https://g34rmeister.github.io/robotics.html</p>
+                                            <p class="cite-text-line"><strong>APA:</strong> L&ecirc;, G. (2026). <em>Multi-Modal Autonomous Systems and Embedded Kinematic Architectures</em> (Undergraduate honors thesis). Louisiana State University, Baton Rouge, LA. https://g34rmeister.github.io/robotics.html</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </article>
+
                     </div>
                 </section>
 
@@ -208,7 +292,7 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/main.js?v=2.9" defer></script>
+            <script src="assets/js/robotics.js?v=1.0" defer></script>
 
     </body>
 </html>
