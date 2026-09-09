@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => body.classList.remove('is-preload'), 100);
     });
 
-    // 2. Build Title Bar for Mobile with Hamburger on Left & Centered GL Logo
+    // 2. Build Title Bar for Mobile with Hamburger on Left & Centered Brand (Text + Logo)
     const titleBar = document.createElement('div');
     titleBar.id = 'titleBar';
     titleBar.innerHTML = `
@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="fas fa-bars"></i>
         </a>
         <a href="index.html" class="titleBar-logo" aria-label="Gerald Lê - Home">
+            <span class="titleBar-brand-title">Gerald Lê</span>
             <img src="images/logo.svg" alt="GL" class="titleBar-logo-img" />
         </a>
         <div class="titleBar-spacer"></div>
@@ -45,7 +46,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const panelNav = document.createElement('nav');
 
     desktopNavLinks.forEach(link => {
-        // Skip icon-only logo link in the mobile text drawer
+        // Skip logo/brand link in the mobile text drawer (already in brand header)
+        if (link.classList.contains('nav-logo-link') || link.closest('.nav-logo-item')) return;
         const text = link.textContent.trim();
         if (!text) return;
 
