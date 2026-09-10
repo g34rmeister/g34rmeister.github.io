@@ -17,7 +17,7 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `affiliations.html` - Academic & work experience
 * `portfolio.html` - Software & automation projects
 * `project-sample.html` - Sample project case study template
-* `resume.html` - Interactive CV viewer (Google Docs embed)
+* `resume.html` - Interactive CV viewer (self-hosted PDF)
 * `contact.html` - Direct contact channels
 * `robotics.html` - TigerBot thesis fleet hub
 * `robotics-agv.html` / `robotics-arm.html` / `robotics-flight.html` / `robotics-quadruped.html` - Thesis chapter deep-dives
@@ -25,6 +25,7 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `robots.txt` / `sitemap.xml` / `site.webmanifest` - SEO & crawler metadata
 * `assets/` - CSS, JS, fonts, webfonts
 * `images/` - WebP imagery & brand logo
+* `assets/resume/` - Self-hosted resume PDF
 * `scripts/export_standalone_thesis.ps1` - Exports the thesis hub (`robotics*.html` + assets) into a self-contained `dist-thesis/` folder (gitignored build output, safe to delete and regenerate)
 
 ## 🧭 SEO, Accessibility & Maintenance Notes

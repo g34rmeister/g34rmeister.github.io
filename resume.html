@@ -31,7 +31,7 @@
         <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="preload" href="assets/fonts/jetbrains-mono-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
-        <link rel="stylesheet" href="assets/css/main.css?v=3.4" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -85,13 +85,10 @@
                                         <div class="resume-toolbar-title">
                                             <i class="fas fa-file-pdf" style="color: var(--accent);"></i>
                                             <span>gl_resume.pdf</span>
-                                            <span style="font-size: 0.78em; color: var(--text-muted);">(Preview Mode)</span>
+                                            <span style="font-size: 0.78em; color: var(--text-muted);">(In-Browser Preview)</span>
                                         </div>
                                         <div class="resume-toolbar-actions">
-                                            <a id="openDocsBtn" href="#" target="_blank" rel="noopener noreferrer" class="btn-icon-action" title="Open in Google Docs">
-                                                <i class="fas fa-external-link-alt"></i> Open in Google Docs
-                                            </a>
-                                            <a id="downloadPdfBtn" href="#" class="btn-icon-action" title="Download PDF">
+                                            <a href="assets/resume/gl_resume.pdf" download class="btn-icon-action" title="Download PDF">
                                                 <i class="fas fa-download"></i> Download PDF
                                             </a>
                                         </div>
@@ -100,14 +97,14 @@
                                     <!-- Mobile Reader Tip -->
                                     <div class="resume-mobile-tip">
                                         <i class="fas fa-info-circle"></i>
-                                        <span>Viewing on mobile? For full-screen reading, use <strong>Download PDF</strong> or <strong>Open in Google Docs</strong> above.</span>
+                                        <span>Viewing on mobile? For full-screen reading, use <strong>Download PDF</strong> above.</span>
                                     </div>
 
                                     <!-- Embed Frame Wrapper -->
                                     <div class="resume-frame-wrapper">
                                         <iframe 
                                             id="resumeFrame"
-                                            src="about:blank"
+                                            src="assets/resume/gl_resume.pdf"
                                             class="resume-frame" 
                                             title="Gerald Lê - Resume Preview"
                                             loading="lazy">
@@ -138,26 +135,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/main.js?v=3.1" defer></script>
-            <noscript>
-                <p style="text-align: center; padding: 1rem; color: var(--text-muted);">Resume preview needs JavaScript. You can still <a href="https://docs.google.com/document/d/1jh74hQQprLfi0yD6wzTB7CBldrT_36Ct/export?format=pdf">download the PDF resume</a> or <a href="https://docs.google.com/document/d/1jh74hQQprLfi0yD6wzTB7CBldrT_36Ct/view?usp=sharing" target="_blank" rel="noopener noreferrer">open it in Google Docs</a>.</p>
-            </noscript>
-            <script>
-                (function() {
-                    var DOC_BASE_URL = 'https://docs.google.com/document/d/1jh74hQQprLfi0yD6wzTB7CBldrT_36Ct';
 
-                    var previewUrl = DOC_BASE_URL + '/preview';
-                    var editUrl = DOC_BASE_URL + '/view?usp=sharing';
-                    var exportPdfUrl = DOC_BASE_URL + '/export?format=pdf';
-
-                    var resumeFrame = document.getElementById('resumeFrame');
-                    var openDocsBtn = document.getElementById('openDocsBtn');
-                    var downloadPdfBtn = document.getElementById('downloadPdfBtn');
-
-                    if (resumeFrame) resumeFrame.src = previewUrl;
-                    if (openDocsBtn) openDocsBtn.href = editUrl;
-                    if (downloadPdfBtn) downloadPdfBtn.href = exportPdfUrl;
-                })();
-            </script>
 
     </body>
 </html>
