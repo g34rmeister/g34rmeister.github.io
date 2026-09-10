@@ -263,6 +263,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const elements = document.querySelectorAll('.reveal-on-scroll');
         if (!elements.length) return;
 
+        // Respect users who prefer reduced motion: show content immediately.
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            elements.forEach(el => el.classList.add('is-revealed'));
+            return;
+        }
+
         if (!('IntersectionObserver' in window)) {
             elements.forEach(el => el.classList.add('is-revealed'));
             return;
@@ -284,4 +290,28 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.forEach(el => observer.observe(el));
     }
     initRevealOnScroll();
+
+    // 7. Auto-Inject Build Date ("last updated" footer stamp)
+    function initBuildDate() {
+        const stamps = document.querySelectorAll('[data-build-date]');
+        if (!stamps.length) return;
+
+        let stamp = null;
+        try {
+            const modified = new Date(document.lastModified);
+            if (!isNaN(modified.getTime())) {
+                stamp = modified.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            }
+        } catch (e) {
+            stamp = null;
+        }
+        if (!stamp) return;
+
+        stamps.forEach(el => {
+            el.textContent = stamp;
+            el.setAttribute('datetime', stamp);
+            el.title = 'Auto-generated from document.lastModified at runtime';
+        });
+    }
+    initBuildDate();
 });

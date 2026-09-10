@@ -62,6 +62,8 @@ Copy-Item "$WorkspaceRoot\assets\css\robotics.css" "$DestFull\assets\css\" -Forc
 Copy-Item "$WorkspaceRoot\assets\css\fontawesome-all.min.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\js\robotics.js" "$DestFull\assets\js\" -Force
 Copy-Item "$WorkspaceRoot\images\logo.svg" "$DestFull\images\" -Force
+Copy-Item "$WorkspaceRoot\site.webmanifest" "$DestFull\" -Force
+Copy-Item "$WorkspaceRoot\robots.txt" "$DestFull\" -Force
 
 if (Test-Path "$WorkspaceRoot\assets\fonts") {
     Copy-Item "$WorkspaceRoot\assets\fonts\*" "$DestFull\assets\fonts\" -Recurse -Force

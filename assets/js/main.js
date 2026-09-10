@@ -176,6 +176,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const revealEls = document.querySelectorAll('.reveal-on-scroll');
         if (!revealEls.length) return;
 
+        // Respect users who prefer reduced motion: show content immediately.
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            revealEls.forEach(el => el.classList.add('is-revealed'));
+            return;
+        }
+
         if ('IntersectionObserver' in window) {
             const observer = new IntersectionObserver((entries, obs) => {
                 entries.forEach(entry => {
@@ -223,8 +229,12 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const filterValue = btn.getAttribute('data-filter');
 
-                filterBtns.forEach(b => b.classList.remove('active'));
+                filterBtns.forEach(b => {
+                    b.classList.remove('active');
+                    b.setAttribute('aria-pressed', 'false');
+                });
                 btn.classList.add('active');
+                btn.setAttribute('aria-pressed', 'true');
 
                 projectCards.forEach(card => {
                     const category = card.getAttribute('data-category');
@@ -282,12 +292,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }, { passive: true });
 
         btn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
         });
     }
     initBackToTop();
 
-    // 12. Theme Engine (Light/Dark Mode + System Preference + Persistence)
+    // 12. Auto-Inject Build Date ("last updated" footer stamp)
+    function initBuildDate() {
+        const stamps = document.querySelectorAll('[data-build-date]');
+        if (!stamps.length) return;
+
+        let stamp = null;
+        try {
+            const modified = new Date(document.lastModified);
+            if (!isNaN(modified.getTime())) {
+                stamp = modified.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            }
+        } catch (e) {
+            stamp = null;
+        }
+        if (!stamp) return;
+
+        stamps.forEach(el => {
+            el.textContent = stamp;
+            el.setAttribute('datetime', stamp);
+            el.title = 'Auto-generated from document.lastModified at runtime';
+        });
+    }
+    initBuildDate();
+
+    // 13. Theme Engine (Light/Dark Mode + System Preference + Persistence)
     function initThemeEngine() {
         const root = document.documentElement;
         const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
@@ -304,9 +339,15 @@ document.addEventListener('DOMContentLoaded', () => {
             desktopToggle.setAttribute('title', 'Toggle light/dark theme');
             desktopToggle.innerHTML = `
                 <span class="theme-toggle-track">
-                    <i class="fas fa-sun toggle-icon toggle-icon-sun" aria-hidden="true"></i>
-                    <i class="fas fa-moon toggle-icon toggle-icon-moon" aria-hidden="true"></i>
-                    <span class="toggle-thumb" aria-hidden="true"></span>
+                    <span class="toggle-slot toggle-slot-sun">
+                        <i class="fas fa-sun toggle-icon toggle-icon-sun" aria-hidden="true"></i>
+                    </span>
+                    <span class="toggle-slot toggle-slot-moon">
+                        <i class="fas fa-moon toggle-icon toggle-icon-moon" aria-hidden="true"></i>
+                    </span>
+                    <span class="toggle-thumb-carrier" aria-hidden="true">
+                        <span class="toggle-thumb-disc"></span>
+                    </span>
                 </span>
             `;
             desktopNav.appendChild(desktopToggle);
