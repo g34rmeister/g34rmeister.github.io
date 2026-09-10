@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="800" height="450">
+    <defs>
+        <pattern id="card-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(253, 208, 35, 0.08)" stroke-width="1"/>
+        </pattern>
+        <radialGradient id="lidar-cone" cx="400" cy="235" r="260" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="rgba(192, 132, 252, 0.35)"/>
+            <stop offset="50%" stop-color="rgba(70, 29, 124, 0.18)"/>
+            <stop offset="100%" stop-color="rgba(12, 8, 23, 0)"/>
+        </radialGradient>
+    </defs>
+
+    <!-- Deep Tech Stage Background -->
+    <rect width="800" height="450" fill="#0c0817"/>
+    <rect width="800" height="450" fill="url(#card-grid)"/>
+
+    <!-- Concentric Radar Range Rings -->
+    <circle cx="400" cy="235" r="70" fill="none" stroke="rgba(192, 132, 252, 0.15)" stroke-width="1" stroke-dasharray="3 3"/>
+    <circle cx="400" cy="235" r="140" fill="none" stroke="rgba(192, 132, 252, 0.18)" stroke-width="1"/>
+    <circle cx="400" cy="235" r="210" fill="none" stroke="rgba(192, 132, 252, 0.12)" stroke-width="1" stroke-dasharray="4 4"/>
+
+    <!-- LiDAR Sweep FOV -->
+    <path d="M 400 235 L 630 90 A 260 260 0 0 0 170 90 Z" fill="url(#lidar-cone)"/>
+    <path d="M 400 235 L 630 90" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <path d="M 400 235 L 170 90" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+    <!-- Simulated Obstacles & Costmap Point Clusters -->
+    <rect x="230" y="110" width="36" height="36" rx="4" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="1.5"/>
+    <rect x="535" y="125" width="44" height="44" rx="4" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="1.5"/>
+    <circle cx="340" cy="115" r="3" fill="#FDD023"/>
+    <circle cx="355" cy="110" r="3" fill="#FDD023"/>
+    <circle cx="445" cy="108" r="3" fill="#FDD023"/>
+    <circle cx="465" cy="116" r="3" fill="#FDD023"/>
+
+    <!-- AGV Mobile Base Schematic (Center) -->
+    <g transform="translate(400, 235)">
+        <!-- Chassis Body -->
+        <rect x="-65" y="-95" width="130" height="190" rx="14" fill="#1b1233" stroke="#FDD023" stroke-width="2"/>
+        <!-- Heading Indicator -->
+        <polygon points="0,-82 12,-62 -12,-62" fill="#FDD023"/>
+        <!-- 4 Drive Wheels -->
+        <rect x="-82" y="-85" width="16" height="42" rx="4" fill="#2d1c52" stroke="#c084fc" stroke-width="1.5"/>
+        <rect x="66" y="-85" width="16" height="42" rx="4" fill="#2d1c52" stroke="#c084fc" stroke-width="1.5"/>
+        <rect x="-82" y="43" width="16" height="42" rx="4" fill="#2d1c52" stroke="#c084fc" stroke-width="1.5"/>
+        <rect x="66" y="43" width="16" height="42" rx="4" fill="#2d1c52" stroke="#c084fc" stroke-width="1.5"/>
+        <!-- Compute Bay (Jetson Orin) -->
+        <rect x="-38" y="-25" width="76" height="50" rx="6" fill="#0e081c" stroke="#9d4edd" stroke-width="1.5"/>
+        <text x="0" y="5" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="9" text-anchor="middle" font-weight="bold">JETSON ORIN</text>
+        <!-- LiDAR Turret Disc -->
+        <circle cx="0" cy="-55" r="16" fill="#FDD023"/>
+        <circle cx="0" cy="-55" r="7" fill="#0c0817"/>
+    </g>
+
+    <!-- HUD Overlay Card Top-Left -->
+    <rect x="24" y="24" width="290" height="74" rx="6" fill="rgba(12, 8, 23, 0.92)" stroke="rgba(253, 208, 35, 0.35)" stroke-width="1"/>
+    <text x="38" y="46" fill="#FDD023" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold">AUTONOMOUS_FLEET // TIGERBOT</text>
+    <text x="38" y="66" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11">SLAM: Cartographer 2D/3D (Active)</text>
+    <text x="38" y="84" fill="#c084fc" font-family="'JetBrains Mono', monospace" font-size="11">Kinematics: 6-DOF Arm &amp; Quadruped</text>
+
+    <!-- HUD Overlay Card Bottom-Right -->
+    <rect x="495" y="352" width="280" height="74" rx="6" fill="rgba(12, 8, 23, 0.92)" stroke="rgba(192, 132, 252, 0.35)" stroke-width="1"/>
+    <text x="509" y="374" fill="#c084fc" font-family="'JetBrains Mono', monospace" font-size="12" font-weight="bold">EMBEDDED_TELEMETRY</text>
+    <text x="509" y="394" fill="#f8fafc" font-family="'JetBrains Mono', monospace" font-size="11">Micro-ROS: 100 Hz Hardware Loop</text>
+    <text x="509" y="412" fill="#FDD023" font-family="'JetBrains Mono', monospace" font-size="11">Precision: +/- 0.42 mm Repeatability</text>
+</svg>

@@ -32,7 +32,7 @@
         <link rel="preload" href="assets/fonts/jetbrains-mono-latin-ext.woff2" as="font" type="font/woff2" crossorigin />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.4" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=1.4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=1.8" />
         <script type="application/ld+json">
         {
             "@context": "https://schema.org",
@@ -139,10 +139,10 @@
                     </div>
                     <h1 class="thesis-main-title">Multi-Modal Autonomous Systems &amp; Embedded Kinematic Architectures</h1>
                     <p class="thesis-lead-abstract">
-                        An end-to-end research investigation into real-time SLAM navigation, closed-loop multi-DOF inverse kinematics, deterministic flight avionics, and dynamic quadruped locomotion across heterogeneous embedded compute tiers.
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                     </p>
                     <div class="thesis-masthead-actions">
-                        <a href="#cat-wheeled" class="btn-read-case"><i class="fas fa-layer-group"></i> Explore Systems Fleet <i class="fas fa-arrow-down"></i></a>
+                        <a href="#fleet-grid" class="btn-read-case"><i class="fas fa-layer-group"></i> Explore Systems Fleet <i class="fas fa-arrow-down"></i></a>
                         <a href="#thesis-cite" class="btn-secondary-gh"><i class="fas fa-quote-right"></i> Cite Thesis (BibTeX)</a>
                         <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-secondary-gh"><i class="fab fa-github"></i> Lab Source Code <i class="fas fa-external-link-alt"></i></a>
                     </div>
@@ -153,366 +153,257 @@
                 <main id="main">
                     <div class="robotics-container">
 
-                        <!-- Per-Category Top Navigation (LSU Purple & Gold Nav) -->
-                        <nav class="robotics-category-nav reveal-on-scroll" aria-label="Robotics Categories">
-                            <div class="category-nav-inner">
-                                <span class="category-nav-label"><i class="fas fa-filter"></i> Categories:</span>
-                                <div class="category-pills" role="tablist">
-                                    <button type="button" class="cat-pill active" data-category="all" role="tab" aria-selected="true">
-                                        <i class="fas fa-th-large"></i> All Systems <span class="cat-count">4</span>
-                                    </button>
-                                    <button type="button" class="cat-pill" data-category="wheeled" role="tab" aria-selected="false">
-                                        <i class="fas fa-truck-monster"></i> Wheeled SLAM <span class="cat-count">1</span>
-                                    </button>
-                                    <button type="button" class="cat-pill" data-category="manipulation" role="tab" aria-selected="false">
-                                        <i class="fas fa-hand-holding"></i> Manipulation &amp; Vision <span class="cat-count">1</span>
-                                    </button>
-                                    <button type="button" class="cat-pill" data-category="aerial" role="tab" aria-selected="false">
-                                        <i class="fas fa-paper-plane"></i> Aerial Avionics <span class="cat-count">1</span>
-                                    </button>
-                                    <button type="button" class="cat-pill" data-category="legged" role="tab" aria-selected="false">
-                                        <i class="fas fa-paw"></i> Legged Dynamics <span class="cat-count">1</span>
+                        <!-- HLTV-Style Research Chapter Newsfeed -->
+                        <section class="hltv-feed-section" id="fleet-grid">
+                            <div class="hltv-feed-section-header reveal-on-scroll">
+                                <div class="hltv-feed-header-top">
+                                    <span class="fleet-section-kicker"><i class="fas fa-layer-group"></i> Research Dispatch Feed</span>
+                                    <button type="button" class="hltv-toggle-all-btn" id="hltv-toggle-all" aria-label="Collapse all research chapters">
+                                        <i class="fas fa-compress-alt" id="hltv-toggle-all-icon"></i> <span id="hltv-toggle-all-text">Collapse All</span>
                                     </button>
                                 </div>
-                            </div>
-                        </nav>
-
-                        <div class="robotics-dashboard">
-
-                            <!-- Main Column (Spotlight & Categorized Feed) -->
-                            <div class="robotics-main-col">
-
-                                <!-- Hero Spotlight Card (Inspired by HLTV Feature / MVP Banner) -->
-                                <div class="robotics-spotlight reveal-on-scroll">
-                                    <div class="spotlight-header">
-                                        <span class="spotlight-tagline"><i class="fas fa-microchip"></i> Spotlight Platform</span>
-                                        <span class="badge-live">Active Field Test</span>
-                                    </div>
-
-                                    <div class="spotlight-tabs">
-                                        <a href="robotics-agv.html" class="spotlight-tab active"><i class="fas fa-info-circle"></i> Overview</a>
-                                        <a href="robotics-agv.html#kinematics" class="spotlight-tab"><i class="fas fa-project-diagram"></i> Architecture</a>
-                                        <a href="robotics-agv.html#firmware" class="spotlight-tab"><i class="fas fa-code-branch"></i> Firmware &amp; ROS 2</a>
-                                        <a href="robotics-agv.html#telemetry" class="spotlight-tab"><i class="fas fa-satellite-dish"></i> Telemetry</a>
-                                    </div>
-
-                                    <div class="spotlight-stage">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" style="width: 100%; aspect-ratio: 16/9; display: block; background: #0c0817;">
-                                            <defs>
-                                                <pattern id="hub-grid-agv" width="40" height="40" patternUnits="userSpaceOnUse">
-                                                    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(253, 208, 35, 0.08)" stroke-width="1"/>
-                                                </pattern>
-                                                <radialGradient id="hub-lidar-cone" cx="400" cy="225" r="280" gradientUnits="userSpaceOnUse">
-                                                    <stop offset="0%" stop-color="rgba(192, 132, 252, 0.35)"/>
-                                                    <stop offset="60%" stop-color="rgba(70, 29, 124, 0.15)"/>
-                                                    <stop offset="100%" stop-color="rgba(12, 8, 23, 0)"/>
-                                                </radialGradient>
-                                            </defs>
-                                            <rect width="800" height="450" fill="#0c0817"/>
-                                            <rect width="800" height="450" fill="url(#hub-grid-agv)"/>
-
-                                            <!-- LiDAR FOV Sweep in LSU Electric Purple -->
-                                            <path d="M 400 225 L 680 70 A 320 320 0 0 0 120 70 Z" fill="url(#hub-lidar-cone)"/>
-                                            <path d="M 400 225 L 680 70" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4 4"/>
-                                            <path d="M 400 225 L 120 70" stroke="#c084fc" stroke-width="1.5" stroke-dasharray="4 4"/>
-
-                                            <!-- Simulated Obstacles & Costmap hits -->
-                                            <rect x="180" y="90" width="40" height="40" rx="4" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="1.5"/>
-                                            <rect x="580" y="110" width="50" height="30" rx="4" fill="rgba(239, 68, 68, 0.25)" stroke="#ef4444" stroke-width="1.5"/>
-                                            <circle cx="200" cy="110" r="3" fill="#ef4444"/>
-                                            <circle cx="605" cy="125" r="3" fill="#ef4444"/>
-
-                                            <!-- Planned Waypoint Path in Official LSU Gold -->
-                                            <path d="M 400 370 Q 400 300 400 225 T 460 140 T 400 60" fill="none" stroke="#FDD023" stroke-width="2.5" stroke-dasharray="6 4"/>
-                                            <circle cx="400" cy="60" r="6" fill="#FDD023"/>
-                                            <text x="415" y="64" fill="#FDD023" font-family="monospace" font-size="12" font-weight="bold">WAYPOINT_04</text>
-
-                                            <!-- AGV Chassis -->
-                                            <g transform="translate(400, 225)">
-                                                <rect x="-100" y="-30" width="22" height="60" rx="4" fill="#2c0e54" stroke="#d8b4fe" stroke-width="1.5"/>
-                                                <rect x="78" y="-30" width="22" height="60" rx="4" fill="#2c0e54" stroke="#d8b4fe" stroke-width="1.5"/>
-                                                <circle cx="0" cy="70" r="12" fill="#2c0e54" stroke="#d8b4fe" stroke-width="1.5"/>
-                                                <rect x="-70" y="-80" width="140" height="160" rx="12" fill="#180e2b" stroke="#FDD023" stroke-width="2"/>
-                                                <circle cx="0" cy="-20" r="22" fill="#0c0817" stroke="#c084fc" stroke-width="2"/>
-                                                <circle cx="0" cy="-20" r="8" fill="#FDD023"/>
-                                                <line x1="0" y1="-20" x2="0" y2="-120" stroke="#FDD023" stroke-width="2"/>
-                                                <polygon points="0,-128 -5,-116 5,-116" fill="#FDD023"/>
-                                                <text x="0" y="30" text-anchor="middle" fill="#d8b4fe" font-family="monospace" font-size="11">AGV_CORE_V1</text>
-                                            </g>
-
-                                            <!-- HUD Overlay -->
-                                            <rect x="24" y="24" width="260" height="68" rx="6" fill="rgba(12, 8, 23, 0.88)" stroke="rgba(253, 208, 35, 0.25)"/>
-                                            <text x="36" y="44" fill="#FDD023" font-family="monospace" font-size="12" font-weight="bold">TELEMETRY_STREAM</text>
-                                            <text x="36" y="62" fill="#f8fafc" font-family="monospace" font-size="11">SLAM: Cartographer 2D (Active)</text>
-                                            <text x="36" y="78" fill="#c084fc" font-family="monospace" font-size="11">LIN_VEL: 0.85 m/s | ANG_VEL: 0.04 r/s</text>
-
-                                            <rect x="520" y="360" width="256" height="66" rx="6" fill="rgba(12, 8, 23, 0.88)" stroke="rgba(168, 85, 247, 0.25)"/>
-                                            <text x="532" y="380" fill="#c084fc" font-family="monospace" font-size="12" font-weight="bold">SENSOR_PAYLOAD</text>
-                                            <text x="532" y="398" fill="#f8fafc" font-family="monospace" font-size="11">RPLiDAR A2M8: 12Hz @ 360 deg</text>
-                                            <text x="532" y="414" fill="#FDD023" font-family="monospace" font-size="11">BNO055 IMU: 9-DOF Fused</text>
-                                        </svg>
-                                    </div>
-
-                                    <div class="spotlight-body">
-                                        <h3 class="spotlight-title"><a href="robotics-agv.html">Autonomous Ground Vehicle (AGV) &amp; SLAM Navigation</a></h3>
-                                        <p class="spotlight-desc">
-                                            An open-architecture differential drive robotic platform executing real-time 2D LiDAR Cartographer SLAM, Smac &amp; NavFn global graph planning, and dual closed-loop PID velocity control on STM32 ARM Cortex-M4.
-                                        </p>
-
-                                        <div class="spotlight-specs-grid">
-                                            <div class="spec-metric">
-                                                <span class="spec-metric-label">Compute Host</span>
-                                                <span class="spec-metric-val">Jetson Orin Nano</span>
-                                            </div>
-                                            <div class="spec-metric">
-                                                <span class="spec-metric-label">Middleware</span>
-                                                <span class="spec-metric-val">ROS 2 Humble / Nav2</span>
-                                            </div>
-                                            <div class="spec-metric">
-                                                <span class="spec-metric-label">Primary Sensor</span>
-                                                <span class="spec-metric-val">RPLiDAR A2M8 (12 Hz)</span>
-                                            </div>
-                                            <div class="spec-metric">
-                                                <span class="spec-metric-label">Embedded Tier</span>
-                                                <span class="spec-metric-val">STM32 (1 kHz Loop)</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="spotlight-actions">
-                                            <a href="robotics-agv.html" class="btn-read-case"><i class="fas fa-file-alt"></i> Read Case Study <i class="fas fa-arrow-right"></i></a>
-                                            <a href="https://github.com/g34rmeister" target="_blank" rel="noopener noreferrer" class="btn-secondary-gh"><i class="fab fa-github"></i> Firmware Repo <i class="fas fa-external-link-alt"></i></a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Categorized Robotics Systems Feed (HLTV "Today's News" Style) -->
-                                <!-- Group 1: Wheeled Autonomous Systems -->
-                                <div class="robotics-category-group reveal-on-scroll" data-category="wheeled" id="cat-wheeled">
-                                    <div class="category-group-header">
-                                        <h3 class="category-group-title"><i class="fas fa-truck-monster"></i> Wheeled Autonomous Systems</h3>
-                                        <span class="category-group-count">1 Platform</span>
-                                    </div>
-                                    <div class="robotics-feed-list">
-                                        <a href="robotics-agv.html" class="robotics-feed-row">
-                                            <div class="feed-row-badge-wrap">
-                                                <span class="feed-tech-pill">ROS 2</span>
-                                            </div>
-                                            <div class="feed-row-main">
-                                                <h4 class="feed-row-title">Autonomous Ground Vehicle (AGV) SLAM Navigation Stack</h4>
-                                                <div class="feed-row-desc">2D LiDAR SLAM, Nav2 regulated pure pursuit, and deterministic hardware emergency stop.</div>
-                                                <div class="feed-row-tags">
-                                                    <span class="feed-mini-tag">Cartographer</span>
-                                                    <span class="feed-mini-tag">LiDAR A2M8</span>
-                                                    <span class="feed-mini-tag">STM32 F4</span>
-                                                    <span class="feed-mini-tag">micro-ROS</span>
-                                                </div>
-                                            </div>
-                                            <div class="feed-row-meta">
-                                                <span class="badge-prototype">Prototype</span>
-                                                <span class="feed-row-date">Sep 2026</span>
-                                                <i class="fas fa-chevron-right feed-row-arrow"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <!-- Group 2: Manipulation & Vision Systems -->
-                                <div class="robotics-category-group reveal-on-scroll" data-category="manipulation" id="cat-manipulation">
-                                    <div class="category-group-header">
-                                        <h3 class="category-group-title"><i class="fas fa-hand-holding"></i> Manipulation &amp; Computer Vision</h3>
-                                        <span class="category-group-count">1 Platform</span>
-                                    </div>
-                                    <div class="robotics-feed-list">
-                                        <a href="robotics-arm.html" class="robotics-feed-row">
-                                            <div class="feed-row-badge-wrap">
-                                                <span class="feed-tech-pill">MoveIt 2</span>
-                                            </div>
-                                            <div class="feed-row-main">
-                                                <h4 class="feed-row-title">6-DOF Robotic Arm Kinematics &amp; Edge Vision Pipeline</h4>
-                                                <div class="feed-row-desc">Inverse kinematics, obstacle-aware trajectory planning, and real-time object classification.</div>
-                                                <div class="feed-row-tags">
-                                                    <span class="feed-mini-tag">MoveIt 2</span>
-                                                    <span class="feed-mini-tag">C++ 20</span>
-                                                    <span class="feed-mini-tag">OpenCV</span>
-                                                    <span class="feed-mini-tag">YOLOv8</span>
-                                                </div>
-                                            </div>
-                                            <div class="feed-row-meta">
-                                                <span class="badge-prototype">Testing</span>
-                                                <span class="feed-row-date">Aug 2026</span>
-                                                <i class="fas fa-chevron-right feed-row-arrow"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <!-- Group 3: Flight Avionics & Aerial Autonomy -->
-                                <div class="robotics-category-group reveal-on-scroll" data-category="aerial" id="cat-aerial">
-                                    <div class="category-group-header">
-                                        <h3 class="category-group-title"><i class="fas fa-paper-plane"></i> Aerial Autonomy &amp; Flight Avionics</h3>
-                                        <span class="category-group-count">1 Platform</span>
-                                    </div>
-                                    <div class="robotics-feed-list">
-                                        <a href="robotics-flight.html" class="robotics-feed-row">
-                                            <div class="feed-row-badge-wrap">
-                                                <span class="feed-tech-pill">PX4</span>
-                                            </div>
-                                            <div class="feed-row-main">
-                                                <h4 class="feed-row-title">Autonomous Telemetry &amp; Flight Controller Avionics</h4>
-                                                <div class="feed-row-desc">Embedded flight avionics, high-rate sensor synchronization, and MAVLink telemetry pipeline.</div>
-                                                <div class="feed-row-tags">
-                                                    <span class="feed-mini-tag">PX4</span>
-                                                    <span class="feed-mini-tag">FreeRTOS</span>
-                                                    <span class="feed-mini-tag">EKF2</span>
-                                                    <span class="feed-mini-tag">MAVLink</span>
-                                                </div>
-                                            </div>
-                                            <div class="feed-row-meta">
-                                                <span class="badge-prototype">Prototype</span>
-                                                <span class="feed-row-date">Jul 2026</span>
-                                                <i class="fas fa-chevron-right feed-row-arrow"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-
-                                <!-- Group 4: Legged Dynamics & Locomotion -->
-                                <div class="robotics-category-group reveal-on-scroll" data-category="legged" id="cat-legged">
-                                    <div class="category-group-header">
-                                        <h3 class="category-group-title"><i class="fas fa-paw"></i> Legged Dynamics &amp; Locomotion</h3>
-                                        <span class="category-group-count">1 Platform</span>
-                                    </div>
-                                    <div class="robotics-feed-list">
-                                        <a href="robotics-quadruped.html" class="robotics-feed-row">
-                                            <div class="feed-row-badge-wrap">
-                                                <span class="feed-tech-pill">PyBullet</span>
-                                            </div>
-                                            <div class="feed-row-main">
-                                                <h4 class="feed-row-title">Quadruped Dynamic Locomotion Engine &amp; Gait Optimization</h4>
-                                                <div class="feed-row-desc">Model predictive control, dynamic footstep planning, and simulated BLDC motor actuation.</div>
-                                                <div class="feed-row-tags">
-                                                    <span class="feed-mini-tag">MPC</span>
-                                                    <span class="feed-mini-tag">PyBullet</span>
-                                                    <span class="feed-mini-tag">CAN 2.0B</span>
-                                                    <span class="feed-mini-tag">Python</span>
-                                                </div>
-                                            </div>
-                                            <div class="feed-row-meta">
-                                                <span class="badge-sim">Sim Phase</span>
-                                                <span class="feed-row-date">Jun 2026</span>
-                                                <i class="fas fa-chevron-right feed-row-arrow"></i>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </div>
-
+                                <h2 class="fleet-section-title">Autonomous Systems Log &amp; Chapters</h2>
+                                <p class="fleet-section-desc">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip.
+                                </p>
                             </div>
 
-                            <!-- Sidebar Column (HLTV Rankings & Telemetry Style) -->
-                            <div class="robotics-sidebar-col">
-
-                                <!-- Fleet Roster / Readiness Widget (HLTV Rankings Style) -->
-                                <div class="sidebar-widget reveal-on-scroll">
-                                    <div class="sidebar-widget-header">
-                                        <h3 class="sidebar-widget-title"><i class="fas fa-list-ol"></i> Platform Fleet Roster</h3>
-                                    </div>
-                                    <div class="fleet-roster-list">
-                                        <a href="robotics-agv.html" class="roster-item">
-                                            <span class="roster-rank">01</span>
-                                            <div class="roster-info">
-                                                <span class="roster-name">AGV Platform V1</span>
-                                                <span class="roster-sub">SLAM &amp; Nav2 Stack</span>
-                                            </div>
-                                            <span class="roster-status-pill status-online">Online</span>
-                                        </a>
-                                        <a href="robotics-arm.html" class="roster-item">
-                                            <span class="roster-rank">02</span>
-                                            <div class="roster-info">
-                                                <span class="roster-name">6-DOF Manipulator</span>
-                                                <span class="roster-sub">MoveIt 2 Kinematics</span>
-                                            </div>
-                                            <span class="roster-status-pill status-online">Active</span>
-                                        </a>
-                                        <a href="robotics-flight.html" class="roster-item">
-                                            <span class="roster-rank">03</span>
-                                            <div class="roster-info">
-                                                <span class="roster-name">Flight Controller</span>
-                                                <span class="roster-sub">PX4 / MAVLink Avionics</span>
-                                            </div>
-                                            <span class="roster-status-pill status-online">Testing</span>
-                                        </a>
-                                        <a href="robotics-quadruped.html" class="roster-item">
-                                            <span class="roster-rank">04</span>
-                                            <div class="roster-info">
-                                                <span class="roster-name">Quadruped Engine</span>
-                                                <span class="roster-sub">MPC Gait Dynamics</span>
-                                            </div>
-                                            <span class="roster-status-pill status-sim">Sim</span>
-                                        </a>
-                                    </div>
+                            <!-- Chapter 1: Autonomous Ground Vehicle -->
+                            <div class="hltv-chapter-block reveal-on-scroll">
+                                <button type="button" class="hltv-chapter-header" aria-expanded="true" aria-controls="chapter-1-feed" id="chapter-1-header">
+                                    <h3 class="hltv-chapter-title"><i class="fas fa-chevron-down hltv-chapter-chevron" aria-hidden="true"></i> Chapter 1</h3>
+                                    <span class="hltv-chapter-kicker">Autonomous Ground Vehicle</span>
+                                </button>
+                                <div class="hltv-feed-list" id="chapter-1-feed" role="region" aria-labelledby="chapter-1-header">
+                                    <a href="robotics-agv.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">a day ago</span>
+                                            <span class="hltv-row-comments">20 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-agv.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">a day ago</span>
+                                            <span class="hltv-row-comments">32 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-agv.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">a day ago</span>
+                                            <span class="hltv-row-comments">58 comments</span>
+                                        </div>
+                                    </a>
+                                    <!-- Featured Dossier Card for Chapter 1 -->
+                                    <a href="robotics-agv.html" class="hltv-featured-card">
+                                        <div class="hltv-featured-thumb">
+                                            <img src="images/thumb-agv.svg" alt="AGV SLAM Navigation Schematic" loading="lazy">
+                                        </div>
+                                        <div class="hltv-featured-body">
+                                            <h4 class="hltv-featured-title">Lorem ipsum dolor sit amet</h4>
+                                            <p class="hltv-featured-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-agv.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">a day ago</span>
+                                            <span class="hltv-row-comments">32 comments</span>
+                                        </div>
+                                    </a>
                                 </div>
-
-                                <!-- Telemetry Benchmarks Widget (HLTV Recent Activity Style) -->
-                                <div class="sidebar-widget reveal-on-scroll">
-                                    <div class="sidebar-widget-header">
-                                        <h3 class="sidebar-widget-title"><i class="fas fa-chart-line"></i> Telemetry Benchmarks</h3>
-                                    </div>
-                                    <div class="telemetry-log-list">
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-circle-notch"></i> RPLiDAR A2M8</span>
-                                            <span class="telemetry-log-val">12 Hz @ 360°</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-compass"></i> BNO055 IMU Fused</span>
-                                            <span class="telemetry-log-val">100 Hz Rate</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-tachometer-alt"></i> Motor PID Loop</span>
-                                            <span class="telemetry-log-val">1000 Hz / 1ms</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-network-wired"></i> UART Host Latency</span>
-                                            <span class="telemetry-log-val">&lt; 2.0 ms</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-eye"></i> Edge Inference (YOLO)</span>
-                                            <span class="telemetry-log-val">45 FPS INT8</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-battery-three-quarters"></i> Field Endurance</span>
-                                            <span class="telemetry-log-val">~4.5 Hours</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Hardware Specifications Widget -->
-                                <div class="sidebar-widget reveal-on-scroll">
-                                    <div class="sidebar-widget-header">
-                                        <h3 class="sidebar-widget-title"><i class="fas fa-cogs"></i> Lab Hardware Stack</h3>
-                                    </div>
-                                    <div class="telemetry-log-list">
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-microchip"></i> Companion Host</span>
-                                            <span class="telemetry-log-val">Orin Nano 8GB</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-memory"></i> Microcontroller</span>
-                                            <span class="telemetry-log-val">STM32 Cortex-M4</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-server"></i> Middleware</span>
-                                            <span class="telemetry-log-val">ROS 2 Humble</span>
-                                        </div>
-                                        <div class="telemetry-log-item">
-                                            <span class="telemetry-log-label"><i class="fas fa-camera"></i> Vision Sensor</span>
-                                            <span class="telemetry-log-val">RealSense D435i</span>
-                                        </div>
-                                    </div>
-                                </div>
-
                             </div>
 
-                        </div>
+                            <!-- Chapter 2: 6-DOF Manipulator & Vision -->
+                            <div class="hltv-chapter-block reveal-on-scroll">
+                                <button type="button" class="hltv-chapter-header" aria-expanded="true" aria-controls="chapter-2-feed" id="chapter-2-header">
+                                    <h3 class="hltv-chapter-title"><i class="fas fa-chevron-down hltv-chapter-chevron" aria-hidden="true"></i> Chapter 2</h3>
+                                    <span class="hltv-chapter-kicker">6-DOF Manipulator &amp; Vision</span>
+                                </button>
+                                <div class="hltv-feed-list" id="chapter-2-feed" role="region" aria-labelledby="chapter-2-header">
+                                    <a href="robotics-arm.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">2 days ago</span>
+                                            <span class="hltv-row-comments">21 comments</span>
+                                        </div>
+                                    </a>
+                                    <!-- Featured Dossier Card for Chapter 2 -->
+                                    <a href="robotics-arm.html" class="hltv-featured-card">
+                                        <div class="hltv-featured-thumb">
+                                            <img src="images/thumb-arm.svg" alt="6-DOF Robotic Arm Schematic" loading="lazy">
+                                        </div>
+                                        <div class="hltv-featured-body">
+                                            <h4 class="hltv-featured-title">Lorem ipsum dolor sit amet</h4>
+                                            <p class="hltv-featured-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-arm.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">2 days ago</span>
+                                            <span class="hltv-row-comments">61 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-arm.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">2 days ago</span>
+                                            <span class="hltv-row-comments">26 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-arm.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">2 days ago</span>
+                                            <span class="hltv-row-comments">90 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-arm.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">2 days ago</span>
+                                            <span class="hltv-row-comments">30 comments</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Chapter 3: Flight Avionics & Telemetry -->
+                            <div class="hltv-chapter-block reveal-on-scroll">
+                                <button type="button" class="hltv-chapter-header" aria-expanded="true" aria-controls="chapter-3-feed" id="chapter-3-header">
+                                    <h3 class="hltv-chapter-title"><i class="fas fa-chevron-down hltv-chapter-chevron" aria-hidden="true"></i> Chapter 3</h3>
+                                    <span class="hltv-chapter-kicker">Flight Avionics &amp; Telemetry</span>
+                                </button>
+                                <div class="hltv-feed-list" id="chapter-3-feed" role="region" aria-labelledby="chapter-3-header">
+                                    <!-- Featured Dossier Card for Chapter 3 -->
+                                    <a href="robotics-flight.html" class="hltv-featured-card">
+                                        <div class="hltv-featured-thumb">
+                                            <img src="images/thumb-flight.svg" alt="Flight Avionics Controller Schematic" loading="lazy">
+                                        </div>
+                                        <div class="hltv-featured-body">
+                                            <h4 class="hltv-featured-title">Lorem ipsum dolor sit amet</h4>
+                                            <p class="hltv-featured-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.</p>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-flight.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">3 days ago</span>
+                                            <span class="hltv-row-comments">44 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-flight.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">3 days ago</span>
+                                            <span class="hltv-row-comments">19 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-flight.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">3 days ago</span>
+                                            <span class="hltv-row-comments">38 comments</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Chapter 4: Quadruped Locomotion Engine -->
+                            <div class="hltv-chapter-block reveal-on-scroll">
+                                <button type="button" class="hltv-chapter-header" aria-expanded="true" aria-controls="chapter-4-feed" id="chapter-4-header">
+                                    <h3 class="hltv-chapter-title"><i class="fas fa-chevron-down hltv-chapter-chevron" aria-hidden="true"></i> Chapter 4</h3>
+                                    <span class="hltv-chapter-kicker">Quadruped Locomotion Engine</span>
+                                </button>
+                                <div class="hltv-feed-list" id="chapter-4-feed" role="region" aria-labelledby="chapter-4-header">
+                                    <a href="robotics-quadruped.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">4 days ago</span>
+                                            <span class="hltv-row-comments">52 comments</span>
+                                        </div>
+                                    </a>
+                                    <!-- Featured Dossier Card for Chapter 4 -->
+                                    <a href="robotics-quadruped.html" class="hltv-featured-card">
+                                        <div class="hltv-featured-thumb">
+                                            <img src="images/thumb-quadruped.svg" alt="Quadruped Dynamics Locomotion Schematic" loading="lazy">
+                                        </div>
+                                        <div class="hltv-featured-body">
+                                            <h4 class="hltv-featured-title">Lorem ipsum dolor sit amet</h4>
+                                            <p class="hltv-featured-desc">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Duis aute irure dolor in reprehenderit in voluptate velit esse.</p>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-quadruped.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">4 days ago</span>
+                                            <span class="hltv-row-comments">33 comments</span>
+                                        </div>
+                                    </a>
+                                    <a href="robotics-quadruped.html" class="hltv-feed-row">
+                                        <span class="hltv-row-title">Lorem ipsum dolor sit amet</span>
+                                        <div class="hltv-row-meta">
+                                            <span class="hltv-row-time">5 days ago</span>
+                                            <span class="hltv-row-comments">77 comments</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Unified System Architecture Overview -->
+                        <section class="robotics-system-arch reveal-on-scroll" id="system-architecture">
+                            <div class="system-arch-header">
+                                <h3 class="system-arch-title"><i class="fas fa-network-wired"></i> Unified Heterogeneous System Architecture</h3>
+                                <p class="system-arch-desc">
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras mattis consectetur purus sit amet fermentum. Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
+                                </p>
+                            </div>
+                            <div class="system-arch-tiers">
+                                <div class="system-arch-tier-card">
+                                    <span class="tier-badge">Tier 1 &bull; High-Level Compute</span>
+                                    <h4 class="tier-title">Perception &amp; SLAM Engine</h4>
+                                    <p class="tier-desc">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean lacinia bibendum nulla sed consectetur. Donec sed odio dui.
+                                    </p>
+                                    <div class="tier-tags">
+                                        <span class="tier-mini-tag">ROS 2 Humble</span>
+                                        <span class="tier-mini-tag">CUDA / TensorRT</span>
+                                        <span class="tier-mini-tag">Nav2</span>
+                                        <span class="tier-mini-tag">CycloneDDS</span>
+                                    </div>
+                                </div>
+                                <div class="system-arch-tier-card">
+                                    <span class="tier-badge">Tier 2 &bull; Real-Time Middleware</span>
+                                    <h4 class="tier-title">Deterministic micro-ROS Bridge</h4>
+                                    <p class="tier-desc">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis natoque penatibus.
+                                    </p>
+                                    <div class="tier-tags">
+                                        <span class="tier-mini-tag">micro-ROS Client</span>
+                                        <span class="tier-mini-tag">UART DMA</span>
+                                        <span class="tier-mini-tag">CAN FD</span>
+                                        <span class="tier-mini-tag">&lt; 2ms Latency</span>
+                                    </div>
+                                </div>
+                                <div class="system-arch-tier-card">
+                                    <span class="tier-badge">Tier 3 &bull; Embedded Control</span>
+                                    <h4 class="tier-title">Low-Level Actuation Firmware</h4>
+                                    <p class="tier-desc">
+                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Vivamus sagittis lacus.
+                                    </p>
+                                    <div class="tier-tags">
+                                        <span class="tier-mini-tag">STM32 Cortex-M4/M7</span>
+                                        <span class="tier-mini-tag">FreeRTOS</span>
+                                        <span class="tier-mini-tag">1 kHz PID Loop</span>
+                                        <span class="tier-mini-tag">Hardware E-Stop</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
 
                         <!-- Thesis Citation & Academic Reference Section -->
                         <div id="thesis-cite" class="thesis-citation-section">
@@ -572,7 +463,8 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/robotics.js?v=1.1" defer></script>
+            <script src="assets/js/robotics.js?v=1.4" defer></script>
 
     </body>
 </html>
+

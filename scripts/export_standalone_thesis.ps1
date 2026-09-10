@@ -49,6 +49,7 @@ $dirs = @(
     "$DestFull\assets\css",
     "$DestFull\assets\js",
     "$DestFull\assets\fonts",
+    "$DestFull\assets\webfonts",
     "$DestFull\images"
 )
 foreach ($d in $dirs) {
@@ -58,6 +59,7 @@ Write-Host "[1/5] Created standalone folder structure." -ForegroundColor Green
 
 # 2. Copy Assets
 Write-Host "[2/5] Copying styles, scripts, fonts, and brand assets..." -ForegroundColor DarkGray
+Copy-Item "$WorkspaceRoot\assets\css\main.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\css\robotics.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\css\fontawesome-all.min.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\js\robotics.js" "$DestFull\assets\js\" -Force
@@ -67,6 +69,9 @@ Copy-Item "$WorkspaceRoot\robots.txt" "$DestFull\" -Force
 
 if (Test-Path "$WorkspaceRoot\assets\fonts") {
     Copy-Item "$WorkspaceRoot\assets\fonts\*" "$DestFull\assets\fonts\" -Recurse -Force
+}
+if (Test-Path "$WorkspaceRoot\assets\webfonts") {
+    Copy-Item "$WorkspaceRoot\assets\webfonts\*" "$DestFull\assets\webfonts\" -Recurse -Force
 }
 Write-Host "[2/5] Core assets copied successfully." -ForegroundColor Green
 

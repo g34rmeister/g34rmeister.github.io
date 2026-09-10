@@ -104,76 +104,26 @@ document.addEventListener('DOMContentLoaded', () => {
             drawer.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', closeDrawer);
             });
+
+            // Swipe to close rightward (matching right-bound pullout)
+            let touchStartX = 0;
+            let touchStartY = 0;
+            drawer.addEventListener('touchstart', (e) => {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+            }, { passive: true });
+            drawer.addEventListener('touchend', (e) => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                if (touchEndX - touchStartX > 45 && Math.abs(touchEndY - touchStartY) < 90) {
+                    closeDrawer();
+                }
+            }, { passive: true });
         }
     }
     initThesisDrawer();
 
-    // 4. Category Filter Engine & Hash Routing
-    function initRoboticsCategoryNav() {
-        const catNav = document.querySelector('.robotics-category-nav');
-        if (!catNav) return;
-
-        const pills = catNav.querySelectorAll('.cat-pill');
-        const groups = document.querySelectorAll('.robotics-category-group');
-        if (!pills.length || !groups.length) return;
-
-        function applyFilter(category, updateUrl = true, shouldScroll = false) {
-            pills.forEach(p => {
-                const isMatch = (p.dataset.category === category) || (!category && p.dataset.category === 'all');
-                p.classList.toggle('active', isMatch);
-                p.setAttribute('aria-selected', isMatch ? 'true' : 'false');
-            });
-
-            groups.forEach(group => {
-                const groupCat = group.dataset.category;
-                if (!category || category === 'all' || groupCat === category) {
-                    group.style.display = '';
-                    group.classList.add('is-revealed');
-                } else {
-                    group.style.display = 'none';
-                }
-            });
-
-            if (updateUrl && category && category !== 'all') {
-                if (history.replaceState) {
-                    history.replaceState(null, '', `#cat-${category}`);
-                }
-            } else if (updateUrl && category === 'all') {
-                if (history.replaceState) {
-                    history.replaceState(null, '', window.location.pathname + window.location.search);
-                }
-            }
-
-            if (shouldScroll && category && category !== 'all') {
-                const targetGroup = document.getElementById(`cat-${category}`);
-                if (targetGroup) {
-                    targetGroup.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-        }
-
-        pills.forEach(pill => {
-            pill.addEventListener('click', (e) => {
-                e.preventDefault();
-                const cat = pill.dataset.category || 'all';
-                applyFilter(cat, true, true);
-            });
-        });
-
-        function checkHash() {
-            const hash = window.location.hash;
-            if (hash && hash.startsWith('#cat-')) {
-                const cat = hash.replace('#cat-', '');
-                applyFilter(cat, false, false);
-            }
-        }
-
-        window.addEventListener('hashchange', checkHash);
-        checkHash();
-    }
-    initRoboticsCategoryNav();
-
-    // 5. One-Click BibTeX Citation Clipboard Copy & Format Switcher
+    // 4. One-Click BibTeX Citation Clipboard Copy & Format Switcher
     function initBibtexCopy() {
         const copyBtn = document.getElementById('btn-copy-bibtex');
         const bibtexPre = document.getElementById('bibtex-code');
@@ -218,7 +168,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!copyBtn) return;
 
         copyBtn.addEventListener('click', async () => {
-            const textToCopy = currentFormat === 'bibtex' ? rawBibtex : rawIeee;
+            let textToCopy = '';
+            if (currentFormat === 'bibtex') {
+                textToCopy = (bibtexPre && bibtexPre.innerText) ? bibtexPre.innerText.trim() : rawBibtex;
+            } else {
+                textToCopy = (ieeeDiv && ieeeDiv.innerText) ? ieeeDiv.innerText.trim() : rawIeee;
+            }
             let copied = false;
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 try {
@@ -257,6 +212,74 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     initBibtexCopy();
+
+    // 5. Collapsible HLTV Research Chapters Controller
+    function initCollapsibleChapters() {
+        const chapterBlocks = document.querySelectorAll('.hltv-chapter-block');
+        if (!chapterBlocks.length) return;
+
+        const toggleAllBtn = document.getElementById('hltv-toggle-all');
+        const toggleAllText = document.getElementById('hltv-toggle-all-text');
+        const toggleAllIcon = document.getElementById('hltv-toggle-all-icon');
+
+        function updateToggleAllState() {
+            if (!toggleAllBtn || !toggleAllText || !toggleAllIcon) return;
+            const anyExpanded = Array.from(chapterBlocks).some(b => !b.classList.contains('is-collapsed'));
+            if (anyExpanded) {
+                toggleAllText.textContent = 'Collapse All';
+                toggleAllIcon.className = 'fas fa-compress-alt';
+                toggleAllBtn.setAttribute('aria-label', 'Collapse all research chapters');
+            } else {
+                toggleAllText.textContent = 'Expand All';
+                toggleAllIcon.className = 'fas fa-expand-alt';
+                toggleAllBtn.setAttribute('aria-label', 'Expand all research chapters');
+            }
+        }
+
+        chapterBlocks.forEach((block, idx) => {
+            const header = block.querySelector('.hltv-chapter-header');
+            const feedList = block.querySelector('.hltv-feed-list');
+            if (!header || !feedList) return;
+
+            const feedId = feedList.id || `chapter-feed-${idx + 1}`;
+            feedList.id = feedId;
+            header.setAttribute('aria-controls', feedId);
+            header.setAttribute('aria-expanded', block.classList.contains('is-collapsed') ? 'false' : 'true');
+
+            function toggleChapter(e) {
+                if (e && e.target && e.target.closest('a')) return;
+                const isNowCollapsed = block.classList.toggle('is-collapsed');
+                header.setAttribute('aria-expanded', isNowCollapsed ? 'false' : 'true');
+                updateToggleAllState();
+            }
+
+            header.addEventListener('click', toggleChapter);
+            header.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleChapter(e);
+                }
+            });
+        });
+
+        if (toggleAllBtn) {
+            toggleAllBtn.addEventListener('click', () => {
+                const anyExpanded = Array.from(chapterBlocks).some(b => !b.classList.contains('is-collapsed'));
+                chapterBlocks.forEach(block => {
+                    const header = block.querySelector('.hltv-chapter-header');
+                    if (anyExpanded) {
+                        block.classList.add('is-collapsed');
+                        if (header) header.setAttribute('aria-expanded', 'false');
+                    } else {
+                        block.classList.remove('is-collapsed');
+                        if (header) header.setAttribute('aria-expanded', 'true');
+                    }
+                });
+                updateToggleAllState();
+            });
+        }
+    }
+    initCollapsibleChapters();
 
     // 6. Reveal-on-Scroll Observer
     function initRevealOnScroll() {
