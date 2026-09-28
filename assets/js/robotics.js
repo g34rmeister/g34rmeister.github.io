@@ -337,4 +337,35 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     initBuildDate();
+
+    // 8. Wikipedia-style "Contents" box for article pages, built from the section headings
+    function initTableOfContents() {
+        const body = document.querySelector('.robotics-article-body');
+        if (!body) return;
+        const headings = body.querySelectorAll('h2.article-section-title');
+        if (headings.length < 2) return;
+
+        const toc = document.createElement('nav');
+        toc.className = 'wp-toc';
+        toc.setAttribute('aria-labelledby', 'wp-toc-title');
+        const title = document.createElement('div');
+        title.className = 'wp-toc-title';
+        title.id = 'wp-toc-title';
+        title.textContent = 'Contents';
+        const list = document.createElement('ol');
+
+        headings.forEach((heading, i) => {
+            if (!heading.id) heading.id = 'section-' + (i + 1);
+            const item = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#' + heading.id;
+            link.textContent = heading.textContent.trim();
+            item.appendChild(link);
+            list.appendChild(item);
+        });
+
+        toc.append(title, list);
+        body.insertBefore(toc, headings[0]);
+    }
+    initTableOfContents();
 });

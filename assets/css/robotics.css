@@ -1,2891 +1,991 @@
+/*
+	Robotics thesis pages (robotics.html + robotics-*.html)
+	Styled after Wikipedia's reading layout, in LSU purple and gold.
+	Loaded after main.css; everything here is scoped to the robotics pages.
+
+	Contents
+	  1. Tokens (light, Wikipedia-style night)
+	  2. Base type
+	  3. Header, nav & mobile drawer
+	  4. Buttons
+	  5. Hub: title block, chapter lists, featured boxes, architecture table
+	  6. Articles: title, figure, contents box, sections, callouts, navbox
+	  7. Citation block
+	  8. Footer
+	  9. Responsive
+*/
+
 /* ==========================================================================
-   Robotics Hub & Articles Stylesheet (assets/css/robotics.css)
-   Inspired by:
-     1. HLTV Esports Dashboard (Information-dense modular hub, hero spotlight,
-        categorized newsfeed, ranking/telemetry sidebar widgets).
-     2. TigerBot Academy (Clean editorial typography, masthead meta, structured
-        spec/milestone lists with bold labels, academic reading clarity).
-   Themed with authentic LSU Purple (#461D7C) and Gold (#FDD023)
-   Engineered for maximum legibility & WCAG AA/AAA contrast in Dark and Light modes.
+   1. Tokens
    ========================================================================== */
-
-/* --------------------------------------------------------------------------
-   0. LSU Purple & Gold Design Tokens
-   -------------------------------------------------------------------------- */
 :root {
-    /* Refined LSU Brand Palette (Warm, elegant, eye-friendly academic luxury) */
-    --lsu-purple: #58298c;              /* Refined deep royal purple */
-    --lsu-purple-deep: #1e1233;         /* Deep velvety dark plum */
-    --lsu-purple-mid: #6d35aa;          /* Smooth mid purple */
-    --lsu-purple-light: #8e58cc;        /* Muted amethyst */
-    --lsu-purple-electric: #a97de8;     /* Soft wisteria, NOT eye-straining neon */
-    --lsu-purple-lilac: #ccb9ea;        /* Gentle warm lilac */
+	--wp-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--wp-serif: 'Linux Libertine', 'Georgia', 'Times', serif;
+	--wp-mono: Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace;
+	--wp-content: 960px;
 
-    --lsu-gold: #e2ba5c;               /* Warm champagne gold (eliminates neon yellow strain) */
-    --lsu-gold-bright: #ecd07a;        /* Soft warm highlight on hover */
-    --lsu-gold-glow: rgba(226, 186, 92, 0.18); /* Gentle ambient glow, no harsh glare */
-    --lsu-gold-amber: #c49938;         /* Warm amber gold */
-    --lsu-gold-dark: #8c6418;          /* Antique gold for light mode (5.4:1 contrast) */
+	--lsu-purple: #461d7c;
+	--lsu-gold: #fdd023;
 
-    /* Robotics Scoped Tokens (Default: Dark Mode) */
-    --robotics-accent: #e2ba5c;              /* Warm champagne gold */
-    --robotics-accent-hover: #ecd07a;
-    --robotics-accent-glow: rgba(226, 186, 92, 0.18);
-    --robotics-secondary: #b69edf;          /* Soft gentle lavender */
-    --robotics-bg: #0e0a17;                 /* Warm dark obsidian aubergine */
-    --robotics-card-bg: rgba(22, 15, 36, 0.9); /* Cohesive warm purple-slate */
-    --robotics-card-border: rgba(182, 158, 223, 0.14); /* Subtle warm border */
-    --robotics-card-hover-border: rgba(226, 186, 92, 0.45); /* Warm gold border on hover */
-    --robotics-subtle-bg: rgba(88, 41, 140, 0.12); /* Soft purple tint */
-    --robotics-surface-bg: rgba(27, 18, 45, 0.94); /* Inner elevated container */
-    --robotics-stage-bg: #0e0a17;           /* Harmonized schematic stage */
-    --robotics-text-gold: #e2ba5c;
-
-    /* Standalone System Fallbacks */
-    --font-mono: 'JetBrains Mono', monospace;
-    --radius: 6px;
-    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
-    --transition-fast: 0.15s ease;
-    --transition-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    --text-heading: #f4effc;               /* Soft warm pearl white */
-    --text-main: #c7bed8;                  /* Comforting muted lavender gray */
-    --text-muted: #8a7c9f;                 /* Gentle secondary subtext */
-    --border-color: rgba(182, 158, 223, 0.14);
+	--wp-bg: #ffffff;
+	--wp-bg-subtle: #f8f9fa;
+	--wp-bg-muted: #eaecf0;
+	--wp-border: #a2a9b1;
+	--wp-border-light: #c8ccd1;
+	--wp-text: #202122;
+	--wp-text-muted: #54595d;
+	--wp-link: #461d7c;
+	--wp-link-hover: #6b3fa8;
+	--wp-on-link: #ffffff;
+	--wp-gold: #fdd023;
+	--wp-gold-soft: #fff8d6;
+	--wp-gold-text: #6b5200;
+	--wp-bib-key: #8a6a00;
 }
 
-[data-theme="light"] {
-    /* Light Mode Overrides for Flawless Readability & High Contrast */
-    --robotics-accent: #58298c;              /* Deep LSU Purple (11.8:1 WCAG AAA on white) */
-    --robotics-accent-hover: #3e1b64;
-    --robotics-accent-glow: rgba(88, 41, 140, 0.12);
-    --robotics-secondary: #8c6418;          /* Antique amber-gold */
-    --robotics-bg: #faf8fc;                 /* Soft warm ivory-lavender parchment */
-    --robotics-card-bg: #ffffff;
-    --robotics-card-border: rgba(88, 41, 140, 0.12);
-    --robotics-card-hover-border: #58298c;
-    --robotics-subtle-bg: rgba(88, 41, 140, 0.05);
-    --robotics-surface-bg: #f4eff9;
-    --robotics-stage-bg: #110a1c;           /* Schematic stages remain dark for crisp HUD SVGs */
-    --robotics-text-gold: #8c6418;
-
-    /* Standalone System Fallbacks (Light) */
-    --card-shadow: 0 4px 18px rgba(88, 41, 140, 0.06);
-    --text-heading: #26143e;               /* Deep velvet purple/charcoal */
-    --text-main: #4a3e5c;                  /* Legible muted dark slate */
-    --text-muted: #726588;
-    --border-color: rgba(88, 41, 140, 0.12);
+[data-theme="dark"] {
+	--wp-bg: #101418;
+	--wp-bg-subtle: #1b1f24;
+	--wp-bg-muted: #27292d;
+	--wp-border: #72777d;
+	--wp-border-light: #3f4449;
+	--wp-text: #eaecf0;
+	--wp-text-muted: #a2a9b1;
+	--wp-link: #c9b1f0;
+	--wp-link-hover: #ddd0f7;
+	--wp-on-link: #1a0b33;
+	--wp-gold-soft: rgba(253, 208, 35, 0.12);
+	--wp-gold-text: #fdd023;
+	--wp-bib-key: #fdd023;
 }
 
-/* --------------------------------------------------------------------------
-   1. Shared Layout & Container Utilities
-   -------------------------------------------------------------------------- */
-/* Layout Overrides for Robotics/Thesis Pages */
-html {
-    scroll-padding-top: 5rem;
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--wp-bg: #101418;
+		--wp-bg-subtle: #1b1f24;
+		--wp-bg-muted: #27292d;
+		--wp-border: #72777d;
+		--wp-border-light: #3f4449;
+		--wp-text: #eaecf0;
+		--wp-text-muted: #a2a9b1;
+		--wp-link: #c9b1f0;
+		--wp-link-hover: #ddd0f7;
+		--wp-on-link: #1a0b33;
+		--wp-gold-soft: rgba(253, 208, 35, 0.12);
+		--wp-gold-text: #fdd023;
+		--wp-bib-key: #fdd023;
+	}
 }
 
-html, body {
-    overflow-x: clip !important;
+/* ==========================================================================
+   2. Base type
+   ========================================================================== */
+html,
+body,
+#page-wrapper {
+	background: var(--wp-bg);
 }
 
 body {
-    padding-top: 0 !important;
+	padding-top: 0;
+	font-family: var(--wp-sans);
+	font-size: 15px;
+	line-height: 1.6;
+	letter-spacing: 0;
+	color: var(--wp-text);
+	-webkit-font-smoothing: auto;
+	text-rendering: auto;
 }
 
-.robotics-container [id],
-.robotics-article-container [id],
-.thesis-masthead [id],
-section[id] {
-    scroll-margin-top: 5rem;
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--wp-sans);
+	letter-spacing: 0;
+	color: var(--wp-text);
 }
 
-body:has(.robotics-container),
-body:has(.robotics-article-container),
-#page-wrapper:has(.robotics-container),
-#page-wrapper:has(.robotics-article-container) {
-    background-color: var(--robotics-bg) !important;
-    color: var(--text-main);
+a {
+	color: var(--wp-link);
+	text-decoration: none;
+	transition: none;
+}
+a:hover {
+	color: var(--wp-link);
+	text-decoration: underline;
 }
 
-@media screen and (max-width: 980px) {
-    html, body {
-        overflow-x: clip !important;
-    }
-    body {
-        padding-top: 0 !important;
-    }
+p { margin: 0.5em 0 1em; }
+ul, ol { margin-bottom: 1em; }
+section, article { margin-bottom: 0; }
+b, strong { color: inherit; font-weight: 700; }
+
+::selection { background: var(--wp-gold); color: #202122; }
+
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+	outline: 2px solid var(--wp-link) !important;
+	outline-offset: 2px !important;
+}
+
+/* Content shows immediately; no scroll-in animations */
+.reveal-on-scroll {
+	opacity: 1;
+	transform: none;
+	transition: none;
 }
 
 #main {
-    border-top: none !important;
-}
-
-.robotics-container {
-    width: 100%;
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-    box-sizing: border-box;
-}
-
-.robotics-article-container {
-    width: 100%;
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 0 1.25rem;
-    box-sizing: border-box;
-}
-
-/* Subpage CTA Button Overrides (Replace main.css green accent with LSU Gold & Purple) */
-.subpage-cta a.button {
-    background: rgba(70, 29, 124, 0.35);
-    border: 1px solid var(--lsu-gold);
-    color: var(--lsu-gold);
-    box-shadow: 0 0 10px rgba(253, 208, 35, 0.15);
-    transition: all var(--transition-fast);
-}
-
-.subpage-cta a.button:hover {
-    background: var(--lsu-gold);
-    color: #240d42;
-    border-color: var(--lsu-gold);
-    box-shadow: 0 0 16px var(--lsu-gold-glow);
-    transform: translateY(-2px);
-}
-
-.subpage-cta a.button.alt {
-    background: var(--robotics-subtle-bg);
-    border-color: var(--border-color);
-    color: var(--text-heading);
-    box-shadow: none;
-}
-
-.subpage-cta a.button.alt:hover {
-    background: rgba(70, 29, 124, 0.2);
-    border-color: var(--lsu-purple-light);
-    color: var(--text-heading);
-}
-
-[data-theme="light"] .subpage-cta a.button {
-    background: rgba(70, 29, 124, 0.08);
-    border-color: var(--lsu-purple);
-    color: var(--lsu-purple);
-    box-shadow: none;
-}
-
-[data-theme="light"] .subpage-cta a.button:hover {
-    background: var(--lsu-purple);
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(70, 29, 124, 0.25);
-}
-
-[data-theme="light"] .subpage-cta a.button.alt {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(70, 29, 124, 0.2);
-    color: var(--text-heading);
-}
-
-[data-theme="light"] .subpage-cta a.button.alt:hover {
-    background: rgba(70, 29, 124, 0.08);
-    border-color: var(--lsu-purple);
-}
-
-/* Subpage Banner Enhancements for Robotics */
-body:has(.robotics-container) #subpage-banner .page-title-badge,
-.robotics-article-container ~ #subpage-banner .page-title-badge,
-#subpage-banner .page-title-badge {
-    border-color: rgba(253, 208, 35, 0.45);
-    color: var(--lsu-gold);
-    background: rgba(70, 29, 124, 0.4);
-    box-shadow: 0 0 12px rgba(253, 208, 35, 0.15);
-}
-
-[data-theme="light"] #subpage-banner .page-title-badge {
-    border-color: rgba(70, 29, 124, 0.35);
-    color: var(--lsu-purple);
-    background: rgba(70, 29, 124, 0.08);
-    box-shadow: none;
-}
-
-/* --------------------------------------------------------------------------
-   2. Category Navigation Bar (LSU Purple & Gold Top Nav)
-   -------------------------------------------------------------------------- */
-.robotics-category-nav {
-    margin-bottom: 2rem;
-    padding: 0.75rem 1.25rem;
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    box-shadow: var(--card-shadow);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: border-color var(--transition-smooth);
-}
-
-.category-nav-inner {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-}
-
-.category-nav-inner::-webkit-scrollbar {
-    display: none;
-}
-
-.category-nav-label {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: var(--robotics-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.category-pills {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: nowrap;
-}
-
-.cat-pill {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 0.45rem 0.9rem;
-    border-radius: 4px;
-    background: var(--robotics-subtle-bg);
-    border: 1px solid var(--robotics-card-border);
-    color: var(--text-muted);
-    cursor: pointer;
-    text-decoration: none;
-    white-space: nowrap;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all var(--transition-fast);
-    outline: none;
-}
-
-.cat-pill i {
-    font-size: 0.88em;
-    color: var(--robotics-secondary);
-    transition: color var(--transition-fast);
-}
-
-.cat-pill .cat-count {
-    font-size: 0.7rem;
-    padding: 0.1em 0.45em;
-    border-radius: 10px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid var(--border-color);
-    color: var(--text-muted);
-}
-
-.cat-pill:hover {
-    color: var(--text-heading);
-    border-color: var(--lsu-gold);
-    background: rgba(253, 208, 35, 0.12);
-}
-
-.cat-pill:hover i {
-    color: var(--lsu-gold);
-}
-
-/* Active Pill: LSU Purple & Gold Glow */
-.cat-pill.active {
-    background: var(--lsu-purple) !important;
-    border-color: var(--lsu-gold) !important;
-    color: var(--lsu-gold) !important;
-    box-shadow: 0 0 14px var(--lsu-gold-glow);
-    font-weight: 700;
-}
-
-.cat-pill.active i {
-    color: var(--lsu-gold) !important;
-}
-
-.cat-pill.active .cat-count {
-    background: rgba(253, 208, 35, 0.25);
-    border-color: var(--lsu-gold);
-    color: #ffffff;
-}
-
-[data-theme="light"] .cat-pill.active {
-    background: var(--lsu-purple) !important;
-    border-color: var(--lsu-gold) !important;
-    color: #ffffff !important;
-    box-shadow: 0 4px 14px rgba(70, 29, 124, 0.25);
-}
-
-[data-theme="light"] .cat-pill.active i {
-    color: var(--lsu-gold) !important;
-}
-
-/* --------------------------------------------------------------------------
-   3. Research Fleet Architecture Grid (Clean Academic Layout)
-   -------------------------------------------------------------------------- */
-.fleet-section-header {
-    margin-bottom: 1.75rem;
-    padding-top: 0.5rem;
-}
-
-.fleet-section-kicker {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--robotics-accent);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 0.4rem;
-}
-
-.fleet-section-title {
-    font-size: 1.65rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0 0 0.5rem 0;
-    letter-spacing: -0.01em;
-}
-
-.fleet-section-desc {
-    font-size: 0.98rem;
-    color: var(--text-main);
-    line-height: 1.6;
-    margin: 0;
-    max-width: 80ch;
-}
-
-.robotics-fleet-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem;
-    margin-top: 1.25rem;
-    margin-bottom: 3.5rem;
-}
-
-@media screen and (max-width: 900px) {
-    .robotics-fleet-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-}
-
-.fleet-card {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    display: flex;
-    flex-direction: column;
-    transition: border-color var(--transition-smooth), transform var(--transition-smooth), box-shadow var(--transition-smooth);
-}
-
-.fleet-card:hover {
-    border-color: var(--robotics-card-hover-border);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 30px -4px var(--robotics-accent-glow);
-}
-
-.fleet-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.85rem 1.25rem;
-    background: var(--robotics-subtle-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.fleet-card-num {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--robotics-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.fleet-card-stage {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    background: var(--robotics-stage-bg);
-    overflow: hidden;
-    border-bottom: 1px solid var(--robotics-card-border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.fleet-card-stage svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.fleet-card-body {
-    padding: 1.35rem 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.fleet-card-title {
-    font-size: 1.22rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.3;
-    letter-spacing: -0.01em;
-}
-
-.fleet-card-title a {
-    color: var(--text-heading);
-    text-decoration: none;
-    transition: color var(--transition-fast);
-}
-
-.fleet-card-title a:hover {
-    color: var(--robotics-accent);
-}
-
-.fleet-card-desc {
-    font-size: 0.92rem;
-    color: var(--text-main);
-    line-height: 1.6;
-    margin: 0 0 1.2rem 0;
-}
-
-.fleet-spec-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1.35rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.45rem;
-}
-
-.fleet-spec-item {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    line-height: 1.45;
-    color: var(--text-muted);
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-}
-
-.fleet-spec-label {
-    color: var(--text-heading);
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-.fleet-spec-item i {
-    font-size: 0.75rem;
-    color: var(--robotics-secondary);
-}
-
-.fleet-card-actions {
-    margin-top: auto;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--robotics-card-border);
-}
-
-/* --------------------------------------------------------------------------
-   3b. Unified System Architecture Callout
-   -------------------------------------------------------------------------- */
-.robotics-system-arch {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    padding: 2rem;
-    box-shadow: var(--card-shadow);
-    margin-bottom: 3.5rem;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.system-arch-header {
-    margin-bottom: 1.75rem;
-}
-
-.system-arch-title {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0 0 0.5rem 0;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.system-arch-title i {
-    color: var(--robotics-accent);
-}
-
-.system-arch-desc {
-    font-size: 0.95rem;
-    color: var(--text-main);
-    line-height: 1.6;
-    margin: 0;
-    max-width: 75ch;
-}
-
-.system-arch-tiers {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
-}
-
-@media screen and (max-width: 900px) {
-    .system-arch-tiers {
-        grid-template-columns: 1fr;
-    }
-}
-
-.system-arch-tier-card {
-    background: var(--robotics-surface-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    transition: border-color var(--transition-fast);
-}
-
-.system-arch-tier-card:hover {
-    border-color: var(--robotics-card-hover-border);
-}
-
-.tier-badge {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--robotics-accent);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-.tier-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0;
-}
-
-.tier-desc {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    line-height: 1.55;
-    margin: 0;
-}
-
-.tier-tags {
-    margin-top: auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-    padding-top: 0.5rem;
-}
-
-.tier-mini-tag {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    padding: 0.15rem 0.5rem;
-    border-radius: 3px;
-    background: var(--robotics-subtle-bg);
-    border: 1px solid var(--robotics-card-border);
-    color: var(--text-heading);
-}
-
-/* --------------------------------------------------------------------------
-   3c. Legacy Robotics Hub Dashboard Grid
-   -------------------------------------------------------------------------- */
-.robotics-dashboard {
-    display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 1.75rem;
-    align-items: start;
-    margin-top: 0.5rem;
-    margin-bottom: 3.5rem;
-}
-
-@media screen and (max-width: 1080px) {
-    .robotics-dashboard {
-        grid-template-columns: 1fr 300px;
-        gap: 1.25rem;
-    }
-}
-
-@media screen and (max-width: 900px) {
-    .robotics-dashboard {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-}
-
-.robotics-main-col {
-    display: flex;
-    flex-direction: column;
-    gap: 2.25rem;
-    min-width: 0;
-}
-
-.robotics-sidebar-col {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-width: 0;
-}
-
-/* --------------------------------------------------------------------------
-   4. Hero Spotlight Card (Inspired by HLTV Feature / MVP Banner)
-   -------------------------------------------------------------------------- */
-.robotics-spotlight {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    transition: border-color var(--transition-smooth), box-shadow var(--transition-smooth);
-}
-
-.robotics-spotlight:hover {
-    border-color: var(--robotics-card-hover-border);
-    box-shadow: 0 8px 32px -4px var(--robotics-accent-glow);
-}
-
-/* Spotlight Header Bar */
-.spotlight-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    padding: 0.85rem 1.25rem;
-    background: var(--robotics-subtle-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.spotlight-tagline {
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--robotics-accent);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-transform: uppercase;
-}
-
-/* Live / Active Pulsing Badge in LSU Gold */
-.badge-live {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: rgba(70, 29, 124, 0.45);
-    border: 1px solid var(--lsu-gold);
-    color: var(--lsu-gold);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 0.2em 0.6em;
-    border-radius: 3px;
-    text-transform: uppercase;
-    box-shadow: 0 0 8px rgba(253, 208, 35, 0.2);
-}
-
-[data-theme="light"] .badge-live {
-    background: rgba(70, 29, 124, 0.1);
-    border: 1px solid var(--lsu-purple);
-    color: var(--lsu-purple);
-    box-shadow: none;
-}
-
-.badge-live::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--lsu-gold);
-    box-shadow: 0 0 8px var(--lsu-gold);
-    animation: pulseDot 1.8s infinite ease-in-out;
-}
-
-[data-theme="light"] .badge-live::before {
-    background: var(--lsu-purple);
-    box-shadow: 0 0 8px var(--lsu-purple);
-}
-
-@keyframes pulseDot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.85); }
-}
-
-.badge-prototype {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(70, 29, 124, 0.35);
-    border: 1px solid var(--lsu-purple-light);
-    color: var(--lsu-purple-electric);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.2em 0.6em;
-    border-radius: 3px;
-}
-
-[data-theme="light"] .badge-prototype {
-    background: rgba(70, 29, 124, 0.08);
-    border: 1px solid rgba(70, 29, 124, 0.3);
-    color: var(--lsu-purple);
-}
-
-.badge-sim {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background: rgba(253, 208, 35, 0.12);
-    border: 1px solid rgba(253, 208, 35, 0.35);
-    color: var(--lsu-gold);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    padding: 0.2em 0.6em;
-    border-radius: 3px;
-}
-
-[data-theme="light"] .badge-sim {
-    background: rgba(180, 83, 9, 0.08);
-    border: 1px solid rgba(180, 83, 9, 0.3);
-    color: var(--lsu-gold-dark);
-}
-
-/* Spotlight Navigation Tabs */
-.spotlight-tabs {
-    display: flex;
-    align-items: center;
-    background: var(--robotics-surface-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-    overflow-x: auto;
-    scrollbar-width: none;
-}
-
-.spotlight-tabs::-webkit-scrollbar {
-    display: none;
-}
-
-.spotlight-tab {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    padding: 0.65rem 1.15rem;
-    text-decoration: none;
-    white-space: nowrap;
-    border-right: 1px solid var(--robotics-card-border);
-    border-bottom: 2px solid transparent;
-    transition: all var(--transition-fast);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.spotlight-tab:hover {
-    color: var(--text-heading);
-    background: var(--robotics-subtle-bg);
-}
-
-.spotlight-tab.active {
-    color: var(--lsu-gold);
-    background: rgba(70, 29, 124, 0.3);
-    border-bottom-color: var(--lsu-gold);
-    font-weight: 700;
-}
-
-[data-theme="light"] .spotlight-tab.active {
-    color: var(--lsu-purple);
-    background: rgba(70, 29, 124, 0.06);
-    border-bottom-color: var(--lsu-purple);
-}
-
-/* Spotlight Media Stage */
-.spotlight-stage {
-    position: relative;
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    max-height: 380px;
-    background: var(--robotics-stage-bg);
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.spotlight-stage svg,
-.spotlight-stage img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* Spotlight Body Content */
-.spotlight-body {
-    padding: 1.5rem;
-}
-
-.spotlight-title {
-    font-size: 1.45rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0 0 0.5rem 0;
-    letter-spacing: -0.02em;
-}
-
-.spotlight-title a {
-    color: inherit;
-    text-decoration: none;
-    transition: color var(--transition-fast);
-}
-
-.spotlight-title a:hover {
-    color: var(--robotics-accent);
-}
-
-.spotlight-desc {
-    font-size: 0.95rem;
-    color: var(--text-main);
-    line-height: 1.6;
-    margin: 0 0 1.25rem 0;
-}
-
-/* Spotlight Quick Specs Grid */
-.spotlight-specs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 0.75rem;
-    padding: 0.85rem 1rem;
-    background: var(--robotics-surface-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: 4px;
-    margin-bottom: 1.25rem;
-}
-
-.spec-metric {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.spec-metric-label {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-}
-
-.spec-metric-val {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--robotics-accent);
-}
-
-/* Spotlight Actions: LSU Gold Button */
-.spotlight-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-}
-
-.btn-read-case {
-    background: var(--lsu-gold) !important;
-    color: #240d42 !important;
-    border: 1px solid var(--lsu-gold) !important;
-    font-family: var(--font-mono);
-    font-weight: 700;
-    font-size: 0.85rem;
-    padding: 0.65rem 1.25rem;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 14px var(--lsu-gold-glow);
-    transition: all var(--transition-fast);
-}
-
-.btn-read-case:hover {
-    background: var(--lsu-gold-bright) !important;
-    color: #17072d !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px var(--lsu-gold-glow);
-}
-
-.btn-secondary-gh {
-    background: var(--robotics-subtle-bg);
-    border: 1px solid var(--robotics-card-border);
-    color: var(--text-heading);
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.65rem 1.15rem;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all var(--transition-fast);
-}
-
-.btn-secondary-gh:hover {
-    border-color: var(--lsu-gold);
-    color: var(--robotics-accent);
-    background: var(--robotics-surface-bg);
-}
-
-/* --------------------------------------------------------------------------
-   5. Categorized Robotics Feed (HLTV Newsfeed Style)
-   -------------------------------------------------------------------------- */
-.robotics-category-group {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    transition: border-color var(--transition-smooth), opacity var(--transition-smooth);
-}
-
-.robotics-category-group:hover {
-    border-color: var(--robotics-card-hover-border);
-}
-
-.category-group-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.85rem 1.25rem;
-    background: var(--robotics-subtle-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.category-group-title {
-    font-family: var(--font-mono);
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.category-group-title i {
-    color: var(--robotics-accent);
-}
-
-.category-group-count {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    background: var(--robotics-surface-bg);
-    border: 1px solid var(--robotics-card-border);
-    padding: 0.15em 0.55em;
-    border-radius: 3px;
-}
-
-/* Feed Row Items */
-.robotics-feed-list {
-    display: flex;
-    flex-direction: column;
-}
-
-.robotics-feed-row {
-    display: grid;
-    grid-template-columns: 95px 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-    text-decoration: none;
-    color: var(--text-main);
-    transition: background-color var(--transition-fast), border-left-color var(--transition-fast), transform var(--transition-fast);
-    border-left: 3px solid transparent;
-}
-
-.robotics-feed-row:last-child {
-    border-bottom: none;
-}
-
-.robotics-feed-row:hover {
-    background: var(--robotics-subtle-bg);
-    border-left-color: var(--lsu-gold);
-    color: var(--text-heading);
-}
-
-.robotics-feed-row:hover .feed-row-title {
-    color: var(--robotics-accent);
-}
-
-.robotics-feed-row:hover .feed-row-arrow {
-    transform: translateX(4px);
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .robotics-feed-row:hover .feed-row-arrow {
-    color: var(--lsu-purple);
-}
-
-/* Feed Row Components */
-.feed-row-badge-wrap {
-    display: flex;
-    align-items: center;
-}
-
-.feed-tech-pill {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.25em 0.6em;
-    border-radius: 3px;
-    background: rgba(70, 29, 124, 0.35);
-    border: 1px solid rgba(168, 85, 247, 0.4);
-    color: var(--lsu-gold);
-    text-align: center;
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-[data-theme="light"] .feed-tech-pill {
-    background: rgba(70, 29, 124, 0.08);
-    border: 1px solid rgba(70, 29, 124, 0.25);
-    color: var(--lsu-purple);
-}
-
-.robotics-feed-row:hover .feed-tech-pill {
-    border-color: var(--lsu-gold);
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .robotics-feed-row:hover .feed-tech-pill {
-    border-color: var(--lsu-purple);
-    color: var(--lsu-purple);
-}
-
-.feed-row-main {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-}
-
-.feed-row-title {
-    font-size: 0.98rem;
-    font-weight: 600;
-    color: var(--text-heading);
-    margin: 0;
-    line-height: 1.35;
-    transition: color var(--transition-fast);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.feed-row-desc {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    line-height: 1.4;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.feed-row-tags {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-top: 2px;
-}
-
-.feed-mini-tag {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    padding: 0.1em 0.45em;
-    border-radius: 2px;
-    background: var(--robotics-surface-bg);
-    border: 1px solid var(--robotics-card-border);
-    color: var(--text-muted);
-}
-
-.feed-row-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-}
-
-.feed-row-arrow {
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    transition: transform var(--transition-fast), color var(--transition-fast);
-}
-
-/* --------------------------------------------------------------------------
-   6. Sidebar Modules (HLTV Rankings & Telemetry Style)
-   -------------------------------------------------------------------------- */
-.sidebar-widget {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    transition: border-color var(--transition-smooth);
-}
-
-.sidebar-widget:hover {
-    border-color: var(--robotics-card-hover-border);
-}
-
-.sidebar-widget-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1.15rem;
-    background: var(--robotics-subtle-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.sidebar-widget-title {
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.sidebar-widget-title i {
-    color: var(--robotics-accent);
-}
-
-/* Fleet Roster */
-.fleet-roster-list {
-    display: flex;
-    flex-direction: column;
-}
-
-.roster-item {
-    display: grid;
-    grid-template-columns: 28px 1fr auto;
-    align-items: center;
-    gap: 10px;
-    padding: 0.75rem 1.15rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-    text-decoration: none;
-    color: var(--text-main);
-    transition: background-color var(--transition-fast), transform var(--transition-fast);
-}
-
-.roster-item:last-child {
-    border-bottom: none;
-}
-
-.roster-item:hover {
-    background: var(--robotics-subtle-bg);
-}
-
-.roster-item:hover .roster-name {
-    color: var(--robotics-accent);
-}
-
-.roster-rank {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--lsu-gold);
-    text-align: center;
-}
-
-[data-theme="light"] .roster-rank {
-    color: var(--lsu-purple);
-}
-
-.roster-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    min-width: 0;
-}
-
-.roster-name {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--text-heading);
-    transition: color var(--transition-fast);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.roster-sub {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-muted);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.roster-status-pill {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 0.15em 0.5em;
-    border-radius: 3px;
-    white-space: nowrap;
-}
-
-.status-online {
-    background: rgba(253, 208, 35, 0.15);
-    border: 1px solid rgba(253, 208, 35, 0.45);
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .status-online {
-    background: rgba(70, 29, 124, 0.1);
-    border: 1px solid rgba(70, 29, 124, 0.3);
-    color: var(--lsu-purple);
-}
-
-.status-active {
-    background: rgba(168, 85, 247, 0.15);
-    border: 1px solid rgba(168, 85, 247, 0.4);
-    color: var(--lsu-purple-electric);
-}
-
-[data-theme="light"] .status-active {
-    background: rgba(70, 29, 124, 0.1);
-    border: 1px solid rgba(70, 29, 124, 0.3);
-    color: var(--lsu-purple);
-}
-
-.status-sim {
-    background: rgba(253, 208, 35, 0.1);
-    border: 1px solid rgba(253, 208, 35, 0.3);
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .status-sim {
-    background: rgba(180, 83, 9, 0.08);
-    border: 1px solid rgba(180, 83, 9, 0.25);
-    color: var(--lsu-gold-dark);
-}
-
-/* Telemetry Logs */
-.telemetry-log-list {
-    display: flex;
-    flex-direction: column;
-}
-
-.telemetry-log-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    padding: 0.65rem 1rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-    font-size: 0.8rem;
-}
-
-.telemetry-log-item:last-child {
-    border-bottom: none;
-}
-
-.telemetry-log-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--text-main);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.telemetry-log-label i {
-    font-size: 0.8em;
-    color: var(--robotics-secondary);
-}
-
-.telemetry-log-val {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--lsu-gold);
-    background: rgba(70, 29, 124, 0.25);
-    border: 1px solid rgba(168, 85, 247, 0.3);
-    padding: 0.1em 0.45em;
-    border-radius: 3px;
-    white-space: nowrap;
-}
-
-[data-theme="light"] .telemetry-log-val {
-    color: var(--lsu-purple);
-    background: rgba(70, 29, 124, 0.08);
-    border: 1px solid rgba(70, 29, 124, 0.2);
-}
-
-/* Lab Hardware Stack */
-.hardware-stack-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 0.85rem 1rem;
-}
-
-.hardware-chip {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.45rem 0.75rem;
-    border-radius: 4px;
-    background: var(--robotics-surface-bg);
-    border: 1px solid var(--robotics-card-border);
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-}
-
-.hardware-chip-name {
-    color: var(--text-heading);
-    font-weight: 600;
-}
-
-.hardware-chip-spec {
-    color: var(--robotics-accent);
-    font-size: 0.7rem;
-}
-
-/* --------------------------------------------------------------------------
-   7. Editorial Article Layout (TigerBot Academy Inspiration)
-   -------------------------------------------------------------------------- */
-.robotics-article-masthead {
-    margin-bottom: 2.25rem;
-    padding-bottom: 1.75rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.article-breadcrumb-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 1.25rem;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    color: var(--text-muted);
-}
-
-.article-breadcrumb-link {
-    color: var(--robotics-accent);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: color var(--transition-fast);
-}
-
-.article-breadcrumb-link:hover {
-    color: var(--robotics-accent-hover);
-    text-decoration: underline;
-}
-
-.article-breadcrumb-divider {
-    color: var(--robotics-card-border);
-}
-
-.robotics-article-headline {
-    font-size: 2.2rem;
-    font-weight: 800;
-    line-height: 1.25;
-    letter-spacing: -0.03em;
-    color: var(--text-heading);
-    margin: 0 0 1rem 0;
-}
-
-@media screen and (max-width: 736px) {
-    .robotics-article-headline {
-        font-size: 1.65rem;
-    }
-}
-
-.robotics-article-meta-bar {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1.25rem;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    color: var(--text-muted);
-}
-
-.article-meta-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.article-meta-item i {
-    color: var(--robotics-accent);
-}
-
-/* Editorial Body & Typography */
-.robotics-article-body {
-    opacity: 1 !important;
-    transform: none !important;
-    font-size: 1.02rem;
-    line-height: 1.75;
-    color: var(--text-main);
-}
-
-.robotics-article-body p {
-    margin-bottom: 1.4rem;
-}
-
-/* TigerBot-Style Section Subheadings */
-.article-section-title {
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    letter-spacing: -0.02em;
-    margin: 2.5rem 0 1rem 0;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-}
-
-.article-section-title::before {
-    content: '//';
-    font-family: var(--font-mono);
-    color: var(--lsu-gold);
-    font-weight: 700;
-    font-size: 0.95em;
-}
-
-[data-theme="light"] .article-section-title::before {
-    color: var(--lsu-purple);
-}
-
-/* TigerBot Structured Spec / Milestone Bullet List */
-.article-spec-list {
-    list-style: none;
-    padding: 0;
-    margin: 1.25rem 0 2rem 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-}
-
-.article-spec-item {
-    position: relative;
-    padding-left: 1.5rem;
-    line-height: 1.65;
-    color: var(--text-main);
-}
-
-.article-spec-item::before {
-    content: '•';
-    position: absolute;
-    left: 0.35rem;
-    top: 0;
-    color: var(--lsu-gold);
-    font-size: 1.2em;
-    font-weight: bold;
-}
-
-[data-theme="light"] .article-spec-item::before {
-    color: var(--lsu-purple);
-}
-
-.spec-label {
-    font-weight: 700;
-    color: var(--text-heading);
-    font-family: inherit;
-}
-
-/* Engineering Callout / Axiom Box */
-.article-callout {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-left: 4px solid var(--lsu-gold);
-    border-radius: 4px;
-    padding: 1.15rem 1.35rem;
-    margin: 1.75rem 0;
-    box-shadow: var(--card-shadow);
-}
-
-[data-theme="light"] .article-callout {
-    border-left: 4px solid var(--lsu-purple);
-    background: #ffffff;
-}
-
-.article-callout-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    font-weight: 700;
-    color: var(--lsu-gold);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.5rem;
-}
-
-[data-theme="light"] .article-callout-header {
-    color: var(--lsu-purple);
-}
-
-.article-callout p {
-    margin: 0;
-    font-size: 0.92rem;
-    line-height: 1.6;
-    color: var(--text-main);
-}
-
-/* TigerBot Article Blockquote */
-.article-quote {
-    margin: 1.75rem 0;
-    padding: 1rem 1.5rem;
-    background: var(--robotics-subtle-bg);
-    border-left: 3px solid var(--lsu-gold);
-    border-radius: 0 var(--radius) var(--radius) 0;
-    font-style: italic;
-    color: var(--text-main);
-}
-
-[data-theme="light"] .article-quote {
-    border-left: 3px solid var(--lsu-purple);
-}
-
-.article-quote p {
-    margin: 0;
-    font-size: 0.98rem;
-    line-height: 1.65;
-}
-
-/* Article Hero Stage Container */
-.article-hero-stage {
-    margin: 1.75rem 0 2.25rem 0;
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    background: var(--robotics-stage-bg);
-    box-shadow: var(--card-shadow);
-}
-
-.article-hero-stage svg,
-.article-hero-stage img {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    display: block;
-}
-
-/* Article Navigation Bar (Next / Prev Platform Footer) */
-.article-footer-nav {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 3.5rem;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--robotics-card-border);
-}
-
-@media screen and (max-width: 600px) {
-    .article-footer-nav {
-        grid-template-columns: 1fr;
-    }
-}
-
-.article-nav-card {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    padding: 1rem 1.25rem;
-    text-decoration: none;
-    color: var(--text-main);
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    transition: all var(--transition-fast);
-}
-
-.article-nav-card:hover {
-    border-color: var(--lsu-gold);
-    background: var(--robotics-subtle-bg);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(253, 208, 35, 0.15);
-}
-
-[data-theme="light"] .article-nav-card:hover {
-    border-color: var(--lsu-purple);
-    box-shadow: 0 6px 20px rgba(70, 29, 124, 0.15);
-}
-
-.article-nav-dir {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .article-nav-dir {
-    color: var(--lsu-purple);
-}
-
-.article-nav-target {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text-heading);
-}
-
-/* --------------------------------------------------------------------------
-   8. Responsive Adjustments & Safe Area Controls
-   -------------------------------------------------------------------------- */
-@media screen and (max-width: 600px) {
-    .robotics-container,
-    .robotics-article-container {
-        padding: 0 1rem;
-    }
-
-    .robotics-feed-row {
-        grid-template-columns: 80px 1fr auto;
-        gap: 0.65rem;
-        padding: 0.85rem 0.9rem;
-    }
-
-    .feed-row-desc {
-        display: none; /* Keep clean high-density layout on mobile */
-    }
-
-    .feed-row-meta .badge-prototype,
-    .feed-row-meta .badge-sim {
-        display: none;
-    }
-
-    .spotlight-actions {
-        flex-direction: column;
-        width: 100%;
-    }
-
-    .btn-read-case,
-    .btn-secondary-gh {
-        width: 100%;
-        justify-content: center;
-        box-sizing: border-box;
-    }
-
-    .category-pills {
-        gap: 0.35rem;
-    }
-
-    .cat-pill {
-        padding: 0.35rem 0.65rem;
-        font-size: 0.74rem;
-    }
-}
-
-/* --------------------------------------------------------------------------
-   9. Dedicated Independent Thesis Navigation Bar
-   -------------------------------------------------------------------------- */
-.thesis-navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    width: 100%;
-    background: rgba(14, 10, 23, 0.94);
-    border-bottom: 1px solid var(--robotics-card-border);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.45);
-    transition: background-color var(--transition-smooth), border-color var(--transition-smooth);
-}
-
-[data-theme="light"] .thesis-navbar {
-    background: rgba(250, 248, 252, 0.95);
-    border-bottom: 1px solid var(--robotics-card-border);
-    box-shadow: 0 2px 14px rgba(88, 41, 140, 0.06);
-}
-
-.thesis-navbar-inner {
-    max-width: 1240px;
-    margin: 0 auto;
-    padding: 0.65rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1.25rem;
-    box-sizing: border-box;
-}
-
-/* Brand Cluster */
-.thesis-brand {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-    flex-shrink: 0;
-}
-
-.thesis-brand-emblem {
-    width: 34px;
-    height: 34px;
-    border-radius: 6px;
-    background: rgba(70, 29, 124, 0.45);
-    border: 1px solid var(--lsu-gold);
-    color: var(--lsu-gold);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.05rem;
-    box-shadow: 0 0 10px rgba(253, 208, 35, 0.25);
-    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-[data-theme="light"] .thesis-brand-emblem {
-    background: rgba(70, 29, 124, 0.1);
-    border-color: var(--lsu-purple);
-    color: var(--lsu-purple);
-    box-shadow: none;
-}
-
-.thesis-brand:hover .thesis-brand-emblem {
-    transform: scale(1.06);
-    box-shadow: 0 0 14px var(--lsu-gold-glow);
-}
-
-.thesis-brand-text {
-    display: flex;
-    flex-direction: column;
-    line-height: 1.15;
-}
-
-.thesis-brand-title {
-    font-family: var(--font-mono);
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    letter-spacing: 0.02em;
-}
-
-.thesis-brand-sub {
-    font-family: var(--font-mono);
-    font-size: 0.68rem;
-    color: var(--robotics-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-}
-
-/* Desktop Links */
-.thesis-nav-links {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    gap: 0.35rem;
-}
-
-.thesis-nav-links li a {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-decoration: none;
-    padding: 0.42rem 0.75rem;
-    border-radius: 4px;
-    transition: all var(--transition-fast);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-    border: 1px solid transparent;
-}
-
-.thesis-nav-links li a i {
-    font-size: 0.85em;
-    color: var(--robotics-secondary);
-    transition: color var(--transition-fast);
-}
-
-.thesis-nav-links li a:hover {
-    color: var(--text-heading);
-    background: rgba(253, 208, 35, 0.1);
-    border-color: rgba(253, 208, 35, 0.3);
-}
-
-.thesis-nav-links li a:hover i {
-    color: var(--lsu-gold);
-}
-
-.thesis-nav-links li a.active {
-    color: var(--lsu-gold);
-    background: rgba(70, 29, 124, 0.4);
-    border-color: rgba(253, 208, 35, 0.45);
-    box-shadow: 0 0 10px rgba(253, 208, 35, 0.15);
-}
-
-[data-theme="light"] .thesis-nav-links li a.active {
-    color: var(--lsu-purple);
-    background: rgba(70, 29, 124, 0.08);
-    border-color: var(--lsu-purple);
-    box-shadow: none;
-}
-
-/* Right Actions Cluster */
-.thesis-nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    flex-shrink: 0;
-}
-
-.thesis-return-btn {
-    font-family: var(--font-mono);
-    font-size: 0.74rem;
-    font-weight: 600;
-    height: 34px;
-    padding: 0 0.8rem;
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background: var(--robotics-subtle-bg);
-    color: var(--text-main);
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all var(--transition-fast);
-    white-space: nowrap;
-}
-
-.thesis-return-btn:hover {
-    border-color: var(--lsu-gold);
-    color: var(--lsu-gold);
-    background: rgba(253, 208, 35, 0.1);
-}
-
-[data-theme="light"] .thesis-return-btn:hover {
-    border-color: var(--lsu-purple);
-    color: var(--lsu-purple);
-    background: rgba(70, 29, 124, 0.08);
-}
-
-.thesis-theme-toggle {
-    width: 34px;
-    height: 34px;
-    box-sizing: border-box;
-    padding: 0;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background: var(--robotics-subtle-bg);
-    color: var(--lsu-gold);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.9rem;
-    line-height: 1;
-    transition: all var(--transition-fast);
-    outline: none;
-}
-
-.thesis-theme-toggle i {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-}
-
-[data-theme="light"] .thesis-theme-toggle {
-    color: var(--lsu-purple);
-}
-
-.thesis-theme-toggle:hover {
-    border-color: var(--lsu-gold);
-    transform: scale(1.05);
-}
-
-.thesis-mobile-toggle {
-    display: none;
-    width: 36px;
-    height: 36px;
-    box-sizing: border-box;
-    padding: 0;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background: var(--robotics-subtle-bg);
-    color: var(--text-heading);
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    outline: none;
-}
-
-/* --------------------------------------------------------------------------
-   10. Mobile Thesis Navigation Drawer
-   -------------------------------------------------------------------------- */
-@media screen and (max-width: 960px) {
-    .thesis-nav-links,
-    .thesis-return-text {
-        display: none;
-    }
-
-    .thesis-return-btn {
-        width: 36px;
-        height: 36px;
-        padding: 0;
-        justify-content: center;
-    }
-
-    .thesis-theme-toggle {
-        width: 36px;
-        height: 36px;
-    }
-
-    .thesis-mobile-toggle {
-        display: inline-flex;
-    }
-}
-
-.thesis-mobile-drawer {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: auto;
-    bottom: 0;
-    width: 290px;
-    max-width: 85vw;
-    background: #0f0a1c;
-    border-left: 1px solid var(--robotics-card-border);
-    border-right: none;
-    z-index: 10001;
-    transform: translateX(100%);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    display: flex;
-    flex-direction: column;
-    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.6);
-}
-
-[data-theme="light"] .thesis-mobile-drawer {
-    background: #ffffff;
-    border-left: 1px solid var(--robotics-card-border);
-    border-right: none;
-    box-shadow: -4px 0 24px rgba(88, 41, 140, 0.12);
-}
-
-body.thesis-drawer-open .thesis-mobile-drawer {
-    transform: translateX(0);
-}
-
-.thesis-drawer-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.thesis-drawer-close {
-    width: 34px;
-    height: 34px;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background: var(--robotics-subtle-bg);
-    color: var(--text-muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-    outline: none;
-}
-
-.thesis-drawer-close:hover {
-    color: var(--lsu-gold);
-    border-color: var(--lsu-gold);
-}
-
-.thesis-drawer-links {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem 0;
-    flex: 1;
-    overflow-y: auto;
-}
-
-.thesis-drawer-links a {
-    font-family: var(--font-mono);
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--text-main);
-    text-decoration: none;
-    padding: 0.75rem 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-left: 3px solid transparent;
-    transition: all var(--transition-fast);
-}
-
-.thesis-drawer-links a i {
-    font-size: 0.9em;
-    color: var(--robotics-secondary);
-    width: 18px;
-    text-align: center;
-}
-
-.thesis-drawer-links a:hover,
-.thesis-drawer-links a.active {
-    background: rgba(70, 29, 124, 0.25);
-    border-left-color: var(--lsu-gold);
-    color: var(--lsu-gold);
-}
-
-.thesis-drawer-links .drawer-return {
-    margin-top: 1rem;
-    border-top: 1px solid var(--robotics-card-border);
-    color: var(--text-muted);
-    font-size: 0.82rem;
-}
-
-.thesis-drawer-footer {
-    padding: 1rem 1.25rem;
-    border-top: 1px solid var(--robotics-card-border);
-}
-
-.thesis-drawer-theme-btn {
-    width: 100%;
-    padding: 0.65rem 1rem;
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
-    background: var(--robotics-subtle-bg);
-    color: var(--text-heading);
-    font-family: var(--font-mono);
-    font-size: 0.82rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    outline: none;
-}
-
-.thesis-drawer-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.65);
-    z-index: 10000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
-
-body.thesis-drawer-open .thesis-drawer-backdrop {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* --------------------------------------------------------------------------
-   11. Academic Thesis Masthead & Header
-   -------------------------------------------------------------------------- */
-.thesis-masthead {
-    width: 100%;
-    padding: 3rem 1.5rem 2.25rem 1.5rem;
-    background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(88, 41, 140, 0.28), transparent 75%), var(--robotics-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-    box-sizing: border-box;
-}
-
-[data-theme="light"] .thesis-masthead {
-    background: radial-gradient(ellipse 90% 70% at 50% -10%, rgba(88, 41, 140, 0.08), transparent 75%), var(--robotics-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-}
-
-.thesis-masthead-inner {
-    max-width: 1240px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-}
-
-.thesis-meta-chips {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.thesis-chip {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 0.28rem 0.8rem;
-    border-radius: 20px;
-    background: rgba(70, 29, 124, 0.4);
-    border: 1px solid rgba(253, 208, 35, 0.4);
-    color: var(--lsu-gold);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    letter-spacing: 0.02em;
-}
-
-[data-theme="light"] .thesis-chip {
-    background: rgba(70, 29, 124, 0.08);
-    border-color: rgba(70, 29, 124, 0.3);
-    color: var(--lsu-purple);
-}
-
-.thesis-main-title {
-    font-size: 2.15rem;
-    font-weight: 800;
-    line-height: 1.2;
-    color: var(--text-heading);
-    margin: 0 0 0.85rem 0;
-    letter-spacing: -0.025em;
-    font-family: var(--font-mono);
-}
-
-@media screen and (max-width: 768px) {
-    .thesis-main-title {
-        font-size: 1.55rem;
-    }
-}
-
-.thesis-lead-abstract {
-    font-size: 1rem;
-    color: var(--text-main);
-    line-height: 1.65;
-    max-width: 940px;
-    margin: 0 0 1.5rem 0;
-}
-
-.thesis-masthead-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    flex-wrap: wrap;
-}
-
-/* --------------------------------------------------------------------------
-   12. Interactive BibTeX Citation Card & Academic Reference
-   -------------------------------------------------------------------------- */
-.thesis-citation-section {
-    margin-top: 2rem;
-    margin-bottom: 3.5rem;
-    scroll-margin-top: 90px;
-}
-
-.thesis-citation-card {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    transition: border-color var(--transition-smooth);
-}
-
-.thesis-citation-card:hover {
-    border-color: var(--robotics-card-hover-border);
-}
-
-.thesis-citation-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.95rem 1.25rem;
-    background: var(--robotics-subtle-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-    flex-wrap: wrap;
-    gap: 0.75rem;
-}
-
-.citation-title-wrap {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.citation-icon {
-    font-size: 1.35rem;
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .citation-icon {
-    color: var(--lsu-purple);
-}
-
-.citation-title {
-    font-family: var(--font-mono);
-    font-size: 0.92rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0 0 2px 0;
-}
-
-.citation-sub {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-muted);
-}
-
-.citation-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
-    flex-wrap: wrap;
-}
-
-.citation-format-tabs {
-    display: flex;
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 4px;
-    padding: 2px;
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="light"] .citation-format-tabs {
-    background: rgba(70, 29, 124, 0.06);
-    border-color: rgba(70, 29, 124, 0.2);
-}
-
-.cite-tab-btn {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 0.28rem 0.65rem;
-    border-radius: 3px;
-    border: none;
-    background: transparent;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.cite-tab-btn:hover {
-    color: var(--text-heading);
-}
-
-.cite-tab-btn.active {
-    background: var(--lsu-purple);
-    color: var(--lsu-gold);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="light"] .cite-tab-btn.active {
-    background: var(--lsu-purple);
-    color: #ffffff;
-}
-
-.btn-copy-bibtex {
-    font-family: var(--font-mono);
-    font-size: 0.76rem;
-    font-weight: 700;
-    padding: 0.42rem 0.9rem;
-    border-radius: 4px;
-    background: var(--lsu-purple);
-    border: 1px solid var(--lsu-gold);
-    color: var(--lsu-gold);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all var(--transition-fast);
-    outline: none;
-    box-shadow: 0 0 8px rgba(253, 208, 35, 0.2);
-}
-
-[data-theme="light"] .btn-copy-bibtex {
-    background: var(--lsu-purple);
-    border-color: var(--lsu-purple);
-    color: #ffffff;
-    box-shadow: 0 2px 8px rgba(70, 29, 124, 0.2);
-}
-
-.btn-copy-bibtex:hover {
-    background: var(--lsu-gold);
-    color: #240d42;
-    border-color: var(--lsu-gold);
-    transform: translateY(-1px);
-    box-shadow: 0 0 14px var(--lsu-gold-glow);
-}
-
-[data-theme="light"] .btn-copy-bibtex:hover {
-    background: var(--lsu-gold);
-    color: #240d42;
-    border-color: var(--lsu-gold);
-}
-
-.citation-code-wrap {
-    padding: 1.25rem 1.5rem;
-    background: #080510;
-    overflow-x: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--border-color) transparent;
-}
-
-.citation-code-wrap::-webkit-scrollbar {
-    height: 6px;
-}
-
-.citation-code-wrap::-webkit-scrollbar-thumb {
-    background: var(--border-color);
-    border-radius: 3px;
-}
-
-[data-theme="light"] .citation-code-wrap {
-    background: #f8fafc;
-    border-top: 1px solid rgba(70, 29, 124, 0.12);
-}
-
-.citation-code-wrap pre {
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: 0.84rem;
-    line-height: 1.6;
-    color: #e2e8f0;
-    white-space: pre;
-}
-
-[data-theme="light"] .citation-code-wrap pre {
-    color: #1e293b;
-}
-
-/* Syntax Highlighting Tokens */
-.bib-type {
-    color: #FDD023;
-    font-weight: 700;
-}
-
-[data-theme="light"] .bib-type {
-    color: #b45309;
-    font-weight: 700;
-}
-
-.bib-key {
-    color: #38bdf8;
-    font-weight: 600;
-}
-
-[data-theme="light"] .bib-key {
-    color: #0284c7;
-    font-weight: 600;
-}
-
-.bib-field {
-    color: #c084fc;
-}
-
-[data-theme="light"] .bib-field {
-    color: #461D7C;
-    font-weight: 600;
-}
-
-.bib-val {
-    color: #86efac;
-}
-
-[data-theme="light"] .bib-val {
-    color: #15803d;
-}
-
-.bib-brace, .bib-eq, .bib-comma {
-    color: #94a3b8;
-}
-
-[data-theme="light"] .bib-brace,
-[data-theme="light"] .bib-eq,
-[data-theme="light"] .bib-comma {
-    color: #64748b;
-}
-
-/* Plain Text Citation View */
-.cite-text-view {
-    font-family: var(--font-mono);
-    font-size: 0.84rem;
-    line-height: 1.65;
-    color: var(--text-main);
-}
-
-.cite-text-view .cite-text-line {
-    margin: 0 0 0.75rem 0;
-    padding: 0.6rem 0.85rem;
-    background: rgba(255, 255, 255, 0.04);
-    border-radius: 4px;
-    border-left: 3px solid var(--lsu-gold);
-}
-
-[data-theme="light"] .cite-text-view .cite-text-line {
-    background: rgba(70, 29, 124, 0.04);
-    border-left-color: var(--lsu-purple);
-    color: #1e293b;
-}
-
-.cite-text-view .cite-text-line:last-child {
-    margin-bottom: 0;
-}
-
-@media screen and (max-width: 640px) {
-    .thesis-citation-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.75rem;
-    }
-
-    .citation-actions {
-        width: 100%;
-        justify-content: space-between;
-    }
+	background: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border: 0;
+	padding: 0;
 }
 
 /* ==========================================================================
-   HLTV-Style Chapter Newsfeed Architecture (.hltv-feed-...)
-   Clean, dense, modular research chapters with compact rows and inline
-   featured thumbnail cards. Extensible for Chapter 5, 6, etc.
+   3. Header, nav & mobile drawer
+   ========================================================================== */
+.thesis-navbar {
+	position: sticky;
+	top: 0;
+	z-index: 100;
+	background: var(--wp-bg);
+	border-bottom: 1px solid var(--wp-border-light);
+}
+.thesis-navbar-inner {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	max-width: 1200px;
+	min-height: 56px;
+	margin: 0 auto;
+	padding: 6px 20px;
+	box-sizing: border-box;
+}
+
+/* Wordmark, in the spirit of Wikipedia's globe + serif name */
+.thesis-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	color: var(--wp-text);
+	text-decoration: none;
+}
+.thesis-brand:hover { text-decoration: none; color: var(--wp-text); }
+.thesis-brand-emblem {
+	display: grid;
+	place-items: center;
+	flex: none;
+	width: 38px;
+	height: 38px;
+	border-radius: 50%;
+	background: var(--lsu-purple);
+	color: var(--lsu-gold);
+	font-size: 17px;
+}
+.thesis-brand-text {
+	display: flex;
+	flex-direction: column;
+	line-height: 1.15;
+}
+.thesis-brand-title {
+	font-family: var(--wp-serif);
+	font-size: 21px;
+	font-variant: small-caps;
+	letter-spacing: 0.03em;
+	color: var(--wp-text);
+}
+.thesis-brand-sub {
+	font-family: var(--wp-serif);
+	font-size: 12.5px;
+	color: var(--wp-text-muted);
+}
+
+.thesis-nav-links {
+	display: flex;
+	align-items: stretch;
+	gap: 2px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	align-self: stretch;
+}
+.thesis-nav-links li { display: flex; margin: 0; }
+.thesis-nav-links a {
+	display: flex;
+	align-items: center;
+	padding: 0 10px;
+	font-size: 14px;
+	color: var(--wp-link);
+	border-bottom: 3px solid transparent;
+	margin-bottom: -1px;
+}
+.thesis-nav-links a i { display: none; }
+.thesis-nav-links a:hover { text-decoration: none; border-bottom-color: var(--wp-border-light); }
+.thesis-nav-links a.active {
+	color: var(--wp-text);
+	font-weight: 700;
+	border-bottom-color: var(--wp-gold);
+}
+
+.thesis-nav-actions {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	margin-left: auto;
+}
+.thesis-return-btn {
+	font-size: 14px;
+	color: var(--wp-link);
+	padding: 4px 6px;
+}
+.thesis-return-btn i { font-size: 11px; margin-left: 2px; }
+
+.thesis-theme-toggle,
+.thesis-mobile-toggle,
+.thesis-drawer-close {
+	display: inline-grid;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	padding: 0;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: 2px;
+	color: var(--wp-text);
+	font-size: 15px;
+	cursor: pointer;
+}
+.thesis-theme-toggle:hover,
+.thesis-mobile-toggle:hover,
+.thesis-drawer-close:hover {
+	background: var(--wp-bg-muted);
+}
+.thesis-mobile-toggle { display: none; }
+
+/* Mobile drawer (slides in from the right) */
+.thesis-mobile-drawer {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1001;
+	display: flex;
+	flex-direction: column;
+	width: min(300px, 85vw);
+	background: var(--wp-bg);
+	border-left: 1px solid var(--wp-border);
+	box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+	transform: translateX(100%);
+	visibility: hidden;
+	transition: transform 0.2s ease, visibility 0.2s ease;
+}
+body.thesis-drawer-open .thesis-mobile-drawer {
+	transform: none;
+	visibility: visible;
+}
+.thesis-drawer-backdrop {
+	position: fixed;
+	inset: 0;
+	z-index: 1000;
+	background: rgba(0, 0, 0, 0.35);
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+body.thesis-drawer-open .thesis-drawer-backdrop {
+	opacity: 1;
+	visibility: visible;
+}
+.thesis-drawer-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--wp-border-light);
+}
+.thesis-drawer-links {
+	display: flex;
+	flex-direction: column;
+	padding: 6px 0;
+	overflow-y: auto;
+}
+.thesis-drawer-links a {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 9px 16px;
+	font-size: 15px;
+	color: var(--wp-link);
+}
+.thesis-drawer-links a i {
+	width: 18px;
+	text-align: center;
+	color: var(--wp-text-muted);
+	font-size: 14px;
+}
+.thesis-drawer-links a:hover { background: var(--wp-bg-subtle); text-decoration: none; }
+.thesis-drawer-links a.active {
+	color: var(--wp-text);
+	font-weight: 700;
+	background: var(--wp-bg-subtle);
+	box-shadow: inset 3px 0 0 var(--wp-gold);
+}
+.thesis-drawer-links .drawer-return {
+	margin-top: 6px;
+	border-top: 1px solid var(--wp-border-light);
+	padding-top: 12px;
+}
+.thesis-drawer-footer {
+	margin-top: auto;
+	padding: 12px 16px;
+	border-top: 1px solid var(--wp-border-light);
+}
+
+/* ==========================================================================
+   4. Buttons (Wikipedia's plain grey buttons; purple for the main action)
+   ========================================================================== */
+.btn-read-case,
+.btn-secondary-gh,
+.hltv-toggle-all-btn,
+.cite-tab-btn,
+.btn-copy-bibtex,
+.thesis-drawer-theme-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 5px 12px;
+	background: var(--wp-bg-subtle);
+	color: var(--wp-text);
+	border: 1px solid var(--wp-border);
+	border-radius: 2px;
+	box-shadow: none;
+	font-family: var(--wp-sans);
+	font-size: 14px;
+	font-weight: 700;
+	line-height: 1.4;
+	letter-spacing: 0;
+	text-transform: none;
+	text-decoration: none;
+	cursor: pointer;
+	transition: none;
+}
+.btn-read-case:hover,
+.btn-secondary-gh:hover,
+.hltv-toggle-all-btn:hover,
+.cite-tab-btn:hover,
+.btn-copy-bibtex:hover,
+.thesis-drawer-theme-btn:hover {
+	background: var(--wp-bg);
+	border-color: var(--wp-text-muted);
+	color: var(--wp-text);
+	text-decoration: none;
+	transform: none;
+	box-shadow: none;
+}
+.btn-read-case,
+.btn-read-case:hover {
+	background: var(--wp-link);
+	border-color: var(--wp-link);
+	color: var(--wp-on-link);
+}
+.btn-read-case:hover { background: var(--wp-link-hover); border-color: var(--wp-link-hover); }
+.thesis-drawer-theme-btn {
+	width: 100%;
+	justify-content: space-between;
+	font-weight: 400;
+}
+
+/* ==========================================================================
+   5. Hub
    ========================================================================== */
 
-.hltv-feed-section {
-    margin: 2.5rem 0 3.5rem 0;
+/* Title block */
+.thesis-masthead {
+	background: var(--wp-bg);
+	border: 0;
+	padding: 20px 0 0;
+}
+.thesis-masthead-inner {
+	display: flex;
+	flex-direction: column;
+	max-width: var(--wp-content);
+	margin: 0 auto;
+	padding: 0 20px;
+}
+.thesis-main-title {
+	order: 1;
+	margin: 0 0 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--wp-border);
+	font-family: var(--wp-serif);
+	font-size: 28px;
+	font-weight: 400;
+	line-height: 1.3;
+}
+.thesis-meta-chips {
+	order: 2;
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0;
+	font-size: 13px;
+	color: var(--wp-text-muted);
+}
+.thesis-chip {
+	background: none;
+	border: 0;
+	padding: 0;
+	color: inherit;
+	font-size: inherit;
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+}
+.thesis-chip i { display: none; }
+.thesis-chip + .thesis-chip::before { content: '·'; margin: 0 0.5em; }
+.thesis-lead-abstract {
+	order: 3;
+	margin: 14px 0 12px;
+	max-width: none;
+	font-size: 15px;
+	color: var(--wp-text);
+}
+.thesis-masthead-actions {
+	order: 4;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
 }
 
-.hltv-feed-section-header {
-    margin-bottom: 1.75rem;
+.robotics-container {
+	max-width: var(--wp-content);
+	margin: 0 auto;
+	padding: 4px 20px 24px;
 }
 
+/* Section headings: serif with a rule, like Wikipedia's h2 */
+.fleet-section-title,
+.system-arch-title,
+.citation-title {
+	margin: 1em 0 0.3em;
+	padding-bottom: 2px;
+	border-bottom: 1px solid var(--wp-border);
+	font-family: var(--wp-serif);
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.3;
+}
+.system-arch-title i { display: none; }
+
+.hltv-feed-section-header { margin-top: 12px; }
 .hltv-feed-header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin-top: 20px;
 }
-
-.hltv-toggle-all-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.45rem;
-    background: var(--robotics-subtle-bg);
-    border: 1px solid var(--robotics-card-border);
-    color: var(--lsu-gold);
-    padding: 0.35rem 0.8rem;
-    border-radius: 4px;
-    font-family: var(--font-mono);
-    font-size: 0.76rem;
-    font-weight: 600;
-    letter-spacing: 0.03em;
-    cursor: pointer;
-    transition: all 0.18s ease;
+.fleet-section-kicker {
+	font-size: 13px;
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--wp-text-muted);
 }
+.fleet-section-kicker i { display: none; }
+.hltv-toggle-all-btn { padding: 3px 9px; font-size: 13px; font-weight: 400; }
+.hltv-toggle-all-btn i { display: none; }
+.hltv-feed-header-top + .fleet-section-title { margin-top: 0.2em; }
+.fleet-section-desc,
+.system-arch-desc { margin: 0.5em 0 1em; color: var(--wp-text); }
 
-.hltv-toggle-all-btn:hover {
-    background: rgba(88, 41, 140, 0.28);
-    border-color: var(--lsu-gold);
-    color: var(--lsu-gold-bright);
-    box-shadow: 0 0 10px var(--lsu-gold-glow);
-}
-
-[data-theme="light"] .hltv-toggle-all-btn {
-    background: rgba(88, 41, 140, 0.06);
-    border-color: var(--robotics-card-border);
-    color: var(--lsu-purple);
-}
-
-[data-theme="light"] .hltv-toggle-all-btn:hover {
-    background: rgba(88, 41, 140, 0.12);
-    border-color: var(--lsu-purple);
-    color: var(--lsu-purple-deep);
-}
-
-.hltv-chapter-block {
-    margin-bottom: 2rem;
-    transition: margin-bottom 0.25s ease;
-}
-
-.hltv-chapter-block.is-collapsed {
-    margin-bottom: 0.75rem;
-}
-
+/* Chapters: bold sub-heading with a Wikipedia [hide]/[show] toggle */
+.hltv-chapter-block { margin: 16px 0 20px; }
 .hltv-chapter-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 0.55rem 0.4rem;
-    margin-bottom: 0.35rem;
-    background: transparent;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    user-select: none;
-    text-align: left;
-    color: inherit;
-    font-family: inherit;
-    transition: background 0.18s ease;
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	width: 100%;
+	padding: 0 0 2px;
+	background: none;
+	border: 0;
+	border-bottom: 1px solid var(--wp-border-light);
+	border-radius: 0;
+	color: var(--wp-text);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
 }
-
-.hltv-chapter-header:hover {
-    background: var(--robotics-subtle-bg);
-}
-
-.hltv-chapter-header:focus-visible {
-    outline: 2px solid var(--lsu-gold);
-    outline-offset: 2px;
-}
-
 .hltv-chapter-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #e2e8f0;
-    letter-spacing: -0.01em;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.65rem;
+	margin: 0;
+	font-size: 17px;
+	font-weight: 700;
+	line-height: 1.4;
 }
-
-.hltv-chapter-chevron {
-    font-size: 0.8rem;
-    color: var(--lsu-gold);
-    display: inline-block;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.hltv-chapter-block.is-collapsed .hltv-chapter-chevron {
-    transform: rotate(-90deg);
-}
-
-[data-theme="light"] .hltv-chapter-title {
-    color: #1e1b4b;
-}
-
-[data-theme="light"] .hltv-chapter-chevron {
-    color: var(--lsu-purple);
-}
-
+.hltv-chapter-chevron { display: none; }
 .hltv-chapter-kicker {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+	font-size: 15px;
+	font-weight: 400;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--wp-text-muted);
 }
-
-[data-theme="light"] .hltv-chapter-kicker {
-    color: var(--text-muted);
+.hltv-chapter-header::after {
+	content: '[hide]';
+	margin-left: auto;
+	font-size: 13px;
+	color: var(--wp-link);
 }
+.hltv-chapter-header:hover::after { text-decoration: underline; }
+.hltv-chapter-block.is-collapsed .hltv-chapter-header::after { content: '[show]'; }
+.hltv-chapter-block.is-collapsed .hltv-feed-list { display: none; }
 
-/* Feed List Container (Cohesive Warm Aubergine-Slate Container) */
-.hltv-feed-list {
-    background: var(--robotics-card-bg);
-    border: 1px solid var(--robotics-card-border);
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    max-height: 2500px;
-    opacity: 1;
-    visibility: visible;
-    transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.22s ease,
-                border-color 0.22s ease,
-                margin 0.3s ease;
-}
+.hltv-feed-list { margin: 8px 0 0; padding: 0; }
 
-.hltv-chapter-block.is-collapsed .hltv-feed-list {
-    max-height: 0 !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-    margin: 0 !important;
-    pointer-events: none;
-}
-
-[data-theme="light"] .hltv-feed-list {
-    background: #ffffff;
-    border-color: var(--robotics-card-border);
-    box-shadow: 0 4px 18px rgba(88, 41, 140, 0.06);
-}
-
-/* Compact Feed Row */
+/* Plain bulleted links */
 .hltv-feed-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.8rem 1.15rem;
-    border-bottom: 1px solid var(--robotics-card-border);
-    text-decoration: none;
-    transition: background 0.15s ease, border-color 0.15s ease;
+	display: list-item;
+	list-style: disc;
+	margin: 0 0 3px 1.6em;
+	color: var(--wp-link);
 }
-
-.hltv-feed-row:last-child {
-    border-bottom: none;
-}
-
-.hltv-feed-row:hover {
-    background: var(--robotics-subtle-bg);
-}
-
-[data-theme="light"] .hltv-feed-row {
-    border-bottom-color: var(--robotics-card-border);
-}
-
-[data-theme="light"] .hltv-feed-row:hover {
-    background: rgba(88, 41, 140, 0.04);
-}
-
-/* Title on the left (No flags/icons as requested: 'left hand row icons - ignore') */
-.hltv-row-title {
-    font-size: 0.94rem;
-    font-weight: 600;
-    color: var(--text-main);
-    flex: 1;
-    padding-right: 1.25rem;
-    transition: color 0.15s ease;
-    margin: 0;
-    line-height: 1.4;
-}
-
-.hltv-feed-row:hover .hltv-row-title {
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .hltv-row-title {
-    color: var(--text-heading);
-}
-
-[data-theme="light"] .hltv-feed-row:hover .hltv-row-title {
-    color: var(--lsu-purple);
-}
-
-/* Right-aligned meta: timestamp on top, comment count below */
+.hltv-feed-row:hover { text-decoration: none; }
+.hltv-feed-row:hover .hltv-row-title { text-decoration: underline; }
+.hltv-row-title { font-weight: 400; }
 .hltv-row-meta {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
-    min-width: 95px;
-    flex-shrink: 0;
-    gap: 0.2rem;
+	display: inline;
+	margin-left: 6px;
+	font-size: 13px;
+	color: var(--wp-text-muted);
 }
+.hltv-row-time::before { content: '— '; }
+.hltv-row-comments { display: none; }
 
-.hltv-row-time {
-    font-size: 0.78rem;
-    color: var(--text-muted);
-    line-height: 1.2;
-}
-
-[data-theme="light"] .hltv-row-time {
-    color: var(--text-muted);
-}
-
-.hltv-row-comments {
-    font-size: 0.78rem;
-    color: var(--lsu-purple-lilac);
-    line-height: 1.2;
-    transition: color 0.15s ease;
-}
-
-.hltv-feed-row:hover .hltv-row-comments {
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .hltv-row-comments {
-    color: var(--text-muted);
-}
-
-[data-theme="light"] .hltv-feed-row:hover .hltv-row-comments {
-    color: var(--lsu-purple);
-}
-
-/* Inline Featured Story / Dossier Card */
+/* Featured entry: a boxed summary with a thumbnail, gold edge */
 .hltv-featured-card {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    padding: 1rem 1.15rem;
-    background: var(--robotics-surface-bg);
-    border-bottom: 1px solid var(--robotics-card-border);
-    text-decoration: none;
-    transition: background 0.18s ease, transform 0.15s ease;
+	display: flex;
+	gap: 14px;
+	margin: 10px 0 10px;
+	padding: 10px 12px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-left: 4px solid var(--wp-gold);
+	color: var(--wp-text);
 }
-
-.hltv-featured-card:last-child {
-    border-bottom: none;
-}
-
-.hltv-featured-card:hover {
-    background: rgba(88, 41, 140, 0.22);
-}
-
-[data-theme="light"] .hltv-featured-card {
-    background: var(--robotics-surface-bg);
-    border-bottom-color: var(--robotics-card-border);
-}
-
-[data-theme="light"] .hltv-featured-card:hover {
-    background: rgba(88, 41, 140, 0.08);
-}
-
+.hltv-featured-card:hover { text-decoration: none; color: var(--wp-text); }
+.hltv-featured-card:hover .hltv-featured-title { text-decoration: underline; }
 .hltv-featured-thumb {
-    width: 175px;
-    aspect-ratio: 16/9;
-    flex-shrink: 0;
-    border-radius: 4px;
-    overflow: hidden;
-    border: 1px solid rgba(226, 186, 92, 0.25);
-    background: var(--robotics-stage-bg);
+	flex: none;
+	width: 150px;
+	padding: 2px;
+	background: var(--wp-bg);
+	border: 1px solid var(--wp-border-light);
+	align-self: flex-start;
 }
-
-[data-theme="light"] .hltv-featured-thumb {
-    border-color: rgba(88, 41, 140, 0.25);
-}
-
-.hltv-featured-thumb img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.25s ease;
-}
-
-.hltv-featured-card:hover .hltv-featured-thumb img {
-    transform: scale(1.04);
-}
-
-.hltv-featured-body {
-    flex: 1;
-    min-width: 0;
-}
-
+.hltv-featured-thumb img { display: block; width: 100%; height: auto; }
 .hltv-featured-title {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--text-heading);
-    margin: 0 0 0.4rem 0;
-    line-height: 1.35;
-    transition: color 0.15s ease;
+	margin: 0 0 4px;
+	font-size: 15px;
+	font-weight: 700;
+	color: var(--wp-link);
 }
-
-.hltv-featured-card:hover .hltv-featured-title {
-    color: var(--lsu-gold);
-}
-
-[data-theme="light"] .hltv-featured-title {
-    color: var(--text-heading);
-}
-
-[data-theme="light"] .hltv-featured-card:hover .hltv-featured-title {
-    color: var(--lsu-purple);
-}
-
 .hltv-featured-desc {
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: var(--text-muted);
-    margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+	margin: 0;
+	font-size: 14px;
+	color: var(--wp-text);
 }
 
-[data-theme="light"] .hltv-featured-desc {
-    color: var(--text-muted);
+/* Architecture tiers: a three-column wikitable */
+.robotics-system-arch { margin: 24px 0 0; }
+.system-arch-tiers {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	margin: 12px 0 8px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border);
+}
+.system-arch-tier-card {
+	padding: 0 12px 12px;
+	border-right: 1px solid var(--wp-border);
+}
+.system-arch-tier-card:last-child { border-right: 0; }
+.tier-badge {
+	display: block;
+	margin: 0 -12px 10px;
+	padding: 6px 12px;
+	background: var(--wp-bg-muted);
+	border-bottom: 1px solid var(--wp-border);
+	font-size: 13px;
+	font-weight: 700;
+	letter-spacing: 0;
+	text-align: center;
+	text-transform: none;
+	color: var(--wp-text);
+}
+.tier-title {
+	margin: 0 0 4px;
+	font-size: 15px;
+	font-weight: 700;
+}
+.tier-desc {
+	margin: 0 0 10px;
+	font-size: 14px;
+}
+.tier-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+.tier-mini-tag {
+	padding: 0 5px;
+	background: var(--wp-bg);
+	border: 1px solid var(--wp-border-light);
+	border-radius: 2px;
+	font-family: var(--wp-mono);
+	font-size: 12.5px;
+	color: var(--wp-text);
 }
 
-/* Responsive Stacking for Mobile Viewports */
-@media screen and (max-width: 720px) {
-    .hltv-featured-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.85rem;
-        padding: 0.9rem;
-    }
-
-    .hltv-featured-thumb {
-        width: 100%;
-        max-width: 100%;
-        aspect-ratio: 16/9;
-    }
-
-    .hltv-feed-row {
-        padding: 0.75rem 0.85rem;
-    }
-
-    .hltv-row-title {
-        font-size: 0.88rem;
-        padding-right: 0.75rem;
-    }
-
-    .hltv-row-meta {
-        min-width: 80px;
-    }
-
-    .hltv-row-time,
-    .hltv-row-comments {
-        font-size: 0.74rem;
-    }
+/* ==========================================================================
+   6. Articles
+   ========================================================================== */
+.robotics-article-container {
+	display: flow-root;
+	max-width: var(--wp-content);
+	margin: 0 auto;
+	padding: 20px 20px 24px;
 }
 
+.robotics-article-masthead {
+	display: flex;
+	flex-direction: column;
+	margin-bottom: 14px;
+}
+.robotics-article-headline {
+	order: 1;
+	margin: 0 0 4px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--wp-border);
+	font-family: var(--wp-serif);
+	font-size: 28px;
+	font-weight: 400;
+	line-height: 1.3;
+}
+/* "From ..." subtitle line under the title */
+.article-breadcrumb-bar {
+	order: 2;
+	font-size: 13px;
+	color: var(--wp-text-muted);
+}
+.article-breadcrumb-link i { display: none; }
+.article-breadcrumb-divider { margin: 0 6px; }
+.robotics-article-meta-bar {
+	order: 3;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	margin-top: 2px;
+	font-size: 13px;
+	color: var(--wp-text-muted);
+}
+.article-meta-item i { display: none; }
+.article-meta-item + .article-meta-item::before { content: '·'; margin: 0 0.5em; }
+.badge-prototype {
+	margin-left: 10px;
+	padding: 0 6px;
+	background: var(--wp-gold-soft);
+	border: 1px solid var(--wp-gold);
+	border-radius: 2px;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--wp-gold-text);
+}
 
+/* Lead figure, floated right like a Wikipedia thumbnail */
+.article-hero-stage {
+	float: right;
+	clear: right;
+	width: 320px;
+	margin: 4px 0 14px 22px;
+	padding: 3px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-radius: 0;
+	box-shadow: none;
+}
+.article-hero-stage svg { display: block; width: 100%; height: auto; }
+.article-hero-stage::after {
+	content: 'Figure 1. System schematic';
+	display: block;
+	padding: 5px 3px 2px;
+	font-size: 12.5px;
+	line-height: 1.4;
+	color: var(--wp-text);
+}
+
+.robotics-article-body {
+	font-size: 15px;
+	line-height: 1.65;
+}
+.robotics-article-body p { margin: 0.5em 0 1em; }
+
+/* Contents box, injected by robotics.js */
+.wp-toc {
+	display: inline-block;
+	min-width: 220px;
+	margin: 4px 0 12px;
+	padding: 7px 14px 10px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	font-size: 14px;
+}
+.wp-toc-title {
+	margin-bottom: 4px;
+	font-weight: 700;
+	text-align: center;
+}
+.wp-toc ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.wp-toc li { margin: 2px 0; }
+
+.article-section-title {
+	overflow: hidden;
+	margin: 1.1em 0 0.4em;
+	padding-bottom: 2px;
+	border-bottom: 1px solid var(--wp-border);
+	font-family: var(--wp-serif);
+	font-size: 22px;
+	font-weight: 400;
+	line-height: 1.3;
+	scroll-margin-top: 70px;
+}
+.article-section-title::before { content: none; }
+
+/* Callout, like a Wikipedia message box with a gold edge */
+.article-callout {
+	overflow: hidden;
+	margin: 16px 0;
+	padding: 8px 14px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-left: 8px solid var(--wp-gold);
+	border-radius: 0;
+	box-shadow: none;
+}
+.article-callout-header {
+	margin-bottom: 2px;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--wp-text);
+}
+.article-callout-header i { color: var(--wp-link); margin-right: 4px; }
+.article-callout p { margin: 0; font-size: 14px; }
+
+.article-spec-list {
+	margin: 0.4em 0 1em 1.6em;
+	padding: 0;
+	list-style: disc;
+}
+.article-spec-item {
+	margin: 0.35em 0;
+	padding: 0;
+	background: none;
+	border: 0;
+}
+.spec-label { font-weight: 700; color: var(--wp-text); }
+ol.article-spec-list { list-style: decimal; }
+
+/* Previous / next, as a navbox */
+.article-footer-nav {
+	clear: both;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin: 28px 0 0;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border);
+}
+.article-nav-card {
+	display: block;
+	padding: 10px 14px;
+	background: none;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	color: var(--wp-text);
+}
+.article-nav-card + .article-nav-card { border-left: 1px solid var(--wp-border); }
+.article-nav-card:hover { text-decoration: none; transform: none; }
+.article-nav-card:hover .article-nav-target { text-decoration: underline; }
+.article-nav-dir {
+	display: block;
+	font-size: 12.5px;
+	letter-spacing: 0;
+	text-transform: none;
+	color: var(--wp-text-muted);
+}
+.article-nav-target {
+	font-weight: 700;
+	color: var(--wp-link);
+}
+
+/* ==========================================================================
+   7. Citation block
+   ========================================================================== */
+.thesis-citation-section {
+	clear: both;
+	margin-top: 32px;
+}
+.thesis-citation-card {
+	padding: 0;
+	background: none;
+	border: 0;
+	box-shadow: none;
+}
+.thesis-citation-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 8px 16px;
+	margin-bottom: 10px;
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--wp-border);
+}
+.citation-title-wrap { display: flex; gap: 10px; }
+.citation-icon { display: none; }
+.thesis-citation-header .citation-title {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.citation-sub {
+	font-size: 13px;
+	color: var(--wp-text-muted);
+}
+.citation-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+.citation-format-tabs { display: inline-flex; }
+.cite-tab-btn { border-radius: 0; font-weight: 400; }
+.cite-tab-btn:first-child { border-radius: 2px 0 0 2px; }
+.cite-tab-btn:last-child { border-radius: 0 2px 2px 0; margin-left: -1px; }
+.cite-tab-btn.active,
+.cite-tab-btn.active:hover {
+	background: var(--wp-link);
+	border-color: var(--wp-link);
+	color: var(--wp-on-link);
+	font-weight: 700;
+}
+
+#bibtex-code {
+	margin: 0;
+	padding: 12px 14px;
+	overflow-x: auto;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-radius: 2px;
+	font-family: var(--wp-mono);
+	font-size: 13px;
+	line-height: 1.55;
+	white-space: pre;
+	color: var(--wp-text);
+}
+#bibtex-code code { font-family: inherit; background: none; }
+.bib-type { color: var(--wp-link); font-weight: 700; }
+.bib-key { color: var(--wp-bib-key); }
+.bib-field { color: var(--wp-link); }
+.bib-val { color: var(--wp-text); }
+.bib-brace,
+.bib-comma,
+.bib-eq { color: var(--wp-text-muted); }
+
+.cite-text-view {
+	padding: 12px 14px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-radius: 2px;
+	font-size: 14px;
+}
+.cite-text-line { margin: 0 0 0.6em; }
+.cite-text-line:last-child { margin-bottom: 0; }
+
+/* ==========================================================================
+   8. Footer
+   ========================================================================== */
+#footer {
+	margin-top: 24px;
+	padding: 14px 0 28px;
+	background: none;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+	border-top: 1px solid var(--wp-border-light);
+	text-align: left;
+}
+#footer .container {
+	width: auto;
+	max-width: var(--wp-content);
+	margin: 0 auto;
+	padding: 0 20px;
+}
+#copyright {
+	display: block;
+	margin: 0;
+	font-size: 12.5px;
+	color: var(--wp-text-muted);
+}
+#copyright .menu { margin: 0; }
+#copyright .menu li,
+#copyright .menu li:first-child {
+	display: block;
+	margin: 0 0 3px;
+	padding: 0;
+	border: 0;
+	line-height: 1.5;
+}
+
+/* ==========================================================================
+   9. Responsive
+   ========================================================================== */
+@media screen and (max-width: 1080px) {
+	.thesis-nav-links a { padding: 0 7px; font-size: 13.5px; }
+	.thesis-return-text { display: none; }
+}
+
+@media screen and (max-width: 980px) {
+	.thesis-nav-links,
+	.thesis-return-btn { display: none; }
+	.thesis-mobile-toggle { display: inline-grid; }
+}
+
+@media screen and (max-width: 736px) {
+	.thesis-navbar-inner { padding: 6px 14px; gap: 12px; }
+	.thesis-masthead-inner,
+	.robotics-container,
+	.robotics-article-container,
+	#footer .container { padding-left: 14px; padding-right: 14px; }
+	.thesis-main-title,
+	.robotics-article-headline { font-size: 24px; }
+	.article-hero-stage {
+		float: none;
+		width: auto;
+		margin: 0 0 16px;
+	}
+	.system-arch-tiers { grid-template-columns: 1fr; }
+	.system-arch-tier-card { border-right: 0; border-bottom: 1px solid var(--wp-border); }
+	.system-arch-tier-card:last-child { border-bottom: 0; }
+	.hltv-featured-card { flex-direction: column; }
+	.hltv-featured-thumb { width: 100%; max-width: 320px; }
+	.article-footer-nav { grid-template-columns: 1fr; }
+	.article-nav-card + .article-nav-card { border-left: 0; border-top: 1px solid var(--wp-border); }
+}

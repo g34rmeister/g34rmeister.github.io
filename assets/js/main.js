@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <a href="#navPanel" class="toggle" aria-label="Toggle Navigation">
             <i class="fas fa-bars"></i>
         </a>
-        <a href="index.html" class="titleBar-logo" aria-label="Gerald Lê - Home">
-            <span class="titleBar-brand-title">Gerald Lê</span>
+        <a href="index.html" class="titleBar-logo" aria-label="Gerald's Site - Home">
+            <span class="titleBar-brand-title">Gerald's Site</span>
             <img src="images/logo.svg" alt="GL" class="titleBar-logo-img" />
         </a>
     `;
@@ -42,10 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
     navPanel.appendChild(panelHeader);
 
     const panelNav = document.createElement('nav');
+    panelNav.setAttribute('aria-label', 'Site menu');
 
-    desktopNavLinks.forEach(link => {
-        // Skip logo/brand link in the mobile text drawer (already in brand header)
-        if (link.classList.contains('nav-logo-link') || link.closest('.nav-logo-item')) return;
+    function addPanelLink(link, isActive) {
         const text = link.textContent.trim();
         if (!text) return;
 
@@ -57,10 +56,9 @@ document.addEventListener('DOMContentLoaded', () => {
             a.rel = link.getAttribute('rel') || 'noopener noreferrer';
         }
         a.textContent = text;
-        
-        // Highlight active page link
-        if (link.parentElement && link.parentElement.classList.contains('current')) {
+        if (isActive) {
             a.classList.add('active');
+            a.setAttribute('aria-current', 'page');
         }
 
         // Close drawer on link click
@@ -69,7 +67,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         panelNav.appendChild(a);
-    });
+    }
+
+    function addPanelLabel(text) {
+        const label = document.createElement('div');
+        label.className = 'navPanel-label';
+        label.textContent = text;
+        panelNav.appendChild(label);
+    }
+
+    // Site sections come from the profile tabs under the cover; the top bar holds the rest (Robotics)
+    const sectionLinks = document.querySelectorAll('.fb-tabs a');
+    const extraLinks = Array.from(desktopNavLinks).filter(link =>
+        !link.classList.contains('nav-logo-link') && !link.closest('.nav-logo-item'));
+
+    if (sectionLinks.length) {
+        addPanelLabel('Gerald\'s Site');
+        sectionLinks.forEach(link => addPanelLink(link, link.classList.contains('is-active')));
+    }
+    if (extraLinks.length) {
+        if (sectionLinks.length) addPanelLabel('More');
+        extraLinks.forEach(link => addPanelLink(link, link.parentElement && link.parentElement.classList.contains('current')));
+    }
 
     navPanel.appendChild(panelNav);
 
@@ -417,4 +436,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     initThemeEngine();
+
+    // 14. Timeline Year Scrubber (highlights the year section in view)
+    function initTimelineScrubber() {
+        const links = document.querySelectorAll('.tl-scrubber a[href^="#"]');
+        if (!links.length || !('IntersectionObserver' in window)) return;
+
+        const linkById = new Map();
+        links.forEach(link => linkById.set(link.getAttribute('href').slice(1), link));
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                links.forEach(link => link.classList.remove('is-active'));
+                const active = linkById.get(entry.target.id);
+                if (active) active.classList.add('is-active');
+            });
+        }, { rootMargin: '-40% 0px -55% 0px' });
+
+        linkById.forEach((_, id) => {
+            const section = document.getElementById(id);
+            if (section) observer.observe(section);
+        });
+    }
+    initTimelineScrubber();
 });

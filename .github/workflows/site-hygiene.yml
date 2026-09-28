@@ -54,7 +54,7 @@ jobs:
               'project-sample.html', 'resume.html', 'contact.html', 'robotics.html',
               'robotics-agv.html', 'robotics-arm.html', 'robotics-flight.html',
               'robotics-quadruped.html',
-          }
+          } | {f'robotics-{c}-{n}.html' for c in range(1, 5) for n in range(1, 6)}
           actual_pages = {p.name for p in root.glob('*.html') if p.name != '404.html'}
           if actual_pages != expected:
               print(f'Page set drift. Actual: {sorted(actual_pages)} Expected: {sorted(expected)}')
