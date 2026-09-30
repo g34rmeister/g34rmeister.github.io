@@ -132,18 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let currentFormat = 'bibtex';
 
-        const rawBibtex = `@mastersthesis{le2026autonomous,
+        const rawBibtex = `@misc{le2026risebot,
   author       = {Gerald Lê},
-  title        = {Multi-Modal Autonomous Systems and Embedded Kinematic Architectures},
-  school       = {Louisiana State University},
+  title        = {RISE Bot Instructor},
+  howpublished = {Honors independent research (CSC 3991), Louisiana State University},
   year         = {2026},
-  type         = {Honors Engineering Thesis},
-  address      = {Baton Rouge, LA, USA},
-  howpublished = {\\url{https://g34rmeister.github.io/robotics.html}},
-  note         = {Autonomous Ground Vehicles, 6-DOF Manipulators, Flight Avionics, and Quadruped Locomotion}
+  note         = {Advisor: Felipe Fronchetti},
+  url          = {https://g34rmeister.github.io/robotics.html}
 }`;
 
-        const rawIeee = `G. Lê, "Multi-Modal Autonomous Systems and Embedded Kinematic Architectures," Undergraduate Honors Thesis, Dept. of Computer Science & Engineering, Louisiana State University, Baton Rouge, LA, 2026. [Online]. Available: https://g34rmeister.github.io/robotics.html`;
+        const rawIeee = `G. Lê, "RISE Bot Instructor," Honors independent research (CSC 3991), Louisiana State University, Baton Rouge, LA, 2026. [Online]. Available: https://g34rmeister.github.io/robotics.html`;
 
         // Format Tab Toggling
         formatTabs.forEach(tab => {

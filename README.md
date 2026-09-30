@@ -19,8 +19,9 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `project-sample.html` - Sample project case study template
 * `resume.html` - Interactive CV viewer (self-hosted PDF)
 * `contact.html` - Direct contact channels
-* `robotics.html` - TigerBot thesis fleet hub
-* `robotics-agv.html` / `robotics-arm.html` / `robotics-flight.html` / `robotics-quadruped.html` - Thesis chapter deep-dives
+* `robotics.html` - RISE Bot Instructor course hub (honors research project)
+* `robotics-intro.html` / `robotics-control.html` / `robotics-programming.html` - Chapter overview pages
+* `robotics-<chapter>-<n>.html` - Chapter articles (4 in chapter 1, 4 in chapter 2, 5 in chapter 3)
 * `404.html` - Custom not-found page
 * `robots.txt` / `sitemap.xml` / `site.webmanifest` - SEO & crawler metadata
 * `assets/` - CSS, JS, fonts, webfonts
