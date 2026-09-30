@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <!--
     Gerald Lê | Personal Developer Portfolio
-    RISE Bot Instructor: 2.3 Encoders and Shaft Encoders
+    RISE Bot Instructor: 2.3 Common Programming Languages
 -->
 <html lang="en">
     <head>
-        <title>2.3 Encoders and Shaft Encoders — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <title>2.3 Common Programming Languages — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="How encoders let a robot measure how far and how fast its motors have turned: incremental vs. absolute, quadrature, the math, and common pitfalls." />
+        <meta name="description" content="Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -16,14 +16,14 @@
         <link rel="canonical" href="https://g34rmeister.github.io/robotics-2-3.html" />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
-        <meta property="og:title" content="2.3 Encoders and Shaft Encoders — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="How encoders let a robot measure how far and how fast its motors have turned: incremental vs. absolute, quadrature, the math, and common pitfalls." />
+        <meta property="og:title" content="2.3 Common Programming Languages — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-2-3.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
-        <meta property="og:image:alt" content="2.3 Encoders and Shaft Encoders, part of RISE Bot Instructor by Gerald Lê" />
+        <meta property="og:image:alt" content="2.3 Common Programming Languages, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="2.3 Encoders and Shaft Encoders — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="How encoders let a robot measure how far and how fast its motors have turned: incremental vs. absolute, quadrature, the math, and common pitfalls." />
+        <meta name="twitter:title" content="2.3 Common Programming Languages — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -59,9 +59,11 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Introduction</a></li>
-                        <li><a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control Basics</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Industrial Programming</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
@@ -94,9 +96,11 @@
                 </div>
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
-                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Introduction</a>
-                    <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control Basics</a>
-                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Industrial Programming</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
                 </div>
@@ -117,10 +121,10 @@
                             <div class="article-breadcrumb-bar">
                                 <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
                                 <span class="article-breadcrumb-divider">/</span>
-                                <a href="robotics-control.html">Chapter 2 &middot; Electronics and Control Basics</a>
+                                <a href="robotics-programming.html">Chapter 2 &middot; Robot Programming</a>
                             </div>
 
-                            <h1 class="robotics-article-headline">2.3 Encoders and Shaft Encoders</h1>
+                            <h1 class="robotics-article-headline">2.3 Common Programming Languages</h1>
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
@@ -130,77 +134,81 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What is an encoder?</h2>
+                            <h2 class="article-section-title">01. Why vendor languages?</h2>
                             <p>
-                                A robot that drives &ldquo;for two seconds&rdquo; and hopes it went one meter is running open loop: it has no idea how far it actually moved. An encoder fixes that. It converts motion into an electrical signal, the opposite of what a motor does. Shaft (rotary) encoders mount on a motor shaft or wheel and report how far it has rotated. They give the robot a sense of where its own parts are.
+                                Most industrial robot makers have their own programming language, tied to their controller. Graphical tools like <a href="robotics-2-2.html">PolyScope</a> cover everyday tasks, but underneath there is always a text language that exposes the robot&rsquo;s full capabilities. This article introduces URScript for Universal Robots cobots, RAPID for ABB industrial robots, and RRL. Others you will meet include KUKA&rsquo;s KRL and FANUC&rsquo;s TP and KAREL.
+                            </p>
+                            <h2 class="article-section-title">02. URScript</h2>
+                            <p>
+                                URScript is the scripting language that runs on the Universal Robots controller. PolyScope programs are converted to it, and advanced users can write it directly for logic the graphical interface cannot express easily.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Syntax:</span> Python-like and readable, which makes it approachable for software developers.</li>
+                                <li class="article-spec-item"><span class="spec-label">Real time:</span> the controller runs at 125&nbsp;Hz on the older CB-series robots and 500&nbsp;Hz on the e-Series.</li>
+                                <li class="article-spec-item"><span class="spec-label">Motion:</span> <code>movej</code> moves in joint space so all joints arrive together, <code>movel</code> moves the tool center point (TCP) in a straight line, and <code>movep</code> keeps a constant tool speed through blended paths, useful for dispensing or welding.</li>
+                                <li class="article-spec-item"><span class="spec-label">Force control:</span> <code>force_mode</code> makes the robot compliant along chosen axes, for tasks like sanding or inserting parts.</li>
+                                <li class="article-spec-item"><span class="spec-label">Threads:</span> a background thread can watch I/O or sensors while the main program keeps moving.</li>
+                            </ul>
+                            <pre class="article-code"><code>def pick_example():
+  # joint move to a safe start pose (joint angles in radians)
+  movej([0, -1.57, 1.57, -1.57, -1.57, 0], a=1.2, v=0.25)
+  # straight-line move of the tool to a pose (x, y, z in m; rotation vector in rad)
+  movel(p[0.30, -0.20, 0.25, 0, 3.14, 0], a=0.5, v=0.1)
+  set_digital_out(0, True)   # e.g. close a gripper wired to output 0
+  sleep(0.5)
+end</code></pre>
+                            <h2 class="article-section-title">03. RAPID</h2>
+                            <p>
+                                RAPID is ABB&rsquo;s high-level, multitasking robot language, used on the real controller and in <a href="robotics-2-2.html">RobotStudio</a>. It handles everything from simple pick-and-place to coordinating several robots.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Structure:</span> a program is organized into <em>tasks</em> (which can run concurrently), <em>modules</em> (collections of data and routines), and <em>routines</em>: procedures (no return value), functions (return a value) and trap routines (interrupt handlers).</li>
+                                <li class="article-spec-item"><span class="spec-label">Typed data:</span> <code>robtarget</code> holds a position and orientation, <code>speeddata</code> the tool speed, and <code>zonedata</code> how closely the robot passes a point, which lets it blend corners instead of stopping at each one.</li>
+                                <li class="article-spec-item"><span class="spec-label">Error handling:</span> ERROR and UNDO handlers let a program recover from interruptions.</li>
+                            </ul>
+                            <pre class="article-code"><code>MODULE MainModule
+    CONST robtarget pHome := [[500,0,600],[0,0,1,0],[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+
+    PROC main()
+        MoveJ pHome, v1000, z50, tool0;                 ! joint move, blend within 50 mm
+        MoveL Offs(pHome, 0, 0, -100), v200, fine, tool0; ! straight down 100 mm, stop exactly
+    ENDPROC
+ENDMODULE</code></pre>
+                            <h2 class="article-section-title">04. RRL</h2>
+                            <p>
+                                <em>(This is blank)</em>
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                             </p>
 
-                            <h2 class="article-section-title">02. Incremental vs. absolute</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Incremental encoders:</span> output a pulse (a &ldquo;tick&rdquo;) for each small step of rotation, and the controller counts them. They are cheap, simple and high resolution, but they only measure change: if the power goes off, the position is forgotten and the robot has to &ldquo;home&rdquo; to a known point again.</li>
-                                <li class="article-spec-item"><span class="spec-label">Absolute encoders:</span> output a unique code for every shaft angle, so the controller knows the exact position the moment it powers on. They cost more and use more complex serial protocols (such as SSI or BiSS). Industrial robot arms rely on this kind of position feedback at every joint.</li>
-                            </ul>
-
-                            <h2 class="article-section-title">03. How encoders sense motion</h2>
+                            <h2 class="article-section-title">05. URScript and RAPID side by side</h2>
                             <table class="article-table">
                                 <thead>
-                                    <tr><th scope="col">Type</th><th scope="col">Principle</th><th scope="col">Good for</th></tr>
+                                    <tr><th scope="col">Feature</th><th scope="col">URScript</th><th scope="col">RAPID</th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Optical</td><td>Light shines through a slotted disk onto a photodetector.</td><td>High precision in clean environments.</td></tr>
-                                    <tr><td>Magnetic</td><td>A magnet turns over a Hall-effect sensor.</td><td>Dust, oil and rough conditions.</td></tr>
-                                    <tr><td>Capacitive</td><td>Measures changing capacitance between a rotor and stator.</td><td>Industrial use and resistance to magnetic interference.</td></tr>
+                                    <tr><td>Robot maker</td><td>Universal Robots</td><td>ABB</td></tr>
+                                    <tr><td>Style</td><td>Python-like scripting</td><td>Structured, strongly typed</td></tr>
+                                    <tr><td>Graphical front end</td><td>PolyScope</td><td>FlexPendant and RobotStudio</td></tr>
+                                    <tr><td>Typical use</td><td>Collaborative tasks</td><td>Heavy industrial and multi-robot cells</td></tr>
                                 </tbody>
                             </table>
-
-                            <h2 class="article-section-title">04. Quadrature: which way is it turning?</h2>
-                            <p>
-                                A single channel of pulses tells you speed but not direction. Quadrature encoders add a second channel (B) offset by a quarter cycle from the first (A). If A changes before B, the shaft is turning one way; if B changes before A, it is turning the other. Counting both the rising and falling edges of both channels gives four counts per pulse, which is why:
-                            </p>
-                            <pre class="article-code"><code>CPR = PPR * 4   (counts per revolution, with 4x decoding)</code></pre>
-                            <p>
-                                Datasheets do not always use these terms the same way. If a &ldquo;1000 PPR&rdquo; encoder is treated as 1000 counts per turn while the code counts every edge, every distance will be off by a factor of four. The simplest check is to turn the wheel exactly one revolution by hand and see what the code reports.
-                            </p>
-
-                            <h2 class="article-section-title">05. From ticks to distance and speed</h2>
-                            <p>
-                                With the counts per revolution (CPR) and the wheel diameter (<em>d</em>), distance traveled is:
-                            </p>
-                            <pre class="article-code"><code>distance = (ticks / CPR) * (pi * d)</code></pre>
-                            <p>
-                                Angular velocity over a time interval &Delta;t, in radians per second, is:
-                            </p>
-                            <pre class="article-code"><code>omega = (delta_ticks / (CPR * dt)) * 2 * pi</code></pre>
-
-                            <h2 class="article-section-title">06. Reading an encoder in code</h2>
-                            <p>
-                                Encoders can produce thousands of pulses per second, far too fast to catch by calling <code>digitalRead()</code> in the main loop. Use hardware interrupts: the microcontroller pauses whatever it is doing when an encoder pin changes, updates the count, and returns. For demanding robots, a dedicated hardware counter (many microcontrollers have timer peripherals that can decode quadrature) frees the main processor entirely.
-                            </p>
-
-                            <h2 class="article-section-title">07. Where encoders are used</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Odometry:</span> encoders on the left and right wheels of a differential-drive robot let it estimate its position relative to where it started.</li>
-                                <li class="article-spec-item"><span class="spec-label">Speed control:</span> with an encoder, a robot can hold a target speed on carpet and on hardwood alike by adjusting power, using <a href="robotics-2-4.html">PID control</a>.</li>
-                                <li class="article-spec-item"><span class="spec-label">Robot arms:</span> encoders at each joint tell the controller the exact angle of every axis.</li>
-                            </ul>
-
-                            <h2 class="article-section-title">08. Common pitfalls</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Backlash:</span> an encoder on the motor side of a gearbox cannot see play in the gears. Mount it close to the output when precision matters.</li>
-                                <li class="article-spec-item"><span class="spec-label">Too much resolution:</span> a very high-resolution encoder on a slow microcontroller can generate interrupts faster than the processor can handle, so counts get missed.</li>
-                                <li class="article-spec-item"><span class="spec-label">Electrical noise:</span> encoder signals are low voltage and high frequency. Keep them away from motor power wires and use twisted-pair or shielded cable.</li>
-                                <li class="article-spec-item"><span class="spec-label">Mounting:</span> use a flexible coupling between the motor and encoder shafts, since no two shafts are perfectly aligned.</li>
-                            </ul>
+                            <h2 class="article-section-title">06. References</h2>
+                            <ol class="article-spec-list">
+                                <li>Universal Robots, <em>The URScript Programming Language</em> (script manual for CB-series and e-Series).</li>
+                                <li>ABB Robotics, <em>Technical Reference Manual: RAPID Instructions, Functions and Data Types</em>.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-2-2.html" class="article-nav-card">
                                     <span class="article-nav-dir">&lt;- Previous</span>
-                                    <span class="article-nav-target">2.2 Pulse Width Modulation (PWM)</span>
+                                    <span class="article-nav-target">2.2 Common Programming Environments</span>
                                 </a>
                                 <a href="robotics-2-4.html" class="article-nav-card" style="text-align: right;">
                                     <span class="article-nav-dir">Next -&gt;</span>
-                                    <span class="article-nav-target">2.4 PID Control</span>
+                                    <span class="article-nav-target">2.4 Intro to ROS (Vendor-Agnostic)</span>
                                 </a>
                             </div>
 

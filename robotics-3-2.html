@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <!--
     Gerald Lê | Personal Developer Portfolio
-    RISE Bot Instructor: 3.2 Teach Pendants and PolyScope 5
+    RISE Bot Instructor: 3.2 ROS 1 vs. ROS 2
 -->
 <html lang="en">
     <head>
-        <title>3.2 Teach Pendants and PolyScope 5 — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <title>3.2 ROS 1 vs. ROS 2 — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="How Universal Robots&#x27; PolyScope 5 interface lets people program a collaborative robot on the teach pendant, mostly without writing code." />
+        <meta name="description" content="The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -16,14 +16,14 @@
         <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-2.html" />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
-        <meta property="og:title" content="3.2 Teach Pendants and PolyScope 5 — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="How Universal Robots&#x27; PolyScope 5 interface lets people program a collaborative robot on the teach pendant, mostly without writing code." />
+        <meta property="og:title" content="3.2 ROS 1 vs. ROS 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-2.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
-        <meta property="og:image:alt" content="3.2 Teach Pendants and PolyScope 5, part of RISE Bot Instructor by Gerald Lê" />
+        <meta property="og:image:alt" content="3.2 ROS 1 vs. ROS 2, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="3.2 Teach Pendants and PolyScope 5 — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="How Universal Robots&#x27; PolyScope 5 interface lets people program a collaborative robot on the teach pendant, mostly without writing code." />
+        <meta name="twitter:title" content="3.2 ROS 1 vs. ROS 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -59,9 +59,11 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Introduction</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control Basics</a></li>
-                        <li><a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Industrial Programming</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
@@ -94,9 +96,11 @@
                 </div>
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
-                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Introduction</a>
-                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control Basics</a>
-                    <a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Industrial Programming</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
                 </div>
@@ -117,65 +121,52 @@
                             <div class="article-breadcrumb-bar">
                                 <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
                                 <span class="article-breadcrumb-divider">/</span>
-                                <a href="robotics-programming.html">Chapter 3 &middot; Programming Industrial Robots</a>
+                                <a href="robotics-ros.html">Chapter 3 &middot; Robot Operating System (ROS)</a>
                             </div>
 
-                            <h1 class="robotics-article-headline">3.2 Teach Pendants and PolyScope 5</h1>
+                            <h1 class="robotics-article-headline">3.2 ROS 1 vs. ROS 2</h1>
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
+                                <span class="badge-prototype">Stub</span>
                             </div>
                         </header>
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What is PolyScope 5?</h2>
+                            <h2 class="article-section-title">01. Communication protocol</h2>
                             <p>
-                                PolyScope 5 is the graphical interface and operating software that Universal Robots (UR) runs on the teach pendant of its e-Series collaborative robots. It is designed to make robot programming accessible to people without a coding background, and it guides the user from setting up the robot to running it in production.
+                                <em>(This is blank)</em>
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                             </p>
 
-                            <h2 class="article-section-title">02. The interface</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Touch-first layout:</span> large buttons and a small set of main tabs, including Run, Program, Installation and Move.</li>
-                                <li class="article-spec-item"><span class="spec-label">Program tree:</span> programs are built by adding commands such as Move, Wait, If and Loop as nodes in a tree, rather than typing code.</li>
-                                <li class="article-spec-item"><span class="spec-label">3D view:</span> a live view of the robot and its programmed path gives immediate visual feedback during setup.</li>
-                                <li class="article-spec-item"><span class="spec-label">Move tab and freedrive:</span> the robot can be jogged with on-screen arrows, or put into freedrive so the operator can guide it by hand to each waypoint (lead-through programming).</li>
-                            </ul>
-
-                            <h2 class="article-section-title">03. Core capabilities</h2>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Feature</th><th scope="col">What it does</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Safety configuration</td><td>Define limits such as restricted zones, speed and force thresholds as part of the robot setup.</td></tr>
-                                    <tr><td>URCaps</td><td>Plug-ins that let third-party grippers, sensors and vision systems integrate with the interface.</td></tr>
-                                    <tr><td>Setup wizards</td><td>Step-by-step calibration of the tool center point (TCP), payload and center of gravity.</td></tr>
-                                </tbody>
-                            </table>
-
-                            <h2 class="article-section-title">04. When the GUI is not enough</h2>
+                            <h2 class="article-section-title">02. Launch files</h2>
                             <p>
-                                PolyScope is mainly a no-code environment, but advanced users are not locked in. A Script node lets a program run <a href="robotics-3-4.html">URScript</a>, the Python-like language underneath PolyScope. Programs can also track digital and analog I/O and user variables, and make decisions with If/Else and Switch nodes.
+                                <em>(This is blank)</em>
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
                             </p>
 
-                            <h2 class="article-section-title">05. Why it matters</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Lower barrier to entry:</span> floor operators can adjust waypoints and troubleshoot without a dedicated robotics engineer.</li>
-                                <li class="article-spec-item"><span class="spec-label">Faster setup:</span> simple tasks can be programmed directly at the robot with little training.</li>
-                                <li class="article-spec-item"><span class="spec-label">Safety by default:</span> because safety limits are configured in the same interface, the robot&rsquo;s speed and force limits apply even when programs call URScript underneath, which is what allows cobots to share space with people.</li>
-                            </ul>
+                            <h2 class="article-section-title">03. Compatibility and flexibility</h2>
+                            <p>
+                                <em>(This is blank)</em>
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            </p>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-3-1.html" class="article-nav-card">
                                     <span class="article-nav-dir">&lt;- Previous</span>
-                                    <span class="article-nav-target">3.1 Online vs. Offline Programming</span>
+                                    <span class="article-nav-target">3.1 Definition and Introduction</span>
                                 </a>
                                 <a href="robotics-3-3.html" class="article-nav-card" style="text-align: right;">
                                     <span class="article-nav-dir">Next -&gt;</span>
-                                    <span class="article-nav-target">3.3 ABB RobotStudio</span>
+                                    <span class="article-nav-target">3.3 Installing ROS on Your Local Environment</span>
                                 </a>
                             </div>
 

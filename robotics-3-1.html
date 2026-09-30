@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <!--
     Gerald Lê | Personal Developer Portfolio
-    RISE Bot Instructor: 3.1 Online vs. Offline Programming
+    RISE Bot Instructor: 3.1 Definition and Introduction
 -->
 <html lang="en">
     <head>
-        <title>3.1 Online vs. Offline Programming — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <title>3.1 Definition and Introduction — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="The two ways industrial robots are programmed: online with a teach pendant or by hand guiding, and offline in simulation software." />
+        <meta name="description" content="What ROS is and how it splits a robot into nodes that communicate by publishing and subscribing to messages." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -16,14 +16,14 @@
         <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-1.html" />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
-        <meta property="og:title" content="3.1 Online vs. Offline Programming — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="The two ways industrial robots are programmed: online with a teach pendant or by hand guiding, and offline in simulation software." />
+        <meta property="og:title" content="3.1 Definition and Introduction — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="What ROS is and how it splits a robot into nodes that communicate by publishing and subscribing to messages." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-1.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
-        <meta property="og:image:alt" content="3.1 Online vs. Offline Programming, part of RISE Bot Instructor by Gerald Lê" />
+        <meta property="og:image:alt" content="3.1 Definition and Introduction, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="3.1 Online vs. Offline Programming — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="The two ways industrial robots are programmed: online with a teach pendant or by hand guiding, and offline in simulation software." />
+        <meta name="twitter:title" content="3.1 Definition and Introduction — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="What ROS is and how it splits a robot into nodes that communicate by publishing and subscribing to messages." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -59,9 +59,11 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Introduction</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control Basics</a></li>
-                        <li><a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Industrial Programming</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
@@ -94,9 +96,11 @@
                 </div>
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
-                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Introduction</a>
-                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control Basics</a>
-                    <a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Industrial Programming</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
                 </div>
@@ -117,10 +121,10 @@
                             <div class="article-breadcrumb-bar">
                                 <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
                                 <span class="article-breadcrumb-divider">/</span>
-                                <a href="robotics-programming.html">Chapter 3 &middot; Programming Industrial Robots</a>
+                                <a href="robotics-ros.html">Chapter 3 &middot; Robot Operating System (ROS)</a>
                             </div>
 
-                            <h1 class="robotics-article-headline">3.1 Online vs. Offline Programming</h1>
+                            <h1 class="robotics-article-headline">3.1 Definition and Introduction</h1>
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
@@ -130,62 +134,32 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Online programming</h2>
+                            <h2 class="article-section-title">01. What is ROS?</h2>
                             <p>
-                                Online programming means taking the robot out of production, putting it into programming (teach) mode, and creating or editing the program on the robot itself. There are two main methods:
+                                <em>(This is blank)</em>
+                            </p>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                            </p>
+
+                            <h2 class="article-section-title">02. Nodes, publishers and subscribers</h2>
+                            <p>
+                                ROS splits a robot&rsquo;s software into <em>nodes</em>, separate programs that communicate by publishing and subscribing to messages. A mobile robot&rsquo;s navigation software is a good example:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Teach pendant:</span> every industrial robot comes with a handheld pendant that plugs into its controller. The programmer jogs the robot to each position and records the steps of the program through the pendant&rsquo;s interface. It is the most common way industrial robots are programmed; one industry source estimates that about 90% of industrial robots are programmed this way.</li>
-                                <li class="article-spec-item"><span class="spec-label">Lead-through (hand guiding):</span> the programmer physically guides the robot arm through the waypoints of the task, and the robot records them. This is the main programming method for collaborative robots (cobots), and because it is so intuitive it is a good fit for people new to automation.</li>
+                                <li class="article-spec-item"><span class="spec-label">Sensor nodes:</span> publish raw data, such as distance scans from a LiDAR.</li>
+                                <li class="article-spec-item"><span class="spec-label">SLAM (simultaneous localization and mapping):</span> builds a map from that data while tracking where the robot is on it.</li>
+                                <li class="article-spec-item"><span class="spec-label">Path planning:</span> finds a route with graph-search algorithms such as A* or Dijkstra&rsquo;s, over a costmap that marks areas near obstacles as expensive.</li>
                             </ul>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>No extra hardware or software needed</td><td>The robot is out of production while it is programmed</td></tr>
-                                    <tr><td>Most technicians already know teach pendants</td><td>Pendants use brand-specific languages</td></tr>
-                                    <tr><td>Well suited to simpler applications</td><td>Lead-through lacks precision</td></tr>
-                                </tbody>
-                            </table>
-
-                            <h2 class="article-section-title">02. Offline programming</h2>
-                            <p>
-                                Offline programming (OLP) means building the robot program on a computer, in software that simulates the robot and its work cell in 3D. The real robot does not need to be present, so it can keep working while the next program is written and debugged in simulation. When the program is ready, it is downloaded to the robot.
-                            </p>
-                            <p>
-                                All major robot makers offer offline software, either text-based or graphical: for example FANUC ROBOGUIDE, Yaskawa MotoSim and ABB RobotStudio (covered in <a href="robotics-3-3.html">its own article</a>).
-                            </p>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Less robot downtime, since programming happens without the robot</td><td>Extra cost; offline software is usually sold as an option</td></tr>
-                                    <tr><td>Saves time on complex programs compared with entering each step by hand</td><td>Needs a computer and additional software</td></tr>
-                                    <tr><td>Simulation catches errors before they reach the real robot</td><td>May require extra training</td></tr>
-                                </tbody>
-                            </table>
-
-                            <h2 class="article-section-title">03. Which to use</h2>
-                            <p>
-                                Online programming is quick and simple for small jobs and small changes. Offline programming pays off for complex programs, for lines that cannot afford downtime, and for checking reach and collisions before equipment is installed. In practice many teams use both: they build the program offline and then touch up a few positions on the real robot with the pendant.
-                            </p>
-
-                            <h2 class="article-section-title">04. References</h2>
-                            <ol class="article-spec-list">
-                                <li>Robots Done Right, &ldquo;Online Robot Programming vs. Offline Robot Programming.&rdquo; <a href="https://robotsdoneright.com/Articles/online-robot-programming-vs-offline-robot-programming.html" target="_blank" rel="noopener noreferrer">robotsdoneright.com</a>. This article is adapted from it.</li>
-                            </ol>
-
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
-                                <a href="robotics-programming.html" class="article-nav-card">
+                                <a href="robotics-ros.html" class="article-nav-card">
                                     <span class="article-nav-dir">&lt;- Previous</span>
                                     <span class="article-nav-target">Chapter 3 overview</span>
                                 </a>
                                 <a href="robotics-3-2.html" class="article-nav-card" style="text-align: right;">
                                     <span class="article-nav-dir">Next -&gt;</span>
-                                    <span class="article-nav-target">3.2 Teach Pendants and PolyScope 5</span>
+                                    <span class="article-nav-target">3.2 ROS 1 vs. ROS 2</span>
                                 </a>
                             </div>
 

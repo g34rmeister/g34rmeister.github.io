@@ -102,9 +102,11 @@ $readmeContent = @"
 **Author:** Gerald Lê
 
 This repository contains the standalone RISE Bot Instructor site, a web-based course that teaches students to program robots:
-- **Chapter 1, Introduction:** what a robot is, why learn robotics, and how the course is organized.
-- **Chapter 2, Electronics and Control Basics:** Arduino, PWM, encoders and PID control.
-- **Chapter 3, Programming Industrial Robots:** online vs. offline programming, PolyScope 5, ABB RobotStudio, URScript and RAPID.
+- **Chapter 1, Intro to Robotics:** definitions, history, types of robots, prerequisites and applications.
+- **Chapter 2, Robot Programming:** online vs. offline programming, RobotStudio and PolyScope, URScript, RAPID and RRL, and an intro to ROS.
+- **Chapter 3, Robot Operating System (ROS):** ROS 1 vs. ROS 2, installation, Turtlesim and ROS tools.
+- **Chapter 4, Ethics:** ethics in engineering and in robotics.
+- **Extra, Electronics and Control Basics:** Arduino, PWM, encoders and PID control.
 
 ---
 
