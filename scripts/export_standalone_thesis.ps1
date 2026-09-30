@@ -1,12 +1,12 @@
 <#
 .SYNOPSIS
-    Exports the TigerBot Thesis Robotics site into a 100% self-contained, standalone repository.
+    Exports the RISE Bot Instructor robotics site into a 100% self-contained, standalone repository.
 
 .DESCRIPTION
     This script extracts all thesis pages, stylesheets, scripts, fonts, and schematics
     from the personal portfolio into an independent directory.
     - Copies 'robotics.html' as the root 'index.html'
-    - Copies all 4 platform chapter pages
+    - Copies the chapter overview pages and every chapter article (robotics-*.html)
     - Re-links internal references to point to 'index.html'
     - Copies 'robotics.css', 'robotics.js', FontAwesome, and JetBrains Mono fonts
     - Generates a dedicated README.md and .nojekyll file for GitHub Pages
@@ -16,7 +16,7 @@
     Defaults to './dist-thesis'.
 
 .EXAMPLE
-    .\scripts\export_standalone_thesis.ps1 -DestinationPath "../tigerbot-thesis"
+    .\scripts\export_standalone_thesis.ps1 -DestinationPath "../rise-bot-instructor"
 #>
 
 [CmdletBinding()]
@@ -34,7 +34,7 @@ if ([string]::IsNullOrWhiteSpace($DestinationPath)) {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host " LSU TigerBot Thesis Research - Standalone Site Exporter" -ForegroundColor Yellow
+Write-Host " RISE Bot Instructor - Standalone Site Exporter" -ForegroundColor Yellow
 Write-Host " Source: $WorkspaceRoot" -ForegroundColor Gray
 Write-Host " Destination: $DestFull" -ForegroundColor Gray
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -83,14 +83,12 @@ $hubContent = Get-Content "$WorkspaceRoot\robotics.html" -Raw -Encoding UTF8
 $hubContent = $hubContent -replace 'href="robotics\.html"', 'href="index.html"'
 Set-Content "$DestFull\index.html" -Value $hubContent -Encoding UTF8
 
-# B. Chapter pages
-$chapters = @("robotics-agv.html", "robotics-arm.html", "robotics-flight.html", "robotics-quadruped.html")
+# B. Chapter overview pages and articles
+$chapters = Get-ChildItem -Path $WorkspaceRoot -Filter "robotics-*.html" | Select-Object -ExpandProperty Name
 foreach ($ch in $chapters) {
-    if (Test-Path "$WorkspaceRoot\$ch") {
-        $chContent = Get-Content "$WorkspaceRoot\$ch" -Raw -Encoding UTF8
-        $chContent = $chContent -replace 'href="robotics\.html"', 'href="index.html"'
-        Set-Content "$DestFull\$ch" -Value $chContent -Encoding UTF8
-    }
+    $chContent = Get-Content "$WorkspaceRoot\$ch" -Raw -Encoding UTF8
+    $chContent = $chContent -replace 'href="robotics\.html', 'href="index.html'
+    Set-Content "$DestFull\$ch" -Value $chContent -Encoding UTF8
 }
 Write-Host "[3/5] HTML pages mapped and exported." -ForegroundColor Green
 
@@ -99,15 +97,16 @@ Write-Host "[4/5] Generating thesis repository README.md and .nojekyll..." -Fore
 Set-Content "$DestFull\.nojekyll" -Value "" -Encoding UTF8
 
 $readmeContent = @"
-# Multi-Modal Autonomous Systems & Embedded Kinematic Architectures
-### Engineering Thesis Research | Louisiana State University (2026)
+# RISE Bot Instructor
+### Honors Independent Research (CSC 3991) | Louisiana State University (2026)
 **Author:** Gerald Lê
 
-This repository contains the standalone documentation and research showcase site for Gerald Lê's thesis work on multi-modal autonomous systems, featuring:
-- **Autonomous Ground Vehicle (AGV):** 2D LiDAR Cartographer SLAM, Nav2 costmap planning, and STM32 motor closed-loop velocity control.
-- **6-DOF Robotic Manipulator:** MoveIt 2 inverse kinematics, edge YOLOv8 vision pipeline, and trajectory optimization.
-- **Embedded Flight Avionics:** 1 kHz deterministic IMU SPI DMA sampling, FreeRTOS task scheduling, and EKF2 attitude estimation.
-- **Quadruped Locomotion Engine:** Convex Model Predictive Control (MPC) and dynamic trot gait simulation in PyBullet.
+This repository contains the standalone RISE Bot Instructor site, a web-based course that teaches students to program robots:
+- **Chapter 1, Intro to Robotics:** definitions, history, types of robots, prerequisites and applications.
+- **Chapter 2, Robot Programming:** online vs. offline programming, RobotStudio and PolyScope, URScript, RAPID and RRL, and an intro to ROS.
+- **Chapter 3, Robot Operating System (ROS):** ROS 1 vs. ROS 2, installation, Turtlesim and ROS tools.
+- **Chapter 4, Ethics:** ethics in engineering and in robotics.
+- **Extra, Electronics and Control Basics:** Arduino, PWM, encoders and PID control.
 
 ---
 
@@ -119,7 +118,7 @@ This repository contains the standalone documentation and research showcase site
    ````bash
    git init
    git add .
-   git commit -m "Initial commit: Standalone TigerBot Thesis Research Site"
+   git commit -m "Initial commit: Standalone RISE Bot Instructor site"
    git branch -M main
    git remote add origin https://github.com/<YOUR_USER>/<REPO_NAME>.git
    git push -u origin main
