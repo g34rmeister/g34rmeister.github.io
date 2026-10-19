@@ -136,7 +136,7 @@
 
                             <h2 class="article-section-title">01. Windows (x86-64)</h2>
                             <p>
-                                ROS 2 publishes official packages for 64-bit Windows. The official guide walks through installing the prerequisites (such as Python and Visual Studio build tools) and then the ROS 2 binary release.
+                                The current long-term support release, ROS 2 Lyrical Luth, supports Windows 11 on 64-bit x86 only. It is installed from a binary archive, with the <code>pixi</code> package manager providing the dependencies, as described in the official guide. If you are on Windows 10, the previous LTS release, Jazzy Jalisco, still supports it.
                             </p>
                             <p>
                                 A popular alternative is WSL 2 (Windows Subsystem for Linux): install Ubuntu inside Windows and then follow the Linux instructions below. Many tutorials assume Linux, so this route usually causes fewer surprises.
@@ -144,27 +144,41 @@
 
                             <h2 class="article-section-title">02. Windows (ARM)</h2>
                             <p>
-                                There are no official native ROS 2 packages for Windows on ARM. The practical route is to run Ubuntu for ARM inside WSL 2 or a virtual machine and install ROS 2&rsquo;s Linux packages there, since ROS 2 does publish packages for 64-bit ARM (arm64) Ubuntu.
+                                ROS 2 has no official support for Windows on ARM. The practical route is to run Ubuntu for ARM inside WSL 2 or a virtual machine and install ROS 2&rsquo;s Linux packages there, since 64-bit ARM (arm64) Ubuntu is a fully supported (Tier 1) ROS 2 platform.
                             </p>
 
                             <h2 class="article-section-title">03. macOS (ARM)</h2>
                             <p>
-                                macOS is not a primary supported platform for current ROS 2 releases, and Apple Silicon Macs need extra work. The most reliable options are running Ubuntu in a virtual machine (for example UTM or Parallels), using a Docker container with ROS 2 installed, or building ROS 2 from source.
+                                macOS is only a Tier 3 platform for ROS 2: there are no official binary packages, and installing natively means building ROS 2 from source. The more reliable options on an Apple Silicon Mac are running ARM Ubuntu in a virtual machine (for example UTM or Parallels) or using a Docker container with ROS 2 installed.
                             </p>
 
                             <h2 class="article-section-title">04. Linux (x86)</h2>
                             <p>
-                                Linux is ROS&rsquo;s home platform. Each ROS 2 release targets a specific Ubuntu version; for example, ROS 2 Jazzy Jalisco, a long-term support release, targets Ubuntu 24.04. After adding the ROS 2 package repository as described in the official guide, install and set up ROS with:
+                                Linux is ROS&rsquo;s home platform, and each ROS 2 release targets a specific Ubuntu version. The current long-term support release, ROS 2 Lyrical Luth, was released on May 22, 2026, targets Ubuntu 26.04 and is supported until May 2031. The previous LTS, Jazzy Jalisco, targets Ubuntu 24.04 and is supported until May 2029.
+                            </p>
+                            <p>
+                                First set up the ROS 2 package repository, which is now done by installing the <code>ros2-apt-source</code> package as shown in the official guide. Then install and set up ROS with:
                             </p>
                             <pre class="article-code"><code>sudo apt update
-sudo apt install ros-jazzy-desktop
-source /opt/ros/jazzy/setup.bash</code></pre>
+sudo apt install ros-lyrical-desktop
+source /opt/ros/lyrical/setup.bash</code></pre>
                             <p>
-                                The <code>source</code> line has to run in every new terminal (or be added to <code>~/.bashrc</code>) so the <code>ros2</code> command can be found.
+                                On Ubuntu 24.04 with Jazzy, replace <code>lyrical</code> with <code>jazzy</code>. The <code>source</code> line has to run in every new terminal (or be added to <code>~/.bashrc</code>) so the <code>ros2</code> command can be found.
                             </p>
                             <ul class="article-spec-list">
-                                <li><a href="https://docs.ros.org/en/jazzy/Installation.html" target="_blank" rel="noopener noreferrer">ROS 2 Jazzy installation guide (docs.ros.org)</a></li>
+                                <li><a href="https://docs.ros.org/en/lyrical/Get-Started/Installation.html" target="_blank" rel="noopener noreferrer">ROS 2 installation guide (docs.ros.org)</a></li>
                             </ul>
+
+                            <h2 class="article-section-title">05. References</h2>
+                            <ol class="article-spec-list">
+                                <li>ROS 2 Documentation, &ldquo;Installation.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Ubuntu (deb packages).&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Windows (binary).&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Windows-Install-Binary.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Windows-Install-Binary.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Lyrical Luth supported platforms.&rdquo; <a href="https://docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Distributions.&rdquo; <a href="https://docs.ros.org/en/lyrical/Releases.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases.html</a>.</li>
+                                <li>ROS Discourse, &ldquo;ROS 2 Lyrical Luth released.&rdquo; <a href="https://discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021</a>.</li>
+                                <li>REP 2000, &ldquo;ROS 2 releases and target platforms.&rdquo; <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000</a>.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
