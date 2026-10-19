@@ -128,7 +128,7 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Stub</span>
+                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
@@ -136,11 +136,25 @@
 
                             <h2 class="article-section-title">01. Turtlesim</h2>
                             <p>
-                                <em>(This is blank)</em>
+                                Turtlesim is a tiny 2D simulator made for learning ROS. It draws a turtle you can drive around, and it uses the same nodes and topics as a real robot. With ROS 2 installed and sourced (the desktop install includes it), open a terminal and start the simulator:
                             </p>
+                            <pre class="article-code"><code>ros2 run turtlesim turtlesim_node</code></pre>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                In a second terminal, start a keyboard controller and drive the turtle with the arrow keys:
                             </p>
+                            <pre class="article-code"><code>ros2 run turtlesim turtle_teleop_key</code></pre>
+                            <p>
+                                Now look at what is happening underneath. In a third terminal, list the nodes and topics, and watch the velocity commands the teleop node sends:
+                            </p>
+                            <pre class="article-code"><code>ros2 node list
+ros2 topic list
+ros2 topic echo /turtle1/cmd_vel</code></pre>
+                            <p>
+                                The teleop node publishes velocity messages on <code>/turtle1/cmd_vel</code>, and the simulator subscribes to them and moves the turtle. That publish/subscribe pattern is exactly how real robots are wired together in ROS.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li><a href="https://docs.ros.org/en/jazzy/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">Official Turtlesim tutorial (docs.ros.org)</a></li>
+                            </ul>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
