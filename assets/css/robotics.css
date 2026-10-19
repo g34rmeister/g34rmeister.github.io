@@ -1001,6 +1001,74 @@ ol.article-spec-list { list-style: decimal; }
 }
 
 /* ==========================================================================
+   8b. Learning features (assets/js/learning.js): objectives, progress, quizzes
+   ========================================================================== */
+.sr-only {
+	position: absolute;
+	width: 1px; height: 1px;
+	overflow: hidden;
+	clip: rect(0 0 0 0);
+	white-space: nowrap;
+}
+.learning-objectives ul { margin: 4px 0 0 1.4em; padding: 0; list-style: disc; font-size: 14px; }
+.learning-objectives li { margin: 2px 0; }
+
+.lesson-complete-panel {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px 16px;
+	margin: 24px 0 8px;
+	padding: 12px 14px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+}
+.lesson-complete-btn[aria-pressed="true"] {
+	background: var(--wp-gold-soft);
+	border-color: var(--wp-gold);
+	color: var(--wp-gold-text);
+}
+.lesson-complete-status { margin: 0; font-size: 13px; color: var(--wp-text-muted); }
+.lesson-quiz-link { font-size: 14px; }
+
+.lesson-done-mark { margin-left: 6px; font-size: 12px; color: var(--wp-gold-text); }
+.chapter-progress-pill {
+	display: inline-block;
+	margin-left: 8px;
+	padding: 0 6px;
+	font-size: 12px;
+	font-weight: 400;
+	color: var(--wp-gold-text);
+	background: var(--wp-gold-soft);
+	border: 1px solid var(--wp-gold);
+	border-radius: 2px;
+}
+
+.rise-tutor-slot { margin: 16px 0; }
+.quiz-actions [hidden],
+.quiz-feedback[hidden],
+.rise-tutor-slot[hidden],
+#quiz-chapter-picker[hidden] { display: none !important; }
+
+.quiz-form { margin: 12px 0; }
+.quiz-question {
+	margin: 0 0 14px;
+	padding: 10px 14px 12px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-left: 4px solid var(--wp-border-light);
+}
+.quiz-question legend { padding: 0 4px; font-weight: 700; color: var(--wp-text); }
+.quiz-question.is-right { border-left-color: #14866d; }
+.quiz-question.is-wrong { border-left-color: #d33; }
+.quiz-choice { display: flex; align-items: baseline; gap: 6px; margin: 4px 0; cursor: pointer; font-weight: 400; }
+.quiz-choice input { margin: 0; }
+.quiz-feedback { margin-top: 8px; font-size: 14px; }
+.quiz-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
+.quiz-result { font-weight: 700; }
+.quiz-chapter-list { margin: 0.4em 0 1em 1.6em; list-style: disc; }
+
+/* ==========================================================================
    9. Responsive
    ========================================================================== */
 @media screen and (max-width: 1080px) {

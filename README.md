@@ -22,6 +22,9 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `robotics.html` - RISE Bot Instructor course hub (honors research project)
 * `robotics-intro.html` / `robotics-programming.html` / `robotics-ros.html` / `robotics-ethics.html` / `robotics-control.html` - Chapter overview pages (Intro to Robotics, Robot Programming, ROS, Ethics, and an extra Electronics and Control chapter)
 * `robotics-<chapter>-<n>.html` - Chapter articles (5, 4, 5, 2 and 4 per chapter); unwritten topics are marked "(This is blank)"
+* `robotics-quiz.html` - Chapter quizzes (`robotics-quiz.html?chapter=N`), rendered from the course data
+* `assets/js/course-data.js` - The course as data: chapters, lessons, learning objectives, key terms and quiz questions. Update it whenever a lesson is added, renamed or rewritten
+* `assets/js/learning.js` - Lesson objectives, "mark as complete" progress (stored in the browser), hub progress marks, quizzes, and the `window.RISEBot` hook for the phase 2 AI tutor
 * `404.html` - Custom not-found page
 * `robots.txt` / `sitemap.xml` / `site.webmanifest` - SEO & crawler metadata
 * `assets/` - CSS, JS, fonts, webfonts
@@ -34,6 +37,15 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * Footers use `<span data-build-date>` for the "last updated" stamp. `assets/js/main.js` and `assets/js/robotics.js` auto-refresh it from `document.lastModified` at runtime — edit the span text only as a no-JS fallback.
 * Every page has exactly one `<h1>` (hero/banner headline). Subpage banners use `<h1>` styled like the old `<h2>` — do not demote them.
 * The portfolio filter bar uses `role="group"` with `aria-pressed` on each button (managed by `initPortfolioFilters` in `assets/js/main.js`). Preserve those attributes when editing filters.
+
+## 🤖 Phase 2: plugging in an AI tutor
+The course is ready for an interactive tutor without changing the lesson pages:
+* `window.RISEBot.getLessonContext()` returns the current chapter and lesson, its objectives and key terms, the lesson's plain text, and the learner's progress. That is the context to send to the model.
+* `window.RISEBot.registerTutor((slot, context) => { ... })` shows the empty `#rise-tutor-slot` panel on lesson pages and hands it to the tutor to render its chat UI.
+* `document` fires `rise:ready`, `rise:lesson-complete` and `rise:quiz-submitted` (with each answer and the lesson it tests), so a tutor can react, for example by offering help on the lessons behind wrong answers.
+* `window.RISEBot.course` is the whole course from `assets/js/course-data.js`.
+
+A GitHub Pages site cannot hold an API key, so the tutor's model calls need a small backend or proxy; the page only talks to that.
 
 ## 📄 License
 This template is based on [TXT by HTML5 UP](https://html5up.net) and licensed under [Creative Commons Attribution 3.0 (CCA 3.0)](LICENSE.txt).
