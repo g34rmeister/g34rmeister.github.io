@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,7 +130,6 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
@@ -171,7 +170,41 @@ source /opt/ros/lyrical/setup.bash</code></pre>
                                 <li><a href="https://docs.ros.org/en/lyrical/Get-Started/Installation.html" target="_blank" rel="noopener noreferrer">ROS 2 installation guide (docs.ros.org)</a></li>
                             </ul>
 
-                            <h2 class="article-section-title">05. References</h2>
+                            <h2 class="article-section-title">05. Check that it works</h2>
+                            <p>
+                                The official guide ends with a quick test using two demo nodes from the desktop install: a C++ <em>talker</em> that publishes messages and a Python <em>listener</em> that receives them. Open two terminals. In the first, run:
+                            </p>
+                            <pre class="article-code"><code>source /opt/ros/lyrical/setup.bash
+ros2 run demo_nodes_cpp talker</code></pre>
+                            <p>
+                                In the second, run:
+                            </p>
+                            <pre class="article-code"><code>source /opt/ros/lyrical/setup.bash
+ros2 run demo_nodes_py listener</code></pre>
+                            <p>
+                                The talker should print lines like <code>Publishing: 'Hello World: 1'</code> and the listener lines like <code>I heard: [Hello World: 1]</code>. If both work, the C++ and Python sides of ROS 2 are installed correctly. Press <code>Ctrl+C</code> in each terminal to stop. (On Jazzy, use <code>/opt/ros/jazzy/setup.bash</code>.)
+                            </p>
+                            <h3>Common problems</h3>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label"><code>ros2: command not found</code>:</span> the setup file was not sourced in this terminal. Run the <code>source</code> line again, or add it to <code>~/.bashrc</code>. To check, run <code>printenv | grep -i ROS</code> and confirm that <code>ROS_DISTRO</code> and <code>ROS_VERSION</code> are set.</li>
+                                <li class="article-spec-item"><span class="spec-label">The listener hears nothing:</span> nodes only talk to nodes in the same DDS domain. If one terminal has set <code>ROS_DOMAIN_ID</code> (the default is 0) and the other has not, they will not see each other; use the same value in both. On a shared network, such as a classroom, pick a different value from your neighbours to avoid interference.</li>
+                                <li class="article-spec-item"><span class="spec-label">Still nothing:</span> DDS discovery needs multicast. Test it with <code>ros2 multicast receive</code> in one terminal and <code>ros2 multicast send</code> in another. If no message arrives, the firewall may be blocking it; on Ubuntu the troubleshooting guide allows it with <code>sudo ufw allow in proto udp to 224.0.0.0/4</code> and <code>sudo ufw allow in proto udp from 224.0.0.0/4</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label">Locale errors:</span> ROS 2 needs a locale that supports UTF-8. Minimal systems such as Docker containers may use <code>POSIX</code>. Run <code>locale</code> to check, and fix it with the commands below from the install guide.</li>
+                            </ul>
+                            <pre class="article-code"><code>sudo apt update &amp;&amp; sudo apt install locales
+sudo locale-gen en_US en_US.UTF-8
+sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+export LANG=en_US.UTF-8</code></pre>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Install ROS 2 using the route for your operating system, then run the talker and listener check.</li>
+                                    <li>Open a new terminal without sourcing and run <code>ros2</code>. Read the error, then fix it by sourcing setup.bash.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">06. References</h2>
                             <ol class="article-spec-list">
                                 <li>ROS 2 Documentation, &ldquo;Installation.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation.html</a>.</li>
                                 <li>ROS 2 Documentation, &ldquo;Ubuntu (deb packages).&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html</a>.</li>
@@ -179,6 +212,9 @@ source /opt/ros/lyrical/setup.bash</code></pre>
                                 <li>ROS 2 Documentation, &ldquo;Lyrical Luth supported platforms.&rdquo; <a href="https://docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html</a>.</li>
                                 <li>ROS 2 Documentation, &ldquo;Distributions.&rdquo; <a href="https://docs.ros.org/en/lyrical/Releases.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases.html</a>.</li>
                                 <li>ROS Discourse, &ldquo;ROS 2 Lyrical Luth released.&rdquo; <a href="https://discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Installation troubleshooting.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Installation-Troubleshooting.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Installation-Troubleshooting.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Configuring environment.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Configuring-ROS2-Environment.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Configuring-ROS2-Environment.html</a>.</li>
+                                <li>ROS 2 demos, <code>talker.cpp</code> and <code>listener.py</code> source. <a href="https://github.com/ros2/demos" target="_blank" rel="noopener noreferrer">github.com/ros2/demos</a>.</li>
                                 <li>REP 2000, &ldquo;ROS 2 releases and target platforms.&rdquo; <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000</a>.</li>
                             </ol>
 
@@ -215,8 +251,9 @@ source /opt/ros/lyrical/setup.bash</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

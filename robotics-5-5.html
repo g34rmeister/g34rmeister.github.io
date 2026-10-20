@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,13 +130,119 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
                         <article class="robotics-article-body">
 
-                            <!-- CONTENT -->
+                            <h2 class="article-section-title">01. The &ldquo;sense&rdquo; in sense&ndash;think&ndash;act</h2>
+                            <p>
+                            Every robot runs the same basic cycle described in <a href="robotics-1-1.html">1.1</a>: sense the world, decide what to do, then act. This lesson is about the first step. A robot can only be as smart as the information its sensors give it, and every sensor gives an incomplete, noisy picture.
+                            </p>
+                            <p>
+                            Robotics textbooks sort sensors into two groups:
+                            </p>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Proprioceptive sensors:</span> measure the robot&rsquo;s own internal state, such as motor speed, joint angles, wheel rotation or battery voltage. The <a href="robotics-5-3.html">encoders</a> from 5.3 are the classic example.</li>
+                            <li class="article-spec-item"><span class="spec-label">Exteroceptive sensors:</span> measure the environment, such as the distance to a wall, the brightness of the floor or what a camera sees. Their readings have to be interpreted before they mean anything.</li>
+                            </ul>
+                            <p>
+                            Sensors can also be <em>passive</em> (they measure energy already present, like a camera) or <em>active</em> (they emit energy and measure what comes back, like an ultrasonic or infrared range finder).
+                            </p>
+
+                            <h2 class="article-section-title">02. Ultrasonic range finders</h2>
+                            <p>
+                            The HC-SR04 is the usual first distance sensor. A 10&nbsp;&micro;s pulse on its trigger pin makes it send out a burst of ultrasound, and its echo pin then stays HIGH for as long as the sound took to travel out and back. <a href="robotics-5-1.html">Lesson 5.1</a> showed how to turn that time into a distance; the datasheet gives the same result as <code>distance_cm = echo_us / 58</code>.
+                            </p>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Range:</span> about 2&nbsp;cm to 4&nbsp;m, according to its datasheet.</li>
+                            <li class="article-spec-item"><span class="spec-label">Wide beam:</span> the measuring angle is about 15&deg;, so the sensor reports the nearest thing anywhere in that cone, not just straight ahead.</li>
+                            <li class="article-spec-item"><span class="spec-label">Surfaces:</span> the datasheet asks for a target that is smooth, flat and at least about 0.5&nbsp;m&sup2;. Sound hitting a smooth wall at a steep angle can bounce away (specular reflection) and never return, or return by a longer path, so the robot sees a wall as farther than it is. Soft or uneven objects, such as fabric, do not meet that condition and may not return a usable echo.</li>
+                            <li class="article-spec-item"><span class="spec-label">Speed:</span> the datasheet recommends at least 60&nbsp;ms between measurements so one echo does not interfere with the next.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Infrared distance sensors</h2>
+                            <p>
+                            Infrared (IR) distance sensors such as the Sharp GP2Y0A21YK0F shine an IR LED at the target and measure where the reflected spot lands on a position-sensitive detector. This is <em>triangulation</em>. Its datasheet gives a range of 10 to 80&nbsp;cm and says triangulation makes it fairly insensitive to the target&rsquo;s reflectivity. The output is an analog voltage that is <em>not</em> linear in distance (it is roughly proportional to 1/distance), so you read it with <code>analogRead()</code> and convert it with a calibration curve. The beam is much narrower than an ultrasonic cone, which makes IR sensors better for spotting a narrow gap.
+                            </p>
+
+                            <h2 class="article-section-title">04. Inertial measurement units (IMUs)</h2>
+                            <p>
+                            An IMU combines several motion sensors on one chip:
+                            </p>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Accelerometer:</span> measures acceleration, including gravity. When the robot is still, it tells you which way is down, and so the robot&rsquo;s tilt.</li>
+                            <li class="article-spec-item"><span class="spec-label">Gyroscope:</span> measures rotation rate in degrees per second. Integrating it gives an angle.</li>
+                            <li class="article-spec-item"><span class="spec-label">Magnetometer:</span> measures the Earth&rsquo;s magnetic field, like a compass. Nearby motors and steel easily disturb it.</li>
+                            </ul>
+                            <p>
+                            The popular MPU-6050 has a 3-axis accelerometer and a 3-axis gyroscope (no magnetometer) and talks to an Arduino over I&sup2;C at up to 400&nbsp;kHz. Its gyroscope ranges are selectable from &plusmn;250 to &plusmn;2000&nbsp;&deg;/s and its accelerometer ranges from &plusmn;2&nbsp;g to &plusmn;16&nbsp;g.
+                            </p>
+                            <div class="article-callout">
+                            <div class="article-callout-header"><i class="fas fa-lightbulb"></i> Gyro drift</div>
+                            <p>Every gyroscope has a small bias: it reads slightly nonzero even when still. When you integrate the rate to get an angle, that bias is integrated too, so the heading error keeps growing the longer the robot runs. Gravity lets the accelerometer correct tilt, but nothing in a 6-axis IMU corrects heading (yaw), which is why IMU heading slowly wanders.</p>
+                            </div>
+
+                            <h2 class="article-section-title">05. Line and color sensors</h2>
+                            <p>
+                            Line-following robots use reflectance sensors: an IR LED and a phototransistor side by side, pointed at the floor. A white surface reflects much more IR than black tape. Arrays such as the Pololu QTR-8RC put eight of these pairs in a row, so the robot can tell not just whether it sees the line but how far the line is to the left or right. They only work very close to the floor: Pololu gives an optimal distance of about 3&nbsp;mm and a maximum of about 9.5&nbsp;mm.
+                            </p>
+                            <p>
+                            Color sensors such as the TCS34725 measure red, green, blue and clear (unfiltered) light, have an IR-blocking filter, and report the values over I&sup2;C. They are useful for sorting objects or reading colored markers, but their readings change with the room lighting, so most robots shine their own light on the target and calibrate.
+                            </p>
+
+                            <h2 class="article-section-title">06. Cameras and LiDAR</h2>
+                            <p>
+                            A camera gives far more information than any other sensor here: color, shape, texture, and with two cameras or a depth camera, distance. The cost is computation. A single image is many thousands of pixel values, and turning it into &ldquo;there is a person 2&nbsp;m ahead&rdquo; needs computer vision or machine learning running on something much more powerful than an Arduino Uno, such as a single-board computer. Cameras are also sensitive to lighting.
+                            </p>
+                            <p>
+                            A LiDAR measures distance with laser light, often by timing the reflected pulse. A spinning 2D LiDAR sweeps a beam around the robot and returns hundreds or thousands of distance readings per turn, which is ideal for building maps and makes it a common sensor for <a href="robotics-ros.html">ROS</a> navigation. It costs more than the sensors above and only sees the plane it scans.
+                            </p>
+
+                            <h2 class="article-section-title">07. Comparing common sensors</h2>
+                            <table class="article-table">
+                            <thead>
+                            <tr><th scope="col">Sensor</th><th scope="col">Measures</th><th scope="col">Strength</th><th scope="col">Weakness</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr><td>Wheel encoder</td><td>Wheel rotation (proprioceptive)</td><td>Cheap, precise, fast</td><td>Cannot see wheel slip</td></tr>
+                            <tr><td>Ultrasonic (HC-SR04)</td><td>Distance, about 2&nbsp;cm&ndash;4&nbsp;m</td><td>Cheap, works in the dark</td><td>15&deg; cone, angled and soft surfaces</td></tr>
+                            <tr><td>IR distance (Sharp)</td><td>Distance, 10&ndash;80&nbsp;cm</td><td>Narrow beam</td><td>Short range, nonlinear output</td></tr>
+                            <tr><td>IMU (MPU-6050)</td><td>Acceleration and rotation rate</td><td>Fast, needs nothing outside the robot</td><td>Gyro drift, vibration noise</td></tr>
+                            <tr><td>Reflectance array (QTR)</td><td>Floor brightness</td><td>Ideal for line following</td><td>Must be a few millimeters from the floor</td></tr>
+                            <tr><td>Color (TCS34725)</td><td>Red, green, blue, clear light</td><td>Identifies colors</td><td>Depends on lighting</td></tr>
+                            <tr><td>Camera</td><td>Images</td><td>Richest information</td><td>Heavy computation, lighting</td></tr>
+                            <tr><td>2D LiDAR</td><td>Distances all around in one plane</td><td>Accurate, good for mapping</td><td>Cost, sees only one plane</td></tr>
+                            </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">08. Noise, and why one sensor is never enough</h2>
+                            <p>
+                            No sensor reading is exact. Electrical noise makes readings jitter, a sensor may have a small constant offset (bias), and some failures, like a missed ultrasonic echo, produce a reading that is simply wrong. Sensors also fail in <em>different</em> ways: encoders are smooth but drift when wheels slip, an ultrasonic sensor does not drift but is noisy, and a gyroscope is fast but slowly wanders.
+                            </p>
+                            <p>
+                            That is the reason real robots carry several sensors and combine them. A good rule is to pair a sensor that is accurate in the short term with one that is reliable in the long term. The next lessons build exactly that: <a href="robotics-5-6.html">5.6 Odometry</a> estimates position from encoders, and <a href="robotics-5-8.html">5.8 Kalman Filters</a> shows how to fuse it with other measurements.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Point an ultrasonic sensor at a hard wall, then at a cushion, then at the wall at a steep angle. Compare the readings and explain the differences.</li>
+                                    <li>Leave an IMU still on the desk, add up its gyroscope rate for a minute, and watch the heading drift.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">09. References</h2>
+                            <ol class="article-spec-list">
+                            <li>R. Siegwart, I. R. Nourbakhsh and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., ch. 4 &ldquo;Perception.&rdquo; MIT Press, 2011.</li>
+                            <li>ElecFreaks, &ldquo;Ultrasonic Ranging Module HC-SR04&rdquo; datasheet. <a href="https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf" target="_blank" rel="noopener noreferrer">cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</a>.</li>
+                            <li>Sharp, &ldquo;GP2Y0A21YK0F Distance Measuring Sensor Unit&rdquo; datasheet, and Pololu, &ldquo;Sharp/Socle GP2Y0A21YK0F Analog Distance Sensor 10-80cm.&rdquo; <a href="https://www.pololu.com/product/136" target="_blank" rel="noopener noreferrer">pololu.com/product/136</a>.</li>
+                            <li>InvenSense, &ldquo;MPU-6000 and MPU-6050 Product Specification,&rdquo; PS-MPU-6000A-00. <a href="https://alliance.seas.upenn.edu/~medesign/wiki/uploads/Guides/MPU6050_datasheet.pdf" target="_blank" rel="noopener noreferrer">alliance.seas.upenn.edu/&hellip;/MPU6050_datasheet.pdf</a>.</li>
+                            <li>I. Beavers, &ldquo;The Case of the Misguided Gyro,&rdquo; <em>Analog Dialogue</em>, Analog Devices. <a href="https://www.analog.com/en/resources/analog-dialogue/raqs/raq-issue-139.html" target="_blank" rel="noopener noreferrer">analog.com/&hellip;/raq-issue-139.html</a>.</li>
+                            <li>Pololu, &ldquo;QTR-8RC Reflectance Sensor Array.&rdquo; <a href="https://www.pololu.com/product/961" target="_blank" rel="noopener noreferrer">pololu.com/product/961</a>.</li>
+                            <li>ams OSRAM, &ldquo;TCS34725 Color Sensor.&rdquo; <a href="https://ams-osram.com/products/sensor-solutions/ambient-light-color-spectral-proximity-sensors/ams-tcs34725-color-sensor" target="_blank" rel="noopener noreferrer">ams-osram.com/&hellip;/ams-tcs34725-color-sensor</a>.</li>
+                            <li>S. Thrun, W. Burgard and D. Fox, <em>Probabilistic Robotics</em>. MIT Press, 2005.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
@@ -171,8 +277,9 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

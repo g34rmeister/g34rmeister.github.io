@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,13 +130,165 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
                         <article class="robotics-article-body">
 
-                            <!-- CONTENT -->
+                            <h2 class="article-section-title">01. Why robots need state machines</h2>
+                            <p>
+                            A robot rarely does just one thing. It follows a line, then swerves around a box, then hunts for the line again, then stops when someone presses a button. Writing all of that as one long chain of <code>if</code> statements quickly becomes impossible to read or debug. A <em>finite state machine</em> (FSM) organizes the &ldquo;think&rdquo; step of sense&ndash;think&ndash;act into a small number of clearly named behaviors and clear rules for switching between them.
+                            </p>
+                            <p>
+                            You have already met one: the hospitality robot in <a href="robotics-1-5.html">1.5</a> is described as a state machine with states such as Idle (waiting for a wake word), Listening and Responding, plus a rule that it slows or stops whenever a person comes too close.
+                            </p>
+
+                            <h2 class="article-section-title">02. The parts of a state machine</h2>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">State:</span> what the robot is doing right now, such as FOLLOW_LINE. The robot is in exactly one state at a time.</li>
+                            <li class="article-spec-item"><span class="spec-label">Event:</span> something that happens, usually detected by a <a href="robotics-5-5.html">sensor</a> or a timer: &ldquo;obstacle closer than 20&nbsp;cm,&rdquo; &ldquo;line lost,&rdquo; &ldquo;5 seconds passed.&rdquo;</li>
+                            <li class="article-spec-item"><span class="spec-label">Guard:</span> an extra condition that must also be true for a transition to happen, such as &ldquo;and the path ahead is clear.&rdquo;</li>
+                            <li class="article-spec-item"><span class="spec-label">Transition:</span> a move from one state to another when its event happens and its guard is true.</li>
+                            <li class="article-spec-item"><span class="spec-label">Action:</span> what the robot does: once on entering a state (entry action, such as starting a timer), or continuously while in it (such as running the line-following controller).</li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Worked example: line follower with obstacle avoidance</h2>
+                            <p>
+                            Our robot has two floor reflectance sensors, a forward HC-SR04 ultrasonic sensor and a stop button. It has four states:
+                            </p>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">FOLLOW_LINE:</span> steer to keep the line between the two floor sensors.</li>
+                            <li class="article-spec-item"><span class="spec-label">AVOID_OBSTACLE:</span> turn away from something in front.</li>
+                            <li class="article-spec-item"><span class="spec-label">SEARCH:</span> drive in a slow arc looking for the line.</li>
+                            <li class="article-spec-item"><span class="spec-label">STOP:</span> motors off. This is also the safe state.</li>
+                            </ul>
+                            <table class="article-table">
+                            <thead>
+                            <tr><th scope="col">Current state</th><th scope="col">Event [guard]</th><th scope="col">Next state</th></tr>
+                            </thead>
+                            <tbody>
+                            <tr><td>FOLLOW_LINE</td><td>Obstacle closer than 20&nbsp;cm</td><td>AVOID_OBSTACLE</td></tr>
+                            <tr><td>FOLLOW_LINE</td><td>Neither sensor sees the line</td><td>SEARCH</td></tr>
+                            <tr><td>AVOID_OBSTACLE</td><td>Turned for 600&nbsp;ms [path ahead clear]</td><td>SEARCH</td></tr>
+                            <tr><td>SEARCH</td><td>Line seen</td><td>FOLLOW_LINE</td></tr>
+                            <tr><td>SEARCH</td><td>Searching for more than 5&nbsp;s</td><td>STOP</td></tr>
+                            <tr><td>Any state</td><td>Stop button pressed</td><td>STOP</td></tr>
+                            </tbody>
+                            </table>
+                            <p>
+                            Writing the table first is good practice: it forces you to decide what happens for every state and event before writing any code.
+                            </p>
+
+                            <h2 class="article-section-title">04. The code: enum, switch and millis()</h2>
+                            <p>
+                            An <code>enum</code> gives each state a name, and a <code>switch</code> inside <code>loop()</code> runs the current state&rsquo;s actions and checks its transitions. Timing uses <code>millis()</code> instead of <code>delay()</code>, so <code>loop()</code> never stops: every pass reads the sensors, and the stop button works even halfway through a turn.
+                            </p>
+                            <pre class="article-code"><code>enum State { FOLLOW_LINE, AVOID_OBSTACLE, SEARCH, STOP };
+                            State state = FOLLOW_LINE;
+                            unsigned long stateStart = 0;      // when we entered the current state
+                            unsigned long lastPing = 0;
+                            float distanceCm = 999;
+
+                            const int LEFT_PWM = 5, LEFT_DIR = 4, RIGHT_PWM = 6, RIGHT_DIR = 7;
+                            const int TRIG = 9, ECHO = 10, STOP_BUTTON = 2;
+                            const int LINE_THRESHOLD = 600;    // analogRead value over black tape
+
+                            void setMotor(int pwmPin, int dirPin, int speed) {   // speed -255..255
+                              digitalWrite(dirPin, speed &gt;= 0 ? HIGH : LOW);
+                              analogWrite(pwmPin, constrain(abs(speed), 0, 255));
+                            }
+                            void drive(int left, int right) {
+                              setMotor(LEFT_PWM, LEFT_DIR, left);
+                              setMotor(RIGHT_PWM, RIGHT_DIR, right);
+                            }
+                            void enterState(State next) {
+                              state = next;
+                              stateStart = millis();
+                            }
+
+                            void setup() {
+                              pinMode(LEFT_DIR, OUTPUT);  pinMode(RIGHT_DIR, OUTPUT);
+                              pinMode(TRIG, OUTPUT);      pinMode(ECHO, INPUT);
+                              pinMode(STOP_BUTTON, INPUT_PULLUP);
+                              enterState(FOLLOW_LINE);
+                            }
+
+                            void loop() {
+                              unsigned long now = millis();
+
+                              // --- sense ---
+                              bool leftOnLine  = analogRead(A0) &gt; LINE_THRESHOLD;
+                              bool rightOnLine = analogRead(A1) &gt; LINE_THRESHOLD;
+                              if (now - lastPing &gt;= 60) {                  // HC-SR04: at least 60 ms apart
+                                lastPing = now;
+                                digitalWrite(TRIG, HIGH); delayMicroseconds(10); digitalWrite(TRIG, LOW);
+                                unsigned long echo = pulseIn(ECHO, HIGH, 12000);   // give up after 12 ms
+                                distanceCm = (echo == 0) ? 999 : echo * 0.034 / 2;
+                              }
+                              if (state != STOP &amp;&amp; digitalRead(STOP_BUTTON) == LOW) enterState(STOP);
+
+                              // --- think and act ---
+                              switch (state) {
+                                case FOLLOW_LINE:
+                                  if (distanceCm &lt; 20)               enterState(AVOID_OBSTACLE);
+                                  else if (!leftOnLine &amp;&amp; !rightOnLine) enterState(SEARCH);
+                                  else if (leftOnLine &amp;&amp; !rightOnLine) drive(80, 180);   // line is to the left
+                                  else if (rightOnLine &amp;&amp; !leftOnLine) drive(180, 80);   // line is to the right
+                                  else                                 drive(160, 160);
+                                  break;
+                                case AVOID_OBSTACLE:
+                                  drive(150, -150);                                  // spin right
+                                  if (now - stateStart &gt;= 600 &amp;&amp; distanceCm &gt;= 20) enterState(SEARCH);
+                                  break;
+                                case SEARCH:
+                                  drive(140, 90);                                    // slow arc
+                                  if (leftOnLine || rightOnLine)   enterState(FOLLOW_LINE);
+                                  else if (now - stateStart &gt; 5000) enterState(STOP);
+                                  break;
+                                case STOP:
+                                  drive(0, 0);                                       // stay here until reset
+                                  break;
+                              }
+                            }</code></pre>
+                            <p>
+                            <code>pulseIn()</code> does wait for the echo, but the 12&nbsp;ms timeout (about 2&nbsp;m of range) keeps that wait short and bounded. The pins match an Arduino Uno: 5 and 6 are PWM pins, and the motor driver is assumed to take one PWM and one direction input per motor.
+                            </p>
+
+                            <h2 class="article-section-title">05. Common mistakes</h2>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Using delay():</span> <code>delay(600)</code> inside AVOID_OBSTACLE would freeze the robot for 600&nbsp;ms, blind to the stop button and sensors. Compare <code>millis()</code> timestamps instead.</li>
+                            <li class="article-spec-item"><span class="spec-label">Forgetting to reset the timer:</span> always change state through one function like <code>enterState()</code>, so the entry time (and any other entry action) is never skipped.</li>
+                            <li class="article-spec-item"><span class="spec-label">Missing transitions:</span> a state with no way out traps the robot. Check every row of your table, and make sure every state can reach STOP.</li>
+                            <li class="article-spec-item"><span class="spec-label">Chattering:</span> if a reading hovers right at a threshold, the robot can flip between two states on every pass. Use two thresholds (for example, enter AVOID below 20&nbsp;cm but only leave above 25&nbsp;cm) or require the condition to hold for a short time.</li>
+                            <li class="article-spec-item"><span class="spec-label">Subtracting time wrongly:</span> write <code>now - stateStart &gt;= 600</code> with <code>unsigned long</code> values. That form still works when <code>millis()</code> wraps back to zero after about 50 days.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">06. The same idea at larger scale</h2>
+                            <p>
+                            State machines are everywhere in professional robotics. Packaging and other industrial machines commonly follow the PackML state model from ISA-TR88.00.02, with standard states such as Idle, Execute, Held, Stopped and Aborted, so any operator or supervisory system knows what &ldquo;Held&rdquo; means on any machine.
+                            </p>
+                            <p>
+                            In <a href="robotics-ros.html">ROS 2</a>, managed (lifecycle) nodes follow a defined state machine with the primary states Unconfigured, Inactive, Active and Finalized, so a launch system can configure and activate a robot&rsquo;s nodes in a known order. The Nav2 navigation stack uses lifecycle nodes for bringup and organizes its navigation logic as <em>behavior trees</em>, which its documentation presents as a more scalable alternative to a finite state machine with dozens of states and hundreds of transitions. Once your robot&rsquo;s behavior outgrows a single switch statement, that is the natural next step.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Add a LOW_BATTERY state to the example. Write its rows in the transition table before you change the code.</li>
+                                    <li>Take an old sketch that uses <code>delay()</code> and rewrite one wait using <code>millis()</code>, so the loop keeps reading a button.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">07. References</h2>
+                            <ol class="article-spec-list">
+                            <li>Arduino, &ldquo;millis().&rdquo; <a href="https://docs.arduino.cc/language-reference/en/functions/time/millis/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/time/millis</a>.</li>
+                            <li>Arduino, &ldquo;Blink Without Delay.&rdquo; <a href="https://docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/built-in-examples/digital/BlinkWithoutDelay</a>.</li>
+                            <li>Arduino, &ldquo;pulseIn().&rdquo; <a href="https://docs.arduino.cc/language-reference/en/functions/advanced-io/pulseIn/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/advanced-io/pulseIn</a>.</li>
+                            <li>ROS 2 Design, &ldquo;Managed nodes.&rdquo; <a href="https://design.ros2.org/articles/node_lifecycle.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/node_lifecycle.html</a>.</li>
+                            <li>Nav2, &ldquo;Navigation Concepts.&rdquo; <a href="https://docs.nav2.org/concepts/index.html" target="_blank" rel="noopener noreferrer">docs.nav2.org/concepts</a>.</li>
+                            <li>ISA, <em>ISA-TR88.00.02-2022, Machine and Unit States: An Implementation Example of ISA-88.00.01</em>. <a href="https://www.isa.org/products/isa-tr88-00-02-2022-machine-and-unit-states-an-imp" target="_blank" rel="noopener noreferrer">isa.org/products/isa-tr88-00-02-2022-&hellip;</a>.</li>
+                            <li>Fabrico, &ldquo;PackML State Model.&rdquo; <a href="https://www.fabrico.io/blog/packml-state-model/" target="_blank" rel="noopener noreferrer">fabrico.io/blog/packml-state-model</a>.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
@@ -171,8 +323,9 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,13 +130,119 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
                         <article class="robotics-article-body">
 
-                            <!-- CONTENT -->
+                            <h2 class="article-section-title">01. Why fuse sensors?</h2>
+                            <p>
+                            The last few lessons left us with a problem. <a href="robotics-5-6.html">Odometry</a> is smooth and responds instantly, but it drifts: its error grows the farther the robot drives. An ultrasonic sensor measuring the distance to a known wall, or GPS outdoors, does not drift, but each reading is noisy and some are badly wrong. Neither is good enough alone (see <a href="robotics-5-5.html">5.5</a>).
+                            </p>
+                            <p>
+                            A Kalman filter combines the two. It keeps a best estimate of the robot&rsquo;s state together with a number saying how uncertain that estimate is, and it weighs each new piece of information by how trustworthy it is. The result is usually better than either source on its own.
+                            </p>
+
+                            <h2 class="article-section-title">02. The predict&ndash;update cycle</h2>
+                            <p>
+                            A Kalman filter repeats two steps forever:
+                            </p>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Predict (time update):</span> use what the robot <em>did</em>, such as the distance its encoders say it drove, to move the estimate forward. Because motion is imperfect, uncertainty <em>grows</em>.</li>
+                            <li class="article-spec-item"><span class="spec-label">Update (measurement update):</span> use what the robot <em>sensed</em> to correct the estimate. Because we learned something, uncertainty <em>shrinks</em>.</li>
+                            </ul>
+                            <p>
+                            Uncertainty is measured as a <em>variance</em>, written P: the square of the standard deviation. A small P means &ldquo;I am fairly sure,&rdquo; a large P means &ldquo;I could be way off.&rdquo;
+                            </p>
+
+                            <h2 class="article-section-title">03. A one-dimensional Kalman filter</h2>
+                            <p>
+                            Picture a robot driving along a hallway. Its state is a single number <em>x</em>, its position in meters. Each step we have a motion input <em>u</em> (from odometry) and a measurement <em>z</em> (from a range sensor, converted to a position).
+                            </p>
+                            <pre class="article-code"><code>Predict:  x_pred = x + u
+                                      P_pred = P + Q
+
+                            Update:   K = P_pred / (P_pred + R)
+                                      x = x_pred + K * (z - x_pred)
+                                      P = (1 - K) * P_pred</code></pre>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">x_pred = x + u:</span> &ldquo;I was at x and moved u, so now I am probably at x + u.&rdquo;</li>
+                            <li class="article-spec-item"><span class="spec-label">P_pred = P + Q:</span> moving adds uncertainty. Q is the <em>process noise</em>, how much error one motion step adds.</li>
+                            <li class="article-spec-item"><span class="spec-label">K, the Kalman gain:</span> a number between 0 and 1 that says how much to trust the measurement. R is the <em>measurement noise</em>, the variance of the sensor. If the prediction is uncertain (P_pred large) compared with the sensor (R small), K is close to 1 and the filter follows the sensor. If the sensor is the noisy one, K is close to 0 and the filter mostly keeps its prediction.</li>
+                            <li class="article-spec-item"><span class="spec-label">z &minus; x_pred:</span> the <em>innovation</em>, how far the measurement is from what we expected. The estimate moves by K times this gap.</li>
+                            <li class="article-spec-item"><span class="spec-label">P = (1 &minus; K) P_pred:</span> after a measurement the estimate is more certain than before.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">04. A worked example</h2>
+                            <p>
+                            The robot believes it is at x = 2.00&nbsp;m with variance P = 0.04 (a standard deviation of 0.2&nbsp;m). Its encoders say it just drove u = 0.50&nbsp;m, and we model each step&rsquo;s process noise as Q = 0.01. The range sensor then reports z = 2.60&nbsp;m, and its noise variance is R = 0.05.
+                            </p>
+                            <pre class="article-code"><code>Predict:  x_pred = 2.00 + 0.50          = 2.50 m
+                                      P_pred = 0.04 + 0.01          = 0.05
+
+                            Update:   K      = 0.05 / (0.05 + 0.05) = 0.5
+                                      x      = 2.50 + 0.5 * (2.60 - 2.50) = 2.55 m
+                                      P      = (1 - 0.5) * 0.05     = 0.025</code></pre>
+                            <p>
+                            Because the prediction and the sensor were equally uncertain (both 0.05), K = 0.5 and the new estimate lands exactly halfway between them, at 2.55&nbsp;m. Notice that the new variance, 0.025, is smaller than <em>both</em> 0.05 values: combining two uncertain sources gives a more certain answer than either alone.
+                            </p>
+
+                            <h2 class="article-section-title">05. In code</h2>
+                            <pre class="article-code"><code>float x = 0.0;          // position estimate (m)
+                            float P = 1.0;          // variance of the estimate: start unsure
+                            const float Q = 0.01;   // process noise: how much each move adds
+                            const float R = 0.05;   // measurement noise: variance of the sensor
+
+                            void kalmanPredict(float u) {     // u = distance moved, from odometry
+                              x = x + u;
+                              P = P + Q;
+                            }
+
+                            void kalmanUpdate(float z) {      // z = position measured by the sensor
+                              float K = P / (P + R);
+                              x = x + K * (z - x);
+                              P = (1 - K) * P;
+                            }</code></pre>
+                            <p>
+                            Call <code>kalmanPredict()</code> every time odometry updates, and <code>kalmanUpdate()</code> only when a new sensor reading arrives. If a reading is missing or obviously invalid (for example, an ultrasonic timeout), simply skip the update: the filter keeps predicting and P keeps growing, which is exactly right.
+                            </p>
+
+                            <h2 class="article-section-title">06. Choosing Q and R</h2>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">R:</span> measure it. Hold the robot still, take many sensor readings, and compute their variance.</li>
+                            <li class="article-spec-item"><span class="spec-label">Q:</span> usually tuned. A larger Q says &ldquo;my motion model is unreliable&rdquo; (slippery floor, wheels that slip), so the filter leans on the sensor and reacts faster but is jumpier. A smaller Q trusts the model, giving a smoother estimate that is slower to correct.</li>
+                            <li class="article-spec-item"><span class="spec-label">Only the ratio matters for K:</span> after a few steps, the gain settles to a value set by how big Q is compared with R. Doubling both Q and R leaves the settled gain unchanged.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">07. Real robots</h2>
+                            <p>
+                            A real robot&rsquo;s state has several numbers (x, y and &theta;, often plus velocities), so the filter uses vectors and matrices instead of single numbers, but the predict&ndash;update cycle is identical. The basic Kalman filter assumes linear motion and measurements. Turning and driving involve sines and cosines, so mobile robots usually use the <em>extended Kalman filter</em> (EKF), which linearizes the equations around the current estimate at each step.
+                            </p>
+                            <p>
+                            For estimating tilt from an IMU, many small robots use a simpler <em>complementary filter</em> instead. The gyroscope is trusted over short time spans and the accelerometer, which knows where gravity points, over long ones: <code>angle = 0.98 * (angle + gyroRate * dt) + 0.02 * accelAngle</code>. The weights here are a common starting point, not a rule.
+                            </p>
+
+                            <h2 class="article-section-title">08. A little history</h2>
+                            <p>
+                            Rudolf E. K&aacute;lm&aacute;n published the filter in 1960 in &ldquo;A New Approach to Linear Filtering and Prediction Problems,&rdquo; a recursive solution that suited the digital computers then appearing. That autumn he visited Stanley Schmidt at NASA Ames Research Center, whose group was studying navigation for the Apollo lunar missions. Schmidt&rsquo;s team turned the idea into a practical tool, developing what became the extended Kalman filter, and a square-root form of the filter was used in the Apollo system. Today Kalman filters run in everything from phones to aircraft to self-driving cars.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Repeat the worked example with R = 0.01 and then R = 0.5. Calculate K each time and explain which way the estimate moves.</li>
+                                    <li>Write the 1-D filter in Python or C++ and feed it ten noisy readings of a constant value. Plot the raw and filtered values.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">09. References</h2>
+                            <ol class="article-spec-list">
+                            <li>R. E. Kalman, &ldquo;A new approach to linear filtering and prediction problems,&rdquo; <em>Transactions of the ASME, Journal of Basic Engineering</em>, vol. 82, series D, pp. 35&ndash;45, 1960. <a href="https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html" target="_blank" rel="noopener noreferrer">cs.unc.edu/~welch/kalman/kalmanPaper.html</a>.</li>
+                            <li>G. Welch and G. Bishop, &ldquo;An Introduction to the Kalman Filter,&rdquo; TR 95-041, University of North Carolina at Chapel Hill. <a href="https://www.cs.unc.edu/~welch/kalman/kalmanIntro.html" target="_blank" rel="noopener noreferrer">cs.unc.edu/~welch/kalman/kalmanIntro.html</a>.</li>
+                            <li>L. A. McGee and S. F. Schmidt, &ldquo;Discovery of the Kalman filter as a practical tool for aerospace and industry,&rdquo; NASA TM-86847, 1985. <a href="https://ntrs.nasa.gov/citations/19860003843" target="_blank" rel="noopener noreferrer">ntrs.nasa.gov/citations/19860003843</a>.</li>
+                            <li>S. Thrun, W. Burgard and D. Fox, <em>Probabilistic Robotics</em>, ch. 3 &ldquo;Gaussian Filters.&rdquo; MIT Press, 2005.</li>
+                            <li>S. Park and J. How, &ldquo;Examples of Estimation Filters from Recent Aircraft Projects at MIT,&rdquo; MIT 16.333, 2004. <a href="https://ocw.mit.edu/courses/16-333-aircraft-stability-and-control-fall-2004/fb8395efd40e5f4a79b98fda10c85de3_l15_filter_examp.pdf" target="_blank" rel="noopener noreferrer">ocw.mit.edu/courses/16-333-&hellip;/l15_filter_examp.pdf</a>.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
@@ -171,8 +277,9 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

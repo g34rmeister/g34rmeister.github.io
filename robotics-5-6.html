@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,13 +130,129 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
                         <article class="robotics-article-body">
 
-                            <!-- CONTENT -->
+                            <h2 class="article-section-title">01. What is odometry?</h2>
+                            <p>
+                            Odometry is estimating where a robot is by adding up how far its wheels have turned. It is a form of <em>dead reckoning</em>: starting from a known pose, the robot keeps a running total of its small movements, with no outside reference. For a differential-drive robot (two driven wheels on one axle, plus a caster) the inputs are simply the tick counts from the left and right <a href="robotics-5-3.html">wheel encoders</a>.
+                            </p>
+                            <p>
+                            The robot&rsquo;s <em>pose</em> is its position and heading in a fixed world frame (see <a href="robotics-1-6.html">1.6 Coordinate Frames</a>): <em>x</em> and <em>y</em> in meters and the heading <em>&theta;</em> in radians, measured counterclockwise from the x-axis.
+                            </p>
+
+                            <h2 class="article-section-title">02. From ticks to wheel distance</h2>
+                            <p>
+                            Each update, read how many ticks each encoder counted since the last update and convert them to distance, using the formula from 5.3:
+                            </p>
+                            <pre class="article-code"><code>d_L = (delta_ticks_L / CPR) * (pi * wheel_diameter)
+                            d_R = (delta_ticks_R / CPR) * (pi * wheel_diameter)</code></pre>
+
+                            <h2 class="article-section-title">03. The update equations</h2>
+                            <p>
+                            With <em>b</em> the wheelbase (the distance between the two wheels&rsquo; contact points), the robot&rsquo;s center moves by the average of the two wheels, and the difference between them turns it:
+                            </p>
+                            <pre class="article-code"><code>d_center = (d_L + d_R) / 2
+                            d_theta  = (d_R - d_L) / b
+
+                            x     = x + d_center * cos(theta + d_theta / 2)
+                            y     = y + d_center * sin(theta + d_theta / 2)
+                            theta = theta + d_theta</code></pre>
+                            <p>
+                            If both wheels travel the same distance, <code>d_theta</code> is zero and the robot drives straight. If the right wheel travels farther, <code>d_theta</code> is positive and the robot turns left (counterclockwise).
+                            </p>
+                            <p>
+                            The <code>d_theta / 2</code> term uses the heading halfway through the step. That is the form in Siegwart&rsquo;s textbook, and it is more accurate on curves than the simpler version you will also see, <code>x += d_center * cos(theta)</code>, which uses the heading from the start of the step. Both are approximations that work well when the update is frequent and each step is small, so update every 10&ndash;20&nbsp;ms rather than once a second.
+                            </p>
+
+                            <h2 class="article-section-title">04. Odometry in code</h2>
+                            <p>
+                            This sketch fragment assumes the encoder interrupt routines from <a href="robotics-5-3.html">5.3</a> keep <code>leftTicks</code> and <code>rightTicks</code> up to date. It uses <code>millis()</code> so the update runs on a steady schedule without blocking the rest of the program.
+                            </p>
+                            <pre class="article-code"><code>const float WHEEL_DIAMETER = 0.065;   // meters
+                            const float WHEELBASE      = 0.150;   // meters
+                            const long  CPR            = 1440;    // counts per wheel revolution
+                            const float M_PER_TICK     = PI * WHEEL_DIAMETER / CPR;
+
+                            volatile long leftTicks = 0, rightTicks = 0;  // updated by encoder ISRs
+                            long prevLeft = 0, prevRight = 0;
+                            float x = 0, y = 0, theta = 0;
+                            unsigned long lastUpdate = 0;
+
+                            void updateOdometry() {
+                              noInterrupts();                 // copy counts safely
+                              long l = leftTicks;
+                              long r = rightTicks;
+                              interrupts();
+
+                              float dL = (l - prevLeft)  * M_PER_TICK;
+                              float dR = (r - prevRight) * M_PER_TICK;
+                              prevLeft = l;
+                              prevRight = r;
+
+                              float dCenter = (dL + dR) / 2.0;
+                              float dTheta  = (dR - dL) / WHEELBASE;
+
+                              x += dCenter * cos(theta + dTheta / 2.0);
+                              y += dCenter * sin(theta + dTheta / 2.0);
+                              theta += dTheta;
+                              theta = atan2(sin(theta), cos(theta));   // keep theta in -pi..pi
+                            }
+
+                            void loop() {
+                              if (millis() - lastUpdate &gt;= 20) {        // 50 updates per second
+                                lastUpdate += 20;
+                                updateOdometry();
+                              }
+                              // ... sensing and motor control continue here ...
+                            }</code></pre>
+
+                            <h2 class="article-section-title">05. Why the error keeps growing</h2>
+                            <p>
+                            Each update adds a small error, and nothing ever removes it, so odometry error grows without bound the farther the robot drives. Heading errors are the worst: a heading that is off by just one degree pushes the position sideways by almost 2&nbsp;cm for every meter driven, and that sideways error keeps growing for the rest of the trip.
+                            </p>
+                            <p>
+                            Borenstein and Feng, who developed the UMBmark test at the University of Michigan, split odometry errors into two kinds:
+                            </p>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Systematic errors:</span> come from the robot itself and repeat on every run. Examples are unequal wheel diameters, an average wheel diameter that differs from the value in the code, an uncertain effective wheelbase, misaligned wheels, and limited encoder resolution or sampling rate. They found unequal wheel diameters and wheelbase uncertainty to be the two biggest.</li>
+                            <li class="article-spec-item"><span class="spec-label">Non-systematic errors:</span> come from the robot&rsquo;s interaction with the floor and are unpredictable. Examples are uneven floors, driving over objects, and wheel slip from slippery floors, hard acceleration, fast turns or being pushed.</li>
+                            </ul>
+                            <p>
+                            Systematic errors can be measured and calibrated away. Non-systematic errors cannot; they can only be bounded by checking against other sensors.
+                            </p>
+
+                            <h2 class="article-section-title">06. Calibration tips</h2>
+                            <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Wheel diameter:</span> drive straight a measured distance, such as 2&nbsp;m, and compare it with what odometry reports. Then <code>new_diameter = old_diameter * actual / reported</code>.</li>
+                            <li class="article-spec-item"><span class="spec-label">Wheelbase:</span> spin in place several full turns (more turns makes small errors easier to see) and compare the reported angle with the real one. Then <code>new_b = old_b * reported_angle / actual_angle</code>.</li>
+                            <li class="article-spec-item"><span class="spec-label">UMBmark:</span> Borenstein and Feng&rsquo;s test drives a 4&nbsp;m &times; 4&nbsp;m square five times clockwise and five times counterclockwise, then compares where odometry thinks the robot ended with where it really ended. Running both directions separates wheel-diameter error from wheelbase error.</li>
+                            <li class="article-spec-item"><span class="spec-label">Drive gently:</span> smooth acceleration and slower turns reduce wheel slip.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">07. Correcting odometry with other sensors</h2>
+                            <p>
+                            Because odometry drifts, robots correct it with sensors that measure the outside world or an absolute reference. A gyroscope in an <a href="robotics-5-5.html">IMU</a> measures turning directly, so it is not fooled when a wheel slips during a turn, although it drifts slowly itself. Range sensors or a LiDAR can match the robot&rsquo;s view to walls or a map, and outdoors GPS gives an absolute but noisy position. Combining a smooth, drifting estimate with noisy, drift-free measurements is the job of the <a href="robotics-5-8.html">Kalman filter</a>, the topic of 5.8.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>By hand, update a pose of (0, 0, 0) with d_L = 0.10 m and d_R = 0.14 m on a 0.20 m wheelbase.</li>
+                                    <li>Drive a robot around a 1 m square using odometry only, and measure how far from the start it stops. Repeat in the other direction.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">08. References</h2>
+                            <ol class="article-spec-list">
+                            <li>R. Siegwart, I. R. Nourbakhsh and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., ch. 5 &ldquo;Mobile Robot Localization.&rdquo; MIT Press, 2011.</li>
+                            <li>J. Borenstein and L. Feng, &ldquo;Measurement and correction of systematic odometry errors in mobile robots,&rdquo; <em>IEEE Transactions on Robotics and Automation</em>, vol. 12, no. 5, 1996. <a href="https://cs.au.dk/~ocaprani/legolab/DigitalControl.dir/NXT/Lesson10.dir/paper58.pdf" target="_blank" rel="noopener noreferrer">cs.au.dk/&hellip;/paper58.pdf</a>.</li>
+                            <li>J. Borenstein, H. R. Everett, L. Feng and D. Wehe, &ldquo;Mobile robot positioning: Sensors and techniques,&rdquo; <em>Journal of Robotic Systems</em>, vol. 14, no. 4, 1997. <a href="https://apps.dtic.mil/sti/tr/pdf/ADA422844.pdf" target="_blank" rel="noopener noreferrer">apps.dtic.mil/sti/tr/pdf/ADA422844.pdf</a>.</li>
+                            <li>Princeton University COS 495, &ldquo;Lecture 5: Odometry&rdquo; (after Siegwart and Nourbakhsh). <a href="https://www.cs.princeton.edu/courses/archive/fall11/cos495/COS495-Lecture5-Odometry.pdf" target="_blank" rel="noopener noreferrer">cs.princeton.edu/&hellip;/COS495-Lecture5-Odometry.pdf</a>.</li>
+                            <li>S. Thrun, W. Burgard and D. Fox, <em>Probabilistic Robotics</em>, ch. 5 &ldquo;Robot Motion.&rdquo; MIT Press, 2005.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
@@ -171,8 +287,9 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

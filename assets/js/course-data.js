@@ -26,7 +26,7 @@ window.RISE_COURSE = {
 			lessons: [
 				{
 					id: '1-1',
-					title: 'Definition of Robots',
+					title: 'Definition of Robots', minutes: 2,
 					objectives: [
 						'Define a robot and explain why an industrial arm counts as one.',
 						'Explain where the word "robot" comes from.',
@@ -36,7 +36,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '1-2',
-					title: 'History and Evolution of Robots',
+					title: 'History and Evolution of Robots', minutes: 4,
 					objectives: [
 						'Name early automata and the idea of a stored program behind Jacquard\'s loom.',
 						'Place Unimate, SCARA, cobots and ROS on a timeline.',
@@ -46,7 +46,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '1-3',
-					title: 'Types of Robots',
+					title: 'Types of Robots', minutes: 3,
 					objectives: [
 						'Tell apart industrial robots, cobots, mobile robots, SCARA robots and AGVs.',
 						'Explain how AGVs differ from autonomous mobile robots (AMRs), and when to pick each.'
@@ -55,7 +55,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '1-4',
-					title: 'Preliminary Requirements',
+					title: 'Preliminary Requirements', minutes: 2,
 					objectives: [
 						'List the programming languages and math that robotics relies on.',
 						'Explain why assembly and networking basics are useful.',
@@ -65,13 +65,14 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '1-5',
-					title: 'Common Applications of Robotics',
+					title: 'Common Applications of Robotics', minutes: 4,
 					objectives: [
 						'Give examples of robots in production, human interaction and exploration.',
 						'Explain how robots protect human lives in dangerous work, using the Mars, World Trade Center and Fukushima cases.'
 					],
 					keyTerms: ['service robot', 'Mars rover', 'AutoNav', 'search and rescue']
-				}
+				},
+				{"id": "1-6", "minutes": 6, "title": "Robot Anatomy and Coordinate Frames", "objectives": ["Distinguish revolute and prismatic joints and explain why six axes are needed to position and orient a tool.", "Explain what the tool center point, tool frame and work object are, and why defining frames makes a program reusable.", "Compare joint, linear and circular moves and describe what blending does."], "keyTerms": ["degree of freedom", "end effector", "workspace (work envelope)", "tool center point (TCP)", "work object (user frame)", "inverse kinematics", "linear interpolation (MoveL)", "blending (zone)"]}
 			]
 		},
 		{
@@ -84,16 +85,17 @@ window.RISE_COURSE = {
 			lessons: [
 				{
 					id: '2-1',
-					title: 'Types of Programming',
+					title: 'Types of Programming', minutes: 5,
 					objectives: [
 						'Compare online (teach pendant, lead-through) and offline programming.',
+						'Explain how block-based programming works and when it fits.',
 						'Choose a method for a given job.'
 					],
-					keyTerms: ['offline programming', 'teach pendant', 'lead-through', 'MoveJ', 'MoveL']
+					keyTerms: ['offline programming', 'teach pendant', 'lead-through', 'block-based programming', 'MoveJ', 'MoveL']
 				},
 				{
 					id: '2-2',
-					title: 'Common Programming Environments',
+					title: 'Common Programming Environments', minutes: 4,
 					objectives: [
 						'Describe what ABB RobotStudio is used for.',
 						'Describe how PolyScope programs are built and where URScript fits in.'
@@ -102,7 +104,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '2-3',
-					title: 'Common Programming Languages',
+					title: 'Common Programming Languages', minutes: 3,
 					objectives: [
 						'Read a short URScript and RAPID program.',
 						'Compare URScript and RAPID.',
@@ -112,7 +114,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '2-4',
-					title: 'Intro to ROS (Vendor-Agnostic)',
+					title: 'Intro to ROS (Vendor-Agnostic)', minutes: 2,
 					objectives: [
 						'Explain why vendor-neutral middleware like ROS is useful.',
 						'Describe what ROS-Industrial adds for manufacturing.',
@@ -132,7 +134,7 @@ window.RISE_COURSE = {
 			lessons: [
 				{
 					id: '3-1',
-					title: 'Definition and Introduction',
+					title: 'Definition and Introduction', minutes: 3,
 					objectives: [
 						'Explain what ROS is and is not.',
 						'Define nodes, topics, services, actions and parameters.',
@@ -142,7 +144,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '3-2',
-					title: 'ROS 1 vs. ROS 2',
+					title: 'ROS 1 vs. ROS 2', minutes: 4,
 					objectives: [
 						'Explain how ROS 2 discovery with DDS differs from the ROS 1 master.',
 						'Choose Quality of Service settings and a middleware for a topic.',
@@ -152,16 +154,17 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '3-3',
-					title: 'Installing ROS on Your Local Environment',
+					title: 'Installing ROS on Your Local Environment', minutes: 4,
 					objectives: [
 						'Pick an install route for your operating system.',
-						'Install and source ROS 2 on Ubuntu.'
+						'Install and source ROS 2 on Ubuntu.',
+						'Check the install with talker and listener, and fix common errors.'
 					],
 					keyTerms: ['Lyrical Luth', 'Jazzy Jalisco', 'WSL 2', 'setup.bash']
 				},
 				{
 					id: '3-4',
-					title: 'Running Your First Example (Turtlesim)',
+					title: 'Running Your First Example (Turtlesim)', minutes: 3,
 					objectives: [
 						'Run Turtlesim and drive the turtle from the keyboard.',
 						'Inspect nodes, topics and message types with the ros2 command.',
@@ -171,7 +174,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '3-5',
-					title: 'ROS Tools',
+					title: 'ROS Tools', minutes: 3,
 					objectives: [
 						'Tell RViz (visualization) apart from Gazebo (simulation).',
 						'See the running node graph with rqt_graph.',
@@ -192,7 +195,7 @@ window.RISE_COURSE = {
 			lessons: [
 				{
 					id: '4-1',
-					title: 'Ethics in Engineering',
+					title: 'Ethics in Engineering', minutes: 3,
 					objectives: [
 						'State the first duty in engineering codes of ethics.',
 						'List the core duties shared by the NSPE and IEEE codes.',
@@ -202,14 +205,15 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '4-2',
-					title: 'Ethics in Robotics (Hardware, Software)',
+					title: 'Ethics in Robotics (Hardware, Software)', minutes: 3,
 					objectives: [
 						'Name the main robot safety standards.',
 						'Describe hardware safeguards and the software safety layer.',
 						'Explain what makes an application collaborative and how people stay safe while teaching a robot.'
 					],
 					keyTerms: ['ISO 10218', 'emergency stop', 'power and force limiting', 'watchdog timer', 'geofencing']
-				}
+				},
+				{"id": "4-3", "minutes": 6, "title": "Robots and Society", "objectives": ["Summarize what research finds about robots' effects on jobs and wages, including tasks versus whole jobs.", "Explain the privacy risks of robot sensors and how data minimization reduces them.", "Describe who is accountable for autonomous systems and how the EU AI Act and IEEE frameworks address human oversight."], "keyTerms": ["displacement effect", "reinstatement effect", "data minimization", "human in the loop", "EU AI Act", "IEEE 7000"]}
 			]
 		},
 		{
@@ -222,7 +226,7 @@ window.RISE_COURSE = {
 			lessons: [
 				{
 					id: '5-1',
-					title: 'Arduino for Robotics',
+					title: 'Arduino for Robotics', minutes: 3,
 					objectives: [
 						'Choose the right Arduino pin type for a job.',
 						'Structure a sketch with setup() and loop().',
@@ -232,7 +236,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '5-2',
-					title: 'Pulse Width Modulation (PWM)',
+					title: 'Pulse Width Modulation (PWM)', minutes: 4,
 					objectives: [
 						'Explain duty cycle and frequency.',
 						'Compute average voltage from duty cycle.',
@@ -242,7 +246,7 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '5-3',
-					title: 'Encoders and Shaft Encoders',
+					title: 'Encoders and Shaft Encoders', minutes: 4,
 					objectives: [
 						'Compare incremental and absolute encoders.',
 						'Explain quadrature decoding and CPR = PPR × 4.',
@@ -252,14 +256,18 @@ window.RISE_COURSE = {
 				},
 				{
 					id: '5-4',
-					title: 'PID Control',
+					title: 'PID Control', minutes: 4,
 					objectives: [
 						'Explain what the P, I and D terms each do.',
 						'Write a discrete-time PID update and tune it by hand.',
 						'Avoid integral windup and derivative kick.'
 					],
 					keyTerms: ['setpoint', 'error', 'Kp', 'Ki', 'Kd', 'Ziegler–Nichols', 'integral windup']
-				}
+				},
+				{"id": "5-5", "minutes": 7, "title": "Sensors for Robots", "objectives": ["Distinguish proprioceptive from exteroceptive sensors.", "Compare how common robot sensors work and where each fails.", "Explain why robots combine several sensors."], "keyTerms": ["proprioceptive sensor", "exteroceptive sensor", "ultrasonic range finder", "IMU", "gyro drift", "reflectance sensor", "LiDAR"]},
+				{"id": "5-6", "minutes": 6, "title": "Odometry", "objectives": ["Compute a differential-drive pose update from encoder ticks.", "Distinguish systematic from non-systematic odometry errors.", "Calibrate wheel diameter and wheelbase."], "keyTerms": ["odometry", "dead reckoning", "pose", "wheelbase", "systematic error", "non-systematic error", "UMBmark"]},
+				{"id": "5-7", "minutes": 6, "title": "State Machines", "objectives": ["Identify the states, events, guards, transitions and actions of a robot behavior.", "Write a state-transition table.", "Implement a non-blocking state machine with enum, switch and millis()."], "keyTerms": ["finite state machine", "state", "transition", "guard", "entry action", "millis()", "lifecycle node"]},
+				{"id": "5-8", "minutes": 6, "title": "Intro to Kalman Filters", "objectives": ["Explain the predict and update steps of a Kalman filter.", "Compute one step of a 1-D Kalman filter.", "Describe how Q and R change the filter's behavior."], "keyTerms": ["sensor fusion", "Kalman gain", "process noise (Q)", "measurement noise (R)", "innovation", "extended Kalman filter", "complementary filter"]}
 			]
 		}
 	],
@@ -301,9 +309,12 @@ window.RISE_COURSE = {
 				choices: ['Rovers have no cameras', 'A radio signal takes roughly 3 to 22 minutes to reach Mars one way', 'Joysticks are not allowed by NASA', 'The rovers do not have motors'],
 				answer: 1,
 				explanation: 'The signal delay is minutes long, so rovers like Perseverance use AutoNav to plan their own paths around hazards.'
-			}
+			},
+			{"lesson": "1-6", "question": "A fixture is moved slightly, and all program targets were defined relative to a work object on that fixture. What is the simplest fix?", "choices": ["Re-teach every target point in the program", "Re-teach the work object so all targets move with it", "Change tool0 to a new tool", "Switch every MoveL to MoveJ"], "answer": 1, "explanation": "Targets are measured relative to the work object, so re-teaching the work object moves every target with it and the program itself does not change."},
+			{"lesson": "1-6", "question": "Which move instruction makes the tool center point travel in a straight line in Cartesian space?", "choices": ["MoveJ / movej", "MoveL / movel", "MoveC / movec", "Any move with a zone such as z50"], "answer": 1, "explanation": "A linear move (MoveL / movel) moves the TCP in a straight line, while a joint move interpolates in joint space and the tool follows a curved path."}
 		],
 		2: [
+			{"lesson": "2-1", "question": "In ABB's Wizard Easy Programming, what happens to the blocks a user snaps together on the FlexPendant?", "choices": ["The controller runs the blocks directly with no translation", "They are converted in real time into ABB's RAPID language", "They are uploaded to a cloud service that rewrites them in Python", "They are only a drawing of the program and must be retyped by hand"], "answer": 1, "explanation": "Wizard is built on the Blockly concept, and the blocks are converted in real time into RAPID, which the controller then runs."},
 			{
 				lesson: '2-1',
 				question: 'What is the main advantage of offline programming?',
@@ -392,6 +403,8 @@ window.RISE_COURSE = {
 			}
 		],
 		4: [
+			{"lesson": "4-3", "question": "Acemoglu and Restrepo studied US labor markets from 1990 to 2007. What did they find about one more robot per thousand workers?", "choices": ["It raised employment by 2 percentage points", "It reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42%", "It had no measurable effect on jobs or wages", "It eliminated 14% of all jobs"], "answer": 1, "explanation": "One more robot per thousand workers reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42% in the most exposed areas."},
+			{"lesson": "4-3", "question": "Which practice best applies data minimization to a robot vacuum's camera?", "choices": ["Upload every image to the cloud in case it is useful later", "Collect only what the task needs, process it on the robot when possible and keep it no longer than necessary", "Share images with labeling contractors without telling users", "Record audio as well, to improve navigation"], "answer": 1, "explanation": "Data minimization means collecting only what the task needs, processing on the robot when possible, keeping data no longer than necessary and telling people what is recorded."},
 			{
 				lesson: '4-1',
 				question: 'According to the NSPE Code of Ethics, what must engineers hold paramount?',
@@ -456,7 +469,15 @@ window.RISE_COURSE = {
 				choices: ['Derivative kick', 'Integral windup', 'Backlash', 'Dead zone'],
 				answer: 1,
 				explanation: 'The integral keeps adding up error while the robot cannot move. Clamp the integral, or stop integrating while the output is at its limit.'
-			}
+			},
+			{"lesson": "5-5", "question": "According to its datasheet, roughly how wide is the HC-SR04 ultrasonic sensor's measuring angle?", "choices": ["About 1°", "About 15°", "About 90°", "A full 360°"], "answer": 1, "explanation": "The HC-SR04 has a measuring angle of about 15°, so it reports the nearest object anywhere in that cone."},
+			{"lesson": "5-5", "question": "Why does the heading from a gyroscope slowly wander even when the robot's motion is measured correctly?", "choices": ["The accelerometer overrides it", "Its small bias is integrated along with the rotation rate, so the error keeps growing", "I²C communication loses data", "Gravity pulls the gyroscope off axis"], "answer": 1, "explanation": "Integrating the rate to get an angle also integrates the gyro's small bias, so heading error grows the longer the robot runs."},
+			{"lesson": "5-6", "question": "In one update the left wheel travels 0.10 m and the right wheel 0.14 m on a robot with a 0.20 m wheelbase. What is d_theta?", "choices": ["0.04 rad", "0.12 rad", "0.20 rad", "0.70 rad"], "answer": 2, "explanation": "d_theta = (d_R − d_L) / b = (0.14 − 0.10) / 0.20 = 0.20 rad, a left (counterclockwise) turn."},
+			{"lesson": "5-6", "question": "Which of these is a non-systematic odometry error?", "choices": ["Unequal wheel diameters", "Wrong wheelbase value in the code", "Wheel slip on a slippery floor", "Limited encoder resolution"], "answer": 2, "explanation": "Wheel slip comes from the robot's interaction with the floor and is unpredictable, so Borenstein and Feng class it as non-systematic."},
+			{"lesson": "5-7", "question": "Why does the example state machine time its 600 ms turn with millis() instead of delay(600)?", "choices": ["delay() only works in setup()", "delay() would freeze loop(), so the robot would ignore its sensors and stop button", "millis() makes the motors faster", "delay() cannot count past 255 ms"], "answer": 1, "explanation": "Comparing millis() timestamps keeps loop() running, so every pass still reads the sensors and the stop button."},
+			{"lesson": "5-7", "question": "Which are the primary states of a ROS 2 managed (lifecycle) node?", "choices": ["Idle, Listening, Responding, Stopped", "Unconfigured, Inactive, Active, Finalized", "FOLLOW_LINE, AVOID_OBSTACLE, SEARCH, STOP", "Starting, Execute, Held, Aborted"], "answer": 1, "explanation": "ROS 2 lifecycle nodes follow a state machine whose primary states are Unconfigured, Inactive, Active and Finalized."},
+			{"lesson": "5-8", "question": "If P_pred = 0.05 and R = 0.05, what is the Kalman gain K?", "choices": ["0.025", "0.1", "0.5", "1.0"], "answer": 2, "explanation": "K = P_pred / (P_pred + R) = 0.05 / 0.10 = 0.5, so the estimate lands halfway between the prediction and the measurement."},
+			{"lesson": "5-8", "question": "What happens when the sensor's noise R is small compared with the predicted uncertainty P_pred?", "choices": ["K is close to 0 and the filter ignores the sensor", "K is close to 1 and the filter follows the sensor", "P grows after the update", "The filter stops predicting"], "answer": 1, "explanation": "A small R relative to P_pred pushes K toward 1, so the estimate moves almost all the way to the measurement."}
 		]
 	}
 };

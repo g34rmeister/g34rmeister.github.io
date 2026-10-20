@@ -102,11 +102,11 @@
 		return 'term-' + String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 	}
 
-	function addReadingTime(body) {
+	function addReadingTime(body, minutes) {
 		var meta = document.querySelector('.robotics-article-meta-bar');
 		if (!meta) return;
 		var words = body.textContent.split(/\s+/).filter(Boolean).length;
-		var mins = Math.max(1, Math.round(words / 200));
+		var mins = minutes || Math.max(1, Math.round(words / 200));
 		meta.appendChild(el('span', { 'class': 'article-meta-item reading-time', html: '<i class="far fa-clock" aria-hidden="true"></i> ' + mins + ' min read' }));
 	}
 
@@ -141,7 +141,7 @@
 		if (!lesson || !body) return;
 
 		document.body.setAttribute('data-lesson-id', id);
-		addReadingTime(body);
+		addReadingTime(body, lesson.minutes);
 
 		if (lesson.objectives && lesson.objectives.length) {
 			var box = el('div', { 'class': 'article-callout learning-objectives', role: 'note' }, [
