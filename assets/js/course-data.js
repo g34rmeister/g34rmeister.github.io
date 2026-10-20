@@ -20,6 +20,8 @@ window.RISE_COURSE = {
 			id: 1,
 			title: 'Intro to Robotics',
 			url: 'robotics-intro.html',
+			prerequisites: 'None. This chapter is the starting point.',
+			handsOn: 'the Try it boxes ask you to classify real robots and trace the sense, think, act loop.',
 			summary: 'What robots are, where they came from, the main types, the skills to learn first, and where robots work.',
 			lessons: [
 				{
@@ -76,6 +78,8 @@ window.RISE_COURSE = {
 			id: 2,
 			title: 'Robot Programming',
 			url: 'robotics-programming.html',
+			prerequisites: 'Chapter 1, especially 1.6 Robot Anatomy and Coordinate Frames.',
+			handsOn: 'edit short URScript and RAPID programs and compare programming methods.',
 			summary: 'How industrial robots are programmed online and offline, in environments like RobotStudio and PolyScope, and in vendor languages.',
 			lessons: [
 				{
@@ -122,6 +126,8 @@ window.RISE_COURSE = {
 			id: 3,
 			title: 'Robot Operating System (ROS)',
 			url: 'robotics-ros.html',
+			prerequisites: 'Chapter 2, and a computer where you can install Ubuntu, WSL 2 or a virtual machine.',
+			handsOn: 'install ROS 2, drive Turtlesim, call services, record a bag and read the node graph.',
 			summary: 'What ROS is, how ROS 2 differs from ROS 1, installing it, a first Turtlesim example, and the most useful tools.',
 			lessons: [
 				{
@@ -180,6 +186,8 @@ window.RISE_COURSE = {
 			id: 4,
 			title: 'Ethics',
 			url: 'robotics-ethics.html',
+			prerequisites: 'Chapters 1 and 2.',
+			handsOn: 'work through ethical scenarios and safety checklists for real robot cells.',
 			summary: 'Ethics in engineering in general, and the specific questions robots raise in hardware and software.',
 			lessons: [
 				{
@@ -208,6 +216,8 @@ window.RISE_COURSE = {
 			id: 5,
 			title: 'Extra: Electronics and Control Basics',
 			url: 'robotics-control.html',
+			prerequisites: 'This chapter is optional. Basic C++ (see 1.4) helps; an Arduino Uno kit lets you build the examples.',
+			handsOn: 'the PWM, encoder and PID simulators in the lessons, plus Arduino sketches you can run.',
 			summary: 'How a microcontroller drives a motor with PWM, measures the result with an encoder, and closes the loop with PID.',
 			lessons: [
 				{

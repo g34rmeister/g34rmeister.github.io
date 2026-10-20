@@ -4,6 +4,9 @@
 	  - "In this lesson" objectives at the top of each lesson
 	  - "Mark as complete" progress, shown again on the hub and chapter pages
 	  - chapter quizzes on robotics-quiz.html?chapter=N
+	  - reading time, key terms linked to the glossary, a "Continue" button on
+	    the hub, and a plan box on each chapter page
+	  - the glossary page (robotics-glossary.html, from assets/js/glossary-data.js)
 	  - window.RISEBot, the hook a phase 2 AI tutor plugs into
 
 	Progress lives in this browser only (localStorage). Every feature degrades
@@ -48,6 +51,7 @@
 		var m = file.match(/^robotics-(\d+-\d+)\.html$/);
 		if (m && getLesson(m[1])) return { type: 'lesson', id: m[1] };
 		if (file === 'robotics-quiz.html') return { type: 'quiz' };
+		if (file === 'robotics-glossary.html') return { type: 'glossary' };
 		if (file === 'robotics.html') return { type: 'hub' };
 		var ch = course.chapters.filter(function (c) { return c.url === file; })[0];
 		if (ch) return { type: 'chapter', id: ch.id };
@@ -92,6 +96,29 @@
 		try { document.dispatchEvent(new CustomEvent(name, { detail: detail })); } catch (e) { /* old browser */ }
 	}
 
+	var glossary = window.RISE_GLOSSARY || {};
+
+	function termSlug(t) {
+		return 'term-' + String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+	}
+
+	function addReadingTime(body) {
+		var meta = document.querySelector('.robotics-article-meta-bar');
+		if (!meta) return;
+		var words = body.textContent.split(/\s+/).filter(Boolean).length;
+		var mins = Math.max(1, Math.round(words / 200));
+		meta.appendChild(el('span', { 'class': 'article-meta-item reading-time', html: '<i class="far fa-clock" aria-hidden="true"></i> ' + mins + ' min read' }));
+	}
+
+	function nextLesson() {
+		var p = loadProgress(), lessons = allLessons();
+		if (!Object.keys(p.completed).length) return null;
+		for (var i = 0; i < lessons.length; i++) {
+			if (!p.completed[lessons[i].id]) return lessons[i];
+		}
+		return null;
+	}
+
 	/* ---------- Small DOM helper ---------- */
 
 	function el(tag, attrs, children) {
@@ -114,12 +141,22 @@
 		if (!lesson || !body) return;
 
 		document.body.setAttribute('data-lesson-id', id);
+		addReadingTime(body);
 
 		if (lesson.objectives && lesson.objectives.length) {
 			var box = el('div', { 'class': 'article-callout learning-objectives', role: 'note' }, [
 				el('div', { 'class': 'article-callout-header', html: '<i class="fas fa-bullseye" aria-hidden="true"></i> In this lesson you will' }),
 				el('ul', {}, lesson.objectives.map(function (o) { return el('li', { text: o }); }))
 			]);
+			var terms = (lesson.keyTerms || []).filter(function (t) { return glossary[t]; });
+			if (terms.length) {
+				var tp = el('p', { 'class': 'lesson-key-terms' }, [el('strong', { text: 'Key terms: ' })]);
+				terms.forEach(function (t, i) {
+					if (i) tp.appendChild(document.createTextNode(', '));
+					tp.appendChild(el('a', { href: 'robotics-glossary.html#' + termSlug(t), title: glossary[t], text: t }));
+				});
+				box.appendChild(tp);
+			}
 			body.insertBefore(box, body.firstChild);
 		}
 
@@ -198,6 +235,17 @@
 
 	function initHub() {
 		markLessonLinks();
+		var actions = document.querySelector('.thesis-masthead-actions');
+		var next = nextLesson();
+		if (actions && next) {
+			actions.insertBefore(el('a', {
+				'class': 'btn-read-case course-resume',
+				href: lessonUrl(next.id),
+				html: '<i class="fas fa-forward" aria-hidden="true"></i> Continue: ' + next.id.replace('-', '.') + ' ' + next.title
+			}), actions.firstChild);
+			var start = actions.querySelector('a[href="robotics-intro.html"]');
+			if (start) start.className = 'btn-secondary-gh';
+		}
 		course.chapters.forEach(function (ch) {
 			var kicker = document.querySelector('#chapter-' + ch.id + '-header .hltv-chapter-kicker');
 			if (!kicker) return;
@@ -214,6 +262,20 @@
 	function initChapter(chId) {
 		markLessonLinks();
 		var ch = getChapter(chId);
+		var cbody = document.querySelector('.robotics-article-body');
+		if (ch && cbody) {
+			var mins = ch.lessons.reduce(function (sum, l) { return sum + (l.minutes || 0); }, 0);
+			var items = [];
+			if (mins) items.push(el('li', { text: 'Time: about ' + mins + ' minutes of reading, plus the Try it activities and the quiz.' }));
+			if (ch.prerequisites) items.push(el('li', { text: 'Before you start: ' + ch.prerequisites }));
+			if (ch.handsOn) items.push(el('li', { text: 'Hands-on: ' + ch.handsOn }));
+			if (items.length) {
+				cbody.insertBefore(el('div', { 'class': 'article-callout', role: 'note' }, [
+					el('div', { 'class': 'article-callout-header', html: '<i class="fas fa-route" aria-hidden="true"></i> Plan for this chapter' }),
+					el('ul', {}, items)
+				]), cbody.firstChild);
+			}
+		}
 		var meta = document.querySelector('.robotics-article-meta-bar');
 		if (!ch || !meta) return;
 		var cp = chapterProgress(ch);
@@ -329,6 +391,43 @@
 		});
 	}
 
+	/* ---------- Glossary page ---------- */
+
+	function initGlossary() {
+		var root = document.getElementById('rise-glossary');
+		if (!root) return;
+		var terms = Object.keys(glossary).sort(function (a, b) { return a.toLowerCase().localeCompare(b.toLowerCase()); });
+		var where = {};
+		allLessons().forEach(function (l) {
+			(l.keyTerms || []).forEach(function (t) { (where[t] = where[t] || []).push(l); });
+		});
+		var filter = el('input', { type: 'search', 'class': 'glossary-filter', placeholder: 'Filter terms', 'aria-label': 'Filter glossary terms' });
+		var dl = el('dl', { 'class': 'glossary-list' });
+		var rows = terms.map(function (t) {
+			var dt = el('dt', { id: termSlug(t), text: t });
+			var dd = el('dd', {}, [document.createTextNode(glossary[t] + ' ')]);
+			(where[t] || []).forEach(function (l, i) {
+				dd.appendChild(document.createTextNode(i ? ', ' : 'See '));
+				dd.appendChild(el('a', { href: lessonUrl(l.id), text: 'lesson ' + l.id.replace('-', '.') }));
+			});
+			if ((where[t] || []).length) dd.appendChild(document.createTextNode('.'));
+			dl.appendChild(dt); dl.appendChild(dd);
+			return { term: t.toLowerCase() + ' ' + glossary[t].toLowerCase(), dt: dt, dd: dd };
+		});
+		filter.addEventListener('input', function () {
+			var q = filter.value.trim().toLowerCase();
+			rows.forEach(function (r) {
+				var show = !q || r.term.indexOf(q) !== -1;
+				r.dt.hidden = !show; r.dd.hidden = !show;
+			});
+		});
+		root.replaceChildren(el('p', { text: terms.length + ' terms used in the course. Each one links to the lessons that use it.' }), filter, dl);
+		if (location.hash) {
+			var target = document.getElementById(location.hash.slice(1));
+			if (target) target.scrollIntoView();
+		}
+	}
+
 	/* ---------- Phase 2 hook: window.RISEBot ---------- */
 
 	function lessonText() {
@@ -393,6 +492,7 @@
 		else if (page.type === 'hub') initHub();
 		else if (page.type === 'chapter') initChapter(page.id);
 		else if (page.type === 'quiz') initQuiz();
+		else if (page.type === 'glossary') initGlossary();
 		if (tutorRenderer) window.RISEBot.registerTutor(tutorRenderer);
 		emit('rise:ready', { page: page });
 	}

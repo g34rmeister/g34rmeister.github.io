@@ -1068,6 +1068,63 @@ ol.article-spec-list { list-style: decimal; }
 .quiz-result { font-weight: 700; }
 .quiz-chapter-list { margin: 0.4em 0 1em 1.6em; list-style: disc; }
 
+
+/* Interactive widgets (assets/js/widgets.js) and lesson diagrams */
+.rise-widget,
+.lesson-diagram {
+	margin: 18px 0;
+	padding: 12px 14px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+}
+.rise-widget-title { margin-bottom: 8px; font-weight: 700; font-size: 14px; color: var(--wp-text); }
+.rise-widget-title i { color: var(--wp-link); }
+.widget-control {
+	display: grid;
+	grid-template-columns: minmax(120px, 200px) 1fr 64px;
+	align-items: center;
+	gap: 10px;
+	margin: 6px 0;
+	font-size: 14px;
+}
+.widget-control input[type="range"] { width: 100%; accent-color: var(--wp-link); }
+.widget-control output { font-family: var(--wp-mono); text-align: right; }
+.widget-check { grid-template-columns: auto 1fr; }
+.widget-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.widget-plot,
+.lesson-diagram svg { display: block; width: 100%; height: auto; margin: 8px 0; overflow: visible; }
+.widget-readout { margin: 4px 0 0; font-family: var(--wp-mono); font-size: 13px; }
+.widget-note { margin: 4px 0 8px; font-size: 13px; color: var(--wp-text-muted); }
+.plot-axis { stroke: var(--wp-border); stroke-width: 1; }
+.plot-line { stroke: var(--wp-link); stroke-width: 2.5; stroke-linejoin: round; }
+.plot-line-b { stroke: var(--wp-gold-text); }
+.plot-ref { stroke: var(--wp-gold-text); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.plot-label { fill: var(--wp-text-muted); font-family: var(--wp-sans); font-size: 11px; }
+.lesson-diagram figcaption { margin-top: 4px; font-size: 13px; color: var(--wp-text-muted); }
+.lesson-diagram .d-box { fill: var(--wp-bg); stroke: var(--wp-link); stroke-width: 1.5; }
+.lesson-diagram .d-box-gold { fill: var(--wp-gold-soft); stroke: var(--wp-gold-text); stroke-width: 1.5; }
+.lesson-diagram .d-line { stroke: var(--wp-text-muted); stroke-width: 1.5; fill: none; }
+.lesson-diagram .d-strong { stroke: var(--wp-link); stroke-width: 2.5; fill: none; }
+.lesson-diagram .d-fill { fill: var(--wp-link); }
+.lesson-diagram .d-text { fill: var(--wp-text); font-family: var(--wp-sans); font-size: 14px; }
+.lesson-diagram .d-title { fill: var(--wp-text); font-family: var(--wp-sans); font-size: 15px; font-weight: 700; }
+.lesson-diagram .d-muted { fill: var(--wp-text-muted); font-family: var(--wp-sans); font-size: 12px; }
+.try-it { border-left-color: var(--wp-link); }
+.try-it .article-callout-header i { color: var(--wp-gold-text); }
+.try-it ol, .try-it ul { margin: 4px 0 0 1.4em; padding: 0; font-size: 14px; list-style: decimal; }
+.try-it ul { list-style: disc; }
+.try-it li { margin: 3px 0; }
+.reading-time { color: var(--wp-text-muted); }
+.course-resume { margin: 12px 0 0; }
+.glossary-list dt { margin-top: 12px; font-weight: 700; }
+.glossary-list dd { margin: 2px 0 0 0; }
+.glossary-list dd a { font-size: 13px; }
+.glossary-filter { width: 100%; max-width: 360px; padding: 6px 8px; margin: 4px 0 8px; font: inherit; color: var(--wp-text); background: var(--wp-bg); border: 1px solid var(--wp-border); }
+@media screen and (max-width: 736px) {
+	.widget-control { grid-template-columns: 1fr 56px; }
+	.widget-control label { grid-column: 1 / -1; }
+}
+
 /* ==========================================================================
    9. Responsive
    ========================================================================== */
