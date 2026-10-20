@@ -144,10 +144,38 @@
                                 ROS is used especially widely in mobile robotics, and simulators let developers build a digital twin of a robot to test code before touching real hardware.
                             </p>
 
-                            <h2 class="article-section-title">02. Where to go next</h2>
+                            <h2 class="article-section-title">02. ROS-Industrial</h2>
+                            <p>
+                                ROS-Industrial is an open-source project that extends ROS to manufacturing. It began in January 2012 as a collaboration between Yaskawa Motoman, Southwest Research Institute (SwRI) and Willow Garage, when Shaun Edwards at SwRI started its code repository. It focuses on what factories need: interfaces for industrial arms, sensors and grippers, plus calibration, perception and motion planning.
+                            </p>
+                            <p>
+                                Companies and research groups support the project through regional consortia: ROS-Industrial Consortium Americas, launched in March 2013 and led by SwRI; a European consortium led by Fraunhofer IPA in Germany; and an Asia Pacific consortium led by ARTC and Nanyang Technological University in Singapore.
+                            </p>
+
+                            <h2 class="article-section-title">03. Vendor drivers: a Universal Robots example</h2>
+                            <p>
+                                A ROS <em>driver</em> is the piece that translates between ROS and a specific robot&rsquo;s controller. Some robot makers publish their own. Universal Robots, for example, officially provides and supports drivers for both ROS and ROS 2 (the <code>Universal_Robots_ROS2_Driver</code> repository on GitHub). According to Universal Robots, the ROS 2 driver:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Works with MoveIt:</span> so arm motion can be planned with the standard ROS motion-planning tools.</li>
+                                <li class="article-spec-item"><span class="spec-label">Uses factory calibration:</span> the robot&rsquo;s own calibration data, for more precise Cartesian targets.</li>
+                                <li class="article-spec-item"><span class="spec-label">Communicates in real time:</span> using the controller&rsquo;s 2 ms cycle time.</li>
+                                <li class="article-spec-item"><span class="spec-label">Replaces the teach pendant for control:</span> robot functions are exposed as ROS services and actions.</li>
+                            </ul>
+                            <p>
+                                Because the driver presents the robot as ordinary ROS topics, services and actions, code written against it looks much like code for any other ROS robot. That is the vendor-agnostic idea in practice.
+                            </p>
+
+                            <h2 class="article-section-title">04. Where to go next</h2>
                             <p>
                                 The <a href="robotics-ros.html">Robot Operating System</a> chapter covers ROS in depth: what it is, how ROS 2 differs from ROS 1, how to install it, a first example, and its most useful tools.
                             </p>
+
+                            <h2 class="article-section-title">05. References</h2>
+                            <ol class="article-spec-list">
+                                <li>ROS-Industrial, &ldquo;Our brief history.&rdquo; <a href="https://rosindustrial.org/briefhistory" target="_blank" rel="noopener noreferrer">rosindustrial.org/briefhistory</a>.</li>
+                                <li>Universal Robots, &ldquo;ROS and ROS2 driver.&rdquo; <a href="https://www.universal-robots.com/developer/communication-protocol/ros-and-ros2-driver/" target="_blank" rel="noopener noreferrer">universal-robots.com/developer/communication-protocol/ros-and-ros2-driver</a>.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
