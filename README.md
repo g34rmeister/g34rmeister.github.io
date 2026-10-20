@@ -21,9 +21,12 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `contact.html` - Direct contact channels
 * `robotics.html` - RISE Bot Instructor course hub (honors research project)
 * `robotics-intro.html` / `robotics-programming.html` / `robotics-ros.html` / `robotics-ethics.html` / `robotics-control.html` - Chapter overview pages (Intro to Robotics, Robot Programming, ROS, Ethics, and an extra Electronics and Control chapter)
-* `robotics-<chapter>-<n>.html` - Chapter articles (5, 4, 5, 2 and 4 per chapter); unwritten topics are marked "(This is blank)"
+* `robotics-<chapter>-<n>.html` - Chapter articles (6, 4, 5, 3 and 8 per chapter); unwritten topics are marked "(This is blank)"
+* `robotics-glossary.html` - Glossary of every key term, rendered from `assets/js/glossary-data.js`
 * `robotics-quiz.html` - Chapter quizzes (`robotics-quiz.html?chapter=N`), rendered from the course data
 * `assets/js/course-data.js` - The course as data: chapters, lessons, learning objectives, key terms and quiz questions. Update it whenever a lesson is added, renamed or rewritten
+* `assets/js/glossary-data.js` - One-sentence definitions for every key term in the course data; add one whenever a lesson adds a key term
+* `assets/js/widgets.js` - The PWM, encoder and PID simulators, mounted on any `<div data-widget="pwm|encoder|pid">`
 * `assets/js/learning.js` - Lesson objectives, "mark as complete" progress (stored in the browser), hub progress marks, quizzes, and the `window.RISEBot` hook for the phase 2 AI tutor
 * `404.html` - Custom not-found page
 * `robots.txt` / `sitemap.xml` / `site.webmanifest` - SEO & crawler metadata
