@@ -37,7 +37,8 @@ window.RISE_COURSE = {
 					title: 'History and Evolution of Robots',
 					objectives: [
 						'Name early automata and the idea of a stored program behind Jacquard\'s loom.',
-						'Place Unimate, SCARA, cobots and ROS on a timeline.'
+						'Place Unimate, SCARA, cobots and ROS on a timeline.',
+						'Trace how robots went from fixed arms to machines that move around.'
 					],
 					keyTerms: ['automaton', 'Jacquard loom', 'Unimate', 'cobot']
 				},
@@ -46,7 +47,7 @@ window.RISE_COURSE = {
 					title: 'Types of Robots',
 					objectives: [
 						'Tell apart industrial robots, cobots, mobile robots, SCARA robots and AGVs.',
-						'Explain how AGVs differ from autonomous mobile robots (AMRs).'
+						'Explain how AGVs differ from autonomous mobile robots (AMRs), and when to pick each.'
 					],
 					keyTerms: ['industrial robot', 'cobot', 'mobile robot', 'SCARA', 'AGV', 'AMR']
 				},
@@ -65,7 +66,7 @@ window.RISE_COURSE = {
 					title: 'Common Applications of Robotics',
 					objectives: [
 						'Give examples of robots in production, human interaction and exploration.',
-						'Explain how robots protect human lives in dangerous work.'
+						'Explain how robots protect human lives in dangerous work, using the Mars, World Trade Center and Fukushima cases.'
 					],
 					keyTerms: ['service robot', 'Mars rover', 'AutoNav', 'search and rescue']
 				}
@@ -138,6 +139,7 @@ window.RISE_COURSE = {
 					title: 'ROS 1 vs. ROS 2',
 					objectives: [
 						'Explain how ROS 2 discovery with DDS differs from the ROS 1 master.',
+						'Choose Quality of Service settings and a middleware for a topic.',
 						'Describe launch files and why new projects should use ROS 2.'
 					],
 					keyTerms: ['roscore', 'DDS', 'QoS', 'launch file', 'Noetic']
@@ -195,7 +197,8 @@ window.RISE_COURSE = {
 					title: 'Ethics in Robotics (Hardware, Software)',
 					objectives: [
 						'Name the main robot safety standards.',
-						'Describe hardware safeguards and the software safety layer.'
+						'Describe hardware safeguards and the software safety layer.',
+						'Explain what makes an application collaborative and how people stay safe while teaching a robot.'
 					],
 					keyTerms: ['ISO 10218', 'emergency stop', 'power and force limiting', 'watchdog timer', 'geofencing']
 				}
