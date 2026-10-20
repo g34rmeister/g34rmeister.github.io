@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -64,6 +64,7 @@
                         <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
                         <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
@@ -101,6 +102,7 @@
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
                 </div>
@@ -151,19 +153,41 @@
 
                             <h2 class="article-section-title">04. SCARA</h2>
                             <p>
-                                <em>(This is blank)</em>
+                                SCARA stands for Selective Compliance Assembly Robot Arm. It was proposed in 1978 by Hiroshi Makino at Yamanashi University, and commercial models appeared in 1981. A SCARA robot usually has four axes: two rotating joints that swing the arm in a horizontal plane, a vertical axis that moves the tool up and down, and a rotation at the tool. It is stiff vertically but slightly compliant sideways, which suits pushing parts into holes.
                             </p>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                SCARA robots are fast and compact, so they are widely used for pick-and-place, assembly of small parts, screw driving and packaging, mostly on flat work surfaces.
                             </p>
 
                             <h2 class="article-section-title">05. Autonomous Guided Vehicles (AGVs)</h2>
                             <p>
-                                <em>(This is blank)</em>
+                                Automated (or autonomous) guided vehicles move materials around factories and warehouses along predefined routes. The first, Barrett Electronics&rsquo; Guide-O-Matic of about 1953&ndash;54, was a towing tractor that followed a wire in the floor. AGVs still follow guidance built into the facility, such as buried wires, magnetic tape, floor markers or laser reflectors, and stop when an obstacle blocks their path.
                             </p>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                Autonomous mobile robots (AMRs) are their more flexible relatives: instead of following a fixed route, they map their surroundings and plan their own path around obstacles, as described under <em>Mobile robot</em> above.
                             </p>
+
+                            <h2 class="article-section-title">06. AGV or AMR?</h2>
+                            <p>
+                                The choice between an AGV and an AMR depends on the job. AGVs are guided in one of several ways:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Magnetic tape:</span> on the floor; extra pieces of tape can mark stopping points.</li>
+                                <li class="article-spec-item"><span class="spec-label">Inductive wire:</span> buried in the floor, which the vehicle follows by its signal.</li>
+                                <li class="article-spec-item"><span class="spec-label">Visual markers:</span> colored tape or printed markers such as AprilTags that a camera tracks.</li>
+                                <li class="article-spec-item"><span class="spec-label">Laser guidance:</span> a 360-degree scanner on the vehicle locates itself from reflectors installed around the facility.</li>
+                            </ul>
+                            <p>
+                                An AMR instead makes an initial mapping run with lidar or depth cameras, after which operators can mark keep-out and speed zones on the map. When something blocks its way, an AGV stops and waits, while an AMR plans a route around it. AGVs suit high-volume, repetitive routes and need their markers installed and maintained. AMRs need no changes to the building but usually cost more up front, and their travel times are less predictable.
+                            </p>
+
+                            <h2 class="article-section-title">07. References</h2>
+                            <ol class="article-spec-list">
+                                <li>Robogaku, robot history entry on the SCARA robot (1978). <a href="https://robogaku.jp/en/history/business/K-1978-1.html" target="_blank" rel="noopener noreferrer">robogaku.jp/en/history/business/K-1978-1.html</a>.</li>
+                                <li><em>Material Handling &amp; Logistics</em>, &ldquo;AGVs follow paths undreamed of by inventor.&rdquo; <a href="https://www.mhlnews.com/blog/agvs-follow-paths-undreamed-inventor" target="_blank" rel="noopener noreferrer">mhlnews.com/blog/agvs-follow-paths-undreamed-inventor</a>.</li>
+                                <li>Analog Devices, &ldquo;Finding the right fit for your industrial automation need: AGVs or AMRs.&rdquo; <a href="https://ez.analog.com/ez-blogs/b/engineerzone-spotlight/posts/finding-the-right-fit-for-your-industrial-automation-need---agvs-or-amrs" target="_blank" rel="noopener noreferrer">ez.analog.com/ez-blogs/b/engineerzone-spotlight/posts/finding-the-right-fit-for-your-industrial-automation-need---agvs-or-amrs</a>.</li>
+                                <li>International Federation of Robotics, &ldquo;History of robotics.&rdquo; <a href="https://ifr.org/robot-history" target="_blank" rel="noopener noreferrer">ifr.org/robot-history</a>.</li>
+                            </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
@@ -198,6 +222,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.1" defer></script>
+            <script src="assets/js/learning.js?v=1.1" defer></script>
 
     </body>
 </html>

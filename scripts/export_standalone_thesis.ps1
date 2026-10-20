@@ -8,7 +8,7 @@
     - Copies 'robotics.html' as the root 'index.html'
     - Copies the chapter overview pages and every chapter article (robotics-*.html)
     - Re-links internal references to point to 'index.html'
-    - Copies 'robotics.css', 'robotics.js', FontAwesome, and JetBrains Mono fonts
+    - Copies 'robotics.css', 'robotics.js', 'course-data.js', 'learning.js', FontAwesome, and JetBrains Mono fonts
     - Generates a dedicated README.md and .nojekyll file for GitHub Pages
 
 .PARAMETER DestinationPath
@@ -63,6 +63,8 @@ Copy-Item "$WorkspaceRoot\assets\css\main.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\css\robotics.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\css\fontawesome-all.min.css" "$DestFull\assets\css\" -Force
 Copy-Item "$WorkspaceRoot\assets\js\robotics.js" "$DestFull\assets\js\" -Force
+Copy-Item "$WorkspaceRoot\assets\js\course-data.js" "$DestFull\assets\js\" -Force
+Copy-Item "$WorkspaceRoot\assets\js\learning.js" "$DestFull\assets\js\" -Force
 Copy-Item "$WorkspaceRoot\images\logo.svg" "$DestFull\images\" -Force
 Copy-Item "$WorkspaceRoot\site.webmanifest" "$DestFull\" -Force
 Copy-Item "$WorkspaceRoot\robots.txt" "$DestFull\" -Force

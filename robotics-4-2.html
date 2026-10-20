@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -64,6 +64,7 @@
                         <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html" class="active"><i class="fas fa-balance-scale"></i> Ethics</a></li>
                         <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
@@ -101,6 +102,7 @@
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html" class="active"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
                 </div>
@@ -141,13 +143,34 @@
 
                             <h2 class="article-section-title">02. Hardware</h2>
                             <p>
-                                <em>(This is blank)</em>
+                                A robot&rsquo;s hardware can hurt people, so physical safety is the first ethical obligation. International standards set the baseline. ISO 10218 covers the safety of industrial robots (Part 1) and of robot applications and cells (Part 2); both parts were revised in 2025, and the collaborative-robot requirements that used to live in the separate ISO/TS 15066, including limits on contact force and pressure, are now part of ISO 10218-2. In the United States the same rules are adopted as ANSI/A3 R15.06-2025. The 2025 edition speaks of <em>collaborative applications</em> rather than collaborative robots, because safety depends on the whole task and cell, not just the arm. Common hardware safeguards include:
                             </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Emergency stops:</span> a physical button that stops motion immediately, wired independently of the main software; ISO 13850 sets the design principles for emergency stop functions.</li>
+                                <li class="article-spec-item"><span class="spec-label">Guarding:</span> fixed fences and interlocked doors or gates that stop the robot when someone opens them.</li>
+                                <li class="article-spec-item"><span class="spec-label">Presence sensing:</span> light curtains, safety mats, safety laser scanners and safety vision systems detect a person and slow or stop the robot.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Collaborative applications</h2>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                When people and robots share a workspace, safety standards and OSHA describe four ways to keep that safe. The 2025 edition of ISO 10218 treats these as properties of the whole <em>collaborative application</em>, not of the robot alone:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Monitored standstill:</span> the robot stops and stays powered but monitored while a person is in the shared space. It is used together with one of the other methods, and was called &ldquo;safety-rated monitored stop&rdquo; before 2025.</li>
+                                <li class="article-spec-item"><span class="spec-label">Hand guiding:</span> the operator moves the robot directly while holding a hold-to-run control.</li>
+                                <li class="article-spec-item"><span class="spec-label">Speed and separation monitoring:</span> presence sensors slow the robot as a person approaches and stop it before contact.</li>
+                                <li class="article-spec-item"><span class="spec-label">Power and force limiting:</span> contact is allowed, but the robot&rsquo;s design or safety functions keep force and pressure below set limits.</li>
+                            </ul>
+                            <p>
+                                In practice, speed and separation monitoring and power and force limiting are often combined. A robot sold as a &ldquo;cobot&rdquo; can still be unsafe in the wrong application, for example when it carries a sharp tool, which is why the standard now judges the application.
                             </p>
 
-                            <h2 class="article-section-title">03. Software: the safety layer</h2>
+                            <h2 class="article-section-title">04. Safeguards while teaching</h2>
+                            <p>
+                                Programming with a teach pendant puts a person close to a powered robot, so manual mode has its own safeguards. OSHA lists a three-position enabling device, which lets the robot move only while held in the middle position and stops it if the operator lets go or squeezes in panic, together with a reduced speed of 250 mm/s or less. Awareness devices such as chains, lights and signs can supplement guards and sensors but never replace them. See <a href="robotics-2-1.html">Types of Programming</a> for how online programming works.
+                            </p>
+
+                            <h2 class="article-section-title">05. Software: the safety layer</h2>
                             <p>
                                 Every kind of robot needs safety logic that sits below the &ldquo;smart&rdquo; code and does not depend on it:
                             </p>
@@ -155,6 +178,15 @@
                                 <li class="article-spec-item"><span class="spec-label">Watchdog timers:</span> if the main program stops responding, the watchdog triggers a safe stop.</li>
                                 <li class="article-spec-item"><span class="spec-label">Geofencing and safety zones:</span> virtual boundaries the robot cannot cross, whatever its planner says. Industrial cobots configure these directly, as in <a href="robotics-2-2.html">PolyScope</a>.</li>
                             </ul>
+                            <h2 class="article-section-title">06. References</h2>
+                            <ol class="article-spec-list">
+                                <li>ISO 10218-1:2025, <em>Robotics &mdash; Safety requirements &mdash; Part 1: Industrial robots</em>. <a href="https://www.iso.org/standard/73933.html" target="_blank" rel="noopener noreferrer">iso.org/standard/73933.html</a>.</li>
+                                <li>ISO 10218-2:2025, <em>Robotics &mdash; Safety requirements &mdash; Part 2: Industrial robot applications and robot cells</em>. <a href="https://www.iso.org/standard/73934.html" target="_blank" rel="noopener noreferrer">iso.org/standard/73934.html</a>.</li>
+                                <li>A3, &ldquo;Updated ISO 10218: answers to FAQs,&rdquo; 2025. <a href="https://www.automate.org/robotics/blogs/updated-iso-10218-faq" target="_blank" rel="noopener noreferrer">automate.org/robotics/blogs/updated-iso-10218-faq</a>.</li>
+                                <li>A3, &ldquo;ANSI and A3 publish revised R15.06 industrial robot safety standard,&rdquo; 2025. <a href="https://www.automate.org/robotics/industry-insights/ansi-a3-publish-revised-r15-06-industrial-robot-safety-standard/aph" target="_blank" rel="noopener noreferrer">automate.org/robotics/industry-insights/ansi-a3-publish-revised-r15-06-industrial-robot-safety-standard/aph</a>.</li>
+                                <li>OSHA Technical Manual, Section IV, Chapter 4: &ldquo;Industrial robot systems and industrial robot system safety.&rdquo; <a href="https://www.osha.gov/otm/section-4-safety-hazards/chapter-4" target="_blank" rel="noopener noreferrer">osha.gov/otm/section-4-safety-hazards/chapter-4</a>.</li>
+                            </ol>
+
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-4-1.html" class="article-nav-card">
@@ -188,6 +220,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.1" defer></script>
+            <script src="assets/js/learning.js?v=1.1" defer></script>
 
     </body>
 </html>

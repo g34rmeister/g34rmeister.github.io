@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -64,6 +64,7 @@
                         <li><a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
                         <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
@@ -101,6 +102,7 @@
                     <a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
                 </div>
@@ -136,11 +138,18 @@
 
                             <h2 class="article-section-title">01. What is ROS?</h2>
                             <p>
-                                <em>(This is blank)</em>
+                                ROS (Robot Operating System) is not an operating system in the usual sense. It is an open-source collection of software libraries, tools and conventions for building robot applications, and it runs on top of an ordinary operating system such as Linux. It began in 2007 at Stanford and the robotics company Willow Garage. Today it is stewarded by the Open Source Robotics Foundation, which since 2024 has run the project through the Open Source Robotics Alliance, together with a large community.
                             </p>
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                                ROS gives developers a common way to structure robot software and a huge library of reusable packages for things like navigation, manipulation, simulation and visualization. Its main building blocks are:
                             </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Nodes:</span> independent programs, each responsible for one job, such as reading a sensor or planning a path.</li>
+                                <li class="article-spec-item"><span class="spec-label">Topics:</span> named channels that nodes publish messages to and subscribe to, for continuous data like sensor readings.</li>
+                                <li class="article-spec-item"><span class="spec-label">Services:</span> request/response calls between nodes, for quick one-off questions.</li>
+                                <li class="article-spec-item"><span class="spec-label">Actions:</span> long-running goals with feedback, such as &ldquo;drive to this point.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label">Parameters:</span> configuration values a node reads at start-up or while running.</li>
+                            </ul>
 
                             <h2 class="article-section-title">02. Nodes, publishers and subscribers</h2>
                             <p>
@@ -151,6 +160,34 @@
                                 <li class="article-spec-item"><span class="spec-label">SLAM (simultaneous localization and mapping):</span> builds a map from that data while tracking where the robot is on it.</li>
                                 <li class="article-spec-item"><span class="spec-label">Path planning:</span> finds a route with graph-search algorithms such as A* or Dijkstra&rsquo;s, over a costmap that marks areas near obstacles as expensive.</li>
                             </ul>
+                            <h2 class="article-section-title">03. Parameters and domains</h2>
+                            <p>
+                                In ROS 1, a central server (<code>roscore</code>) held every parameter in one global store. In ROS 2 there is no central server, so each parameter belongs to a specific node, and you read or change it by naming that node.
+                            </p>
+                            <p>
+                                ROS 2 also uses a <em>domain ID</em> to keep groups of robots apart on a shared network. Nodes on the same domain discover and talk to each other; nodes on different domains cannot. Every node uses domain 0 by default, so on a shared lab or school network, setting a different value in the <code>ROS_DOMAIN_ID</code> environment variable keeps your robot from hearing someone else&rsquo;s:
+                            </p>
+                            <pre class="article-code"><code>export ROS_DOMAIN_ID=7</code></pre>
+
+                            <h2 class="article-section-title">04. Where ROS came from</h2>
+                            <p>
+                                ROS grew out of the Personal Robotics Program in Ken Salisbury&rsquo;s lab at Stanford, run by Eric Berger and Keenan Wyrobek, which drew on Morgan Quigley&rsquo;s Switchyard software from Stanford&rsquo;s STAIR robot project. In 2007 the robotics company Willow Garage took the program on, and the paper and the paper &ldquo;ROS: An Open-Source Robot Operating System&rdquo; was presented at the ICRA conference in 2009.ldquo;ROS: An Open-Source Robot Operating Systemand the paper &ldquo;ROS: An Open-Source Robot Operating System&rdquo; was presented at the ICRA conference in 2009.rdquo; appeared at the ICRA robotics conference in 2009.
+                            </p>
+                            <p>
+                                ROS 2 was later built to keep what worked in ROS 1 while fixing what did not, as the official documentation puts it: &ldquo;Since ROS was started in 2007, a lot has changed in the robotics and ROS community.&rdquo; See <a href="robotics-3-2.html">ROS 1 vs. ROS 2</a> for the differences.
+                            </p>
+
+                            <h2 class="article-section-title">05. References</h2>
+                            <ol class="article-spec-list">
+                                <li>ROS 2 Documentation, &ldquo;About ROS.&rdquo; <a href="https://docs.ros.org/en/lyrical/About-ROS.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/About-ROS.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Understanding nodes.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/nodes/Working-with-nodes/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/nodes/Working-with-nodes/Understanding-ROS2-Nodes/Understanding-ROS2-Nodes.html</a>.</li>
+                                <li>Open Robotics, &ldquo;Announcing the Open Source Robotics Alliance,&rdquo; March 2024. <a href="https://openrobotics.org/blog/2024/3/18/announcing-the-open-source-robotics-alliance-osra" target="_blank" rel="noopener noreferrer">openrobotics.org/blog/2024/3/18/announcing-the-open-source-robotics-alliance-osra</a>.</li>
+                                <li>IEEE Spectrum, &ldquo;Wizards of ROS: Willow Garage and the making of the Robot Operating System.&rdquo; <a href="https://spectrum.ieee.org/wizards-of-ros-willow-garage-and-the-making-of-the-robot-operating-system" target="_blank" rel="noopener noreferrer">spectrum.ieee.org/wizards-of-ros-willow-garage-and-the-making-of-the-robot-operating-system</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Parameters.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/About-Parameters.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/About-Parameters.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;The ROS_DOMAIN_ID.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Domain-ID.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Domain-ID.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Migrating parameters.&rdquo; <a href="https://docs.ros.org/en/lyrical/Migration-and-Upgrades/Migrating-from-ROS1/Migrating-Parameters.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Migration-and-Upgrades/Migrating-from-ROS1/Migrating-Parameters.html</a>.</li>
+                            </ol>
+
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-ros.html" class="article-nav-card">
@@ -184,6 +221,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.1" defer></script>
+            <script src="assets/js/learning.js?v=1.1" defer></script>
 
     </body>
 </html>
