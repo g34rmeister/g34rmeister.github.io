@@ -156,9 +156,45 @@ ros2 topic echo /turtle1/cmd_vel</code></pre>
                                 <li><a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">Official Turtlesim tutorial (docs.ros.org)</a></li>
                             </ul>
 
-                            <h2 class="article-section-title">02. References</h2>
+                            <h2 class="article-section-title">02. Inspecting the message</h2>
+                            <p>
+                                Every topic carries one message type. Ask ROS what the velocity topic carries:
+                            </p>
+                            <pre class="article-code"><code>ros2 topic info /turtle1/cmd_vel</code></pre>
+                            <p>
+                                The answer is <code>geometry_msgs/msg/Twist</code>: <code>geometry_msgs</code> is the package and <code>Twist</code> is the message, a linear and an angular velocity. Mobile robots in ROS are commonly driven with the same message type on a <code>cmd_vel</code> topic, so what you practice here carries over.
+                            </p>
+
+                            <h2 class="article-section-title">03. Calling a service: spawn a second turtle</h2>
+                            <p>
+                                Topics stream data continuously; services answer one request at a time. Turtlesim offers several services. List them, then call <code>/spawn</code> to add a second turtle at a chosen position:
+                            </p>
+                            <pre class="article-code"><code>ros2 service list
+ros2 service call /spawn turtlesim_msgs/srv/Spawn &quot;{x: 2, y: 2, theta: 0.2, name: &#x27;&#x27;}&quot;</code></pre>
+                            <p>
+                                Arguments are written in YAML. An empty name lets turtlesim pick one (<code>turtle2</code>). On releases older than Kilted, the service type is <code>turtlesim/srv/Spawn</code> instead. Each turtle needs a unique name; spawning a second <code>turtle1</code> prints an error.
+                            </p>
+                            <p>
+                                The same can be done with a graphical tool. Install rqt (<code>sudo apt install ros-lyrical-rqt ros-lyrical-rqt-common-plugins</code>), run <code>rqt</code>, and choose <strong>Plugins &gt; Services &gt; Service Caller</strong>. From there you can also call <code>/turtle1/set_pen</code> to change the color and width of the line the turtle draws.
+                            </p>
+
+                            <h2 class="article-section-title">04. Remapping: drive the second turtle</h2>
+                            <p>
+                                The keyboard controller always sends commands to <code>turtle1</code>. Instead of changing its code, you can <em>remap</em> its topic and action names when you start it, so a second copy drives <code>turtle2</code>:
+                            </p>
+                            <pre class="article-code"><code>ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel --remap turtle1/rotate_absolute:=turtle2/rotate_absolute</code></pre>
+                            <p>
+                                Each teleop terminal now drives its own turtle; the window you type in must be active to capture key presses. Remapping is how real ROS systems reuse the same node for several robots or sensors.
+                            </p>
+                            <p>
+                                To finish, press <code>Ctrl + C</code> in the simulator&rsquo;s terminal and <code>q</code> in each teleop terminal.
+                            </p>
+
+                            <h2 class="article-section-title">05. References</h2>
                             <ol class="article-spec-list">
                                 <li>ROS 2 Documentation, &ldquo;Using turtlesim, ros2, and rqt.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Understanding services.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/services/Working-with-services/Understanding-ROS2-Services/Understanding-ROS2-Services.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/services/Working-with-services/Understanding-ROS2-Services/Understanding-ROS2-Services.html</a>.</li>
+                                <li>ROS 2 Documentation, &ldquo;Understanding topics.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
