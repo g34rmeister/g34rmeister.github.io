@@ -109,9 +109,11 @@ window.RISE_COURSE = {
 					id: '2-4',
 					title: 'Intro to ROS (Vendor-Agnostic)',
 					objectives: [
-						'Explain why vendor-neutral middleware like ROS is useful.'
+						'Explain why vendor-neutral middleware like ROS is useful.',
+						'Describe what ROS-Industrial adds for manufacturing.',
+						'Explain what a vendor ROS driver does, using Universal Robots as the example.'
 					],
-					keyTerms: ['middleware', 'ROS', 'digital twin']
+					keyTerms: ['middleware', 'ROS', 'digital twin', 'ROS-Industrial', 'ROS driver']
 				}
 			]
 		},
@@ -126,9 +128,10 @@ window.RISE_COURSE = {
 					title: 'Definition and Introduction',
 					objectives: [
 						'Explain what ROS is and is not.',
-						'Define nodes, topics, services, actions and parameters.'
+						'Define nodes, topics, services, actions and parameters.',
+						'Use ROS_DOMAIN_ID to keep robots apart on a shared network.'
 					],
-					keyTerms: ['node', 'topic', 'service', 'action', 'parameter', 'SLAM']
+					keyTerms: ['node', 'topic', 'service', 'action', 'parameter', 'SLAM', 'ROS_DOMAIN_ID', 'Willow Garage']
 				},
 				{
 					id: '3-2',
@@ -153,18 +156,21 @@ window.RISE_COURSE = {
 					title: 'Running Your First Example (Turtlesim)',
 					objectives: [
 						'Run Turtlesim and drive the turtle from the keyboard.',
-						'Inspect nodes and topics with the ros2 command.'
+						'Inspect nodes, topics and message types with the ros2 command.',
+						'Call a service to spawn a turtle, and remap topics to drive it.'
 					],
-					keyTerms: ['turtlesim', 'teleop', 'ros2 topic echo', '/turtle1/cmd_vel']
+					keyTerms: ['turtlesim', 'teleop', 'ros2 topic echo', '/turtle1/cmd_vel', 'Twist', '/spawn', 'remapping']
 				},
 				{
 					id: '3-5',
 					title: 'ROS Tools',
 					objectives: [
 						'Tell RViz (visualization) apart from Gazebo (simulation).',
+						'See the running node graph with rqt_graph.',
+						'Record and replay topics with ros2 bag.',
 						'Name widely used ROS packages and what they do.'
 					],
-					keyTerms: ['RViz', 'Gazebo', 'Nav2', 'MoveIt 2', 'tf2']
+					keyTerms: ['RViz', 'rqt_graph', 'Gazebo', 'ros2 bag', 'Nav2', 'MoveIt 2', 'tf2']
 				}
 			]
 		},
@@ -179,9 +185,10 @@ window.RISE_COURSE = {
 					title: 'Ethics in Engineering',
 					objectives: [
 						'State the first duty in engineering codes of ethics.',
-						'List the core duties shared by the NSPE and IEEE codes.'
+						'List the core duties shared by the NSPE and IEEE codes.',
+						'Name the NSPE Fundamental Canons and the three principles of the IEEE code.'
 					],
-					keyTerms: ['NSPE Code of Ethics', 'IEEE Code of Ethics', 'conflict of interest']
+					keyTerms: ['NSPE Code of Ethics', 'Fundamental Canons', 'IEEE Code of Ethics', 'conflict of interest']
 				},
 				{
 					id: '4-2',
@@ -350,11 +357,25 @@ window.RISE_COURSE = {
 				explanation: 'The teleop node publishes on /turtle1/cmd_vel and the simulator subscribes to it.'
 			},
 			{
+				lesson: '3-1',
+				question: 'Your class shares one network and every robot hears every other robot. What should you set?',
+				choices: ['A different ROS_DOMAIN_ID for each robot', 'A new roscore for each robot', 'A different message type', 'Nothing, ROS 2 cannot be separated'],
+				answer: 0,
+				explanation: 'Nodes only discover nodes on the same domain. Every node uses domain 0 by default, so set a different ROS_DOMAIN_ID, for example export ROS_DOMAIN_ID=7.'
+			},
+			{
 				lesson: '3-5',
 				question: 'What is the difference between RViz and Gazebo?',
 				choices: ['They are the same tool', 'RViz displays data already flowing through ROS; Gazebo simulates the robot and its world with physics', 'RViz simulates physics; Gazebo only draws maps', 'Gazebo is for ROS 1 only'],
 				answer: 1,
 				explanation: 'RViz visualizes existing data and simulates nothing. Gazebo is a physics simulator connected through ros_gz.'
+			},
+			{
+				lesson: '3-5',
+				question: 'Which tool records messages on chosen topics so you can replay them later without the robot?',
+				choices: ['rqt_graph', 'ros2 bag', 'RViz', 'tf2'],
+				answer: 1,
+				explanation: 'ros2 bag record saves the messages to a file and ros2 bag play republishes them.'
 			}
 		],
 		4: [

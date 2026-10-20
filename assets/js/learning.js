@@ -230,7 +230,12 @@
 		if (!root) return;
 		var params = new URLSearchParams(location.search);
 		var ch = getChapter(params.get('chapter'));
-		var questions = ch && course.quizzes[ch.id];
+		var questions = ch && course.quizzes[ch.id] && course.quizzes[ch.id].slice();
+		// Ask questions in lesson order, keeping the data file's order within a lesson
+		if (questions) questions = questions
+			.map(function (q, i) { return { q: q, i: i }; })
+			.sort(function (a, b) { return a.q.lesson.localeCompare(b.q.lesson) || a.i - b.i; })
+			.map(function (x) { return x.q; });
 		var picker = document.getElementById('quiz-chapter-picker');
 
 		if (!ch || !questions) {
