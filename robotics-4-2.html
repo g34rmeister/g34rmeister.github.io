@@ -145,13 +145,30 @@
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Emergency stops:</span> a physical button that stops motion immediately, wired independently of the main software; ISO 13850 sets the design principles for emergency stop functions.</li>
-                                <li class="article-spec-item"><span class="spec-label">Guarding:</span> fences, light curtains and interlocked doors that stop the robot when someone enters its cell.</li>
-                                <li class="article-spec-item"><span class="spec-label">Monitored standstill:</span> the robot holds still under safety monitoring while a person works in the shared space (called &ldquo;safety-rated monitored stop&rdquo; before 2025).</li>
-                                <li class="article-spec-item"><span class="spec-label">Speed and separation monitoring:</span> sensors slow or stop the robot as a person approaches.</li>
-                                <li class="article-spec-item"><span class="spec-label">Power and force limiting:</span> the robot limits the force it can apply so contact with a person stays below set limits.</li>
+                                <li class="article-spec-item"><span class="spec-label">Guarding:</span> fixed fences and interlocked doors or gates that stop the robot when someone opens them.</li>
+                                <li class="article-spec-item"><span class="spec-label">Presence sensing:</span> light curtains, safety mats, safety laser scanners and safety vision systems detect a person and slow or stop the robot.</li>
                             </ul>
 
-                            <h2 class="article-section-title">03. Software: the safety layer</h2>
+                            <h2 class="article-section-title">03. Collaborative applications</h2>
+                            <p>
+                                When people and robots share a workspace, safety standards and OSHA describe four ways to keep that safe. The 2025 edition of ISO 10218 treats these as properties of the whole <em>collaborative application</em>, not of the robot alone:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Monitored standstill:</span> the robot stops and stays powered but monitored while a person is in the shared space. It is used together with one of the other methods, and was called &ldquo;safety-rated monitored stop&rdquo; before 2025.</li>
+                                <li class="article-spec-item"><span class="spec-label">Hand guiding:</span> the operator moves the robot directly while holding a hold-to-run control.</li>
+                                <li class="article-spec-item"><span class="spec-label">Speed and separation monitoring:</span> presence sensors slow the robot as a person approaches and stop it before contact.</li>
+                                <li class="article-spec-item"><span class="spec-label">Power and force limiting:</span> contact is allowed, but the robot&rsquo;s design or safety functions keep force and pressure below set limits.</li>
+                            </ul>
+                            <p>
+                                In practice, speed and separation monitoring and power and force limiting are often combined. A robot sold as a &ldquo;cobot&rdquo; can still be unsafe in the wrong application, for example when it carries a sharp tool, which is why the standard now judges the application.
+                            </p>
+
+                            <h2 class="article-section-title">04. Safeguards while teaching</h2>
+                            <p>
+                                Programming with a teach pendant puts a person close to a powered robot, so manual mode has its own safeguards. OSHA lists a three-position enabling device, which lets the robot move only while held in the middle position and stops it if the operator lets go or squeezes in panic, together with a reduced speed of 250 mm/s or less. Awareness devices such as chains, lights and signs can supplement guards and sensors but never replace them. See <a href="robotics-2-1.html">Types of Programming</a> for how online programming works.
+                            </p>
+
+                            <h2 class="article-section-title">05. Software: the safety layer</h2>
                             <p>
                                 Every kind of robot needs safety logic that sits below the &ldquo;smart&rdquo; code and does not depend on it:
                             </p>
@@ -159,7 +176,7 @@
                                 <li class="article-spec-item"><span class="spec-label">Watchdog timers:</span> if the main program stops responding, the watchdog triggers a safe stop.</li>
                                 <li class="article-spec-item"><span class="spec-label">Geofencing and safety zones:</span> virtual boundaries the robot cannot cross, whatever its planner says. Industrial cobots configure these directly, as in <a href="robotics-2-2.html">PolyScope</a>.</li>
                             </ul>
-                            <h2 class="article-section-title">04. References</h2>
+                            <h2 class="article-section-title">06. References</h2>
                             <ol class="article-spec-list">
                                 <li>ISO 10218-1:2025, <em>Robotics &mdash; Safety requirements &mdash; Part 1: Industrial robots</em>. <a href="https://www.iso.org/standard/73933.html" target="_blank" rel="noopener noreferrer">iso.org/standard/73933.html</a>.</li>
                                 <li>ISO 10218-2:2025, <em>Robotics &mdash; Safety requirements &mdash; Part 2: Industrial robot applications and robot cells</em>. <a href="https://www.iso.org/standard/73934.html" target="_blank" rel="noopener noreferrer">iso.org/standard/73934.html</a>.</li>
