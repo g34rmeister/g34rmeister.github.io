@@ -8,7 +8,7 @@
         <title>1.4 Preliminary Requirements — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="The skills worth having before starting robotics: Python, C++, some math, the right learning mentality, assembly language and networking basics." />
+        <meta name="description" content="What to know before programming robots: robot safety, Python, C++, vendor languages, math with a worked example, physics and electronics, Linux, git and simulators, networking, optional assembly and career paths." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="1.4 Preliminary Requirements — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="The skills worth having before starting robotics: Python, C++, some math, the right learning mentality, assembly language and networking basics." />
+        <meta property="og:description" content="What to know before programming robots: robot safety, Python, C++, vendor languages, math with a worked example, physics and electronics, Linux, git and simulators, networking, optional assembly and career paths." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-1-4.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="1.4 Preliminary Requirements, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="1.4 Preliminary Requirements — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="The skills worth having before starting robotics: Python, C++, some math, the right learning mentality, assembly language and networking basics." />
+        <meta name="twitter:description" content="What to know before programming robots: robot safety, Python, C++, vendor languages, math with a worked example, physics and electronics, Linux, git and simulators, networking, optional assembly and career paths." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,77 +135,248 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Python</h2>
                             <p>
-                                Python is widely used in robotics for scripting, testing and higher-level logic, and it is one of the two main languages used with <a href="robotics-ros.html">ROS</a>. The Universal Robots language URScript also has Python-like syntax.
+                                You do not need to be an expert in anything before starting this course. The free textbook Modern Robotics expects only first-year physics, some linear algebra, basic differential equations and &ldquo;only basic programming skills.&rdquo;<sup><a href="#ref-1">[1]</a></sup> This lesson walks through what is worth having, why, and where to learn it for free. It starts with the one thing that is not optional: safety.
+                            </p>
+
+                            <h2 class="article-section-title">01. Safety first: before you touch a real robot</h2>
+                            <p>
+                                An industrial arm is strong, fast and does exactly what its program says, even if a person is in the way. The U.S. Occupational Safety and Health Administration (OSHA) describes real accidents in its Technical Manual. They include:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Unexpected motion while programming:</span> the worker did not know the program, could not see well, or used a pendant with no enabling device.</li>
+                                <li class="article-spec-item"><span class="spec-label">Entering the cell in automatic mode:</span> a worker went into the robot&rsquo;s space while it was running and was pinned against a post.</li>
+                                <li class="article-spec-item"><span class="spec-label">Power switched on during maintenance:</span> a coworker turned the power back on because lockout/tagout was not done properly.</li>
+                                <li class="article-spec-item"><span class="spec-label">Cleaning a sensor in automatic mode:</span> a worker cleaned a photobeam sensor while the robot was still in automatic.</li>
+                            </ul>
+                            <p>
+                                OSHA lists the sources of these hazards as human programming errors, control errors, unauthorized access, mechanical failure, time pressure and power system failures.<sup><a href="#ref-2">[2]</a></sup> Each case above maps to a habit you can build from day one: know the program, use the enabling device, lock out before servicing, and never enter the cell in automatic mode.
+                            </p>
+                            <p>
+                                Three rules from OSHA are worth memorizing:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Slow teach speed:</span> while programming, the robot should move at &ldquo;10 inches per second (250 mm/second) or less.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label">Enabling device:</span> typically a 3-position switch on the teach pendant that must be held in the center (ON) position for the robot to move while you program it.</li>
+                                <li class="article-spec-item"><span class="spec-label">Lockout/tagout:</span> before servicing, hazardous energy must be controlled under OSHA rule 29 CFR 1910.147 (lockout/tagout) or 1910.333. You lock the power off and tag it so nobody can turn it back on while you work.</li>
+                            </ul>
+                            <p>
+                                OSHA also says that anyone who programs, operates or maintains a robot should receive adequate safety training before being assigned, and that removing or engineering away a hazard is preferred over relying on rules and protective equipment.<sup><a href="#ref-2">[2]</a></sup> The main international standard is ISO 10218, revised in 2025. The new edition makes functional safety requirements more explicit, absorbs the cobot guidance from ISO/TS 15066, and adds cybersecurity requirements as they relate to safety.<sup><a href="#ref-3">[3]</a></sup> You will meet its collaborative modes in <a href="robotics-1-3.html">1.3 Types of Robots</a>.
+                            </p>
+
+                            <h2 class="article-section-title">02. Python</h2>
+                            <p>
+                                Python is widely used in robotics for scripting, testing and higher-level logic, and it is one of the two main languages used with <a href="robotics-ros.html">ROS</a>. ROS 2 provides <code>rclpy</code>, its Python client library, which lets you create nodes, publishers and subscriptions with ordinary Python types. The ROS 2 documentation favors Python where &ldquo;it makes prototyping iterations faster.&rdquo;<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                The Universal Robots language URScript has Python-like syntax, but it is still a vendor language, not Python. It runs on the robot&rsquo;s controller, not in a normal Python interpreter.
                             </p>
                             <ul class="article-spec-list">
                                 <li><a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener noreferrer">The Python Tutorial (python.org)</a></li>
                             </ul>
 
-                            <h2 class="article-section-title">02. C++</h2>
+                            <h2 class="article-section-title">03. C++</h2>
                             <p>
-                                C++ is the other main ROS language, and Arduino sketches are written in a simplified form of it. It is the usual choice when code has to run fast and close to the hardware.
+                                C++ is the other main ROS language. Its client library, <code>rclcpp</code>, is the C++ interface for the same jobs: nodes, publishers and subscriptions. The ROS 2 documentation suggests that nodes where efficiency matters &ldquo;might be better implemented in C++.&rdquo; Both <code>rclcpp</code> and <code>rclpy</code> are built on a shared C library, <code>rcl</code>, so they behave the same way.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                The Arduino language is also based on C/C++,<sup><a href="#ref-5">[5]</a></sup> so what you learn here carries straight over to the microcontroller lessons in Chapter 5.
                             </p>
                             <ul class="article-spec-list">
                                 <li><a href="https://www.learncpp.com/" target="_blank" rel="noopener noreferrer">LearnCpp.com</a></li>
                             </ul>
 
-                            <h2 class="article-section-title">03. Some math (calculus, linear algebra)</h2>
+                            <h2 class="article-section-title">04. Vendor robot languages</h2>
                             <p>
-                                Calculus shows up in control, for example the integral and derivative terms of a <a href="robotics-5-4.html">PID controller</a>. Linear algebra is how robots describe positions, orientations and the motion of their joints.
+                                Industrial arms are usually programmed in their maker&rsquo;s own language: ABB uses RAPID, Comau PDL2, FANUC Karel, Kawasaki AS, KUKA KRL, St&auml;ubli VAL3 and Yaskawa Inform. VAL, used on Unimate robots, was one of the first robot languages. With over 30 robot manufacturers, there are roughly as many languages, and that lack of standardization causes real challenges.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                The good news is that the ideas are shared. A typical first FANUC course covers the teach pendant, jogging (moving the arm by hand with buttons), frames, motion types, programs for handling material, input/output (I/O) signals, and backup and restore.<sup><a href="#ref-7">[7]</a></sup> Once you understand points, frames and moves in one language, the next one is much easier. Lesson <a href="robotics-2-3.html">2.3 Common Programming Languages</a> compares them.
+                            </p>
+                            <p>
+                                You can practice without a robot. Universal Robots provides an emulator, URSim, for testing programs offline.<sup><a href="#ref-8">[8]</a></sup> Offline programming tools such as RoboDK do the same for many brands, as an alternative to programming on the teach pendant.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">05. Math</h2>
+                            <p>
+                                Modern Robotics lists its math prerequisites as linear algebra, including matrix operations, and basic linear ordinary differential equations.<sup><a href="#ref-1">[1]</a></sup> In practice that means four topics:
                             </p>
                             <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Trigonometry:</span> sines and cosines turn joint angles into positions.</li>
+                                <li class="article-spec-item"><span class="spec-label">Vectors and matrices:</span> linear algebra is how robots describe positions, orientations and the motion of their joints.</li>
+                                <li class="article-spec-item"><span class="spec-label">Derivatives and integrals:</span> calculus shows up in velocities and in control, for example the integral and derivative terms of a <a href="robotics-5-4.html">PID controller</a>.</li>
+                                <li class="article-spec-item"><span class="spec-label">Basic differential equations:</span> how a system changes over time, which you need for robot dynamics.</li>
+                            </ul>
+                            <p>
+                                <span class="spec-label">Worked example: a two-link arm.</span> This is our own worked example, the standard first exercise in forward kinematics (working out where the tool is from the joint angles). Picture a flat arm with two links of length L1 and L2. The first joint is at angle &theta;1 from the x-axis, and the second joint bends by &theta;2 relative to the first link. The tip of the arm is at:
+                            </p>
+                            <pre class="article-code"><code>x = L1&middot;cos(&theta;1) + L2&middot;cos(&theta;1 + &theta;2)
+y = L1&middot;sin(&theta;1) + L2&middot;sin(&theta;1 + &theta;2)
+&phi; = &theta;1 + &theta;2      (the direction the tip points)</code></pre>
+                            <p>
+                                Try it with L1 = L2 = 1 m, &theta;1 = 30&deg; and &theta;2 = 60&deg;. Then x = 0.866 + cos 90&deg; = 0.866 m, and y = 0.5 + sin 90&deg; = 1.5 m. In Python:
+                            </p>
+                            <pre class="article-code"><code>from math import cos, sin, radians
+
+L1, L2 = 1.0, 1.0
+t1, t2 = radians(30), radians(60)
+x = L1 * cos(t1) + L2 * cos(t1 + t2)
+y = L1 * sin(t1) + L2 * sin(t1 + t2)
+print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
+                            <p>
+                                This one example uses every topic above. Trigonometry gives the formula. With matrices, you get the same answer by multiplying a rotation and a translation for each link. Differentiating x and y with respect to time gives the arm&rsquo;s velocity, which leads to a matrix called the Jacobian. Lesson <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a> builds on this with joints, frames and kinematics.
+                            </p>
+                            <p>
+                                Free resources:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li><a href="https://hades.mech.northwestern.edu/index.php/Modern_Robotics" target="_blank" rel="noopener noreferrer">Modern Robotics (Lynch &amp; Park)</a>: the book&rsquo;s preprint PDF and lecture videos are free. The six-course Coursera specialization (about 4 weeks each at about 5 hours a week) can be audited without paying; graded work costs a fee.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-10">[10]</a></sup></li>
                                 <li><a href="https://ocw.mit.edu/courses/18-01sc-single-variable-calculus-fall-2010/" target="_blank" rel="noopener noreferrer">MIT OpenCourseWare 18.01: Single Variable Calculus</a></li>
                                 <li><a href="https://ocw.mit.edu/courses/18-06-linear-algebra-spring-2010/" target="_blank" rel="noopener noreferrer">MIT OpenCourseWare 18.06: Linear Algebra</a></li>
                             </ul>
 
-                            <h2 class="article-section-title">04. Learning mentality</h2>
+                            <h2 class="article-section-title">06. Physics and electronics basics</h2>
                             <p>
-                                When robot code is wrong, the robot tells you right away: it drives into a wall, stalls, or grips too hard. That feedback is immediate and impersonal. The most useful mindset is to treat each failure as information, test, adjust and try again, rather than expecting to get it right the first time.
+                                Modern Robotics expects &ldquo;freshman-level physics, including f = ma&rdquo;: force equals mass times acceleration.<sup><a href="#ref-1">[1]</a></sup> That is what tells you how hard a motor must push to speed up an arm. A related idea is torque, the turning effect of a force, which grows with the distance from the joint. You can reason from this that a load held far out on a stretched arm is harder on the joints than the same load held close in.
+                            </p>
+                            <p>
+                                For electronics, start with Ohm&rsquo;s law: voltage equals current times resistance (E = IR, often written V = IR).<sup><a href="#ref-11">[11]</a></sup> From there you can learn how motors, encoders and switches connect to a controller. The course covers <a href="robotics-5-2.html">PWM</a> and <a href="robotics-5-3.html">encoders</a> in Chapter 5.
+                            </p>
+                            <p>
+                                Electricity is also a safety topic. OSHA lists electrical hazards (arc flash and shock), hydraulic hazards including high-pressure cutting streams, whipping pneumatic hoses, and parts thrown when a tool fails. It also notes that electrically powered robots can be stopped or powered down more safely and faster than hydraulic or pneumatic ones.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">05. Assembly language</h2>
+                            <h2 class="article-section-title">07. Linux, git and simulators</h2>
                             <p>
-                                Assembly language is a low-level language in which each instruction corresponds closely to one machine instruction of a specific processor. You rarely write whole robot programs in assembly, but knowing what it looks like helps you understand what a microcontroller is actually doing: registers, memory, timing and interrupts.
+                                <span class="spec-label">Linux:</span> ROS 2 runs mainly on Ubuntu Linux. The newest release, ROS 2 Lyrical Luth (22 May 2026, supported until May 2031), has Ubuntu 26.04 and Windows 11 as its Tier 1 (best supported) platforms.<sup><a href="#ref-12">[12]</a></sup> Getting comfortable with the command line, moving between folders, running commands and editing files, pays off quickly.
                             </p>
                             <p>
-                                That understanding pays off when code has to be fast and predictable, such as reading an <a href="robotics-5-3.html">encoder</a> inside an interrupt or generating precise <a href="robotics-5-2.html">PWM</a> timing.
+                                <span class="spec-label">git:</span> git tracks every change to your code so you can undo mistakes and share work. The book <em>Pro Git</em> is free to read online.<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <p>
+                                <span class="spec-label">Simulators:</span> run a robot in simulation before you run a real one. Gazebo is the usual simulator for ROS, and each ROS 2 release has a matching Gazebo version. For new users, Gazebo recommends Ubuntu 24.04 with ROS 2 Jazzy and Gazebo Harmonic.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col">ROS 2 release</th><th scope="col">Gazebo version</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Humble (long-term support)</td><td>Fortress</td></tr>
+                                    <tr><td>Jazzy (long-term support)</td><td>Harmonic</td></tr>
+                                    <tr><td>Kilted</td><td>Ionic</td></tr>
+                                    <tr><td>Lyrical (long-term support)</td><td>Jetty</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                For Universal Robots, URSim runs on Linux or as a virtual machine on Windows. When URSim runs on the same computer as ROS, the robot&rsquo;s IP address is <code>127.0.0.1</code>. One warning: the Linux installer may remove ROS packages, so install ROS after URSim.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li><a href="https://www.nand2tetris.org/" target="_blank" rel="noopener noreferrer">Nand2Tetris: build a computer from logic gates up to assembly and beyond</a></li>
+                                <li><a href="https://swcarpentry.github.io/shell-novice/" target="_blank" rel="noopener noreferrer">Software Carpentry: The Unix Shell</a>, a beginner lesson on the command line.<sup><a href="#ref-15">[15]</a></sup></li>
+                                <li><a href="https://git-scm.com/book/en/v2" target="_blank" rel="noopener noreferrer">Pro Git (Chacon &amp; Straub), free online</a></li>
                             </ul>
 
-                            <h2 class="article-section-title">06. Networking basics</h2>
+                            <h2 class="article-section-title">08. Networking basics</h2>
                             <p>
-                                Robots rarely work alone. Industrial robots talk to PLCs, cameras and other machines over Ethernet, and ROS 2 nodes exchange messages over the network. Useful basics:
+                                Robots rarely work alone. Industrial robots talk to PLCs (programmable logic controllers, the computers that run factory equipment), cameras and other machines over Ethernet, and ROS 2 nodes exchange messages over the network. Useful basics:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">IP addresses and subnets:</span> how devices on a network find each other; a robot controller and a PC usually need addresses on the same subnet to communicate.</li>
-                                <li class="article-spec-item"><span class="spec-label">TCP vs. UDP:</span> TCP guarantees delivery and order; UDP is lighter and faster but can drop packets. ROS 2&rsquo;s default middleware, DDS, runs over UDP.</li>
-                                <li class="article-spec-item"><span class="spec-label">Ports:</span> a single device runs many services, each listening on its own port number. Modbus TCP, for example, uses port 502.</li>
-                                <li class="article-spec-item"><span class="spec-label">Industrial protocols:</span> factory equipment often uses protocols such as Modbus TCP, EtherNet/IP or PROFINET on top of Ethernet.</li>
+                                <li class="article-spec-item"><span class="spec-label">TCP vs. UDP:</span> TCP provides &ldquo;a reliable, in-order, byte-stream service&rdquo;;<sup><a href="#ref-16">[16]</a></sup> UDP is lighter and faster but does not guarantee delivery, so packets can be lost.<sup><a href="#ref-17">[17]</a></sup> ROS 2&rsquo;s default middleware, DDS, runs over UDP.<sup><a href="#ref-18">[18]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Ports:</span> a single device runs many services, each listening on its own port number. Modbus TCP, for example, uses port 502.<sup><a href="#ref-19">[19]</a></sup></li>
+                            </ul>
+                            <p>
+                                Factory equipment uses industrial protocols on top of Ethernet:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Modbus TCP:</span> Modbus was developed by Modicon in 1979 and became a de facto standard in manufacturing. The TCP/IP version dates from 1999, and the specification is free with no licensing fees.<sup><a href="#ref-19">[19]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">EtherNet/IP:</span> an industrial protocol built on standard Ethernet and TCP/IP. It also uses UDP for real-time cyclic data, and its underlying protocol, CIP, is supported by hundreds of vendors.<sup><a href="#ref-20">[20]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">PROFINET:</span> another industrial Ethernet standard, maintained by PROFIBUS &amp; PROFINET International.<sup><a href="#ref-21">[21]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">OPC UA:</span> the OPC UA Robotics specification (OPC 40010-1) defines a shared information model for industrial and mobile robots, covering asset management and condition monitoring of arms, axes, motors, controllers and software. Version 1.02 was released in September 2025.<sup><a href="#ref-22">[22]</a></sup></li>
                             </ul>
                             <ul class="article-spec-list">
                                 <li><a href="https://book.systemsapproach.org/" target="_blank" rel="noopener noreferrer">Computer Networks: A Systems Approach (free online book)</a></li>
                             </ul>
 
+                            <h2 class="article-section-title">09. Learning mentality</h2>
+                            <p>
+                                When robot code is wrong, the robot tells you right away: it drives into a wall, stalls, or grips too hard. That feedback is immediate and impersonal. The most useful mindset is to treat each failure as information, test, adjust and try again, rather than expecting to get it right the first time.
+                            </p>
+                            <p>
+                                The same habit keeps you safe. Test new code in a simulator first, then on the real robot at slow teach speed, and only then at full speed.
+                            </p>
+
+                            <h2 class="article-section-title">10. Optional: assembly language</h2>
+                            <p>
+                                Assembly language is a low-level language in which each instruction corresponds closely to one machine instruction of a specific processor.<sup><a href="#ref-23">[23]</a></sup> It is <em>not</em> a prerequisite for this course. Nothing in this course asks you to write assembly, and Modern Robotics needs only basic programming skills.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                The evidence points the same way. An engineering education paper by He, Zhang and Shen (2015) taught microcontrollers with about 30% assembly and 70% embedded C, keeping assembly for understanding machine code, instruction timing and the stack, and noted that industry prefers high-level languages such as embedded C.<sup><a href="#ref-24">[24]</a></sup> A 2022 All About Circuits article pointed out that assembly ranked 30th in IEEE Spectrum&rsquo;s 2022 job-posting ranking, while C and C++ ranked 6th and 7th. It argued that the strongest reason to learn assembly is to understand what the processor actually does, and that there is &ldquo;no one-size-fits-all answer.&rdquo;<sup><a href="#ref-25">[25]</a></sup>
+                            </p>
+                            <p>
+                                So treat assembly as enrichment. Knowing what it looks like helps you reason about registers, memory, timing and interrupts, which matters when code has to be fast and predictable, such as reading an <a href="robotics-5-3.html">encoder</a> inside an interrupt or generating precise <a href="robotics-5-2.html">PWM</a> timing. You would normally write that code in C or C++, though.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li><a href="https://www.nand2tetris.org/" target="_blank" rel="noopener noreferrer">Nand2Tetris: build a computer from logic gates up to assembly and beyond</a></li>
+                            </ul>
+
+                            <h2 class="article-section-title">11. Careers and a learning path</h2>
+                            <p>
+                                Robots need people to program and maintain them. The U.S. Bureau of Labor Statistics (BLS) counts 547,300 jobs (2025) for industrial machinery mechanics, maintenance workers and millwrights, with a median pay of $64,100 (May 2025). It projects 14% growth from 2025 to 2035, much faster than average, with about 51,900 openings a year, and says the continued adoption of automated manufacturing machinery is expected to create jobs for these workers. It names robotic welding arms as an example of the machines they work on.<sup><a href="#ref-26">[26]</a></sup>
+                            </p>
+                            <p>
+                                For industrial roles, vendor training counts. FANUC America offers over 60 standard courses with recommended paths in programming, vision, safety and more.<sup><a href="#ref-27">[27]</a></sup> One example entry course, FANUC HandlingTool Operation and Programming at Kent State, runs 32 hours with 24 lab exercises, has no prerequisites, and leads to the FANUC Robotics CERT I credential.<sup><a href="#ref-7">[7]</a></sup> Universal Robots Academy offers free e-learning for its e-Series robots, including an 8-module Core Track that simulates setting up and programming a complete pick-and-place application.<sup><a href="#ref-28">[28]</a></sup> The Association for Advancing Automation (A3) also certifies robot integrator companies, and offers individual credentials such as Certified Motion Control Professional.<sup><a href="#ref-29">[29]</a></sup>
+                            </p>
+                            <p>
+                                A sensible order for an undergraduate, based on the sections above:
+                            </p>
+                            <ol class="article-spec-list">
+                                <li>Python, plus the Linux command line and git.</li>
+                                <li>A simulator: URSim, Gazebo or RoboDK.</li>
+                                <li>The math, through Modern Robotics.</li>
+                                <li>A vendor course (such as FANUC CERT I or UR Academy) if you are aiming at industry, or ROS 2 projects if you are aiming at research.</li>
+                            </ol>
+
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
                                     <li>Write a short Python or C++ program that converts a distance in centimeters to inches. If you can do this comfortably, you have enough programming to start.</li>
-                                    <li>Look up your computer&rsquo;s IP address and subnet mask, and work out which other addresses would be on the same subnet.</li>
+                                    <li>Change the two-link example to L1 = 0.5 m, L2 = 0.3 m, &theta;1 = 90&deg; and &theta;2 = &minus;90&deg;. Work out x and y by hand first, then check with the code.</li>
+                                    <li>Look up your computer&rsquo;s IP address and subnet mask, and work out which other addresses would be on the same subnet. If you install URSim, ping <code>127.0.0.1</code> and explain why it answers.</li>
+                                    <li>For each OSHA accident in section 01, write down the one habit that would have prevented it.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">07. References</h2>
+                            <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li>&ldquo;Assembly language.&rdquo; <em>Encyclop&aelig;dia Britannica</em>. <a href="https://www.britannica.com/technology/assembly-language" target="_blank" rel="noopener noreferrer">britannica.com/technology/assembly-language</a>.</li>
-                                <li>Modbus Organization, &ldquo;Modbus FAQ.&rdquo; <a href="https://www.modbus.org/faq" target="_blank" rel="noopener noreferrer">modbus.org/faq</a>.</li>
-                                <li>J. Postel, &ldquo;User Datagram Protocol,&rdquo; RFC 768. <a href="https://www.rfc-editor.org/rfc/rfc768" target="_blank" rel="noopener noreferrer">rfc-editor.org/rfc/rfc768</a>.</li>
-                                <li>Open Robotics, &ldquo;ROS on DDS.&rdquo; <a href="https://design.ros2.org/articles/ros_on_dds.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/ros_on_dds.html</a>.</li>
-                                <li>ODVA, &ldquo;EtherNet/IP.&rdquo; <a href="https://www.odva.org/technology-standards/key-technologies/ethernet-ip/" target="_blank" rel="noopener noreferrer">odva.org/technology-standards/key-technologies/ethernet-ip</a>.</li>
-                                <li>PROFIBUS &amp; PROFINET International, &ldquo;PROFINET technology.&rdquo; <a href="https://www.profibus.com/profinet-technology" target="_blank" rel="noopener noreferrer">profibus.com/profinet-technology</a>.</li>
+                                <li id="ref-1">K. M. Lynch and F. C. Park, &ldquo;Modern Robotics: Mechanics, Planning, and Control&rdquo; (book wiki, prerequisites and free resources). Northwestern University, accessed October 2026. <a href="https://hades.mech.northwestern.edu/index.php/Modern_Robotics" target="_blank" rel="noopener noreferrer">hades.mech.northwestern.edu/index.php/Modern_Robotics</a>.</li>
+                                <li id="ref-2">Occupational Safety and Health Administration, <em>OSHA Technical Manual</em>, Section IV, Chapter 4 (industrial robot systems and their safety). U.S. Department of Labor, accessed October 2026. <a href="https://www.osha.gov/otm/section-4-safety-hazards/chapter-4" target="_blank" rel="noopener noreferrer">osha.gov/otm/section-4-safety-hazards/chapter-4</a>.</li>
+                                <li id="ref-3">Association for Advancing Automation (A3), &ldquo;Updated ISO 10218: major advancements in industrial robot safety standards now available.&rdquo; A3, 17 February 2025. <a href="https://www.automate.org/robotics/news/updated-iso-10218-major-advancements-in-industrial-robot-safety-standards-now-available" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/updated-iso-10218-major-advancements-in-industrial-robot-safety-standards-now-available</a>.</li>
+                                <li id="ref-4">Open Robotics, &ldquo;Client libraries,&rdquo; ROS 2 Documentation (Iron). Accessed October 2026. <a href="https://docs.ros.org/en/iron/Concepts/Basic/About-Client-Libraries.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/iron/Concepts/Basic/About-Client-Libraries.html</a>.</li>
+                                <li id="ref-5">Arduino, &ldquo;Language Reference&rdquo; (Arduino 0019 reference, mirrored by Stanford CCRMA). <a href="https://ccrma.stanford.edu/~fgeorg/250a/lab2/arduino-0019/reference/index.html" target="_blank" rel="noopener noreferrer">ccrma.stanford.edu/~fgeorg/250a/lab2/arduino-0019/reference</a>.</li>
+                                <li id="ref-6">&ldquo;Robot software.&rdquo; <em>Wikipedia</em>, accessed October 2026. <a href="https://en.wikipedia.org/wiki/Robot_software" target="_blank" rel="noopener noreferrer">en.wikipedia.org/wiki/Robot_software</a>.</li>
+                                <li id="ref-7">Kent State University, &ldquo;FANUC Robot Training.&rdquo; Accessed October 2026. <a href="https://www.kent.edu/cae/fanuc-robot-training" target="_blank" rel="noopener noreferrer">kent.edu/cae/fanuc-robot-training</a>.</li>
+                                <li id="ref-8">MathWorks, &ldquo;Set up URSim offline simulator.&rdquo; Accessed October 2026. <a href="https://mathworks.com/help/robotics/urseries/ug/setup-ursim-offline-simulator.html" target="_blank" rel="noopener noreferrer">mathworks.com/help/robotics/urseries/ug/setup-ursim-offline-simulator.html</a>.</li>
+                                <li id="ref-9">RoboDK, &ldquo;Offline programming&rdquo; (blog). RoboDK, accessed October 2026. <a href="https://robodk.com/blog/off-line-programming/" target="_blank" rel="noopener noreferrer">robodk.com/blog/off-line-programming</a>.</li>
+                                <li id="ref-10">Northwestern University, &ldquo;Modern Robotics MOOC now available on Coursera,&rdquo; 2018. <a href="https://www.robotics.northwestern.edu/news-events/articles/2018/modern-robotics-mooc-now-available-on-coursera.html" target="_blank" rel="noopener noreferrer">robotics.northwestern.edu/news-events/articles/2018/modern-robotics-mooc-now-available-on-coursera.html</a>.</li>
+                                <li id="ref-11">All About Circuits, &ldquo;Ohm&rsquo;s Law: How Voltage, Current, and Resistance Relate,&rdquo; <em>Lessons in Electric Circuits</em>, Volume I: Direct Current (DC). Accessed October 2026. <a href="https://www.allaboutcircuits.com/textbook/direct-current/chpt-2/voltage-current-resistance-relate/" target="_blank" rel="noopener noreferrer">allaboutcircuits.com/textbook/direct-current/chpt-2/voltage-current-resistance-relate</a>.</li>
+                                <li id="ref-12">Open Robotics, &ldquo;ROS 2 Lyrical Luth Released,&rdquo; Open Robotics Discourse, 22 May 2026. <a href="https://discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/ros-2-lyrical-luth-released/55021</a>.</li>
+                                <li id="ref-13">S. Chacon and B. Straub, <em>Pro Git</em>, 2nd ed. Apress, 2014 (free online, CC BY-NC-SA 3.0). <a href="https://git-scm.com/book/en/v2" target="_blank" rel="noopener noreferrer">git-scm.com/book/en/v2</a>.</li>
+                                <li id="ref-14">Gazebo, &ldquo;Installing Gazebo with ROS,&rdquo; Gazebo documentation. Accessed October 2026. <a href="https://gazebosim.org/docs/all/ros_installation" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/all/ros_installation</a>.</li>
+                                <li id="ref-15">The Carpentries, &ldquo;The Unix Shell,&rdquo; Software Carpentry lesson (CC BY 4.0). Accessed October 2026. <a href="https://swcarpentry.github.io/shell-novice/" target="_blank" rel="noopener noreferrer">swcarpentry.github.io/shell-novice</a>.</li>
+                                <li id="ref-16">IETF, &ldquo;Transmission Control Protocol (TCP),&rdquo; RFC 9293, 2022. <a href="https://www.rfc-editor.org/rfc/rfc9293" target="_blank" rel="noopener noreferrer">rfc-editor.org/rfc/rfc9293</a>.</li>
+                                <li id="ref-17">J. Postel, &ldquo;User Datagram Protocol,&rdquo; RFC 768. <a href="https://www.rfc-editor.org/rfc/rfc768" target="_blank" rel="noopener noreferrer">rfc-editor.org/rfc/rfc768</a>.</li>
+                                <li id="ref-18">Open Robotics, &ldquo;ROS on DDS.&rdquo; <a href="https://design.ros2.org/articles/ros_on_dds.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/ros_on_dds.html</a>.</li>
+                                <li id="ref-19">Modbus Organization, &ldquo;Modbus FAQ.&rdquo; Accessed October 2026. <a href="https://www.modbus.org/faq" target="_blank" rel="noopener noreferrer">modbus.org/faq</a>.</li>
+                                <li id="ref-20">ODVA, &ldquo;EtherNet/IP.&rdquo; Accessed October 2026. <a href="https://www.odva.org/technology-standards/key-technologies/ethernet-ip/" target="_blank" rel="noopener noreferrer">odva.org/technology-standards/key-technologies/ethernet-ip</a>.</li>
+                                <li id="ref-21">PROFIBUS &amp; PROFINET International, &ldquo;PROFINET technology.&rdquo; <a href="https://www.profibus.com/profinet-technology" target="_blank" rel="noopener noreferrer">profibus.com/profinet-technology</a>.</li>
+                                <li id="ref-22">OPC Foundation, &ldquo;OPC 40010-1: OPC Unified Architecture for Robotics.&rdquo; Accessed October 2026. <a href="https://opcfoundation.org/developer-tools/specifications-opc-ua-information-models/opc-unified-architecture-for-robotics/" target="_blank" rel="noopener noreferrer">opcfoundation.org/developer-tools/specifications-opc-ua-information-models/opc-unified-architecture-for-robotics</a>.</li>
+                                <li id="ref-23">&ldquo;Assembly language.&rdquo; <em>Encyclop&aelig;dia Britannica</em>. <a href="https://www.britannica.com/technology/assembly-language" target="_blank" rel="noopener noreferrer">britannica.com/technology/assembly-language</a>.</li>
+                                <li id="ref-24">W. He, Y. Zhang and S. Shen, &ldquo;Microcontrollers for Non-Electrical Engineering Students: Do We Need to Teach Assembly Language?&rdquo; ASEE Annual Conference, 2015. <a href="https://peer.asee.org/microcontrollers-for-non-electrical-engineering-students-do-we-need-to-teach-assembly-language" target="_blank" rel="noopener noreferrer">peer.asee.org/microcontrollers-for-non-electrical-engineering-students-do-we-need-to-teach-assembly-language</a>.</li>
+                                <li id="ref-25">D. Hewitt, &ldquo;Is Assembly Still Relevant?&rdquo; <em>All About Circuits</em>, 6 November 2022. <a href="https://www.allaboutcircuits.com/technical-articles/is-assembly-language-relevant-for-embedded-software-development/" target="_blank" rel="noopener noreferrer">allaboutcircuits.com/technical-articles/is-assembly-language-relevant-for-embedded-software-development</a>.</li>
+                                <li id="ref-26">U.S. Bureau of Labor Statistics, &ldquo;Industrial Machinery Mechanics, Machinery Maintenance Workers, and Millwrights,&rdquo; <em>Occupational Outlook Handbook</em>. Accessed October 2026. <a href="https://www.bls.gov/ooh/installation-maintenance-and-repair/industrial-machinery-mechanics-and-maintenance-workers-and-millwrights.htm" target="_blank" rel="noopener noreferrer">bls.gov/ooh/installation-maintenance-and-repair/industrial-machinery-mechanics-and-maintenance-workers-and-millwrights.htm</a>.</li>
+                                <li id="ref-27">FANUC America, &ldquo;Training: course descriptions.&rdquo; Accessed October 2026. <a href="https://www.fanucamerica.com/fanuc-mexico/support/training/course-descriptions/j2p030-handlingtool-software-programming-and-operation" target="_blank" rel="noopener noreferrer">fanucamerica.com (training course descriptions)</a>.</li>
+                                <li id="ref-28">Universal Robots Academy, &ldquo;Free e-Learning: e-Series (PolyScope 5).&rdquo; Universal Robots, accessed October 2026. <a href="https://academy.universal-robots.com/free-e-learning/e-series-e-learning/" target="_blank" rel="noopener noreferrer">academy.universal-robots.com/free-e-learning/e-series-e-learning</a>.</li>
+                                <li id="ref-29">Association for Advancing Automation (A3), &ldquo;Robotic Integrator Certification Program.&rdquo; Accessed October 2026. <a href="https://www.automate.org/robotics/robotic-integrator-certification-program" target="_blank" rel="noopener noreferrer">automate.org/robotics/robotic-integrator-certification-program</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -241,8 +412,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.2" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/course-data.js?v=1.3" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

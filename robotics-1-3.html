@@ -8,7 +8,7 @@
         <title>1.3 Types of Robots — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="The main types of robots: industrial arms, cobots, mobile robots, SCARA robots and autonomous guided vehicles." />
+        <meta name="description" content="How robots are classified: by structure (articulated, SCARA, delta, Cartesian, cylindrical, polar) and by application (collaborative applications, AGVs, AMRs, service robots and humanoids), with real spec sheets." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="1.3 Types of Robots — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="The main types of robots: industrial arms, cobots, mobile robots, SCARA robots and autonomous guided vehicles." />
+        <meta property="og:description" content="How robots are classified: by structure (articulated, SCARA, delta, Cartesian, cylindrical, polar) and by application (collaborative applications, AGVs, AMRs, service robots and humanoids), with real spec sheets." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-1-3.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="1.3 Types of Robots, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="1.3 Types of Robots — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="The main types of robots: industrial arms, cobots, mobile robots, SCARA robots and autonomous guided vehicles." />
+        <meta name="twitter:description" content="How robots are classified: by structure (articulated, SCARA, delta, Cartesian, cylindrical, polar) and by application (collaborative applications, AGVs, AMRs, service robots and humanoids), with real spec sheets." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -140,43 +140,148 @@
                                     <defs><marker id="arrow-shp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
                                     <rect class="d-box-gold" x="40" y="150" width="70" height="16" rx="3"/><line class="d-strong" x1="75" y1="150" x2="75" y2="120"/><circle class="d-fill" cx="75" cy="118" r="6"/><line class="d-strong" x1="75" y1="118" x2="125" y2="70"/><circle class="d-fill" cx="125" cy="70" r="6"/><line class="d-strong" x1="125" y1="70" x2="180" y2="95"/><circle class="d-fill" cx="180" cy="95" r="5"/><path class="d-strong" d="M180,95 l14,6 M180,95 l6,14"/><text class="d-title" x="110" y="190" text-anchor="middle">Six-axis arm</text><text class="d-muted" x="110" y="207" text-anchor="middle">rotary joints, any position and orientation</text><rect class="d-box-gold" x="275" y="150" width="60" height="16" rx="3"/><line class="d-strong" x1="305" y1="150" x2="305" y2="70"/><circle class="d-fill" cx="305" cy="70" r="6"/><line class="d-strong" x1="305" y1="70" x2="370" y2="70"/><circle class="d-fill" cx="370" cy="70" r="6"/><line class="d-strong" x1="370" y1="70" x2="425" y2="70"/><circle class="d-fill" cx="425" cy="70" r="5"/><line class="d-strong" x1="425" y1="70" x2="425" y2="120"/><text class="d-title" x="350" y="190" text-anchor="middle">SCARA</text><text class="d-muted" x="350" y="207" text-anchor="middle">swings flat, moves the tool up and down</text><path class="d-line" stroke-dasharray="5 4" d="M500,140 L700,140"/><rect class="d-box" x="560" y="100" width="90" height="34" rx="5"/><circle class="d-fill" cx="578" cy="138" r="7"/><circle class="d-fill" cx="632" cy="138" r="7"/><line class="d-line" x1="655" y1="117" x2="700" y2="117" marker-end="url(#arrow-shp)"/><text class="d-muted" x="600" y="160" text-anchor="middle">follows a guide in the floor</text><text class="d-title" x="600" y="190" text-anchor="middle">AGV / mobile robot</text><text class="d-muted" x="600" y="207" text-anchor="middle">moves around instead of staying bolted down</text>
                                 </svg>
-                                <figcaption>Three common robot shapes. Cobots usually share the six-axis shape, with force and speed limits added.</figcaption>
+                                <figcaption>Three common robot shapes. Many cobots share the six-axis shape, with safety functions such as force and speed limits added, although some differ: ABB&rsquo;s YuMi has seven axes on each arm.</figcaption>
                             </figure>
 
-                            <h2 class="article-section-title">01. Industrial</h2>
+                            <h2 class="article-section-title">01. Two ways to sort robots</h2>
                             <p>
-                                Industrial robots are the backbone of manufacturing. A typical example is a six-axis robotic arm on an automotive line performing spot welding: it follows a precisely programmed path and must be repeatable, safe and predictable. Industrial robots are usually programmed with a teach pendant or offline in simulation (see <a href="robotics-2-1.html">Types of Programming</a>).
+                                There are a lot of robots in the world. The International Federation of Robotics (IFR) counted 603,307 new industrial robots installed in factories in 2025, a record, and 5,079,078 industrial robots in operation, just over 5 million. The biggest customers were the electronics industry (142,235 robots) and the automotive industry (138,429).<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> On top of that, about 250,000 professional service robots and about 34.2 million consumer service robots were sold in 2025.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                To make sense of all of these, it helps to know that robots are sorted in two different ways, and people often mix them up:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">By mechanical structure:</span> what kinds of joints the arm has and how they are arranged. This gives types such as articulated, SCARA, Cartesian and delta robots.</li>
+                                <li class="article-spec-item"><span class="spec-label">By application and safety:</span> where the robot works and how it keeps people safe. This gives categories such as collaborative applications (cobots), mobile robots, service robots and humanoids.</li>
+                            </ul>
+                            <p>
+                                The two overlap: every cobot in section 08 is an articulated arm. Keep the two questions separate: &ldquo;what shape is it?&rdquo; and &ldquo;how and where is it used?&rdquo;
+                            </p>
+                            <p>
+                                The IFR follows the international vocabulary standard ISO 8373:2021. It defines an industrial robot as an &ldquo;automatically controlled, reprogrammable multipurpose manipulator, programmable in three or more axes&rdquo; for use in industrial automation. <em>Reprogrammable</em> means you can change its motions without physically rebuilding it.<sup><a href="#ref-4">[4]</a></sup> For a closer look at joints, links and axes, see <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a>.
                             </p>
 
-                            <h2 class="article-section-title">02. Cobot (collaborative robot)</h2>
+                            <h2 class="article-section-title">02. Classification by structure</h2>
                             <p>
-                                Collaborative robots, or cobots, are designed to work alongside people in shared spaces. Their speed and force limits are configured as part of their setup, and they are usually programmed by lead-through: the operator physically guides the arm through the waypoints of a task. Universal Robots&rsquo; e-Series, programmed through <a href="robotics-2-2.html">PolyScope 5</a>, is a common example.
+                                The IFR sorts industrial robots into six structures, based on their joints. A <em>rotary</em> (revolute) joint turns, like your elbow. A <em>prismatic</em> (linear) joint slides in a straight line, like a drawer.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Articulated:</span> three or more rotary joints. Most six-axis arms are articulated.</li>
+                                <li class="article-spec-item"><span class="spec-label">SCARA:</span> two parallel rotary joints that give the arm compliance (a little give) in one selected plane.</li>
+                                <li class="article-spec-item"><span class="spec-label">Cartesian (rectangular or gantry):</span> three linear joints whose axes form an x, y, z coordinate system.</li>
+                                <li class="article-spec-item"><span class="spec-label">Parallel or delta:</span> arms whose links form a closed loop, so several arms hold the tool at once.</li>
+                                <li class="article-spec-item"><span class="spec-label">Cylindrical:</span> at least one rotary and one linear joint, with axes forming a cylindrical coordinate system.</li>
+                                <li class="article-spec-item"><span class="spec-label">Polar (spherical):</span> two rotary joints and one linear joint, with axes forming a polar coordinate system.</li>
+                            </ul>
+                            <p>
+                                The sections below look at the most common of these with real spec sheets, so you can see what the numbers look like in practice.
                             </p>
 
-                            <h2 class="article-section-title">03. Mobile robot</h2>
+                            <h2 class="article-section-title">03. Articulated robots</h2>
                             <p>
-                                Mobile robots, such as warehouse robots and planetary rovers, move through their environment instead of staying bolted to one spot. Because those environments are less predictable than a factory cell, mobile robots rely on sensors to build a map, work out where they are on it, and plan a path around obstacles. This kind of software is commonly built with <a href="robotics-ros.html">ROS</a>.
+                                Articulated arms come in a huge range of sizes, from a 250 kg arm that carries 25 kg to an 11-tonne giant that carries 2.3 tonnes:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">FANUC M-20iD/25 (mid-size):</span> 6 axes, 25 kg maximum payload, 1831 mm reach, &plusmn;0.02 mm repeatability, and a 250 kg arm. The M-20 family covers payloads from 12 to 35 kg.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ABB IRB 6700 (heavy):</span> 6 axes and a 1250&ndash;1280 kg arm. Versions range from 150 kg payload with 3.20 m reach to 235 kg with 2.65 m reach, with repeatability of 0.04 to 0.06 mm.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">FANUC M-2000iA/2300 (ultra-heavy):</span> 6 axes, a 2300 kg maximum payload, 3734 mm reach and &plusmn;0.18 mm repeatability. The arm itself weighs 11,000 kg. Its base joint turns at 20&deg;/s, far slower than smaller arms.<sup><a href="#ref-7">[7]</a></sup></li>
+                            </ul>
+                            <p>
+                                Notice that even the 2300 kg giant is electric: FANUC lists its average power consumption as 8 kW.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                Industrial arms are usually programmed with a teach pendant (a handheld control panel) or by offline programming in simulation on a PC.<sup><a href="#ref-8">[8]</a></sup> See <a href="robotics-2-1.html">2.1 Types of Programming</a>.
                             </p>
 
-                            <h2 class="article-section-title">04. SCARA</h2>
+                            <h2 class="article-section-title">04. SCARA robots</h2>
                             <p>
-                                SCARA stands for Selective Compliance Assembly Robot Arm. It was proposed in 1978 by Hiroshi Makino at Yamanashi University, and commercial models appeared in 1981. A SCARA robot usually has four axes: two rotating joints that swing the arm in a horizontal plane, a vertical axis that moves the tool up and down, and a rotation at the tool. It is stiff vertically but slightly compliant sideways, which suits pushing parts into holes.
+                                SCARA stands for Selective Compliance Assembly Robot Arm. It was proposed in 1978 by Hiroshi Makino at Yamanashi University, and commercial models appeared in 1981.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> A SCARA robot usually has four axes: two rotating joints that swing the arm in a horizontal plane, a vertical axis that moves the tool up and down, and a rotation at the tool.
                             </p>
                             <p>
-                                SCARA robots are fast and compact, so they are widely used for pick-and-place, assembly of small parts, screw driving and packaging, mostly on flat work surfaces.
-                            </p>
-
-                            <h2 class="article-section-title">05. Autonomous Guided Vehicles (AGVs)</h2>
-                            <p>
-                                Automated (or autonomous) guided vehicles move materials around factories and warehouses along predefined routes. The first, Barrett Electronics&rsquo; Guide-O-Matic of about 1953&ndash;54, was a towing tractor that followed a wire in the floor. AGVs still follow guidance built into the facility, such as buried wires, magnetic tape, floor markers or laser reflectors, and stop when an obstacle blocks their path.
+                                It is stiff vertically but slightly compliant sideways, which suits pushing parts into holes.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-9">[9]</a></sup> SCARA robots are fast and compact, so they are widely used for pick-and-place, assembly of small parts, screw driving and packaging, mostly on flat work surfaces.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
-                                Autonomous mobile robots (AMRs) are their more flexible relatives: instead of following a fixed route, they map their surroundings and plan their own path around obstacles, as described under <em>Mobile robot</em> above.
+                                A real example is the Epson T6-B, a 4-axis SCARA. It has a rated payload of 2 kg (6 kg maximum), 600 mm reach, a 200 mm vertical stroke and &plusmn;0.040 mm repeatability in the horizontal plane. It weighs 22 kg. Epson quotes a cycle time of 0.46 s for a standard back-and-forth motion of 300 mm across and 25 mm up and down, carrying 2 kg.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">06. AGV or AMR?</h2>
+                            <h2 class="article-section-title">05. Parallel (delta) robots</h2>
                             <p>
-                                The choice between an AGV and an AMR depends on the job. AGVs are guided in one of several ways:
+                                In a delta robot, several arms all connect to one small tool plate, so their links form a closed loop instead of a single chain of joints.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                The ABB IRB 360 FlexPicker is a well-known delta. Depending on the version it has 3 or 4 axes, payloads of 1 to 8 kg, and a working diameter of 1130 or 1600 mm. Its position repeatability is 0.1 mm. On ABB&rsquo;s standard 25/305/25 mm pick path, the lightest version manages a cycle time as low as 0.30 s, although ABB notes that cycle times &ldquo;may vary depending on the actual application.&rdquo;<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">06. Cartesian, cylindrical and polar robots</h2>
+                            <p>
+                                The other three structures are built partly or fully from linear joints.<sup><a href="#ref-4">[4]</a></sup> A Cartesian or gantry robot moves its tool along straight x, y and z axes, like the coordinate axes you know from math class. A cylindrical robot combines a turning base with linear motions, so its axes form a cylindrical coordinate system. A polar robot uses two rotary joints and one linear joint that extends the arm.
+                            </p>
+                            <p>
+                                This lesson does not give spec-sheet examples for these three, because we could not find current manufacturer datasheets to cite. Their definitions above are enough to recognize them.
+                            </p>
+
+                            <h2 class="article-section-title">07. Reading a spec sheet</h2>
+                            <p>
+                                Spec sheets use the same few terms. <em>Payload</em> is the mass the robot can carry at its wrist. <em>Reach</em> is how far the wrist can extend. <em>Repeatability</em> is how closely the robot returns to the same programmed point, again and again; Universal Robots, for example, measures it to the ISO 9283 standard.<sup><a href="#ref-13">[13]</a></sup> <em>Cycle time</em> is how long one standard move takes.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col">Robot</th><th scope="col">Structure</th><th scope="col">Axes</th><th scope="col">Max payload</th><th scope="col">Reach</th><th scope="col">Repeatability</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>ABB IRB 360-1/1130<sup><a href="#ref-12">[12]</a></sup></td><td>Delta</td><td>3 or 4</td><td>1 kg</td><td>1130 mm working diameter</td><td>0.1 mm</td></tr>
+                                    <tr><td>Epson T6-B<sup><a href="#ref-11">[11]</a></sup></td><td>SCARA</td><td>4</td><td>6 kg (2 kg rated)</td><td>600 mm</td><td>&plusmn;0.040 mm</td></tr>
+                                    <tr><td>Universal Robots UR10e<sup><a href="#ref-13">[13]</a></sup></td><td>Articulated (cobot)</td><td>6</td><td>12.5 kg</td><td>1300 mm</td><td>&plusmn;0.05 mm</td></tr>
+                                    <tr><td>FANUC M-20iD/25<sup><a href="#ref-5">[5]</a></sup></td><td>Articulated</td><td>6</td><td>25 kg</td><td>1831 mm</td><td>&plusmn;0.02 mm</td></tr>
+                                    <tr><td>ABB IRB 6700-235<sup><a href="#ref-6">[6]</a></sup></td><td>Articulated</td><td>6</td><td>235 kg</td><td>2650 mm</td><td>0.04 mm</td></tr>
+                                    <tr><td>FANUC M-2000iA/2300<sup><a href="#ref-7">[7]</a></sup></td><td>Articulated</td><td>6</td><td>2300 kg</td><td>3734 mm</td><td>&plusmn;0.18 mm</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Two patterns stand out in this table. First, the biggest arms are the least repeatable: &plusmn;0.02 mm for the 25 kg FANUC against &plusmn;0.18 mm for the 2300 kg one. Second, the delta is less precise than the SCARA or a mid-size arm, but it is built for speed, with light picks in about a third of a second. These are patterns in a handful of datasheets, not a law, but they show the trade-offs designers make.
+                            </p>
+
+                            <h2 class="article-section-title">08. Cobots and collaborative applications</h2>
+                            <p>
+                                Collaborative robots, or cobots, are designed to work alongside people in shared spaces. Their speed and force limits are configured as part of their setup, and many can be taught by lead-through, a form of hand guiding: the operator physically guides the arm through the waypoints of a task.<sup><a href="#ref-14">[14]</a></sup> Universal Robots&rsquo; e-Series, programmed through <a href="robotics-2-2.html">PolyScope 5</a>, is a common example.<sup><a href="#ref-15">[15]</a></sup>
+                            </p>
+                            <p>
+                                The safety standard for industrial robots changed in March 2025, when ISO 10218-1:2025 and ISO 10218-2:2025 replaced the 2011 versions. The revised standard no longer uses the terms &ldquo;collaborative robot&rdquo; or &ldquo;collaborative operation.&rdquo; It speaks of a <em>collaborative application</em> instead, because only the actual application can be confirmed as collaborative.<sup><a href="#ref-16">[16]</a></sup> The revision also folds in the old cobot guidance, ISO/TS 15066, including limits on the forces and pressures allowed if a robot touches a person, and it splits robots into two classes.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-17">[17]</a></sup>
+                            </p>
+                            <p>
+                                Why does this matter? A cobot holding a knife is not a safe collaborative application, however gentle the arm is. The safety comes from the whole task and its risk assessment, not the arm alone.
+                            </p>
+                            <p>
+                                The earlier edition of ISO 10218-1 described four types of collaborative operation, and the 2025 edition revised their requirements.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-14">[14]</a></sup> The four classic names are:
+                            </p>
+                            <ol class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Safety-rated monitored stop:</span> the robot pauses while a person is in the shared workspace, and can resume automatically once the space is clear.</li>
+                                <li class="article-spec-item"><span class="spec-label">Hand guiding:</span> the operator moves the robot directly, using a guiding device and an enabling switch.</li>
+                                <li class="article-spec-item"><span class="spec-label">Speed and separation monitoring:</span> the robot keeps moving as long as it and the person stay a set distance apart, often watched by a safety laser scanner. The faster the robot moves, the larger the distance must be.</li>
+                                <li class="article-spec-item"><span class="spec-label">Power and force limiting:</span> the robot has force feedback built in and limits how hard it can push. This is the most popular type, and it needs an extensive risk assessment.</li>
+                            </ol>
+                            <p>
+                                Cobot arms are similar in size to small industrial arms:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots UR10e:</span> 6 rotating joints, 12.5 kg payload, 1300 mm reach, &plusmn;0.05 mm repeatability and 33.3 kg. A built-in force/torque sensor measures up to &plusmn;100 N.<sup><a href="#ref-13">[13]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">FANUC CRX-10iA:</span> 6 axes, 10 kg payload, 1249 mm reach, 0.04 mm repeatability and 40 kg. It can be mounted on the floor, upside down or at an angle.<sup><a href="#ref-18">[18]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ABB GoFa:</span> 6 axes and 0.02 mm repeatability, with payloads of 5, 10 or 12 kg.<sup><a href="#ref-19">[19]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ABB YuMi:</span> not six-axis. The dual-arm IRB 14000 has 7 axes on each arm, 14 in total, and carries 0.5 kg per arm. The single-arm IRB 14050 has 7 axes.<sup><a href="#ref-19">[19]</a></sup></li>
+                            </ul>
+                            <p>
+                                The payloads and repeatability overlap with ordinary industrial arms. What makes a cobot different is its safety functions and the risk assessment of its application, not its shape.
+                            </p>
+                            <p>
+                                Cobots are still a small slice of the market. They made up 10.5% of the 541,302 industrial robots installed in 2023.<sup><a href="#ref-20">[20]</a></sup> That year, cobot installations fell by 2%, the first decline the IFR had recorded.<sup><a href="#ref-21">[21]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">09. Automated Guided Vehicles (AGVs)</h2>
+                            <p>
+                                Mobile robots, such as warehouse robots and planetary rovers, move through their environment instead of staying bolted to one spot. The oldest kind in factories is the Automated Guided Vehicle (AGV), sometimes also called an autonomous guided vehicle. AGVs move materials around factories and warehouses along predefined routes. The first, Barrett Electronics&rsquo; Guide-O-Matic of about 1953&ndash;54, was a towing tractor that followed a wire in the floor.<sup><a href="#ref-22">[22]</a></sup>
+                            </p>
+                            <p>
+                                AGVs still follow guidance built into the facility, and stop when an obstacle blocks their path. They are guided in one of several ways:<sup><a href="#ref-23">[23]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Magnetic tape:</span> on the floor; extra pieces of tape can mark stopping points.</li>
@@ -184,24 +289,97 @@
                                 <li class="article-spec-item"><span class="spec-label">Visual markers:</span> colored tape or printed markers such as AprilTags that a camera tracks.</li>
                                 <li class="article-spec-item"><span class="spec-label">Laser guidance:</span> a 360-degree scanner on the vehicle locates itself from reflectors installed around the facility.</li>
                             </ul>
+
+                            <h2 class="article-section-title">10. Autonomous Mobile Robots (AMRs)</h2>
                             <p>
-                                An AMR instead makes an initial mapping run with lidar or depth cameras, after which operators can mark keep-out and speed zones on the map. When something blocks its way, an AGV stops and waits, while an AMR plans a route around it. AGVs suit high-volume, repetitive routes and need their markers installed and maintained. AMRs need no changes to the building but usually cost more up front, and their travel times are less predictable.
+                                Autonomous mobile robots (AMRs) are the more flexible relatives of AGVs. Instead of following a fixed route, they map their surroundings and plan their own path around obstacles. An AMR first makes a mapping run with lidar or depth cameras, after which operators can mark keep-out and speed zones on the map.<sup><a href="#ref-23">[23]</a></sup> You will build this kind of mapping and planning software yourself in the <a href="robotics-ros.html">ROS</a> chapter.
+                            </p>
+                            <p>
+                                Two real examples:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Amazon Proteus (2022):</span> Amazon&rsquo;s first fully autonomous mobile robot. It lifts and moves carts and works in open areas where employees are present, which set it apart from Amazon&rsquo;s earlier robots. Amazon had more than 520,000 robotic drive units at the time.<sup><a href="#ref-24">[24]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">MiR1200 Pallet Jack (2024):</span> fuses four depth cameras and a 3D lidar to spot obstacles on the floor and overhead, reroutes itself, and uses AI pallet detection trained on over 1.2 million real and synthetic images. It is designed to comply with ISO 3691-4.<sup><a href="#ref-25">[25]</a></sup></li>
+                            </ul>
+                            <p>
+                                <span class="spec-label">Safety standards:</span> mobile robots have their own standards, separate from ISO 10218. In the United States, ANSI/RIA R15.08-1 (2020) sets safety requirements for manufacturers of industrial mobile robots, and ANSI/A3 R15.08-2 (October 2023) covers integrators, including fleets, charging stations and the surrounding environment. A Part 3 for users was still to come at the time.<sup><a href="#ref-26">[26]</a></sup> Internationally, ISO 3691-4 covers driverless industrial trucks and their systems; its current edition is from 2023, and a third edition was in draft in 2026.<sup><a href="#ref-27">[27]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">11. AGV or AMR?</h2>
+                            <p>
+                                The choice between an AGV and an AMR depends on the job. When something blocks its way, an AGV stops and waits, while an AMR plans a route around it. AGVs suit high-volume, repetitive routes and need their markers installed and maintained. AMRs need no changes to the building but usually cost more up front, and their travel times are less predictable.<sup><a href="#ref-23">[23]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col"></th><th scope="col">AGV</th><th scope="col">AMR</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Navigation</td><td>Follows guidance built into the facility: tape, wire, markers or reflectors</td><td>Maps its surroundings and plans its own path</td></tr>
+                                    <tr><td>Obstacle in the way</td><td>Stops and waits</td><td>Plans a route around it</td></tr>
+                                    <tr><td>Building changes</td><td>Markers must be installed and maintained</td><td>None needed</td></tr>
+                                    <tr><td>Best for</td><td>High-volume, repetitive routes</td><td>Changing layouts; higher up-front cost, less predictable travel times</td></tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">12. Service robots, humanoids and drones</h2>
+                            <p>
+                                The IFR counts robots used for jobs outside industrial automation separately, as <em>service robots</em>, and the safety of personal care robots falls under a different standard, ISO 13482.<sup><a href="#ref-4">[4]</a></sup> The IFR splits service robots into two groups:<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Professional service robots:</span> almost 250,000 sold in 2025, up 24%. Transport and logistics robots led with 117,500 units, a 47% share, followed by hospitality and cleaning robots. Medical robots grew 57% to 8,400 units, driven by surgical robots.</li>
+                                <li class="article-spec-item"><span class="spec-label">Consumer service robots:</span> almost 34.2 million sold in 2025, up 37%, mainly mass-market robots for the home.</li>
+                            </ul>
+                            <p>
+                                <span class="spec-label">Humanoids</span> are robots with a roughly human body shape. They are moving from pilots to early production. In June 2024 the logistics company GXO signed a multi-year Robots-as-a-Service deal for Agility Robotics&rsquo; Digit, billed as the industry&rsquo;s first formal commercial deployment of humanoids; Digit moves totes onto conveyors alongside AMRs.<sup><a href="#ref-28">[28]</a></sup> In January 2026 Boston Dynamics unveiled the production version of Atlas, a fully electric humanoid with 56 degrees of freedom that can lift up to 50 kg and swap its own battery. All 2026 deployments were already committed.<sup><a href="#ref-29">[29]</a></sup>
+                            </p>
+                            <p>
+                                The numbers are still small. About 7,000 full-size humanoids (taller than 140 cm) were sold worldwide in 2025,<sup><a href="#ref-3">[3]</a></sup> against more than 600,000 industrial robots installed.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                <span class="spec-label">Drones</span> are joining in too. The IFR&rsquo;s IERA Award for 2026 went to Verity, a Swiss company, for flying warehouse robots that check inventory.<sup><a href="#ref-30">[30]</a></sup> For more on where robots are used, see <a href="robotics-1-5.html">1.5 Common Applications of Robotics</a>.
                             </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>For each job, choose a robot type and say why: screwing small parts into a circuit board, welding a car frame, moving pallets around a warehouse that changes layout every week, packing boxes next to a human worker.</li>
-                                    <li>Find a photo of a real robot online and identify which type it is from its shape.</li>
+                                    <li>For each job, choose a robot structure and say why, using the spec sheets above: screwing small parts into a circuit board, welding a car frame, picking cookies off a fast conveyor, lifting an engine block.</li>
+                                    <li>Now answer the second question for each: would it be a collaborative application, and which of the four modes would fit? Would moving the parts around a warehouse that changes layout every week call for an AGV or an AMR?</li>
+                                    <li>Find a real robot&rsquo;s datasheet online. Write down its structure, number of axes, payload, reach and repeatability, and add it as a row to the table in section 07.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">07. References</h2>
+                            <h2 class="article-section-title">13. References</h2>
                             <ol class="article-spec-list">
-                                <li>Robogaku, robot history entry on the SCARA robot (1978). <a href="https://robogaku.jp/en/history/business/K-1978-1.html" target="_blank" rel="noopener noreferrer">robogaku.jp/en/history/business/K-1978-1.html</a>.</li>
-                                <li><em>Material Handling &amp; Logistics</em>, &ldquo;AGVs follow paths undreamed of by inventor.&rdquo; <a href="https://www.mhlnews.com/blog/agvs-follow-paths-undreamed-inventor" target="_blank" rel="noopener noreferrer">mhlnews.com/blog/agvs-follow-paths-undreamed-inventor</a>.</li>
-                                <li>Analog Devices, &ldquo;Finding the right fit for your industrial automation need: AGVs or AMRs.&rdquo; <a href="https://ez.analog.com/ez-blogs/b/engineerzone-spotlight/posts/finding-the-right-fit-for-your-industrial-automation-need---agvs-or-amrs" target="_blank" rel="noopener noreferrer">ez.analog.com/ez-blogs/b/engineerzone-spotlight/posts/finding-the-right-fit-for-your-industrial-automation-need---agvs-or-amrs</a>.</li>
-                                <li>International Federation of Robotics, &ldquo;History of robotics.&rdquo; <a href="https://ifr.org/robot-history" target="_blank" rel="noopener noreferrer">ifr.org/robot-history</a>.</li>
+                                <li id="ref-1">International Federation of Robotics, &ldquo;Five million robots now operate in factories globally,&rdquo; press release, 24 September 2026. <a href="https://ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally" target="_blank" rel="noopener noreferrer">ifr.org/ifr-press-releases/news/five-million-robots-now-operate-in-factories-globally</a>.</li>
+                                <li id="ref-2">International Federation of Robotics, &ldquo;Executive Summary, World Robotics 2026: Industrial Robots.&rdquo; IFR, 2026. <a href="https://ifr.org/img/worldrobotics/Executive_Summary_WR_2026_-_Industrial_Robots.pdf" target="_blank" rel="noopener noreferrer">ifr.org/img/worldrobotics/Executive_Summary_WR_2026_-_Industrial_Robots.pdf</a>.</li>
+                                <li id="ref-3">International Federation of Robotics, &ldquo;Global sales of professional service robots surge 24 percent,&rdquo; press release, 30 September 2026. <a href="https://ifr.org/ifr-press-releases/news/global-sales-of-professional-service-robots-surge-24-percent" target="_blank" rel="noopener noreferrer">ifr.org/ifr-press-releases/news/global-sales-of-professional-service-robots-surge-24-percent</a>.</li>
+                                <li id="ref-4">International Federation of Robotics, &ldquo;Industrial Robots&rdquo; (definitions following ISO 8373:2021). IFR, accessed October 2026. <a href="https://ifr.org/industrial-robots" target="_blank" rel="noopener noreferrer">ifr.org/industrial-robots</a>.</li>
+                                <li id="ref-5">FANUC America, &ldquo;M-20iD/25&rdquo; (product specifications). FANUC, accessed October 2026. <a href="https://www.fanucamerica.com/products/robot/m-20id-25" target="_blank" rel="noopener noreferrer">fanucamerica.com/products/robot/m-20id-25</a>.</li>
+                                <li id="ref-6">ABB Robotics, &ldquo;IRB 6700&rdquo; (datasheet). ABB, accessed October 2026. <a href="https://library.e.abb.com/public/a2698bc8d34a36a048257d4000330712/IRB_6700_EN.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com (IRB_6700_EN.pdf)</a>.</li>
+                                <li id="ref-7">FANUC America, &ldquo;M-2000iA/2300&rdquo; (product specifications). FANUC, accessed October 2026. <a href="https://www.fanucamerica.com/products/robot/m-2000ia-2300" target="_blank" rel="noopener noreferrer">fanucamerica.com/products/robot/m-2000ia-2300</a>.</li>
+                                <li id="ref-8">RoboDK, &ldquo;Offline programming&rdquo; (blog). RoboDK, accessed October 2026. <a href="https://robodk.com/blog/off-line-programming/" target="_blank" rel="noopener noreferrer">robodk.com/blog/off-line-programming</a>.</li>
+                                <li id="ref-9">Robogaku, robot history entry on the SCARA robot (1978). <a href="https://robogaku.jp/en/history/business/K-1978-1.html" target="_blank" rel="noopener noreferrer">robogaku.jp/en/history/business/K-1978-1.html</a>.</li>
+                                <li id="ref-10">International Federation of Robotics, &ldquo;History of robotics.&rdquo; <a href="https://ifr.org/robot-history" target="_blank" rel="noopener noreferrer">ifr.org/robot-history</a>.</li>
+                                <li id="ref-11">Epson, &ldquo;T6-B All-in-One SCARA Robot (RT6B-602SS)&rdquo; (specifications). Epson America, accessed October 2026. <a href="https://epson.com/For-Work/Robots/SCARA/T6-B-All-in-One-SCARA-Robot/p/RT6B-602SS" target="_blank" rel="noopener noreferrer">epson.com/For-Work/Robots/SCARA/T6-B-All-in-One-SCARA-Robot/p/RT6B-602SS</a>.</li>
+                                <li id="ref-12">ABB Robotics, &ldquo;IRB 360 FlexPicker&rdquo; (datasheet). ABB, 2022. <a href="https://library.e.abb.com/public/f03878770fef4c2c93757953373aed9b/IRB%20360_datasheet_20220829.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com (IRB 360_datasheet_20220829.pdf)</a>.</li>
+                                <li id="ref-13">Universal Robots, &ldquo;UR10e datasheet.&rdquo; Universal Robots, accessed October 2026. <a href="https://www.universal-robots.com/manuals/latest/en/datasheets/ur10e/" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/latest/en/datasheets/ur10e</a>.</li>
+                                <li id="ref-14">Robotic Industries Association (RIA), article on the four types of collaborative operation, <em>Plant Engineering</em>, 20 November 2019. <a href="https://www.plantengineering.com/?p=23158" target="_blank" rel="noopener noreferrer">plantengineering.com/?p=23158</a>.</li>
+                                <li id="ref-15">Universal Robots Academy, &ldquo;Free e-Learning: e-Series (PolyScope 5).&rdquo; Universal Robots, accessed October 2026. <a href="https://academy.universal-robots.com/free-e-learning/e-series-e-learning/" target="_blank" rel="noopener noreferrer">academy.universal-robots.com/free-e-learning/e-series-e-learning</a>.</li>
+                                <li id="ref-16">Association for Advancing Automation (A3), &ldquo;Updated ISO 10218 FAQ.&rdquo; A3, 2025. <a href="https://www.automate.org/robotics/blogs/updated-iso-10218-faq" target="_blank" rel="noopener noreferrer">automate.org/robotics/blogs/updated-iso-10218-faq</a>.</li>
+                                <li id="ref-17">SICK, blog post on the revised robot safety standard ISO 10218. SICK AG, 2025. <a href="https://www.sick.com/br/en/more-safety-for-humans-and-machines/w/blog-robotic-norm-iso10218" target="_blank" rel="noopener noreferrer">sick.com/br/en/more-safety-for-humans-and-machines/w/blog-robotic-norm-iso10218</a>.</li>
+                                <li id="ref-18">Robots.com (reseller), &ldquo;FANUC CRX-10iA&rdquo; (specifications). Accessed October 2026. <a href="https://www.robots.com/industrial-robots/fanuc-crx-10ia" target="_blank" rel="noopener noreferrer">robots.com/industrial-robots/fanuc-crx-10ia</a>.</li>
+                                <li id="ref-19">ABB Robotics, &ldquo;Collaborative robotics portfolio&rdquo; (brochure). ABB, accessed October 2026. <a href="https://library.e.abb.com/public/544f24358c4d4cfdba7375ad5de30707/9AKK108471A7656_en_A_ABB%20Collaborative%20robotics%20portfolio.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com (ABB Collaborative robotics portfolio.pdf)</a>.</li>
+                                <li id="ref-20">International Federation of Robotics, &ldquo;How robots work alongside humans,&rdquo; press release. IFR, accessed October 2026. <a href="https://ifr.org/ifr-press-releases/news/how-robots-work-alongside-humans" target="_blank" rel="noopener noreferrer">ifr.org/ifr-press-releases/news/how-robots-work-alongside-humans</a>.</li>
+                                <li id="ref-21">International Federation of Robotics, &ldquo;World Robotics 2024&rdquo; press conference slides. IFR, 2024. <a href="https://ifr.org/img/worldrobotics/Press_Conference_2024.pdf" target="_blank" rel="noopener noreferrer">ifr.org/img/worldrobotics/Press_Conference_2024.pdf</a>.</li>
+                                <li id="ref-22"><em>Material Handling &amp; Logistics</em>, &ldquo;AGVs follow paths undreamed of by inventor.&rdquo; <a href="https://www.mhlnews.com/blog/agvs-follow-paths-undreamed-inventor" target="_blank" rel="noopener noreferrer">mhlnews.com/blog/agvs-follow-paths-undreamed-inventor</a>.</li>
+                                <li id="ref-23">Analog Devices, &ldquo;Finding the right fit for your industrial automation need: AGVs or AMRs.&rdquo; <a href="https://ez.analog.com/ez-blogs/b/engineerzone-spotlight/posts/finding-the-right-fit-for-your-industrial-automation-need---agvs-or-amrs" target="_blank" rel="noopener noreferrer">ez.analog.com/ez-blogs/b/engineerzone-spotlight/posts/finding-the-right-fit-for-your-industrial-automation-need---agvs-or-amrs</a>.</li>
+                                <li id="ref-24">Retail Dive, &ldquo;Amazon unveils its first fully autonomous mobile robot, Proteus.&rdquo; June 2022. <a href="https://www.retaildive.com/news/amazon-unveils-first-fully-autonomous-mobile-robot-proteus-warehouse/626218/" target="_blank" rel="noopener noreferrer">retaildive.com/news/amazon-unveils-first-fully-autonomous-mobile-robot-proteus-warehouse/626218</a>.</li>
+                                <li id="ref-25">Robotics 24/7, &ldquo;MiR launches AI-enabled MiR1200 Pallet Jack.&rdquo; April 2024. <a href="https://www.robotics247.com/article/mir_launches_ai_enabled_mir1200_pallet_jack/components" target="_blank" rel="noopener noreferrer">robotics247.com/article/mir_launches_ai_enabled_mir1200_pallet_jack</a>.</li>
+                                <li id="ref-26">Association for Advancing Automation (A3), &ldquo;ANSI/A3 R15.08-2 safety standard for industrial mobile robot systems and applications now available.&rdquo; A3, October 2023. <a href="https://www.automate.org/robotics/news/ansi-a3-r15-08-2-safety-standard-for-industrial-mobile-robot-systems-and-applications-now-available" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/ansi-a3-r15-08-2-safety-standard-for-industrial-mobile-robot-systems-and-applications-now-available</a>.</li>
+                                <li id="ref-27">ISO, &ldquo;ISO/DIS 3691-4: Industrial trucks &mdash; Safety requirements and verification &mdash; Part 4: Driverless industrial trucks and their systems&rdquo; (replaces ISO 3691-4:2023). ISO, 2026. <a href="https://www.iso.org/standard/88615.html" target="_blank" rel="noopener noreferrer">iso.org/standard/88615.html</a>.</li>
+                                <li id="ref-28">GXO Logistics, &ldquo;GXO signs industry-first multi-year agreement with Agility Robotics,&rdquo; news release, 27 June 2024. <a href="https://investors.gxo.com/news-releases/news-release-details/gxo-signs-industry-first-multi-year-agreement-agility-robotics" target="_blank" rel="noopener noreferrer">investors.gxo.com/news-releases/news-release-details/gxo-signs-industry-first-multi-year-agreement-agility-robotics</a>.</li>
+                                <li id="ref-29">Boston Dynamics, &ldquo;Boston Dynamics unveils new Atlas robot to revolutionize industry&rdquo; (blog), 5 January 2026. <a href="https://bostondynamics.com/blog/boston-dynamics-unveils-new-atlas-robot-to-revolutionize-industry/" target="_blank" rel="noopener noreferrer">bostondynamics.com/blog/boston-dynamics-unveils-new-atlas-robot-to-revolutionize-industry</a>.</li>
+                                <li id="ref-30">International Federation of Robotics, &ldquo;IERA Award 2026 Goes to Flying Warehouse Robots by Verity,&rdquo; press release, 16 June 2026 (IFR press room). <a href="https://www.ifr.org/ifr-press-releases/" target="_blank" rel="noopener noreferrer">ifr.org/ifr-press-releases</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -237,8 +415,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.2" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/course-data.js?v=1.3" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
