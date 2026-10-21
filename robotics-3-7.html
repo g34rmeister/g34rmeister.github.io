@@ -1,0 +1,543 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 3.7 Launch Files and Parameters
+-->
+<html lang="en">
+    <head>
+        <title>3.7 Launch Files and Parameters — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Start many ROS 2 nodes with one command: Python and XML launch files, namespaces, remapping, launch arguments, and YAML parameter files on Lyrical Luth." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-7.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.7 Launch Files and Parameters — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Start many ROS 2 nodes with one command: Python and XML launch files, namespaces, remapping, launch arguments, and YAML parameter files on Lyrical Luth." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-7.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.7 Launch Files and Parameters, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.7 Launch Files and Parameters — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Start many ROS 2 nodes with one command: Python and XML launch files, namespaces, remapping, launch arguments, and YAML parameter files on Lyrical Luth." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-ros.html">Chapter 3 &middot; Robot Operating System (ROS)</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">3.7 Launch Files and Parameters</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Why launch files exist</h2>
+                            <p>
+                                In <a href="robotics-3-4.html">lesson 3.4</a> you started Turtlesim and its teleop node by hand, one terminal per node, and in <a href="robotics-3-6.html">lesson 3.6</a> you wrote your own package with <code>rclpy</code> and <code>turtlesim_msgs</code>. That works for two or three nodes. A real robot is different: the ROS 2 documentation notes that a system "typically consists of many nodes running across many different processes (and even different machines)", and starting each one by hand "gets cumbersome quite quickly."<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                The <strong>launch system</strong> solves this. It is "meant to automate the running of many nodes with a single command."<sup><a href="#ref-1">[1]</a></sup> A launch description says what programs to run, where to run them, what arguments to pass them, and which ROS conventions (such as names, namespaces and remappings) to apply so that the same component can be reused in many places with a different configuration each time.<sup><a href="#ref-1">[1]</a></sup> Launch does more than start processes: it also monitors the state of the processes it launched and can report or react when that state changes.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                The second half of this lesson covers <strong>parameters</strong>, the settings that configure a node at startup and while it runs without changing its code.<sup><a href="#ref-3">[3]</a></sup> Launch files and parameter files work together: the launch file decides which nodes run, and the parameter file decides how each one is tuned. On an industrial cell this is how one tested program can drive two identical robots, a simulated one and a real one, or a test bench and a production line, with only configuration changing.
+                            </p>
+                            <p>
+                                Everything here targets ROS 2 <strong>Lyrical Luth</strong>, the long-term support release from May 2026, supported until May 2031.<sup><a href="#ref-4">[4]</a></sup> The examples come from the official Lyrical tutorials, which in the Lyrical documentation tree live under <em>Developer Tools &rarr; Launch</em> and <em>ROS Framework</em>.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">02. From ROS 1 roslaunch to ROS 2 launch</h2>
+                            <p>
+                                ROS 1 had a tool called <code>roslaunch</code>. It read a static XML <code>.launch</code> file, started nodes locally or on remote machines over SSH, set values on the global Parameter Server, and could respawn processes that died. It handled large systems by composition with tags such as <code>&lt;include&gt;</code>, <code>&lt;group&gt;</code> and <code>&lt;machine&gt;</code>.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                The ROS 2 design article for the new launch system lists several reasons a straight copy would not work:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Nodes are not processes:</span> ROS 2 allows many nodes in one process, so "node" and "process" no longer mean the same thing.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">No global parameter server:</span> in ROS 2 parameters are node specific, there are no truly global parameters, and the node itself manages them (it can even refuse a change).<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Richer reactions to events:</span> ROS 1 could only respawn a dead process or shut everything down. ROS 2 aims to let users specify arbitrary responses to events.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">A programmatic API:</span> besides static files, ROS 2 launch offers a more accessible programming interface.<sup><a href="#ref-2">[2]</a></sup></li>
+                            </ul>
+                            <p>
+                                Some ideas carried over unchanged: launch still turns remapping and namespace settings into command-line arguments for each node, still manages complexity through includes and groups, and still aims to be portable across operating systems.<sup><a href="#ref-2">[2]</a></sup> In ROS 2 the framework is the <code>launch_ros</code> package, which sits on top of the general-purpose, non-ROS-specific <code>launch</code> package.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                ROS 2 launch files can be written in <strong>Python, XML or YAML</strong>, and you run them with the <code>ros2 launch</code> command.<sup><a href="#ref-1">[1]</a></sup> Which format should you choose? The official how-to says that for most applications "the choice of which ROS 2 launch format comes down to developer preference."<sup><a href="#ref-6">[6]</a></sup> Python is the most flexible, because you can use the whole language and its libraries, and because <code>launch</code> itself is written in Python, so you get lower-level access to features that XML and YAML may not expose. The price is that a Python launch file "may be more complex and verbose."<sup><a href="#ref-6">[6]</a></sup> The ROS 1 migration guide leans further toward the static formats, saying that "for typical use cases, XML and YAML should be preferred over Python."<sup><a href="#ref-7">[7]</a></sup> This lesson teaches Python first, because it matches the <code>rclpy</code> track of this course, and shows the XML version alongside so you can read either.
+                            </p>
+                            <p>
+                                If you ever port a ROS 1 file, the migration guide lists the main XML changes: on <code>&lt;node&gt;</code>, <code>type</code> becomes <code>exec</code> and <code>ns</code> becomes <code>namespace</code>; <code>&lt;param&gt;</code> can only appear inside a <code>&lt;node&gt;</code> because there is no global parameter concept; and <code>&lt;rosparam&gt;</code> is replaced by <code>&lt;param from="file.yaml"/&gt;</code>.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">03. Anatomy of a Python launch file</h2>
+                            <p>
+                                The official "Creating a launch file" tutorial builds a small system called <strong>turtlesim_mimic</strong>: two Turtlesim windows and a third node, <code>mimic</code>, that makes the second turtle copy whatever the first turtle does.<sup><a href="#ref-5">[5]</a></sup> Here is the Python version exactly as the Lyrical documentation gives it:<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>from launch import LaunchDescription
+from launch_ros.actions import Node
+
+
+def generate_launch_description():
+    return LaunchDescription([
+        Node(
+            package='turtlesim',
+            namespace='turtlesim1',
+            executable='turtlesim_node',
+            name='sim',
+            arguments=['--ros-args', '--log-level', 'info']
+        ),
+        Node(
+            package='turtlesim',
+            namespace='turtlesim2',
+            executable='turtlesim_node',
+            name='sim',
+            ros_arguments=['--log-level', 'warn']
+        ),
+        Node(
+            package='turtlesim',
+            executable='mimic',
+            name='mimic',
+            remappings=[
+                ('/input/pose', '/turtlesim1/turtle1/pose'),
+                ('/output/cmd_vel', '/turtlesim2/turtle1/cmd_vel'),
+            ]
+        )
+    ])</code></pre>
+                            <p>
+                                Read it from the outside in. A Python launch file must define a function called <code>generate_launch_description()</code> that returns a <code>LaunchDescription</code>; the <code>ros2 launch</code> command calls that function.<sup><a href="#ref-8">[8]</a></sup> What does that function return? A <code>LaunchDescription</code>, which is simply a list of <strong>actions</strong> for the launch system to carry out. Here every action is a <code>Node</code> from <code>launch_ros.actions</code>.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                Each <code>Node</code> names the <code>package</code> and the <code>executable</code> to start (the same two words you would type after <code>ros2 run</code>), and can set a node <code>name</code> and a <code>namespace</code>.<sup><a href="#ref-5">[5]</a></sup> Notice that both simulators are called <code>sim</code>. That is allowed only because they live in different namespaces, <code>turtlesim1</code> and <code>turtlesim2</code>. The tutorial explains: "Unique namespaces allow the system to start two nodes without node name or topic name conflicts."<sup><a href="#ref-5">[5]</a></sup> The full names become <code>/turtlesim1/sim</code> and <code>/turtlesim2/sim</code>, and each turtle's topics are prefixed the same way, for example <code>/turtlesim1/turtle1/pose</code>.
+                            </p>
+                            <p>
+                                The two simulators also show the two ways to pass command-line options. The first uses <code>arguments</code>, which go straight to the executable, so ROS-specific options need the <code>--ros-args</code> flag in front. The second uses <code>ros_arguments</code>, which is designed for ROS arguments only, so the flag is not needed. The documentation recommends <code>arguments</code> when you mix ROS and non-ROS options, and <code>ros_arguments</code> for cleaner syntax when you only pass ROS options such as remappings, parameters or log levels.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                The third node does the interesting work. In the Turtlesim source code, <code>mimic</code> subscribes to a topic named <code>input/pose</code> (type <code>turtlesim_msgs/msg/Pose</code>) and publishes velocity commands on <code>output/cmd_vel</code> (type <code>geometry_msgs/msg/Twist</code>).<sup><a href="#ref-9">[9]</a></sup> The <code>remappings</code> list connects those generic names to real topics: <code>/input/pose</code> becomes the first turtle's pose and <code>/output/cmd_vel</code> becomes the second turtle's velocity command. "In other words, <code>turtlesim2</code> will mimic <code>turtlesim1</code>'s movements."<sup><a href="#ref-5">[5]</a></sup> This is the same remapping you met in lesson 3.4 with <code>--ros-args --remap</code>, written once in a file instead of typed every time.
+                            </p>
+
+                            <h2 class="article-section-title">04. Running the mimic system, and the same file in XML</h2>
+                            <p>
+                                You can run a launch file directly from its path, or from an installed package. The two forms are <code>ros2 launch &lt;path_to_launch_file&gt;</code> and <code>ros2 launch &lt;package_name&gt; &lt;launch_file_name&gt;</code>.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-5">[5]</a></sup> Save the code above as <code>turtlesim_mimic_launch.py</code>, source ROS 2, and run:<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 launch turtlesim_mimic_launch.py</code></pre>
+                            <p>
+                                Two Turtlesim windows open, and the terminal reports one line per process, such as <code>[INFO] [turtlesim_node-1]: process started with pid [...]</code>, followed by <code>[turtlesim_node-2]</code> and <code>[mimic-3]</code>.<sup><a href="#ref-5">[5]</a></sup> To make the first turtle move, publish a velocity command to it from a second terminal:<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 topic pub -r 1 /turtlesim1/turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: -1.8}}"</code></pre>
+                            <p>
+                                You should see both turtles following the same path. Running <code>ros2 run rqt_graph rqt_graph</code> shows why: <code>mimic</code> subscribes to the pose published by <code>/turtlesim1/sim</code> and publishes to the <code>cmd_vel</code> topic that <code>/turtlesim2/sim</code> listens to.<sup><a href="#ref-5">[5]</a></sup> Another way to test is to drive the first turtle with the keyboard, pushing the teleop node into the right namespace: <code>ros2 run turtlesim turtle_teleop_key --ros-args --remap __ns:=/turtlesim1</code>.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                Here is the identical system in XML, again verbatim from the tutorial:<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;launch&gt;
+  &lt;node pkg="turtlesim" exec="turtlesim_node" name="sim" namespace="turtlesim1" args="--ros-args --log-level info" /&gt;
+  &lt;node pkg="turtlesim" exec="turtlesim_node" name="sim" namespace="turtlesim2" ros_args="--log-level warn" /&gt;
+  &lt;node pkg="turtlesim" exec="mimic" name="mimic"&gt;
+    &lt;remap from="/input/pose" to="/turtlesim1/turtle1/pose" /&gt;
+    &lt;remap from="/output/cmd_vel" to="/turtlesim2/turtle1/cmd_vel" /&gt;
+  &lt;/node&gt;
+&lt;/launch&gt;</code></pre>
+                            <p>
+                                The keywords map one to one: <code>package</code> becomes <code>pkg</code>, <code>executable</code> becomes <code>exec</code>, <code>arguments</code> becomes <code>args</code>, <code>ros_arguments</code> becomes <code>ros_args</code>, and each remapping tuple becomes a <code>&lt;remap from="..." to="..."/&gt;</code> tag. The YAML version uses the same keys with a <code>remap:</code> list of <code>from</code>/<code>to</code> pairs.<sup><a href="#ref-5">[5]</a></sup> The large-projects tutorial calls the three formats "functionally equivalent", so once you can read one you can read the others.<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">05. Installing launch files in a package</h2>
+                            <p>
+                                Running a launch file from a loose path is fine for experiments. For anything you want to keep, put it in a package. "By convention, all launch files for a package are stored in the <code>launch</code> directory inside of the package," at the top level, next to <code>package.xml</code> and <code>setup.py</code>.<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <p>
+                                Placing the file there is not enough. When you build, colcon copies files into the workspace's <code>install</code> folder, and <code>ros2 launch &lt;package&gt; &lt;file&gt;</code> looks for launch files there. For an <code>ament_python</code> package, such as the one you made in lesson 3.6, the documentation says: "To enable colcon to locate and utilize our launch files, we need to inform Python's setup tools of their presence."<sup><a href="#ref-8">[8]</a></sup> You do that by adding an entry to <code>data_files</code> in <code>setup.py</code>:<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>import os
+from glob import glob
+# Other imports ...
+
+package_name = 'py_launch_example'
+
+setup(
+    # Other parameters ...
+    data_files=[
+        # ... Other data files
+        # Include all launch files.
+        (os.path.join('share', package_name, 'launch'), glob('launch/*'))
+    ]
+)</code></pre>
+                            <p>
+                                Each entry is a pair: a destination folder under the install space (<code>share/&lt;package&gt;/launch</code>) and a list of source files. Parameter files need their own entry in the same list, for example <code>(os.path.join('share', package_name, 'config'), glob('config/*.yaml'))</code>.<sup><a href="#ref-10">[10]</a></sup> For a C++ <code>ament_cmake</code> package the equivalent is an <code>install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}/)</code> command near the end of <code>CMakeLists.txt</code>, before <code>ament_package()</code>.<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <p>
+                                Three more rules from the documentation are worth following:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Name the file correctly:</span> the <code>_launch.py</code>, <code>_launch.xml</code> and <code>_launch.yaml</code> suffixes are recommended but not required, but "the launch file name needs to end with <code>launch.py</code> to be recognized and autocompleted by <code>ros2 launch</code>."<sup><a href="#ref-8">[8]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Declare the dependency:</span> add <code>&lt;exec_depend&gt;ros2launch&lt;/exec_depend&gt;</code> to <code>package.xml</code>, which makes sure the <code>ros2 launch</code> command is available after building and that all launch file formats are recognized.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Build, then source:</span> after <code>colcon build</code> succeeds and you have sourced the workspace, run <code>ros2 launch py_launch_example my_script_launch.py</code>.<sup><a href="#ref-8">[8]</a></sup> The tutorials repeat the reminder to source the workspace after building, and to source ROS 2 in every new terminal.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-5">[5]</a></sup></li>
+                            </ul>
+                            <p>
+                                Because the build copies your files, an edit to <code>src/.../launch/mimic_launch.py</code> or to a YAML file has no effect until you build again (or until you build with <code>--symlink-install</code>, as described in lesson 3.4). Forgetting this is a very common source of confusion.
+                            </p>
+
+                            <h2 class="article-section-title">06. Launch arguments and substitutions</h2>
+                            <p>
+                                A launch file becomes far more useful when you can change it from the command line without editing it. ROS 2 does this with two tools that work together. A <strong>launch argument</strong> is declared with <code>DeclareLaunchArgument</code>, and its value is read with <code>LaunchConfiguration</code>.<sup><a href="#ref-11">[11]</a></sup> Here is the pattern from the substitutions tutorial:<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+...
+turtlesim_ns = LaunchConfiguration('turtlesim_ns')
+...
+DeclareLaunchArgument('turtlesim_ns', default_value='turtlesim1'),
+Node(package='turtlesim', namespace=turtlesim_ns, executable='turtlesim_node', name='sim'),</code></pre>
+                            <p>
+                                <code>LaunchConfiguration</code> is a <strong>substitution</strong>. The documentation defines substitutions as "variables that are only evaluated during execution of the launch description," used to get information such as a launch configuration, an environment variable, or the result of a Python expression.<sup><a href="#ref-11">[11]</a></sup> In other words, when Python reads your file, <code>turtlesim_ns</code> is not yet a string; it is a placeholder that the launch system fills in once it knows the argument's value. Note that the default is written as a string (<code>'turtlesim1'</code>); in the documentation's examples even numbers are passed to launch arguments as quoted strings.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                To set an argument when you launch, use <code>name:=value</code> after the file name, for example <code>ros2 launch &lt;package_name&gt; &lt;launch_file_name&gt; background_r:=255</code>.<sup><a href="#ref-6">[6]</a></sup> To see which arguments a file accepts, add <code>--show-args</code>, which prints each argument with its description and default value:<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>Arguments (pass arguments as '&lt;name&gt;:=&lt;value&gt;'):
+    'turtlesim_ns':
+        no description given
+        (default: 'turtlesim1')</code></pre>
+                            <p>
+                                In XML the same idea is written <code>&lt;arg name="background_r" default="0" /&gt;</code> and read with <code>$(var background_r)</code>; in YAML it is an <code>arg</code> entry with a <code>name</code> and a <code>default</code>.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                Two other substitutions appear in almost every packaged launch file. <code>FindPackageShare('pkg')</code> finds the installed <code>share</code> folder of a package, and <code>PathJoinSubstitution([...])</code> joins it with further folder and file names into a full path.<sup><a href="#ref-11">[11]</a></sup> In XML and YAML the package lookup is written <code>$(find-pkg-share pkg)</code>.<sup><a href="#ref-6">[6]</a></sup> You will use these two in the hands-on task to locate your parameter file.
+                            </p>
+
+                            <h2 class="article-section-title">07. Larger systems: includes, namespaces and event handlers</h2>
+                            <p>
+                                Real robots are built from subsystems: drivers, perception, navigation, a user interface. The large-projects tutorial advises that "top-level launch files should be short, consist of includes to other files corresponding to subcomponents of the application, and commonly changed parameters."<sup><a href="#ref-10">[10]</a></sup> The tool for this is <code>IncludeLaunchDescription</code>, which runs another launch file and can pass it arguments:<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.substitutions import FindPackageShare
+
+def generate_launch_description():
+    colors = {'background_r': '200'}
+    return LaunchDescription([
+        IncludeLaunchDescription(
+            PathJoinSubstitution([
+                FindPackageShare('launch_tutorial'),
+                'launch',
+                'example_substitutions_launch.py'
+            ]),
+            launch_arguments={
+                'turtlesim_ns': 'turtlesim2',
+                'use_provided_red': 'True',
+                'new_background_r': colors['background_r'],
+            }.items()
+        )
+    ])</code></pre>
+                            <p>
+                                Any of the three formats can include any other; in XML an include looks like <code>&lt;include file="$(find-pkg-share demo_nodes_cpp)/launch/topics/talker_listener_launch.py" /&gt;</code>.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                To run a whole included file inside a namespace, wrap it in a <code>GroupAction</code> whose first action is <code>PushROSNamespace('turtlesim2')</code>, or in XML a <code>&lt;group&gt;</code> that starts with <code>&lt;push_ros_namespace namespace="turtlesim2" /&gt;</code>. The order matters: "<code>PushROSNamespace</code> has to be the first action in the list for the following actions to apply the namespace."<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                Finally, launch can react to what happens at runtime. Process start, output, completion and exit "are called events and can be handled by registering an event handler with the launch system."<sup><a href="#ref-12">[12]</a></sup> The event handlers tutorial registers <code>OnProcessStart</code>, <code>OnProcessIO</code>, <code>OnExecutionComplete</code>, <code>OnProcessExit</code> and <code>OnShutdown</code>. One example shuts the whole launch down when the user closes the Turtlesim window:<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>RegisterEventHandler(
+    OnProcessExit(
+        target_action=turtlesim_node,
+        on_exit=[
+            LogInfo(msg=(EnvironmentVariable(name='USER'),
+                    ' closed the turtlesim window')),
+            EmitEvent(event=Shutdown(
+                reason='Window closed'))
+        ]
+    )
+),</code></pre>
+                            <p>
+                                The same idea matters on a factory floor: if a critical driver process dies, you usually want the rest of the system to stop cleanly rather than keep running with stale data.
+                            </p>
+
+                            <h2 class="article-section-title">08. Parameters belong to nodes</h2>
+                            <p>
+                                In ROS 2, "parameters ... are associated with individual nodes. Parameters are used to configure nodes at startup (and during runtime), without changing the code. The lifetime of a parameter is tied to the lifetime of the node."<sup><a href="#ref-3">[3]</a></sup> Where are parameters stored in ROS 2? Not on a central server as in ROS 1, but <strong>on each individual node, which declares and manages its own parameters</strong>.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-2">[2]</a></sup> A parameter can be a <code>bool</code>, <code>int64</code>, <code>float64</code>, <code>string</code>, <code>byte[]</code>, or an array of booleans, integers, floats or strings.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                "By default, a node needs to <em>declare</em> all of the parameters that it will accept during its lifetime."<sup><a href="#ref-3">[3]</a></sup> In <code>rclpy</code> that looks like this:<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>self.declare_parameter('my_parameter', 'world')
+my_param = self.get_parameter('my_parameter').get_parameter_value().string_value</code></pre>
+                            <p>
+                                The second argument to <code>declare_parameter</code> is the default value, which also fixes the parameter's type; changing a declared parameter's type at runtime fails unless it was declared with dynamic typing allowed.<sup><a href="#ref-3">[3]</a></sup> If a node you write in lesson 3.6 should read a value from a YAML file, it must declare that parameter first.
+                            </p>
+                            <p>
+                                Every node automatically offers services such as <code>list_parameters</code>, <code>get_parameters</code> and <code>set_parameters</code>, and the <code>ros2 param</code> command-line tool is built on them.<sup><a href="#ref-3">[3]</a></sup> With a single Turtlesim running you can try the basic workflow:<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 param list
+ros2 param get /turtlesim background_g
+ros2 param set /turtlesim background_r 150
+ros2 param dump /turtlesim &gt; turtlesim.yaml
+ros2 param load /turtlesim turtlesim.yaml</code></pre>
+                            <p>
+                                <code>get</code> prints a result such as <code>Integer value is: 86</code>, and <code>set</code> prints <code>Set parameter successful</code> and changes the background colour at once. A value set this way is lost when the node restarts.<sup><a href="#ref-14">[14]</a></sup> <code>dump</code> saves all of the node's current parameters to a YAML file, and <code>load</code> applies a file to a running node. When loading at runtime, read-only entries such as <code>qos_overrides.*</code> fail with a "read-only" message; when the same file is given at node startup, all parameters are applied, including the read-only ones.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <p>
+                                A node can also guard its own parameters with callbacks. A pre-set callback can modify the list of parameters being set, an on-set callback can inspect a proposed change and explicitly reject it, and a post-set callback reacts after a change has been accepted.<sup><a href="#ref-3">[3]</a></sup> That is how a motor driver could refuse a speed limit outside its safe range.
+                            </p>
+
+                            <h2 class="article-section-title">09. Parameter files and launch</h2>
+                            <p>
+                                A <strong>parameter file</strong> is a YAML file that sets parameters for one or more nodes. It is not a launch file; the large-projects tutorial stresses that it "is a configuration file for the <code>turtlesim_node</code> that sets parameters for the node."<sup><a href="#ref-10">[10]</a></sup> Its structure is the node's fully qualified name, then the special key <code>ros__parameters</code> (with two underscores), then the values:<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>/turtlesim2/sim:
+   ros__parameters:
+      background_b: 255
+      background_g: 86
+      background_r: 150</code></pre>
+                            <p>
+                                In a YAML parameter file, what does the top-level key (for example <code>/turtlesim2/sim</code>) specify? <strong>The fully qualified name of the node, including its namespace, that the parameters under it apply to.</strong><sup><a href="#ref-10">[10]</a></sup> This is the most common trap: the tutorial shows that a third node, <code>/turtlesim3/sim</code>, loading the same file is not affected at all, because "its parameters are stored under another namespace."<sup><a href="#ref-10">[10]</a></sup> The fix is a wildcard. "<code>/**</code> will assign all the parameters in every node, despite differences in node names and namespaces."<sup><a href="#ref-10">[10]</a></sup> The command-line arguments guide gives the full rules: <code>*</code> matches a single name token between slashes, <code>**</code> matches zero or more tokens, and partial matches such as <code>foo*</code> are not allowed. Nested YAML maps become dotted parameter names, such as <code>some_lists.some_integers</code>.<sup><a href="#ref-15">[15]</a></sup>
+                            </p>
+                            <p>
+                                There are three ways to hand a parameter file to a node. From the command line, use <code>ros2 run ... --ros-args --params-file demo_params.yaml</code> (or set a single value with <code>-p name:=value</code>).<sup><a href="#ref-15">[15]</a></sup> In a Python launch file, put the file's path in the node's <code>parameters</code> list:<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>Node(
+    package='turtlesim',
+    executable='turtlesim_node',
+    namespace='turtlesim2',
+    name='sim',
+    parameters=[PathJoinSubstitution([
+        FindPackageShare('launch_tutorial'), 'config', 'turtlesim.yaml'])
+    ],
+),</code></pre>
+                            <p>
+                                In XML the same thing is a <code>&lt;param from="$(find-pkg-share launch_tutorial)/config/turtlesim.yaml" /&gt;</code> tag inside the <code>&lt;node&gt;</code>.<sup><a href="#ref-10">[10]</a></sup> The <code>parameters</code> list can also hold plain dictionaries for quick inline values, such as <code>parameters=[{'my_parameter': 'earth'}]</code>; the parameters tutorial pairs this with <code>output='screen', emulate_tty=True</code> so the node's log messages appear in your console.<sup><a href="#ref-13">[13]</a></sup> In XML, inline values are written <code>&lt;param name="..." value="..."/&gt;</code>, and the type is inferred from the text: <code>value="1"</code> is an integer, <code>"1.0"</code> a float, and <code>"'1'"</code> the string "1".<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                You rarely need to type a parameter file from scratch. As the tutorial notes, "YAML files can be easily exported from the current <code>ros2 param</code> list": tune a running node with <code>ros2 param set</code>, then save the result with <code>ros2 param dump</code>.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">10. Common mistakes, and what is new in Lyrical</h2>
+                            <p>
+                                Most launch problems come from a small set of mistakes that the documentation itself warns about:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Files not installed:</span> the launch or config folder is missing from <code>data_files</code> (or from <code>install(DIRECTORY ...)</code> in CMake), so <code>ros2 launch</code> or <code>FindPackageShare</code> cannot find it.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Workspace not sourced:</span> a new terminal does not know about your freshly built package until you source it.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-12">[12]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Wrong file name:</span> a file that does not end in <code>launch.py</code> is not recognized or autocompleted by <code>ros2 launch</code>.<sup><a href="#ref-8">[8]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Name collisions:</span> two nodes with the same name and no distinct namespaces clash; unique namespaces avoid node and topic name conflicts.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">YAML keyed to the wrong node:</span> a block for <code>/turtlesim2/sim</code> silently does nothing for any other node; check the full name with <code>ros2 node list</code> or use <code>/**</code>.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Namespace pushed too late:</span> <code>PushROSNamespace</code> must be the first action in its group.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Include arguments without defaults:</span> argument values only flow into an included file automatically for arguments that have a default there; required arguments must be passed explicitly.<sup><a href="#ref-7">[7]</a></sup></li>
+                            </ul>
+                            <p>
+                                Lyrical Luth keeps the syntax taught above and adds a few conveniences. Launch files can now log at a chosen severity, with a <code>level</code> argument on <code>log</code> and new actions such as <code>&lt;log_warning message="..."/&gt;</code>.<sup><a href="#ref-4">[4]</a></sup> XML and YAML files gain <code>string-join</code> and <code>path-join</code> substitutions, for example <code>$(path-join opt ros lyrical $(string-join . setup bash))</code>.<sup><a href="#ref-4">[4]</a></sup> Parameter files accept YAML type tags such as <code>string_param: !!str true</code> or <code>int_param: !!int 0</code>, which fix cases where an ambiguous value was read as the wrong type.<sup><a href="#ref-4">[4]</a></sup> On the command line, <code>ros2 param get</code> without a node name reads a parameter from all nodes, and <code>get</code> and <code>set</code> can now handle several parameters in one call.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-14">[14]</a></sup> XML and YAML launch files can also pass arguments into an include with <code>let</code>; older distributions may require <code>arg</code> there instead, which matters when you read older tutorials.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>In the <code>src</code> folder of your workspace, create a package with <code>ros2 pkg create --build-type ament_python --license Apache-2.0 turtle_launch_demo</code>, then add <code>launch/</code> and <code>config/</code> folders next to its <code>setup.py</code>, and add <code>&lt;exec_depend&gt;ros2launch&lt;/exec_depend&gt;</code> to its <code>package.xml</code>. (You can add these files to your lesson 3.6 package instead if you prefer.)</li>
+                                    <li>Save this parameter file as <code>config/turtles.yaml</code>. It is an example built from the documented format, so test it in the simulator before relying on it:
+<pre class="article-code"><code>/turtlesim1/sim:
+  ros__parameters:
+    background_r: 150
+    background_g: 86
+    background_b: 255
+/turtlesim2/sim:
+  ros__parameters:
+    background_r: 0
+    background_g: 120
+    background_b: 60</code></pre></li>
+                                    <li>Save this as <code>launch/mimic_launch.py</code>. It is the official turtlesim_mimic example with a <code>parameters</code> entry added to each simulator:
+<pre class="article-code"><code>from launch import LaunchDescription
+from launch.substitutions import PathJoinSubstitution
+from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+
+
+def generate_launch_description():
+    turtles_yaml = PathJoinSubstitution([
+        FindPackageShare('turtle_launch_demo'), 'config', 'turtles.yaml'])
+    return LaunchDescription([
+        Node(package='turtlesim', namespace='turtlesim1',
+             executable='turtlesim_node', name='sim',
+             parameters=[turtles_yaml]),
+        Node(package='turtlesim', namespace='turtlesim2',
+             executable='turtlesim_node', name='sim',
+             parameters=[turtles_yaml]),
+        Node(package='turtlesim', executable='mimic', name='mimic',
+             remappings=[
+                 ('/input/pose', '/turtlesim1/turtle1/pose'),
+                 ('/output/cmd_vel', '/turtlesim2/turtle1/cmd_vel'),
+             ]),
+    ])</code></pre></li>
+                                    <li>In <code>setup.py</code>, add <code>import os</code> and <code>from glob import glob</code> at the top, and add these two entries to the existing <code>data_files</code> list:
+<pre class="article-code"><code>(os.path.join('share', package_name, 'launch'), glob('launch/*')),
+(os.path.join('share', package_name, 'config'), glob('config/*.yaml')),</code></pre></li>
+                                    <li>From the workspace root, run <code>colcon build --packages-select turtle_launch_demo</code>, open a new terminal, run <code>source install/setup.bash</code>, then <code>ros2 launch turtle_launch_demo mimic_launch.py</code>. Two windows should open with different background colours.</li>
+                                    <li>In another sourced terminal, publish the circle command from section 04 to <code>/turtlesim1/turtle1/cmd_vel</code> and check that the second turtle copies the first. Then confirm the parameters with <code>ros2 param get /turtlesim2/sim background_g</code> and <code>ros2 param dump /turtlesim1/sim</code>.</li>
+                                    <li>Experiment: change the key <code>/turtlesim2/sim</code> to <code>/turtlesim3/sim</code>, rebuild and relaunch. What happens to the second window, and why? Then replace both blocks with one <code>/**</code> block and predict the result before you run it.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">11. References</h2>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">Open Robotics, &ldquo;Launch,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/About-Launch.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/About-Launch.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/About-Launch.html</a>.</li>
+                                <li id="ref-2">W. Woodall, &ldquo;ROS 2 Launch System,&rdquo; <em>ROS 2 Design</em>, September 2019; read from <code>articles/150_roslaunch.md</code> in the ros2/design repository. Available: <a href="https://design.ros2.org/articles/roslaunch.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/roslaunch.html</a>.</li>
+                                <li id="ref-3">Open Robotics, &ldquo;Parameters,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/ROS-Framework/About-Parameters.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/About-Parameters.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/About-Parameters.html</a>.</li>
+                                <li id="ref-4">Open Robotics, &ldquo;Lyrical Luth (codename 'lyrical'; May, 2026),&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Releases/Release-Lyrical-Luth.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Releases/Release-Lyrical-Luth.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/Release-Lyrical-Luth.html</a>.</li>
+                                <li id="ref-5">Open Robotics, &ldquo;Creating a launch file,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Launch/Creating-Launch-Files.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Creating-Launch-Files.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Creating-Launch-Files.html</a> Example files: <code>launch/turtlesim_mimic_launch.py</code>, <code>.xml</code> and <code>.yaml</code> in the same folder.</li>
+                                <li id="ref-6">Open Robotics, &ldquo;Using Python, XML, and YAML for ROS 2 Launch Files,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Launch/Launch-file-different-formats.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Launch-file-different-formats.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Launch-file-different-formats.html</a>.</li>
+                                <li id="ref-7">Open Robotics, &ldquo;Migrating launch files,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Migration-and-Upgrades/Migrating-from-ROS1/Migrating-Launch-Files.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Migration-and-Upgrades/Migrating-from-ROS1/Migrating-Launch-Files.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Migration-and-Upgrades/Migrating-from-ROS1/Migrating-Launch-Files.html</a>.</li>
+                                <li id="ref-8">Open Robotics, &ldquo;Integrating launch files into ROS 2 packages,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Launch/Launch-system.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Launch-system.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Launch-system.html</a>.</li>
+                                <li id="ref-9">Open Robotics, <code>turtlesim/tutorials/mimic.cpp</code> (turtlesim mimic node source), ros/ros_tutorials repository, <code>rolling</code> branch. Available: <a href="https://github.com/ros/ros_tutorials/blob/rolling/turtlesim/tutorials/mimic.cpp" target="_blank" rel="noopener noreferrer">github.com/ros/ros_tutorials/blob/rolling/turtlesim/tutorials/mimic.cpp</a>.</li>
+                                <li id="ref-10">Open Robotics, &ldquo;Managing large projects,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Launch/Using-ROS2-Launch-For-Large-Projects.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Using-ROS2-Launch-For-Large-Projects.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Using-ROS2-Launch-For-Large-Projects.html</a>.</li>
+                                <li id="ref-11">Open Robotics, &ldquo;Using substitutions,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Launch/Using-Substitutions.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Using-Substitutions.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Using-Substitutions.html</a>.</li>
+                                <li id="ref-12">Open Robotics, &ldquo;Using event handlers,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Launch/Using-Event-Handlers.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Using-Event-Handlers.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Using-Event-Handlers.html</a>.</li>
+                                <li id="ref-13">Open Robotics, &ldquo;Using parameters in a class (Python),&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/ROS-Framework/client-libraries/Working-with-Client-Libraries/Using-Parameters-In-A-Class-Python.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Using-Parameters-In-A-Class-Python.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Using-Parameters-In-A-Class-Python.html</a>.</li>
+                                <li id="ref-14">Open Robotics, &ldquo;Understanding parameters,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/ROS-Framework/parameters/Working-with-parameters/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/parameters/Working-with-parameters/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/parameters/Working-with-parameters/Understanding-ROS2-Parameters/Understanding-ROS2-Parameters.html</a>.</li>
+                                <li id="ref-15">Open Robotics, &ldquo;Passing ROS arguments to nodes via the command-line,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Developer-Tools/Introspection-and-analysis/Node-arguments.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Introspection-and-analysis/Node-arguments.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Introspection-and-analysis/Node-arguments.html</a>.</li>
+                                <li id="ref-16">Open Robotics, &ldquo;Lyrical Luth Complete Changelog,&rdquo; <em>ROS 2 Documentation: Lyrical</em>; read from <code>source/Releases/Lyrical-Luth-Complete-Changelog.rst</code> on the <code>lyrical</code> branch of the ros2/ros2_documentation repository, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Releases/Lyrical-Luth-Complete-Changelog.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/Lyrical-Luth-Complete-Changelog.html</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-3-6.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.6 Writing Your First ROS 2 Package</span>
+                                </a>
+                                <a href="robotics-ethics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-target">Chapter 4: Ethics</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.6" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.3" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>
