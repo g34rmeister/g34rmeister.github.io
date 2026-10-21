@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -203,6 +203,13 @@
                                 <li class="article-spec-item"><span class="spec-label">Security (SROS 2):</span> DDS-Security gives each participant an identity from a public key infrastructure with mutual authentication, encrypts traffic (AES-GCM), and enforces access-control policies. SROS 2 is the set of ROS 2 tools that creates the certificates, keystores, and permission files needed to switch this on.<sup><a href="#ref-13">[13]</a></sup></li>
                             </ul>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 260" role="img" aria-label="Two panels. ROS 1: every node registers with one central master started by roscore, then nodes connect directly. ROS 2: nodes discover each other directly through DDS, with no master." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-dds" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><text class="d-title" x="160" y="24" text-anchor="middle">ROS 1</text><rect class="d-box-gold" x="110" y="100" width="100" height="48" rx="6"/><text class="d-title" x="160" y="120" text-anchor="middle">master</text><text class="d-muted" x="160" y="138" text-anchor="middle">roscore</text><rect class="d-box" x="20" y="40" width="90" height="36" rx="6"/><text class="d-title" x="65" y="63" text-anchor="middle">camera</text><rect class="d-box" x="210" y="40" width="90" height="36" rx="6"/><text class="d-title" x="255" y="63" text-anchor="middle">planner</text><rect class="d-box" x="20" y="190" width="90" height="36" rx="6"/><text class="d-title" x="65" y="213" text-anchor="middle">driver</text><rect class="d-box" x="210" y="190" width="90" height="36" rx="6"/><text class="d-title" x="255" y="213" text-anchor="middle">UI</text><path class="d-line" d="M65,76 L130,98" marker-end="url(#arrow-dds)" stroke-dasharray="5 4"/><path class="d-line" d="M255,76 L190,98" marker-end="url(#arrow-dds)" stroke-dasharray="5 4"/><path class="d-line" d="M65,190 L130,150" marker-end="url(#arrow-dds)" stroke-dasharray="5 4"/><path class="d-line" d="M255,190 L190,150" marker-end="url(#arrow-dds)" stroke-dasharray="5 4"/><text class="d-muted" x="160" y="252" text-anchor="middle">dashed: lookup through the master</text><line class="d-line" x1="340" y1="20" x2="340" y2="220" stroke-dasharray="3 5"/><text class="d-title" x="510" y="24" text-anchor="middle">ROS 2 (DDS)</text><rect class="d-box" x="380" y="40" width="90" height="36" rx="6"/><text class="d-title" x="425" y="63" text-anchor="middle">camera</text><rect class="d-box" x="560" y="40" width="90" height="36" rx="6"/><text class="d-title" x="605" y="63" text-anchor="middle">planner</text><rect class="d-box" x="380" y="190" width="90" height="36" rx="6"/><text class="d-title" x="425" y="213" text-anchor="middle">driver</text><rect class="d-box" x="560" y="190" width="90" height="36" rx="6"/><text class="d-title" x="605" y="213" text-anchor="middle">UI</text><line class="d-strong" x1="470" y1="58" x2="558" y2="58"/><line class="d-strong" x1="470" y1="208" x2="558" y2="208"/><line class="d-strong" x1="425" y1="76" x2="425" y2="188"/><line class="d-strong" x1="605" y1="76" x2="605" y2="188"/><line class="d-strong" x1="470" y1="70" x2="560" y2="196"/><line class="d-strong" x1="560" y1="70" x2="470" y2="196"/><text class="d-muted" x="515" y="252" text-anchor="middle">distributed discovery, no master</text>
+                                </svg>
+                                <figcaption>In ROS 1, nodes find each other through one master. ROS 2 replaced it with DDS, whose discovery is distributed, so any two nodes can find each other directly.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">06. Target releases and the LTS lifecycle: Lyrical Luth</h2>
                             <p>
                                 New ROS 2 releases are published on a time-based schedule every 12 months. In even years, the release comes one month after the new Ubuntu LTS (long-term support) release and is itself an LTS release supported for five years; releases in odd years are supported for 1.5 years.<sup><a href="#ref-2">[2]</a></sup>
@@ -327,6 +334,7 @@
                             </div>
 
                             <h2 class="article-section-title">12. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">M. Quigley, K. Conley, B. Gerkey, J. Faust, T. Foote, J. Leibs, E. Berger, R. Wheeler and A. Y. Ng, &ldquo;ROS: an open-source Robot Operating System,&rdquo; in <em>ICRA Workshop on Open Source Software</em>, Kobe, Japan, 2009. Available: <a href="https://project.dke.maastrichtuniversity.nl/swarmlab_old/wp-content/uploads/2012/07/quigley-icra2009-ros-1.pdf" target="_blank" rel="noopener noreferrer">Maastricht University copy (PDF)</a>.</li>
                                 <li id="ref-2">M. Arguedas, S. Ragnarok, D. Thomas, A. Nash, G. Biggs and M. A. Gutierrez, &ldquo;REP 2000: ROS 2 Releases and Target Platforms,&rdquo; ROS Enhancement Proposal, Open Robotics. Available: <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000/</a>.</li>

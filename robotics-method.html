@@ -1,0 +1,255 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: how the course was made (sources policy, AI-assisted drafting, review steps)
+-->
+<html lang="en">
+    <head>
+        <title>How This Course Was Made — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How RISE Bot Instructor was written, sourced and checked, including where AI tools helped draft lessons and how every reference was verified." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-method.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="How This Course Was Made — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="How RISE Bot Instructor was written, sourced and checked, including where AI tools helped draft lessons and how every reference was verified." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-method.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="How This Course Was Made, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="How This Course Was Made — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="How RISE Bot Instructor was written, sourced and checked, including where AI tools helped draft lessons and how every reference was verified." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <span>How This Course Was Made</span>
+                            </div>
+
+                            <h1 class="robotics-article-headline">How This Course Was Made</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <p>
+                                RISE Bot Instructor is Gerald L&ecirc;'s honors research project (CSC 3991, Louisiana State University, Spring 2026, advised by Felipe Fronchetti). This page explains where the lessons came from, how their sources were chosen and checked, and where AI tools were used along the way, so that readers and reviewers can judge how far to trust them.
+                            </p>
+
+                            <h2 class="article-section-title">01. What the course is built from</h2>
+                            <p>
+                                The structure follows Gerald's research proposal and roadmap: an introduction to robots, how industrial robots are programmed (teach pendant, offline and block-based), the Robot Operating System (ROS), and the ethics of building robots. An optional fifth chapter on electronics and control (Arduino, PWM, encoders, PID, sensors, odometry, state machines and Kalman filters) covers a list of topics Gerald set out to explore. His advisor's feedback asked for more hands-on work, visuals and photos, and a quiz, which is why lessons have Try it boxes, diagrams, simulators and chapter quizzes.
+                            </p>
+
+                            <h2 class="article-section-title">02. Sources policy</h2>
+                            <ul>
+                                <li><strong>Every factual claim is cited.</strong> Each lesson marks claims with a numbered link such as <sup>[3]</sup> that jumps to its References list, numbered in order of first use.</li>
+                                <li><strong>Primary sources first.</strong> The preferred sources are standards bodies (ISO, IEC), vendor manuals (ABB, Universal Robots, FANUC, Arduino), the official ROS documentation, the International Federation of Robotics, and peer-reviewed papers. Encyclopedias and tutorials are used only for background.</li>
+                                <li><strong>No source, no claim.</strong> A statement that could not be traced to a source was removed or reworded as an open question, not guessed.</li>
+                                <li><strong>Current versions.</strong> The course targets ROS 2 Lyrical Luth (May 2026), ISO 10218:2025 and IFR World Robotics 2026. Older releases are named where students may still meet them.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. How AI tools were used</h2>
+                            <p>
+                                AI tools helped research and draft much of the text. They did not decide what the course covers, and nothing they wrote was published without a check against sources.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Part</th>
+                                        <th scope="col">How it was drafted</th>
+                                        <th scope="col">How it was checked</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>First drafts (all chapters)</td>
+                                        <td>Gerald's own notes and drafts. Some background documents were generated with Google Gemini and were marked as unverified.</td>
+                                        <td>A fact check against primary sources fixed outdated claims, such as the current ROS 2 release and the 2025 revision of ISO 10218, and found that &ldquo;RRL&rdquo; is not a language on today&rsquo;s commercial robots, so lesson 2.3 now presents it as history next to KUKA&rsquo;s KRL.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chapter 1 (lessons 1.1 to 1.6)</td>
+                                        <td>Researched and rewritten with Claude (Anthropic), with one research pass per lesson.</td>
+                                        <td>Each lesson came with research notes listing every source. Corrections, such as the Czech premiere dates of R.U.R. and the World Trade Center robot deployments, were made before the text was expanded.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chapters 2 to 5 (lessons 2.1 to 5.8)</td>
+                                        <td>Expanded with Google Gemini.</td>
+                                        <td>Claude audited every reference in all 20 lessons. Invented references were replaced with real sources, wrong figures were corrected (for example the ISO/TS 15066 contact-force limits), and quiz questions that relied on removed facts were rewritten.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Added lessons (1.7, 2.5, 2.6, 3.6, 3.7 and 4.4)</td>
+                                        <td>Researched and written with Claude (Anthropic), one research pass per lesson.</td>
+                                        <td>Each lesson came with research notes listing every source. The research could open only GitHub-hosted pages, such as the ROS 2 documentation source, so many references in 1.7, 2.5, 2.6 and 4.4 were cited from search summaries and are being checked by Gerald against the original pages.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Diagrams, simulators and quizzes</td>
+                                        <td>Written with Claude to match the lesson text.</td>
+                                        <td>Quiz answers are tested against the lesson text, and every simulator is tested in a browser on desktop and phone widths.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                The audit logs and research notes are kept with the project files. The full history of every change is public in the site's <a href="https://github.com/g34rmeister/g34rmeister.github.io" target="_blank" rel="noopener noreferrer">GitHub repository</a>.
+                            </p>
+
+                            <h2 class="article-section-title">04. Review before publishing</h2>
+                            <ol>
+                                <li>Every change is made on a separate branch and opened as a GitHub pull request that describes what changed and why.</li>
+                                <li>Automated checks run on each pull request: every internal link and every citation link must resolve, every page must follow the shared accessibility and metadata conventions, and the course data (objectives, key terms and quiz answers) must match the lessons.</li>
+                                <li>The lessons are opened in a real browser at desktop and phone widths to catch layout and script errors.</li>
+                                <li>Gerald approves the pull request before it goes live.</li>
+                            </ol>
+
+                            <h2 class="article-section-title">05. Known limits</h2>
+                            <ul>
+                                <li>Checking reduces errors but does not remove them. AI-assisted text can still contain a wrong detail that a source check missed.</li>
+                                <li>Some standards (ISO 8373, ISO 10218, ISO/TS 15066) are sold, not free. Where the full text was not available, lessons rely on the official preview samples or on summaries from standards bodies and industry groups.</li>
+                                <li>Software moves fast. Install steps and release names were correct when written and may change with the next ROS release.</li>
+                            </ul>
+                            <p>
+                                If you find an error, please report it through the <a href="contact.html">contact page</a> with the lesson number and, if you can, a source.
+                            </p>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Course home</span>
+                                    <span class="article-nav-target">All chapters</span>
+                                </a>
+                                <a href="robotics-glossary.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Look up a term -&gt;</span>
+                                    <span class="article-nav-target">Glossary</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.6" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.3" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>

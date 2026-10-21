@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -212,6 +212,13 @@
                                 <li class="article-spec-item"><span class="spec-label">Universal Robots safety system:</span> Provides joint position and speed limits, a tool (TCP) speed limit, force and momentum limits, and up to eight safety planes, certified to PL d, Category 3 by TÜV Rheinland.<sup><a href="#ref-14">[14]</a></sup></li>
                             </ul>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 272" role="img" aria-label="Layered safety stack, top to bottom: application software such as ROS 2, planners and perception, which is not safety-rated; a software safety layer with watchdog and geofencing; a safety controller or safety PLC with dual channels, commonly PL d Category 3; and hardware safeguards such as guards, interlocks, light curtains and the emergency stop. Any lower layer can stop the motors." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-ls" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="20" y="10" width="470" height="50" rx="6"/><text class="d-title" x="255" y="31" text-anchor="middle">Application software</text><text class="d-muted" x="255" y="49" text-anchor="middle">ROS 2, planners, perception: not safety-rated</text><rect class="d-box" x="20" y="70" width="470" height="50" rx="6"/><text class="d-title" x="255" y="91" text-anchor="middle">Software safety layer</text><text class="d-muted" x="255" y="109" text-anchor="middle">watchdog timer, geofencing zones</text><rect class="d-box-gold" x="20" y="130" width="470" height="50" rx="6"/><text class="d-title" x="255" y="151" text-anchor="middle">Safety controller / safety PLC</text><text class="d-muted" x="255" y="169" text-anchor="middle">dual channels, commonly PL d, Category 3</text><rect class="d-box-gold" x="20" y="190" width="470" height="50" rx="6"/><text class="d-title" x="255" y="211" text-anchor="middle">Hardware safeguards</text><text class="d-muted" x="255" y="229" text-anchor="middle">guards, interlocks, light curtains, E-stop</text><rect class="d-box" x="540" y="100" width="130" height="60" rx="6"/><text class="d-title" x="605" y="126" text-anchor="middle">Stop motors</text><text class="d-muted" x="605" y="144" text-anchor="middle">Category 0 or 1</text><path class="d-line" d="M490,95 L515,95 L515,130 L538,130"/><path class="d-line" d="M490,155 L515,155 L515,130 L538,130" marker-end="url(#arrow-ls)"/><path class="d-line" d="M490,215 L515,215 L515,130 L538,130"/><text class="d-muted" x="20" y="266">Each lower layer can stop the robot even if the layers above it fail.</text>
+                                </svg>
+                                <figcaption>Safety in layers. The application code at the top can have bugs, so the watchdog, the safety-rated controller and the hardware safeguards below it can each stop the robot on their own.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">06. Sensor privacy and data harvesting</h2>
                             <p>
                                 Physical safety protects people's bodies. As robots move into homes, hospitals and shops, their sensors also raise questions of privacy and surveillance.<sup><a href="#ref-18">[18]</a></sup>
@@ -322,6 +329,7 @@
                             </div>
 
                             <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">Occupational Safety and Health Administration (OSHA), &ldquo;Industrial Robot Systems and Industrial Robot System Safety,&rdquo; <em>OSHA Technical Manual (OTM)</em>, Section IV, Chapter 4, U.S. Department of Labor. <a href="https://www.osha.gov/otm/section-4-safety-hazards/chapter-4" target="_blank" rel="noopener noreferrer">osha.gov/otm/section-4-safety-hazards/chapter-4</a>.</li>
                                 <li id="ref-2">ISO 10218-1:2025, <em>Robotics: Safety requirements, Part 1: Industrial robots</em>, 3rd ed., International Organization for Standardization, Geneva, February 2025. Catalogue page: <a href="https://www.iso.org/standard/73933.html" target="_blank" rel="noopener noreferrer">iso.org/standard/73933.html</a>.</li>

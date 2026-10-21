@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -385,6 +385,13 @@ if __name__ == '__main__':
                                 Here <code>create_subscription</code> takes the message type (<code>Pose</code>), the topic name (<code>/turtle1/pose</code>), the callback function (<code>self.pose_callback</code>) and the queue size (10). The topic name and message type must match the publisher's for the two to communicate. The subscriber needs no timer: its callback is called as soon as a message arrives.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 200" role="img" aria-label="Node graph: draw_circle_node or teleop_turtle publish Twist messages on /turtle1/cmd_vel, the turtlesim node subscribes and moves the turtle, then publishes Pose messages on /turtle1/pose, which pose_subscriber_node receives." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-tg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box-gold" x="10" y="30" width="170" height="46" rx="6"/><text class="d-title" x="95" y="58" text-anchor="middle">draw_circle_node</text><rect class="d-box" x="10" y="110" width="170" height="46" rx="6"/><text class="d-title" x="95" y="138" text-anchor="middle">teleop_turtle</text><rect class="d-line" x="215" y="68" width="150" height="40" rx="20"/><text class="d-text" x="290" y="93" text-anchor="middle">/turtle1/cmd_vel</text><path class="d-line" d="M180,53 L213,80" marker-end="url(#arrow-tg)"/><path class="d-line" d="M180,133 L213,98" marker-end="url(#arrow-tg)" stroke-dasharray="5 4"/><rect class="d-box" x="395" y="64" width="110" height="48" rx="6"/><text class="d-title" x="450" y="93" text-anchor="middle">/turtlesim</text><line class="d-line" x1="365" y1="88" x2="393" y2="88" marker-end="url(#arrow-tg)"/><rect class="d-line" x="525" y="20" width="140" height="40" rx="20"/><text class="d-text" x="595" y="45" text-anchor="middle">/turtle1/pose</text><path class="d-line" d="M505,78 L540,62" marker-end="url(#arrow-tg)"/><rect class="d-box-gold" x="470" y="130" width="205" height="46" rx="6"/><text class="d-title" x="572.5" y="158" text-anchor="middle">pose_subscriber_node</text><line class="d-line" x1="595" y1="60" x2="595" y2="128" marker-end="url(#arrow-tg)"/><text class="d-muted" x="290" y="130" text-anchor="middle">Twist (velocity)</text><text class="d-muted" x="600" y="104">Pose</text><text class="d-muted" x="10" y="190">Boxes are nodes, rounded shapes are topics. Gold: the nodes you write.</text>
+                                </svg>
+                                <figcaption>The graph once both of your nodes run. Your publisher takes the place of the teleop node on <code>/turtle1/cmd_vel</code>, and your subscriber listens to <code>/turtle1/pose</code>. Run <code>rqt_graph</code> to see the same picture.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">10. Compiling with colcon and running custom nodes</h2>
                             <p>
                                 Before <code>ros2 run</code> can start our scripts, they must be registered as entry points in <code>setup.py</code>.<sup><a href="#ref-13">[13]</a></sup> Open <code>~/ros2_ws/src/my_robot_controller/setup.py</code> and add these lines inside the <code>console_scripts</code> brackets of <code>entry_points</code>:
@@ -445,6 +452,7 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
                             </div>
 
                             <h2 class="article-section-title">12. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">Open Robotics, &ldquo;Setting up Turtlesim,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html</a>.</li>
                                 <li id="ref-2">Open Robotics, <em>turtlesim</em> and <em>turtlesim_msgs</em> source code (<code>turtle.cpp</code>, <code>turtle_frame.cpp</code>, <code>teleop_turtle_key.cpp</code>, <code>Pose.msg</code>, <code>Spawn.srv</code>), ros/ros_tutorials repository, <code>lyrical</code> branch. Available: <a href="https://github.com/ros/ros_tutorials/tree/lyrical/turtlesim" target="_blank" rel="noopener noreferrer">github.com/ros/ros_tutorials/tree/lyrical/turtlesim</a>.</li>

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -229,6 +229,13 @@ ENDMODULE</code></pre>
                                 Lines that start with <code>!</code> are comments that the controller ignores. <code>Offs(point, x, y, z)</code> returns a copy of a point shifted by the given offsets, which is how the program makes approach points 100 mm above the pick and drop targets. <code>MoveJ</code> moves the arm without forcing a straight-line path, while <code>MoveL</code> moves the tool in a straight line.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 250" role="img" aria-label="Side view of the RAPID pick-and-place program: a MoveJ to pHome, a MoveL to 100 mm above pPick, MoveL to pPick and stop with fine, close the gripper, MoveL back up, MoveJ to above pDrop, MoveL down to pDrop with fine, open the gripper, and return." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-pp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><line class="d-line" x1="40" y1="212" x2="640" y2="212"/><text class="d-muted" x="40" y="232">table / fixture</text><circle class="d-box-gold" cx="340" cy="40" r="7"/><circle class="d-box-gold" cx="150" cy="120" r="7"/><circle class="d-box-gold" cx="150" cy="200" r="7"/><circle class="d-box-gold" cx="530" cy="120" r="7"/><circle class="d-box-gold" cx="530" cy="200" r="7"/><text class="d-title" x="352" y="36">pHome</text><text class="d-muted" x="136" y="124" text-anchor="end">Offs(pPick, +100 mm)</text><text class="d-text" x="164" y="204">pPick (fine)</text><text class="d-muted" x="544" y="124">Offs(pDrop, +100 mm)</text><text class="d-text" x="544" y="204">pDrop (fine)</text><line class="d-strong" x1="334" y1="44" x2="157" y2="115" marker-end="url(#arrow-pp)"/><text class="d-muted" x="196" y="62">MoveL, z10</text><path class="d-line" d="M524,116 Q470,50 348,40" marker-end="url(#arrow-pp)" stroke-dasharray="5 4"/><text class="d-muted" x="470" y="52">MoveJ back to pHome</text><line class="d-strong" x1="150" y1="128" x2="150" y2="192" marker-end="url(#arrow-pp)"/><line class="d-line" x1="140" y1="192" x2="140" y2="128" marker-end="url(#arrow-pp)"/><text class="d-muted" x="84" y="165">MoveL</text><text class="d-muted" x="162" y="165">MoveL</text><path class="d-line" d="M158,116 Q340,70 524,114" marker-end="url(#arrow-pp)" stroke-dasharray="5 4"/><text class="d-muted" x="340" y="122" text-anchor="middle">MoveJ, z30 (curved, blended)</text><line class="d-strong" x1="530" y1="128" x2="530" y2="192" marker-end="url(#arrow-pp)"/><text class="d-muted" x="544" y="165">MoveL</text><text class="d-muted" x="340" y="168" text-anchor="middle">Dashed: joint move, path not a</text><text class="d-muted" x="340" y="184" text-anchor="middle">straight line. Solid: straight line.</text>
+                                </svg>
+                                <figcaption>The RAPID example seen from the side. Joint moves (dashed) cross free space on a curved path; linear moves (solid) travel in straight lines, and <code>fine</code> makes the robot stop exactly at the pick and drop points.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">05. Universal Robots URScript: syntax and execution</h2>
                             <p>
                                 Universal Robots' script language, <strong>URScript</strong>, looks friendlier than RAPID.<sup><a href="#ref-2">[2]</a></sup> Functions are defined with <code>def</code> and closed with <code>end</code>, the lines inside a block must be indented, and variables do not need type declarations: the manual states that a variable's type is deduced from its first assignment. If you know Python, the syntax will feel familiar.
@@ -416,6 +423,7 @@ end</code></pre>
                             </div>
 
                             <h2 class="article-section-title">12. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">ABB Robotics, <em>Technical reference manual: RAPID Instructions, Functions and Data types</em>, RobotWare 6.06, Document ID 3HAC050917-001, Revision F, ABB AB, 2017. Available: <a href="https://library.e.abb.com/public/b227fcd260204c4dbeb8a58f8002fe64/Rapid_instructions.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com (PDF)</a>.</li>
                                 <li id="ref-2">Universal Robots, <em>The URScript Programming Language for SW5 (Script Manual, e-Series)</em>, Version 5.14, Universal Robots A/S, 2023. Available: <a href="https://docs.universal-robots.com/PolyScopeX_SDK_Documentation/build/SDK-v0.13/_static/pdf/scriptManualG5.pdf" target="_blank" rel="noopener noreferrer">docs.universal-robots.com (PDF)</a>.</li>

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -153,6 +153,13 @@
                                 <li class="article-spec-item"><span class="spec-label">Passive Sensors:</span> Detect ambient physical energy naturally present in the surrounding environment without emitting any artificial signals. Examples include passive infrared (PIR) thermal sensors, ambient light photodiodes, and standard RGB cameras capturing natural sunlight.<sup><a href="#ref-1">[1]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Active Sensors:</span> Emit controlled electromagnetic or acoustic energy into the surrounding environment and measure the resulting reflected signature. Examples include ultrasonic transducers emitting acoustic pulses, infrared proximity sensors emitting modulated infrared light, and LiDAR units emitting laser pulses. Because they supply their own energy, active sensors can work in complete darkness.<sup><a href="#ref-1">[1]</a></sup></li>
                             </ul>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 230" role="img" aria-label="Sensor classification. Proprioceptive sensors measure the robot itself: encoders, battery voltage, motor current, temperature. Exteroceptive sensors measure the world, split into passive (RGB camera, PIR, ambient light) and active (ultrasonic, infrared proximity, LiDAR)." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-sc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><text class="d-muted" x="20" y="24">Measures the robot itself</text><rect class="d-box" x="20" y="32" width="640" height="56" rx="6"/><text class="d-title" x="340" y="56" text-anchor="middle">Proprioceptive</text><text class="d-muted" x="340" y="74" text-anchor="middle">encoders, battery voltage, motor current, temperature</text><text class="d-muted" x="20" y="112">Measures the world around it</text><rect class="d-box" x="20" y="120" width="310" height="96" rx="6"/><text class="d-title" x="175" y="156" text-anchor="middle">Exteroceptive, passive</text><text class="d-muted" x="175" y="174" text-anchor="middle">senses energy already there:</text><text class="d-muted" x="175" y="189" text-anchor="middle">RGB camera, PIR, ambient light</text><rect class="d-box-gold" x="350" y="120" width="310" height="96" rx="6"/><text class="d-title" x="505" y="156" text-anchor="middle">Exteroceptive, active</text><text class="d-muted" x="505" y="174" text-anchor="middle">emits its own energy:</text><text class="d-muted" x="505" y="189" text-anchor="middle">ultrasonic, IR proximity, LiDAR</text>
+                                </svg>
+                                <figcaption>The two axes from this section. Active sensors bring their own signal, so they keep working in darkness.</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">03. Acoustic ranging: HC-SR04 ultrasonic sensor</h2>
                             <p>
@@ -324,6 +331,7 @@
                             </div>
 
                             <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">R. Siegwart, I. R. Nourbakhsh, and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., Chapter 4: &ldquo;Perception&rdquo; and Chapter 5: &ldquo;Mobile Robot Localization,&rdquo; MIT Press, Cambridge, MA, 2011, ISBN 978-0-262-01535-6. <a href="https://mitpress.mit.edu/9780262015356/introduction-to-autonomous-mobile-robots/" target="_blank" rel="noopener noreferrer">mitpress.mit.edu/9780262015356/...</a>.</li>
                                 <li id="ref-2">ElecFreaks, <em>Ultrasonic Ranging Module HC-SR04</em> (datasheet, undated). <a href="https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf" target="_blank" rel="noopener noreferrer">cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</a>.</li>

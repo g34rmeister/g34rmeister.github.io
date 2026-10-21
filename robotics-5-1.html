@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -270,6 +270,13 @@
                                 The reason is that voltage is not an absolute quantity: it is a difference in electrical potential between two points. When the Arduino sets digital pin 9 HIGH (5 V), that 5 V is measured relative to the Arduino's own Ground pin. If the motor driver's logic does not share that same Ground, it has no reference for deciding whether pin 9 is at 5 V or 0 V. Its control inputs effectively float, pick up noise and can switch unpredictably, just like the floating inputs described in Section 03.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 262" role="img" aria-label="Wiring: the Arduino sends low-current PWM and direction signals to an H-bridge motor driver. A separate battery feeds the driver motor supply, and the driver powers the motor. The Arduino ground and the battery ground are tied together." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-pw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="20" y="40" width="170" height="80" rx="6"/><text class="d-title" x="105" y="76" text-anchor="middle">Arduino</text><text class="d-muted" x="105" y="94" text-anchor="middle">logic domain, 5 V</text><rect class="d-box-gold" x="270" y="40" width="170" height="80" rx="6"/><text class="d-title" x="355" y="76" text-anchor="middle">H-bridge driver</text><text class="d-muted" x="355" y="94" text-anchor="middle">L298 or TB6612FNG</text><rect class="d-box" x="520" y="40" width="140" height="80" rx="6"/><text class="d-title" x="590" y="85" text-anchor="middle">DC motor</text><rect class="d-box" x="270" y="160" width="170" height="50" rx="6"/><text class="d-title" x="355" y="181" text-anchor="middle">Motor battery</text><text class="d-muted" x="355" y="199" text-anchor="middle">e.g. 2S LiPo</text><line class="d-line" x1="190" y1="70" x2="268" y2="70" marker-end="url(#arrow-pw)"/><text class="d-muted" x="229" y="62" text-anchor="middle">PWM + DIR</text><line class="d-line" x1="440" y1="80" x2="518" y2="80" marker-end="url(#arrow-pw)"/><text class="d-muted" x="479" y="72" text-anchor="middle">power</text><line class="d-line" x1="355" y1="160" x2="355" y2="122" marker-end="url(#arrow-pw)"/><text class="d-muted" x="362" y="145">VS / VM</text><path class="d-strong" d="M105,120 L105,230 L470,230"/><path class="d-strong" d="M300,210 L300,230"/><path class="d-strong" d="M410,122 L410,140 L470,140 L470,230"/><text class="d-title" x="288" y="252" text-anchor="middle">common GND (thick line)</text>
+                                </svg>
+                                <figcaption>Two power domains. The pin only sends a signal; the battery powers the motor through the driver. The thick line is the shared ground that gives the driver the same 0 V reference as the Arduino.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">07. Mobile robot power: Lithium Polymer (LiPo) safety</h2>
                             <p>
                                 Autonomous mobile robots need light, energy-dense power sources, so many use rechargeable lithium-based batteries such as Lithium Polymer (LiPo) packs. Lithium-based cells can go into thermal runaway if mistreated (Battery University lists a thermal runaway temperature of about 150 &deg;C for lithium cobalt oxide), so every robotics engineer should know the basic voltage limits.<sup><a href="#ref-15">[15]</a></sup> The figures below are for cobalt-based lithium cells; always check your own pack's datasheet.
@@ -339,6 +346,7 @@ void loop() {
                             </div>
 
                             <h2 class="article-section-title">09. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">The Linux Foundation, &ldquo;Technical basics: Important aspects for real time,&rdquo; <em>Real-Time Linux Wiki</em>. <a href="https://wiki.linuxfoundation.org/realtime/documentation/technical_basics/start" target="_blank" rel="noopener noreferrer">wiki.linuxfoundation.org/realtime/documentation/technical_basics/start</a>.</li>
                                 <li id="ref-2">Microchip Technology, &ldquo;ATmega328P&rdquo; product page and <em>ATmega328/P Datasheet Complete</em>, Atmel-42735B, 11/2016. <a href="https://www.microchip.com/en-us/product/ATmega328P" target="_blank" rel="noopener noreferrer">microchip.com/en-us/product/ATmega328P</a>.</li>

@@ -23,10 +23,11 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `robotics-intro.html` / `robotics-programming.html` / `robotics-ros.html` / `robotics-ethics.html` / `robotics-control.html` - Chapter overview pages (Intro to Robotics, Robot Programming, ROS, Ethics, and an extra Electronics and Control chapter)
 * `robotics-<chapter>-<n>.html` - Chapter articles (6, 4, 5, 3 and 8 per chapter); unwritten topics are marked "(This is blank)"
 * `robotics-glossary.html` - Glossary of every key term, rendered from `assets/js/glossary-data.js`
+* `robotics-method.html` - How This Course Was Made: sources policy, where AI tools helped draft lessons, and the review steps. Every lesson's References heading links to it
 * `robotics-quiz.html` - Chapter quizzes (`robotics-quiz.html?chapter=N`), rendered from the course data
 * `assets/js/course-data.js` - The course as data: chapters, lessons, learning objectives, key terms and quiz questions. Update it whenever a lesson is added, renamed or rewritten
 * `assets/js/glossary-data.js` - One-sentence definitions for every key term in the course data; add one whenever a lesson adds a key term
-* `assets/js/widgets.js` - The PWM, encoder and PID simulators, mounted on any `<div data-widget="pwm|encoder|pid">`
+* `assets/js/widgets.js` - The simulators, mounted on any `<div data-widget="...">`: `pwm` (5.2), `encoder` (5.3), `pid` (5.4), `arm` (two-link arm with MoveJ vs MoveL, 1.6), `blocks` (blocks to RAPID and URScript, 2.1), `odometry` (UMBmark square, 5.6), `fsm` (5.7; wraps the static state diagram inside the mount) and `kalman` (5.8). Pages that use one load `widgets.js`
 * `assets/js/learning.js` - Lesson objectives, "mark as complete" progress (stored in the browser), hub progress marks, quizzes, and the `window.RISEBot` hook for the phase 2 AI tutor
 * `404.html` - Custom not-found page
 * `robots.txt` / `sitemap.xml` / `site.webmanifest` - SEO & crawler metadata
