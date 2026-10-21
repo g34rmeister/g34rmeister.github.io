@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -222,6 +222,16 @@
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <div data-widget="fsm">
+                                <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 310" role="img" aria-label="State diagram of the line follower: FOLLOW_LINE goes to AVOID_OBSTACLE when an obstacle is closer than 20 cm and to SEARCH when the line is lost. AVOID_OBSTACLE goes to SEARCH after 600 ms with the path clear. SEARCH returns to FOLLOW_LINE when the line is found, or goes to STOP after 5 s. The emergency stop sends any state to STOP." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-fsm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><g data-state="FOLLOW_LINE"><rect class="d-box" x="20" y="110" width="170" height="56" rx="6"/><text class="d-title" x="105" y="143" text-anchor="middle">FOLLOW_LINE</text></g><g data-state="AVOID_OBSTACLE"><rect class="d-box" x="400" y="20" width="220" height="56" rx="6"/><text class="d-title" x="510" y="53" text-anchor="middle">AVOID_OBSTACLE</text></g><g data-state="SEARCH"><rect class="d-box" x="250" y="220" width="150" height="56" rx="6"/><text class="d-title" x="325" y="253" text-anchor="middle">SEARCH</text></g><g data-state="STOP"><rect class="d-box-gold" x="500" y="220" width="150" height="56" rx="6"/><text class="d-title" x="575" y="253" text-anchor="middle">STOP</text></g><path class="d-line" d="M190,124 L398,56" marker-end="url(#arrow-fsm)"/><text class="d-muted" x="250" y="72">obstacle &lt; 20 cm</text><path class="d-line" d="M90,166 Q100,248 248,248" marker-end="url(#arrow-fsm)"/><text class="d-muted" x="40" y="240">line lost</text><path class="d-line" d="M290,220 L180,168" marker-end="url(#arrow-fsm)"/><text class="d-muted" x="250" y="184">line found</text><path class="d-line" d="M500,76 L360,218" marker-end="url(#arrow-fsm)"/><text class="d-muted" x="442" y="150">≥ 600 ms and clear</text><path class="d-line" d="M400,248 L498,248" marker-end="url(#arrow-fsm)"/><text class="d-muted" x="449" y="240" text-anchor="middle">&gt; 5 s</text><path class="d-line" d="M630,48 Q672,130 600,218" marker-end="url(#arrow-fsm)" stroke-dasharray="5 4"/><text class="d-muted" x="606" y="120" text-anchor="end">E-stop</text><text class="d-muted" x="606" y="134" text-anchor="end">(any state)</text><text class="d-muted" x="20" y="300">Gold: the fail-safe state. Leaving STOP needs a manual reset.</text>
+                                </svg>
+                                <figcaption>The transition table from this section drawn as a state diagram. Every arrow is one row of the table.</figcaption>
+                            </figure>
+                                <p class="widget-note">With JavaScript on, you can send events to this state machine and watch it change state.</p>
+                            </div>
 
                             <h2 class="article-section-title">04. Non-blocking timing: why delay() is fatal in robotics</h2>
                             <p>
@@ -482,6 +492,7 @@ void loop() {
                             </div>
 
                             <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">M. Colledanchise and P. &Ouml;gren, <em>Behavior Trees in Robotics and AI: An Introduction</em>, CRC Press, Boca Raton, FL, 2018, doi:10.1201/9780429489105. Preprint: <a href="https://arxiv.org/abs/1709.00084" target="_blank" rel="noopener noreferrer">arxiv.org/abs/1709.00084</a>.</li>
                                 <li id="ref-2">D. Harel, &ldquo;Statecharts: A Visual Formalism for Complex Systems,&rdquo; <em>Science of Computer Programming</em>, vol. 8, no. 3, pp. 231&ndash;274, 1987. <a href="https://doi.org/10.1016/0167-6423(87)90035-9" target="_blank" rel="noopener noreferrer">doi.org/10.1016/0167-6423(87)90035-9</a>.</li>
@@ -540,6 +551,7 @@ void loop() {
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.5" defer></script>
             <script src="assets/js/glossary-data.js?v=1.2" defer></script>
+            <script src="assets/js/widgets.js?v=1.1" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

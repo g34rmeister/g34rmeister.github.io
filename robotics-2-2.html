@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -156,6 +156,13 @@
                             <p>
                                 Because the simulated robot runs the same controller software as the real machine, simulations can use real robot programs and configuration files identical to those used on the shop floor.<sup><a href="#ref-2">[2]</a></sup> This is why RobotStudio programs can usually be transferred to a physical robot with little adjustment, apart from calibrating the real cell (see <a href="robotics-2-1.html">Lesson 2.1</a>).
                             </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 230" role="img" aria-label="Diagram: on the office PC, RobotStudio runs a Virtual Controller with the same RobotWare software as the real controller. A PLC can exchange signals with the virtual cell. The tested program is copied to the real controller, and the real cell is calibrated." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-vc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-line" x="10" y="10" width="330" height="210" rx="10" stroke-dasharray="5 4"/><text class="d-title" x="24" y="32">Office PC: RobotStudio</text><rect class="d-box-gold" x="30" y="50" width="140" height="64" rx="6"/><text class="d-title" x="100" y="78" text-anchor="middle">Virtual</text><text class="d-muted" x="100" y="96" text-anchor="middle">Controller</text><rect class="d-box" x="190" y="50" width="130" height="64" rx="6"/><text class="d-title" x="255" y="78" text-anchor="middle">3D cell</text><text class="d-muted" x="255" y="96" text-anchor="middle">simulation</text><line class="d-line" x1="170" y1="82" x2="188" y2="82" marker-end="url(#arrow-vc)"/><rect class="d-box" x="30" y="142" width="140" height="58" rx="6"/><text class="d-title" x="100" y="167" text-anchor="middle">RobotWare</text><text class="d-muted" x="100" y="185" text-anchor="middle">same software</text><line class="d-line" x1="100" y1="140" x2="100" y2="116" marker-end="url(#arrow-vc)"/><rect class="d-box" x="190" y="142" width="130" height="58" rx="6"/><text class="d-title" x="255" y="167" text-anchor="middle">PLC</text><text class="d-muted" x="255" y="185" text-anchor="middle">virtual commissioning</text><path class="d-line" d="M255,140 L255,116" marker-end="url(#arrow-vc)"/><rect class="d-line" x="420" y="10" width="250" height="210" rx="10" stroke-dasharray="5 4"/><text class="d-title" x="434" y="32">Shop floor</text><rect class="d-box-gold" x="440" y="50" width="210" height="64" rx="6"/><text class="d-title" x="545" y="78" text-anchor="middle">Real controller</text><text class="d-muted" x="545" y="96" text-anchor="middle">runs RobotWare</text><rect class="d-box" x="440" y="142" width="210" height="58" rx="6"/><text class="d-title" x="545" y="167" text-anchor="middle">Calibrate the real cell</text><text class="d-muted" x="545" y="185" text-anchor="middle">see lesson 2.1</text><line class="d-line" x1="545" y1="116" x2="545" y2="140" marker-end="url(#arrow-vc)"/><line class="d-strong" x1="320" y1="70" x2="438" y2="70" marker-end="url(#arrow-vc)"/><text class="d-muted" x="380" y="98" text-anchor="middle">same</text><text class="d-muted" x="380" y="112" text-anchor="middle">program</text>
+                                </svg>
+                                <figcaption>RobotStudio runs a Virtual Controller with the same RobotWare as the real robot, so a program tested on the PC can be copied to the real controller. Virtual commissioning connects a PLC to the simulated cell to test signals and interlocks first.</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">03. Motion fidelity: TrueMove and QuickMove</h2>
                             <p>
@@ -362,6 +369,7 @@
                             </div>
 
                             <h2 class="article-section-title">12. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">R. Raffaeli, P. Bilancia, F. Neri, M. Peruzzini and M. Pellicciari, &ldquo;Engineering method and tool for the complete virtual commissioning of robotic cells,&rdquo; <em>Applied Sciences</em>, vol. 12, no. 6, art. 3164, 2022. DOI: 10.3390/app12063164. <a href="https://www.mdpi.com/2076-3417/12/6/3164" target="_blank" rel="noopener noreferrer">mdpi.com/2076-3417/12/6/3164</a>.</li>
                                 <li id="ref-2">ABB Robotics, &ldquo;RobotStudio Desktop: The world's most used offline programming tool for robotics,&rdquo; product page, ABB. <a href="https://www.abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop" target="_blank" rel="noopener noreferrer">abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop</a>.</li>

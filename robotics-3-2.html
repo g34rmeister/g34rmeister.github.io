@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -302,6 +302,13 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp</code></pre>
                                 Moving out of a primary state (except after an error in Active) requires an action from an external supervisory process, through transitions such as <code>configure</code>, <code>activate</code>, <code>deactivate</code>, <code>cleanup</code> and <code>shutdown</code>.<sup><a href="#ref-17">[17]</a></sup> A supervisor can therefore bring every sensor driver to <em>Inactive</em> first and only <code>activate</code> the cell once each driver reports that its hardware is ready, so hardware is only used when it is ready and is released safely on shutdown.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-17">[17]</a></sup>
                             </p>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 220" role="img" aria-label="State diagram of a ROS 2 managed node: Unconfigured goes to Inactive on configure, Inactive goes to Active on activate, Active returns to Inactive on deactivate, Inactive returns to Unconfigured on cleanup, and shutdown from any of these leads to Finalized." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-lc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="20" y="60" width="150" height="50" rx="6"/><text class="d-title" x="95" y="90" text-anchor="middle">Unconfigured</text><rect class="d-box" x="265" y="60" width="150" height="50" rx="6"/><text class="d-title" x="340" y="90" text-anchor="middle">Inactive</text><rect class="d-box-gold" x="510" y="60" width="150" height="50" rx="6"/><text class="d-title" x="585" y="90" text-anchor="middle">Active</text><rect class="d-box" x="265" y="160" width="150" height="46" rx="6"/><text class="d-title" x="340" y="188" text-anchor="middle">Finalized</text><path class="d-line" d="M170,74 L263,74" marker-end="url(#arrow-lc)"/><text class="d-muted" x="216" y="66" text-anchor="middle">configure</text><path class="d-line" d="M263,98 L172,98" marker-end="url(#arrow-lc)"/><text class="d-muted" x="216" y="116" text-anchor="middle">cleanup</text><path class="d-line" d="M415,74 L508,74" marker-end="url(#arrow-lc)"/><text class="d-muted" x="461" y="66" text-anchor="middle">activate</text><path class="d-line" d="M508,98 L417,98" marker-end="url(#arrow-lc)"/><text class="d-muted" x="461" y="116" text-anchor="middle">deactivate</text><path class="d-line" d="M95,110 L95,183 L263,183" marker-end="url(#arrow-lc)" stroke-dasharray="5 4"/><path class="d-line" d="M585,110 L585,183 L417,183" marker-end="url(#arrow-lc)" stroke-dasharray="5 4"/><path class="d-line" d="M340,110 L340,158" marker-end="url(#arrow-lc)" stroke-dasharray="5 4"/><text class="d-muted" x="140" y="176">shutdown</text><text class="d-muted" x="470" y="176">shutdown</text><text class="d-muted" x="340" y="30" text-anchor="middle">A supervisor triggers each transition</text>
+                                </svg>
+                                <figcaption>The four primary states of a managed (lifecycle) node. Only the Active state processes data; a supervisor moves each node through configure and activate when its hardware is ready.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">07. Programmable Python launch files</h2>
                             <p>
                                 A ROS system usually has many nodes, and starting each one by hand quickly becomes cumbersome. The launch system starts many nodes with one command, passes them their arguments, and monitors the processes it started.<sup><a href="#ref-18">[18]</a></sup> In ROS 1, launch files were written in XML.<sup><a href="#ref-19">[19]</a></sup>
@@ -370,6 +377,7 @@ def generate_launch_description():
                             </div>
 
                             <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">B. Gerkey, &ldquo;Why ROS 2?,&rdquo; <em>ROS 2 Design</em>, Open Robotics, written June 2014, last modified May 2022. Available: <a href="https://design.ros2.org/articles/why_ros2.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/why_ros2.html</a>.</li>
                                 <li id="ref-2">W. Woodall, &ldquo;ROS on DDS,&rdquo; <em>ROS 2 Design</em>, Open Robotics, written June 2014, last modified July 2019. Available: <a href="https://design.ros2.org/articles/ros_on_dds.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/ros_on_dds.html</a>.</li>
