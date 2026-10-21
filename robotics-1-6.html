@@ -8,7 +8,7 @@
         <title>1.6 Robot Anatomy and Coordinate Frames — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="How an industrial arm is built: joints, degrees of freedom, the work envelope, coordinate frames, the tool center point, and how a controller interpolates joint and straight-line moves." />
+        <meta name="description" content="How an industrial arm is built and measured: joints and degrees of freedom, gears and datasheets, accuracy versus repeatability, coordinate frames and the TCP, a worked kinematics example, singularities and blended moves." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="1.6 Robot Anatomy and Coordinate Frames — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="How an industrial arm is built: joints, degrees of freedom, the work envelope, coordinate frames, the tool center point, and how a controller interpolates joint and straight-line moves." />
+        <meta property="og:description" content="How an industrial arm is built and measured: joints and degrees of freedom, gears and datasheets, accuracy versus repeatability, coordinate frames and the TCP, a worked kinematics example, singularities and blended moves." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-1-6.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="1.6 Robot Anatomy and Coordinate Frames, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="1.6 Robot Anatomy and Coordinate Frames — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="How an industrial arm is built: joints, degrees of freedom, the work envelope, coordinate frames, the tool center point, and how a controller interpolates joint and straight-line moves." />
+        <meta name="twitter:description" content="How an industrial arm is built and measured: joints and degrees of freedom, gears and datasheets, accuracy versus repeatability, coordinate frames and the TCP, a worked kinematics example, singularities and blended moves." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -137,25 +137,123 @@
 
                             <h2 class="article-section-title">01. Links and joints</h2>
                             <p>
-                                A robot arm is a chain of rigid <em>links</em> connected by motorized <em>joints</em>. There are two kinds of joint:
+                                A robot arm is a chain of rigid <em>links</em> connected by motorized <em>joints</em>. Industrial arms almost always use two kinds of joint:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Revolute (rotary):</span> the link rotates about the joint axis, like an elbow.</li>
                                 <li class="article-spec-item"><span class="spec-label">Prismatic (linear):</span> the link slides along the joint axis, like a drawer. The up-and-down axis of a SCARA robot is an example.</li>
                             </ul>
                             <p>
-                                Each joint adds one <em>degree of freedom</em> (DOF). Data sheets call the joints <em>axes</em>, numbered from the base outward.
+                                Each of these joints has one <em>degree of freedom</em> (DOF): one number, an angle or a distance, describes its position. Other joint types allow more motion. A <em>helical</em> (screw) joint has 1 DOF, because turning it also moves it along its axis. <em>Cylindrical</em> and <em>universal</em> joints have 2, and a <em>spherical</em> (ball) joint has 3. These appear in parallel robots, but the motorized joints of a typical industrial arm are all 1-DOF, so for an arm each joint adds one degree of freedom.
+                            </p>
+                            <p>
+                                Data sheets call the joints <em>axes</em>, numbered from the base outward.
                             </p>
 
-                            <h2 class="article-section-title">02. Why six axes?</h2>
+                            <h2 class="article-section-title">02. Counting degrees of freedom: Gr&uuml;bler&rsquo;s formula</h2>
+                            <p>
+                                Closed loops, where links connect back to each other, need a formula. Lynch and Park&rsquo;s <em>Modern Robotics</em> gives Gr&uuml;bler&rsquo;s formula:
+                            </p>
+                            <p>
+                                DOF = m(N &minus; 1 &minus; J) + &sum; f<sub>i</sub>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">m:</span> the freedoms of one free rigid body, 3 for a mechanism that moves in a plane and 6 for one that moves in space.</li>
+                                <li class="article-spec-item"><span class="spec-label">N:</span> the number of links, <em>including the ground</em> (the fixed base counts as a link).</li>
+                                <li class="article-spec-item"><span class="spec-label">J:</span> the number of joints.</li>
+                                <li class="article-spec-item"><span class="spec-label">f<sub>i</sub>:</span> the freedoms of joint <em>i</em> (1 for revolute, 3 for spherical, and so on).</li>
+                            </ul>
+                            <p>
+                                Every link starts with m freedoms, and every joint takes some away (a revolute joint in space removes 5 of 6). Some examples:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col">Mechanism</th><th scope="col">m</th><th scope="col">N</th><th scope="col">J</th><th scope="col">&sum; f<sub>i</sub></th><th scope="col">DOF</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Planar arm with 3 revolute joints</td><td>3</td><td>4</td><td>3</td><td>3</td><td>3(4&minus;1&minus;3) + 3 = 3</td></tr>
+                                    <tr><td>Four-bar linkage (a closed loop)</td><td>3</td><td>4</td><td>4</td><td>4</td><td>3(4&minus;1&minus;4) + 4 = 1</td></tr>
+                                    <tr><td>Six-axis industrial arm (6 revolute joints)</td><td>6</td><td>7</td><td>6</td><td>6</td><td>6(7&minus;1&minus;6) + 6 = 6</td></tr>
+                                    <tr><td>SCARA (revolute, revolute, prismatic, revolute)</td><td>6</td><td>5</td><td>4</td><td>4</td><td>6(5&minus;1&minus;4) + 4 = 4</td></tr>
+                                    <tr><td>Stewart platform (a parallel robot)</td><td>6</td><td>14</td><td>18</td><td>36</td><td>6(14&minus;1&minus;18) + 36 = 6</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                The formula assumes the joint constraints are independent. When they are not, it can be wrong: <em>Modern Robotics</em> shows a linkage where it gives 0 but the mechanism still moves with 1 DOF.
+                            </p>
+
+                            <h2 class="article-section-title">03. Why six axes?</h2>
                             <p>
                                 A rigid object in three-dimensional space has six degrees of freedom: three for its position (x, y, z) and three for its orientation (rotation about each of those directions). To place a tool at a chosen position <em>and</em> point it in a chosen direction, the arm generally needs at least six joints. That is why the typical industrial arm is a six-axis robot with six rotary joints.
                             </p>
                             <p>
-                                Roughly speaking, the first three axes (base, shoulder, elbow) decide where the wrist is, and the last three axes form the <em>wrist</em>, which turns the tool in roll, pitch and yaw. A robot with fewer axes cannot reach every orientation. A four-axis SCARA robot, for example, can only turn its tool about the vertical axis.
+                                Roughly speaking, the first three axes decide where the wrist is, and the last three form the <em>wrist</em>, three rotations that set the tool&rsquo;s orientation. Vendors name the axes differently:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">ABB (IRB 1200):</span> axis 1 &ldquo;rotation,&rdquo; axes 2 and 3 &ldquo;arm,&rdquo; axis 4 &ldquo;wrist,&rdquo; axis 5 &ldquo;bend&rdquo; and axis 6 &ldquo;turn.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label">FANUC (LR Mate 200iD):</span> J1 to J6.</li>
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots (UR5e):</span> Base, Shoulder, Elbow, Wrist 1, Wrist 2 and Wrist 3.</li>
+                            </ul>
+                            <p>
+                                A robot with fewer axes cannot reach every orientation. A four-axis SCARA robot, for example, can only turn its tool about the vertical axis.
                             </p>
 
-                            <h2 class="article-section-title">03. End effector and workspace</h2>
+                            <h2 class="article-section-title">04. Inside a joint: motors and reducers</h2>
+                            <p>
+                                Each joint is driven by an electric servo motor. A small motor spins fast but has little torque, so it drives the joint through a <em>reducer</em>, a gearbox that trades speed for torque. Robot reducers must have almost no <em>backlash</em>, the small play in a gear train that lets the output wiggle without the motor moving. Two families dominate:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">RV (cycloidal) reducers:</span> Nabtesco says its RV gear, introduced in 1985, is used by most major industrial robot makers. In its RS series, backlash is 1.0 to 1.5 arc-minutes and gear ratios run from 65.4 to 240. Their high stiffness suits the heavily loaded main axes.</li>
+                                <li class="article-spec-item"><span class="spec-label">Strain-wave (harmonic) gears:</span> compact, hollow-shaft gear units. Harmonic Drive describes using them on the base and shoulder axes of six-axis robots, where the application &ldquo;requires zero backlash gears with high torque capacity, high torsional stiffness, and excellent repeatability.&rdquo;</li>
+                            </ul>
+                            <p>
+                                <span class="spec-label">Why an arc-minute matters.</span> One arc-minute is 1/60 of a degree:
+                            </p>
+                            <pre class="article-code"><code>1 arc-min = (1/60)&deg; = &pi; / 10,800 rad &asymp; 0.000291 rad
+tool error &asymp; arm length &times; angle
+           &asymp; 0.7 m &times; 0.000291 rad &asymp; 0.000204 m &asymp; 0.20 mm</code></pre>
+                            <p>
+                                So 1 arc-minute at the base of a 0.7 m arm moves the tool about 0.2 mm, ten times the 0.02 mm repeatability ABB quotes for its 0.7 m IRB 1200 (section 05). Main-axis reducers need about 1 arc-minute of backlash or less, and good repeatability also depends on the encoders and servo control.
+                            </p>
+
+                            <h2 class="article-section-title">05. Reading a datasheet</h2>
+                            <p>
+                                Here are three small six-axis robots, as their makers describe them:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col">Specification</th><th scope="col">ABB IRB 1200-7/0.7</th><th scope="col">FANUC LR Mate 200iD</th><th scope="col">Universal Robots UR5e</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Payload</td><td>7 kg</td><td>7 kg</td><td>5 kg</td></tr>
+                                    <tr><td>Reach</td><td>700 mm</td><td>717 mm</td><td>850 mm</td></tr>
+                                    <tr><td>Pose repeatability (ISO 9283)</td><td>0.02 mm</td><td>&plusmn;0.01 mm</td><td>&plusmn;0.03 mm</td></tr>
+                                    <tr><td>Robot mass</td><td>52 kg</td><td>25 kg</td><td>20.7 kg (with cable)</td></tr>
+                                    <tr><td>Axis 1 range</td><td>+170&deg; to &minus;170&deg;</td><td>340&deg; total</td><td>&plusmn;360&deg;</td></tr>
+                                    <tr><td>Axis 1 top speed</td><td>288&deg;/s</td><td>450&deg;/s</td><td>&plusmn;180&deg;/s</td></tr>
+                                    <tr><td>Axis 6 top speed</td><td>600&deg;/s</td><td>1,000&deg;/s</td><td>&plusmn;180&deg;/s</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Every UR5e joint turns &plusmn;360&deg;, while the industrial arms have different limits and faster speeds axis by axis. The UR5e carries about 24% of its own mass (5 &divide; 20.7), the IRB 1200 about 13% (7 &divide; 52).
+                            </p>
+
+                            <h2 class="article-section-title">06. Accuracy versus repeatability (ISO 9283)</h2>
+                            <p>
+                                The standard ISO 9283 defines how robot performance is measured. Two terms are easy to mix up:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Pose accuracy (AP):</span> command the robot to the same pose many times and average where it actually goes. AP is the distance between the commanded position and that average position. It tells you how close the robot gets to where you <em>asked</em> it to go.</li>
+                                <li class="article-spec-item"><span class="spec-label">Pose repeatability (RP):</span> how tightly the attained positions cluster around their own average, whether or not that average is in the right place. ISO 9283 computes it as the mean distance from that average plus three standard deviations.</li>
+                            </ul>
+                            <p>
+                                Think of darts: a tight group far from the bullseye is repeatable but not accurate. In the standard test, summarized by Hexagon, the robot carries its full rated load and visits five points in a test cube 30 times each.
+                            </p>
+                            <p>
+                                Datasheets like the three in section 05 quote <em>repeatability</em>, not accuracy. As RoboDK puts it, &ldquo;industrial robots are highly repeatable but not accurate,&rdquo; and their accuracy can be improved through calibration; most makers quote accuracy only for a calibrated robot. That is one reason points taught on the real robot, or work objects re-taught in the real cell, beat coordinates typed in from a drawing.
+                            </p>
+
+                            <h2 class="article-section-title">07. End effector and workspace</h2>
                             <p>
                                 The <em>end effector</em> is the tool mounted on the wrist flange: a gripper or vacuum cup for picking parts, a spot-welding gun, an arc-welding torch. Changing the end effector changes the job.
                             </p>
@@ -163,15 +261,15 @@
                                 The <em>workspace</em> (often called the <em>work envelope</em> in industry) is the region the end effector can reach. Near its edges the robot can reach a point only with a limited range of tool orientations, so important work is placed well inside it.
                             </p>
 
-                            <h2 class="article-section-title">04. Coordinate frames</h2>
+                            <h2 class="article-section-title">08. Coordinate frames</h2>
                             <p>
-                                A position such as &ldquo;x = 500 mm&rdquo; only means something once you say where it is measured from. Controllers use several coordinate frames (ABB&rsquo;s names below; other vendors use similar ones):
+                                A position such as &ldquo;x = 500 mm&rdquo; only means something once you say where it is measured from. Controllers use several coordinate frames, arranged as parents and children with the world frame at the top (ABB&rsquo;s names below; other vendors use similar ideas under other names):
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">World frame:</span> a fixed frame for the whole cell.</li>
-                                <li class="article-spec-item"><span class="spec-label">Base frame:</span> fixed at the base of the robot.</li>
+                                <li class="article-spec-item"><span class="spec-label">Base frame:</span> fixed at the base of the robot. By default it coincides with the world frame.</li>
                                 <li class="article-spec-item"><span class="spec-label">Tool frame and TCP:</span> the <em>tool center point</em> (TCP) is the working point of the tool, such as the tip of a welding wire or the center between gripper fingers. Every ABB robot has a predefined tool, <code>tool0</code>, whose TCP sits at the tool mounting flange. For a real tool you define a new tool frame so the controller knows where its tip is.</li>
-                                <li class="article-spec-item"><span class="spec-label">Work object (user frame):</span> a frame attached to the fixture or workpiece. In ABB robots it consists of a user frame and an object frame, and all program targets are measured relative to it. The default work object, <code>wobj0</code>, coincides with the robot&rsquo;s base frame.</li>
+                                <li class="article-spec-item"><span class="spec-label">Work object (user frame):</span> a frame attached to the fixture or workpiece. In ABB robots it consists of a user frame and an object frame (the object frame is a child of the user frame), and all program targets are measured relative to it. The default work object, <code>wobj0</code>, coincides with the robot&rsquo;s base frame.</li>
                             </ul>
                             <p>
                                 Defining frames is what makes a program reusable. If the fixture is placed a little differently in the real cell than in simulation, or moved to another spot, you re-teach the work object and every target moves with it; the program itself does not change.
@@ -185,7 +283,36 @@
                                 <figcaption>The three frames you set up when programming an arm: the base frame at the robot&rsquo;s foot, the tool frame at the TCP, and the work object on the fixture. Targets are measured from the work object.</figcaption>
                             </figure>
 
-                            <h2 class="article-section-title">05. Joint space, Cartesian space and kinematics</h2>
+                            <p>
+                                <span class="spec-label">What a target stores.</span> In ABB&rsquo;s RAPID language a Cartesian target is a <code>robtarget</code>. Besides external axes, it stores:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">trans:</span> x, y, z, the position of the TCP.</li>
+                                <li class="article-spec-item"><span class="spec-label">rot:</span> four numbers, q1 to q4, giving the orientation as a <em>quaternion</em>, a compact way to store a 3D rotation.</li>
+                                <li class="article-spec-item"><span class="spec-label">robconf:</span> the <em>configuration data</em> (confdata) that picks one arm configuration when several could reach the same pose. The fields cf1, cf4 and cf6 give the quarter-turn &ldquo;quadrant&rdquo; that axes 1, 4 and 6 are in: &minus;1 means between &minus;90&deg; and 0&deg;, 0 means between 0&deg; and +90&deg;, and 1 means between +90&deg; and +180&deg;.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">09. Teaching a TCP: the 4-point method</h2>
+                            <p>
+                                The controller knows exactly where its flange is, but not where the tip of your tool is. A common way to find out is the <em>4-point method</em>, described for a KUKA robot in a University of Angers lab handout:
+                            </p>
+                            <ol>
+                                <li>Fix a sharp reference point in the cell.</li>
+                                <li>Jog the robot until the tool tip touches the point, and record it.</li>
+                                <li>Touch the same point again with the wrist in a clearly different orientation. Repeat until you have four touches.</li>
+                                <li>The controller computes the tool tip&rsquo;s x, y, z offset from the flange.</li>
+                            </ol>
+                            <p>
+                                Why it works: for each touch <em>i</em>, forward kinematics gives the flange orientation R<sub>i</sub> and position p<sub>i</sub>. The unknown tip offset <strong>t</strong>, measured in flange coordinates, must land on the same fixed point P every time:
+                            </p>
+                            <pre class="article-code"><code>R1&middot;t + p1 = P
+R2&middot;t + p2 = P   (and so on for touches 3 and 4)
+subtract pairs:  (R1 &minus; R2)&middot;t = p2 &minus; p1</code></pre>
+                            <p>
+                                Subtracting pairs removes P and leaves linear equations in <strong>t</strong>, solved by least squares. If the orientations are too similar, the R<sub>i</sub> are nearly equal, their differences are close to zero and small touching errors ruin the answer. That is why the orientations must differ a lot.
+                            </p>
+
+                            <h2 class="article-section-title">10. Joint space, Cartesian space and kinematics</h2>
                             <p>
                                 In <em>joint space</em> you describe the robot by the angle of every joint. In <em>Cartesian space</em> (task space) you give the position and orientation of the TCP in some frame. Kinematics converts between them:
                             </p>
@@ -194,10 +321,51 @@
                                 <li class="article-spec-item"><span class="spec-label">Inverse kinematics:</span> from a desired tool pose, calculate the joint angles that achieve it. This is harder: there may be several solutions (for example elbow up or elbow down) or none at all if the pose is out of reach.</li>
                             </ul>
                             <p>
-                                The controller does this for you: given a pose, a Universal Robots <code>movej</code> uses inverse kinematics to find the joint positions.
+                                The controller does this for you: given a pose, a Universal Robots <code>movej</code> uses inverse kinematics to find the joint positions. A small example shows what it is doing.
+                            </p>
+                            <p>
+                                <span class="spec-label">Worked example: a two-link arm.</span> Take a planar arm with two revolute joints, link lengths L<sub>1</sub> = 0.4 m and L<sub>2</sub> = 0.3 m. These are the standard planar two-link equations found in <em>Modern Robotics</em> (chapters 4 and 6); the numbers were worked for this lesson.
+                            </p>
+                            <p>
+                                <em>Forward kinematics</em>, with &theta;<sub>1</sub> = 30&deg; and &theta;<sub>2</sub> = 45&deg;:
+                            </p>
+                            <pre class="article-code"><code>x = L1&middot;cos &theta;1 + L2&middot;cos(&theta;1 + &theta;2) = 0.4&middot;0.8660 + 0.3&middot;0.2588 = 0.4241 m
+y = L1&middot;sin &theta;1 + L2&middot;sin(&theta;1 + &theta;2) = 0.4&middot;0.5000 + 0.3&middot;0.9659 = 0.4898 m
+tool angle &phi; = &theta;1 + &theta;2 = 75&deg;</code></pre>
+                            <p>
+                                <em>Inverse kinematics</em>: now start from the point (0.4241, 0.4898) and work back to the angles.
+                            </p>
+                            <pre class="article-code"><code>cos &theta;2 = (x&sup2; + y&sup2; &minus; L1&sup2; &minus; L2&sup2;) / (2&middot;L1&middot;L2)
+        = (0.4197 &minus; 0.16 &minus; 0.09) / 0.24 = 0.7071   so &theta;2 = +45&deg; or &minus;45&deg;
+
+&theta;1 = atan2(y, x) &minus; atan2(L2&middot;sin &theta;2, L1 + L2&middot;cos &theta;2)
+
+Solution A (&theta;2 = +45&deg;): &theta;1 = 49.11&deg; &minus; 19.11&deg; = 30.00&deg;
+Solution B (&theta;2 = &minus;45&deg;): &theta;1 = 49.11&deg; + 19.11&deg; = 68.23&deg;</code></pre>
+                            <p>
+                                Solution A recovers the starting angles. In Solution B the elbow sits on the other side of the line from base to tip. These are the &ldquo;elbow down&rdquo; and &ldquo;elbow up&rdquo; solutions, and they are why ABB stores confdata in every <code>robtarget</code>.
+                            </p>
+                            <p>
+                                The equations also show the workspace. This arm can reach any point between 0.1 m (|L<sub>1</sub> &minus; L<sub>2</sub>|) and 0.7 m (L<sub>1</sub> + L<sub>2</sub>) from its base, a ring. If the formula gives |cos &theta;<sub>2</sub>| &gt; 1, the point is out of reach and there is no solution. At &theta;<sub>2</sub> = 0, with the arm fully stretched, the two solutions merge into one. That is a singularity.
+                            </p>
+                            <p>
+                                For real arms, engineers describe each link with four <em>Denavit&ndash;Hartenberg (DH) parameters</em> and multiply one transform per link; for this arm, that gives the same x and y as above.
                             </p>
 
-                            <h2 class="article-section-title">06. Motion types</h2>
+                            <h2 class="article-section-title">11. Singularities</h2>
+                            <p>
+                                A <em>singularity</em> is a pose where a small tool motion can demand very fast joint motion. Universal Robots describes three families:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Outer workspace limit:</span> the arm is stretched to the edge of its reach. Most positions can still be reached, but with restrictions on tool orientation. The two-link example at &theta;<sub>2</sub> = 0 is this case.</li>
+                                <li class="article-spec-item"><span class="spec-label">Inner workspace limit:</span> the tool is in the column directly above or below the base, where a slow tool speed can need a very fast rotation of the base joint.</li>
+                                <li class="article-spec-item"><span class="spec-label">Wrist alignment:</span> on a UR robot, Wrist 2 at 0&deg; or 180&deg;. FANUC notes that singularities happen &ldquo;especially when J5 is at zero.&rdquo;</li>
+                            </ul>
+                            <p>
+                                Remedies are practical: rearrange the cell, offset the tool, mount the robot differently, or use a joint move with joint angles instead of a linear move.
+                            </p>
+
+                            <h2 class="article-section-title">12. Motion types and blending</h2>
                             <p>
                                 A move instruction also says <em>how</em> to get there (the interpolation). ABB (<code>MoveJ</code>, <code>MoveL</code>, <code>MoveC</code>) and Universal Robots (<code>movej</code>, <code>movel</code>, <code>movec</code>) offer the same three basic types:
                             </p>
@@ -212,11 +380,16 @@
                                 </tbody>
                             </table>
                             <p>
-                                Linear and circular moves need inverse kinematics along the whole path, so they can fail near <em>singularities</em>, poses where a small tool motion needs very fast joint motion. A joint move to joint angles is not affected. Use joint moves where the path does not matter, and linear or circular moves where it does.
+                                Linear and circular moves need inverse kinematics along the whole path, so they can fail near singularities. A joint move to joint angles is not affected. A joint move to a Cartesian target still needs inverse kinematics once, at the target, which is where confdata comes in. Use joint moves where the path does not matter, and linear or circular moves where it does.
                             </p>
                             <p>
-                                <span class="spec-label">Blending:</span> stopping exactly at every point wastes time. A <em>zone</em> (ABB&rsquo;s <code>zonedata</code>, such as <code>z50</code>) or <em>blend radius</em> (the <code>r</code> parameter in URScript) lets the robot round the corner without stopping. Use a stop point (ABB&rsquo;s <code>fine</code>, or <code>r=0</code>) where accuracy matters, such as the moment a gripper closes.
+                                <span class="spec-label">Blending:</span> stopping exactly at every point wastes time. A <em>zone</em> or <em>blend radius</em> lets the robot round the corner without stopping. Use a stop point where accuracy matters, such as the moment a gripper closes.
                             </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">ABB:</span> <code>fine</code> stops exactly at the point. A <code>zonedata</code> value such as <code>z50</code> makes it a fly-by point. Zonedata holds separate sizes for the TCP zone (in mm), tool reorientation and external axes.</li>
+                                <li class="article-spec-item"><span class="spec-label">FANUC:</span> <code>FINE</code> fully stops at the position; <code>CNT</code> blends motion. CNT is a scale from 0 to 100, not a distance, and the value changes how much corners are rounded and how closely the point is reached.</li>
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots:</span> the blend radius <code>r</code> in URScript; <code>r=0</code> stops at the point.</li>
+                            </ul>
 
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fas fa-lightbulb"></i> Connecting to lesson 2.3</div>
@@ -229,11 +402,12 @@
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
                                     <li>Hold your arm out and count its degrees of freedom from shoulder to wrist. Which joints are revolute?</li>
+                                    <li>For the two-link arm in section 10, find the tool position for &theta;<sub>1</sub> = 0&deg;, &theta;<sub>2</sub> = 90&deg;. Then use the inverse kinematics equations to find both joint solutions for that point.</li>
                                     <li>In the RAPID example from 2.3, name the tool and the work object it uses, and say what would change if the part moved 5 cm.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">07. References</h2>
+                            <h2 class="article-section-title">13. References</h2>
                             <ol class="article-spec-list">
                                 <li>K. M. Lynch and F. C. Park, <em>Modern Robotics: Mechanics, Planning, and Control</em>, Cambridge University Press, 2017 (free preprint, chapters 1, 2, 4 and 6). <a href="https://hades.mech.northwestern.edu/images/2/25/MR-v2.pdf" target="_blank" rel="noopener noreferrer">hades.mech.northwestern.edu/images/2/25/MR-v2.pdf</a>.</li>
                                 <li>Association for Advancing Automation (A3), &ldquo;Six-Axis Robot&rdquo; (glossary). <a href="https://www.automate.org/glossary/six-axis-robot" target="_blank" rel="noopener noreferrer">automate.org/glossary/six-axis-robot</a>.</li>
@@ -245,6 +419,19 @@
                                 <li>ABB Robotics, &ldquo;RsMoveInstruction Class&rdquo; (joint, linear and circular motion types), RobotStudio API. <a href="https://developercenter.robotstudio.com/api/robotstudio/api/ABB.Robotics.RobotStudio.Stations.RsMoveInstruction.html" target="_blank" rel="noopener noreferrer">developercenter.robotstudio.com/api/robotstudio/api/ABB.Robotics.RobotStudio.Stations.RsMoveInstruction.html</a>.</li>
                                 <li>Universal Robots, URScript manual (SW 5.24): &ldquo;movej,&rdquo; &ldquo;movel&rdquo; and &ldquo;movec.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-scriptmanual/all_scripts/movej_qa14v105t0r.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/.../movej</a>, <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_20/Content/prod-scriptmanual/G5/movel_posea12v025t.htm" target="_blank" rel="noopener noreferrer">.../movel</a>, <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-scriptmanual/all_scripts/movec_pose_via_pose_toa1.htm" target="_blank" rel="noopener noreferrer">.../movec</a>.</li>
                                 <li>Universal Robots, &ldquo;What is a singularity?&rdquo; <a href="https://www.universal-robots.com/articles/ur/application-installation/what-is-a-singularity/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/application-installation/what-is-a-singularity</a>.</li>
+                                <li>K. M. Lynch and F. C. Park, <em>Modern Robotics</em>, section 2.2, &ldquo;Degrees of freedom of a robot&rdquo; (Gr&uuml;bler&rsquo;s formula), Northwestern University online edition, 2017. <a href="https://modernrobotics.northwestern.edu/?p=30" target="_blank" rel="noopener noreferrer">modernrobotics.northwestern.edu/?p=30</a>.</li>
+                                <li>ABB Robotics, &ldquo;IRB 1200&rdquo; product datasheet, 2022. <a href="https://library.e.abb.com/public/a2343909f52f463794af0380c8525df7/IRB1200%20datasheet_220308.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/.../IRB1200 datasheet_220308.pdf</a>.</li>
+                                <li>FANUC, &ldquo;LR Mate 200iD&rdquo; datasheet. <a href="https://cdn.craft.cloud/6166486b-1eb4-43d5-990c-ea573de4e750/assets/files/data-sheets/lr-mate-200id-datasheet.pdf" target="_blank" rel="noopener noreferrer">cdn.craft.cloud/.../lr-mate-200id-datasheet.pdf</a>.</li>
+                                <li>Universal Robots, &ldquo;UR5e&rdquo; datasheet (online manual). <a href="https://www.universal-robots.com/manuals/latest/en/datasheets/ur5e/" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/latest/en/datasheets/ur5e</a>.</li>
+                                <li>Nabtesco, &ldquo;Precision Reduction Gear RV: RS series&rdquo; catalog. <a href="https://en.nabtesco.de/fileadmin/05_downloads/03_kataloge/RS-series_EN.pdf" target="_blank" rel="noopener noreferrer">en.nabtesco.de/.../RS-series_EN.pdf</a>.</li>
+                                <li>Harmonic Drive, application note on gear units for the primary (base and shoulder) axes of six-axis robots. <a href="https://www.harmonicdrive.net/_hd/content/ApplicationHandbooks/6AxisPrimaryAxes.pdf" target="_blank" rel="noopener noreferrer">harmonicdrive.net/.../6AxisPrimaryAxes.pdf</a>.</li>
+                                <li>Hexagon, &ldquo;ISO 9283 Basics&rdquo; (summary of ISO 9283 performance criteria and test methods). <a href="https://documentation-be.hexagon.com/bundle/04_ISO9283_Basics/raw/resource/enus/04_ISO9283_Basics.pdf" target="_blank" rel="noopener noreferrer">documentation-be.hexagon.com/.../04_ISO9283_Basics.pdf</a>.</li>
+                                <li>RoboDK, &ldquo;Robot performance testing (ISO9283)&rdquo; documentation. <a href="https://robodk.com/doc/en/Robot-Validation-ISO9283.html" target="_blank" rel="noopener noreferrer">robodk.com/doc/en/Robot-Validation-ISO9283.html</a>.</li>
+                                <li>FZI Research Center for Information Technology, &ldquo;ABB&rdquo; (robtarget, confdata and RAPID motion instructions), Robot Interface Proposal documentation. <a href="https://fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html" target="_blank" rel="noopener noreferrer">fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html</a>.</li>
+                                <li>University of Angers (LARIS), KUKA KR3 lab handout on the XYZ 4-point tool calibration method (in French). <a href="https://perso-laris.univ-angers.fr/~boimond/TP_2_Kuka_KR3_Position_outil_XYZ_4_points.pdf" target="_blank" rel="noopener noreferrer">perso-laris.univ-angers.fr/~boimond/TP_2_Kuka_KR3_Position_outil_XYZ_4_points.pdf</a>.</li>
+                                <li>FANUC America Tech Transfer, &ldquo;Singularity: what it is and how to avoid it.&rdquo; <a href="https://techtransfer.fanucamerica.com/tech-transfer/singularity-what-it-is-and-how-to-avoid-it" target="_blank" rel="noopener noreferrer">techtransfer.fanucamerica.com/tech-transfer/singularity-what-it-is-and-how-to-avoid-it</a>.</li>
+                                <li>ABB Robotics, &ldquo;ZoneData&rdquo; structure, FlexPendant SDK reference. <a href="https://developercenter.robotstudio.com/api/fpsdk/html/fb6df07f-0116-77ed-cd7f-7a5aab872b19.htm" target="_blank" rel="noopener noreferrer">developercenter.robotstudio.com/api/fpsdk/.../ZoneData</a>.</li>
+                                <li>FANUC America Tech Transfer, &ldquo;Termination types.&rdquo; <a href="https://techtransfer.fanucamerica.com/tech-transfer/termination-types" target="_blank" rel="noopener noreferrer">techtransfer.fanucamerica.com/tech-transfer/termination-types</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -280,8 +467,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.2" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/course-data.js?v=1.3" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

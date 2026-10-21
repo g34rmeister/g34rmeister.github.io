@@ -24,55 +24,12 @@ window.RISE_COURSE = {
 			handsOn: 'the Try it boxes ask you to classify real robots and trace the sense, think, act loop.',
 			summary: 'What robots are, where they came from, the main types, the skills to learn first, and where robots work.',
 			lessons: [
-				{
-					id: '1-1',
-					title: 'Definition of Robots', minutes: 2,
-					objectives: [
-						'Define a robot and explain why an industrial arm counts as one.',
-						'Explain where the word "robot" comes from.',
-						'Describe the sense, think, act loop.'
-					],
-					keyTerms: ['robot', 'R.U.R.', 'sensor', 'controller', 'actuator']
-				},
-				{
-					id: '1-2',
-					title: 'History and Evolution of Robots', minutes: 4,
-					objectives: [
-						'Name early automata and the idea of a stored program behind Jacquard\'s loom.',
-						'Place Unimate, SCARA, cobots and ROS on a timeline.',
-						'Trace how robots went from fixed arms to machines that move around.'
-					],
-					keyTerms: ['automaton', 'Jacquard loom', 'Unimate', 'cobot']
-				},
-				{
-					id: '1-3',
-					title: 'Types of Robots', minutes: 3,
-					objectives: [
-						'Tell apart industrial robots, cobots, mobile robots, SCARA robots and AGVs.',
-						'Explain how AGVs differ from autonomous mobile robots (AMRs), and when to pick each.'
-					],
-					keyTerms: ['industrial robot', 'cobot', 'mobile robot', 'SCARA', 'AGV', 'AMR']
-				},
-				{
-					id: '1-4',
-					title: 'Preliminary Requirements', minutes: 2,
-					objectives: [
-						'List the programming languages and math that robotics relies on.',
-						'Explain why assembly and networking basics are useful.',
-						'Adopt a test, adjust and retry mindset.'
-					],
-					keyTerms: ['Python', 'C++', 'assembly', 'TCP', 'UDP', 'Modbus TCP']
-				},
-				{
-					id: '1-5',
-					title: 'Common Applications of Robotics', minutes: 4,
-					objectives: [
-						'Give examples of robots in production, human interaction and exploration.',
-						'Explain how robots protect human lives in dangerous work, using the Mars, World Trade Center and Fukushima cases.'
-					],
-					keyTerms: ['service robot', 'Mars rover', 'AutoNav', 'search and rescue']
-				},
-				{"id": "1-6", "minutes": 6, "title": "Robot Anatomy and Coordinate Frames", "objectives": ["Distinguish revolute and prismatic joints and explain why six axes are needed to position and orient a tool.", "Explain what the tool center point, tool frame and work object are, and why defining frames makes a program reusable.", "Compare joint, linear and circular moves and describe what blending does."], "keyTerms": ["degree of freedom", "end effector", "workspace (work envelope)", "tool center point (TCP)", "work object (user frame)", "inverse kinematics", "linear interpolation (MoveL)", "blending (zone)"]}
+				{"id": "1-1", "minutes": 16, "title": "Definition of Robots", "objectives": ["Define a robot using ISO 8373:2021 and compare it with dictionary, RIA and sense-think-act definitions.", "Explain autonomy as a matter of degree and tell a robot from a robotic device.", "Explain where the words \"robot\" (Josef and Karel Čapek, R.U.R.) and \"robotics\" (Asimov) came from.", "Describe the sense, think, act loop and compare sense-plan-act, reactive and hybrid control architectures."], "keyTerms": ["robot", "ISO 8373", "autonomy", "robotic device", "industrial robot", "R.U.R.", "sensor", "controller", "actuator", "subsumption architecture"]},
+				{"id": "1-2", "minutes": 14, "title": "History and Evolution of Robots", "objectives": ["Describe early automata (Hero, al-Jazari, Su Song, Jaquet-Droz) and the stored-program idea behind Jacquard's loom and numerical control.", "Place Unimate, the Stanford Arm, the 1970s European and Japanese firsts, SCARA, cobots and ROS on a timeline.", "Trace how robots went from fixed arms to machines that move around, from Grey Walter's tortoises and Shakey to Kiva and humanoids.", "Quote the current installed base of industrial robots from IFR World Robotics 2026."], "keyTerms": ["automaton", "escapement", "Jacquard loom", "numerical control", "Unimate", "degree of freedom", "Stanford Arm", "SCARA", "cobot", "ROS"]},
+				{"id": "1-3", "minutes": 13, "title": "Types of Robots", "objectives": ["Classify an industrial robot by mechanical structure (articulated, SCARA, Cartesian, parallel/delta, cylindrical, polar) separately from its application.", "Read a robot spec sheet and compare payload, reach and repeatability across real models.", "Explain why ISO 10218:2025 speaks of collaborative applications and describe the four collaborative modes.", "Tell AGVs from AMRs by how they navigate, and place service robots and humanoids in the wider robot population."], "keyTerms": ["industrial robot", "articulated robot", "SCARA", "delta robot", "Cartesian robot", "repeatability", "cobot", "collaborative application", "AGV", "AMR", "mobile robot"]},
+				{"id": "1-4", "minutes": 12, "title": "Preliminary Requirements", "objectives": ["Apply the basic safety rules for working near an industrial robot: reduced teach speed, the enabling device and lockout/tagout.", "Explain where Python, C++ and vendor robot languages are used, and name the ROS 2 client libraries.", "Compute the forward kinematics of a planar two-link arm and connect it to trigonometry, matrices and derivatives.", "Plan a learning path using free resources, simulators and vendor training, treating assembly as optional enrichment."], "keyTerms": ["enabling device", "lockout/tagout", "Python", "C++", "rclpy", "forward kinematics", "Ohm's law", "Gazebo", "Modbus TCP", "assembly", "TCP", "UDP"]},
+				{"id": "1-5", "minutes": 13, "title": "Common Applications of Robotics", "objectives": ["Use IFR World Robotics figures to describe how many industrial robots are installed and operating, and which countries and industries use them most.", "Explain the difference between total robot numbers and robot density, using China and Korea as examples.", "Describe real applications in logistics, car plants, medicine, service, space and agriculture, and say what each case shows about current robot capabilities.", "Explain how robots protect human lives, using the Mars, World Trade Center and Fukushima cases, and why humanoids and AI foundation models are still early applications."], "keyTerms": ["industrial robot", "operational stock", "robot density", "service robot", "teleoperation", "humanoid robot", "foundation model", "Mars rover", "AutoNav", "search and rescue"]},
+				{"id": "1-6", "minutes": 14, "title": "Robot Anatomy and Coordinate Frames", "objectives": ["Distinguish joint types, count degrees of freedom with Grübler's formula, and explain why six axes are needed to position and orient a tool.", "Read a robot datasheet, explain how reducers affect precision, and tell pose accuracy from pose repeatability (ISO 9283).", "Explain the tool center point, tool frame and work object, how a TCP is taught with the 4-point method, and why defining frames makes a program reusable.", "Solve forward and inverse kinematics for a two-link arm, recognize singularities, and compare joint, linear and circular moves with blending."], "keyTerms": ["degree of freedom", "Grübler's formula", "reducer", "backlash", "pose repeatability", "tool center point (TCP)", "work object (user frame)", "inverse kinematics", "singularity", "blending (zone)", "end effector", "workspace (work envelope)", "linear interpolation (MoveL)"]}
 			]
 		},
 		{
@@ -311,7 +268,25 @@ window.RISE_COURSE = {
 				explanation: 'The signal delay is minutes long, so rovers like Perseverance use AutoNav to plan their own paths around hazards.'
 			},
 			{"lesson": "1-6", "question": "A fixture is moved slightly, and all program targets were defined relative to a work object on that fixture. What is the simplest fix?", "choices": ["Re-teach every target point in the program", "Re-teach the work object so all targets move with it", "Change tool0 to a new tool", "Switch every MoveL to MoveJ"], "answer": 1, "explanation": "Targets are measured relative to the work object, so re-teaching the work object moves every target with it and the program itself does not change."},
-			{"lesson": "1-6", "question": "Which move instruction makes the tool center point travel in a straight line in Cartesian space?", "choices": ["MoveJ / movej", "MoveL / movel", "MoveC / movec", "Any move with a zone such as z50"], "answer": 1, "explanation": "A linear move (MoveL / movel) moves the TCP in a straight line, while a joint move interpolates in joint space and the tool follows a curved path."}
+			{"lesson": "1-6", "question": "Which move instruction makes the tool center point travel in a straight line in Cartesian space?", "choices": ["MoveJ / movej", "MoveL / movel", "MoveC / movec", "Any move with a zone such as z50"], "answer": 1, "explanation": "A linear move (MoveL / movel) moves the TCP in a straight line, while a joint move interpolates in joint space and the tool follows a curved path."},
+			{"lesson": "1-1", "question": "Under ISO 8373:2021, what is a teleoperated remote manipulator that has no autonomy?", "choices": ["A service robot", "A robotic device", "An industrial robot", "A medical robot"], "answer": 1, "explanation": "ISO 8373 calls a mechanism built with robotic technology that does not meet every part of the robot definition a robotic device, and gives a teleoperated remote manipulator as an example."},
+			{"lesson": "1-1", "question": "Who suggested the word \"robot\" to Karel Čapek?", "choices": ["Isaac Asimov", "His brother, the painter Josef Čapek", "Joseph Engelberger", "George Devol"], "answer": 1, "explanation": "Karel first thought of \"labori\"; his brother Josef, a painter, suggested \"robots\" instead."},
+			{"lesson": "1-1", "question": "In Brooks's subsumption architecture, what happens to the lower layers when higher layers are added?", "choices": ["They are deleted", "They keep running, and higher layers can suppress their outputs", "They are replaced by a global world model", "They only run when the robot is idle"], "answer": 1, "explanation": "Brooks wrote that higher-level layers can subsume lower ones by suppressing their outputs, but lower levels continue to function as higher levels are added."},
+			{"lesson": "1-2", "question": "Willow Garage began developing ROS in 2007. When did the first release of ROS come out?", "choices": ["2005", "2007", "2009", "2012"], "answer": 2, "explanation": "Development started in 2007 and Willow Garage released ROS for the first time in 2009."},
+			{"lesson": "1-2", "question": "Which 1974 robot does the IFR describe as the first fully electric, microprocessor-controlled industrial robot?", "choices": ["Unimate", "KUKA FAMULUS", "ASEA IRB 6", "Cincinnati Milacron T3"], "answer": 2, "explanation": "The ASEA IRB 6 (Sweden, 1974) was the first fully electric, microprocessor-controlled industrial robot. FAMULUS (1973) was the first with six electromechanically driven axes, and the T3 was the first commercial minicomputer-controlled robot."},
+			{"lesson": "1-2", "question": "How many vehicles finished the first DARPA Grand Challenge in March 2004?", "choices": ["None", "One", "Five", "All of them"], "answer": 0, "explanation": "No vehicle finished in 2004; the best, CMU's Sandstorm, covered 7.32 miles. In 2005 Stanford's Stanley won."},
+			{"lesson": "1-3", "question": "Which term does the 2025 revision of ISO 10218 use in place of \"collaborative robot\"?", "choices": ["Cobot system", "Collaborative application", "Human-safe robot", "Power-limited manipulator"], "answer": 1, "explanation": "ISO 10218-1/-2:2025 speak of a collaborative application, because only the actual application, not the robot alone, can be confirmed as collaborative."},
+			{"lesson": "1-3", "question": "In which robot structure do the arms' links form a closed loop?", "choices": ["Articulated", "SCARA", "Parallel (delta)", "Cartesian"], "answer": 2, "explanation": "The IFR defines parallel or delta robots as arms whose links form a closed-loop structure, like the ABB IRB 360 FlexPicker."},
+			{"lesson": "1-3", "question": "How many axes does each arm of ABB's dual-arm YuMi (IRB 14000) have?", "choices": ["4", "6", "7", "14"], "answer": 2, "explanation": "YuMi has 7 axes on each arm, 14 in total, so not every cobot has the six-axis shape."},
+			{"lesson": "1-4", "question": "According to OSHA, how fast should a robot move while it is being programmed?", "choices": ["1,000 mm/s or less", "250 mm/s (10 inches per second) or less", "Its full rated speed", "There is no limit if the operator wears PPE"], "answer": 1, "explanation": "OSHA says speeds during programming should be 10 inches per second (250 mm/s) or less."},
+			{"lesson": "1-4", "question": "A planar two-link arm has L1 = L2 = 1 m, θ1 = 30° and θ2 = 60°. What is the x-coordinate of its tip?", "choices": ["0 m", "0.5 m", "0.866 m", "1.5 m"], "answer": 2, "explanation": "x = L1·cos θ1 + L2·cos(θ1 + θ2) = 0.866 + cos 90° = 0.866 m (and y = 1.5 m)."},
+			{"lesson": "1-4", "question": "How does the lesson recommend treating assembly language?", "choices": ["As the first language to learn", "As required for ROS 2", "As optional enrichment for understanding what the processor does", "As the language most robot jobs ask for"], "answer": 2, "explanation": "Assembly is not a prerequisite; C and C++ dominate embedded work, and assembly is mainly useful for understanding registers, timing and interrupts."},
+			{"lesson": "1-5", "question": "Which country had the highest robot density (robots per 10,000 manufacturing employees) in 2024, according to IFR?", "choices": ["China", "Republic of Korea", "Germany", "United States"], "answer": 1, "explanation": "Korea led with 1,220 robots per 10,000 manufacturing employees. China installs by far the most robots, but ranks 22nd for density because its factories also employ very many people."},
+			{"lesson": "1-5", "question": "How does the da Vinci surgical system work?", "choices": ["It performs whole operations autonomously", "A surgeon at a console controls the instruments and the robot follows", "It only delivers medicine around the hospital", "It is programmed once and then repeats the same operation on every patient"], "answer": 1, "explanation": "da Vinci is a teleoperated robot: the surgeon controls the instruments from a console, and the robot does not operate on its own."},
+			{"lesson": "1-5", "question": "What did the rescue robots at the World Trade Center find in 2001?", "choices": ["Several survivors trapped in voids", "Nothing at all, because they never entered the rubble", "No survivors, but several sets of human remains, some spotted only later on video", "Only structural cracks in nearby buildings"], "answer": 2, "explanation": "The robots found no survivors, but did find several sets of human remains. Some were missed by the people watching live and were spotted only when the video was reviewed."},
+			{"lesson": "1-6", "question": "Using Grübler's formula, how many degrees of freedom does a planar four-bar linkage (4 links including ground, 4 revolute joints) have?", "choices": ["0", "1", "2", "3"], "answer": 1, "explanation": "DOF = 3(4 − 1 − 4) + 4 = 1, so a four-bar linkage moves with a single degree of freedom."},
+			{"lesson": "1-6", "question": "A datasheet lists \"±0.03 mm (ISO 9283)\" for a robot. What does this figure describe?", "choices": ["Absolute accuracy: how close the robot gets to a commanded position", "Pose repeatability: how tightly repeated moves to the same pose cluster", "The maximum tool speed", "The backlash of the base reducer"], "answer": 1, "explanation": "Datasheets quote pose repeatability. Absolute accuracy is usually worse and can be improved by calibration."},
+			{"lesson": "1-6", "question": "For a two-link planar arm, a reachable point inside the workspace (not at its edge) usually has how many inverse kinematics solutions?", "choices": ["None", "Exactly one", "Two, elbow up and elbow down", "Infinitely many"], "answer": 2, "explanation": "cos θ2 gives θ2 = ±value, so there are two solutions, elbow up and elbow down. They merge into one only at the workspace edge, where θ2 = 0."}
 		],
 		2: [
 			{"lesson": "2-1", "question": "In ABB's Wizard Easy Programming, what happens to the blocks a user snaps together on the FlexPendant?", "choices": ["The controller runs the blocks directly with no translation", "They are converted in real time into ABB's RAPID language", "They are uploaded to a cloud service that rewrites them in Python", "They are only a drawing of the program and must be retyped by hand"], "answer": 1, "explanation": "Wizard is built on the Blockly concept, and the blocks are converted in real time into RAPID, which the controller then runs."},
