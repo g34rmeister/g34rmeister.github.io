@@ -263,7 +263,7 @@ window.RISE_COURSE = {
 			{
 				lesson: '1-5',
 				question: 'Why can\'t Mars rovers be driven live with a joystick from Earth?',
-				choices: ['Rovers have no cameras', 'A radio signal takes roughly 3 to 22 minutes to reach Mars one way', 'Joysticks are not allowed by NASA', 'The rovers do not have motors'],
+				choices: ['Rovers have no cameras', 'A radio signal can take up to about 22 minutes to reach Mars one way', 'Joysticks are not allowed by NASA', 'The rovers do not have motors'],
 				answer: 1,
 				explanation: 'The signal delay is minutes long, so rovers like Perseverance use AutoNav to plan their own paths around hazards.'
 			},
