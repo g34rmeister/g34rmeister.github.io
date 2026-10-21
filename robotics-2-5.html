@@ -1,0 +1,534 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 2.5 End-of-Arm Tooling and I/O
+-->
+<html lang="en">
+    <head>
+        <title>2.5 End-of-Arm Tooling and I/O — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How to choose and size grippers, mount them and set payload, and program the digital I/O that opens a gripper, confirms a grip and talks to a PLC, in URScript and RAPID." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-2-5.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="2.5 End-of-Arm Tooling and I/O — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="How to choose and size grippers, mount them and set payload, and program the digital I/O that opens a gripper, confirms a grip and talks to a PLC, in URScript and RAPID." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-2-5.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="2.5 End-of-Arm Tooling and I/O, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="2.5 End-of-Arm Tooling and I/O — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="How to choose and size grippers, mount them and set payload, and program the digital I/O that opens a gripper, confirms a grip and talks to a PLC, in URScript and RAPID." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-programming.html">Chapter 2 &middot; Robot Programming</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">2.5 End-of-Arm Tooling and I/O</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+
+                            <h2 class="article-section-title">01. What the robot holds, and how it is told to hold it</h2>
+                            <p>
+                                On its own, a robot arm only carries a flange through space. The work is done by the <strong>end-of-arm tooling</strong> (EOAT), also called the end effector: a gripper, suction cups, a torch or a screwdriver. In <a href="robotics-2-3.html">lesson 2.3</a> you wrote pick-and-place programs in which a single line set a digital output to close a gripper and another line read an input to check for a part. This lesson looks at what sits behind those lines.
+                            </p>
+                            <p>
+                                Three questions run through the lesson. What can physically hold this part? What does the controller need to know about the tool that is bolted to it? And how does the program find out whether the tool actually did its job? The answers involve some mechanics, some configuration and a good deal of input/output (I/O) programming in URScript and ABB RAPID.
+                            </p>
+
+                            <h2 class="article-section-title">02. Choosing a gripper family</h2>
+                            <p>
+                                Gripper selection starts from the part: its material, porosity, mass, shape and fragility. It also depends on the utilities the cell has. Some cells have a compressed-air supply; others have only 24 V electrical power. A practical rule of thumb for a first choice:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Vacuum (suction cups):</span> Flat, smooth, non-porous parts such as sheet, panels and sealed boxes.</li>
+                                <li class="article-spec-item"><span class="spec-label">Parallel finger grippers:</span> Rigid parts such as machined components. Pneumatic fingers are inexpensive, fast and strong, but are usually either fully open or fully closed. Electric fingers offer programmable force and position, can report their state back to the controller, and need no compressed air.</li>
+                                <li class="article-spec-item"><span class="spec-label">Magnetic grippers:</span> Ferrous (steel) sheet and parts.</li>
+                                <li class="article-spec-item"><span class="spec-label">Soft grippers:</span> Food and irregular or fragile items that rigid fingers would bruise or crush.</li>
+                                <li class="article-spec-item"><span class="spec-label">Tool changers:</span> Cells that must handle several part types, each needing a different tool.</li>
+                            </ul>
+                            <p>
+                                This list is a starting heuristic, not a standard. A real selection checks the candidate gripper's datasheet against the actual part, and it pays to note which version of the datasheet a number came from. For example, Robotiq's 2019 Hand-E instruction manual and its current Hand-E product page give different grip-force and payload figures for the same gripper.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> This lesson concentrates on vacuum and finger grippers, which you are most likely to meet first.
+                            </p>
+
+                            <h2 class="article-section-title">03. Vacuum grippers: sizing the cups</h2>
+                            <p>
+                                A suction cup holds a part because the air pressure outside the cup is higher than the partial vacuum inside it. The holding force is the pressure difference multiplied by the effective suction area of the cup, before any safety factor is applied.<sup><a href="#ref-3">[3]</a></sup> For a round cup of diameter D, the area is A = &pi;(D/2)&sup2;.<sup><a href="#ref-4">[4]</a></sup> Schmalz's sizing method runs this backwards: from the part's mass, a safety factor, the vacuum level and the number of cups, it gives the cup diameter needed, with a friction coefficient added when the cup face is vertical and the part hangs on friction alone.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                The force a cup must supply is larger than the part's weight, because the robot accelerates. Robotiq gives the required holding force as F<sub>H</sub> = m &times; (g + a/&mu;) &times; S for a horizontal cup (the part is lifted from above) and F<sub>H</sub> = (m/&mu;) &times; (g + a) &times; S for a vertical cup. Here m is the part mass, g is gravitational acceleration, a is the robot's acceleration, &mu; is the friction coefficient between cup and part, and S is the safety factor.<sup><a href="#ref-5">[5]</a></sup> Robotiq recommends a safety factor of at least 1.5 for smooth parts, 2.0 for porous or oily parts, up to 4.0 when the cup face is vertical, and 2.5 or more for fast swinging or swivelling moves.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Worked example.</strong> A 2 kg box is picked from above with a horizontal cup. The robot accelerates at a = 5 m/s&sup2;, the friction coefficient is &mu; = 0.5 and the box is smooth, so S = 1.5. Using Robotiq's horizontal formula, F<sub>H</sub> = 2 &times; (9.81 + 5/0.5) &times; 1.5 = 2 &times; 19.81 &times; 1.5 &asymp; 59 N.<sup><a href="#ref-5">[5]</a></sup> To turn that into a cup size, assume, for this exercise only, that the vacuum generator holds a pressure difference of 60 kPa (a real design takes this from the generator's datasheet). The total cup area must then be at least 59 N &divide; 60,000 Pa &asymp; 9.8 &times; 10<sup>-4</sup> m&sup2;, or about 980 mm&sup2;. Split over two cups, that is about 490 mm&sup2; each, and solving A = &pi;(D/2)&sup2; gives D &asymp; 25 mm per cup.
+                            </p>
+                            <p>
+                                The vacuum itself comes either from an electric pump or from an <strong>ejector</strong> (a venturi device that creates vacuum from a flow of compressed air). Piab, an ejector maker, says ejectors give off no heat, start producing vacuum immediately and are easy to switch on and off for intermittent duty, while conceding that they consume a lot of compressed air.<sup><a href="#ref-6">[6]</a></sup> How the ejector is built matters for that air bill. In a stamping study at DaimlerChrysler, multistage ejectors used 1.1 SCFM per cycle, up to 78% less than single-stage generators, and an air-saving check valve that shuts off the air once vacuum is reached reduced consumption further.<sup><a href="#ref-7">[7]</a></sup> Piab also claims up to 50% lower compressed-air cost for its compact P2010 multistage ejector, which runs from a 26 psi feed.<sup><a href="#ref-8">[8]</a></sup> Treat these as vendor figures: no independent comparison of ejectors and pumps was found for this lesson.
+                            </p>
+
+                            <h2 class="article-section-title">04. Finger grippers and soft grippers</h2>
+                            <p>
+                                Finger grippers hold a part either by friction (squeezing it) or by form (the fingers wrap around a shape so the part cannot slip out). Datasheets therefore often quote two payloads. The OnRobot RG2 electric gripper, for example, is rated for 2 kg with a force-fit grip and 5 kg with a form-fit grip.<sup><a href="#ref-9">[9]</a></sup> Its other datasheet figures show the trade-offs an electric gripper exposes to the programmer:<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Stroke and force:</span> 110 mm total stroke; grip force adjustable from 3 to 40 N (&plusmn;25%).</li>
+                                <li class="article-spec-item"><span class="spec-label">Speed:</span> 38 to 127 mm/s, linearly proportional to the force setting, so a gentle grip is also a slower one.</li>
+                                <li class="article-spec-item"><span class="spec-label">Repeatability and build:</span> 0.2 mm repeatability, IP54, 0.78 kg, powered from 24 V at 70 to 600 mA.</li>
+                                <li class="article-spec-item"><span class="spec-label">Power loss:</span> The gripper keeps holding the workpiece if power is lost.</li>
+                            </ul>
+                            <p>
+                                Electric grippers also differ in how they talk to the controller. Zimmer's GEP2000 series comes in three sizes, with 10, 13 and 16 mm of stroke per jaw and up to 200, 360 and 500 N of grip force, and each size is offered with plain digital I/O, with a 0-10 V position-feedback signal, or with IO-Link.<sup><a href="#ref-10">[10]</a></sup> A GEP2000-B variant adds detection of a lost workpiece that is reported to the controller.<sup><a href="#ref-11">[11]</a></sup> Vention sells a Universal Robots package for the 16 mm Zimmer gripper (125 to 500 N, 24 V, 2 A maximum, 0.02 mm repeatability) aimed at sites with no compressed air.<sup><a href="#ref-12">[12]</a></sup> The choice of interface decides what your program can know: a digital-only gripper reports at most "open" or "closed", while an analog or IO-Link version can report where the jaws actually stopped.
+                            </p>
+                            <p>
+                                A pneumatic finger gripper is driven by a solenoid valve: the robot switches a digital output, the valve sends air to one side of the gripper's piston, and the fingers move. Grip force is set mechanically, by the air pressure, rather than in the program. That makes them cheap and robust, but they tell the controller little unless sensors are added.
+                            </p>
+                            <p>
+                                Soft grippers use flexible materials that conform to the item. The OnRobot Soft Gripper, for example, has three interchangeable silicone cups, handles small items under 2.2 kg with a grip size of 11 to 118 mm depending on the cup, needs no external air supply, and is certified for food contact (FDA 21 CFR for non-fatty foods and EC 1935/2004).<sup><a href="#ref-13">[13]</a></sup> Its capacity depends on the item's shape, softness and friction.<sup><a href="#ref-13">[13]</a></sup> Inflatable soft grippers can handle varied food shapes with forces that do not bruise, although one patent notes that few industrial soft-robotics designs suit washdown or food-contact environments.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">05. Mounting: the ISO 9409-1 flange</h2>
+                            <p>
+                                Grippers bolt to the robot through a standardised mechanical interface defined in ISO 9409-1. The designation encodes the pattern: <strong>ISO 9409-1-50-4-M6</strong> means a 50 mm pitch circle with four M6 screws.<sup><a href="#ref-15">[15]</a></sup> Accessory makers sell adapters for this pattern; Schmalz, for example, offers a 50 mm / M6 flange set described as compatible with Universal Robots arms.<sup><a href="#ref-16">[16]</a></sup> It is not the only size. Epson's tool-adapter documentation lists a smaller ISO pattern, a 31.5 mm pitch circle with four M5 screws (31.5-4-M5), alongside the 50 mm, 4 &times; M6 pattern.<sup><a href="#ref-17">[17]</a></sup> Gripper makers often supply a coupling plate for a given pattern; Robotiq's 2019 Hand-E manual, for instance, lists a coupling (GRP-CPL-062) for ISO 9409-1-50-4-M6.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                Compare the gripper's coupling with the flange drawing in your robot's manual, and remember that every adapter plate moves the tool further out, which changes the tool center point (TCP) offset.
+                            </p>
+
+                            <h2 class="article-section-title">06. Telling the controller about the tool: payload and center of gravity</h2>
+                            <p>
+                                The controller does not see the gripper; it has to be told what it carries. Two groups of numbers matter: the TCP (where the working point of the tool is, covered in lesson 2.3) and the <strong>payload</strong>, meaning the mass of the tool, and later of the tool plus the part, together with the position of its center of gravity (CoG). The controller uses these numbers in its model of the arm's dynamics. If they are wrong, that model is wrong: path accuracy suffers, and on a force-limited cobot the robot may stop for a collision that never happened, or press harder than expected before it reacts to a real one. So a careful program updates the payload at the pick and restores it at the place.
+                            </p>
+                            <p>
+                                <strong>On a Universal Robots arm</strong>, UR's own open-source driver script shows the two calls in use. It calls <code>set_payload(mass, cog)</code>, with <code>cog</code> given as <code>[x, y, z]</code>, and on PolyScope 5.10.0 or newer it calls <code>set_target_payload(mass, cog, inertia, transition_time)</code> instead. On older software it falls back to <code>set_payload</code> and logs "PolyScope &lt; 5.10.0. Inertia and transition_time ignored."<sup><a href="#ref-18">[18]</a></sup> The e-Series script manual lists <code>set_payload(m, cog)</code>, <code>set_payload_mass(m)</code> and <code>set_target_payload(m, cog, inertia=[0,0,0,0,0,0], transition_time=0)</code>.<sup><a href="#ref-19">[19]</a></sup>
+                            </p>
+                            <p>
+                                <strong>In ABB RAPID</strong>, the tool's load is part of the <code>tooldata</code> record. Its components are <code>robhold</code> (TRUE when the robot holds the tool), <code>tframe</code> (the TCP as a translation and a quaternion) and <code>tload</code> (mass, center of gravity, axes of moment <code>aom</code>, and the inertia values <code>ix</code>, <code>iy</code>, <code>iz</code>).<sup><a href="#ref-20">[20]</a></sup> One ABB community example defines a dual gripper of 8.5 kg with its CoG at [10, 0, 80] mm.<sup><a href="#ref-20">[20]</a></sup> The RobotStudio API documentation models a load as a 5 kg point mass at (0.023, 0, 0.075) m.<sup><a href="#ref-21">[21]</a></sup> The part being carried is handled separately: <code>GripLoad</code> sets the payload of the gripped part relative to the active TCP, whereas the <code>tload</code> in <code>tooldata</code> is relative to the wrist flange.<sup><a href="#ref-22">[22]</a></sup> The declarations below are an illustrative example with made-up values, not a measured tool:
+                            </p>
+                            <pre class="article-code"><code>! Tool: held by robot, TCP 150 mm along tool Z, 1.2 kg with CoG 60 mm out from the flange
+PERS tooldata tGripper := [TRUE, [[0, 0, 150], [1, 0, 0, 0]], [1.2, [0, 0, 60], [1, 0, 0, 0], 0, 0, 0]];
+! Part: 0.5 kg, CoG 60 mm from the TCP (used with GripLoad after the grip)
+PERS loaddata loPart := [0.5, [0, 0, 60], [1, 0, 0, 0], 0, 0, 0];</code></pre>
+
+                            <h2 class="article-section-title">07. The I/O on a UR and an ABB controller</h2>
+                            <p>
+                                A digital input (DI) tells the program whether something is true, such as a part sensor seeing a part. A digital output (DO) switches something, such as a gripper valve. Analog inputs and outputs (AI and AO) carry a value in a range, such as a jaw position.
+                            </p>
+                            <p>
+                                The Universal Robots e-Series control box provides 16 digital inputs, 16 digital outputs, 2 analog inputs, 2 analog outputs and 4 quadrature digital inputs, powered by a 24 V, 2 A I/O supply.<sup><a href="#ref-23">[23]</a></sup> UR describes the digital channels as 8 dedicated (standard) inputs and outputs plus 8 configurable ones, with two more of each at the tool flange; more I/O can be added through a Modbus I/O block.<sup><a href="#ref-24">[24]</a></sup> UR's official ROS message definition gives the pin numbering that drivers use:<sup><a href="#ref-25">[25]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Group</th>
+                                        <th scope="col">Pin numbers (ROS <code>SetIO</code>)</th>
+                                        <th scope="col">Where it is</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Standard digital out</strong></td>
+                                        <td>0 to 7 (<code>PIN_DOUT0</code> to <code>PIN_DOUT7</code>)</td>
+                                        <td>Control box</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Configurable digital out</strong></td>
+                                        <td>8 to 15 (<code>PIN_CONF_OUT0</code> to <code>PIN_CONF_OUT7</code>)</td>
+                                        <td>Control box</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tool digital out</strong></td>
+                                        <td>16 and 17 (<code>PIN_TOOL_DOUT0</code>, <code>PIN_TOOL_DOUT1</code>)</td>
+                                        <td>Tool flange</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Analog out</strong></td>
+                                        <td>0 and 1 (<code>PIN_AOUT0</code>, <code>PIN_AOUT1</code>)</td>
+                                        <td>Control box</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tool voltage</strong></td>
+                                        <td>0, 12 or 24 V</td>
+                                        <td>Tool flange</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                The tool connector matters most for grippers, because it saves running cables along the arm. A UR community wiki written for the CB3 generation, which has the same tool I/O counts, describes an M8 connector with 2 digital inputs, 2 digital outputs and 2 analog inputs. Signals and tool power are at 12 V or 24 V, switched together, with 600 mA available in total. Because the tool voltage is generated locally, an external power supply does not raise that limit.<sup><a href="#ref-26">[26]</a></sup> Check the figures for your controller generation in its own manual. The tool outputs can be set to sink current (NPN), source current (PNP) or push-pull with <code>set_tool_digital_output_mode(n, mode)</code>, using mode 1, 2 or 3 respectively.<sup><a href="#ref-27">[27]</a></sup> Use the mode your gripper's manual specifies.
+                            </p>
+                            <p>
+                                On an ABB IRC5, I/O usually comes from fieldbus units. The DSQC 652 is a DeviceNet unit with 16 digital inputs and 16 digital outputs; on the IRC5 Compact these come out on connector XS7 with 24 V, and a forum reply gives 500 mA per output.<sup><a href="#ref-28">[28]</a></sup> The usual way to get more is a second DSQC 652 at an unused DeviceNet address, within DeviceNet's limit of 20 I/O devices per controller.<sup><a href="#ref-29">[29]</a></sup> In RAPID, signals are not addressed by pin number: each one is given a name in the controller's I/O configuration, and the program uses that name.<sup><a href="#ref-30">[30]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">08. Reading and writing I/O in code</h2>
+                            <p>
+                                <strong>URScript</strong> has separate functions for the control-box I/O and for the tool I/O. The current script manual's Interfaces module lists <code>get_tool_digital_in(n)</code>, <code>set_tool_digital_out(n, b)</code> and <code>set_tool_digital_output_mode(n, mode)</code> for the tool connector.<sup><a href="#ref-31">[31]</a></sup> For the standard control-box channels, the current names are <code>get_standard_digital_in(n)</code> and <code>set_standard_digital_out(n, b)</code>; the older generic <code>get_digital_in</code> and <code>set_digital_out</code> used in lesson 2.3 are reported as deprecated or not working on some software versions.<sup><a href="#ref-32">[32]</a></sup> Tool power is switched with <code>set_tool_voltage</code>, which UR's own driver script calls.<sup><a href="#ref-18">[18]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>set_tool_voltage(24)               # power the tool connector at 24 V
+set_tool_digital_out(0, True)      # tool output 0 on
+set_standard_digital_out(3, False) # control-box output 3 off
+if get_standard_digital_in(0):     # control-box input 0
+  textmsg("Part present")
+end</code></pre>
+                            <p>
+                                URScript has no single "wait for input with timeout" instruction in the sources used here, so a timed wait is written as a loop. UR's own driver script uses <code>sync()</code> inside its control loops and reads the control-cycle length with <code>get_steptime()</code>, treating 0.008 s as a CB3 controller and 0.002 s as an e-Series.<sup><a href="#ref-18">[18]</a></sup> Calling <code>sync()</code> in a polling loop ends the current control cycle, so the loop checks the input once per cycle instead of spinning and starving the controller. Adding <code>get_steptime()</code> to a counter each time round gives elapsed time.
+                            </p>
+                            <p>
+                                <strong>RAPID</strong> uses named signals and dedicated instructions. <code>SetDO</code> sets an output defined in the I/O configuration, and <code>WaitDI</code> waits until an input reaches a value; a line such as <code>WaitDI di1, 1;</code> is enough, with no event handling needed.<sup><a href="#ref-30">[30]</a></sup> A timeout is an optional argument: <code>WaitDI sig, value \MaxTime:=t \TimeFlag:=flag;</code>. With <code>\TimeFlag</code>, an expired timeout sets the Boolean flag to TRUE and execution continues. Without it, the error <code>ERR_WAIT_MAXTIME</code> is raised, which an <code>ERROR</code> handler can catch.<sup><a href="#ref-33">[33]</a></sup><sup><a href="#ref-34">[34]</a></sup> One user reported <code>\TimeFlag</code> behaving differently in Auto mode, which was not resolved, so test your timeout handling in the mode you will run in.<sup><a href="#ref-33">[33]</a></sup> For momentary signals, such as a "cycle done" pulse to a PLC, there is <code>PulseDO</code>, used as <code>PulseDO do1;</code>.<sup><a href="#ref-35">[35]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Task</th>
+                                        <th scope="col">URScript</th>
+                                        <th scope="col">RAPID</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Set an output</strong></td>
+                                        <td><code>set_standard_digital_out(n, b)</code> or <code>set_tool_digital_out(n, b)</code></td>
+                                        <td><code>SetDO doName, 1;</code> (<code>Reset doName;</code> to clear)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Read an input</strong></td>
+                                        <td><code>get_standard_digital_in(n)</code> or <code>get_tool_digital_in(n)</code></td>
+                                        <td>Signal name used directly, e.g. <code>IF diName = 1 THEN</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Wait for an input with timeout</strong></td>
+                                        <td>Loop with <code>sync()</code> and a counter</td>
+                                        <td><code>WaitDI diName, 1 \MaxTime:=t;</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Signal identity</strong></td>
+                                        <td>Pin number</td>
+                                        <td>Name from the I/O configuration</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">09. Confirming the grip and handling failures</h2>
+                            <p>
+                                Setting an output only tells the gripper what to do. It does not prove that the part is held. The rule for a reliable cell is simple: <strong>never move away from the pick until the grip is confirmed</strong>, and never wait for that confirmation forever.
+                            </p>
+                            <p>
+                                For suction tools, confirmation usually comes from a vacuum switch wired to a digital input. In one ABB cell discussed on ABB's forum, an input called <code>diVacuum</code> is wired to a vacuum sensor that goes high when vacuum forms between the cups and the part; the program turns the vacuum on with <code>SetDO</code> and then waits on <code>diVacuum</code> before it moves. In RobotStudio simulation, a Smart Component can raise the same signal when the part attaches.<sup><a href="#ref-36">[36]</a></sup>
+                            </p>
+                            <p>
+                                Electric grippers can report more. With the Robotiq URCap installed on a UR, <code>rq_is_object_detected()</code> returns True if an object was picked; it should be called after the close command, and gripper commands must not be issued from a thread.<sup><a href="#ref-37">[37]</a></sup> Underneath, Robotiq grippers report object detection through a status register called gOBJ, but sources disagree about what some of its values mean, so read the manual for your exact gripper and firmware before relying on a particular code.<sup><a href="#ref-38">[38]</a></sup><sup><a href="#ref-39">[39]</a></sup> The Zimmer GEP2000 can report jaw position as a 0-10 V signal or over IO-Link, and its -B variant reports a lost workpiece.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                One trap is worth remembering. For a finger gripper, "fully closed" often means the part was missed: the fingers travelled their whole stroke because nothing was between them. Treat a jaw position at full close as a failure, not a success. Also know what your tool does on power loss: the RG2, for example, keeps holding the workpiece.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <p>
+                                The error-handling pattern to use in every pick is:
+                            </p>
+                            <ol class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Command:</span> Set the output that closes the gripper or turns on the vacuum.</li>
+                                <li class="article-spec-item"><span class="spec-label">Confirm:</span> Wait for the confirmation input, with a timeout.</li>
+                                <li class="article-spec-item"><span class="spec-label">On failure:</span> Open the gripper, retreat to the approach pose, then raise a fault or retry once.</li>
+                                <li class="article-spec-item"><span class="spec-label">Keep watching:</span> Re-check the grip or vacuum signal before the place move, since a part can slip during transport.</li>
+                            </ol>
+
+                            <h2 class="article-section-title">10. Worked example: one pick, two languages</h2>
+                            <p>
+                                The two programs below put the pieces together. They are this lesson's own illustrative examples and have not been run on a controller, so test them in a simulator (URSim or RobotStudio) before using them on hardware. They assume the following wiring, which you would change to match your gripper: tool output 0 closes the gripper and tool output 1 opens it; standard input 0 is a part-present sensor; tool input 0 is a gripper-closed-on-part (or vacuum-OK) signal.
+                            </p>
+                            <pre class="article-code"><code>def pick_with_io():
+  home_q   = [0.0, -1.57, 1.57, -1.57, -1.57, 0.0]       # joint angles (rad)
+  pick_p   = p[0.350, 0.250, 0.150, 0.0, 3.14159, 0.0]    # pick pose (m, rad)
+  approach_p = pose_add(pick_p, p[0, 0, 0.100, 0, 0, 0])  # 10 cm above
+
+  set_tool_voltage(24)
+  set_tool_digital_out(0, False)            # close off
+  set_tool_digital_out(1, True)             # open on
+  movej(home_q, a=1.2, v=0.5)
+
+  # Wait for part-present, with a 10 s timeout
+  t = 0
+  while not get_standard_digital_in(0):
+    sync()
+    t = t + get_steptime()
+    if t &gt; 10:
+      popup("No part after 10 s", error=True)
+      halt
+    end
+  end
+
+  movel(approach_p, a=0.5, v=0.25)
+  movel(pick_p, a=0.3, v=0.05)
+  set_tool_digital_out(1, False)            # open off
+  set_tool_digital_out(0, True)             # close on
+  sleep(0.3)                                # let the fingers settle
+
+  if not get_tool_digital_in(0):            # grip not confirmed
+    set_tool_digital_out(0, False)
+    set_tool_digital_out(1, True)           # open again
+    movel(approach_p, a=0.5, v=0.25)        # retreat
+    popup("Grip failed", error=True)
+    halt
+  end
+
+  set_target_payload(0.5, [0, 0, 0.06], [0, 0, 0, 0, 0, 0], 0.1)  # tool + part
+  movel(approach_p, a=0.5, v=0.25)
+  # ... move to the place pose, release, then restore the empty-tool payload
+end</code></pre>
+                            <p>
+                                The same pick in RAPID, with the signals <code>doGripClose</code>, <code>diPartPresent</code> and <code>diGripClosed</code> defined in the controller's I/O configuration and the <code>tGripper</code> and <code>loPart</code> data from section 06:
+                            </p>
+                            <pre class="article-code"><code>PROC Pick()
+    Reset doGripClose;                          ! gripper open
+    MoveJ pHome, v1000, z50, tGripper;
+    WaitDI diPartPresent, 1 \MaxTime:=10;       ! wait for a part, 10 s max
+    MoveL Offs(pPick, 0, 0, 100), v500, z10, tGripper;
+    MoveL pPick, v100, fine, tGripper;
+    SetDO doGripClose, 1;                       ! close
+    WaitDI diGripClosed, 1 \MaxTime:=2;         ! confirm the grip, 2 s max
+    GripLoad loPart;                            ! robot now carries the part
+    MoveL Offs(pPick, 0, 0, 100), v500, z10, tGripper;
+ERROR
+    IF ERRNO = ERR_WAIT_MAXTIME THEN
+        Reset doGripClose;                      ! open again
+        TPWrite "Timeout: part or grip";
+        Stop;
+    ENDIF
+ENDPROC</code></pre>
+                            <p>
+                                Compare the two. In URScript the timeout is a loop you write yourself, the signals are pin numbers, and the failure branch sits inline after the check. In RAPID the timeout is one optional argument to <code>WaitDI</code>, the signals have names, and both timeouts land in the same <code>ERROR</code> handler through <code>ERR_WAIT_MAXTIME</code>.<sup><a href="#ref-33">[33]</a></sup> That handler cannot tell which wait failed, and it stops without retreating; the exercise below fixes both. After the place move, <code>GripLoad load0;</code> returns to the empty-tool load.
+                            </p>
+
+                            <h2 class="article-section-title">11. Handshaking with a PLC</h2>
+                            <p>
+                                In a production cell, the robot is rarely in charge. A programmable logic controller (PLC) usually owns the sequence, and the robot acts as a device that exchanges ready, busy and done bits with it. In the common pattern, permissives such as "E-stop OK" and "guard door closed" come from a safety PLC, safety relays or a safety protocol, not from ordinary I/O. The PLC holds cycle-start on until the robot acknowledges; the robot reports busy and then complete; the PLC acknowledges, and the bits reset.<sup><a href="#ref-40">[40]</a></sup> The PLC side is often written as a state machine: a start button and part-present together begin the cycle, and the next state is entered only after the robot reports, for example, position OK and gripper closed. Typical failures are unlatched requests, missing acknowledgements and pulse-timing problems.<sup><a href="#ref-41">[41]</a></sup>
+                            </p>
+                            <p>
+                                The table below is an illustrative sequence for the pick in section 10. Signal names and polarity vary between vendors and integrators; Fanuc's PalletTool, for example, uses signals such as cycle-ready, pallet-ready and abort.<sup><a href="#ref-42">[42]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Step</th>
+                                        <th scope="col">Signal</th>
+                                        <th scope="col">Meaning</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>Safety OK (safety circuit)</td><td>E-stop and guards are healthy</td></tr>
+                                    <tr><td>2</td><td>Robot &rarr; PLC: <code>RobotAtHome = 1</code></td><td>Robot is ready at home</td></tr>
+                                    <tr><td>3</td><td>PLC &rarr; Robot: <code>PartPresent = 1</code></td><td>A part is waiting</td></tr>
+                                    <tr><td>4</td><td>PLC &rarr; Robot: <code>CycleStart = 1</code> (held)</td><td>Request to run one cycle</td></tr>
+                                    <tr><td>5</td><td>Robot &rarr; PLC: <code>Busy = 1</code></td><td>Acknowledged; the PLC now drops <code>CycleStart</code></td></tr>
+                                    <tr><td>6</td><td>Gripper &rarr; Robot: <code>GripClosed = 1</code></td><td>Grip confirmed, otherwise the robot faults</td></tr>
+                                    <tr><td>7</td><td>Robot &rarr; PLC: <code>CycleDone = 1</code></td><td>Part placed, robot back home</td></tr>
+                                    <tr><td>8</td><td>PLC &rarr; Robot: <code>DoneAck = 1</code></td><td>PLC has seen the result</td></tr>
+                                    <tr><td>9</td><td>Robot clears <code>Busy</code> and <code>CycleDone</code></td><td>Ready for the next cycle</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Every request stays on until it is acknowledged, so a slow scan cannot miss it. Discrete wiring like this works for a handful of bits. When a cell needs many signals, they travel over a fieldbus or industrial Ethernet on one cable instead: the DSQC 652 already sits on DeviceNet,<sup><a href="#ref-29">[29]</a></sup> and UR controllers can add I/O over Modbus.<sup><a href="#ref-24">[24]</a></sup>
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>In URSim, start from your pick-and-place script from lesson 2.3. Replace <code>get_digital_in</code> and <code>set_digital_out</code> with <code>get_standard_digital_in</code> and <code>set_standard_digital_out</code>, then add gripper open and close on tool outputs 0 and 1 with <code>set_tool_digital_out</code>, as in section 10.</li>
+                                    <li>Add a "wait for part-present" loop on standard input 0 with a 10 s timeout using <code>sync()</code> and <code>get_steptime()</code>. Run it once with the input off and confirm the popup appears after about 10 s; then toggle the input in the simulator's I/O tab and confirm the robot continues.</li>
+                                    <li>Add the grip check on <code>get_tool_digital_in(0)</code> so that a failed grip opens the gripper, retreats to the approach pose and stops.</li>
+                                    <li>In RobotStudio, write the RAPID version with <code>SetDO</code> and <code>WaitDI ... \MaxTime</code>. Then change it to use <code>\TimeFlag</code> on both waits so the program reports which wait timed out, and add a retreat move before <code>Stop</code>. Write two or three sentences comparing how each language expresses the timeout and the failure path.</li>
+                                    <li>Size the suction cups for a 1.5 kg smooth box picked from above at a = 4 m/s&sup2; with &mu; = 0.5, using Robotiq's horizontal formula and a safety factor of 1.5.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">12. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">Robotiq, &ldquo;Hand-E Instruction Manual: 6. Specifications,&rdquo; online manual, March 29, 2019. <a href="https://assets.robotiq.com/website-assets/support_documents/document/online/Hand-E_Instruction_Manual_Web_20190329.zip/Hand-E_Instruction_Manual_Web/Content/6.%20Specifications.htm" target="_blank" rel="noopener noreferrer">assets.robotiq.com/website-assets/support_documents/document/online/Hand-E_Instruction_Manual_Web_20190329.zip</a>.</li>
+                                <li id="ref-2">Robotiq, &ldquo;Hand-E Adaptive Robot Gripper,&rdquo; product page, accessed October 21, 2026. <a href="https://robotiq.com/products/hand-e-adaptive-robot-gripper" target="_blank" rel="noopener noreferrer">robotiq.com/products/hand-e-adaptive-robot-gripper</a>.</li>
+                                <li id="ref-3">J. Schmalz GmbH, &ldquo;Design of the suction cup,&rdquo; Vacuum knowledge, schmalz.com, accessed October 21, 2026. <a href="https://www.schmalz.com/en/support/know-how/vacuum-knowledge/the-vacuum-system-and-its-components/vacuum-suction-cups/design-of-the-suction-cup" target="_blank" rel="noopener noreferrer">schmalz.com/en/support/know-how/vacuum-knowledge/the-vacuum-system-and-its-components/vacuum-suction-cups/design-of-the-suction-cup</a>.</li>
+                                <li id="ref-4">FIRGELLI Automations, &ldquo;Vacuum Suction Cup Force Calculator,&rdquo; Engineering calculators, accessed October 21, 2026. <a href="https://www.firgelliauto.com/blogs/engineering-calculators/vacuum-suction-cup-force-calculator" target="_blank" rel="noopener noreferrer">firgelliauto.com/blogs/engineering-calculators/vacuum-suction-cup-force-calculator</a>.</li>
+                                <li id="ref-5">Robotiq, &ldquo;Best practices for cup selection,&rdquo; Robotiq blog, accessed October 21, 2026. <a href="https://blog.robotiq.com/best-practices-for-cup-selection" target="_blank" rel="noopener noreferrer">blog.robotiq.com/best-practices-for-cup-selection</a>.</li>
+                                <li id="ref-6">Piab, vacuum ejector product information (ejectors compared with electric pumps), Piab Japan listing on IPROS, accessed October 21, 2026. <a href="https://pr.mono.ipros.com/en/piab/product/detail/2000951425" target="_blank" rel="noopener noreferrer">pr.mono.ipros.com/en/piab/product/detail/2000951425</a>.</li>
+                                <li id="ref-7">Association for Advancing Automation (A3), &ldquo;Automotive Stamping Study at DaimlerChrysler Finds New Vacuum Technology Elicits Potential Annual Savings of $400,000/Plant,&rdquo; case study, automate.org, accessed October 21, 2026. <a href="https://www.automate.org/case-studies/automotive-stamping-study-at-daimlerchrysler-finds-new-vacuum-technology-elicits-potential-annual-savings-of-400-000-plant" target="_blank" rel="noopener noreferrer">automate.org/case-studies/automotive-stamping-study-at-daimlerchrysler-finds-new-vacuum-technology-elicits-potential-annual-savings-of-400-000-plant</a>.</li>
+                                <li id="ref-8">Automation.com, &ldquo;Piab introduces the compact P2010 multi-stage ejector,&rdquo; product news (vendor claims), accessed October 21, 2026. <a href="https://www.automation.com/article/piab-introduces-the-compact-p2010-multi-stage-ejec" target="_blank" rel="noopener noreferrer">automation.com/article/piab-introduces-the-compact-p2010-multi-stage-ejec</a>.</li>
+                                <li id="ref-9">OnRobot, &ldquo;RG2 Datasheet,&rdquo; version 1.8, onrobot.com, accessed October 21, 2026. <a href="https://onrobot.com/storage/datasheets/rg2/datasheet_rg2_v1.8_en.pdf" target="_blank" rel="noopener noreferrer">onrobot.com/storage/datasheets/rg2/datasheet_rg2_v1.8_en.pdf</a>.</li>
+                                <li id="ref-10">Association for Advancing Automation (A3), &ldquo;New Product Release: GEP2000 Small Electric Long-Stroke Grippers,&rdquo; robotics news, automate.org, accessed October 21, 2026. <a href="https://www.automate.org/robotics/news/new-product-release-gep2000-small-electric-long-stroke-grippers" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/new-product-release-gep2000-small-electric-long-stroke-grippers</a>.</li>
+                                <li id="ref-11">Industrial Production, &ldquo;E-Greifer f&uuml;r das Kleinteile-Handling&rdquo; (Zimmer GEP2000), industrial-production.de, accessed October 21, 2026. <a href="https://www.industrial-production.de/handhabungstechnik/e-greifer--fuer-das-kleinteile-handling.htm" target="_blank" rel="noopener noreferrer">industrial-production.de/handhabungstechnik/e-greifer--fuer-das-kleinteile-handling.htm</a>.</li>
+                                <li id="ref-12">Vention, &ldquo;Zimmer Group UR Small Parts Electric Gripper Package, 16 mm Stroke per Jaw,&rdquo; part 3540, vention.io, accessed October 21, 2026. <a href="https://vention.io/de/parts/zimmer-group-ur-small-parts-electric-gripper-package-16mm-stroke-per-jaw-3540" target="_blank" rel="noopener noreferrer">vention.io/de/parts/zimmer-group-ur-small-parts-electric-gripper-package-16mm-stroke-per-jaw-3540</a>.</li>
+                                <li id="ref-13">Association for Advancing Automation (A3), &ldquo;OnRobot Soft Gripper Brings Highly Flexible, Food-Grade Certified Handling to Challenging Pick-and-Place Applications,&rdquo; OnRobot press release, automate.org, April 2020. <a href="https://www.automate.org/robotics/news/onrobot-soft-gripper-brings-highly-flexible-food-grade-certified-handling-to-challenging-pick-and-place-applications" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/onrobot-soft-gripper-brings-highly-flexible-food-grade-certified-handling-to-challenging-pick-and-place-applications</a>.</li>
+                                <li id="ref-14">United States Patent and Trademark Office, U.S. Patent 11,090,818 (inflatable soft gripper), full-text PDF, accessed October 21, 2026. <a href="https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11090818" target="_blank" rel="noopener noreferrer">image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11090818</a>.</li>
+                                <li id="ref-15">Vention, &ldquo;ISO-50 Robot Flange Multi-Tool Adapter,&rdquo; part 3251, vention.io, accessed October 21, 2026. <a href="https://vention.io/parts/iso-50-robot-flange-multi-tool-adapter-3251" target="_blank" rel="noopener noreferrer">vention.io/parts/iso-50-robot-flange-multi-tool-adapter-3251</a>.</li>
+                                <li id="ref-16">J. Schmalz GmbH, &ldquo;Flange sets PXT,&rdquo; Modular gripper system PXT, item 10.01.49.00014, schmalz.com, accessed October 21, 2026. <a href="https://www.schmalz.com/en/vacuum-technology-for-robotics/modular-gripper-system/modular-gripper-system-pxt/flange-sets-pxt-332098/10.01.49.00014" target="_blank" rel="noopener noreferrer">schmalz.com/en/vacuum-technology-for-robotics/modular-gripper-system/modular-gripper-system-pxt/flange-sets-pxt-332098</a>.</li>
+                                <li id="ref-17">Seiko Epson, &ldquo;ISO flange tool adapter,&rdquo; robot hand documentation, download.epson.biz, accessed October 21, 2026. <a href="https://download.epson.biz/robots/ww/data/html/Hand/en/100/100-010/100-010-010.html" target="_blank" rel="noopener noreferrer">download.epson.biz/robots/ww/data/html/Hand/en/100/100-010/100-010-010.html</a>.</li>
+                                <li id="ref-18">Universal Robots, &ldquo;external_control.urscript,&rdquo; Universal_Robots_Client_Library, GitHub (master branch), accessed October 21, 2026. <a href="https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_Client_Library/master/resources/external_control.urscript" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/resources/external_control.urscript</a>.</li>
+                                <li id="ref-19">Universal Robots, <em>The URScript Programming Language, e-Series</em> (script manual), third-party copy on Scribd, accessed October 21, 2026. <a href="https://www.scribd.com/document/792122175/scriptManualG5" target="_blank" rel="noopener noreferrer">scribd.com/document/792122175/scriptManualG5</a>.</li>
+                                <li id="ref-20">ABB Robotics Tech Community, &ldquo;One tool with two grippers (two TCP): how to define the RAPID tooldata,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/one-tool-with-two-grippers-two-tcp-how-to-define-the-rapid-tooldata/14942" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/one-tool-with-two-grippers-two-tcp-how-to-define-the-rapid-tooldata/14942</a>.</li>
+                                <li id="ref-21">ABB, &ldquo;RsToolData example,&rdquo; RobotStudio API How-To, ABB Developer Center, accessed October 21, 2026. <a href="https://developercenter.robotstudio.com/api/robotstudio/articles/How-To/Rapid/RsToolDataExample.html" target="_blank" rel="noopener noreferrer">developercenter.robotstudio.com/api/robotstudio/articles/How-To/Rapid/RsToolDataExample.html</a>.</li>
+                                <li id="ref-22">RobotStudio Forum, &ldquo;Tool load when exchanging end effector,&rdquo; discussion comment 31768, forums.robotstudio.com, accessed October 21, 2026. <a href="https://forums.robotstudio.com/discussion/comment/31768" target="_blank" rel="noopener noreferrer">forums.robotstudio.com/discussion/comment/31768</a>.</li>
+                                <li id="ref-23">Universal Robots, &ldquo;e-Series comparison datasheet&rdquo; (Control Box CB 5.5 / CB 5.6), universal-robots.com, May 2026. <a href="https://www.universal-robots.com/manuals/latest/en/datasheets/comp_e-serie/" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/latest/en/datasheets/comp_e-serie</a>.</li>
+                                <li id="ref-24">Universal Robots, &ldquo;Connecting internal inputs and outputs (I/O) on the robot's controller,&rdquo; support article, universal-robots.com, accessed October 21, 2026. <a href="https://www.universal-robots.com/articles/ur/interface-communication/connecting-internal-inputs-and-outputs-io-on-the-robots-controller/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/connecting-internal-inputs-and-outputs-io-on-the-robots-controller</a>.</li>
+                                <li id="ref-25">ROS-Industrial / Universal Robots, &ldquo;SetIO.srv,&rdquo; ur_msgs package, GitHub (master branch), accessed October 21, 2026. <a href="https://raw.githubusercontent.com/ros-industrial/ur_msgs/master/srv/SetIO.srv" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/ur_msgs/blob/master/srv/SetIO.srv</a>.</li>
+                                <li id="ref-26">Universal Robots Forum, &ldquo;Electrical interfaces,&rdquo; community wiki (CB3), forum.universal-robots.com, accessed October 21, 2026. <a href="https://forum.universal-robots.com/t/electrical-interfaces/25" target="_blank" rel="noopener noreferrer">forum.universal-robots.com/t/electrical-interfaces/25</a>.</li>
+                                <li id="ref-27">Universal Robots Forum, &ldquo;Change digital tool output mode PNP to NPN,&rdquo; forum thread, accessed October 21, 2026. <a href="https://forum.universal-robots.com/t/change-digital-tool-ouput-mode-pnp-to-npn/6037" target="_blank" rel="noopener noreferrer">forum.universal-robots.com/t/change-digital-tool-ouput-mode-pnp-to-npn/6037</a>.</li>
+                                <li id="ref-28">ABB Robotics Tech Community, &ldquo;Using of DSQC 652,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/using-of-dsqc-652/4200" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/using-of-dsqc-652/4200</a>.</li>
+                                <li id="ref-29">ABB Robotics Tech Community, &ldquo;More I/Os for IRC5 Compact,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/more-i-os-for-irc5-compact/7073" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/more-i-os-for-irc5-compact/7073</a>.</li>
+                                <li id="ref-30">RobotStudio Forum, &ldquo;Signal and rapid command,&rdquo; discussion 4123, forums.robotstudio.com, accessed October 21, 2026. <a href="https://forums.robotstudio.com/discussion/4123/signal-and-rapid-command" target="_blank" rel="noopener noreferrer">forums.robotstudio.com/discussion/4123/signal-and-rapid-command</a>.</li>
+                                <li id="ref-31">Universal Robots, &ldquo;Interfaces,&rdquo; URScript Manual, software 10.10 to 10.15 (PolyScope X), universal-robots.com, accessed October 21, 2026. <a href="https://www.universal-robots.com/manuals/EN/HTML/SW10_15/Content/prod-scriptmanual/all_scripts/5ModuleInterfaces.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW10_15/Content/prod-scriptmanual/all_scripts/5ModuleInterfaces.htm</a>.</li>
+                                <li id="ref-32">Universal Robots Forum, &ldquo;How to use URScript,&rdquo; forum thread, accessed October 21, 2026. <a href="https://forum.universal-robots.com/t/how-to-use-urscript/21121" target="_blank" rel="noopener noreferrer">forum.universal-robots.com/t/how-to-use-urscript/21121</a>.</li>
+                                <li id="ref-33">ABB Robotics Tech Community, &ldquo;Using MaxTime and TimeFlag together for WaitDI,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/using-maxtime-and-timeflag-together-for-waitdi/6694" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/using-maxtime-and-timeflag-together-for-waitdi/6694</a>.</li>
+                                <li id="ref-34">ABB Robotics Tech Community, &ldquo;Disable max time expired warning in event log,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/disable-max-time-expired-warning-in-event-log/9668" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/disable-max-time-expired-warning-in-event-log/9668</a>.</li>
+                                <li id="ref-35">ABB Robotics Tech Community, &ldquo;PC SDK 5.13: execute single RAPID command,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/pc-sdk-5-13-execute-single-rapid-command/4294" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/pc-sdk-5-13-execute-single-rapid-command/4294</a>.</li>
+                                <li id="ref-36">ABB Robotics Tech Community, &ldquo;Gripper simulation without manual digital input,&rdquo; forum thread, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/gripper-simulation-without-manual-digital-input/5155" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/gripper-simulation-without-manual-digital-input/5155</a>.</li>
+                                <li id="ref-37">Robotiq DoF community, discussion 665 (rq_is_object_detected in URScript), dof.robotiq.com, accessed October 21, 2026. <a href="https://dof.robotiq.com/discussion/665" target="_blank" rel="noopener noreferrer">dof.robotiq.com/discussion/665</a>.</li>
+                                <li id="ref-38">Robotiq, &ldquo;How object detection works on Robotiq grippers,&rdquo; knowledge base, accessed October 21, 2026. <a href="https://blog.robotiq.com/knowledge/how-object-detection-works-on-robotiq-grippers" target="_blank" rel="noopener noreferrer">blog.robotiq.com/knowledge/how-object-detection-works-on-robotiq-grippers</a>.</li>
+                                <li id="ref-39">sequenceplanner, &ldquo;robotiq_2f,&rdquo; GitHub repository, accessed October 21, 2026. <a href="https://github.com/sequenceplanner/robotiq_2f" target="_blank" rel="noopener noreferrer">github.com/sequenceplanner/robotiq_2f</a>.</li>
+                                <li id="ref-40">Control.com, &ldquo;Robot-to-PLC Handshaking,&rdquo; technical article, accessed October 21, 2026. <a href="https://control.com/technical-articles/robot-to-plc-handshaking/" target="_blank" rel="noopener noreferrer">control.com/technical-articles/robot-to-plc-handshaking</a>.</li>
+                                <li id="ref-41">Industrial Monitor Direct, &ldquo;PLC-robot state synchronization: integration methods,&rdquo; knowledge base blog, accessed October 21, 2026. <a href="https://industrialmonitordirect.com/blogs/knowledgebase/plc-robot-state-synchronization-integration-methods" target="_blank" rel="noopener noreferrer">industrialmonitordirect.com/blogs/knowledgebase/plc-robot-state-synchronization-integration-methods</a>.</li>
+                                <li id="ref-42">Industrial Monitor Direct, &ldquo;Fanuc PalletTool and Allen-Bradley PLC integration guide (M-410),&rdquo; knowledge base blog, accessed October 21, 2026. <a href="https://industrialmonitordirect.com/blogs/knowledgebase/fanuc-pallettool-ab-plc-integration-guide-m-410" target="_blank" rel="noopener noreferrer">industrialmonitordirect.com/blogs/knowledgebase/fanuc-pallettool-ab-plc-integration-guide-m-410</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-2-4.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">2.4 Intro to ROS (Vendor-Agnostic)</span>
+                                </a>
+                                <a href="robotics-2-6.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">2.6 Your First Pick-and-Place</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.6" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.3" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>
