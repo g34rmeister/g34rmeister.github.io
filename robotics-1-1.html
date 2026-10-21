@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,7 +130,6 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
@@ -162,6 +161,22 @@
                             <p>
                                 The <a href="robotics-control.html">Electronics and Control</a> chapter follows exactly this loop: <a href="robotics-5-2.html">PWM</a> is how a program acts on a motor, <a href="robotics-5-3.html">encoders</a> are how it senses the result, and <a href="robotics-5-4.html">PID control</a> is how it thinks about the difference.
                             </p>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 180" role="img" aria-label="Diagram: sense, then think, then act, with an arrow looping back from act to sense" xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-sta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                    <rect class="d-box" x="20" y="40" width="170" height="70" rx="6"/><text class="d-title" x="105.0" y="69.0" text-anchor="middle">Sense</text><text class="d-muted" x="105.0" y="89.0" text-anchor="middle">encoders, cameras</text><rect class="d-box-gold" x="255" y="40" width="170" height="70" rx="6"/><text class="d-title" x="340.0" y="69.0" text-anchor="middle">Think</text><text class="d-muted" x="340.0" y="89.0" text-anchor="middle">controller runs the program</text><rect class="d-box" x="490" y="40" width="170" height="70" rx="6"/><text class="d-title" x="575.0" y="69.0" text-anchor="middle">Act</text><text class="d-muted" x="575.0" y="89.0" text-anchor="middle">motors, grippers</text><line class="d-line" x1="190" y1="75" x2="253" y2="75" marker-end="url(#arrow-sta)"/><line class="d-line" x1="425" y1="75" x2="488" y2="75" marker-end="url(#arrow-sta)"/><path class="d-line" d="M575,110 C575,170 105,170 105,112" marker-end="url(#arrow-sta)"/><text class="d-muted" x="340" y="165" text-anchor="middle">acting changes the world, which the sensors measure on the next pass</text>
+                                </svg>
+                                <figcaption>The sense, think, act loop. Every robot in this course, from a hobby rover to a six-axis arm, runs some version of it many times per second.</figcaption>
+                            </figure>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Pick a machine you use every day (a robot vacuum, an automatic door, a dishwasher). Write down what it senses, what decides, and what acts.</li>
+                                    <li>Using the Merriam-Webster definition, decide whether it counts as a robot, and why or why not.</li>
+                                </ol>
+                            </div>
+
                             <h2 class="article-section-title">04. References</h2>
                             <ol class="article-spec-list">
                                 <li>&ldquo;Robot.&rdquo; <em>Merriam-Webster.com Dictionary</em>, Merriam-Webster. <a href="https://www.merriam-webster.com/dictionary/robot" target="_blank" rel="noopener noreferrer">merriam-webster.com/dictionary/robot</a>.</li>
@@ -201,8 +216,9 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

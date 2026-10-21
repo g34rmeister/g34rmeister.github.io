@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,7 +130,6 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
@@ -146,6 +145,14 @@
                                 rqt is a graphical framework that runs ROS tools as plugins in one dockable window. Start it with <code>rqt</code> and pick plugins from the <strong>Plugins</strong> menu. One of the most useful is <code>rqt_graph</code>, which draws the running nodes and the topics connecting them, so you can see at a glance who publishes to whom:
                             </p>
                             <pre class="article-code"><code>ros2 run rqt_graph rqt_graph</code></pre>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 110" role="img" aria-label="rqt_graph view: /teleop_turtle node publishes /turtle1/cmd_vel, which the /turtlesim node subscribes to" xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-rqt" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                    <ellipse class="d-box" cx="110" cy="60" rx="95" ry="28"/><text class="d-title" x="110" y="65" text-anchor="middle">/teleop_turtle</text><rect class="d-box-gold" x="250" y="40" width="190" height="40" rx="6"/><text class="d-title" x="345.0" y="65.0" text-anchor="middle">/turtle1/cmd_vel</text><ellipse class="d-box" cx="580" cy="60" rx="85" ry="28"/><text class="d-title" x="580" y="65" text-anchor="middle">/turtlesim</text><line class="d-line" x1="205" y1="60" x2="248" y2="60" marker-end="url(#arrow-rqt)"/><line class="d-line" x1="440" y1="60" x2="493" y2="60" marker-end="url(#arrow-rqt)"/>
+                                </svg>
+                                <figcaption>What rqt_graph shows while you drive the turtle: two nodes (ovals) joined by the topic they share (box).</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">03. Gazebo</h2>
                             <p>
@@ -179,6 +186,14 @@ ros2 bag play subset</code></pre>
                                 <li class="article-spec-item"><span class="spec-label">robot_state_publisher:</span> publishes the positions of a robot&rsquo;s parts from its model and joint states.</li>
                                 <li class="article-spec-item"><span class="spec-label">slam_toolbox:</span> builds maps with SLAM while a robot explores.</li>
                             </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>While driving the turtle, open <code>rqt_graph</code> and check that it matches the diagram above.</li>
+                                    <li>Record a bag while you draw a shape, reset the simulator with <code>ros2 service call /reset std_srvs/srv/Empty</code>, and play the bag back to repeat the drawing.</li>
+                                </ol>
+                            </div>
 
                             <h2 class="article-section-title">06. References</h2>
                             <ol class="article-spec-list">
@@ -226,8 +241,9 @@ ros2 bag play subset</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>

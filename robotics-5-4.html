@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,7 +130,6 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
@@ -151,6 +150,14 @@
                                 <li class="article-spec-item"><span class="spec-label">Integral (the past):</span> adds up error over time, so a small error that lingers slowly builds more push until it is gone. Too much integral causes overshoot and oscillation.</li>
                                 <li class="article-spec-item"><span class="spec-label">Derivative (the future):</span> reacts to how fast the error is changing, braking as the robot approaches the target. It damps oscillation but amplifies sensor noise.</li>
                             </ul>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 700 190" role="img" aria-label="Block diagram: setpoint minus measured position gives the error, which feeds P, I and D terms that are summed into a PWM output driving the motor; an encoder feeds the position back" xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-pid" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                    <text class="d-text" x="10" y="74">setpoint</text><line class="d-line" x1="70" y1="70" x2="118" y2="70" marker-end="url(#arrow-pid)"/><circle class="d-box" cx="135" cy="70" r="16"/><text class="d-title" x="135" y="75" text-anchor="middle">&#931;</text><text class="d-muted" x="112" y="60">+</text><text class="d-muted" x="140" y="102">&#8722;</text><line class="d-line" x1="151" y1="70" x2="208" y2="70" marker-end="url(#arrow-pid)"/><text class="d-muted" x="152" y="56">error</text><rect class="d-box" x="210" y="10" width="140" height="36" rx="6"/><text class="d-title" x="280.0" y="33.0" text-anchor="middle">P: Kp&#183;e</text><rect class="d-box" x="210" y="52" width="140" height="36" rx="6"/><text class="d-title" x="280.0" y="75.0" text-anchor="middle">I: Ki&#183;&#8747;e dt</text><rect class="d-box" x="210" y="94" width="140" height="36" rx="6"/><text class="d-title" x="280.0" y="117.0" text-anchor="middle">D: Kd&#183;de/dt</text><line class="d-line" x1="190" y1="28" x2="190" y2="112"/><line class="d-line" x1="190" y1="28" x2="208" y2="28"/><line class="d-line" x1="190" y1="112" x2="208" y2="112"/><line class="d-line" x1="350" y1="28" x2="380" y2="28"/><line class="d-line" x1="350" y1="112" x2="380" y2="112"/><line class="d-line" x1="380" y1="28" x2="380" y2="112"/><line class="d-line" x1="350" y1="70" x2="393" y2="70" marker-end="url(#arrow-pid)"/><circle class="d-box" cx="410" cy="70" r="16"/><text class="d-title" x="410" y="75" text-anchor="middle">&#931;</text><line class="d-line" x1="426" y1="70" x2="478" y2="70" marker-end="url(#arrow-pid)"/><text class="d-muted" x="436" y="62">PWM u</text><rect class="d-box-gold" x="480" y="45" width="110" height="50" rx="6"/><text class="d-title" x="535.0" y="64.0" text-anchor="middle">Motor</text><text class="d-muted" x="535.0" y="84.0" text-anchor="middle">plant</text><line class="d-line" x1="590" y1="70" x2="668" y2="70" marker-end="url(#arrow-pid)"/><text class="d-muted" x="600" y="62">position</text><path class="d-line" d="M630,70 L630,160 L135,160 L135,88" marker-end="url(#arrow-pid)"/><rect class="d-box" x="330" y="142" width="120" height="36" rx="6"/><text class="d-title" x="390.0" y="165.0" text-anchor="middle">Encoder</text><text class="d-muted" x="190" y="152">measured</text>
+                                </svg>
+                                <figcaption>A PID loop. The encoder measures the motor, the error is the setpoint minus the measurement, and the sum of the three terms sets the PWM output.</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">03. PID in code</h2>
                             <p>
@@ -184,6 +191,10 @@ float updatePID(float setpoint, float measured, float dt) {
                                 The classic Ziegler&ndash;Nichols method gives a starting point instead of guessing. With Ki and Kd at zero, increase Kp until the output oscillates steadily. That gain is the ultimate gain Ku, and the oscillation period is Pu. Then start from Kp = 0.6&nbsp;Ku, Ki = 1.2&nbsp;Ku&nbsp;/&nbsp;Pu and Kd = 0.075&nbsp;Ku&nbsp;&times;&nbsp;Pu, and refine by hand.
                             </p>
 
+                            <div data-widget="pid">
+                                <p class="widget-note">The PID simulator needs JavaScript. With it on, you can move Kp, Ki and Kd sliders and watch the step response change.</p>
+                            </div>
+
                             <h2 class="article-section-title">05. Common pitfalls</h2>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Integral windup:</span> if the robot is blocked, the integral keeps growing, and when it is released it lurches. Clamp the integral, or stop integrating while the output is already at its limit.</li>
@@ -213,6 +224,14 @@ float updatePID(float setpoint, float measured, float dt) {
                                 </tbody>
                             </table>
 
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Use the PID simulator above: start with only Kp and find the value where the arm overshoots by about 20%.</li>
+                                    <li>Add Kd until the overshoot is gone, then add Ki and watch the remaining error disappear. Turn on anti-windup and compare.</li>
+                                </ol>
+                            </div>
+
                             <h2 class="article-section-title">08. References</h2>
                             <ol class="article-spec-list">
                                 <li>J. G. Ziegler and N. B. Nichols, &ldquo;Optimum settings for automatic controllers,&rdquo; <em>Transactions of the ASME</em>, vol. 64, pp. 759&ndash;768, 1942.</li>
@@ -225,9 +244,9 @@ float updatePID(float setpoint, float measured, float dt) {
                                     <span class="article-nav-dir">&lt;- Previous</span>
                                     <span class="article-nav-target">5.3 Encoders and Shaft Encoders</span>
                                 </a>
-                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Back to -&gt;</span>
-                                    <span class="article-nav-target">Course home</span>
+                                <a href="robotics-5-5.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">5.5 Sensors for Robots</span>
                                 </a>
                             </div>
 
@@ -252,8 +271,10 @@ float updatePID(float setpoint, float measured, float dt) {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/widgets.js?v=1.0" defer></script>
 
     </body>
 </html>

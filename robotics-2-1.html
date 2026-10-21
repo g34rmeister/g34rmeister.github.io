@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -130,7 +130,6 @@
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                                <span class="badge-prototype">Draft</span>
                             </div>
                         </header>
 
@@ -158,7 +157,7 @@
                                 Online programming means taking the robot out of production, putting it into programming (teach) mode, and creating or editing the program on the robot itself. There are two main methods:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Teach pendant:</span> every industrial robot comes with a handheld pendant that plugs into its controller. The programmer jogs the robot to each position and records the steps of the program through the pendant&rsquo;s interface. It is the most common way industrial robots are programmed; one industry source estimates that about 90% of industrial robots are programmed this way.</li>
+                                <li class="article-spec-item"><span class="spec-label">Teach pendant:</span> industrial robots normally come with a handheld pendant connected to the controller. The programmer jogs the robot to each position and records the steps of the program through the pendant&rsquo;s interface. It is the most common way industrial robots are programmed: EU Automation&rsquo;s Jonathan Wilkins puts the share at over 90%, though this is an industry estimate rather than a published survey.</li>
                                 <li class="article-spec-item"><span class="spec-label">Lead-through (hand guiding):</span> the programmer physically guides the robot arm through the waypoints of the task, and the robot records them. This is the main programming method for collaborative robots (cobots), and because it is so intuitive it is a good fit for people new to automation.</li>
                             </ul>
                             <table class="article-table">
@@ -171,17 +170,68 @@
                                     <tr><td>Well suited to simpler applications</td><td>Lead-through lacks precision</td></tr>
                                 </tbody>
                             </table>
-                            <h2 class="article-section-title">03. Which to use</h2>
+                            <h2 class="article-section-title">03. Block-based (visual) programming</h2>
+                            <p>
+                                Block-based programming is a graphical form of programming in which commands are shown as blocks that the user drags onto the screen and snaps together, like puzzle pieces. A block might mean &ldquo;move to this point,&rdquo; &ldquo;close the gripper&rdquo; or &ldquo;repeat 10 times,&rdquo; and the shapes of the blocks show which ones fit together. This is the style many students know from Scratch. The <em>Blockly</em> library, an open-source project of the Raspberry Pi Foundation supported by Google, lets software makers add the same kind of block editor to their own apps.
+                            </p>
+                            <p>
+                                The robot does not run the blocks themselves. In a Blockly-based editor, each block is defined to produce a piece of text code, and the editor joins the pieces from the connected blocks into one program. In robot tools that program is written in the robot&rsquo;s own language, which the controller then runs as usual.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">ABB Wizard Easy Programming:</span> launched in 2020 for the single-arm YuMi cobot and built on the Blockly concept. Programs are assembled on the FlexPendant and converted in real time into ABB&rsquo;s <a href="robotics-2-3.html">RAPID</a> language. ABB has since extended it to its other cobots (including GoFa and SWIFTI) and, in 2023, to six-axis industrial robots with the OmniCore controller.</li>
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots PolyScope:</span> a related graphical approach. Instead of puzzle blocks, the program is a tree of nodes such as Move, Wait and If, and PolyScope combines the nodes into a URScript program that is sent to the controller (see <a href="robotics-2-2.html">2.2</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">Educational robots:</span> the LEGO Education SPIKE app moves from icon and word blocks based on Scratch to text-based Python, and VEX Robotics&rsquo; VEXcode Blocks is powered by Scratch Blocks.</li>
+                            </ul>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>No syntax to learn, so typing errors such as a missing bracket cannot happen</td><td>Large or complex programs become hard to read on screen</td></tr>
+                                    <tr><td>Operators without programming experience can build and adjust simple tasks</td><td>Not every feature of the native language is available as a block</td></tr>
+                                    <tr><td>Experts can wrap complex code in a single custom block for others to use</td><td>Each vendor&rsquo;s blocks are different, so skills transfer only partly</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Block-based programming fits simple, frequently changed tasks such as pick-and-place on a cobot, and teaching. For complex logic, a common pattern is that an expert writes the hard parts in the native language and packages them as blocks that floor operators can arrange.
+                            </p>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 580 200" role="img" aria-label="Two flows: online stops production, teaches with the pendant and resumes; offline builds the cell in 3D, simulates, then downloads" xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-wf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                    <text class="d-title" x="10" y="30">Online</text><rect class="d-box" x="10" y="40" width="150" height="50" rx="6"/><text class="d-title" x="85.0" y="70.0" text-anchor="middle">Stop production</text><rect class="d-box-gold" x="200" y="40" width="170" height="50" rx="6"/><text class="d-title" x="285.0" y="70.0" text-anchor="middle">Teach with pendant</text><rect class="d-box" x="410" y="40" width="150" height="50" rx="6"/><text class="d-title" x="485.0" y="70.0" text-anchor="middle">Resume</text><line class="d-line" x1="160" y1="65" x2="198" y2="65" marker-end="url(#arrow-wf)"/><line class="d-line" x1="370" y1="65" x2="408" y2="65" marker-end="url(#arrow-wf)"/><text class="d-title" x="10" y="130">Offline</text><rect class="d-box" x="10" y="140" width="150" height="50" rx="6"/><text class="d-title" x="85.0" y="159.0" text-anchor="middle">Build cell in 3D</text><text class="d-muted" x="85.0" y="179.0" text-anchor="middle">on a PC</text><rect class="d-box-gold" x="200" y="140" width="170" height="50" rx="6"/><text class="d-title" x="285.0" y="159.0" text-anchor="middle">Simulate and fix</text><text class="d-muted" x="285.0" y="179.0" text-anchor="middle">robot keeps working</text><rect class="d-box" x="410" y="140" width="150" height="50" rx="6"/><text class="d-title" x="485.0" y="159.0" text-anchor="middle">Download</text><text class="d-muted" x="485.0" y="179.0" text-anchor="middle">touch up points</text><line class="d-line" x1="160" y1="165" x2="198" y2="165" marker-end="url(#arrow-wf)"/><line class="d-line" x1="370" y1="165" x2="408" y2="165" marker-end="url(#arrow-wf)"/>
+                                </svg>
+                                <figcaption>Online programming stops the robot while you teach it; offline programming builds and tests the program in simulation while the robot keeps working.</figcaption>
+                            </figure>
+
+                            <h2 class="article-section-title">04. Which to use</h2>
                             <p>
                                 Online programming is quick and simple for small jobs and small changes. Offline programming pays off for complex programs, for lines that cannot afford downtime, and for checking reach and collisions before equipment is installed. In practice many teams use both: they build the program offline and then touch up a few positions on the real robot with the pendant.
                             </p>
-                            <h2 class="article-section-title">04. Example: a welding cell</h2>
+                            <h2 class="article-section-title">05. Example: a welding cell</h2>
                             <p>
                                 Industrial programming centers on repeatability, safety and deterministic logic. In a spot-welding cell, for example, a six-axis arm follows a path built from joint moves (<code>MoveJ</code>) and straight-line moves (<code>MoveL</code>) defined relative to a work object and tool center point, and the program must fire the welder exactly when the arm reaches each point. Increasingly these paths are developed offline in simulation to avoid stopping production.
                             </p>
-                            <h2 class="article-section-title">05. References</h2>
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Pick a job (palletizing boxes, welding a frame, sorting parts on a bench) and choose online, offline or block-based programming for it. Explain your choice.</li>
+                                    <li>Try a free Blockly demo in your browser (see <a href="https://blockly.com/" target="_blank" rel="noopener noreferrer">blockly.com</a>) and look at the code the blocks generate.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">06. References</h2>
                             <ol class="article-spec-list">
                                 <li>Robots Done Right, &ldquo;Online Robot Programming vs. Offline Robot Programming.&rdquo; <a href="https://robotsdoneright.com/Articles/online-robot-programming-vs-offline-robot-programming.html" target="_blank" rel="noopener noreferrer">robotsdoneright.com</a>. This article is adapted from it.</li>
+                                <li>J. Wilkins (EU Automation), &ldquo;Avoiding robotics defeat: understanding methods of robot programming,&rdquo; <em>Engineers Journal</em>, Engineers Ireland, 18 July 2017. <a href="https://www.engineersireland.ie/Engineers-Journal/Technology/avoiding-robotics-defeat-understanding-methods-of-robot-programming" target="_blank" rel="noopener noreferrer">engineersireland.ie/Engineers-Journal/Technology/avoiding-robotics-defeat-understanding-methods-of-robot-programming</a>.</li>
+                                <li>FANUC Europe, &ldquo;Simulation Software ROBOGUIDE.&rdquo; <a href="https://fanuc.eu/es-es/pim/accessory/79" target="_blank" rel="noopener noreferrer">fanuc.eu/es-es/pim/accessory/79</a>.</li>
+                                <li>Yaskawa Motoman, &ldquo;Robotic Simulation Software: MotoSim EG-VRC.&rdquo; <a href="https://www.motoman.com/en-us/products/software/simulation" target="_blank" rel="noopener noreferrer">motoman.com/en-us/products/software/simulation</a>.</li>
+                                <li>ABB Robotics, &ldquo;RobotStudio Desktop.&rdquo; <a href="https://www.abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop" target="_blank" rel="noopener noreferrer">abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop</a>.</li>
+                                <li>Blockly, &ldquo;What is Blockly?&rdquo; <a href="https://docs.blockly.com/guides/get-started/what-is-blockly/" target="_blank" rel="noopener noreferrer">docs.blockly.com/guides/get-started/what-is-blockly</a>.</li>
+                                <li>ABB, &ldquo;ABB makes robot programming more intuitive with Wizard Easy Programming software,&rdquo; press release, 8 April 2020. <a href="https://new.abb.com/news/detail/59950/abb-makes-robot-programming-more-intuitive-with-wizard-easy-programming-software" target="_blank" rel="noopener noreferrer">new.abb.com/news/detail/59950</a>.</li>
+                                <li>A3, &ldquo;ABB extends no-code Wizard Easy Programming to industrial robots,&rdquo; 21 November 2023. <a href="https://www.automate.org/robotics/news/abb-extends-no-code-wizard-easy-programming-to-industrial-robots/boa" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/abb-extends-no-code-wizard-easy-programming-to-industrial-robots</a>.</li>
+                                <li>Universal Robots, &ldquo;URCap &ndash; UR software architecture.&rdquo; <a href="https://universal-robots.com/articles/ur/urplus-resources/urcap-ur-software-architecture" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/urplus-resources/urcap-ur-software-architecture</a>.</li>
+                                <li>LEGO Education, &ldquo;SPIKE App software.&rdquo; <a href="https://education.lego.com/en-us/downloads/spike-app/software" target="_blank" rel="noopener noreferrer">education.lego.com/en-us/downloads/spike-app/software</a>.</li>
+                                <li>VEX Robotics, &ldquo;VEXcode V5&rdquo; (App Store listing). <a href="https://apps.apple.com/app/id1516887593" target="_blank" rel="noopener noreferrer">apps.apple.com/app/id1516887593</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -217,8 +267,9 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.1" defer></script>
-            <script src="assets/js/learning.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.2" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.0" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
 </html>
