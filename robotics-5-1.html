@@ -137,15 +137,15 @@
 
                             <h2 class="article-section-title">01. Microcontrollers at the physical frontier</h2>
                             <p>
-                                High-level robotic architectures such as ROS 2 often execute on single-board computers or industrial servers running general-purpose operating systems like Linux. However, general-purpose operating systems are not hard real-time systems: the Linux task scheduler can preempt a navigation thread to handle networking or disk I/O, introducing unpredictable jitter ranging from hundreds of microseconds to several milliseconds.<sup><a href="#ref-1">[1]</a></sup>
+                                High-level robotic architectures such as ROS 2 often run on single-board computers or PCs with a general-purpose operating system like Linux. A standard Linux kernel is not set up as a real-time operating system: the mainline kernel offers several preemption models, and only the "Fully Preemptible Kernel" model turns Linux into a real-time OS. Without it, a time-critical thread can be held up by other work, so its timing is not guaranteed.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                At the physical hardware frontier, robots demand microsecond-deterministic timing. Motor commutation loops, quadrature encoder tick counting, and ultrasonic echo measurements cannot tolerate scheduling delays. For embedded physical control, roboticists rely on microcontrollers: self-contained integrated circuits containing a processor core, memory, and programmable input/output peripherals on a single silicon die.<sup><a href="#ref-1">[1]</a></sup> The Arduino platform serves as the premier open-source environment for prototyping robotic embedded control systems.<sup><a href="#ref-1">[1]</a></sup>
+                                At the physical hardware frontier, robots need tight, predictable timing. Motor switching, quadrature encoder counting and ultrasonic echo measurements cannot tolerate long scheduling delays. For this low-level control, roboticists use microcontrollers: single chips that combine a processor core, program memory, working memory and input/output pins. The ATmega328P, for example, packs 32 KB of flash, 2 KB of SRAM, 1 KB of EEPROM and 23 general-purpose I/O lines into one device.<sup><a href="#ref-2">[2]</a></sup> The Arduino Uno, built around this chip, is a common starting point for prototyping robot control electronics.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">02. Hardware architecture: Arduino Uno R3 versus Uno R4</h2>
                             <p>
-                                When designing an embedded robot controller, selecting the appropriate board generation dictates electrical limits and computational throughput. The classic benchmark is the <strong>Arduino Uno R3</strong>, powered by the Microchip ATmega328P microcontroller,<sup><a href="#ref-2">[2]</a></sup> while modern designs increasingly utilize the 32-bit <strong>Arduino Uno R4</strong>,<sup><a href="#ref-3">[3]</a></sup> powered by the Renesas RA4M1.<sup><a href="#ref-4">[4]</a></sup>
+                                When designing an embedded robot controller, the board generation sets the electrical limits and the computing power. The classic benchmark is the <strong>Arduino Uno R3</strong>, powered by the Microchip ATmega328P microcontroller,<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup> while newer designs often use the 32-bit <strong>Arduino Uno R4</strong>,<sup><a href="#ref-5">[5]</a></sup> powered by the Renesas RA4M1.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -158,137 +158,137 @@
                                 <tbody>
                                     <tr>
                                         <td><strong>Microcontroller (MCU)</strong></td>
-                                        <td>Microchip ATmega328P (8-bit AVR RISC)<sup><a href="#ref-2">[2]</a></sup></td>
-                                        <td>Renesas RA4M1 (32-bit Arm Cortex-M4 with FPU)<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td>Microchip ATmega328P (8-bit AVR)<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td>Renesas RA4M1 (32-bit Arm Cortex-M4 with FPU)<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Clock Frequency</strong></td>
-                                        <td>16 MHz</td>
-                                        <td>48 MHz (3x clock speed, 32-bit operations)</td>
+                                        <td>16 MHz<sup><a href="#ref-3">[3]</a></sup></td>
+                                        <td>48 MHz (3 times the R3 clock)<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Flash Memory / SRAM</strong></td>
-                                        <td>32 KB Flash, 2 KB SRAM, 1 KB EEPROM</td>
-                                        <td>256 KB Flash, 32 KB SRAM, 8 KB Data Flash</td>
+                                        <td>32 KB Flash (0.5 KB used by the bootloader), 2 KB SRAM, 1 KB EEPROM<sup><a href="#ref-3">[3]</a></sup></td>
+                                        <td>256 KB Flash, 32 KB SRAM, 8 KB data memory (EEPROM)<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Operating Voltage</strong></td>
-                                        <td>5.0 V logic</td>
-                                        <td>5.0 V logic (5V shield compatibility)</td>
+                                        <td>5 V<sup><a href="#ref-3">[3]</a></sup></td>
+                                        <td>5 V (keeps 5 V shield compatibility)<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Input Voltage Range (VIN)</strong></td>
-                                        <td>7 V to 12 V (linear regulator)</td>
-                                        <td>6 V to 24 V (high-efficiency buck regulator)</td>
+                                        <td><strong>Input Voltage (VIN)</strong></td>
+                                        <td>7 V to 12 V recommended, 6 V to 20 V limit<sup><a href="#ref-3">[3]</a></sup></td>
+                                        <td>6 V to 24 V recommended, stepped down to 5 V by a buck converter<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>DC Current per I/O Pin</strong></td>
-                                        <td>20 mA recommended (40 mA absolute max)<sup><a href="#ref-2">[2]</a></sup></td>
-                                        <td>8 mA maximum (cannot drive optocouplers directly)<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td>20 mA listed by Arduino; 40 mA is the chip's absolute maximum rating<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-7">[7]</a></sup></td>
+                                        <td>8 mA maximum<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>ADC Resolution</strong></td>
-                                        <td>10-bit (1024 steps, ~4.88 mV per step)<sup><a href="#ref-2">[2]</a></sup></td>
-                                        <td>14-bit (configured as 12-bit: 4096 steps, ~1.22 mV)<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td>10-bit (1024 steps, about 4.9 mV per step at 5 V)<sup><a href="#ref-8">[8]</a></sup></td>
+                                        <td>Up to 14-bit; <code>analogRead()</code> defaults to 10-bit for compatibility<sup><a href="#ref-8">[8]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>True Analog DAC Output</strong></td>
-                                        <td>None (PWM approximation only)</td>
-                                        <td>12-bit true DAC on analog pin A0</td>
+                                        <td>None (PWM approximation only)<sup><a href="#ref-9">[9]</a></sup></td>
+                                        <td>Up to 12-bit DAC on analog pin A0<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>External Interrupt Pins</strong></td>
-                                        <td>Pins 2 (INT0) and 3 (INT1) only<sup><a href="#ref-2">[2]</a></sup></td>
-                                        <td>All digital pins (pins 0 to 13)<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td><strong>External Interrupt Pins (<code>attachInterrupt()</code>)</strong></td>
+                                        <td>Pins 2 and 3<sup><a href="#ref-10">[10]</a></sup></td>
+                                        <td>Pins 2 and 3<sup><a href="#ref-10">[10]</a></sup></td>
                                     </tr>
                                     <tr>
                                         <td><strong>Built-in Peripherals</strong></td>
-                                        <td>UART, SPI, I2C</td>
-                                        <td>UART, SPI, I2C, CAN Bus, Op-Amp, USB HID</td>
+                                        <td>USART, SPI, I2C<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td>UART, SPI, I2C, CAN (external transceiver needed), op-amp, USB 2.0 full-speed (HID capable)<sup><a href="#ref-5">[5]</a></sup></td>
                                     </tr>
                                 </tbody>
                             </table>
                             <p>
-                                The current limit per GPIO pin is a vital distinction for roboticists. On the Uno R3, an ATmega328P pin can comfortably supply up to 20 mA, sufficient to directly light standard LEDs or trigger low-current optocouplers.<sup><a href="#ref-2">[2]</a></sup> On the Uno R4, the Renesas RA4M1 limits DC current to 8 mA per pin: attempting to draw 20 mA directly from an R4 pin will trigger thermal degradation or burn out the internal silicon output buffer.<sup><a href="#ref-4">[4]</a></sup>
+                                The current limit per GPIO pin is a vital distinction for roboticists. On the Uno R3, Arduino lists 20 mA per I/O pin, and the ATmega328P's absolute maximum rating is 40 mA per pin; 20 mA is the datasheet's test condition at 5 V, not a safe target to run at continuously.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-7">[7]</a></sup> On the Uno R4, Arduino states that the RA4M1's GPIOs can handle up to 8 mA and warns never to connect devices that draw more current directly to a GPIO.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">03. GPIO pin functions and input modes</h2>
                             <p>
-                                An Arduino Uno exposes 14 digital input/output pins (labeled 0 through 13) and 6 analog input pins (labeled A0 through A5).<sup><a href="#ref-1">[1]</a></sup> Understanding their electrical behavior prevents erratic software bugs:
+                                An Arduino Uno exposes 14 digital input/output pins (labeled 0 through 13) and 6 analog input pins (labeled A0 through A5).<sup><a href="#ref-3">[3]</a></sup> Understanding their electrical behavior prevents confusing software bugs:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Digital Pins (0&ndash;13):</span> Read or output binary voltages: logic HIGH (5.0 V) or logic LOW (0 V / Ground). Pins 0 (RX) and 1 (TX) connect directly to the USB serial transceiver. Connecting sensors or motors to pins 0 and 1 while attempting to debug via the Serial Monitor causes bus contention, communication errors, and sketch upload failures.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">PWM Output Pins (~):</span> On the Uno R3, pins 3, 5, 6, 9, 10, and 11 feature internal timer-counter peripherals capable of generating Pulse Width Modulation waves to modulate average electrical power.<sup><a href="#ref-2">[2]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Analog Input Pins (A0&ndash;A5):</span> Connect to an internal successive-approximation Analog-to-Digital Converter (ADC). On the Uno R3, <code>analogRead(pin)</code> maps voltages between 0 V and 5.0 V to an integer between 0 and 1023. Each step represents approximately \(5.0\text{ V} / 1024 \approx 4.88\text{ mV}\).<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Digital Pins (0&ndash;13):</span> Read or output binary voltages: logic HIGH (5 V) or logic LOW (0 V / Ground). On the Uno R3, pins 0 (RX) and 1 (TX) carry the serial link to the board's USB bridge chip (an ATmega16U2), which some of the processor's pins are reserved for; this USB link is also how sketches are uploaded and how the Serial Monitor talks to the board.<sup><a href="#ref-4">[4]</a></sup> Connecting other hardware to pins 0 and 1 can therefore interfere with uploads and serial debugging.</li>
+                                <li class="article-spec-item"><span class="spec-label">PWM Output Pins (~):</span> On both the Uno R3 and the Uno R4, pins 3, 5, 6, 9, 10 and 11 are the officially supported pins for Pulse Width Modulation with <code>analogWrite()</code>.<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Analog Input Pins (A0&ndash;A5):</span> Connect to the microcontroller's Analog-to-Digital Converter (ADC). On the Uno R3, <code>analogRead(pin)</code> maps voltages between 0 V and 5 V to an integer between 0 and 1023, so each step is about \(5\text{ V} / 1024 \approx 4.9\text{ mV}\).<sup><a href="#ref-8">[8]</a></sup></li>
                             </ul>
                             <p>
-                                When configuring a digital input pin using <code>pinMode()</code>, leaving the pin unconnected results in a <strong>floating input</strong>.<sup><a href="#ref-5">[5]</a></sup> In a high-impedance state, an unconnected pin acts like a miniature antenna, picking up ambient capacitive and electromagnetic noise from nearby power lines and motors. The digital read will flutter randomly between 0 and 1.<sup><a href="#ref-5">[5]</a></sup>
+                                When a digital pin is configured with <code>pinMode(pin, INPUT)</code> and nothing is connected to it, the pin is a <strong>floating input</strong>. In this high-impedance state it picks up electrical noise from its surroundings and reports seemingly random changes between HIGH and LOW.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <p>
-                                To prevent floating inputs when connecting mechanical switches or limit bumpers, roboticists configure the pin mode as <code>pinMode(pin, INPUT_PULLUP)</code>.<sup><a href="#ref-5">[5]</a></sup> This activates an internal pull-up resistor inside the microcontroller (20 to 50 k\(\Omega\) on the ATmega328P), tying the input pin firmly to the 5 V rail. The default unpressed state is guaranteed to read HIGH. When the robot's bumper switch closes, it connects the pin to Ground, pulling the voltage to 0 V and producing a clean, noise-free logic LOW.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                                To prevent floating inputs when connecting mechanical switches or bumpers, roboticists configure the pin as <code>pinMode(pin, INPUT_PULLUP)</code>. This turns on a pull-up resistor inside the microcontroller (between 20 k\(\Omega\) and 50 k\(\Omega\) on most AVR-based boards), which holds the pin at HIGH when the switch is open.<sup><a href="#ref-11">[11]</a></sup> When the robot's bumper switch closes, it connects the pin to Ground and the pin reads LOW, so the logic is inverted: LOW means pressed.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">04. Actuator power: why microcontrollers cannot drive motors</h2>
                             <p>
-                                A beginner mistake in robotics is attempting to wire a DC motor or large hobby servo directly to an Arduino GPIO pin or to the board's 5V power header. This will instantly malfunction or permanently destroy the microcontroller board.<sup><a href="#ref-1">[1]</a></sup>
+                                A beginner mistake in robotics is wiring a DC motor or large hobby servo directly to an Arduino GPIO pin. Arduino's own documentation notes that a pin's current is not enough to run most relays, solenoids or motors, and that short circuits or high-current loads on a pin can damage or destroy the pin or even the whole chip.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <p>
-                                Two fundamental physical laws explain why direct motor connection fails:
+                                Two physical effects explain why direct motor connection fails:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Current demands versus pin limits:</span> An Arduino Uno R3 pin can supply a maximum of 20 mA (Uno R4: 8 mA), and the onboard 5V linear voltage regulator can provide at most 500 mA before overheating. In contrast, even a miniature yellow plastic hobby DC gearmotor draws 150 to 300 mA when spinning freely with no load. When the motor starts up, accelerates, or encounters mechanical resistance, its <strong>stall current</strong> surges to 1.5 A to 3.0 A: between 75 and 150 times the safe current rating of a microcontroller pin.<sup><a href="#ref-2">[2]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Inductive kickback and back-EMF:</span> A motor is fundamentally an electromagnetic coil: a powerful inductor. According to Faraday's law of electromagnetic induction, the voltage across an inductor is proportional to the rate of change of current: \(V_L = -L \frac{di}{dt}\). When the microcontroller abruptly switches a motor off, the sudden interruption of current causes the collapsing magnetic field to generate an enormous reverse voltage spike (often exceeding 50 to 100 V). This high-voltage inductive kickback punches through the microscopic silicon oxide insulation of the microcontroller's CMOS transistors, permanently frying the chip.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Current demands versus pin limits:</span> An Uno R3 pin is listed for 20 mA (absolute maximum 40 mA) and an Uno R4 pin for 8 mA.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-5">[5]</a></sup> Even small DC gearmotors need far more than this when running, and much more again when starting or stalled, so they must be fed from a driver circuit, not from a pin.<sup><a href="#ref-11">[11]</a></sup> Check the stall current on your motor's datasheet before choosing a driver.</li>
+                                <li class="article-spec-item"><span class="spec-label">Inductive kickback:</span> A motor winding is a coil, which is an inductor. An inductor resists sudden changes in current, so when a switch abruptly cuts the current, the coil produces a voltage spike that can damage the switching electronics. This is why datasheets for motor drivers such as the L298 require diodes to carry this current when inductive loads are driven.<sup><a href="#ref-12">[12]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">05. H-bridge motor drivers: L298N versus TB6612FNG</h2>
                             <p>
-                                To protect the microcontroller while supplying the high currents required by motors, roboticists use an intermediate power amplifier known as an <strong>H-bridge motor driver</strong>.<sup><a href="#ref-6">[6]</a></sup> An H-bridge consists of four solid-state electronic switches arranged in an "H" shape around the motor. By closing diagonal pairs of switches, current flows forward or backward through the motor windings, enabling bidirectional rotation. Modulating the switches with a high-speed logic signal regulates speed.<sup><a href="#ref-6">[6]</a></sup>
+                                To protect the microcontroller while supplying the high currents motors need, roboticists use an intermediate power stage known as an <strong>H-bridge motor driver</strong>: a power stage that takes low-current control signals from the microcontroller and switches the much larger motor current from a separate supply.<sup><a href="#ref-12">[12]</a></sup> An H-bridge consists of four electronic switches arranged in an "H" shape around the motor. Closing diagonal pairs of switches sends current forward or backward through the motor, which gives two directions of rotation, and switching them rapidly with a PWM signal sets the speed.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <p>
-                                Two popular motor driver modules illustrate the evolutionary leap in power electronics:
+                                Two popular driver chips (often sold on breakout modules such as the "L298N" board) show how much driver technology has improved:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">STMicroelectronics L298N:</span> An older dual full-bridge driver constructed using Bipolar Junction Transistors (BJTs).<sup><a href="#ref-6">[6]</a></sup> Because BJTs suffer from a substantial collector-emitter saturation voltage drop (\(V_{CE(sat)} \approx 1.8\text{ V}\) to \(3.2\text{ V}\) across upper and lower transistors combined), significant energy is wasted directly as heat. When driving a 2 A load, the L298N dissipates up to 6 watts of pure heat, requiring a massive finned aluminum heatsink. Furthermore, BJTs lack intrinsic body diodes: an L298N circuit requires external high-speed flyback diodes (such as 1N4007 or Schottky diodes) wired across each output to clamp inductive voltage spikes.<sup><a href="#ref-6">[6]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Toshiba TB6612FNG:</span> A modern, highly efficient dual full-bridge driver constructed using Power MOSFETs.<sup><a href="#ref-7">[7]</a></sup> Power MOSFETs operate with an exceptionally low on-resistance: the TB6612FNG features an on-resistance of just \(R_{DS(ON)} \approx 0.5\ \Omega\) combined across high-side and low-side transistors. At 1 A current, the voltage drop is less than 0.5 V. The module remains cool to the touch and requires no bulky heatsink. It delivers 1.2 A continuous current (3.2 A peak pulse), includes built-in fast flyback protection diodes, and features internal thermal shutdown circuitry.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">STMicroelectronics L298:</span> An older dual full-bridge driver rated for supply voltages up to 46 V, 2 A DC per bridge (2.5 A repetitive peak) and 4 A total.<sup><a href="#ref-12">[12]</a></sup> Its output transistors have a large saturation voltage drop: the datasheet gives a total drop (upper plus lower transistor) of 1.8 V typical and up to 3.2 V at 1 A, and up to 4.9 V at 2 A.<sup><a href="#ref-12">[12]</a></sup> At 2 A, a 4.9 V drop means about \(4.9 \times 2 \approx 10\) W turned into heat in one bridge, which is why L298 modules carry a large finned heatsink. The L298 also needs an external set of fast-recovery diodes (trr of 200 ns or less) when it drives inductive loads such as motors.<sup><a href="#ref-12">[12]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Toshiba TB6612FNG:</span> A newer dual driver whose output transistors use an LD MOS structure with low on-resistance: 0.5 \(\Omega\) typical for the upper and lower transistors combined (at a motor supply of 5 V or more).<sup><a href="#ref-13">[13]</a></sup> At 1 A this is a drop of only about 0.5 V, so it runs much cooler than the L298 for the same current. It is rated for 1.2 A average and 3.2 A peak output current with a motor supply of up to 15 V, includes built-in regenerative diodes, and has a thermal shutdown circuit and a low-voltage detection circuit.<sup><a href="#ref-13">[13]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">06. Power architecture: the common ground rule</h2>
                             <p>
-                                How should you power a DC motor in an Arduino robot? The foundational rule of robotics electrical architecture is clear: <strong>from a separate battery through a motor driver, with grounds connected</strong>.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                                How should you power a DC motor in an Arduino robot? The foundational rule of robot electrical design is: <strong>from a separate battery through a motor driver, with grounds connected</strong>. Arduino's Servo library documentation gives the same advice for servos, which draw considerable power: use a separate supply and be sure to connect the grounds of the Arduino and the external supply together.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
-                                Operating a robot requires two isolated power domains:
+                                Operating a robot therefore uses two power domains:
                             </p>
                             <ol class="article-spec-list">
-                                <li><strong>The Logic Domain:</strong> The sensitive 5V digital circuitry of the Arduino board, which can be powered via a USB power bank or a dedicated battery through a clean switching regulator.</li>
-                                <li><strong>The Motor Power Domain:</strong> A high-discharge battery pack (such as a 7.4V or 11.1V Lithium Polymer pack) connected directly to the high-voltage power terminals (VCC / VMOT) of the motor driver.</li>
+                                <li><strong>The Logic Domain:</strong> The 5 V digital circuitry of the Arduino board, powered over USB or from a battery through the board's VIN input or a regulator.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li><strong>The Motor Power Domain:</strong> A battery pack (for example a 2S or 3S lithium polymer pack) connected to the motor-supply terminal of the driver (VS on the L298, VM on the TB6612FNG).<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup></li>
                             </ol>
                             <p>
-                                Crucially, the Ground (GND) wire from the motor battery and the Ground (GND) pin on the Arduino <strong>must be connected together</strong>.<sup><a href="#ref-6">[6]</a></sup> What happens if you do not connect the Arduino ground to the motor battery ground? The logic signals float without a shared 0V reference, causing erratic motor behavior or complete failure to switch.<sup><a href="#ref-6">[6]</a></sup>
+                                Crucially, the Ground (GND) wire from the motor battery and the Ground (GND) pin on the Arduino <strong>must be connected together</strong>.<sup><a href="#ref-14">[14]</a></sup> What happens if you do not connect the Arduino ground to the motor battery ground? The logic signals float without a shared 0 V reference, causing erratic motor behavior or complete failure to switch.
                             </p>
                             <p>
-                                In electrical engineering, voltage is not an absolute quantity: it is a difference in electrical potential between two physical points. When the Arduino sets digital pin 9 to HIGH (5.0 V), that 5.0 V is measured relative to the Arduino's own Ground pin. If the motor driver's logic circuit does not share that exact same Ground, it cannot measure whether pin 9 is at 5 V or 0 V. The floating control inputs pick up electrical noise, resulting in unpredictable motor stuttering, sudden full-speed runaway, or fried driver logic.<sup><a href="#ref-6">[6]</a></sup>
+                                The reason is that voltage is not an absolute quantity: it is a difference in electrical potential between two points. When the Arduino sets digital pin 9 HIGH (5 V), that 5 V is measured relative to the Arduino's own Ground pin. If the motor driver's logic does not share that same Ground, it has no reference for deciding whether pin 9 is at 5 V or 0 V. Its control inputs effectively float, pick up noise and can switch unpredictably, just like the floating inputs described in Section 03.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">07. Mobile robot power: Lithium Polymer (LiPo) safety</h2>
                             <p>
-                                Autonomous mobile robots require lightweight, high-energy-density power sources. Modern mobile robotics relies almost universally on <strong>Lithium Polymer (LiPo)</strong> rechargeable batteries.<sup><a href="#ref-8">[8]</a></sup> However, the high electrochemical reactivity of lithium makes LiPo packs hazardous if mistreated. Every robotics engineer must understand cell chemistry and safety limits:<sup><a href="#ref-8">[8]</a></sup>
+                                Autonomous mobile robots need light, energy-dense power sources, so many use rechargeable lithium-based batteries such as Lithium Polymer (LiPo) packs. Lithium-based cells can go into thermal runaway if mistreated (Battery University lists a thermal runaway temperature of about 150 &deg;C for lithium cobalt oxide), so every robotics engineer should know the basic voltage limits.<sup><a href="#ref-15">[15]</a></sup> The figures below are for cobalt-based lithium cells; always check your own pack's datasheet.
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Nominal cell voltage:</span> A single LiPo cell (1S) has a nominal voltage of <strong>3.7 V</strong>. Multiple cells are wired in series to create higher voltages: a 2S pack produces 7.4 V nominal, while a 3S pack produces 11.1 V nominal.<sup><a href="#ref-8">[8]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Maximum charged voltage:</span> When fully charged, each cell reaches exactly <strong>4.20 V</strong> (8.4 V for 2S, 12.6 V for 3S). Charging a cell beyond 4.25 V causes lithium plating and electrolyte breakdown, which can ignite violent combustion.<sup><a href="#ref-8">[8]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Critical discharge floor:</span> Discharging a LiPo cell below <strong>3.0 V per cell</strong> causes permanent chemical damage. Below 3.0 V, copper from the anode dissolves into the electrolyte solution. When recharged, the dissolved copper forms microscopic metallic spikes (dendrites) that puncture the polymer separator, causing an internal short-circuit and thermal runaway. A safe operational cutoff is 3.5 V per cell under resting conditions.<sup><a href="#ref-8">[8]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Storage charge:</span> If a robot will sit unused for more than a few days, cells should be maintained at a storage voltage of <strong>3.80 V to 3.85 V per cell</strong> to minimize chemical aging and swelling.<sup><a href="#ref-8">[8]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Discharge C-Rating:</span> The "C" rating denotes maximum safe discharge current. Maximum current equals \(I_{max} = C \times \text{Capacity in Amp-hours}\). For example, a 2200 mAh (2.2 Ah) 25C battery can safely deliver \(2.2 \times 25 = 55\text{ A}\) continuous current.<sup><a href="#ref-8">[8]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Nominal cell voltage:</span> Battery University lists a nominal voltage of 3.60 V per cell for lithium cobalt oxide.<sup><a href="#ref-15">[15]</a></sup> Cells are wired in series to raise the voltage: a 2S pack has two cells in series and a 3S pack has three, so their nominal voltages are about twice and three times the cell value. Hobby packs are often labelled with a slightly higher nominal value per cell, so read the label.</li>
+                                <li class="article-spec-item"><span class="spec-label">Maximum charged voltage:</span> Cobalt-blend lithium-ion cells typically charge to <strong>4.20 V per cell</strong> with a tolerance of &plusmn;50 mV (8.4 V for 2S, 12.6 V for 3S). Prolonged charging above 4.30 V on a cell designed for 4.20 V plates metallic lithium on the anode, and a fully charged cell has a lower thermal runaway temperature than a partly charged one.<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Discharge floor:</span> Battery University lists a full-discharge cutoff of <strong>3.00 V per cell</strong> for lithium cobalt oxide, with 2.50 V as the minimal voltage.<sup><a href="#ref-15">[15]</a></sup> Treat 3.0 V per cell as the floor your robot should never go below; discharging further damages the cell.</li>
+                                <li class="article-spec-item"><span class="spec-label">Storage charge:</span> If a robot will sit unused, do not store its battery empty or full. Battery University recommends putting some charge into an empty battery before storage, with 40 to 50 percent state of charge as ideal.<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Discharge C-Rating:</span> The C-rate expresses current relative to a battery's rated capacity: a 1 Ah battery discharged at 1C supplies 1 A for one hour, and at 2C it supplies 2 A.<sup><a href="#ref-17">[17]</a></sup> A pack's "C" rating is the maximum discharge rate its maker allows, so \(I_{max} = C \times \text{capacity in Ah}\). As a worked example, a 2200 mAh (2.2 Ah) pack rated 25C allows \(2.2 \times 25 = 55\text{ A}\).</li>
                             </ul>
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fas fa-fire-extinguisher"></i> LiPo safety protocols</div>
-                                <p>Always charge LiPo batteries using a computerized balance charger that monitors individual cell voltages through the multi-pin JST-XH balance lead. Mount a low-voltage battery monitor/buzzer on your mobile robot chassis to sound an alarm before cells drop below 3.5 V. Always store and charge batteries inside fireproof fiberglass LiPo safety bags.</p>
+                                <p>Charge LiPo packs only with a charger made for lithium packs that respects the 4.20 V per cell limit.<sup><a href="#ref-16">[16]</a></sup> Fit a low-voltage battery monitor or buzzer to your mobile robot so it warns you well before any cell approaches the 3.0 V floor.<sup><a href="#ref-15">[15]</a></sup> Follow the battery and charger makers' instructions on charging and storage locations, and never leave a charging pack unattended.</p>
                             </div>
 
                             <h2 class="article-section-title">08. Sketch structure and non-blocking sensor timing</h2>
                             <p>
-                                An Arduino program (termed a "sketch") is written in C++ and compiled via AVR-GCC or Arm-GCC into raw machine code. Every sketch requires two core functions that mirror robotic execution:<sup><a href="#ref-5">[5]</a></sup>
+                                An Arduino program (called a "sketch") is written in C++ and compiled into machine code for the board's microcontroller. Every sketch has two core functions: <code>setup()</code>, which runs once after each power-up or reset and is used to set pin modes and start libraries, and <code>loop()</code>, which then runs over and over so the program can respond to its inputs.<sup><a href="#ref-18">[18]</a></sup>
                             </p>
                             <pre class="article-code"><code>void setup() {
     // Runs exactly once at hardware power-on or microcontroller reset.
@@ -303,10 +303,10 @@ void loop() {
     // Sample sensors, compute control laws, and update motor outputs.
 }</code></pre>
                             <p>
-                                A classic beginner pitfall is using <code>delay(milliseconds)</code> to sequence robot movements. The <code>delay()</code> function is a <strong>blocking call</strong>: it forces the microcontroller CPU into an idle loop, burning clock cycles without executing any other code. If a robot is commanded to turn for 1,000 milliseconds using <code>delay(1000)</code>, it cannot read bumper switches, measure distance sensors, or check for an emergency stop command during that entire second.<sup><a href="#ref-5">[5]</a></sup>
+                                A classic beginner pitfall is using <code>delay(milliseconds)</code> to sequence robot movements. While <code>delay()</code> runs, no other reading of sensors, calculations or pin manipulation can happen in your sketch; only interrupts, incoming serial data and running PWM outputs carry on.<sup><a href="#ref-19">[19]</a></sup> If a robot is told to turn using <code>delay(1000)</code>, it cannot read its bumper switches, measure distance sensors or check for an emergency stop command during that entire second.
                             </p>
                             <p>
-                                Professional robotic software uses <strong>non-blocking timing</strong> via <code>millis()</code> or <code>micros()</code>, recording timestamps and checking elapsed time against target intervals on every loop pass:<sup><a href="#ref-5">[5]</a></sup>
+                                The alternative, shown in Arduino's "Blink Without Delay" example, is <strong>non-blocking timing</strong>: the loop keeps running and checks <code>millis()</code> on every pass until enough time has elapsed.<sup><a href="#ref-19">[19]</a></sup> <code>millis()</code> returns the number of milliseconds since the program started as an <code>unsigned long</code>, and it wraps back to zero after about 49 days; for short intervals <code>micros()</code> gives finer timing.<sup><a href="#ref-20">[20]</a></sup>
                             </p>
                             <pre class="article-code"><code>unsigned long previousMillis = 0;
 const unsigned long interval = 50; // Execute control loop at 20 Hz
@@ -322,10 +322,10 @@ void loop() {
     checkEmergencyStop();
 }</code></pre>
                             <p>
-                                A standard initial distance sensor for mobile robots is the <strong>HC-SR04 ultrasonic rangefinder</strong>.<sup><a href="#ref-9">[9]</a></sup> The sensor features an acoustic transmitter and receiver. To take a measurement, the microcontroller sends a 10-microsecond HIGH pulse on the Trigger pin, prompting the sensor to emit an 8-cycle ultrasonic burst at 40 kHz. The sensor pulls its Echo pin HIGH until the reflected sound pulse returns.<sup><a href="#ref-9">[9]</a></sup>
+                                A common first distance sensor for mobile robots is the <strong>HC-SR04 ultrasonic ranging module</strong>, which measures from about 2 cm to 4 m on a 5 V supply.<sup><a href="#ref-21">[21]</a></sup> To take a measurement, the microcontroller sends a 10-microsecond pulse on the Trigger pin; the module then sends eight cycles of 40 kHz ultrasound and holds its Echo pin HIGH for the time the sound takes to travel out and back.<sup><a href="#ref-21">[21]</a></sup>
                             </p>
                             <p>
-                                In dry air at room temperature (20 &deg;C), sound travels at approximately <strong>343 meters per second</strong> (or 0.0343 centimeters per microsecond).<sup><a href="#ref-10">[10]</a></sup> Because the sound pulse travels from the sensor to the obstacle and bounces back, the total distance traveled is twice the physical separation distance. The distance is computed as:<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                                In dry air at 20 &deg;C, sound travels at about <strong>343 meters per second</strong> (0.0343 centimeters per microsecond).<sup><a href="#ref-22">[22]</a></sup> Because the pulse travels to the obstacle and back, the distance is half of speed times echo time. The HC-SR04 datasheet expresses the same idea as "microseconds / 58 = centimeters".<sup><a href="#ref-21">[21]</a></sup><sup><a href="#ref-22">[22]</a></sup>
                             </p>
                             <pre class="article-code"><code>distance_cm = (echo_time_microseconds * 0.0343) / 2.0;</code></pre>
 
@@ -340,16 +340,28 @@ void loop() {
 
                             <h2 class="article-section-title">09. References</h2>
                             <ol class="article-spec-list">
-                                <li id="ref-1">Arduino, <em>Arduino Uno Rev3 User Manual and Hardware Reference</em>, Arduino Docs, 2024. <a href="https://docs.arduino.cc/hardware/uno-rev3/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/hardware/uno-rev3/</a>.</li>
-                                <li id="ref-2">Microchip Technology, <em>ATmega328P 8-bit AVR Microcontroller with 32K Bytes In-System Programmable Flash Datasheet</em>, Document DS40002061B, 2018. <a href="https://www.microchip.com/en-us/product/ATmega328P" target="_blank" rel="noopener noreferrer">microchip.com/en-us/product/ATmega328P</a>.</li>
-                                <li id="ref-3">Arduino, <em>Arduino Uno R4 Minima Hardware Reference and User Manual</em>, Arduino Docs, 2023. <a href="https://docs.arduino.cc/hardware/uno-r4-minima/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/hardware/uno-r4-minima/</a>.</li>
-                                <li id="ref-4">Renesas Electronics, <em>RA4M1 Group User's Manual: Hardware</em>, Document R01UH0887EJ0100, Rev. 1.00, 2020. <a href="https://www.renesas.com/en/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ra4m1-32-bit-microcontrollers-48mhz-arm-cortex-m4" target="_blank" rel="noopener noreferrer">renesas.com/en/products/.../ra4m1</a>.</li>
-                                <li id="ref-5">Arduino, &ldquo;Language Reference: pinMode(), analogRead(), analogWrite(), millis(),&rdquo; <em>Arduino Docs</em>, 2024. <a href="https://docs.arduino.cc/language-reference/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/</a>.</li>
-                                <li id="ref-6">STMicroelectronics, <em>L298: Dual Full-Bridge Driver Datasheet</em>, Document DocID 1773, Rev. 6, 2000. <a href="https://www.st.com/en/motor-drivers/l298.html" target="_blank" rel="noopener noreferrer">st.com/en/motor-drivers/l298.html</a>.</li>
-                                <li id="ref-7">Toshiba Electronic Devices, <em>TB6612FNG Driver IC for Dual DC Motor Datasheet</em>, Document Rev. 2.0, 2014. <a href="https://toshiba.semicon-storage.com/ap-en/semiconductor/product/linear-ics/motor-driver-ics/detail.TB6612FNG.html" target="_blank" rel="noopener noreferrer">toshiba.semicon-storage.com/.../TB6612FNG.html</a>.</li>
-                                <li id="ref-8">Cadex Electronics, &ldquo;BU-216: Summary Table of Lithium-based Batteries,&rdquo; <em>Battery University</em>, 2023. <a href="https://batteryuniversity.com/article/bu-216-summary-table-of-lithium-based-batteries" target="_blank" rel="noopener noreferrer">batteryuniversity.com/article/bu-216-summary-table-of-lithium-based-batteries</a>.</li>
-                                <li id="ref-9">ElecFreaks, <em>Ultrasonic Ranging Module HC-SR04 User Manual and Datasheet</em>, 2013. <a href="https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf" target="_blank" rel="noopener noreferrer">cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</a>.</li>
-                                <li id="ref-10">OpenStax, &ldquo;Speed of Sound,&rdquo; <em>University Physics Volume 1</em>, Section 17.3, OpenStax CNX, 2021. <a href="https://phys.libretexts.org/Bookshelves/University_Physics/Book%3A_University_Physics_(OpenStax)/Book%3A_University_Physics_I_-_Mechanics_Sound_Oscillations_and_Waves_(OpenStax)/17%3A_Sound/17.03%3A_Speed_of_Sound" target="_blank" rel="noopener noreferrer">phys.libretexts.org/.../17.03:_Speed_of_Sound</a>.</li>
+                                <li id="ref-1">The Linux Foundation, &ldquo;Technical basics: Important aspects for real time,&rdquo; <em>Real-Time Linux Wiki</em>. <a href="https://wiki.linuxfoundation.org/realtime/documentation/technical_basics/start" target="_blank" rel="noopener noreferrer">wiki.linuxfoundation.org/realtime/documentation/technical_basics/start</a>.</li>
+                                <li id="ref-2">Microchip Technology, &ldquo;ATmega328P&rdquo; product page and <em>ATmega328/P Datasheet Complete</em>, Atmel-42735B, 11/2016. <a href="https://www.microchip.com/en-us/product/ATmega328P" target="_blank" rel="noopener noreferrer">microchip.com/en-us/product/ATmega328P</a>.</li>
+                                <li id="ref-3">Arduino, &ldquo;Arduino UNO R3: Tech Specs,&rdquo; <em>Arduino Store</em>. <a href="https://store.arduino.cc/products/arduino-uno-rev3" target="_blank" rel="noopener noreferrer">store.arduino.cc/products/arduino-uno-rev3</a>.</li>
+                                <li id="ref-4">Arduino, <em>Arduino UNO R3 Product Reference Manual</em>, SKU A000066, rev. 3, 2024. <a href="https://docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf" target="_blank" rel="noopener noreferrer">docs.arduino.cc/resources/datasheets/A000066-datasheet.pdf</a>.</li>
+                                <li id="ref-5">Arduino, <em>Arduino UNO R4 Minima Product Reference Manual</em>, SKU ABX00080, rev. 5, 2025. <a href="https://docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf" target="_blank" rel="noopener noreferrer">docs.arduino.cc/resources/datasheets/ABX00080-datasheet.pdf</a>.</li>
+                                <li id="ref-6">Renesas Electronics, <em>RA4M1 Group Datasheet</em>, R01DS0355EJ0100, Rev. 1.00, October 2019. <a href="https://docs.arduino.cc/resources/datasheets/ra4m1-datasheet.pdf" target="_blank" rel="noopener noreferrer">docs.arduino.cc/resources/datasheets/ra4m1-datasheet.pdf</a>.</li>
+                                <li id="ref-7">Arduino, &ldquo;Arduino Pin Current Limitations,&rdquo; <em>Arduino Playground</em> (archived, read-only). <a href="https://www.arduino.cc/playground/Main/ArduinoPinCurrentLimitations/" target="_blank" rel="noopener noreferrer">arduino.cc/playground/Main/ArduinoPinCurrentLimitations/</a>.</li>
+                                <li id="ref-8">Arduino, &ldquo;analogRead(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/analog-io/analogRead/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/analog-io/analogRead/</a>.</li>
+                                <li id="ref-9">Arduino, &ldquo;analogWrite(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/</a>.</li>
+                                <li id="ref-10">Arduino, &ldquo;attachInterrupt(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/</a>.</li>
+                                <li id="ref-11">Arduino, &ldquo;Digital Pins,&rdquo; <em>Arduino Docs</em>. <a href="https://docs.arduino.cc/learn/microcontrollers/digital-pins/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/learn/microcontrollers/digital-pins/</a>.</li>
+                                <li id="ref-12">STMicroelectronics, <em>L298: Dual Full-Bridge Driver</em>, datasheet DS0218, Rev. 5, October 2023. <a href="https://www.st.com/resource/en/datasheet/l298.pdf" target="_blank" rel="noopener noreferrer">st.com/resource/en/datasheet/l298.pdf</a>.</li>
+                                <li id="ref-13">Toshiba Electronic Devices &amp; Storage, <em>TB6612FNG: Driver IC for Dual DC Motor</em>, datasheet. <a href="https://toshiba.semicon-storage.com/info/docget.jsp?did=10660" target="_blank" rel="noopener noreferrer">toshiba.semicon-storage.com/info/docget.jsp?did=10660</a>.</li>
+                                <li id="ref-14">Arduino, <em>Servo library</em> (documentation and source code), GitHub. <a href="https://github.com/arduino-libraries/Servo" target="_blank" rel="noopener noreferrer">github.com/arduino-libraries/Servo</a>.</li>
+                                <li id="ref-15">Battery University, &ldquo;BU-216: Summary Table of Lithium-based Batteries,&rdquo; <em>Battery University</em>. <a href="https://batteryuniversity.com/article/bu-216-summary-table-of-lithium-based-batteries" target="_blank" rel="noopener noreferrer">batteryuniversity.com/article/bu-216-summary-table-of-lithium-based-batteries</a>.</li>
+                                <li id="ref-16">Battery University, &ldquo;BU-409: Charging Lithium-ion,&rdquo; <em>Battery University</em>. <a href="https://batteryuniversity.com/article/bu-409-charging-lithium-ion" target="_blank" rel="noopener noreferrer">batteryuniversity.com/article/bu-409-charging-lithium-ion</a>.</li>
+                                <li id="ref-17">Battery University, &ldquo;BU-402: What Is C-rate?&rdquo; <em>Battery University</em>. <a href="https://batteryuniversity.com/article/bu-402-what-is-c-rate" target="_blank" rel="noopener noreferrer">batteryuniversity.com/article/bu-402-what-is-c-rate</a>.</li>
+                                <li id="ref-18">Arduino, &ldquo;setup()&rdquo; and &ldquo;loop(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/structure/sketch/setup/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/structure/sketch/setup/</a>.</li>
+                                <li id="ref-19">Arduino, &ldquo;delay(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/time/delay/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/time/delay/</a>.</li>
+                                <li id="ref-20">Arduino, &ldquo;millis(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/time/millis/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/time/millis/</a>.</li>
+                                <li id="ref-21">ElecFreaks, <em>Ultrasonic Ranging Module HC-SR04</em>, datasheet (hosted by SparkFun). <a href="https://cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf" target="_blank" rel="noopener noreferrer">cdn.sparkfun.com/datasheets/Sensors/Proximity/HCSR04.pdf</a>.</li>
+                                <li id="ref-22">OpenStax, &ldquo;17.3: Speed of Sound,&rdquo; <em>University Physics Volume 1</em>, LibreTexts Physics, 2016. <a href="https://phys.libretexts.org/Bookshelves/University_Physics/Book%3A_University_Physics_(OpenStax)/Book%3A_University_Physics_I_-_Mechanics_Sound_Oscillations_and_Waves_(OpenStax)/17%3A_Sound/17.03%3A_Speed_of_Sound" target="_blank" rel="noopener noreferrer">phys.libretexts.org/.../17.03:_Speed_of_Sound</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
