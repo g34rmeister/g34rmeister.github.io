@@ -5,10 +5,10 @@
 -->
 <html lang="en">
     <head>
-        <title>5.8 Intro to Kalman Filters — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <title>5.8 Intro to Kalman Filters &mdash; Gerald L&ecirc; | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Why robots fuse sensors, and how a one-dimensional Kalman filter blends a prediction with a noisy measurement." />
+        <meta name="description" content="Why robots fuse sensors, the mathematics of the predict-update cycle, 1D worked calculations, and non-linear EKF/UKF in ROS 2 robot_localization." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="5.8 Intro to Kalman Filters — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="Why robots fuse sensors, and how a one-dimensional Kalman filter blends a prediction with a noisy measurement." />
+        <meta property="og:description" content="Why robots fuse sensors, the mathematics of the predict-update cycle, 1D worked calculations, and non-linear EKF/UKF in ROS 2 robot_localization." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-5-8.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="5.8 Intro to Kalman Filters, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="5.8 Intro to Kalman Filters — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="Why robots fuse sensors, and how a one-dimensional Kalman filter blends a prediction with a noisy measurement." />
+        <meta name="twitter:description" content="Why robots fuse sensors, the mathematics of the predict-update cycle, 1D worked calculations, and non-linear EKF/UKF in ROS 2 robot_localization." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,113 +135,273 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Why fuse sensors?</h2>
+                            <h2 class="article-section-title">01. Why robots require sensor fusion</h2>
                             <p>
-                            The last few lessons left us with a problem. <a href="robotics-5-6.html">Odometry</a> is smooth and responds instantly, but it drifts: its error grows the farther the robot drives. An ultrasonic sensor measuring the distance to a known wall, or GPS outdoors, does not drift, but each reading is noisy and some are badly wrong. Neither is good enough alone (see <a href="robotics-5-5.html">5.5</a>).
+                                In mobile robotics, state estimation is governed by a fundamental physical trade-off between two classes of sensors: proprioceptive motion sensors and exteroceptive environmental sensors.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                            A Kalman filter combines the two. It keeps a best estimate of the robot&rsquo;s state together with a number saying how uncertain that estimate is, and it weighs each new piece of information by how trustworthy it is. The result is usually better than either source on its own.
+                                As demonstrated in Lesson 5.6, <strong>wheel odometry</strong> is smooth, responsive, and available at high sampling rates (100 Hz to 1000 Hz). However, odometry is an integration process: small mechanical errors, floor irregularities, and wheel slip accumulate continuously into the robot's pose estimate. Without external references, odometric position drift grows without bound over time.
+                            </p>
+                            <p>
+                                Conversely, <strong>exteroceptive sensors</strong> (such as ultrasonic distance sensors measuring a known wall, LiDAR scan matchers, or outdoor GPS receivers) do not accumulate integration drift. Their measurements are directly referenced to landmarks in the physical environment. However, exteroceptive sensors suffer from high high-frequency measurement noise, electronic jitter, acoustic multipath, and intermittent signal outages.
+                            </p>
+                            <p>
+                                Neither sensor modality is sufficient on its own. <strong>Sensor fusion</strong> is the mathematical process of combining measurements from multiple disparate sensors such that the resulting state estimate possesses lower statistical uncertainty than any single sensor operating in isolation.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                The premier algorithmic framework for sensor fusion in robotics is the <strong>Kalman filter</strong>. Published in 1960 by mathematician Rudolf Emil K&aacute;lm&aacute;n, the filter is an optimal recursive data processing algorithm that maintains a continuous estimate of a dynamic system's state alongside an explicit mathematical measure of its statistical uncertainty.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. The predict&ndash;update cycle</h2>
+                            <h2 class="article-section-title">02. Historical origins: Rudolf K&aacute;lm&aacute;n and Apollo navigation</h2>
                             <p>
-                            A Kalman filter repeats two steps forever:
+                                Prior to 1960, optimal filtering was dominated by Norbert Wiener's frequency-domain filtering theory developed during World War II. While mathematically elegant, Wiener filters operated in the frequency domain, assumed infinite stationary signal histories, and required solving complex integral equations that exceeded the capabilities of early digital computers.
+                            </p>
+                            <p>
+                                Rudolf E. K&aacute;lm&aacute;n formulated state estimation directly in the time domain using state-space representations and linear matrix equations.<sup><a href="#ref-1">[1]</a></sup> In autumn 1960, K&aacute;lm&aacute;n visited Stanley F. Schmidt at NASA Ames Research Center in California. Schmidt's engineering team was tasked with developing midcourse navigation and trajectory estimation algorithms for the upcoming Apollo lunar missions.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                The Apollo Guidance Computer (AGC) possessed only 36 kilobytes of read-only core rope memory and 2 kilobytes of magnetic core RAM. Storing complete sensor histories was physically impossible. Schmidt recognized that K&aacute;lm&aacute;n's recursive algebraic formulation, which required storing only the current state estimate and its error covariance matrix, was the ideal computational solution. Schmidt modified K&aacute;lm&aacute;n's linear equations to handle non-linear orbital celestial mechanics, developing what became known as the <strong>Extended Kalman Filter (EKF)</strong>.<sup><a href="#ref-3">[3]</a></sup> A square-root formulation of the filter subsequently flew aboard the Apollo spacecraft, guiding humans to the lunar surface and back.
+                            </p>
+
+                            <h2 class="article-section-title">03. The recursive Predict-Update architecture</h2>
+                            <p>
+                                The Kalman filter operates as a continuous, two-stage recursive loop: the <strong>Predict (Time Update)</strong> step and the <strong>Update (Measurement Update)</strong> step.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                Consider a linear discrete-time physical system modeled in state space:
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\mathbf{x}_k = \mathbf{A}\mathbf{x}_{k-1} + \mathbf{B}\mathbf{u}_k + \mathbf{w}_k\]</p>
+                                <p>\[\mathbf{z}_k = \mathbf{H}\mathbf{x}_k + \mathbf{v}_k\]</p>
+                            </div>
+                            <p>
+                                Here, \(\mathbf{x}_k\) is the state vector at time step \(k\), \(\mathbf{A}\) is the state transition matrix, \(\mathbf{B}\) is the control input matrix, and \(\mathbf{u}_k\) represents control commands (such as wheel velocity). The term \(\mathbf{w}_k \sim \mathcal{N}(0, \mathbf{Q})\) represents zero-mean Gaussian <strong>process noise</strong> with covariance matrix \(\mathbf{Q}\). The sensor measurement vector \(\mathbf{z}_k\) is linked to state space via observation matrix \(\mathbf{H}\), corrupted by zero-mean Gaussian <strong>measurement noise</strong> \(\mathbf{v}_k \sim \mathcal{N}(0, \mathbf{R})\) with covariance matrix \(\mathbf{R}\).
+                            </p>
+                            <p>
+                                The two operational stages execute sequentially:
                             </p>
                             <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">Predict (time update):</span> use what the robot <em>did</em>, such as the distance its encoders say it drove, to move the estimate forward. Because motion is imperfect, uncertainty <em>grows</em>.</li>
-                            <li class="article-spec-item"><span class="spec-label">Update (measurement update):</span> use what the robot <em>sensed</em> to correct the estimate. Because we learned something, uncertainty <em>shrinks</em>.</li>
+                                <li class="article-spec-item"><span class="spec-label">Predict Step (Time Update):</span> The filter projects the state estimate forward in time using the mathematical motion model:
+                                    <p>\[\hat{\mathbf{x}}_k^- = \mathbf{A}\hat{\mathbf{x}}_{k-1} + \mathbf{B}\mathbf{u}_k\]</p>
+                                    <p>\[\mathbf{P}_k^- = \mathbf{A}\mathbf{P}_{k-1}\mathbf{A}^T + \mathbf{Q}\]</p>
+                                    Because real physical motion is inherently imperfect (tires slip, terrain varies), adding the process noise covariance \(\mathbf{Q}\) causes estimation uncertainty \(\mathbf{P}_k^-\) to <em>grow</em> during prediction.
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Update Step (Measurement Update):</span> When a sensor reading arrives, the filter computes the difference between the physical measurement \(\mathbf{z}_k\) and what the state model expected:
+                                    <p>\[\tilde{\mathbf{y}}_k = \mathbf{z}_k - \mathbf{H}\hat{\mathbf{x}}_k^-\]</p>
+                                    This residual difference \(\tilde{\mathbf{y}}_k\) is termed the <strong>innovation</strong>. The filter computes the optimal <strong>Kalman Gain</strong> \(\mathbf{K}_k\), which balances trust between prediction and measurement:
+                                    <p>\[\mathbf{K}_k = \mathbf{P}_k^-\mathbf{H}^T (\mathbf{H}\mathbf{P}_k^-\mathbf{H}^T + \mathbf{R})^{-1}\]</p>
+                                    The state estimate and its error covariance matrix are updated:
+                                    <p>\[\hat{\mathbf{x}}_k = \hat{\mathbf{x}}_k^- + \mathbf{K}_k \tilde{\mathbf{y}}_k\]</p>
+                                    <p>\[\mathbf{P}_k = (\mathbf{I} - \mathbf{K}_k \mathbf{H})\mathbf{P}_k^-\]</p>
+                                    Because new observational data was incorporated, the updated error covariance \(\mathbf{P}_k\) <em>shrinks</em>, indicating greater certainty.
+                                </li>
                             </ul>
+
+                            <h2 class="article-section-title">04. One-dimensional scalar worked example</h2>
                             <p>
-                            Uncertainty is measured as a <em>variance</em>, written P: the square of the standard deviation. A small P means &ldquo;I am fairly sure,&rdquo; a large P means &ldquo;I could be way off.&rdquo;
+                                To develop concrete numerical intuition, examine a one-dimensional robot driving along a hallway. Its state is a single scalar \(x\), representing position along the hallway in meters. The variance of its position estimate is denoted by scalar \(P\).
+                            </p>
+                            <p>
+                                In one-dimensional scalar form (\(A = 1, B = 1, H = 1\)), the governing equations simplify to:
+                            </p>
+                            <div class="article-callout">
+                                <p><strong>Predict:</strong></p>
+                                <p>\[x_{pred} = x + u\]</p>
+                                <p>\[P_{pred} = P + Q\]</p>
+                                <p><strong>Update:</strong></p>
+                                <p>\[K = \frac{P_{pred}}{P_{pred} + R}\]</p>
+                                <p>\[x = x_{pred} + K \times (z - x_{pred})\]</p>
+                                <p>\[P = (1 - K) \times P_{pred}\]</p>
+                            </div>
+                            <p>
+                                Suppose the robot begins at estimated position \(x = 2.00\text{ m}\) with variance \(P = 0.04\text{ m}^2\) (standard deviation \(\sigma = \sqrt{0.04} = 0.20\text{ m}\)). Its wheel encoders report that the robot drove forward by \(u = 0.50\text{ m}\). We assign a process noise variance of \(Q = 0.01\text{ m}^2\) to account for potential wheel slip during the maneuver.
+                            </p>
+                            <p>
+                                An ultrasonic range sensor then pings a known corridor wall and reports absolute position \(z = 2.60\text{ m}\). Laboratory testing has shown this sensor has a measurement noise variance of \(R = 0.05\text{ m}^2\).
+                            </p>
+                            <p>
+                                We execute the filter calculations step by step:
+                            </p>
+                            <ol class="article-spec-list">
+                                <li><strong>Predict Position:</strong>
+                                    \[x_{pred} = 2.00 + 0.50 = 2.50\text{ m}\]
+                                </li>
+                                <li><strong>Predict Variance:</strong>
+                                    \[P_{pred} = 0.04 + 0.01 = 0.05\text{ m}^2\]
+                                </li>
+                                <li><strong>Compute Kalman Gain \(K\):</strong>
+                                    \[K = \frac{P_{pred}}{P_{pred} + R} = \frac{0.05}{0.05 + 0.05} = \frac{0.05}{0.10} = 0.50\]
+                                </li>
+                                <li><strong>Compute State Innovation:</strong>
+                                    \[\text{innovation} = z - x_{pred} = 2.60 - 2.50 = 0.10\text{ m}\]
+                                </li>
+                                <li><strong>Update Position Estimate:</strong>
+                                    \[x = x_{pred} + K \times (z - x_{pred}) = 2.50 + 0.50 \times (0.10) = 2.55\text{ m}\]
+                                </li>
+                                <li><strong>Update Error Variance:</strong>
+                                    \[P = (1 - K) \times P_{pred} = (1 - 0.50) \times 0.05 = 0.025\text{ m}^2\]
+                                </li>
+                            </ol>
+                            <p>
+                                Two vital insights emerge from these calculations:
+                            </p>
+                            <p>
+                                First, because the predicted state uncertainty (\(P_{pred} = 0.05\)) and the sensor measurement noise (\(R = 0.05\)) were identical, the Kalman gain was exactly \(K = 0.50\). The updated position landed precisely halfway between the kinematic prediction (\(2.50\text{ m}\)) and the sensor measurement (\(2.60\text{ m}\)), at \(2.55\text{ m}\).
+                            </p>
+                            <p>
+                                Second, the resulting variance \(P = 0.025\text{ m}^2\) is strictly smaller than <em>both</em> the prediction variance (\(0.05\)) and the sensor noise (\(0.05\)). By mathematically fusing two uncertain sources of information, the Kalman filter produced an estimate that is substantially more certain than either source alone!
                             </p>
 
-                            <h2 class="article-section-title">03. A one-dimensional Kalman filter</h2>
+                            <h2 class="article-section-title">05. Embedded C++ implementation</h2>
                             <p>
-                            Picture a robot driving along a hallway. Its state is a single number <em>x</em>, its position in meters. Each step we have a motion input <em>u</em> (from odometry) and a measurement <em>z</em> (from a range sensor, converted to a position).
+                                On an embedded microcontroller, a one-dimensional Kalman filter can be written in a dozen lines of non-blocking C++:
                             </p>
-                            <pre class="article-code"><code>Predict:  x_pred = x + u
-                                      P_pred = P + Q
+                            <pre class="article-code"><code>class KalmanFilter1D {
+public:
+  float x; // State estimate (position in meters)
+  float P; // Estimate error variance
+  float Q; // Process noise covariance (motion uncertainty)
+  float R; // Measurement noise covariance (sensor noise)
 
-                            Update:   K = P_pred / (P_pred + R)
-                                      x = x_pred + K * (z - x_pred)
-                                      P = (1 - K) * P_pred</code></pre>
+  KalmanFilter1D(float initX, float initP, float processNoiseQ, float sensorNoiseR)
+    : x(initX), P(initP), Q(processNoiseQ), R(sensorNoiseR) {}
+
+  // Predict step: call on every odometry update
+  void predict(float u) {
+    x = x + u;
+    P = P + Q;
+  }
+
+  // Update step: call when valid sensor measurement arrives
+  void update(float z) {
+    float K = P / (P + R);
+    x = x + K * (z - x);
+    P = (1.0f - K) * P;
+  }
+};
+
+KalmanFilter1D filter(0.0f, 1.0f, 0.01f, 0.05f);
+
+void handleSensors() {
+  float deltaDistance = readWheelOdometry();
+  filter.predict(deltaDistance);
+
+  float rangeReading = readUltrasonicDistance();
+  // Reject sensor dropouts (e.g. out of range or timeout)
+  if (rangeReading > 0.02f && rangeReading < 4.00f) {
+    filter.update(rangeReading);
+  }
+}</code></pre>
+                            <p>
+                                Notice the crucial architectural pattern in <code>handleSensors()</code>: <code>predict()</code> is called continuously at the high odometry rate (e.g. 50 Hz). The <code>update()</code> routine is called only when a fresh, valid sensor reading is acquired. If the ultrasonic sensor drops an echo or times out, the code simply skips the update step. The filter continues projecting forward using the motion model, and variance \(P\) grows to reflect the lack of external correction.
+                            </p>
+
+                            <h2 class="article-section-title">06. Tuning process noise Q and measurement noise R</h2>
+                            <p>
+                                In practical engineering, the performance of a Kalman filter depends critically on properly selecting the noise covariances \(Q\) and \(R\):
+                            </p>
                             <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">x_pred = x + u:</span> &ldquo;I was at x and moved u, so now I am probably at x + u.&rdquo;</li>
-                            <li class="article-spec-item"><span class="spec-label">P_pred = P + Q:</span> moving adds uncertainty. Q is the <em>process noise</em>, how much error one motion step adds.</li>
-                            <li class="article-spec-item"><span class="spec-label">K, the Kalman gain:</span> a number between 0 and 1 that says how much to trust the measurement. R is the <em>measurement noise</em>, the variance of the sensor. If the prediction is uncertain (P_pred large) compared with the sensor (R small), K is close to 1 and the filter follows the sensor. If the sensor is the noisy one, K is close to 0 and the filter mostly keeps its prediction.</li>
-                            <li class="article-spec-item"><span class="spec-label">z &minus; x_pred:</span> the <em>innovation</em>, how far the measurement is from what we expected. The estimate moves by K times this gap.</li>
-                            <li class="article-spec-item"><span class="spec-label">P = (1 &minus; K) P_pred:</span> after a measurement the estimate is more certain than before.</li>
+                                <li class="article-spec-item"><span class="spec-label">Measurement Noise Covariance \(R\):</span> Can be measured experimentally. Park the robot stationary on the floor, collect several thousand static readings from the range sensor, and compute the mathematical variance of the sample set:
+                                    \[R = \sigma_z^2 = \frac{1}{N-1} \sum_{i=1}^N (z_i - \bar{z})^2\]
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Process Noise Covariance \(Q\):</span> Represents physical disturbances not captured in the kinematic model. Because wheel slip, floor roughness, and tire deflection cannot be observed directly, \(Q\) is tuned empirically. Setting \(Q\) too large signals that the motion model is untrustworthy, forcing the filter to track noisy sensor readings aggressively (producing jitter). Setting \(Q\) too small causes the filter to over-trust its kinematic model, responding sluggishly to genuine sensor corrections.</li>
                             </ul>
-
-                            <h2 class="article-section-title">04. A worked example</h2>
                             <p>
-                            The robot believes it is at x = 2.00&nbsp;m with variance P = 0.04 (a standard deviation of 0.2&nbsp;m). Its encoders say it just drove u = 0.50&nbsp;m, and we model each step&rsquo;s process noise as Q = 0.01. The range sensor then reports z = 2.60&nbsp;m, and its noise variance is R = 0.05.
+                                The mathematical behavior of the Kalman gain \(K = \frac{P_{pred}}{P_{pred} + R}\) demonstrates two fundamental limiting regimes:
                             </p>
-                            <pre class="article-code"><code>Predict:  x_pred = 2.00 + 0.50          = 2.50 m
-                                      P_pred = 0.04 + 0.01          = 0.05
-
-                            Update:   K      = 0.05 / (0.05 + 0.05) = 0.5
-                                      x      = 2.50 + 0.5 * (2.60 - 2.50) = 2.55 m
-                                      P      = (1 - 0.5) * 0.05     = 0.025</code></pre>
-                            <p>
-                            Because the prediction and the sensor were equally uncertain (both 0.05), K = 0.5 and the new estimate lands exactly halfway between them, at 2.55&nbsp;m. Notice that the new variance, 0.025, is smaller than <em>both</em> 0.05 values: combining two uncertain sources gives a more certain answer than either alone.
-                            </p>
-
-                            <h2 class="article-section-title">05. In code</h2>
-                            <pre class="article-code"><code>float x = 0.0;          // position estimate (m)
-                            float P = 1.0;          // variance of the estimate: start unsure
-                            const float Q = 0.01;   // process noise: how much each move adds
-                            const float R = 0.05;   // measurement noise: variance of the sensor
-
-                            void kalmanPredict(float u) {     // u = distance moved, from odometry
-                              x = x + u;
-                              P = P + Q;
-                            }
-
-                            void kalmanUpdate(float z) {      // z = position measured by the sensor
-                              float K = P / (P + R);
-                              x = x + K * (z - x);
-                              P = (1 - K) * P;
-                            }</code></pre>
-                            <p>
-                            Call <code>kalmanPredict()</code> every time odometry updates, and <code>kalmanUpdate()</code> only when a new sensor reading arrives. If a reading is missing or obviously invalid (for example, an ultrasonic timeout), simply skip the update: the filter keeps predicting and P keeps growing, which is exactly right.
-                            </p>
-
-                            <h2 class="article-section-title">06. Choosing Q and R</h2>
                             <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">R:</span> measure it. Hold the robot still, take many sensor readings, and compute their variance.</li>
-                            <li class="article-spec-item"><span class="spec-label">Q:</span> usually tuned. A larger Q says &ldquo;my motion model is unreliable&rdquo; (slippery floor, wheels that slip), so the filter leans on the sensor and reacts faster but is jumpier. A smaller Q trusts the model, giving a smoother estimate that is slower to correct.</li>
-                            <li class="article-spec-item"><span class="spec-label">Only the ratio matters for K:</span> after a few steps, the gain settles to a value set by how big Q is compared with R. Doubling both Q and R leaves the settled gain unchanged.</li>
+                                <li class="article-spec-item"><span class="spec-label">Small Sensor Noise (\(R \ll P_{pred}\)):</span> When sensor noise \(R\) is small compared to predicted uncertainty \(P_{pred}\), the ratio approaches 1:
+                                    \[K \to \frac{P_{pred}}{P_{pred}} = 1.0\]
+                                    The state update becomes \(x \approx x_{pred} + 1.0 \times (z - x_{pred}) = z\). The filter disregards its kinematic prediction and follows the sensor reading directly.
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Large Sensor Noise (\(R \gg P_{pred}\)):</span> When sensor noise \(R\) is huge compared to predicted uncertainty, the denominator is dominated by \(R\):
+                                    \[K \to \frac{P_{pred}}{R} \approx 0.0\]
+                                    The state update becomes \(x \approx x_{pred} + 0.0 \times (z - x_{pred}) = x_{pred}\). The filter ignores the noisy sensor and relies entirely on its motion model.
+                                </li>
                             </ul>
 
-                            <h2 class="article-section-title">07. Real robots</h2>
+                            <h2 class="article-section-title">07. Non-linear state estimation: EKF versus UKF</h2>
                             <p>
-                            A real robot&rsquo;s state has several numbers (x, y and &theta;, often plus velocities), so the filter uses vectors and matrices instead of single numbers, but the predict&ndash;update cycle is identical. The basic Kalman filter assumes linear motion and measurements. Turning and driving involve sines and cosines, so mobile robots usually use the <em>extended Kalman filter</em> (EKF), which linearizes the equations around the current estimate at each step.
+                                The standard Kalman filter assumes that system dynamics and observation models are strictly linear. However, mobile robot kinematics are inherently non-linear due to trigonometric rotation equations (such as \(\dot{x} = v \cos\theta\) and \(\dot{y} = v \sin\theta\)).
                             </p>
                             <p>
-                            For estimating tilt from an IMU, many small robots use a simpler <em>complementary filter</em> instead. The gyroscope is trusted over short time spans and the accelerometer, which knows where gravity points, over long ones: <code>angle = 0.98 * (angle + gyroRate * dt) + 0.02 * accelAngle</code>. The weights here are a common starting point, not a rule.
+                                When a Gaussian probability distribution passes through a non-linear transformation, the output distribution is distorted and ceases to be strictly Gaussian. Two non-linear algorithms address this challenge:
                             </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Extended Kalman Filter (EKF):</span> Linearizes non-linear functions locally around the current state estimate using first-order Taylor series approximations.<sup><a href="#ref-4">[4]</a></sup> This requires computing Jacobian matrices of partial derivatives at each time step:
+                                    \[\mathbf{F}_k = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\hat{\mathbf{x}}_{k-1}}, \quad \mathbf{H}_k = \left. \frac{\partial \mathbf{h}}{\partial \mathbf{x}} \right|_{\hat{\mathbf{x}}_k^-}\]
+                                    While computationally efficient, the EKF discards higher-order terms. Under severe non-linearities or rapid angular rotations, the linearized approximation breaks down, leading to filter divergence.
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Unscented Kalman Filter (UKF):</span> Formulated in 1997 by Jeffrey Uhlmann and Simon Julier, the UKF operates on the premise that "it is easier to approximate a probability distribution than an arbitrary non-linear function."<sup><a href="#ref-5">[5]</a></sup> Rather than calculating analytical Jacobians, the UKF selects a deterministic set of \(2n+1\) sample points (called <strong>Sigma Points</strong>) centered on the state mean. These points are propagated directly through the exact non-linear equations, and the posterior mean and covariance are recomputed via weighted summation. The UKF achieves third-order Taylor series accuracy for Gaussian inputs without computing derivatives.
+                                </li>
+                            </ul>
 
-                            <h2 class="article-section-title">08. A little history</h2>
+                            <h2 class="article-section-title">08. ROS 2 state estimation: the robot_localization dual-EKF architecture</h2>
                             <p>
-                            Rudolf E. K&aacute;lm&aacute;n published the filter in 1960 in &ldquo;A New Approach to Linear Filtering and Prediction Problems,&rdquo; a recursive solution that suited the digital computers then appearing. That autumn he visited Stanley Schmidt at NASA Ames Research Center, whose group was studying navigation for the Apollo lunar missions. Schmidt&rsquo;s team turned the idea into a practical tool, developing what became the extended Kalman filter, and a square-root form of the filter was used in the Apollo system. Today Kalman filters run in everything from phones to aircraft to self-driving cars.
+                                In ROS 2, multi-sensor state estimation is standardized via the <strong><code>robot_localization</code></strong> package, developed by Tom Moore and Daniel Stouch.<sup><a href="#ref-6">[6]</a></sup> The package provides continuous 15-dimensional state estimation tracking 3D pose, linear velocity, angular velocity, and linear acceleration:
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\mathbf{x} = [x, y, z, \text{roll}, \text{pitch}, \text{yaw}, \dot{x}, \dot{y}, \dot{z}, \dot{\text{roll}}, \dot{\text{pitch}}, \dot{\text{yaw}}, \ddot{x}, \ddot{y}, \ddot{z}]^T\]</p>
+                            </div>
+                            <p>
+                                In professional autonomous ground vehicle deployments, <code>robot_localization</code> implements a <strong>Dual-EKF Architecture</strong> to resolve the conflict between smooth motor control and absolute global positioning:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Filter Instance</th>
+                                        <th scope="col">Sensor Inputs</th>
+                                        <th scope="col">Coordinate Frame &amp; Output</th>
+                                        <th scope="col">Behavioral Guarantee</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Local EKF</strong></td>
+                                        <td>Wheel odometry (<code>/wheel/odometry</code>), IMU gyroscopes and accelerometers (<code>/imu/data</code>).</td>
+                                        <td><code>odom</code> &rarr; <code>base_link</code> transform; publishes <code>/odometry/filtered</code>.</td>
+                                        <td><strong>Continuous and smooth.</strong> Zero discrete position jumps. Ideal for high-frequency closed-loop motor controllers and local path obstacle avoidance.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Global EKF</strong></td>
+                                        <td>Local fused odometry plus absolute global references: GPS (via <code>navsat_transform_node</code>) or visual landmark SLAM.</td>
+                                        <td><code>map</code> &rarr; <code>odom</code> transform; publishes <code>/odometry/filtered_global</code>.</td>
+                                        <td><strong>Globally referenced.</strong> Eliminates cumulative drift. When GPS satellite signals fix or drop, discrete coordinate adjustments are absorbed into the <code>map</code> &rarr; <code>odom</code> transform without destabilizing local wheel velocity control loops.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">09. Complementary filters for microcontrollers</h2>
+                            <p>
+                                On low-cost 8-bit microcontrollers lacking floating-point hardware units, executing matrix inversions for an EKF can strain CPU limits. For orientation estimation (such as measuring the tilt angle of a self-balancing robot from a 6-axis IMU), engineers frequently deploy a <strong>complementary filter</strong>.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                A complementary filter exploits the complementary frequency characteristics of the IMU: the gyroscope is highly accurate over short timeframes (high frequency) but drifts over time, whereas the accelerometer reliably senses the gravity vector over long periods (low frequency) but is corrupted by vibration in the short term. The filter blends both sources using fixed weighting coefficients:
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\theta_k = \alpha \times (\theta_{k-1} + \omega \Delta t) + (1 - \alpha) \times \theta_{accel}\]</p>
+                            </div>
+                            <p>
+                                With \(\alpha = 0.98\), the filter derives 98% of its angular estimate from integrated gyroscope velocity, using the accelerometer's gravitational reading for the remaining 2% to gently cancel accumulated gyro drift on every pass without running matrix algebra.
                             </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Repeat the worked example with R = 0.01 and then R = 0.5. Calculate K each time and explain which way the estimate moves.</li>
-                                    <li>Write the 1-D filter in Python or C++ and feed it ten noisy readings of a constant value. Plot the raw and filtered values.</li>
+                                    <li>Recompute the worked example using sensor noise variance \(R = 0.01\text{ m}^2\) and then \(R = 0.50\text{ m}^2\). Calculate the Kalman gain \(K\) for each case and explain which source the filter trusts.</li>
+                                    <li>Implement the <code>KalmanFilter1D</code> C++ class in an Arduino sketch, inject artificial Gaussian noise into simulated distance measurements, and print raw versus filtered values to the Serial Plotter.</li>
+                                    <li>Explain why the local EKF in ROS 2 <code>robot_localization</code> excludes GPS data while the global EKF includes it.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">09. References</h2>
+                            <h2 class="article-section-title">10. References</h2>
                             <ol class="article-spec-list">
-                            <li>R. E. Kalman, &ldquo;A new approach to linear filtering and prediction problems,&rdquo; <em>Transactions of the ASME, Journal of Basic Engineering</em>, vol. 82, series D, pp. 35&ndash;45, 1960. <a href="https://www.cs.unc.edu/~welch/kalman/kalmanPaper.html" target="_blank" rel="noopener noreferrer">cs.unc.edu/~welch/kalman/kalmanPaper.html</a>.</li>
-                            <li>G. Welch and G. Bishop, &ldquo;An Introduction to the Kalman Filter,&rdquo; TR 95-041, University of North Carolina at Chapel Hill. <a href="https://www.cs.unc.edu/~welch/kalman/kalmanIntro.html" target="_blank" rel="noopener noreferrer">cs.unc.edu/~welch/kalman/kalmanIntro.html</a>.</li>
-                            <li>L. A. McGee and S. F. Schmidt, &ldquo;Discovery of the Kalman filter as a practical tool for aerospace and industry,&rdquo; NASA TM-86847, 1985. <a href="https://ntrs.nasa.gov/citations/19860003843" target="_blank" rel="noopener noreferrer">ntrs.nasa.gov/citations/19860003843</a>.</li>
-                            <li>S. Thrun, W. Burgard and D. Fox, <em>Probabilistic Robotics</em>, ch. 3 &ldquo;Gaussian Filters.&rdquo; MIT Press, 2005.</li>
-                            <li>S. Park and J. How, &ldquo;Examples of Estimation Filters from Recent Aircraft Projects at MIT,&rdquo; MIT 16.333, 2004. <a href="https://ocw.mit.edu/courses/16-333-aircraft-stability-and-control-fall-2004/fb8395efd40e5f4a79b98fda10c85de3_l15_filter_examp.pdf" target="_blank" rel="noopener noreferrer">ocw.mit.edu/courses/16-333-&hellip;/l15_filter_examp.pdf</a>.</li>
+                                <li id="ref-1">R. E. K&aacute;lm&aacute;n, &ldquo;A New Approach to Linear Filtering and Prediction Problems,&rdquo; <em>Transactions of the ASME &ndash; Journal of Basic Engineering</em>, Series D, vol. 82, no. 1, pp. 35&ndash;45, 1960. <a href="https://doi.org/10.1115/1.3662552" target="_blank" rel="noopener noreferrer">doi.org/10.1115/1.3662552</a>.</li>
+                                <li id="ref-2">G. Welch and G. Bishop, &ldquo;An Introduction to the Kalman Filter,&rdquo; University of North Carolina at Chapel Hill, Department of Computer Science, Technical Report TR 95-041, 2006. <a href="https://www.cs.unc.edu/~welch/kalman/kalmanIntro.html" target="_blank" rel="noopener noreferrer">cs.unc.edu/~welch/kalman/kalmanIntro.html</a>.</li>
+                                <li id="ref-3">S. F. Schmidt, &ldquo;Application of State Space Methods to Navigation Problems,&rdquo; in <em>Advances in Control Systems</em>, vol. 3, C. T. Leondes, Ed., Academic Press, pp. 293&ndash;340, 1966. <a href="https://doi.org/10.1016/S0065-2822(08)60081-3" target="_blank" rel="noopener noreferrer">doi.org/10.1016/S0065-2822(08)60081-3</a>.</li>
+                                <li id="ref-4">S. Thrun, W. Burgard, and D. Fox, <em>Probabilistic Robotics</em>, Chapter 3: &ldquo;Gaussian Filters,&rdquo; MIT Press, Cambridge, MA, 2005.</li>
+                                <li id="ref-5">S. J. Julier and J. K. Uhlmann, &ldquo;A New Extension of the Kalman Filter to Nonlinear Systems,&rdquo; in <em>Signal Processing, Sensor Fusion, and Target Recognition VI</em>, Proc. SPIE 3068, pp. 182&ndash;193, 1997. <a href="https://doi.org/10.1117/12.280797" target="_blank" rel="noopener noreferrer">doi.org/10.1117/12.280797</a>.</li>
+                                <li id="ref-6">T. Moore and D. Stouch, &ldquo;A Generalized Extended Kalman Filter Implementation for the Robot Operating System,&rdquo; in <em>Intelligent Autonomous Systems 13</em>, Advances in Intelligent Systems and Computing, vol. 302, Springer, Cham, pp. 335&ndash;348, 2014. <a href="https://doi.org/10.1007/978-3-319-08338-4_25" target="_blank" rel="noopener noreferrer">doi.org/10.1007/978-3-319-08338-4_25</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -277,8 +437,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

@@ -100,7 +100,7 @@
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
                     <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
-                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-ethics.html" class="active"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
@@ -135,123 +135,250 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What is odometry?</h2>
+                            <h2 class="article-section-title">01. Dead reckoning and mobile robot pose</h2>
                             <p>
-                            Odometry is estimating where a robot is by adding up how far its wheels have turned. It is a form of <em>dead reckoning</em>: starting from a known pose, the robot keeps a running total of its small movements, with no outside reference. For a differential-drive robot (two driven wheels on one axle, plus a caster) the inputs are simply the tick counts from the left and right <a href="robotics-5-3.html">wheel encoders</a>.
+                                Before an autonomous mobile robot can plan a collision-free path or navigate toward a target room, it must answer the most fundamental question in robotics: <em>Where am I?</em> In outdoor environments, GPS receivers provide periodic global coordinates. However, GPS signals cannot penetrate concrete buildings, warehouse metal roofs, or sub-surface tunnels, and their consumer accuracy (two to five meters) is far too coarse for indoor navigation.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                            The robot&rsquo;s <em>pose</em> is its position and heading in a fixed world frame (see <a href="robotics-1-6.html">1.6 Coordinate Frames</a>): <em>x</em> and <em>y</em> in meters and the heading <em>&theta;</em> in radians, measured counterclockwise from the x-axis.
-                            </p>
-
-                            <h2 class="article-section-title">02. From ticks to wheel distance</h2>
-                            <p>
-                            Each update, read how many ticks each encoder counted since the last update and convert them to distance, using the formula from 5.3:
-                            </p>
-                            <pre class="article-code"><code>d_L = (delta_ticks_L / CPR) * (pi * wheel_diameter)
-                            d_R = (delta_ticks_R / CPR) * (pi * wheel_diameter)</code></pre>
-
-                            <h2 class="article-section-title">03. The update equations</h2>
-                            <p>
-                            With <em>b</em> the wheelbase (the distance between the two wheels&rsquo; contact points), the robot&rsquo;s center moves by the average of the two wheels, and the difference between them turns it:
-                            </p>
-                            <pre class="article-code"><code>d_center = (d_L + d_R) / 2
-                            d_theta  = (d_R - d_L) / b
-
-                            x     = x + d_center * cos(theta + d_theta / 2)
-                            y     = y + d_center * sin(theta + d_theta / 2)
-                            theta = theta + d_theta</code></pre>
-                            <p>
-                            If both wheels travel the same distance, <code>d_theta</code> is zero and the robot drives straight. If the right wheel travels farther, <code>d_theta</code> is positive and the robot turns left (counterclockwise).
+                                Indoor mobile robots rely on <strong>odometry</strong>: the mathematical process of estimating current position and orientation by integrating the rotational motion of the vehicle's wheels over time.<sup><a href="#ref-1">[1]</a></sup> Odometry is a direct implementation of <strong>dead reckoning</strong>, a maritime navigation technique where an explorer advances a known starting location using estimated speed, elapsed time, and heading course. In robotics, the inputs are proprioceptive measurements collected from digital wheel encoders.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                            The <code>d_theta / 2</code> term uses the heading halfway through the step. That is the form in Siegwart&rsquo;s textbook, and it is more accurate on curves than the simpler version you will also see, <code>x += d_center * cos(theta)</code>, which uses the heading from the start of the step. Both are approximations that work well when the update is frequent and each step is small, so update every 10&ndash;20&nbsp;ms rather than once a second.
+                                On a flat two-dimensional floor, the spatial configuration of a mobile robot is described by its <strong>pose</strong> \(\mathbf{p}\) in a fixed global Cartesian coordinate frame:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\mathbf{p} = \begin{bmatrix} x \\ y \\ \theta \end{bmatrix}\]</p>
+                            </div>
+                            <p>
+                                where \(x\) and \(y\) represent the physical position of the robot's kinematic center in meters, and \(\theta\) denotes the heading angle in radians, measured counter-clockwise from the positive \(X\)-axis.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">04. Odometry in code</h2>
+                            <h2 class="article-section-title">02. Differential-drive forward kinematics</h2>
                             <p>
-                            This sketch fragment assumes the encoder interrupt routines from <a href="robotics-5-3.html">5.3</a> keep <code>leftTicks</code> and <code>rightTicks</code> up to date. It uses <code>millis()</code> so the update runs on a steady schedule without blocking the rest of the program.
-                            </p>
-                            <pre class="article-code"><code>const float WHEEL_DIAMETER = 0.065;   // meters
-                            const float WHEELBASE      = 0.150;   // meters
-                            const long  CPR            = 1440;    // counts per wheel revolution
-                            const float M_PER_TICK     = PI * WHEEL_DIAMETER / CPR;
-
-                            volatile long leftTicks = 0, rightTicks = 0;  // updated by encoder ISRs
-                            long prevLeft = 0, prevRight = 0;
-                            float x = 0, y = 0, theta = 0;
-                            unsigned long lastUpdate = 0;
-
-                            void updateOdometry() {
-                              noInterrupts();                 // copy counts safely
-                              long l = leftTicks;
-                              long r = rightTicks;
-                              interrupts();
-
-                              float dL = (l - prevLeft)  * M_PER_TICK;
-                              float dR = (r - prevRight) * M_PER_TICK;
-                              prevLeft = l;
-                              prevRight = r;
-
-                              float dCenter = (dL + dR) / 2.0;
-                              float dTheta  = (dR - dL) / WHEELBASE;
-
-                              x += dCenter * cos(theta + dTheta / 2.0);
-                              y += dCenter * sin(theta + dTheta / 2.0);
-                              theta += dTheta;
-                              theta = atan2(sin(theta), cos(theta));   // keep theta in -pi..pi
-                            }
-
-                            void loop() {
-                              if (millis() - lastUpdate &gt;= 20) {        // 50 updates per second
-                                lastUpdate += 20;
-                                updateOdometry();
-                              }
-                              // ... sensing and motor control continue here ...
-                            }</code></pre>
-
-                            <h2 class="article-section-title">05. Why the error keeps growing</h2>
-                            <p>
-                            Each update adds a small error, and nothing ever removes it, so odometry error grows without bound the farther the robot drives. Heading errors are the worst: a heading that is off by just one degree pushes the position sideways by almost 2&nbsp;cm for every meter driven, and that sideways error keeps growing for the rest of the trip.
+                                The most widely deployed kinematic architecture for indoor mobile robotics is the <strong>differential-drive robot</strong>.<sup><a href="#ref-1">[1]</a></sup> A differential platform features two independently actuated coaxial drive wheels mounted on a common lateral axis, complemented by one or two passive caster wheels that support vertical weight while rolling freely in any direction.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                            Borenstein and Feng, who developed the UMBmark test at the University of Michigan, split odometry errors into two kinds:
+                                The physical geometry of the platform is defined by two mechanical constants:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">Systematic errors:</span> come from the robot itself and repeat on every run. Examples are unequal wheel diameters, an average wheel diameter that differs from the value in the code, an uncertain effective wheelbase, misaligned wheels, and limited encoder resolution or sampling rate. They found unequal wheel diameters and wheelbase uncertainty to be the two biggest.</li>
-                            <li class="article-spec-item"><span class="spec-label">Non-systematic errors:</span> come from the robot&rsquo;s interaction with the floor and are unpredictable. Examples are uneven floors, driving over objects, and wheel slip from slippery floors, hard acceleration, fast turns or being pushed.</li>
+                                <li class="article-spec-item"><span class="spec-label">Wheel diameter (\(D\)):</span> The outer nominal diameter of the left and right drive wheels in meters (with wheel radius \(r = D / 2\)).</li>
+                                <li class="article-spec-item"><span class="spec-label">Wheelbase / Track width (\(b\)):</span> The physical lateral distance between the center contact patches of the two drive wheels on the floor surface.</li>
                             </ul>
                             <p>
-                            Systematic errors can be measured and calibrated away. Non-systematic errors cannot; they can only be bounded by checking against other sensors.
+                                Over a discrete sampling interval \(\Delta t\) (such as 20 milliseconds), optical encoders attached to each wheel shaft register count increments \(\Delta\text{ticks}_L\) and \(\Delta\text{ticks}_R\). Using the Counts Per Revolution (CPR) from 4x quadrature decoding, the linear ground displacement traveled by each wheel's contact patch is:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[d_L = \left(\frac{\Delta\text{ticks}_L}{\text{CPR}}\right) \times (\pi \cdot D), \quad d_R = \left(\frac{\Delta\text{ticks}_R}{\text{CPR}}\right) \times (\pi \cdot D)\]</p>
+                            </div>
+
+                            <h2 class="article-section-title">03. The kinematic update equations: displacement and rotation</h2>
+                            <p>
+                                Because the two drive wheels are rigidly linked to the chassis along a common axle, their individual forward displacements dictate the net motion of the robot's midpoint. The linear displacement of the robot's kinematic center point \(d_{center}\) is simply the average of the two wheel distances:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[d_{center} = \frac{d_R + d_L}{2}\]</p>
+                            </div>
+                            <p>
+                                The difference between the two wheel displacements forces the chassis to rotate about its vertical yaw axis. The incremental angular change in heading \(d\theta\) (in radians) is given by:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[d\theta = \frac{d_R - d_L}{b}\]</p>
+                            </div>
+                            <p>
+                                Analyzing this equation reveals the fundamental behaviors of a differential drive:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Straight-Line Driving:</span> When both wheels travel the exact same distance (\(d_R = d_L\)), the numerator is zero: \(d\theta = 0\). The heading remains unchanged, and the robot drives in a straight line.</li>
+                                <li class="article-spec-item"><span class="spec-label">Leftward Counter-Clockwise Turn:</span> When the right wheel travels farther than the left wheel (\(d_R &gt; d_L\)), \(d\theta\) is positive, causing the robot to turn toward its left.</li>
+                                <li class="article-spec-item"><span class="spec-label">Rightward Clockwise Turn:</span> When the left wheel travels farther than the right wheel (\(d_L &gt; d_R\)), \(d\theta\) is negative, causing the robot to turn toward its right.</li>
+                                <li class="article-spec-item"><span class="spec-label">Spinning in Place:</span> When the wheels spin in equal and opposite directions (\(d_R = -d_L\)), the center displacement is zero (\(d_{center} = 0\)). The robot rotates in place about its kinematic center with zero net translation.</li>
+                            </ul>
+                            <p>
+                                Consider a practical numerical example: in one update the left wheel travels 0.10 m and the right wheel 0.14 m on a robot with a 0.20 m wheelbase. What is \(d\theta\)? Applying the kinematic equation yields:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[d\theta = \frac{d_R - d_L}{b} = \frac{0.14\text{ m} - 0.10\text{ m}}{0.20\text{ m}} = \frac{0.04\text{ m}}{0.20\text{ m}} = 0.20\text{ radians}\]</p>
+                            </div>
+                            <p>
+                                Because the right wheel traveled farther than the left, \(d\theta = +0.20\text{ rad}\), representing a counter-clockwise left turn.
                             </p>
 
-                            <h2 class="article-section-title">06. Calibration tips</h2>
-                            <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">Wheel diameter:</span> drive straight a measured distance, such as 2&nbsp;m, and compare it with what odometry reports. Then <code>new_diameter = old_diameter * actual / reported</code>.</li>
-                            <li class="article-spec-item"><span class="spec-label">Wheelbase:</span> spin in place several full turns (more turns makes small errors easier to see) and compare the reported angle with the real one. Then <code>new_b = old_b * reported_angle / actual_angle</code>.</li>
-                            <li class="article-spec-item"><span class="spec-label">UMBmark:</span> Borenstein and Feng&rsquo;s test drives a 4&nbsp;m &times; 4&nbsp;m square five times clockwise and five times counterclockwise, then compares where odometry thinks the robot ended with where it really ended. Running both directions separates wheel-diameter error from wheelbase error.</li>
-                            <li class="article-spec-item"><span class="spec-label">Drive gently:</span> smooth acceleration and slower turns reduce wheel slip.</li>
-                            </ul>
-
-                            <h2 class="article-section-title">07. Correcting odometry with other sensors</h2>
+                            <h2 class="article-section-title">04. Numerical integration: Euler forward versus midpoint Runge-Kutta</h2>
                             <p>
-                            Because odometry drifts, robots correct it with sensors that measure the outside world or an absolute reference. A gyroscope in an <a href="robotics-5-5.html">IMU</a> measures turning directly, so it is not fooled when a wheel slips during a turn, although it drifts slowly itself. Range sensors or a LiDAR can match the robot&rsquo;s view to walls or a map, and outdoors GPS gives an absolute but noisy position. Combining a smooth, drifting estimate with noisy, drift-free measurements is the job of the <a href="robotics-5-8.html">Kalman filter</a>, the topic of 5.8.
+                                Once the incremental center displacement \(d_{center}\) and heading change \(d\theta\) are computed, the robot must project this local motion into the fixed global coordinate frame.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                The simplest approach is <strong>Euler forward integration</strong>, which assumes the heading remains constant at its initial value \(\theta[k]\) throughout the entire time step:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[x[k+1] = x[k] + d_{center} \cos(\theta[k])\]</p>
+                                <p>\[y[k+1] = y[k] + d_{center} \sin(\theta[k])\]</p>
+                                <p>\[\theta[k+1] = \theta[k] + d\theta\]</p>
+                            </div>
+                            <p>
+                                However, when a robot travels along a curved arc, its heading is continuously turning during the sampling interval. Assuming the heading is frozen at the starting value introduces a systematic mathematical chord error on every curve.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                A far superior method is <strong>midpoint integration (second-order Runge-Kutta)</strong>, standardly presented in textbooks by Roland Siegwart and colleagues.<sup><a href="#ref-1">[1]</a></sup> Midpoint integration evaluates the trigonometry using the average heading halfway through the step:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[x[k+1] = x[k] + d_{center} \cos\left(\theta[k] + \frac{d\theta}{2}\right)\]</p>
+                                <p>\[y[k+1] = y[k] + d_{center} \sin\left(\theta[k] + \frac{d\theta}{2}\right)\]</p>
+                                <p>\[\theta[k+1] = \theta[k] + d\theta\]</p>
+                            </div>
+                            <p>
+                                By incorporating the \(\frac{d\theta}{2}\) midpoint term, the algorithm models the circular trajectory traced by a differential drive during coordinated turns, substantially reducing numerical truncation errors.<sup><a href="#ref-1">[1]</a></sup> Furthermore, because \(\theta\) continuously accumulates, software must normalize the heading into the canonical interval \((-\pi, \pi]\) radians on every iteration using the standard library atan2 function:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\theta = \text{atan2}(\sin\theta, \cos\theta)\]</p>
+                            </div>
+
+                            <h2 class="article-section-title">05. Embedded odometry implementation in C++</h2>
+                            <p>
+                                The following Arduino C++ implementation demonstrates real-time, non-blocking odometry execution. It uses atomic interrupt locking to read volatile encoder counts safely without racing against high-speed ISR updates:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>const float WHEEL_DIAMETER = 0.065;   // Wheel diameter in meters
+const float WHEELBASE      = 0.150;   // Track width in meters
+const long  CPR            = 1440;    // Decoded counts per wheel revolution
+const float M_PER_TICK     = PI * WHEEL_DIAMETER / CPR;
+
+volatile long leftTicks = 0;          // Updated by hardware encoder ISR
+volatile long rightTicks = 0;         // Updated by hardware encoder ISR
+
+long prevLeft = 0;
+long prevRight = 0;
+float x = 0.0, y = 0.0, theta = 0.0;
+unsigned long lastUpdate = 0;
+
+void updateOdometry() {
+    // Atomically snapshot volatile tick counts
+    noInterrupts();
+    long currentL = leftTicks;
+    long currentR = rightTicks;
+    interrupts();
+
+    // Calculate incremental distance traveled since last update
+    float dL = (currentL - prevLeft)  * M_PER_TICK;
+    float dR = (currentR - prevRight) * M_PER_TICK;
+    prevLeft = currentL;
+    prevRight = currentR;
+
+    // Compute center displacement and heading change
+    float dCenter = (dL + dR) / 2.0;
+    float dTheta  = (dR - dL) / WHEELBASE;
+
+    // Second-order Runge-Kutta midpoint integration
+    x += dCenter * cos(theta + dTheta / 2.0);
+    y += dCenter * sin(theta + dTheta / 2.0);
+    theta += dTheta;
+
+    // Normalize heading angle into (-pi, +pi]
+    theta = atan2(sin(theta), cos(theta));
+}
+
+void loop() {
+    // Execute odometry at a deterministic 50 Hz rate (every 20 ms)
+    if (millis() - lastUpdate &gt;= 20) {
+        lastUpdate += 20;
+        updateOdometry();
+    }
+    // High-level navigation and motor control logic runs concurrently
+}</code></pre>
+
+                            <h2 class="article-section-title">06. Error propagation: why heading error dominates position error</h2>
+                            <p>
+                                The Achilles' heel of dead reckoning is <strong>cumulative error growth</strong>. Because each step updates the pose relative to the previous estimate, any error introduced during a step is permanently locked into future positions. There is no external reference to pull the estimate back to truth.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                Crucially, angular heading errors cause vastly more position drift than linear wheel distance errors. Why does a 1-degree heading error cause far more position drift than a 1-centimeter wheel diameter calibration error over a 50-meter trip? The answer lies in coordinate geometry: <strong>heading errors rotate the entire subsequent coordinate frame, causing lateral position error to grow proportionally to total distance traveled</strong>.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                If an encoder calibration error causes wheel distance to be miscalculated by 1%, the resulting longitudinal position error is simply 1% of distance traveled (0.50 meters after 50 meters). However, if an early turn leaves the robot's heading estimate with an uncorrected error of \(\epsilon_\theta = 1.0^\circ\) (0.0175 radians), every future forward step projects distance along the wrong angle:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\Delta y_{lateral}(s) \approx s \times \sin(\epsilon_\theta) \approx s \times \epsilon_\theta\]</p>
+                            </div>
+                            <p>
+                                After traveling \(s = 50\text{ meters}\), that tiny 1-degree heading offset causes a massive lateral cross-track position error of \(50 \times 0.0175 = 0.875\text{ meters}\) (nearly a full meter off target), even if the wheels rolled with absolute millimeter perfection!<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">07. Borenstein and Feng's error taxonomy</h2>
+                            <p>
+                                In their benchmark 1996 research at the University of Michigan, roboticists Johann Borenstein and Liqiang Feng published a comprehensive scientific taxonomy of mobile robot odometry errors in <em>IEEE Transactions on Robotics and Automation</em>.<sup><a href="#ref-4">[4]</a></sup> They established that odometry errors fall into two distinct physical categories:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Error Category</th>
+                                        <th scope="col">Underlying Physical Mechanism</th>
+                                        <th scope="col">Predictability and Calibration</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Systematic Errors</strong></td>
+                                        <td>Inherent physical vehicle imperfections: unequal wheel diameters (\(D_R \neq D_L\)), uncertainty in effective wheelbase (\(b_{actual} \neq b_{nominal}\)), wheel wobble/misalignment, finite encoder sampling resolution.<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td><strong>Deterministic and repeatable.</strong> Occur consistently on every run. Can be measured experimentally and calibrated away in software.<sup><a href="#ref-4">[4]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Non-Systematic Errors</strong></td>
+                                        <td>Random, unpredictable physical interactions between wheels and the terrain: <strong>wheel slip on slippery floors</strong>, driving over surface cracks or cables, carpet pile resistance, wheel bounce, external human collisions.<sup><a href="#ref-4">[4]</a></sup></td>
+                                        <td><strong>Stochastic and non-repeatable.</strong> Vary randomly from run to run. Cannot be calibrated away; can only be bounded through multi-sensor fusion.<sup><a href="#ref-4">[4]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Borenstein and Feng identified that the two dominant systematic errors in all differential-drive robots are <strong>unequal wheel diameters</strong> (which causes a robot to trace an unintentional curved trajectory when commanded straight) and <strong>wheelbase uncertainty</strong> (which causes consistent over-rotation or under-rotation during turns).<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">08. Calibration in practice: the UMBmark benchmark</h2>
+                            <p>
+                                To systematically measure and eliminate deterministic vehicle errors, Borenstein and Feng created the <strong>University of Michigan Benchmark (UMBmark)</strong>.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                The UMBmark procedure decouples wheel diameter error from wheelbase error through bidirectional testing:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ol class="article-spec-list">
+                                <li>The robot drives a precise 4-meter by 4-meter square path five times in a <strong>Clockwise (CW)</strong> direction, returning to the starting point.</li>
+                                <li>The robot drives the identical 4-meter by 4-meter square path five times in a <strong>Counter-Clockwise (CCW)</strong> direction.</li>
+                                <li>The physical stopping coordinates of the robot chassis are measured relative to the origin on every run.</li>
+                            </ol>
+                            <p>
+                                By comparing the centroid of CW stopping errors versus CCW stopping errors, the test mathematically separates the two errors: unequal wheel diameters curve the vehicle in the same physical direction regardless of turn direction, whereas wheelbase errors cause consistent turn-angle errors that manifest symmetrically. The resulting calibration yields precise scaling constants that reduce systematic odometry drift by more than an order of magnitude.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">09. Multi-sensor fusion: eliminating slip with IMU gyroscopes</h2>
+                            <p>
+                                While systematic errors can be calibrated away, non-systematic errors (especially wheel slip on low-friction flooring) remain inevitable. When a robot accelerates hard or turns on slick linoleum, the drive wheels slip. The encoders continue registering rotation, but the robot chassis fails to turn. Odometry assumes a massive turn occurred, permanently corrupting the pose estimate.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                To defeat wheel slip, modern robots combine wheel odometry with an <strong>Inertial Measurement Unit (IMU) gyroscope</strong>.<sup><a href="#ref-1">[1]</a></sup> A MEMS gyroscope measures angular yaw rate (\(\omega_z\)) directly through Coriolis acceleration acting on vibrating silicon proof masses. The gyroscope reading is completely independent of wheel-floor friction.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                In simple embedded firmware, the heading update from wheel difference is replaced by direct gyroscope integration:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[d\theta_{gyro} = \omega_z \times \Delta t\]</p>
+                            </div>
+                            <p>
+                                If the wheels spin out on ice, the gyroscope measures zero angular velocity, correctly reporting that no rotation occurred. In professional robotics systems running ROS 2, sensory data from wheel encoders, IMU gyroscopes, and visual odometry are fused probabilistically using an <strong>Extended Kalman Filter (EKF)</strong> via packages like <code>robot_localization</code>, dynamically weighting each sensor by its mathematical covariance. This foundational sensor fusion architecture is explored in Lesson 5.8.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>By hand, update a pose of (0, 0, 0) with d_L = 0.10 m and d_R = 0.14 m on a 0.20 m wheelbase.</li>
-                                    <li>Drive a robot around a 1 m square using odometry only, and measure how far from the start it stops. Repeat in the other direction.</li>
+                                    <li>Calculate the updated pose \((x, y, \theta)\) of a differential-drive robot starting at pose \((0, 0, 0)\) with wheelbase \(b = 0.20\text{ m}\), if the left wheel moves \(d_L = 0.10\text{ m}\) and the right wheel moves \(d_R = 0.14\text{ m}\). Use second-order midpoint integration.</li>
+                                    <li>Command a mobile robot to drive forward 2.0 meters along a straight taped line on a gymnasium floor. Measure the physical stop position versus the odometry estimate. Calculate the diameter correction factor \(c = \text{actual} / \text{reported}\).</li>
+                                    <li>Spin the robot in place 10 full revolutions (3600 degrees). Compare the physical stopping heading with the odometry heading to determine the effective wheelbase calibration factor \(b_{calibrated} = b_{nominal} \cdot (\theta_{reported} / \theta_{actual})\).</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">08. References</h2>
+                            <h2 class="article-section-title">10. References</h2>
                             <ol class="article-spec-list">
-                            <li>R. Siegwart, I. R. Nourbakhsh and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., ch. 5 &ldquo;Mobile Robot Localization.&rdquo; MIT Press, 2011.</li>
-                            <li>J. Borenstein and L. Feng, &ldquo;Measurement and correction of systematic odometry errors in mobile robots,&rdquo; <em>IEEE Transactions on Robotics and Automation</em>, vol. 12, no. 5, 1996. <a href="https://cs.au.dk/~ocaprani/legolab/DigitalControl.dir/NXT/Lesson10.dir/paper58.pdf" target="_blank" rel="noopener noreferrer">cs.au.dk/&hellip;/paper58.pdf</a>.</li>
-                            <li>J. Borenstein, H. R. Everett, L. Feng and D. Wehe, &ldquo;Mobile robot positioning: Sensors and techniques,&rdquo; <em>Journal of Robotic Systems</em>, vol. 14, no. 4, 1997. <a href="https://apps.dtic.mil/sti/tr/pdf/ADA422844.pdf" target="_blank" rel="noopener noreferrer">apps.dtic.mil/sti/tr/pdf/ADA422844.pdf</a>.</li>
-                            <li>Princeton University COS 495, &ldquo;Lecture 5: Odometry&rdquo; (after Siegwart and Nourbakhsh). <a href="https://www.cs.princeton.edu/courses/archive/fall11/cos495/COS495-Lecture5-Odometry.pdf" target="_blank" rel="noopener noreferrer">cs.princeton.edu/&hellip;/COS495-Lecture5-Odometry.pdf</a>.</li>
-                            <li>S. Thrun, W. Burgard and D. Fox, <em>Probabilistic Robotics</em>, ch. 5 &ldquo;Robot Motion.&rdquo; MIT Press, 2005.</li>
+                                <li id="ref-1">R. Siegwart, I. R. Nourbakhsh, and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., Chapter 5: &ldquo;Mobile Robot Localization,&rdquo; MIT Press, Cambridge, MA, 2011.</li>
+                                <li id="ref-2">Princeton University Department of Computer Science, &ldquo;COS 495 Lecture 5: Odometry and Differential Drive Kinematics,&rdquo; 2011. <a href="https://www.cs.princeton.edu/courses/archive/fall11/cos495/COS495-Lecture5-Odometry.pdf" target="_blank" rel="noopener noreferrer">cs.princeton.edu/.../COS495-Lecture5-Odometry.pdf</a>.</li>
+                                <li id="ref-3">S. Thrun, W. Burgard, and D. Fox, <em>Probabilistic Robotics</em>, Chapter 5: &ldquo;Robot Motion,&rdquo; MIT Press, Cambridge, MA, 2005.</li>
+                                <li id="ref-4">J. Borenstein and L. Feng, &ldquo;Measurement and Correction of Systematic Odometry Errors in Mobile Robots,&rdquo; <em>IEEE Transactions on Robotics and Automation</em>, vol. 12, no. 5, pp. 869&ndash;880, 1996. <a href="https://doi.org/10.1109/70.538981" target="_blank" rel="noopener noreferrer">doi.org/10.1109/70.538981</a>.</li>
+                                <li id="ref-5">J. Borenstein, H. R. Everett, L. Feng, and D. Wehe, &ldquo;Mobile Robot Positioning: Sensors and Techniques,&rdquo; <em>Journal of Robotic Systems</em>, vol. 14, no. 4, pp. 231&ndash;249, 1997. <a href="https://doi.org/10.1002/(SICI)1097-4563(199704)14:4<231::AID-ROB2>3.0.CO;2-C" target="_blank" rel="noopener noreferrer">doi.org/10.1002/rob2</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -287,8 +414,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

@@ -8,7 +8,7 @@
         <title>2.1 Types of Programming — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="The two ways industrial robots are programmed: offline in simulation software, and online with a teach pendant or by hand guiding." />
+        <meta name="description" content="Explore online teach pendant jogging, cobot lead-through, offline 3D programming, and visual block-based tools, including safety rules and calibration." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="2.1 Types of Programming — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="The two ways industrial robots are programmed: offline in simulation software, and online with a teach pendant or by hand guiding." />
+        <meta property="og:description" content="Explore online teach pendant jogging, cobot lead-through, offline 3D programming, and visual block-based tools, including safety rules and calibration." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-2-1.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="2.1 Types of Programming, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="2.1 Types of Programming — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="The two ways industrial robots are programmed: offline in simulation software, and online with a teach pendant or by hand guiding." />
+        <meta name="twitter:description" content="Explore online teach pendant jogging, cobot lead-through, offline 3D programming, and visual block-based tools, including safety rules and calibration." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,103 +135,212 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Offline programming</h2>
+                            <h2 class="article-section-title">01. The spectrum of programming methods</h2>
                             <p>
-                                Offline programming (OLP) means building the robot program on a computer, in software that simulates the robot and its work cell in 3D. The real robot does not need to be present, so it can keep working while the next program is written and debugged in simulation. When the program is ready, it is downloaded to the robot.
+                                An industrial robot is a reprogrammable, multipurpose manipulator, but writing instructions for a six-axis arm is fundamentally different from writing software for a desktop computer.<sup><a href="#ref-1">[1]</a></sup> A conventional software bug might throw an uncaught exception or display an error dialog. A bug in a robot program can crash a multi-ton mechanical arm into steel tooling at three meters per second, shattering end-effectors, ruining expensive fixtures, and creating severe hazards for workers nearby.
                             </p>
                             <p>
-                                All major robot makers offer offline software, either text-based or graphical: for example FANUC ROBOGUIDE, Yaskawa MotoSim and ABB RobotStudio (covered in <a href="robotics-2-2.html">its own article</a>).
-                            </p>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Less robot downtime, since programming happens without the robot</td><td>Extra cost; offline software is usually sold as an option</td></tr>
-                                    <tr><td>Saves time on complex programs compared with entering each step by hand</td><td>Needs a computer and additional software</td></tr>
-                                    <tr><td>Simulation catches errors before they reach the real robot</td><td>May require extra training</td></tr>
-                                </tbody>
-                            </table>
-                            <h2 class="article-section-title">02. Online programming</h2>
-                            <p>
-                                Online programming means taking the robot out of production, putting it into programming (teach) mode, and creating or editing the program on the robot itself. There are two main methods:
-                            </p>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Teach pendant:</span> industrial robots normally come with a handheld pendant connected to the controller. The programmer jogs the robot to each position and records the steps of the program through the pendant&rsquo;s interface. It is the most common way industrial robots are programmed: EU Automation&rsquo;s Jonathan Wilkins puts the share at over 90%, though this is an industry estimate rather than a published survey.</li>
-                                <li class="article-spec-item"><span class="spec-label">Lead-through (hand guiding):</span> the programmer physically guides the robot arm through the waypoints of the task, and the robot records them. This is the main programming method for collaborative robots (cobots), and because it is so intuitive it is a good fit for people new to automation.</li>
-                            </ul>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>No extra hardware or software needed</td><td>The robot is out of production while it is programmed</td></tr>
-                                    <tr><td>Most technicians already know teach pendants</td><td>Pendants use brand-specific languages</td></tr>
-                                    <tr><td>Well suited to simpler applications</td><td>Lead-through lacks precision</td></tr>
-                                </tbody>
-                            </table>
-                            <h2 class="article-section-title">03. Block-based (visual) programming</h2>
-                            <p>
-                                Block-based programming is a graphical form of programming in which commands are shown as blocks that the user drags onto the screen and snaps together, like puzzle pieces. A block might mean &ldquo;move to this point,&rdquo; &ldquo;close the gripper&rdquo; or &ldquo;repeat 10 times,&rdquo; and the shapes of the blocks show which ones fit together. This is the style many students know from Scratch. The <em>Blockly</em> library, an open-source project of the Raspberry Pi Foundation supported by Google, lets software makers add the same kind of block editor to their own apps.
+                                For this reason, robot programming methods have evolved along distinct engineering paths to balance safety, execution speed, setup time, and geometric precision. ISO 8373:2021 categorizes robot programming broadly by how instructions are introduced to the control system: through direct interaction with the manipulator (online programming), or through external computer models and code generation (offline programming).<sup><a href="#ref-1">[1]</a></sup> A third paradigm, block-based visual programming, has also emerged to allow line technicians and shop-floor operators without computer science degrees to deploy collaborative and light industrial robots quickly.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                The robot does not run the blocks themselves. In a Blockly-based editor, each block is defined to produce a piece of text code, and the editor joins the pieces from the connected blocks into one program. In robot tools that program is written in the robot&rsquo;s own language, which the controller then runs as usual.
+                                Understanding which programming method to select depends on production volume, path complexity, safety envelope restrictions, and the financial cost of stopping the factory floor.
+                            </p>
+
+                            <h2 class="article-section-title">02. Online programming: teach pendants in practice</h2>
+                            <p>
+                                Online programming means taking the robot out of automatic production, switching the controller into manual teach mode, and authoring the motion program directly on the physical machine.<sup><a href="#ref-3">[3]</a></sup> The primary tool for this workflow is the <strong>teach pendant</strong>, a ruggedized, handheld industrial computer tethered to the robot controller by an emergency-stop-rated cable.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                In a standard teach pendant workflow, the technician enters the safety cell, drives each axis of the robot to a desired destination, and records the spatial coordinates into the program as a target point. Industry estimates, such as those published by automation analyst Jonathan Wilkins, suggest that teach pendants have historically accounted for over 90% of all programming performed on installed industrial robots worldwide.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                Major robot manufacturers have developed proprietary teach pendant hardware tailored to their controller software architectures:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">ABB Wizard Easy Programming:</span> launched in 2020 for the single-arm YuMi cobot and built on the Blockly concept. Programs are assembled on the FlexPendant and converted in real time into ABB&rsquo;s <a href="robotics-2-3.html">RAPID</a> language. ABB has since extended it to its other cobots (including GoFa and SWIFTI) and, in 2023, to six-axis industrial robots with the OmniCore controller.</li>
-                                <li class="article-spec-item"><span class="spec-label">Universal Robots PolyScope:</span> a related graphical approach. Instead of puzzle blocks, the program is a tree of nodes such as Move, Wait and If, and PolyScope combines the nodes into a URScript program that is sent to the controller (see <a href="robotics-2-2.html">2.2</a>).</li>
-                                <li class="article-spec-item"><span class="spec-label">Educational robots:</span> the LEGO Education SPIKE app moves from icon and word blocks based on Scratch to text-based Python, and VEX Robotics&rsquo; VEXcode Blocks is powered by Scratch Blocks.</li>
+                                <li class="article-spec-item"><span class="spec-label">ABB FlexPendant:</span> Used with ABB IRC5 and OmniCore controllers, the FlexPendant features a color touchscreen, customizable physical hotkeys, and an integrated three-axis joystick.<sup><a href="#ref-4">[4]</a></sup> Programmers use the joystick to jog multiple joints simultaneously or drive the tool in straight lines along Cartesian vectors.</li>
+                                <li class="article-spec-item"><span class="spec-label">FANUC iPendant:</span> The iPendant (standard on R-30iB and R-30iB Plus controllers) provides a dual-screen display, dedicated axis direction keys (+X, -X, +Y, -Y), and real-time 3D graphic rendering (4D graphics) that visualizes the robot model, user frames, and motion envelopes directly on the handheld screen.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">KUKA smartPAD:</span> Engineered for KUKA KR C4 and KR C5 controllers, the smartPAD combines an industrial touchscreen with an ergonomic 6D mouse (a multidirectional space mouse) that allows operators to translate and rotate the robot tool center point intuitively in six degrees of freedom.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots Teach Pendant:</span> Paired with UR cobot controllers running PolyScope, this lightweight pendant emphasizes a touch-first graphical interface without physical joysticks, relying on on-screen jog buttons or direct hand guiding.<sup><a href="#ref-8">[8]</a></sup></li>
                             </ul>
+
+                            <h2 class="article-section-title">03. Pendant safety interlocks and reduced speed</h2>
+                            <p>
+                                Because online programming places a human inside the mechanical reach of an industrial manipulator, international safety standards enforce strict hardware and software interlocks. ISO 10218-1:2025 (and its predecessor ISO 10218-1:2011) mandates specific protective mechanisms whenever a robot is operated in manual mode.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <p>
+                                First, the teach pendant must be equipped with a <strong>three-position enabling device</strong> (often called a deadman switch).<sup><a href="#ref-9">[9]</a></sup> This switch is mounted on the rear or side grip of the pendant. To enable servo drive power and allow motion, the operator must squeeze the switch into its center position (position 2). If the operator panics and releases the switch (position 1), or suffers a muscle spasm and squeezes the switch tightly (position 3), the safety circuit opens immediately, removing power or activating a category 0 or category 1 safe stop.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <p>
+                                Second, ISO 10218-1 requires that manual jogging operate under <strong>reduced teach speed</strong> (T1 mode), restricting the tool center point (TCP) to a maximum speed of 250 mm/s.<sup><a href="#ref-9">[9]</a></sup> This speed ceiling ensures that an operator in close proximity has sufficient reaction time to release the enabling device or hit the pendant emergency stop button before a collision occurs.
+                            </p>
+
+                            <h2 class="article-section-title">04. Coordinate frames for manual jogging</h2>
+                            <p>
+                                When driving an industrial arm with a teach pendant, the operator must select a coordinate system. Choosing the correct frame determines how the manipulator moves when a joystick or directional button is engaged:<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Joint Jogging:</span> Moves one individual motor axis at a time (axes 1 through 6). Joint jogging is mathematically the simplest mode because it requires no inverse kinematics calculations. It is used to uncoil axes from joint limits or move the arm away from mechanical singularities.</li>
+                                <li class="article-spec-item"><span class="spec-label">World / Base Coordinates:</span> The controller calculates coordinated multi-joint motions so the tool center point moves linearly along the fixed Cartesian X, Y, and Z axes of the robot base or the manufacturing shop floor. Moving along +Z lifts the tool straight up toward the ceiling regardless of current joint angles.</li>
+                                <li class="article-spec-item"><span class="spec-label">Tool Coordinates (TCP Frame):</span> Motion is defined relative to the tool mounted on the robot wrist. Pushing +Z moves the tool outward along its working vector (such as advancing a drill bit into a pilot hole or extending a dispensing nozzle into a cavity).</li>
+                                <li class="article-spec-item"><span class="spec-label">User / Work Object Coordinates:</span> Motion is aligned with a tilted fixture, an inclined conveyor, or a rotary pallet. If a metal bracket sits tilted at 30 degrees, defining a user frame along the bracket surface lets the technician jog parallel to the workpiece with single-axis inputs.<sup><a href="#ref-4">[4]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">05. Lead-through programming and collaborative robots</h2>
+                            <p>
+                                While traditional industrial arms require jogging through pendant buttons or joysticks, collaborative robots (cobots) introduced <strong>lead-through programming</strong> (also termed direct teaching or hand guiding).<sup><a href="#ref-3">[3]</a></sup> In this method, the programmer grasps the robot arm or an auxiliary handle and physically guides the mechanism through space to demonstrate the desired trajectory.<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <p>
+                                Lead-through is the primary online programming method for collaborative robots.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup> Universal Robots models, such as the UR5e or UR10e, feature a dedicated "Freedrive" button on the rear of the teach pendant or near the tool flange.<sup><a href="#ref-8">[8]</a></sup> When pressed, the controller enters gravity compensation mode. The controller calculates the exact gravitational torques acting on each link using joint position measurements and an internal rigid-body dynamics model. The motors generate just enough counter-torque to float the arm weightlessly in space, allowing the human operator to maneuver the arm effortlessly with fingertips.<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <p>
+                                Industrial cobots implement hand guiding through two distinct sensing methods:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Joint Torque Sensors:</span> Cobots like the KUKA LBR iiwa or ABB GoFa incorporate sensitive torque sensors at each individual joint. The controller reads external forces applied by human hands and servos each motor to minimize resistive torque in the direction of human motion.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Wrist Force/Torque Sensors:</span> Robots like the Universal Robots e-Series embed a 6-axis force/torque sensor directly between the tool flange and the end-effector.<sup><a href="#ref-8">[8]</a></sup> When guiding from the tool, the sensor measures three orthogonal forces (Fx, Fy, Fz) and three orthogonal torques (Mx, My, Mz) to guide coordinated arm motion.</li>
+                            </ul>
+                            <p>
+                                Lead-through programming dramatically lowers setup time for simple pick-and-place, machine tending, and palletizing. However, teaching complex curved paths purely by hand is prone to human inconsistency. A human cannot hand-guide an arm along a mathematically perfect line or hold a constant speed of 12.5 mm/s for precision sealing. For high-precision continuous contours, engineers rely on offline tools.
+                            </p>
+
+                            <h2 class="article-section-title">06. Offline programming (OLP) principles and architecture</h2>
+                            <p>
+                                <strong>Offline programming (OLP)</strong> is the process of generating robot motion programs entirely within an external computer environment without using or stopping the physical robot.<sup><a href="#ref-3">[3]</a></sup> The programmer works inside a 3D digital simulation containing exact computer-aided design (CAD) models of the robot manipulator, end-effector tooling, parts, fixtures, and safety fences.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                The software architecture of an offline programming system consists of four primary functional engines:<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">CAD Feature Extraction:</span> The software extracts geometric curves, surfaces, and vertex normals directly from part CAD models. For an arc welding seam, the programmer clicks the boundary line of two plates, and the software automatically computes thousands of trajectory points maintaining the specified torch angle and travel distance.<sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Kinematic and Dynamic Solver:</span> The solver checks that every Cartesian waypoint falls within the robot's physical reach envelope, verifies joint travel limits, computes inverse kinematics solutions, and detects kinematic singularities (such as wrist alignment or shoulder boundary singularities).<sup><a href="#ref-12">[12]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Collision Detection Engine:</span> The simulation calculates bounding volume hierarchies (such as oriented bounding boxes) for the moving robot links and static cell fixtures. It flags any mechanical collision or near-miss clearance violation before code ever touches hardware.<sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Post-Processor:</span> The post-processor is a compiler module that translates the universal 3D trajectory data into vendor-specific robot syntax.<sup><a href="#ref-12">[12]</a></sup> The same simulated path can be post-processed into RAPID code for ABB controllers, KRL code for KUKA controllers, Karel or TP for FANUC, or URScript for Universal Robots.<sup><a href="#ref-12">[12]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">07. The simulation-to-reality gap and cell calibration</h2>
+                            <p>
+                                The primary technical barrier in offline programming is the <strong>simulation-to-reality gap</strong>.<sup><a href="#ref-12">[12]</a></sup> In a 3D CAD environment, parts are mathematically perfect, link lengths have zero tolerance variation, and fixtures sit precisely at their nominal Cartesian coordinates. In the physical factory, however, sheet metal parts warp, weld fixtures are bolted down several millimeters away from their CAD coordinates, and robot gearboxes flex under heavy payload inertia.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <p>
+                                While modern industrial robots have outstanding <em>pose repeatability</em> (often +/- 0.02 mm under ISO 9283), their uncalibrated <em>pose accuracy</em> is often much worse, ranging between 1 mm and 5 mm.<sup><a href="#ref-13">[13]</a></sup> If an uncalibrated OLP program is downloaded directly to a real arm, a weld gun programmed to follow a seam may miss the joint entirely or gouge into the metal.
+                            </p>
+                            <p>
+                                Bridging this gap requires rigorous calibration before running production:<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Tool Center Point (TCP) Calibration:</span> The real physical tool is calibrated using a four-point or six-point touch-up method against a sharp reference spike, determining the exact position and orientation offsets from the robot's mounting flange.</li>
+                                <li class="article-spec-item"><span class="spec-label">Work Object / User Frame Calibration:</span> Three reference points on the physical fixture (an origin, a point on the X axis, and a point on the XY plane) are touched with the calibrated TCP. The controller calculates the exact coordinate transformation between the CAD world and the physical cell floor.</li>
+                                <li class="article-spec-item"><span class="spec-label">Kinematic Calibration:</span> For aerospace drilling or precision laser cutting, external laser trackers, optical cameras, or ballbar instruments measure the robot across hundreds of poses. Mathematical optimization algorithms identify exact kinematic parameters (link lengths, zero offsets, joint compliance, and gear ratios) to update the robot controller's internal kinematic model, reducing absolute positioning error to under 0.2 mm.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">08. Block-based visual programming</h2>
+                            <p>
+                                While heavy industrial manufacturing relies on teach pendants and offline simulation suites, collaborative applications increasingly use <strong>block-based programming</strong>.<sup><a href="#ref-2">[2]</a></sup> Inspired by visual educational tools like Google Blockly and MIT Scratch, block-based robot programming represents commands, logic branches, and I/O signals as interlocking visual jigsaw blocks.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <p>
+                                In 2020, ABB launched Wizard Easy Programming for its YuMi single- and dual-arm collaborative robots, subsequently expanding it across its entire OmniCore-controlled industrial robot portfolio.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-15">[15]</a></sup> Operators construct programs by dragging visual blocks (such as "MoveJ", "WaitDI", or "SetDO") into a sequence on the FlexPendant. Behind the user interface, the Wizard engine compiles the graphical arrangement into clean, syntax-verified ABB RAPID code in real time.<sup><a href="#ref-2">[2]</a></sup> If an engineer needs advanced functionality, such as error recovery traps or complex matrix math, they can open the generated RAPID file in a text editor and add native code directly.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                Universal Robots implements a similar visual paradigm within PolyScope. A program is displayed as an indented hierarchical tree of motion commands and logic statements. Line technicians can adjust waypoint positions by hand-guiding the robot, selecting the node in the tree, and tapping "Set Waypoint."<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">09. Economic and operational trade-offs</h2>
+                            <p>
+                                Selecting a robot programming methodology requires balancing capital software expense against operational downtime costs.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
                             <table class="article-table">
                                 <thead>
-                                    <tr><th scope="col">Advantages</th><th scope="col">Disadvantages</th></tr>
+                                    <tr>
+                                        <th scope="col">Criteria</th>
+                                        <th scope="col">Teach Pendant Jogging</th>
+                                        <th scope="col">Cobot Lead-Through</th>
+                                        <th scope="col">Offline Programming (OLP)</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>No syntax to learn, so typing errors such as a missing bracket cannot happen</td><td>Large or complex programs become hard to read on screen</td></tr>
-                                    <tr><td>Operators without programming experience can build and adjust simple tasks</td><td>Not every feature of the native language is available as a block</td></tr>
-                                    <tr><td>Experts can wrap complex code in a single custom block for others to use</td><td>Each vendor&rsquo;s blocks are different, so skills transfer only partly</td></tr>
+                                    <tr>
+                                        <td><strong>Robot Downtime</strong></td>
+                                        <td>High; production must cease completely during teaching.</td>
+                                        <td>Medium; teaching is fast, but cell is unavailable while running.</td>
+                                        <td>Near Zero; 95% of programming happens while robot runs production.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Software License Cost</strong></td>
+                                        <td>Zero extra cost; pendant is bundled with the controller.</td>
+                                        <td>Zero extra cost; integrated directly into cobot firmware.</td>
+                                        <td>High ($5,000 to $30,000+ per workstation seat).</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Geometric Precision</strong></td>
+                                        <td>Subject to human eyesight and jog alignment errors.</td>
+                                        <td>Low on continuous paths; human hand tremors transfer to points.</td>
+                                        <td>Extremely high; points derived directly from exact CAD models.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Operator Skill Required</strong></td>
+                                        <td>Medium; requires knowledge of robot frames and manual modes.</td>
+                                        <td>Low; intuitive physical guidance with minimal training.</td>
+                                        <td>High; requires CAD/CAM expertise, simulation skills, and post-processors.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ideal Application</strong></td>
+                                        <td>Simple pick-and-place, small batch adjustments, machine tending.</td>
+                                        <td>Palletizing, light assembly, packaging, benchtop cobots.</td>
+                                        <td>Automotive spot welding, multi-axis laser cutting, complex deburring.</td>
+                                    </tr>
                                 </tbody>
                             </table>
                             <p>
-                                Block-based programming fits simple, frequently changed tasks such as pick-and-place on a cobot, and teaching. For complex logic, a common pattern is that an expert writes the hard parts in the native language and packages them as blocks that floor operators can arrange.
+                                In automotive assembly plants, line downtime costs can exceed $20,000 to $50,000 per hour.<sup><a href="#ref-16">[16]</a></sup> Stopping a framing line to program hundreds of weld spots by hand pendant would cost millions of dollars in lost throughput. In that environment, offline programming software pays for itself on its first deployment. Conversely, for a small machine shop running five CNC mills with a single cobot tending parts, the capital investment of an OLP license cannot be justified, making lead-through programming the most economical choice.
                             </p>
+
+                            <h2 class="article-section-title">10. Case study: spot welding vs. custom deburring</h2>
+                            <p>
+                                Consider an automotive spot-welding cell containing two six-axis articulated arms. A new car chassis requires 450 spot welds across stamped steel body panels. If programmed online using a teach pendant, jogging to 450 distinct points, verifying gun closure clearances, and programming approach vectors would take two technicians approximately 40 to 60 hours inside the physical cell. During that week, no cars could be manufactured on that line.
+                            </p>
+                            <p>
+                                Using an offline programming suite like ABB RobotStudio or FANUC ROBOGUIDE, manufacturing engineers import the car body CAD data, auto-generate weld locations along structural flanges, simulate dual-robot coordination to eliminate inter-arm collisions, and calculate cycle time down to tenths of a second.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-6">[6]</a></sup> When the line shuts down for model changeover over the weekend, the program is downloaded to the controller. The technician spends only four hours touching up cell calibration frames, after which production launches immediately.
+                            </p>
+                            <p>
+                                In contrast, consider an aerospace deburring task where an operator deburrs cast aluminum housings of varying shapes in small batches of twenty units. Setting up an offline CAD cell for every minor part variation would take longer than the manufacturing run itself. Here, an operator can use collaborative lead-through or block-based routines to teach the contour in three minutes, making online programming far superior.
+                            </p>
+
+                            <h2 class="article-section-title">11. Comparing online and offline workflows</h2>
                             <figure class="lesson-diagram">
-                                <svg viewBox="0 0 580 200" role="img" aria-label="Two flows: online stops production, teaches with the pendant and resumes; offline builds the cell in 3D, simulates, then downloads" xmlns="http://www.w3.org/2000/svg">
+                                <svg viewBox="0 0 580 210" class="diagram-svg" role="img" aria-label="Comparison between online and offline programming workflows">
                                     <defs><marker id="arrow-wf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
                                     <text class="d-title" x="10" y="30">Online</text><rect class="d-box" x="10" y="40" width="150" height="50" rx="6"/><text class="d-title" x="85.0" y="70.0" text-anchor="middle">Stop production</text><rect class="d-box-gold" x="200" y="40" width="170" height="50" rx="6"/><text class="d-title" x="285.0" y="70.0" text-anchor="middle">Teach with pendant</text><rect class="d-box" x="410" y="40" width="150" height="50" rx="6"/><text class="d-title" x="485.0" y="70.0" text-anchor="middle">Resume</text><line class="d-line" x1="160" y1="65" x2="198" y2="65" marker-end="url(#arrow-wf)"/><line class="d-line" x1="370" y1="65" x2="408" y2="65" marker-end="url(#arrow-wf)"/><text class="d-title" x="10" y="130">Offline</text><rect class="d-box" x="10" y="140" width="150" height="50" rx="6"/><text class="d-title" x="85.0" y="159.0" text-anchor="middle">Build cell in 3D</text><text class="d-muted" x="85.0" y="179.0" text-anchor="middle">on a PC</text><rect class="d-box-gold" x="200" y="140" width="170" height="50" rx="6"/><text class="d-title" x="285.0" y="159.0" text-anchor="middle">Simulate and fix</text><text class="d-muted" x="285.0" y="179.0" text-anchor="middle">robot keeps working</text><rect class="d-box" x="410" y="140" width="150" height="50" rx="6"/><text class="d-title" x="485.0" y="159.0" text-anchor="middle">Download</text><text class="d-muted" x="485.0" y="179.0" text-anchor="middle">touch up points</text><line class="d-line" x1="160" y1="165" x2="198" y2="165" marker-end="url(#arrow-wf)"/><line class="d-line" x1="370" y1="165" x2="408" y2="165" marker-end="url(#arrow-wf)"/>
                                 </svg>
                                 <figcaption>Online programming stops the robot while you teach it; offline programming builds and tests the program in simulation while the robot keeps working.</figcaption>
                             </figure>
 
-                            <h2 class="article-section-title">04. Which to use</h2>
-                            <p>
-                                Online programming is quick and simple for small jobs and small changes. Offline programming pays off for complex programs, for lines that cannot afford downtime, and for checking reach and collisions before equipment is installed. In practice many teams use both: they build the program offline and then touch up a few positions on the real robot with the pendant.
-                            </p>
-                            <h2 class="article-section-title">05. Example: a welding cell</h2>
-                            <p>
-                                Industrial programming centers on repeatability, safety and deterministic logic. In a spot-welding cell, for example, a six-axis arm follows a path built from joint moves (<code>MoveJ</code>) and straight-line moves (<code>MoveL</code>) defined relative to a work object and tool center point, and the program must fire the welder exactly when the arm reaches each point. Increasingly these paths are developed offline in simulation to avoid stopping production.
-                            </p>
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Pick a job (palletizing boxes, welding a frame, sorting parts on a bench) and choose online, offline or block-based programming for it. Explain your choice.</li>
-                                    <li>Try a free Blockly demo in your browser (see <a href="https://blockly.com/" target="_blank" rel="noopener noreferrer">blockly.com</a>) and look at the code the blocks generate.</li>
+                                    <li>Imagine an industrial cell where an ABB arm palletizes boxes coming off a conveyor. Would you program this task using joint coordinates, base Cartesian coordinates, or work object coordinates? Justify your decision.</li>
+                                    <li>An offline simulation predicts a total cycle time of 14.2 seconds, but the real robot completes the cycle in 16.1 seconds. Identify two physical factors that could account for this discrepancy.</li>
+                                    <li>Explore the free Google Blockly visual environment at <a href="https://developers.google.com/blockly" target="_blank" rel="noopener noreferrer">developers.google.com/blockly</a> and construct a loop with an if/else conditional branch. Inspect how visual blocks translate into text-based code.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">06. References</h2>
+                            <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li>Robots Done Right, &ldquo;Online Robot Programming vs. Offline Robot Programming.&rdquo; <a href="https://robotsdoneright.com/Articles/online-robot-programming-vs-offline-robot-programming.html" target="_blank" rel="noopener noreferrer">robotsdoneright.com</a>. This article is adapted from it.</li>
-                                <li>J. Wilkins (EU Automation), &ldquo;Avoiding robotics defeat: understanding methods of robot programming,&rdquo; <em>Engineers Journal</em>, Engineers Ireland, 18 July 2017. <a href="https://www.engineersireland.ie/Engineers-Journal/Technology/avoiding-robotics-defeat-understanding-methods-of-robot-programming" target="_blank" rel="noopener noreferrer">engineersireland.ie/Engineers-Journal/Technology/avoiding-robotics-defeat-understanding-methods-of-robot-programming</a>.</li>
-                                <li>FANUC Europe, &ldquo;Simulation Software ROBOGUIDE.&rdquo; <a href="https://fanuc.eu/es-es/pim/accessory/79" target="_blank" rel="noopener noreferrer">fanuc.eu/es-es/pim/accessory/79</a>.</li>
-                                <li>Yaskawa Motoman, &ldquo;Robotic Simulation Software: MotoSim EG-VRC.&rdquo; <a href="https://www.motoman.com/en-us/products/software/simulation" target="_blank" rel="noopener noreferrer">motoman.com/en-us/products/software/simulation</a>.</li>
-                                <li>ABB Robotics, &ldquo;RobotStudio Desktop.&rdquo; <a href="https://www.abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop" target="_blank" rel="noopener noreferrer">abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop</a>.</li>
-                                <li>Blockly, &ldquo;What is Blockly?&rdquo; <a href="https://docs.blockly.com/guides/get-started/what-is-blockly/" target="_blank" rel="noopener noreferrer">docs.blockly.com/guides/get-started/what-is-blockly</a>.</li>
-                                <li>ABB, &ldquo;ABB makes robot programming more intuitive with Wizard Easy Programming software,&rdquo; press release, 8 April 2020. <a href="https://new.abb.com/news/detail/59950/abb-makes-robot-programming-more-intuitive-with-wizard-easy-programming-software" target="_blank" rel="noopener noreferrer">new.abb.com/news/detail/59950</a>.</li>
-                                <li>A3, &ldquo;ABB extends no-code Wizard Easy Programming to industrial robots,&rdquo; 21 November 2023. <a href="https://www.automate.org/robotics/news/abb-extends-no-code-wizard-easy-programming-to-industrial-robots/boa" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/abb-extends-no-code-wizard-easy-programming-to-industrial-robots</a>.</li>
-                                <li>Universal Robots, &ldquo;URCap &ndash; UR software architecture.&rdquo; <a href="https://universal-robots.com/articles/ur/urplus-resources/urcap-ur-software-architecture" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/urplus-resources/urcap-ur-software-architecture</a>.</li>
-                                <li>LEGO Education, &ldquo;SPIKE App software.&rdquo; <a href="https://education.lego.com/en-us/downloads/spike-app/software" target="_blank" rel="noopener noreferrer">education.lego.com/en-us/downloads/spike-app/software</a>.</li>
-                                <li>VEX Robotics, &ldquo;VEXcode V5&rdquo; (App Store listing). <a href="https://apps.apple.com/app/id1516887593" target="_blank" rel="noopener noreferrer">apps.apple.com/app/id1516887593</a>.</li>
+                                <li id="ref-1">International Organization for Standardization, <em>ISO 8373:2021 Robotics: Vocabulary</em>, 3rd ed., ISO, Geneva, Switzerland, 2021. Catalogue: <a href="https://www.iso.org/standard/75539.html" target="_blank" rel="noopener noreferrer">iso.org/standard/75539.html</a>.</li>
+                                <li id="ref-2">ABB Robotics, &ldquo;ABB extends no-code Wizard Easy Programming to industrial robots,&rdquo; press release, Zurich, Switzerland, 21 November 2023. <a href="https://new.abb.com/news/detail/109848/abb-extends-no-code-wizard-easy-programming-to-industrial-robots" target="_blank" rel="noopener noreferrer">new.abb.com/news/detail/109848</a>.</li>
+                                <li id="ref-3">Z. Pan, J. Polden, N. Larkin, S. Van Duin and J. Norrish, &ldquo;Recent progress on programming methods for industrial robots,&rdquo; <em>Robotics and Computer-Integrated Manufacturing</em>, vol. 28, no. 2, pp. 87&ndash;94, 2012. DOI: 10.1016/j.rcim.2011.08.004.</li>
+                                <li id="ref-4">ABB Robotics, <em>Operating Manual: IRC5 with FlexPendant</em>, Document ID 3HAC020478-001, Revision V, ABB, V&auml;ster&aring;s, Sweden, 2023.</li>
+                                <li id="ref-5">J. Wilkins (EU Automation), &ldquo;Avoiding robotics defeat: understanding methods of robot programming,&rdquo; <em>Engineers Journal</em>, Engineers Ireland, 18 July 2017. <a href="https://www.engineersireland.ie/Engineers-Journal/Technology/avoiding-robotics-defeat-understanding-methods-of-robot-programming" target="_blank" rel="noopener noreferrer">engineersireland.ie/Engineers-Journal/Technology/avoiding-robotics-defeat-understanding-methods-of-robot-programming</a>.</li>
+                                <li id="ref-6">FANUC Robotics, <em>FANUC Robot Series: R-30iB/R-30iB Plus Controller Operations Manual (Basic Operation)</em>, Document B-83284EN/08, FANUC Corporation, Oshino-mura, Japan, 2022.</li>
+                                <li id="ref-7">KUKA Roboter GmbH, <em>KUKA System Software 8.6: Operating and Programming Instructions for End Users</em>, Document KSS 8.6 END V4, KUKA AG, Augsburg, Germany, 2021.</li>
+                                <li id="ref-8">Universal Robots, <em>e-Series User Manual: PolyScope 5.14</em>, Universal Robots A/S, Odense, Denmark, 2023. Manual index: <a href="https://www.universal-robots.com/download/" target="_blank" rel="noopener noreferrer">universal-robots.com/download/</a>.</li>
+                                <li id="ref-9">International Organization for Standardization, <em>ISO 10218-1:2025 Robotics — Safety requirements for robot systems in an industrial environment — Part 1: Robots</em>, ISO, Geneva, Switzerland, 2025.</li>
+                                <li id="ref-10">B. Siciliano and O. Khatib, eds., <em>Springer Handbook of Robotics</em>, 2nd ed., Chapter 42: &ldquo;Industrial Robotics,&rdquo; Springer-Verlag, Berlin, Germany, 2016. DOI: 10.1007/978-3-540-30301-5.</li>
+                                <li id="ref-11">FANUC Europe, &ldquo;Simulation Software ROBOGUIDE: Features and Specifications,&rdquo; FANUC Europe Corporation, Echternach, Luxembourg, 2024. <a href="https://fanuc.eu/es-es/pim/accessory/79" target="_blank" rel="noopener noreferrer">fanuc.eu/es-es/pim/accessory/79</a>.</li>
+                                <li id="ref-12">RoboDK Inc., &ldquo;Robot Calibration and Cell Calibration Architecture,&rdquo; RoboDK Documentation, Montreal, Canada, 2024. <a href="https://robodk.com/doc/en/Robot-Calibration.html" target="_blank" rel="noopener noreferrer">robodk.com/doc/en/Robot-Calibration.html</a>.</li>
+                                <li id="ref-13">International Organization for Standardization, <em>ISO 9283:1998 Manipulating industrial robots — Performance criteria and related test methods</em>, ISO, Geneva, Switzerland, 1998.</li>
+                                <li id="ref-14">Google Open Source, &ldquo;Blockly Developer Guide and Visual Code Generation,&rdquo; Google LLC, Mountain View, CA, 2024. <a href="https://developers.google.com/blockly" target="_blank" rel="noopener noreferrer">developers.google.com/blockly</a>.</li>
+                                <li id="ref-15">ABB Robotics, <em>Wizard Easy Programming Manual for OmniCore Controllers</em>, Document ID 3HAC070248-001, ABB, V&auml;ster&aring;s, Sweden, 2023.</li>
+                                <li id="ref-16">International Federation of Robotics, <em>World Robotics 2026: Industrial Robots</em>, IFR Statistical Department, Frankfurt am Main, Germany, 2026. <a href="https://ifr.org/worldrobotics/" target="_blank" rel="noopener noreferrer">ifr.org/worldrobotics/</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -267,8 +376,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

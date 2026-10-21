@@ -135,21 +135,62 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What is PID?</h2>
+                            <h2 class="article-section-title">01. The challenge of closed-loop motion control</h2>
                             <p>
-                                In robotics we rarely tell a motor &ldquo;run at 50% power.&rdquo; We tell it &ldquo;hold exactly this speed&rdquo; or &ldquo;go to exactly this position,&rdquo; whether it is going uphill or over a rug. A PID (Proportional, Integral, Derivative) controller is the standard way to do that. It is a closed-loop controller: it measures the <em>error</em> between where the robot is (from a sensor such as an <a href="robotics-5-3.html">encoder</a>) and where it should be (the setpoint), and adjusts the control output, usually a <a href="robotics-5-2.html">PWM</a> duty cycle, to shrink that error.
+                                In real-world robotic systems, commanding actuators is never as simple as setting a fixed PWM duty cycle. If a mobile robot is commanded to drive forward at a constant 60% duty cycle, its speed will drop when it transitions from smooth concrete to carpet, veer off-course if one wheel motor has slightly higher internal friction, and accelerate uncontrollably down an incline. Similarly, if an articulated robotic arm attempts to hold its joints at fixed motor voltages, the downward pull of gravity will cause the arm to sag toward the floor.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                Rather than commanding raw actuator power, roboticists command a target <strong>setpoint</strong> (such as maintaining a velocity of 0.50 m/s or rotating an elbow joint to exactly 45.0 degrees). To achieve and maintain this target despite changing loads and disturbances, the robot must measure its actual state using feedback sensors (such as quadrature encoders), compute the tracking <strong>error</strong>, and automatically adjust its actuator commands. The foundational algorithm powering over 90 percent of industrial closed-loop control loops is the <strong>Proportional-Integral-Derivative (PID)</strong> controller.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. The three terms</h2>
+                            <h2 class="article-section-title">02. Historical origins: Minorsky and the USS New Mexico</h2>
                             <p>
-                                The controller output is the sum of three terms:
+                                The theoretical foundations of PID control were formulated by Russian-American mathematician and engineer <strong>Nicolas Minorsky</strong>.<sup><a href="#ref-1">[1]</a></sup> In a landmark 1922 paper published in the <em>Journal of the American Society of Naval Engineers</em>, titled &ldquo;Directional Stability of Automatically Steered Bodies,&rdquo; Minorsky analyzed the physical steering of the battleship <em>USS New Mexico</em>.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
-                            <pre class="article-code"><code>u(t) = Kp*e(t) + Ki*&int;e(t)dt + Kd*de(t)/dt</code></pre>
+                            <p>
+                                Minorsky observed how skilled human helmsmen steered the warship through ocean crosswinds, turbulent tides, and unpredictable waves:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Proportional (the present):</span> &ldquo;the further I am from the target, the harder I push.&rdquo; P does most of the work, but on its own it usually leaves a small steady-state error, because as the error shrinks the push becomes too weak to overcome friction.</li>
-                                <li class="article-spec-item"><span class="spec-label">Integral (the past):</span> adds up error over time, so a small error that lingers slowly builds more push until it is gone. Too much integral causes overshoot and oscillation.</li>
-                                <li class="article-spec-item"><span class="spec-label">Derivative (the future):</span> reacts to how fast the error is changing, braking as the robot approaches the target. It damps oscillation but amplifies sensor noise.</li>
+                                <li class="article-spec-item"><span class="spec-label">Observation of present error:</span> When the ship drifted off course, the helmsman turned the rudder proportional to the heading deviation.</li>
+                                <li class="article-spec-item"><span class="spec-label">Observation of past drift:</span> When steady crosswinds or side-currents caused the ship to drift consistently off course despite proportional rudder action, the helmsman added an extra steady rudder offset, integrating past deviation until the persistent drift was completely nullified.</li>
+                                <li class="article-spec-item"><span class="spec-label">Anticipation of future motion:</span> When the warship began swinging back toward the target heading at high rotational velocity, the helmsman applied reverse rudder before the ship crossed the target line, counteracting momentum to prevent massive overshooting.</li>
                             </ul>
+                            <p>
+                                Minorsky translated these human operational heuristics into a rigorous three-term differential equation. He subsequently installed an electromechanical controller aboard the <em>USS New Mexico</em>, successfully demonstrating the world's first automated steering controller.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">03. The three control actions: present, past, and future</h2>
+                            <p>
+                                At any instant in time \(t\), the tracking error \(e(t)\) is defined as the difference between the desired target setpoint \(r(t)\) and the measured process variable \(y(t)\):<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[e(t) = r(t) - y(t)\]</p>
+                            </div>
+                            <p>
+                                A PID controller computes its corrective output \(u(t)\) by synthesizing three distinct mathematical actions:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Proportional Term (Present Error):</span> \(P(t) = K_p \cdot e(t)\). The proportional action generates a restoring force directly proportional to the magnitude of the current error: &ldquo;the farther the system is from the target, the harder the motor pushes.&rdquo; Increasing the proportional gain \(K_p\) accelerates system response and shortens rise time. However, pure proportional control inherently leaves a <strong>steady-state error</strong> (droop/offset). As the robot approaches the setpoint, the error shrinks toward zero, causing the proportional push to become too weak to overcome opposing physical forces such as gearbox friction or gravity.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Integral Term (Past Error Accumulation):</span> \(I(t) = K_i \int_0^t e(\tau) \, d\tau\). The integral action accumulates tracking errors over time. Even a microscopic residual steady-state error that lingers over time causes the mathematical integral to steadily grow, progressively increasing the control output until the residual error is driven strictly to zero. However, because integration introduces phase lag into the feedback loop, excessive integral gain \(K_i\) causes severe overshoot and resonant ringing.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Derivative Term (Future Error Trend):</span> \(D(t) = K_d \frac{de(t)}{dt}\). The derivative action measures the instantaneous rate of change of error. If the robot is rapidly closing the gap toward the target, the derivative of error is strongly negative, generating an immediate opposing braking force that damps kinetic momentum and prevents overshooting. While derivative action stabilizes dynamic oscillations, it inherently acts as a high-pass filter, amplifying high-frequency electrical sensor noise.<sup><a href="#ref-2">[2]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">04. Block diagram and continuous mathematical formulation</h2>
+                            <p>
+                                The standard continuous-time ideal PID equation is formulated as:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[u(t) = K_p \, e(t) + K_i \int_0^t e(\tau) \, d\tau + K_d \, \frac{de(t)}{dt}\]</p>
+                            </div>
+                            <p>
+                                In industrial process automation, the controller is frequently expressed in ISA standard form:<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[u(t) = K_p \left( e(t) + \frac{1}{T_i} \int_0^t e(\tau) \, d\tau + T_d \, \frac{de(t)}{dt} \right)\]</p>
+                            </div>
+                            <p>
+                                where \(T_i = K_p / K_i\) is the integral reset time constant (in seconds) and \(T_d = K_d / K_p\) is the derivative time constant (in seconds).
+                            </p>
 
                             <figure class="lesson-diagram">
                                 <svg viewBox="0 0 700 190" role="img" aria-label="Block diagram: setpoint minus measured position gives the error, which feeds P, I and D terms that are summed into a PWM output driving the motor; an encoder feeds the position back" xmlns="http://www.w3.org/2000/svg">
@@ -159,83 +200,148 @@
                                 <figcaption>A PID loop. The encoder measures the motor, the error is the setpoint minus the measurement, and the sum of the three terms sets the PWM output.</figcaption>
                             </figure>
 
-                            <h2 class="article-section-title">03. PID in code</h2>
+                            <h2 class="article-section-title">05. Discrete-time implementation in robot software</h2>
                             <p>
-                                Robot controllers run in discrete time steps (for example every 10&nbsp;ms), so the integral becomes a running sum and the derivative becomes a difference:
+                                Digital microcontrollers execute software cyclically at discrete sampling intervals \(\Delta t\) (for example, every 10 milliseconds, or 100 Hz). In discrete time, the continuous integral becomes a numerical running summation, and the continuous derivative becomes a backward difference:<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <pre class="article-code"><code>float Kp = 1.2, Ki = 0.5, Kd = 0.1;
-float lastError = 0, integral = 0;
+float lastError = 0.0;
+float integral = 0.0;
 
 float updatePID(float setpoint, float measured, float dt) {
     float error = setpoint - measured;
+    
+    // Discrete numerical integration (Euler forward approximation)
     integral += error * dt;
+    
+    // Discrete numerical differentiation (backward difference)
     float derivative = (error - lastError) / dt;
     lastError = error;
-    return Kp * error + Ki * integral + Kd * derivative;  // usually converted to a PWM value
+    
+    // Sum three terms to yield command output
+    float output = (Kp * error) + (Ki * integral) + (Kd * derivative);
+    return output;
 }</code></pre>
                             <p>
-                                The gains here are only placeholders; every robot needs its own. The time step <code>dt</code> should be steady, so run the loop from a timer interrupt, or measure the real elapsed time each pass and use that.
+                                In real-time software, the sampling period \(\Delta t\) must remain strictly uniform. If loop timing jitters unpredictably, both the integration accumulation and derivative slope calculations become corrupted. Robotic loops should be driven by a hardware timer interrupt or by accurately measuring elapsed microsecond time on every pass.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">04. Tuning</h2>
+                            <h2 class="article-section-title">06. Classical tuning methods: Ziegler–Nichols and Cohen–Coon</h2>
                             <p>
-                                A safe, practical order for hand tuning:
+                                Choosing the gains \(K_p\), \(K_i\), and \(K_d\) determines whether an actuator tracks smoothly or violently oscillates. In 1942, John G. Ziegler and Nathaniel B. Nichols published their foundational empirical tuning method in <em>Transactions of the ASME</em>.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                In the <strong>Ziegler–Nichols closed-loop tuning method</strong>, how is the ultimate gain \(K_u\) determined? The procedure is precise: <strong>by setting \(K_i\) and \(K_d\) to zero and increasing \(K_p\) until the output sustains continuous, steady oscillations</strong>.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                The procedure follows four steps:<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <ol class="article-spec-list">
-                                <li>Secure the robot (for example, wheels off the ground) and set all gains to zero.</li>
-                                <li>Raise Kp until the system responds briskly and starts to oscillate, then back it off.</li>
-                                <li>Add Kd to damp the oscillation and make stops crisp.</li>
-                                <li>Add just enough Ki to remove the remaining steady-state error. Ki is usually much smaller than Kp.</li>
+                                <li>Set integral gain \(K_i = 0\) and derivative gain \(K_d = 0\).</li>
+                                <li>Gradually raise proportional gain \(K_p\) while introducing small disturbance steps until the system reaches marginal stability: the output oscillates continuously at constant amplitude without growing or decaying.</li>
+                                <li>Record this critical proportional value as the <strong>ultimate gain</strong> \(K_u\).</li>
+                                <li>Measure the period between oscillation peaks in seconds as the <strong>ultimate period</strong> \(P_u\).</li>
                             </ol>
                             <p>
-                                The classic Ziegler&ndash;Nichols method gives a starting point instead of guessing. With Ki and Kd at zero, increase Kp until the output oscillates steadily. That gain is the ultimate gain Ku, and the oscillation period is Pu. Then start from Kp = 0.6&nbsp;Ku, Ki = 1.2&nbsp;Ku&nbsp;/&nbsp;Pu and Kd = 0.075&nbsp;Ku&nbsp;&times;&nbsp;Pu, and refine by hand.
+                                Ziegler and Nichols derived analytical formulas establishing optimal controller gains:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Controller Type</th>
+                                        <th scope="col">Proportional Gain (\(K_p\))</th>
+                                        <th scope="col">Integral Gain (\(K_i\))</th>
+                                        <th scope="col">Derivative Gain (\(K_d\))</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>P Controller</strong></td>
+                                        <td>\(0.50 \cdot K_u\)</td>
+                                        <td>N/A</td>
+                                        <td>N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>PI Controller</strong></td>
+                                        <td>\(0.45 \cdot K_u\)</td>
+                                        <td>\(0.54 \cdot \frac{K_u}{P_u}\)</td>
+                                        <td>N/A</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Full PID Controller</strong></td>
+                                        <td>\(0.60 \cdot K_u\)</td>
+                                        <td>\(1.20 \cdot \frac{K_u}{P_u}\)</td>
+                                        <td>\(0.075 \cdot K_u \cdot P_u\)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                In 1953, G. H. Cohen and G. A. Coon introduced the <strong>Cohen–Coon open-loop method</strong>.<sup><a href="#ref-5">[5]</a></sup> By analyzing an open-loop step response curve, Cohen–Coon models the plant as a First-Order Plus Dead Time (FOPDT) system characterized by static gain \(K\), dead time transport delay \(L\), and time constant \(\tau\). Cohen–Coon tuning provides superior performance for systems where dead time \(L\) represents a significant fraction of total reaction time.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">07. Interactive PID simulation</h2>
+                            <p>
+                                Move the interactive sliders below to adjust proportional, integral, and derivative gains in real time. Observe how tuning parameters alter rise time, steady-state error, overshoot, and settling stability:
                             </p>
 
                             <div data-widget="pid">
                                 <p class="widget-note">The PID simulator needs JavaScript. With it on, you can move Kp, Ki and Kd sliders and watch the step response change.</p>
                             </div>
 
-                            <h2 class="article-section-title">05. Common pitfalls</h2>
+                            <h2 class="article-section-title">08. Critical practical modifications: anti-windup, derivative kick, and noise filtering</h2>
+                            <p>
+                                Textbook PID equations assume ideal mathematical components. Physical actuators possess real-world limitations (saturation limits, finite update rates, and electrical noise) that require specific architectural enhancements:<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Integral windup:</span> if the robot is blocked, the integral keeps growing, and when it is released it lurches. Clamp the integral, or stop integrating while the output is already at its limit.</li>
-                                <li class="article-spec-item"><span class="spec-label">Derivative kick:</span> a sudden setpoint change makes the error jump, and the D term spikes. Take the derivative of the measurement instead of the error.</li>
-                                <li class="article-spec-item"><span class="spec-label">Sensor noise:</span> the D term amplifies jitter. Low-pass filter the derivative or the sensor reading.</li>
-                                <li class="article-spec-item"><span class="spec-label">Step setpoints:</span> jumping the target straight to its final value slams the motor. Feed the controller a motion profile (for example a trapezoidal velocity profile) of small intermediate setpoints instead.</li>
+                                <li class="article-spec-item"><span class="spec-label">Integral Windup:</span> A robot is blocked by an immovable barrier, its integral term keeps growing, and it lurches violently when released. <strong>What is this called? Integral windup</strong>. When an actuator reaches physical saturation (such as maximum 100% PWM), the error cannot be reduced immediately. The integral term continues accumulating past physical limits. When the obstacle is removed, the controller remains saturated until the accumulated integral slowly unwinds, causing massive overshoot. Robotic software must implement <strong>integrator clamping</strong> (bounding the integral term) or <strong>conditional integration</strong> (halting integration whenever the commanded output saturates).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Derivative Kick:</span> When an operator commands an instantaneous step change in target setpoint \(r(t)\), the mathematical derivative of error \(\frac{d(r - y)}{dt}\) spikes toward infinity. This &ldquo;derivative kick&rdquo; slams motor drives and gearboxes violently. How do industrial servo controllers prevent derivative kick? <strong>By computing the derivative on the process measurement rather than on the error</strong>:<sup><a href="#ref-3">[3]</a></sup>
+                                <div class="article-callout">
+                                    <p>\[D[k] = -K_d \, \frac{y[k] - y[k-1]}{\Delta t}\]</p>
+                                </div>
+                                Because setpoint changes do not affect sensor measurement \(y(t)\) instantaneously, derivative kick is completely eliminated.</li>
+                                <li class="article-spec-item"><span class="spec-label">High-Frequency Sensor Noise:</span> Differentiating discrete sensor data (such as encoder tick quantization) amplifies high-frequency noise. Industrial controllers pair the derivative term with a first-order low-pass filter:<sup><a href="#ref-3">[3]</a></sup>
+                                <div class="article-callout">
+                                    <p>\[D_{filtered}[k] = \alpha \cdot D_{filtered}[k-1] + (1 - \alpha) \cdot D[k]\]</p>
+                                </div>
+                                where filter coefficient \(\alpha\) attenuates high-frequency jitter while preserving true mechanical motion.</li>
                             </ul>
 
-                            <h2 class="article-section-title">06. Going further</h2>
+                            <h2 class="article-section-title">09. How industrial robot vendors tune servo loops</h2>
+                            <p>
+                                Modern industrial robot arms (ABB, FANUC, KUKA, Universal Robots) do not execute a single flat PID loop from joint coordinates directly to motor voltage. Instead, vendors implement a <strong>three-tier cascaded control architecture</strong> with predictive model feed-forward:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Feed-forward:</span> if you know roughly how much power a motion needs (for example to hold an arm up against gravity), add it directly and let PID handle only the correction.</li>
-                                <li class="article-spec-item"><span class="spec-label">Cascaded loops:</span> an outer position loop sets the target for a faster inner velocity loop, so the robot reacts to disturbances before the position error grows.</li>
-                                <li class="article-spec-item"><span class="spec-label">Gain scheduling:</span> switch to a different set of gains when the robot&rsquo;s behavior changes, such as an arm carrying a heavy load.</li>
-                                <li class="article-spec-item"><span class="spec-label">Reusable code:</span> wrap PID in a class with its gains and limits, so the left wheel, right wheel and gripper can each have their own controller built from the same tested code.</li>
+                                <li class="article-spec-item"><span class="spec-label">1. Inner Torque/Current Loop (10 kHz to 20 kHz):</span> Uses Field-Oriented Control (FOC) or high-speed PI loops to measure motor stator phase currents directly, regulating electromagnetic torque within tens of microseconds.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">2. Middle Velocity Loop (1 kHz to 5 kHz):</span> Compares differentiated encoder feedback to velocity setpoints, utilizing PI control to suppress mechanical gear resonance and load disturbances.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">3. Outer Position Loop (250 Hz to 1 kHz):</span> Tracks joint trajectory waypoints using a high-gain Proportional or PID controller.<sup><a href="#ref-6">[6]</a></sup></li>
                             </ul>
-
-                            <h2 class="article-section-title">07. Which controller when?</h2>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Controller</th><th scope="col">Typical use</th><th scope="col">Result</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>P</td><td>Simple systems that tolerate a small offset</td><td>Fast, but settles slightly off target</td></tr>
-                                    <tr><td>PI</td><td>Speed control, like cruise control</td><td>Reaches the exact target, can be sluggish</td></tr>
-                                    <tr><td>PD</td><td>Position control of a servo or gimbal</td><td>Fast with little overshoot, may leave a small offset</td></tr>
-                                    <tr><td>PID</td><td>Precise arms and balancing robots</td><td>Accurate and stable when well tuned</td></tr>
-                                </tbody>
-                            </table>
+                            <p>
+                                Furthermore, industrial controllers incorporate <strong>dynamic feed-forward compensation</strong> based on rigid-body equations of motion:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\tau_{cmd} = \tau_{PID} + M(q)\ddot{q}_{ref} + C(q,\dot{q})\dot{q}_{ref} + g(q)\]</p>
+                            </div>
+                            <p>
+                                Rather than waiting for feedback error to develop, the model predicts the joint torque required to accelerate the arm's mass matrix \(M(q)\), cancel Coriolis forces \(C(q,\dot{q})\), and hold the arm against gravity vector \(g(q)\). The predictive feed-forward term delivers over 90 percent of the required drive effort, leaving the feedback PID loop to correct only small residual modeling errors and unmodeled friction.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Use the PID simulator above: start with only Kp and find the value where the arm overshoots by about 20%.</li>
-                                    <li>Add Kd until the overshoot is gone, then add Ki and watch the remaining error disappear. Turn on anti-windup and compare.</li>
+                                    <li>In the PID simulator above, set Ki and Kd to zero. Increase Kp until the step response begins sustained oscillations, noting the ultimate gain Ku. Calculate the Ziegler–Nichols PID gains using the formulas in section 06 and test them in the simulator.</li>
+                                    <li>Simulate a heavy external load disturbance by applying a continuous offset in the simulator. Compare how a pure P controller settles with permanent steady-state droop versus how adding Ki eliminates the offset.</li>
+                                    <li>In your robot firmware, implement integrator clamping by restricting the integral term between -100 and +100 PWM units. Test with a physically stalled motor and observe how clamping prevents the robot from lurching when released.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">08. References</h2>
+                            <h2 class="article-section-title">10. References</h2>
                             <ol class="article-spec-list">
-                                <li>J. G. Ziegler and N. B. Nichols, &ldquo;Optimum settings for automatic controllers,&rdquo; <em>Transactions of the ASME</em>, vol. 64, pp. 759&ndash;768, 1942.</li>
-                                <li>K. J. &Aring;str&ouml;m and R. M. Murray, <em>Feedback Systems: An Introduction for Scientists and Engineers</em>. Princeton University Press, 2008.</li>
+                                <li id="ref-1">N. Minorsky, &ldquo;Directional Stability of Automatically Steered Bodies,&rdquo; <em>Journal of the American Society of Naval Engineers</em>, vol. 34, no. 2, pp. 280&ndash;309, 1922. <a href="https://doi.org/10.1111/j.1559-3584.1922.tb04958.x" target="_blank" rel="noopener noreferrer">doi.org/10.1111/j.1559-3584.1922.tb04958.x</a>.</li>
+                                <li id="ref-2">K. J. &Aring;str&ouml;m and R. M. Murray, <em>Feedback Systems: An Introduction for Scientists and Engineers</em>, Princeton University Press, Princeton, NJ, 2008. <a href="https://www.cds.caltech.edu/~murray/amwiki/index.php/Main_Page" target="_blank" rel="noopener noreferrer">cds.caltech.edu/.../amwiki</a>.</li>
+                                <li id="ref-3">K. J. &Aring;str&ouml;m and T. H&auml;gglund, <em>Advanced PID Control</em>, ISA &mdash; The Instrumentation, Systems, and Automation Society, Research Triangle Park, NC, 2006.</li>
+                                <li id="ref-4">J. G. Ziegler and N. B. Nichols, &ldquo;Optimum Settings for Automatic Controllers,&rdquo; <em>Transactions of the ASME</em>, vol. 64, pp. 759&ndash;768, 1942.</li>
+                                <li id="ref-5">G. H. Cohen and G. A. Coon, &ldquo;Theoretical Consideration of Retarded Control,&rdquo; <em>Transactions of the ASME</em>, vol. 75, pp. 827&ndash;834, 1953.</li>
+                                <li id="ref-6">B. Siciliano, L. Sciavicco, L. Villani, and G. Oriolo, <em>Robotics: Modelling, Planning and Control</em>, Chapter 8: &ldquo;Motion Control,&rdquo; Springer-Verlag, London, 2009.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -271,8 +377,8 @@ float updatePID(float setpoint, float measured, float dt) {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
             <script src="assets/js/widgets.js?v=1.0" defer></script>
 

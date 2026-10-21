@@ -8,7 +8,7 @@
         <title>3.2 ROS 1 vs. ROS 2 — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility." />
+        <meta name="description" content="Compare ROS 1 and ROS 2: decentralized DDS peer discovery, the RMW layer, Quality of Service (QoS), lifecycle nodes, Python launch files, and Zenoh." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="3.2 ROS 1 vs. ROS 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility." />
+        <meta property="og:description" content="Compare ROS 1 and ROS 2: decentralized DDS peer discovery, the RMW layer, Quality of Service (QoS), lifecycle nodes, Python launch files, and Zenoh." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-2.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="3.2 ROS 1 vs. ROS 2, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="3.2 ROS 1 vs. ROS 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility." />
+        <meta name="twitter:description" content="Compare ROS 1 and ROS 2: decentralized DDS peer discovery, the RMW layer, Quality of Service (QoS), lifecycle nodes, Python launch files, and Zenoh." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,76 +135,258 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Communication protocol</h2>
+                            <h2 class="article-section-title">01. Why the robotics community rebuilt ROS from scratch</h2>
                             <p>
-                                ROS 1 depends on a central <em>master</em> (started with <code>roscore</code>) that every node registers with, and sends messages over its own TCP-based protocol. If the master goes down, nodes can no longer find each other.
+                                When the Robot Operating System was conceived at Willow Garage in 2007, its creators targeted a very specific hardware setup: a single PR2 mobile manipulation robot operating indoors on a dedicated, wired Gigabit Ethernet connection, running under the care of expert software engineers.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                ROS 2 replaced this with a pluggable middleware layer. The default is DDS (Data Distribution Service), an industry-standard middleware, through the Fast DDS implementation. With DDS there is no master: nodes discover each other automatically on the network. DDS also adds Quality of Service (QoS) settings, so each topic can choose, for example, reliable delivery for commands or best-effort delivery for high-rate sensor data. Since the Kilted Kaiju release in 2025, Eclipse Zenoh is also a fully supported (Tier 1) alternative to DDS.
+                                ROS 1 succeeded far beyond those initial laboratory boundaries. Within five years, engineers were using ROS to run multi-vehicle aerial drone swarms over lossy Wi-Fi, industrial automotive welding arms requiring sub-millisecond determinism, and safety-critical surgical robots.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                Pushing ROS 1 into these demanding commercial domains revealed fundamental architectural bottlenecks that could not be solved with minor patches. Rather than maintaining backwards compatibility with flawed architectural assumptions, the robotics community undertook a comprehensive, ground-up rewrite, creating <strong>ROS 2</strong>.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. Quality of Service in practice</h2>
+                            <h2 class="article-section-title">02. Master versus decentralized discovery</h2>
                             <p>
-                                In ROS 1, data between nodes went over TCP (TCPROS) by default, with UDP (UDPROS) as an option in C++. ROS 2 replaces that choice with Quality of Service policies set per publisher and subscription. The most important are:
+                                The most profound difference between ROS 1 and ROS 2 lies in how nodes find each other on the network.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                ROS 1 relied on a centralized master coordinator process named <code>roscore</code>.<sup><a href="#ref-1">[1]</a></sup> When a node started, it called an XML-RPC service on the master to register its published and subscribed topics. The master acted as a central phonebook, introducing publisher IP addresses to subscribers so they could establish point-to-point TCP sockets (TCPROS).
+                            </p>
+                            <p>
+                                This central master architecture introduced three severe operational vulnerabilities:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">History and depth:</span> keep the last <em>N</em> messages (like ROS 1&rsquo;s queue size) or keep all of them.</li>
-                                <li class="article-spec-item"><span class="spec-label">Reliability:</span> <em>reliable</em> retries until each message arrives; <em>best effort</em> sends once and accepts losses.</li>
-                                <li class="article-spec-item"><span class="spec-label">Durability:</span> <em>transient local</em> keeps recent messages for subscribers that join late, like a ROS 1 &ldquo;latched&rdquo; topic; <em>volatile</em> does not.</li>
+                                <li class="article-spec-item"><span class="spec-label">Single Point of Failure:</span> If the <code>roscore</code> process crashed or suffered a segmentation fault, no new nodes could discover each other. If the host machine running the master rebooted, the entire robotic computational graph disintegrated.</li>
+                                <li class="article-spec-item"><span class="spec-label">Multi-Robot Network Headaches:</span> Coordinating multiple autonomous mobile robots in a warehouse required complex master-synchronization bridges (like multimaster_fkie) that were notoriously fragile over fluctuating industrial Wi-Fi.</li>
+                                <li class="article-spec-item"><span class="spec-label">Boot Ordering Fragility:</span> Nodes started before <code>roscore</code> was completely initialized would throw fatal connection errors and crash on startup.</li>
                             </ul>
                             <p>
-                                By default a publisher keeps the last 10 messages, reliably, with volatile durability. ROS 2 also ships ready-made profiles; the <em>sensor data</em> profile uses best effort and a smaller queue, because a fresh reading matters more than a late one.
+                                How do ROS 2 nodes find each other? They discover each other automatically through DDS, with no master.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> ROS 2 eliminated <code>roscore</code> completely. Instead, it adopted the industry-standard <strong>Data Distribution Service (DDS)</strong>, standardized by the Object Management Group (OMG).<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
-                                A publisher and a subscription only connect if their settings are compatible. The subscription asks for a minimum quality and the publisher offers a maximum, so a subscription that requests <em>reliable</em> will not receive data from a <em>best effort</em> publisher. When a topic seems silent, a QoS mismatch is one of the first things to check.
+                                Under DDS, nodes use the Real-Time Publish-Subscribe (RTPS) discovery protocol over UDP multicast. When a node starts up, it broadcasts discovery announcements across the local network subnet. Peer nodes listen on defined multicast ports, parse the announcements, and negotiate peer-to-peer data links directly. There is no central server to crash, no master to boot first, and no single point of failure.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">03. Choosing a middleware</h2>
+                            <h2 class="article-section-title">03. The ROS Middleware (RMW) abstraction layer</h2>
                             <p>
-                                Because ROS 2&rsquo;s middleware is pluggable, you can switch it without changing your code by setting the <code>RMW_IMPLEMENTATION</code> environment variable. If it is not set, you are using your release&rsquo;s default (Fast DDS). To try Zenoh, install it, start its router, and select it in every terminal:
+                                One of the most elegant architectural designs of ROS 2 is that it is not tied to any single vendor's communication engine. Instead, the ROS 2 core defines an internal C abstraction layer known as the <strong>ROS Middleware (RMW)</strong> interface.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo apt install ros-lyrical-rmw-zenoh-cpp
-ros2 run rmw_zenoh_cpp rmw_zenohd        # terminal 1: the Zenoh router
-export RMW_IMPLEMENTATION=rmw_zenoh_cpp  # in every other terminal</code></pre>
                             <p>
-                                Unlike DDS, Zenoh does not discover nodes by itself by default: without the router running, nodes cannot find each other.
+                                The RMW layer sits between the higher-level client libraries (<code>rclcpp</code> for C++ and <code>rclpy</code> for Python) and the low-level communication library. As long as a middleware vendor writes a standard adapter implementing the RMW functions (such as creating publishers, registering topic callbacks, and configuring network discovery), ROS 2 can run on top of it without changing a single line of application source code.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
-
-                            <h2 class="article-section-title">04. Launch files</h2>
                             <p>
-                                A launch file starts several nodes at once with their parameters, so a whole robot can be brought up with one command. In ROS 1, launch files are written in XML and run with <code>roslaunch</code>. In ROS 2 they can be written in Python, XML or YAML and are run with <code>ros2 launch</code>. Python launch files make it possible to add logic, such as starting a node only when a condition is met.
+                                Several major RMW implementations are maintained across the ecosystem:<sup><a href="#ref-4">[4]</a></sup>
                             </p>
-                            <pre class="article-code"><code>ros2 launch &lt;package_name&gt; &lt;launch_file&gt;</code></pre>
-
-                            <h2 class="article-section-title">05. Compatibility and flexibility</h2>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Operating systems:</span> ROS 1 was built mainly for Ubuntu Linux. ROS 2 officially supports Ubuntu and Windows; macOS is only a community-supported (Tier 3) platform.</li>
-                                <li class="article-spec-item"><span class="spec-label">Real-time and embedded:</span> ROS 2 was designed with real-time control, multiple robots and small embedded devices in mind, which ROS 1 handled poorly.</li>
-                                <li class="article-spec-item"><span class="spec-label">Security:</span> ROS 2 can encrypt and authenticate communication through DDS security; ROS 1 has no built-in security.</li>
-                                <li class="article-spec-item"><span class="spec-label">Moving between them:</span> ROS 1 and ROS 2 code is not directly compatible. ROS 1&rsquo;s final release, Noetic, reached end of life on May 31, 2025, and the <code>ros1_bridge</code> package that passed messages between the two is now legacy, so new projects should use ROS 2.</li>
+                                <li class="article-spec-item"><span class="spec-label">rmw_fastrtps_cpp:</span> Built on eProsima Fast DDS. Fast DDS is an open-source, high-performance C++ implementation of RTPS and DDS, serving as the default middleware in several long-term support releases.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">rmw_cyclonedds_cpp:</span> Built on Eclipse Cyclone DDS. Cyclone DDS is a lightweight, high-performance C implementation developed by Eclipse Foundation, widely favored in multi-robot fleets and academic research for its minimal CPU and memory footprint.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">rmw_connextdds:</span> Built on Real-Time Innovations (RTI) Connext DDS. RTI Connext is a commercial DDS suite certified for safety-critical medical devices (IEC 62304), avionics systems (DO-178C), and automotive functional safety (ISO 26262).<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">rmw_zenoh_cpp:</span> Built on Eclipse Zenoh. Beginning with the Kilted Kaiju release in 2025 and continuing into Lyrical Luth, Zenoh is supported as a Tier 1 non-DDS alternative.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup> Zenoh eliminates multicast discovery overhead by using lightweight routers, making it exceptionally effective across lossy Wi-Fi links, cellular 5G networks, and microcontrollers.</li>
                             </ul>
+                            <p>
+                                To switch middleware implementations on a machine, an engineer simply installs the corresponding RMW package and sets an environment variable in the terminal:
+                            </p>
+                            <pre class="article-code"><code>sudo apt install ros-lyrical-rmw-cyclonedds-cpp
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp</code></pre>
+
+                            <h2 class="article-section-title">04. Quality of Service (QoS) in practice</h2>
+                            <p>
+                                In ROS 1, communication was strictly one-size-fits-all. Every topic operated over TCP sockets (TCPROS) by default. TCP guarantees that every byte arrives in order, but it does so by holding up subsequent packets and retransmitting lost data. While this is acceptable on a wired desk, it is disastrous for real-time mobile robots.
+                            </p>
+                            <p>
+                                If an autonomous vehicle driving at 10 meters per second drops two Wi-Fi packets of lidar data, TCP will stall the incoming stream to retransmit the missing frames. By the time the old frames arrive, they are 300 milliseconds stale and dangerous to use for obstacle avoidance. The robot needs the <em>newest</em> sensor frame immediately, even if a few historical packets were lost.
+                            </p>
+                            <p>
+                                ROS 2 solves this by introducing <strong>Quality of Service (QoS)</strong> policies.<sup><a href="#ref-10">[10]</a></sup> Developers configure the communication behavior for every publisher and subscription independently:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">History and Depth:</span>
+                                    <ul style="margin-top: 0.3rem; margin-bottom: 0;">
+                                        <li><strong>Keep Last:</strong> Only stores up to a configured queue depth <em>N</em> (e.g., depth = 10). If the queue fills up, the oldest unread message is discarded to make room for fresh data.</li>
+                                        <li><strong>Keep All:</strong> Retains every message up to the resource limits of the operating system memory.</li>
+                                    </ul>
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Reliability:</span>
+                                    <ul style="margin-top: 0.3rem; margin-bottom: 0;">
+                                        <li><strong>Best Effort:</strong> The publisher transmits data once over UDP without waiting for acknowledgments or retrying dropped packets. Prioritizes low latency and data freshness over 100% arrival guarantees. Ideal for high-rate sensor streams (cameras, lidars, IMUs).</li>
+                                        <li><strong>Reliable:</strong> The publisher guarantees that every message arrives in order through automatic acknowledgments and retransmissions. Ideal for motor command trajectories, service requests, and emergency stop triggers.</li>
+                                    </ul>
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Durability:</span>
+                                    <ul style="margin-top: 0.3rem; margin-bottom: 0;">
+                                        <li><strong>Volatile:</strong> Historical samples are not preserved. Subscribers only receive messages published after they successfully connect.</li>
+                                        <li><strong>Transient Local:</strong> The publisher retains the last <em>N</em> samples in local memory. When a new subscriber connects late (such as an RViz visualization window opened ten minutes after the robot started), the publisher immediately sends the saved historical samples. This replaces the "latched" topic mechanism from ROS 1, making it ideal for static occupancy grid maps and robot coordinate transform trees.</li>
+                                    </ul>
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">Lifespan and Deadline:</span> <em>Lifespan</em> defines how long a message remains valid before being expired from queues. <em>Deadline</em> defines the maximum expected interval between consecutive messages; if a sensor node fails to publish within the deadline window, the middleware triggers an alert callback.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">05. The QoS compatibility rule</h2>
+                            <p>
+                                A common source of confusion for newcomers to ROS 2 is the "silent topic" problem: a publisher is visibly running, a subscriber is actively listening, but zero messages are delivered. In most cases, this occurs because of a <strong>QoS incompatibility</strong>.<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                In DDS, QoS negotiation follows a strict rule:
+                            </p>
+                            <div class="article-callout">
+                                <div class="article-callout-header"><i class="fas fa-check-circle"></i> The Rule of QoS Compatibility</div>
+                                <p>A connection is established between a publisher and a subscriber if and only if the publisher <strong>offers</strong> a level of service greater than or equal to what the subscriber <strong>requests</strong>: <code>Offered QoS &ge; Requested QoS</code>.<sup><a href="#ref-10">[10]</a></sup></p>
+                            </div>
+                            <p>
+                                Let us examine how this rule applies to Reliability and Durability:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Publisher Offers</th>
+                                        <th scope="col">Subscriber Requests</th>
+                                        <th scope="col">Connection Status</th>
+                                        <th scope="col">Technical Explanation</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Reliable</strong></td>
+                                        <td><strong>Reliable</strong></td>
+                                        <td>Compatible</td>
+                                        <td>Both endpoints agree on delivery acknowledgments.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Reliable</strong></td>
+                                        <td><strong>Best Effort</strong></td>
+                                        <td>Compatible</td>
+                                        <td>Publisher offers higher quality than requested; subscriber receives data.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Best Effort</strong></td>
+                                        <td><strong>Best Effort</strong></td>
+                                        <td>Compatible</td>
+                                        <td>Both endpoints accept unacknowledged UDP packets.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Best Effort</strong></td>
+                                        <td><strong>Reliable</strong></td>
+                                        <td><strong>INCOMPATIBLE</strong></td>
+                                        <td>Subscriber demands delivery guarantees that the publisher cannot provide. Connection rejected.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Volatile</strong></td>
+                                        <td><strong>Transient Local</strong></td>
+                                        <td><strong>INCOMPATIBLE</strong></td>
+                                        <td>Subscriber demands historical latched data, but publisher retains zero history. Connection rejected.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                If your subscriber is not receiving data, you can diagnose the issue on the command line using:
+                            </p>
+                            <pre class="article-code"><code>ros2 topic info /my_topic --verbose</code></pre>
+                            <p>
+                                This command displays the exact Offered and Requested QoS profiles for every active publisher and subscriber on that topic.
+                            </p>
+
+                            <h2 class="article-section-title">06. Managed lifecycle nodes</h2>
+                            <p>
+                                In ROS 1, nodes had no formal state machine. As soon as an executable launched, its constructor ran, hardware initialized, and publishers started streaming. In complex industrial cells, this lack of lifecycle management caused race conditions: path planners began commanding arm motions before motor drivers had finished homing their encoders.
+                            </p>
+                            <p>
+                                ROS 2 introduced <strong>lifecycle nodes</strong> (managed nodes via <code>rclcpp_lifecycle</code>).<sup><a href="#ref-11">[11]</a></sup> A managed node follows a strict, deterministic state machine with four primary states:<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Unconfigured:</span> The node process has started, but no memory is allocated and no hardware connections exist.</li>
+                                <li class="article-spec-item"><span class="spec-label">Inactive:</span> The node has parsed its configuration parameters and established hardware connections, but all publishers and execution loops are held in an idle state. It processes no execution callbacks.</li>
+                                <li class="article-spec-item"><span class="spec-label">Active:</span> The node is fully operational. Publishers actively broadcast data, subscribers process messages, and execution timers run.</li>
+                                <li class="article-spec-item"><span class="spec-label">Finalized:</span> The node has cleanly released hardware resources and terminated, ready for process destruction.</li>
+                            </ul>
+                            <p>
+                                Orchestrator launch scripts can configure and verify all sensor drivers in the <em>Inactive</em> state first. Once every sensor confirms physical connectivity, the orchestrator triggers an <code>activate</code> transition simultaneously across the cell, ensuring zero startup race conditions.
+                            </p>
+
+                            <h2 class="article-section-title">07. Programmable Python launch files</h2>
+                            <p>
+                                In ROS 1, launching multiple nodes required writing static XML files parsed by <code>roslaunch</code>. While functional, XML cannot express conditional programmatic logic, such as: "Start the real camera driver if physical hardware is connected; otherwise start a synthetic image generator."
+                            </p>
+                            <p>
+                                In ROS 2, the launch system was completely re-architected.<sup><a href="#ref-12">[12]</a></sup> While XML and YAML remain supported, the primary launch format in ROS 2 is <strong>Python</strong> (<code>*.launch.py</code>).<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                Python launch files give developers full programmatic power:
+                            </p>
+                            <pre class="article-code"><code>from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+
+def generate_launch_description():
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+
+    return LaunchDescription([
+        DeclareLaunchArgument('use_sim_time', default_value='false', description='Use simulation clock'),
+        Node(
+            package='turtlesim',
+            executable='turtlesim_node',
+            name='sim',
+            parameters=[{'use_sim_time': use_sim_time}]
+        ),
+        Node(
+            package='turtlesim',
+            executable='turtle_teleop_key',
+            name='teleop',
+            output='screen'
+        )
+    ])</code></pre>
+                            <p>
+                                Python launch files support event handlers (such as shutting down the entire robot if an emergency stop node exits), dynamic launch arguments, path substitutions, and containerized node composition.
+                            </p>
+
+                            <h2 class="article-section-title">08. Multi-platform and security enhancements</h2>
+                            <p>
+                                Beyond messaging and discovery, ROS 2 expanded the core system architecture across three critical engineering fronts:<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Cross-Platform Parity:</span> ROS 1 was effectively tied to Ubuntu Linux. ROS 2 treats Ubuntu Linux and 64-bit Windows (Windows 10/11) as Tier 1 supported operating systems, with macOS supported via community builds (Tier 3).<sup><a href="#ref-14">[14]</a></sup> Industrial automation teams can run ROS 2 directly on Windows workstations alongside proprietary CAD/CAM software.</li>
+                                <li class="article-spec-item"><span class="spec-label">Native Security (SROS 2):</span> ROS 1 had zero encryption or authentication; any computer on the local network could inject rogue commands. ROS 2 integrates DDS-Security standards, providing complete cryptographic authentication via X.509 digital certificates, TLS access control, and AES-GCM message encryption.<sup><a href="#ref-13">[13]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Microcontroller Integration (micro-ROS):</span> ROS 1 could only bridge to microcontrollers through a fragile serial protocol called <code>rosserial</code>. ROS 2 provides <strong>micro-ROS</strong>, putting true ROS 2 nodes directly onto real-time embedded microcontrollers (such as STM32, ESP32, and Raspberry Pi RP2040) running FreeRTOS or Zephyr.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">09. Migration timeline: from Noetic to Lyrical Luth</h2>
+                            <p>
+                                For several years, ROS 1 and ROS 2 coexisted in the robotics community. Developers bridged legacy ROS 1 nodes with modern ROS 2 systems using the transitional <code>ros1_bridge</code> package.
+                            </p>
+                            <p>
+                                That transition period has now formally concluded. On <strong>May 31, 2025</strong>, the final release of ROS 1, <strong>ROS Noetic Ninjemys</strong>, officially reached its End-of-Life (EOL).<sup><a href="#ref-15">[15]</a></sup> The ROS 1 repository servers ceased building new packages, and security patches ended.
+                            </p>
+                            <p>
+                                Today, all modern robotics development takes place exclusively in ROS 2. Long Term Support (LTS) releases provide stable five-year horizons: ROS 2 Humble Hawksbill (Ubuntu 22.04 LTS), ROS 2 Jazzy Jalisco (Ubuntu 24.04 LTS), and our target platform, <strong>ROS 2 Lyrical Luth</strong>, deployed on <strong>Ubuntu 26.04 LTS</strong>.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>With turtlesim running, run <code>ros2 topic info /turtle1/cmd_vel --verbose</code> and find the reliability and durability settings of the publisher.</li>
-                                    <li>Write down which QoS profile you would choose for a camera stream and for a &ldquo;stop the robot&rdquo; command, and why.</li>
+                                    <li>Why is a Best Effort reliability QoS setting preferred over Reliable for high-resolution video streams from a moving mobile robot? What happens on lossy Wi-Fi if Reliable is used?</li>
+                                    <li>You deploy a laser scanner publishing with Best Effort reliability, but your autonomous navigation node subscribes using Reliable reliability. Will the navigation node receive laser scans? Explain why or why not using the QoS compatibility rule.</li>
+                                    <li>Explain the key difference between a Transient Local durability setting and a Volatile durability setting. Which one would you choose for a map topic that only publishes once every ten minutes?</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">06. References</h2>
+                            <h2 class="article-section-title">10. References</h2>
                             <ol class="article-spec-list">
-                                <li>Open Robotics, &ldquo;ROS on DDS.&rdquo; <a href="https://design.ros2.org/articles/ros_on_dds.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/ros_on_dds.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;About discovery.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Discovery.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Discovery.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Kilted Kaiju release notes.&rdquo; <a href="https://docs.ros.org/en/lyrical/Releases/Release-Kilted-Kaiju.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/Release-Kilted-Kaiju.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Creating a launch file.&rdquo; <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Launch/Creating-Launch-Files.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Launch/Creating-Launch-Files.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;About security.&rdquo; <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Introspection-and-analysis/Security/About-Security.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Introspection-and-analysis/Security/About-Security.html</a>.</li>
-                                <li>REP 2000, &ldquo;ROS 2 releases and target platforms.&rdquo; <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000</a>.</li>
-                                <li>ROS Discourse, &ldquo;ROS Noetic end of life: May 31, 2025.&rdquo; <a href="https://discourse.openrobotics.org/t/ros-noetic-end-of-life-may-31-2025/43160" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/ros-noetic-end-of-life-may-31-2025/43160</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Quality of Service settings.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/About-Quality-of-Service-Settings.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/About-Quality-of-Service-Settings.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Working with multiple ROS 2 middleware implementations.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/RMW-Implementations/Working-with-multiple-RMW-implementations.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/RMW-Implementations/Working-with-multiple-RMW-implementations.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Working with Zenoh.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/RMW-Implementations/Non-DDS-Implementations/Working-with-Zenoh.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/RMW-Implementations/Non-DDS-Implementations/Working-with-Zenoh.html</a>.</li>
-                                <li>ROS Wiki, &ldquo;ROS Technical Overview.&rdquo; <a href="https://wiki.ros.org/ROS/Technical%20Overview" target="_blank" rel="noopener noreferrer">wiki.ros.org/ROS/Technical%20Overview</a>.</li>
+                                <li id="ref-1">M. Quigley, K. Conley, B. Gerkey, J. Faust, T. Foote, J. Leibs, R. Wheeler and A. Y. Ng, &ldquo;ROS: an open-source Robot Operating System,&rdquo; in <em>ICRA Workshop on Open Source Software</em>, Kobe, Japan, 2009. Paper archive: <a href="http://www.willowgarage.com/papers/ros-open-source-robot-operating-system" target="_blank" rel="noopener noreferrer">willowgarage.com/papers/ros-open-source-robot-operating-system</a>.</li>
+                                <li id="ref-2">D. Coleman et al., &ldquo;Why ROS 2: The Need for a Next-Generation Robot Operating System,&rdquo; ROS 2 Design Articles, Open Robotics, 2015. Available: <a href="https://design.ros2.org/articles/why_ros2.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/why_ros2.html</a>.</li>
+                                <li id="ref-3">Object Management Group, <em>Real-Time Publish-Subscribe (RTPS) Wire Protocol Specification</em>, Version 2.5, OMG Document formal/2022-07-01, Needham, MA, 2022. Specification: <a href="https://www.omg.org/spec/DDSI-RTPS/" target="_blank" rel="noopener noreferrer">omg.org/spec/DDSI-RTPS/</a>.</li>
+                                <li id="ref-4">ROS 2 Documentation, &ldquo;Working with Multiple ROS 2 Middleware Implementations,&rdquo; Open Robotics, 2024. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/RMW-Implementations/Working-with-multiple-RMW-implementations.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/RMW-Implementations/</a>.</li>
+                                <li id="ref-5">eProsima, &ldquo;Fast DDS: Real-Time Publish-Subscribe Middleware for ROS 2,&rdquo; eProsima documentation, Madrid, Spain, 2024. <a href="https://www.eprosima.com" target="_blank" rel="noopener noreferrer">eprosima.com</a>.</li>
+                                <li id="ref-6">Eclipse Foundation, &ldquo;Eclipse Cyclone DDS: Ultra-reliable and high-performance DDS implementation,&rdquo; Eclipse Foundation, 2024. <a href="https://cyclonedds.io" target="_blank" rel="noopener noreferrer">cyclonedds.io</a>.</li>
+                                <li id="ref-7">Real-Time Innovations, &ldquo;RTI Connext DDS: Connectivity Framework for Critical Infrastructure,&rdquo; RTI, Sunnyvale, CA, 2024. <a href="https://www.rti.com" target="_blank" rel="noopener noreferrer">rti.com</a>.</li>
+                                <li id="ref-8">Eclipse Foundation, &ldquo;Eclipse Zenoh: Zero-Overhead Pub/Sub, Store, and Query Protocol,&rdquo; 2024. <a href="https://zenoh.io" target="_blank" rel="noopener noreferrer">zenoh.io</a>.</li>
+                                <li id="ref-9">ROS 2 Documentation, &ldquo;ROS 2 Kilted Kaiju and Lyrical Luth Release Notes,&rdquo; Open Robotics, 2025&ndash;2026. <a href="https://docs.ros.org/en/lyrical/Releases.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases.html</a>.</li>
+                                <li id="ref-10">ROS 2 Documentation, &ldquo;About Quality of Service Settings,&rdquo; Open Robotics, 2024. Guide: <a href="https://docs.ros.org/en/lyrical/Concepts/Intermediate/About-Quality-of-Service-Settings.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Concepts/Intermediate/About-Quality-of-Service-Settings.html</a>.</li>
+                                <li id="ref-11">ROS 2 Design, &ldquo;Managed Nodes and Node Lifecycle in ROS 2,&rdquo; Open Robotics Design Articles, 2023. <a href="https://design.ros2.org/articles/node_lifecycle.html" target="_blank" rel="noopener noreferrer">design.ros2.org/articles/node_lifecycle.html</a>.</li>
+                                <li id="ref-12">ROS 2 Documentation, &ldquo;Creating and Running Launch Files,&rdquo; Open Robotics, 2024. <a href="https://docs.ros.org/en/lyrical/Tutorials/Intermediate/Launch/Creating-Launch-Files.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Intermediate/Launch/</a>.</li>
+                                <li id="ref-13">ROS 2 Documentation, &ldquo;Security in ROS 2: Authentication, Access Control, and Encryption,&rdquo; Open Robotics, 2024. <a href="https://docs.ros.org/en/lyrical/Tutorials/Advanced/Security/Introducing-ros2-security.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Advanced/Security/</a>.</li>
+                                <li id="ref-14">Open Robotics, <em>REP 2000: ROS 2 Releases and Target Platforms</em>, ROS Enhancement Proposals, 2024. <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000/</a>.</li>
+                                <li id="ref-15">Open Robotics, &ldquo;Official Notice: ROS Noetic Ninjemys Reaches End-of-Life on May 31, 2025,&rdquo; ROS Discourse announcement, 2025. <a href="https://discourse.openrobotics.org/t/ros-noetic-end-of-life-may-31-2025/43160" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/ros-noetic-end-of-life-may-31-2025/43160</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -240,8 +422,8 @@ export RMW_IMPLEMENTATION=rmw_zenoh_cpp  # in every other terminal</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

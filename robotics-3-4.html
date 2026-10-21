@@ -8,7 +8,7 @@
         <title>3.4 Running Your First Example (Turtlesim) — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="A first hands-on ROS example using the Turtlesim simulator." />
+        <meta name="description" content="Drive Turtlesim, introspect topics and services, remap CLI arguments, set up a colcon workspace, and write custom Python rclpy publisher and subscriber nodes." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="3.4 Running Your First Example (Turtlesim) — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="A first hands-on ROS example using the Turtlesim simulator." />
+        <meta property="og:description" content="Drive Turtlesim, introspect topics and services, remap CLI arguments, set up a colcon workspace, and write custom Python rclpy publisher and subscriber nodes." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-4.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
-        <meta property="og:image:alt" content="3.4 Running Your First Example (Turtlesim), part of RISE Bot Instructor by Gerald Lê" />
+        <meta property="og:image:alt" content="3.4 Turtlesim and First Nodes, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="3.4 Running Your First Example (Turtlesim) — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="A first hands-on ROS example using the Turtlesim simulator." />
+        <meta name="twitter:description" content="Drive Turtlesim, introspect topics and services, remap CLI arguments, set up a colcon workspace, and write custom Python rclpy publisher and subscriber nodes." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,75 +135,300 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Turtlesim</h2>
+                            <h2 class="article-section-title">01. Hands-on robotics with Turtlesim</h2>
                             <p>
-                                Turtlesim is a tiny 2D simulator made for learning ROS. It draws a turtle you can drive around, and it uses the same nodes and topics as a real robot. The desktop install includes it; otherwise install it with <code>sudo apt install ros-lyrical-turtlesim</code>. With ROS 2 sourced, open a terminal and start the simulator:
+                                Having configured our ROS 2 installation in <a href="robotics-3-3.html">lesson 3.3</a>, it is time to transition from theory to practice. In robotics education, jumping straight into physical multi-thousand-dollar hardware carries risks: improper motor commands can tip over rovers or strip gearbox teeth.
+                            </p>
+                            <p>
+                                To give developers a lightweight, safe sandbox, the ROS core distribution includes <strong>Turtlesim</strong>.<sup><a href="#ref-1">[1]</a></sup> Turtlesim is a 2D animated simulation package originally inspired by Seymour Papert's educational Logo turtle graphics. Behind its colorful, friendly appearance lies a fully functional ROS 2 computational graph.
+                            </p>
+                            <p>
+                                Turtlesim instantiates nodes, publishes telemetry topics, listens to Cartesian velocity commands, advertises service servers, and executes long-running actions. Every command-line tool, message format, and Python script you master in Turtlesim transfers directly to multi-ton factory arms and industrial mobile robots.
+                            </p>
+
+                            <h2 class="article-section-title">02. Launching and teleoperating your first robot</h2>
+                            <p>
+                                Turtlesim is included in the <code>ros-lyrical-desktop</code> package. If you installed a base headless image, install it manually:
+                            </p>
+                            <pre class="article-code"><code>sudo apt install -y ros-lyrical-turtlesim</code></pre>
+                            <p>
+                                Open a fresh terminal (with your ROS 2 environment sourced) and launch the simulator executable using the <code>ros2 run</code> command:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 run turtlesim turtlesim_node</code></pre>
                             <p>
-                                In a second terminal, start a keyboard controller and drive the turtle with the arrow keys:
+                                A graphical window appears displaying a blue ocean background and an animated turtle centered at Cartesian coordinates (x = 5.54, y = 5.54) within an 11.08 by 11.08 meter square arena.
+                            </p>
+                            <p>
+                                Now, open a <strong>second terminal</strong> to start the keyboard teleoperation node:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 run turtlesim turtle_teleop_key</code></pre>
                             <p>
-                                Now look at what is happening underneath. In a third terminal, list the nodes and topics, and watch the velocity commands the teleop node sends:
+                                With the teleop terminal active, press the keyboard arrow keys. The Up and Down arrows command forward and reverse linear velocity; the Left and Right arrows command counterclockwise and clockwise angular rotation. As the turtle moves across the screen, it lowers an electronic pen, drawing colored lines along its trajectory.
                             </p>
-                            <pre class="article-code"><code>ros2 node list
-ros2 topic list
-ros2 topic echo /turtle1/cmd_vel</code></pre>
+
+                            <h2 class="article-section-title">03. Topic introspection and the Twist message</h2>
                             <p>
-                                The teleop node publishes velocity messages on <code>/turtle1/cmd_vel</code>, and the simulator subscribes to them and moves the turtle. That publish/subscribe pattern is exactly how real robots are wired together in ROS.
+                                What is happening behind the graphical window? Open a <strong>third terminal</strong> to introspect the active ROS computational graph using command-line diagnostic tools.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                First, query the active nodes:
+                            </p>
+                            <pre class="article-code"><code>ros2 node list</code></pre>
+                            <p>
+                                The terminal reports two running nodes: <code>/turtlesim</code> (the simulator) and <code>/teleop_turtle</code> (the keyboard controller). Next, list all active communication topics:
+                            </p>
+                            <pre class="article-code"><code>ros2 topic list</code></pre>
+                            <p>
+                                You will see topics such as <code>/turtle1/cmd_vel</code>, <code>/turtle1/color_sensor</code>, and <code>/turtle1/pose</code>. In Turtlesim, which topic carries the velocity commands from the teleop node? The answer is <code>/turtle1/cmd_vel</code>.<sup><a href="#ref-1">[1]</a></sup> The teleop node publishes on <code>/turtle1/cmd_vel</code>, and the simulator subscribes to it to move the simulated turtle.
+                            </p>
+                            <p>
+                                To inspect the data streaming across that topic in real time, run:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 topic echo /turtle1/cmd_vel</code></pre>
+                            <p>
+                                When you press the Up arrow in the teleop terminal, the echo window prints:
+                            </p>
+                            <pre class="article-code"><code>linear:
+  x: 2.0
+  y: 0.0
+  z: 0.0
+angular:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+---</code></pre>
+                            <p>
+                                To find out what message type this topic carries, query its interface:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 topic type /turtle1/cmd_vel</code></pre>
+                            <p>
+                                The output is <strong>geometry_msgs/msg/Twist</strong>.<sup><a href="#ref-3">[3]</a></sup> A <code>Twist</code> is a fundamental geometric primitive in robotics: it expresses spatial velocity decomposed into three linear coordinates (x, y, z in meters per second) and three rotational coordinates (x, y, z in radians per second). Because Turtlesim is a planar differential-drive robot, it only responds to linear velocity along the forward X axis (<code>linear.x</code>) and angular yaw velocity around the vertical Z axis (<code>angular.z</code>).
+                            </p>
+                            <p>
+                                You can even command the robot directly from the command line without using the teleop node at all:
+                            </p>
+                            <pre class="article-code"><code>ros2 topic pub --once /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"</code></pre>
+                            <p>
+                                The turtle immediately traces a smooth circle across the arena.
+                            </p>
+
+                            <h2 class="article-section-title">04. Calling services from the CLI: spawning robots</h2>
+                            <p>
+                                While topics stream continuous velocity and pose data, discrete commands are managed via <strong>services</strong>.<sup><a href="#ref-4">[4]</a></sup> Query Turtlesim's active services:
+                            </p>
+                            <pre class="article-code"><code>ros2 service list</code></pre>
+                            <p>
+                                You will see services including <code>/clear</code>, <code>/reset</code>, <code>/spawn</code>, <code>/kill</code>, and <code>/turtle1/set_pen</code>. Let us call the <code>/spawn</code> service to introduce a second robot into our simulation arena:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 service call /spawn turtlesim/srv/Spawn "{x: 2.0, y: 2.0, theta: 0.0, name: 'turtle2'}"</code></pre>
+                            <p>
+                                The service client sends the request, the simulator instantiates a second turtle at coordinates (2, 2), and the terminal outputs:
+                            </p>
+                            <pre class="article-code"><code>response:
+  name: "turtle2"</code></pre>
+                            <p>
+                                If you list topics again with <code>ros2 topic list</code>, you will see an entirely new set of isolated channels: <code>/turtle2/cmd_vel</code> and <code>/turtle2/pose</code>.
+                            </p>
+
+                            <h2 class="article-section-title">05. Dynamic remapping on the command line</h2>
+                            <p>
+                                If you return to your teleop terminal and press arrow keys, only <code>turtle1</code> moves. The compiled binary of <code>turtle_teleop_key</code> has the topic string <code>/turtle1/cmd_vel</code> hardcoded into its source code. How can we drive our new <code>turtle2</code> without modifying or recompiling the software?
+                            </p>
+                            <p>
+                                In ROS 2, any topic, service, or node name can be redirected at process startup using <strong>remapping arguments</strong> (<code>--ros-args --remap</code>).<sup><a href="#ref-5">[5]</a></sup> Open a fourth terminal and launch a second teleoperation node remapped to <code>turtle2</code>:<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel</code></pre>
+                            <p>
+                                Now you have two independent teleop terminals: one driving <code>turtle1</code> and the other driving <code>turtle2</code>. Dynamic remapping is the primary mechanism industrial engineers use to reuse standard sensor drivers and navigation stacks across multi-robot factory fleets.
+                            </p>
+
+                            <h2 class="article-section-title">06. ROS 2 workspace architecture</h2>
+                            <p>
+                                Driving demo nodes from the terminal is educational, but true robotics engineering requires writing custom software. In ROS 2, software is organized inside a <strong>workspace</strong>.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                A ROS 2 workspace is a directory following a strict four-folder structure:<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li><a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">Official Turtlesim tutorial (docs.ros.org)</a></li>
+                                <li class="article-spec-item"><span class="spec-label">src/ (Source Directory):</span> The only directory where human developers write code. Every custom package, node script, and Git repository is placed inside <code>src/</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label">build/ (Intermediate Artifacts):</span> Created automatically by the build tool. Stores intermediate object files, compiler caches, and CMake build logs.</li>
+                                <li class="article-spec-item"><span class="spec-label">install/ (Deployment Target):</span> Created automatically by the build tool. Stores final compiled binaries, Python modules, and the critical local environment script <code>install/setup.bash</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label">log/ (Diagnostic Records):</span> Created automatically by the build tool. Stores detailed compiler output and error traces.</li>
+                            </ul>
+                            <p>
+                                Create your first workspace in your home directory:
+                            </p>
+                            <pre class="article-code"><code>mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src</code></pre>
+
+                            <h2 class="article-section-title">07. Python package layout: package.xml and setup.py</h2>
+                            <p>
+                                Rather than creating loose scripts, ROS code must be encapsulated inside a formal <strong>package</strong>.<sup><a href="#ref-6">[6]</a></sup> Use the <code>ros2 pkg create</code> command to generate a new Python package named <code>my_robot_controller</code>:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 pkg create --build-type ament_python my_robot_controller --dependencies rclpy geometry_msgs turtlesim</code></pre>
+                            <p>
+                                This command creates a standardized folder hierarchy inside <code>~/ros2_ws/src/my_robot_controller/</code>:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">package.xml:</span> The package manifest file. It records the package name, software license, maintainer email, and declares build and runtime dependencies (<code>rclpy</code>, <code>geometry_msgs</code>, <code>turtlesim</code>).</li>
+                                <li class="article-spec-item"><span class="spec-label">setup.py:</span> The Python setuptools deployment configuration. It defines where libraries are installed and contains the <code>entry_points</code> dictionary that binds terminal commands to Python functions.</li>
+                                <li class="article-spec-item"><span class="spec-label">setup.cfg:</span> Tells setuptools to install executable scripts into the package lib directory.</li>
+                                <li class="article-spec-item"><span class="spec-label">my_robot_controller/:</span> The Python module directory containing an empty <code>__init__.py</code>. This is where your custom Python node scripts reside.</li>
                             </ul>
 
-                            <h2 class="article-section-title">02. Inspecting the message</h2>
+                            <h2 class="article-section-title">08. Writing a custom rclpy velocity publisher</h2>
                             <p>
-                                Every topic carries one message type. Ask ROS what the velocity topic carries:
+                                Let us write a Python node that autonomously commands the turtle to drive in a continuous circle by publishing velocity commands at 2 Hz.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
-                            <pre class="article-code"><code>ros2 topic info /turtle1/cmd_vel</code></pre>
                             <p>
-                                The answer is <code>geometry_msgs/msg/Twist</code>: <code>geometry_msgs</code> is the package and <code>Twist</code> is the message, a linear and an angular velocity. Mobile robots in ROS are commonly driven with the same message type on a <code>cmd_vel</code> topic, so what you practice here carries over.
+                                Create a new file named <code>~/ros2_ws/src/my_robot_controller/my_robot_controller/draw_circle.py</code>:<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from geometry_msgs.msg import Twist
+
+class DrawCircleNode(Node):
+    def __init__(self):
+        # 1. Initialize the parent Node class with the node name
+        super().__init__('draw_circle_node')
+
+        # 2. Create a publisher on topic /turtle1/cmd_vel with queue depth 10
+        self.cmd_vel_pub_ = self.create_publisher(Twist, '/turtle1/cmd_vel', 10)
+
+        # 3. Create a timer callback running at 2 Hz (every 0.5 seconds)
+        self.timer_ = self.create_timer(0.5, self.send_velocity_command)
+        self.get_logger().info('Draw Circle Node has started successfully!')
+
+    def send_velocity_command(self):
+        msg = Twist()
+        msg.linear.x = 2.0   # Forward speed: 2.0 meters per second
+        msg.angular.z = 1.0  # Yaw rate: 1.0 radian per second
+        self.cmd_vel_pub_.publish(msg)
+
+def main(args=None):
+    rclpy.init(args=args)            # Initialize the ROS 2 communications context
+    node = DrawCircleNode()          # Instantiate our custom node class
+    rclpy.spin(node)                 # Block thread and process incoming callbacks
+    node.destroy_node()              # Clean up node memory
+    rclpy.shutdown()                 # Shut down ROS 2 context
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            <p>
+                                Notice the object-oriented structure: our class inherits from <code>rclpy.node.Node</code>. Inside the constructor, <code>create_publisher</code> instantiates a publisher for <code>Twist</code> messages. <code>create_timer(0.5, callback)</code> triggers our motion function every 500 milliseconds. Finally, <code>rclpy.spin(node)</code> blocks the main thread, entering an event loop that services timers and messages until the process is terminated with <code>Ctrl+C</code>.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">03. Calling a service: spawn a second turtle</h2>
+                            <h2 class="article-section-title">09. Writing a custom rclpy pose subscriber</h2>
                             <p>
-                                Topics stream data continuously; services answer one request at a time. Turtlesim offers several services. List them, then call <code>/spawn</code> to add a second turtle at a chosen position:
-                            </p>
-                            <pre class="article-code"><code>ros2 service list
-ros2 service call /spawn turtlesim_msgs/srv/Spawn &quot;{x: 2, y: 2, theta: 0.2, name: &#x27;&#x27;}&quot;</code></pre>
-                            <p>
-                                Arguments are written in YAML. An empty name lets turtlesim pick one (<code>turtle2</code>). On releases older than Kilted, the service type is <code>turtlesim/srv/Spawn</code> instead. Each turtle needs a unique name; spawning a second <code>turtle1</code> prints an error.
+                                Next, let us write a subscriber node that listens to the turtle's real-time position updates and logs them to the console.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <p>
-                                The same can be done with a graphical tool. Install rqt (<code>sudo apt install ros-lyrical-rqt ros-lyrical-rqt-common-plugins</code>), run <code>rqt</code>, and choose <strong>Plugins &gt; Services &gt; Service Caller</strong>. From there you can also call <code>/turtle1/set_pen</code> to change the color and width of the line the turtle draws.
+                                Create a new file named <code>~/ros2_ws/src/my_robot_controller/my_robot_controller/pose_subscriber.py</code>:
+                            </p>
+                            <pre class="article-code"><code>#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from turtlesim.msg import Pose
+
+class PoseSubscriberNode(Node):
+    def __init__(self):
+        super().__init__('pose_subscriber_node')
+
+        # Create a subscription to /turtle1/pose
+        self.pose_sub_ = self.create_subscription(
+            Pose,
+            '/turtle1/pose',
+            self.pose_callback,
+            10
+        )
+        self.get_logger().info('Pose Subscriber Node has started!')
+
+    def pose_callback(self, msg: Pose):
+        self.get_logger().info(
+            f'Coordinates: x={msg.x:.2f}, y={msg.y:.2f}, heading={msg.theta:.2f} rad'
+        )
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = PoseSubscriberNode()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+                            <p>
+                                In this subscriber node, <code>create_subscription</code> takes four arguments: the message type (<code>Pose</code>), the topic name (<code>/turtle1/pose</code>), the callback function (<code>self.pose_callback</code>), and the QoS history depth (10). Whenever Turtlesim publishes a new pose sample, the middleware automatically invokes <code>pose_callback</code>, passing the populated <code>msg</code> object.
                             </p>
 
-                            <h2 class="article-section-title">04. Remapping: drive the second turtle</h2>
+                            <h2 class="article-section-title">10. Compiling with colcon and running custom nodes</h2>
                             <p>
-                                The keyboard controller always sends commands to <code>turtle1</code>. Instead of changing its code, you can <em>remap</em> its topic and action names when you start it, so a second copy drives <code>turtle2</code>:
+                                Before our Python scripts can be executed using <code>ros2 run</code>, they must be registered in <code>setup.py</code>.<sup><a href="#ref-6">[6]</a></sup> Open <code>~/ros2_ws/src/my_robot_controller/setup.py</code> in a text editor and locate the <code>entry_points</code> dictionary:
                             </p>
-                            <pre class="article-code"><code>ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel --remap turtle1/rotate_absolute:=turtle2/rotate_absolute</code></pre>
+                            <pre class="article-code"><code>entry_points={
+    'console_scripts': [
+        'draw_circle = my_robot_controller.draw_circle:main',
+        'pose_subscriber = my_robot_controller.pose_subscriber:main',
+    ],
+},</code></pre>
                             <p>
-                                Each teleop terminal now drives its own turtle; the window you type in must be active to capture key presses. Remapping is how real ROS systems reuse the same node for several robots or sensors.
+                                Now, return to the root of your workspace and compile with <strong>colcon</strong>:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
+                            <pre class="article-code"><code>cd ~/ros2_ws
+colcon build --symlink-install</code></pre>
+                            <div class="article-callout">
+                                <div class="article-callout-header"><i class="fas fa-lightbulb"></i> Developer Tip: Symlink Install</div>
+                                <p>The <code>--symlink-install</code> flag creates symbolic links to your Python source scripts instead of copying them into the <code>install/</code> folder. This allows you to edit your Python node code and test changes immediately without having to run <code>colcon build</code> every time.<sup><a href="#ref-8">[8]</a></sup></p>
+                            </div>
                             <p>
-                                To finish, press <code>Ctrl + C</code> in the simulator&rsquo;s terminal and <code>q</code> in each teleop terminal.
+                                Finally, source your newly created workspace underlay:
+                            </p>
+                            <pre class="article-code"><code>source install/setup.bash</code></pre>
+                            <p>
+                                With Turtlesim running in another window, launch your custom nodes:
+                            </p>
+                            <pre class="article-code"><code># Terminal 1: Run your autonomous circle driver
+ros2 run my_robot_controller draw_circle
+
+# Terminal 2: Run your real-time pose logger
+ros2 run my_robot_controller pose_subscriber</code></pre>
+                            <p>
+                                The turtle immediately begins drawing perfect circles on screen, while your subscriber node streams real-time Cartesian coordinates to the console.
+                            </p>
+
+                            <h2 class="article-section-title">11. Transferring skills to physical robots</h2>
+                            <p>
+                                While steering a cartoon turtle across a screen is a classic beginner exercise, every software technique you practiced here is identical to real-world industrial robotics:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item">A physical Clearpath Husky mobile robot uses the exact same <code>geometry_msgs/msg/Twist</code> on topic <code>/cmd_vel</code> to drive its high-torque electric wheels through outdoor terrain.</li>
+                                <li class="article-spec-item">An industrial AMR in an automotive warehouse publishes its wheel-encoder dead reckoning on a pose topic structured identically to Turtlesim's pose feed.</li>
+                                <li class="article-spec-item">The <code>rclpy.node.Node</code> object-oriented architecture, timer callbacks, and publisher/subscriber methods are the universal syntax of modern robotics.</li>
+                            </ul>
+                            <p>
+                                In <a href="robotics-3-5.html">lesson 3.5</a>, we examine the advanced developer tools of the ROS ecosystem: visualizing sensor transforms in RViz2, diagnosing node communication topologies with rqt_graph, and recording real-time mission telemetry with ros2 bag.
                             </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Spawn a third turtle at x = 8, y = 8 and drive it with a remapped teleop.</li>
-                                    <li>Use the <code>/turtle1/set_pen</code> service to draw a red line, then drive the turtle in a square.</li>
+                                    <li>Modify <code>draw_circle.py</code> so that the turtle drives in a wider circle by reducing angular velocity to <code>0.4</code> rad/s. Re-run the node and observe how the drawn path changes.</li>
+                                    <li>Add logic to <code>pose_subscriber.py</code> so that when the turtle's X coordinate exceeds <code>9.0</code> (approaching the right wall), the node prints a warning message to the logger.</li>
+                                    <li>Why is it advantageous to place source code in <code>~/ros2_ws/src</code> rather than modifying files directly inside <code>/opt/ros/lyrical/</code>?</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">05. References</h2>
+                            <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li>ROS 2 Documentation, &ldquo;Using turtlesim, ros2, and rqt.&rdquo; <a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Understanding services.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/services/Working-with-services/Understanding-ROS2-Services/Understanding-ROS2-Services.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/services/Working-with-services/Understanding-ROS2-Services/Understanding-ROS2-Services.html</a>.</li>
-                                <li>ROS 2 Documentation, &ldquo;Understanding topics.&rdquo; <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html</a>.</li>
+                                <li id="ref-1">Open Source Robotics Foundation (OSRF), &ldquo;Using Turtlesim, ros2, and rqt,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, Open Robotics, 2024. Tutorial: <a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Introducing-Turtlesim/</a>.</li>
+                                <li id="ref-2">ROS 2 Documentation, &ldquo;Understanding ROS 2 Topics and CLI Introspection,&rdquo; Open Robotics, 2024. Available: <a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Topics/</a>.</li>
+                                <li id="ref-3">Open Robotics, <em>geometry_msgs Interface Specification</em>, ROS Common Interfaces Repository, 2024. <a href="https://github.com/ros2/common_interfaces/tree/rolling/geometry_msgs" target="_blank" rel="noopener noreferrer">github.com/ros2/common_interfaces/tree/rolling/geometry_msgs</a>.</li>
+                                <li id="ref-4">ROS 2 Documentation, &ldquo;Understanding ROS 2 Services and Service Callers,&rdquo; Open Robotics, 2024. Available: <a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/Understanding-ROS2-Services.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Understanding-ROS2-Services/</a>.</li>
+                                <li id="ref-5">ROS 2 Documentation, &ldquo;Remapping Names and CLI Arguments in ROS 2,&rdquo; Open Robotics, 2024. Guide: <a href="https://docs.ros.org/en/lyrical/How-To-Guides/Node-arguments.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/How-To-Guides/Node-arguments.html</a>.</li>
+                                <li id="ref-6">ROS 2 Documentation, &ldquo;Creating a Workspace and Understanding Package Anatomy,&rdquo; Open Robotics, 2024. <a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/</a>.</li>
+                                <li id="ref-7">ROS 2 Documentation, &ldquo;Writing a Simple Publisher and Subscriber in Python (rclpy),&rdquo; Open Robotics, 2024. Tutorial: <a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html</a>.</li>
+                                <li id="ref-8">colcon Community, &ldquo;colcon: Building Workspaces and Package Deployment,&rdquo; Open Robotics / colcon developers, 2024. <a href="https://colcon.readthedocs.io" target="_blank" rel="noopener noreferrer">colcon.readthedocs.io</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -239,8 +464,8 @@ ros2 service call /spawn turtlesim_msgs/srv/Spawn &quot;{x: 2, y: 2, theta: 0.2,
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
