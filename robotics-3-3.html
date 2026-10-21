@@ -137,186 +137,199 @@
 
                             <h2 class="article-section-title">01. Choosing your installation strategy</h2>
                             <p>
-                                Setting up a robotics development environment is a critical milestone in every roboticist's education. Because ROS 2 is middleware that coordinates processes, compiles custom C++ and Python packages, and interfaces with hardware buses, running it requires a properly configured host operating system.<sup><a href="#ref-1">[1]</a></sup>
+                                Setting up a robotics development environment is an important first milestone. ROS 2 is not a stand-alone operating system: it is a set of tools and libraries that runs on top of a host operating system, and each ROS 2 distribution requires a specific Ubuntu LTS release (other platforms may need a source build or containers).<sup><a href="#ref-1">[1]</a></sup> Getting the host right is therefore the first step.
                             </p>
                             <p>
-                                New engineers frequently encounter installation hurdles because they attempt to install software without understanding the underlying platform tiers. Depending on whether your primary personal computer runs Ubuntu Linux, Microsoft Windows, or Apple macOS, your path to a functioning ROS 2 environment will look slightly different.
+                                New engineers often run into installation problems because they do not know which platforms a release officially supports. Depending on whether your computer runs Ubuntu Linux, Microsoft Windows, or Apple macOS, your path to a working ROS 2 environment will look different: binary packages are only built for the Tier 1 platforms, and everything else means building from source or using a container.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                In this lesson, we walk through the installation pipeline for our target long-term support release: <strong>ROS 2 Lyrical Luth</strong>, supported through 2031.<sup><a href="#ref-2">[2]</a></sup> We examine platform tiers, provide the exact commands to install packages, configure essential shell environment variables, and diagnose common setup errors.
+                                In this lesson, we walk through the installation for our target long-term support release: <strong>ROS 2 Lyrical Luth</strong>, released on May 22, 2026 and supported until May 2031.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup> We look at platform tiers, give the exact commands to install the packages, configure the shell environment, and diagnose common setup errors.
                             </p>
 
                             <h2 class="article-section-title">02. Platform support tiers and REP 2000</h2>
                             <p>
-                                Open Robotics formalizes supported operating systems and architectures in <strong>ROS Enhancement Proposal 2000 (REP 2000)</strong>.<sup><a href="#ref-3">[3]</a></sup> Every ROS 2 distribution categorizes target operating systems into three distinct tiers:
+                                ROS 2 groups supported platforms (an operating system, a CPU architecture and a middleware) into three tiers.<sup><a href="#ref-5">[5]</a></sup> Up to Kilted Kaiju, the target platforms for each release were listed in <strong>ROS Enhancement Proposal 2000 (REP 2000)</strong>; from Lyrical Luth onward, REP 2000 no longer covers new releases and the platform list lives in each release's own documentation.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup> The tiers are:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Tier 1 (Fully Supported):</span> Receives full automated Continuous Integration (CI) testing, pre-compiled binary Debian packages, release blockers for any build regressions, and official security maintenance. For ROS 2 Lyrical Luth, Tier 1 platforms are <strong>Ubuntu 26.04 LTS</strong> (on x86_64 and arm64 architectures) and <strong>Windows 11</strong> (64-bit x86_64).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Tier 2 (Source-Tested):</span> Built and tested on continuous integration farms from source, but without guaranteed binary package mirror distributions (such as RHEL and CentOS Stream).<sup><a href="#ref-3">[3]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Tier 3 (Community Maintained):</span> No automated CI infrastructure; builds are maintained by external community volunteers. Apple macOS is a Tier 3 platform. Running ROS 2 on macOS requires virtual machines, Docker containers, or community Conda packaging.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Tier 1:</span> Run through the unit test suite and other tests frequently, including continuous integration, nightly, packaging and performance jobs. Bugs on these platforms are prioritized and can delay a release.<sup><a href="#ref-5">[5]</a></sup> For ROS 2 Lyrical Luth, Tier 1 platforms are <strong>Ubuntu 26.04 LTS</strong> (amd64 and arm64), which gets Debian packages and binary archives, and <strong>Windows 11</strong> (amd64), which gets a binary archive.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Tier 2:</span> Get periodic CI builds and tests with public results; known errors are fixed on a best-effort basis.<sup><a href="#ref-5">[5]</a></sup> For Lyrical, RHEL 10 (amd64) is Tier 2, with RPM packages and a binary archive available.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Tier 3:</span> The development team runs no tests; these platforms are listed because community reports say the release works.<sup><a href="#ref-5">[5]</a></sup> For Lyrical, macOS, Ubuntu 24.04, Debian Trixie and others are Tier 3, and using Lyrical on any Tier 3 platform means building it from source.<sup><a href="#ref-7">[7]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">03. Native Ubuntu 26.04 installation step by step</h2>
                             <p>
-                                Ubuntu Linux is the native home of ROS. Over 90% of open-source robot drivers, documentation examples, and research repositories assume an Ubuntu environment.<sup><a href="#ref-1">[1]</a></sup> Installing ROS 2 Lyrical Luth on Ubuntu 26.04 LTS follows a four-stage pipeline: locale configuration, repository authentication, package installation, and environment initialization.<sup><a href="#ref-1">[1]</a></sup>
+                                Ubuntu Linux is the main home of ROS: Deb packages are the recommended way to install, because they pull in their dependencies automatically and update along with regular system updates.<sup><a href="#ref-2">[2]</a></sup> Installing ROS 2 Lyrical Luth on Ubuntu 26.04 LTS follows four stages: set up your system (locale and repositories), install ROS, set up your environment, and test the installation.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">04. Setting up UTF-8 locale and GPG keyrings</h2>
+                            <h2 class="article-section-title">04. Setting up the UTF-8 locale and the ROS 2 apt repository</h2>
                             <p>
-                                <strong>Step 1: Verify UTF-8 Locale.</strong> ROS 2 tools and Python 3 command-line utilities require an operating system locale that supports UTF-8 character encoding.<sup><a href="#ref-1">[1]</a></sup> Bare server images, Docker containers, or minimal cloud virtual machines often default to an unconfigured POSIX or ASCII locale. Running ROS tools in a non-UTF-8 environment causes Python to throw fatal <code>UnicodeDecodeError</code> exceptions during node launch.
+                                <strong>Step 1: Verify UTF-8 Locale.</strong> Make sure your system uses a locale that supports UTF-8.<sup><a href="#ref-8">[8]</a></sup> Minimal environments, such as Docker containers, may use a minimal locale like <code>POSIX</code>; the ROS developers test with the <code>en_US.UTF-8</code> settings below, but any UTF-8 locale should work.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                Verify and generate a proper UTF-8 locale using the official commands:<sup><a href="#ref-1">[1]</a></sup>
+                                Check and generate a UTF-8 locale using the official commands:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo apt update && sudo apt install -y locales
+                            <pre class="article-code"><code>locale  # check for UTF-8
+sudo apt update && sudo apt install locales
 sudo locale-gen en_US en_US.UTF-8
 sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
-export LANG=en_US.UTF-8</code></pre>
+export LANG=en_US.UTF-8
+locale  # verify settings</code></pre>
                             <p>
-                                <strong>Step 2: Enable Universe and Authorize GPG Keyring.</strong> Ensure the Ubuntu Universe software repository is enabled:
+                                <strong>Step 2: Enable Universe and add the ROS 2 apt source.</strong> First make sure the Ubuntu Universe repository is enabled:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo apt install -y software-properties-common curl
+                            <pre class="article-code"><code>sudo apt install software-properties-common
 sudo add-apt-repository universe</code></pre>
                             <p>
-                                Next, install the official Open Robotics GPG public key. The GPG key is used by the Linux APT package manager to cryptographically verify that downloaded software packages are authentic and have not been tampered with in transit:<sup><a href="#ref-1">[1]</a></sup>
+                                Next, install the <code>ros2-apt-source</code> package. It provides both the signing keys and the apt source configuration for the ROS repositories; apt uses the keys to check that downloaded packages really come from the ROS repositories. Because it is a package, the repository configuration also updates automatically when new versions are released. (Older guides downloaded a <code>ros.key</code> file by hand; the current documentation uses this package instead.)<sup><a href="#ref-8">[8]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg</code></pre>
+                            <pre class="article-code"><code>sudo apt update && sudo apt install curl -y
+export ROS_APT_SOURCE_VERSION=$(curl -s https://api.github.com/repos/ros-infrastructure/ros-apt-source/releases/latest | grep -F "tag_name" | awk -F'"' '{print $4}')
+curl -L -o /tmp/ros2-apt-source.deb "https://github.com/ros-infrastructure/ros-apt-source/releases/download/${ROS_APT_SOURCE_VERSION}/ros2-apt-source_${ROS_APT_SOURCE_VERSION}.$(. /etc/os-release &amp;&amp; echo ${UBUNTU_CODENAME:-${VERSION_CODENAME}})_all.deb"
+sudo dpkg -i /tmp/ros2-apt-source.deb</code></pre>
                             <p>
-                                Then add the official ROS 2 repository to your system sources list:
+                                Optionally, install the development tools you will need for building your own packages:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
-                            <pre class="article-code"><code>echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release &amp;&amp; echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list &gt; /dev/null</code></pre>
+                            <pre class="article-code"><code>sudo apt update && sudo apt install ros-dev-tools</code></pre>
 
                             <h2 class="article-section-title">05. Desktop versus base installations</h2>
                             <p>
-                                Once your package sources are updated, refresh your local package cache:
+                                Once the repository is set up, refresh your package cache and make sure the system is up to date, because ROS packages are built on frequently updated Ubuntu systems:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo apt update</code></pre>
+                            <pre class="article-code"><code>sudo apt update
+sudo apt upgrade</code></pre>
                             <p>
-                                ROS 2 offers two primary installation configurations:<sup><a href="#ref-1">[1]</a></sup>
+                                ROS 2 offers two main installation configurations:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Desktop Install (Recommended):</span> Includes the complete ROS 2 core communication libraries, standard message definition packages, the Turtlesim 2D simulator, demos, perception headers, and the 3D graphical visualization environment <code>rviz2</code>. For a workstation or laptop, install Desktop:
-                                    <pre class="article-code" style="margin-top: 0.4rem;"><code>sudo apt install -y ros-lyrical-desktop</code></pre>
+                                <li class="article-spec-item"><span class="spec-label">Desktop Install (Recommended):</span> ROS, the RViz visualization tool, demos and tutorials. The <code>desktop</code> package extends <code>ros_base</code> with high-level packages such as visualization tools and demos.<sup><a href="#ref-8">[8]</a></sup> For a workstation or laptop, install Desktop:
+                                    <pre class="article-code" style="margin-top: 0.4rem;"><code>sudo apt install ros-lyrical-desktop</code></pre>
                                 </li>
-                                <li class="article-spec-item"><span class="spec-label">ROS-Base Install:</span> A stripped-down, headless installation containing only the core middleware, client libraries, and command-line tools, without any graphical windowing packages. Base is designed for resource-constrained onboard single-board computers (such as a Raspberry Pi 5 or NVIDIA Jetson mounted inside a mobile robot):
-                                    <pre class="article-code" style="margin-top: 0.4rem;"><code>sudo apt install -y ros-lyrical-ros-base</code></pre>
+                                <li class="article-spec-item"><span class="spec-label">ROS-Base Install (Bare Bones):</span> Communication libraries, message packages and command-line tools, with no GUI tools.<sup><a href="#ref-8">[8]</a></sup> This suits a computer without a screen, such as a single-board computer mounted inside a mobile robot:
+                                    <pre class="article-code" style="margin-top: 0.4rem;"><code>sudo apt install ros-lyrical-ros-base</code></pre>
                                 </li>
                             </ul>
+                            <p>
+                                The default middleware is Fast DDS; other RMW implementations can be installed as extra packages if your project needs them.<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
 
                             <h2 class="article-section-title">06. Sourcing the environment: setup.bash</h2>
                             <p>
-                                After the package installation completes, opening a fresh terminal and typing <code>ros2</code> will result in a frustrating error: <code>bash: ros2: command not found</code>.
+                                After the package installation completes, opening a fresh terminal and typing <code>ros2</code> will typically fail with <code>bash: ros2: command not found</code>, because without sourcing the setup files you cannot access ROS commands or find ROS packages.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
-                                This happens because ROS 2 installs all its executable binaries, libraries, Python modules, and share directories into a self-contained root folder: <code>/opt/ros/lyrical/</code>. Why do you run <code>source /opt/ros/lyrical/setup.bash</code>? You run it so the <code>ros2</code> command and its supporting libraries can be found in that terminal session.<sup><a href="#ref-4">[4]</a></sup>
+                                The Debian packages install ROS 2 under <code>/opt/ros/lyrical/</code>. Why do you run <code>source /opt/ros/lyrical/setup.bash</code>? You run it so the <code>ros2</code> command and its supporting libraries can be found in that terminal session.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-8">[8]</a></sup> If you use a different shell, replace <code>.bash</code> with <code>.sh</code> or <code>.zsh</code>.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                Sourcing <code>setup.bash</code> sets and modifies several critical shell environment variables:<sup><a href="#ref-4">[4]</a></sup>
+                                Sourcing <code>setup.bash</code> runs environment hooks that prepend the install folder to several shell environment variables:<sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">PATH:</span> Prepends <code>/opt/ros/lyrical/bin</code>, allowing your shell to locate the <code>ros2</code> CLI, compiler wrappers, and node executables.</li>
-                                <li class="article-spec-item"><span class="spec-label">LD_LIBRARY_PATH:</span> Points the dynamic runtime linker to <code>/opt/ros/lyrical/lib</code> so compiled C++ nodes can link against shared DDS and client libraries.</li>
-                                <li class="article-spec-item"><span class="spec-label">PYTHONPATH:</span> Adds ROS 2's site-packages so Python scripts can import <code>rclpy</code> and standard message definitions.</li>
-                                <li class="article-spec-item"><span class="spec-label">AMENT_PREFIX_PATH:</span> Tells ROS package search tools where installed interfaces and plugin manifests reside.</li>
+                                <li class="article-spec-item"><span class="spec-label">PATH:</span> Prepends <code>/opt/ros/lyrical/bin</code>, so your shell can find the <code>ros2</code> command-line tool.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">LD_LIBRARY_PATH:</span> Prepends <code>/opt/ros/lyrical/lib</code>, so compiled C++ programs can find the ROS shared libraries at run time (on Linux).<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">PYTHONPATH:</span> Adds the ROS 2 Python package folder, so Python scripts can import <code>rclpy</code> and message definitions.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">AMENT_PREFIX_PATH:</span> Adds the install prefix, which ROS tools use to find installed packages.<sup><a href="#ref-10">[10]</a></sup></li>
                             </ul>
                             <p>
-                                Because sourcing only alters the current terminal session, you should append the command to your personal shell configuration file (<code>~/.bashrc</code>). Every new terminal you open will automatically source your ROS 2 environment:
+                                Sourcing also sets variables such as <code>ROS_DISTRO</code> and <code>ROS_VERSION</code>.<sup><a href="#ref-9">[9]</a></sup> Because sourcing only affects the current terminal session, you can append the command to your shell startup script (<code>~/.bashrc</code>), so every new terminal you open sources ROS 2 automatically:<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <pre class="article-code"><code>echo "source /opt/ros/lyrical/setup.bash" &gt;&gt; ~/.bashrc</code></pre>
 
                             <h2 class="article-section-title">07. Windows installation: WSL 2 versus native</h2>
                             <p>
-                                Windows users have two viable pathways to develop with ROS 2:<sup><a href="#ref-5">[5]</a></sup>
+                                Windows users have two main ways to develop with ROS 2:
                             </p>
                             <p>
-                                <strong>Option A: Windows Subsystem for Linux (WSL 2) (Strongly Recommended).</strong> WSL 2 runs an authentic Linux kernel in a lightweight utility virtual machine managed directly by Windows 11. Through WSLg (Windows Subsystem for Linux GUI), Linux graphical applications like RViz2 and Turtlesim render seamlessly as native desktop windows with full GPU hardware acceleration.
+                                <strong>Option A: Windows Subsystem for Linux (WSL 2).</strong> WSL runs a real Ubuntu installation on Windows, and the ROS documentation notes that WSL improves the ROS 2 experience compared with a native Windows install because it runs on a Linux platform.<sup><a href="#ref-11">[11]</a></sup> On Windows 11 (or Windows 10 build 19044 and later), WSL 2 can also run Linux GUI applications such as RViz2 and Turtlesim as normal desktop windows, with hardware-accelerated OpenGL once the matching GPU driver is installed.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
                             <p>
-                                To set up WSL 2, open Windows PowerShell as Administrator and run:
+                                To set up WSL 2 with Ubuntu 26.04, open Windows PowerShell and run (use <code>wsl --list --online</code> to see the available names):<sup><a href="#ref-13">[13]</a></sup>
                             </p>
-                            <pre class="article-code"><code>wsl --install -d Ubuntu-26.04</code></pre>
+                            <pre class="article-code"><code>wsl --install Ubuntu-26.04</code></pre>
                             <p>
-                                Once Ubuntu finishes installing, open the Ubuntu terminal prompt and follow the exact native Ubuntu installation steps detailed above.
+                                Once Ubuntu finishes installing, open the Ubuntu terminal and follow the native Ubuntu installation steps above.<sup><a href="#ref-11">[11]</a></sup> If RViz crashes under WSL 2, forcing software rendering with <code>export LIBGL_ALWAYS_SOFTWARE=true</code> is a documented workaround.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
-                                <strong>Option B: Native Windows 11 Binary Archive.</strong> For engineers who require tight integration with proprietary Windows industrial software or Visual Studio 2022 C++ development, ROS 2 provides native Windows binary archives.<sup><a href="#ref-5">[5]</a></sup> In modern releases, dependencies (including Python 3.12, CMake, OpenCV, and OpenSSL) are managed cleanly using the modern <code>pixi</code> cross-platform package manager. You download the official ROS 2 zip archive, unpack it to <code>C:\ros2_lyrical</code>, and source its batch environment:
+                                <strong>Option B: Native Windows 11 binary archive.</strong> For engineers who need tight integration with Windows software or Visual Studio C++ development, ROS 2 provides a pre-built Windows archive; only Windows 11 is supported.<sup><a href="#ref-15">[15]</a></sup> It includes all ROS base packages but only some desktop packages. Dependencies come from conda-forge, managed with the <code>pixi</code> package manager, and compiling C++ packages needs Visual Studio Build Tools 2022.<sup><a href="#ref-15">[15]</a></sup> The documented steps are to create a short folder such as <code>C:\dev</code>, install pixi, download the <code>ros2-lyrical-*-windows-release-amd64.zip</code> archive from the ROS 2 GitHub releases page, unpack it, install the dependencies, and source the environment in every new Command Prompt:<sup><a href="#ref-15">[15]</a></sup>
                             </p>
-                            <pre class="article-code"><code>call C:\ros2_lyrical\local_setup.bat</code></pre>
+                            <pre class="article-code"><code>cd C:\dev\lyrical
+pixi install
+pixi run python preinstall_setup_windows.py
+pixi shell
+call C:\dev\lyrical\local_setup.bat</code></pre>
 
                             <h2 class="article-section-title">08. macOS strategies: Docker and virtual machines</h2>
                             <p>
-                                Under REP 2000, macOS is a Tier 3 platform. There are no pre-compiled <code>.pkg</code> or <code>.dmg</code> installers, and building the entire desktop suite from source requires overcoming non-trivial clang compiler differences.<sup><a href="#ref-3">[3]</a></sup>
+                                For Lyrical Luth, macOS is a Tier 3 platform, so there are no official binaries and running Lyrical directly on macOS means building it from source.<sup><a href="#ref-7">[7]</a></sup> The documentation also notes that ROS on macOS is community-supported and not recommended for new users.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                On Apple Silicon Macs (M1 through M4 chips), the two most reliable workflows are:
+                                On a Mac, especially one with Apple silicon, two workflows avoid a source build:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Virtualization with UTM or Parallels:</span> Install an ARM64 edition of Ubuntu 26.04 LTS inside a virtual machine. UTM is a free, open-source hypervisor utilizing native Apple Hypervisor virtualization, providing near-native execution speed. Inside the ARM64 Ubuntu VM, install <code>ros-lyrical-desktop</code> via <code>apt</code> normally.</li>
-                                <li class="article-spec-item"><span class="spec-label">Docker Containers:</span> Run the official Open Robotics container:
-                                    <pre class="article-code" style="margin-top: 0.3rem;"><code>docker run -it --net=host osrf/ros:lyrical-desktop</code></pre>
-                                    To display graphical windows (RViz2 or Turtlesim) on macOS, forward X11 display sockets via XQuartz or use modern VNC/web browser stream containers.
+                                <li class="article-spec-item"><span class="spec-label">Virtual machine:</span> Install the arm64 edition of Ubuntu 26.04 LTS in a virtual machine (for example with UTM or Parallels). Ubuntu 26.04 on arm64 is a Tier 1 platform with Debian packages, so inside the VM you can install <code>ros-lyrical-desktop</code> with <code>apt</code> as usual.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Docker Containers:</span> Run an official ROS 2 desktop image; container solutions are the documented route for platforms without binaries:<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-16">[16]</a></sup>
+                                    <pre class="article-code" style="margin-top: 0.3rem;"><code>docker run -it osrf/ros:lyrical-desktop</code></pre>
+                                    Showing graphical windows (RViz2 or Turtlesim) from a container on macOS needs extra display set-up, such as an X11 server or a VNC or browser-based desktop inside the container.
                                 </li>
                             </ul>
 
                             <h2 class="article-section-title">09. Post-installation verification: talker and listener</h2>
                             <p>
-                                Once your installation and environment sourcing are complete, verify that both the C++ and Python client libraries are functioning correctly. Open two separate terminal windows.<sup><a href="#ref-1">[1]</a></sup>
+                                Once installation and sourcing are complete, check that both the C++ and Python client libraries work. If you installed <code>ros-lyrical-desktop</code>, open two separate terminal windows.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                In <strong>Terminal 1</strong>, start the pre-compiled C++ demo publisher node:
+                                In <strong>Terminal 1</strong>, start the pre-compiled C++ demo publisher node:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <pre class="article-code"><code>source /opt/ros/lyrical/setup.bash
 ros2 run demo_nodes_cpp talker</code></pre>
                             <p>
-                                The talker will begin broadcasting text strings over topic <code>/chatter</code> at 1 Hz:
+                                The talker publishes a &ldquo;Hello World&rdquo; string with a counter on the <code>chatter</code> topic once per second:<sup><a href="#ref-17">[17]</a></sup>
                             </p>
                             <pre class="article-code"><code>[INFO] [1716400000.123456789] [talker]: Publishing: 'Hello World: 1'
 [INFO] [1716400001.123456789] [talker]: Publishing: 'Hello World: 2'</code></pre>
                             <p>
-                                In <strong>Terminal 2</strong>, start the Python demo subscriber node:
+                                In <strong>Terminal 2</strong>, start the Python demo subscriber node:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <pre class="article-code"><code>source /opt/ros/lyrical/setup.bash
 ros2 run demo_nodes_py listener</code></pre>
                             <p>
-                                The listener will immediately discover the talker via DDS multicast, establish a peer subscription, and print:
+                                The listener discovers the talker automatically and prints each message it hears:<sup><a href="#ref-18">[18]</a></sup>
                             </p>
                             <pre class="article-code"><code>[INFO] [1716400002.123456789] [listener]: I heard: [Hello World: 2]
 [INFO] [1716400003.123456789] [listener]: I heard: [Hello World: 3]</code></pre>
                             <p>
-                                If the listener prints each incoming message, your ROS 2 networking, C++ core, and Python bindings are fully operational. Press <code>Ctrl+C</code> in both windows to stop.
+                                If the talker says it is publishing and the listener says it hears those messages, both the C++ and Python APIs are working.<sup><a href="#ref-8">[8]</a></sup> Press <code>Ctrl+C</code> in both windows to stop.
                             </p>
 
                             <h2 class="article-section-title">10. Essential developer utilities: rosdep and colcon</h2>
                             <p>
-                                Before you begin creating custom packages in <a href="robotics-3-4.html">lesson 3.4</a>, two critical developer tools must be installed:<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                                Before you begin creating custom packages in <a href="robotics-3-4.html">lesson 3.4</a>, two developer tools must be installed:<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-20">[20]</a></sup>
                             </p>
                             <p>
-                                <strong>1. colcon (Collective Construction).</strong> <code>colcon</code> is the standard build tool used in ROS 2.<sup><a href="#ref-6">[6]</a></sup> In ROS 1, developers used <code>catkin_make</code>. <code>colcon</code> is significantly more versatile: it builds multi-package workspaces containing arbitrary mixtures of C++ (CMake), Python (setuptools), and pure documentation packages in parallel. Install it with:
+                                <strong>1. colcon (collective construction).</strong> <code>colcon</code> is the build tool for ROS 2 workspaces. It is an iteration on the earlier ROS build tools <code>catkin_make</code>, <code>catkin_make_isolated</code>, <code>catkin_tools</code> and <code>ament_tools</code>. It builds multi-package workspaces that mix build types such as <code>ament_cmake</code>, <code>ament_python</code> and plain <code>cmake</code>, and builds packages in parallel by default.<sup><a href="#ref-19">[19]</a></sup> Install it with:<sup><a href="#ref-19">[19]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo apt install -y python3-colcon-common-extensions</code></pre>
+                            <pre class="article-code"><code>sudo apt install python3-colcon-common-extensions</code></pre>
                             <p>
-                                <strong>2. rosdep (Dependency Resolver).</strong> When you download an open-source ROS package from GitHub, it often depends on external Linux system libraries (such as Boost, Eigen, libusb, or OpenCV).<sup><a href="#ref-7">[7]</a></sup> Manually reading <code>package.xml</code> and installing every missing library with <code>apt</code> is tedious and error-prone.
+                                <strong>2. rosdep (dependency resolver).</strong> Packages list their dependencies in <code>package.xml</code>, including non-ROS &ldquo;system dependencies&rdquo; on outside libraries. Installing every missing library by hand is tedious and error-prone.<sup><a href="#ref-20">[20]</a></sup>
                             </p>
                             <p>
-                                <code>rosdep</code> inspects all packages in your workspace, queries the official ROS package database, and automatically downloads and installs all missing system dependencies with a single command.<sup><a href="#ref-7">[7]</a></sup> Initialize <code>rosdep</code> once on your system:
+                                <code>rosdep</code> reads the dependency keys in the <code>package.xml</code> files of your workspace, looks them up in the central <code>rosdistro</code> index, and installs the matching packages through the system package manager (<code>apt</code> on Ubuntu). It currently works on Linux and macOS but not Windows.<sup><a href="#ref-20">[20]</a></sup> Install and initialize it once on your system:<sup><a href="#ref-20">[20]</a></sup>
                             </p>
-                            <pre class="article-code"><code>sudo apt install -y python3-rosdep
+                            <pre class="article-code"><code>sudo apt install python3-rosdep
 sudo rosdep init
 rosdep update</code></pre>
 
                             <h2 class="article-section-title">11. Troubleshooting common setup errors</h2>
                             <p>
-                                If your talker and listener test fails or commands behave unexpectedly, run through this diagnostic checklist:<sup><a href="#ref-8">[8]</a></sup>
+                                If your talker and listener test fails or commands behave unexpectedly, run through this diagnostic checklist:<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Command Not Found:</span> Verify your shell environment variables by running <code>printenv | grep -i ROS</code>. If <code>ROS_DISTRO=lyrical</code> and <code>ROS_VERSION=2</code> do not appear, you forgot to source <code>setup.bash</code> in that terminal window.</li>
-                                <li class="article-spec-item"><span class="spec-label">Listener Hears Nothing (Domain ID Mismatch):</span> Nodes only communicate within the same DDS domain. If one terminal ran <code>export ROS_DOMAIN_ID=5</code> and the other terminal left it at default 0, they cannot see each other. Run <code>echo $ROS_DOMAIN_ID</code> in both terminals to verify that they match.</li>
-                                <li class="article-spec-item"><span class="spec-label">Firewall Blocking UDP Multicast:</span> DDS peer discovery relies on UDP multicast traffic on the <code>224.0.0.0/4</code> subnet. If an aggressive operating system firewall (like Ubuntu UFW) blocks multicast, test it with ROS multicast diagnostic tools:
+                                <li class="article-spec-item"><span class="spec-label">Command Not Found:</span> List your ROS environment variables by running <code>printenv | grep -i ROS</code>. If <code>ROS_DISTRO=lyrical</code> and <code>ROS_VERSION=2</code> do not appear, the setup file was not sourced in that terminal window.<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Listener Hears Nothing (Domain ID Mismatch):</span> Nodes only communicate with nodes in the same domain, and the default domain is 0.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-14">[14]</a></sup> If one terminal ran <code>export ROS_DOMAIN_ID=5</code> and the other did not, they cannot see each other. Run <code>echo $ROS_DOMAIN_ID</code> in both terminals to verify that they match.</li>
+                                <li class="article-spec-item"><span class="spec-label">Multicast Disabled or Blocked by a Firewall:</span> DDS needs a network interface with multicast enabled, which is not always the case by default.<sup><a href="#ref-14">[14]</a></sup> Test multicast with the ROS 2 tool:<sup><a href="#ref-14">[14]</a></sup>
                                     <pre class="article-code" style="margin-top: 0.3rem;"><code># In Terminal 1:
 ros2 multicast receive
 # In Terminal 2:
 ros2 multicast send</code></pre>
-                                    If no packet arrives, open the necessary firewall ports:
+                                    If no &ldquo;Hello World!&rdquo; message is received, your firewall may be blocking multicast. With Ubuntu's <code>ufw</code> firewall, allow multicast traffic (224.0.0.0/4) with:<sup><a href="#ref-14">[14]</a></sup>
                                     <pre class="article-code" style="margin-top: 0.3rem;"><code>sudo ufw allow in proto udp to 224.0.0.0/4
 sudo ufw allow in proto udp from 224.0.0.0/4</code></pre>
                                 </li>
@@ -333,14 +346,26 @@ sudo ufw allow in proto udp from 224.0.0.0/4</code></pre>
 
                             <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li id="ref-1">Open Source Robotics Foundation (OSRF), &ldquo;ROS 2 Installation: Ubuntu (Debian Packages),&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, Open Robotics, 2024. Guide: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html</a>.</li>
-                                <li id="ref-2">Open Source Robotics Foundation, &ldquo;ROS 2 Distributions and Release Roadmap,&rdquo; Open Robotics, 2024. Available: <a href="https://docs.ros.org/en/lyrical/Releases.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases.html</a>.</li>
-                                <li id="ref-3">Open Robotics, <em>REP 2000: ROS 2 Releases and Target Platforms</em>, ROS Enhancement Proposals, 2024. Full specification: <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000/</a>.</li>
-                                <li id="ref-4">ROS 2 Documentation, &ldquo;Configuring Your Environment,&rdquo; Open Robotics, 2024. Guide: <a href="https://docs.ros.org/en/lyrical/Get-Started/Configuring-ROS2-Environment.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Configuring-ROS2-Environment.html</a>.</li>
-                                <li id="ref-5">ROS 2 Documentation, &ldquo;Installing ROS 2 on Windows,&rdquo; Open Robotics, 2024. Documentation: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Windows-Install-Binary.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Windows-Install-Binary.html</a>.</li>
-                                <li id="ref-6">colcon Community, &ldquo;colcon: Collective Construction Build Tool Documentation,&rdquo; Open Robotics / colcon developers, 2024. Available: <a href="https://colcon.readthedocs.io" target="_blank" rel="noopener noreferrer">colcon.readthedocs.io</a>.</li>
-                                <li id="ref-7">ROS 2 Documentation, &ldquo;Managing Dependencies with rosdep,&rdquo; Open Robotics, 2024. <a href="https://docs.ros.org/en/lyrical/Tutorials/Intermediate/Rosdep.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Intermediate/Rosdep.html</a>.</li>
-                                <li id="ref-8">ROS 2 Documentation, &ldquo;Installation Troubleshooting and Common Diagnostics,&rdquo; Open Robotics, 2024. <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Installation-Troubleshooting.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Installation-Troubleshooting.html</a>.</li>
+                                <li id="ref-1">Open Robotics, &ldquo;About ROS,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/About-ROS.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/About-ROS.html</a>.</li>
+                                <li id="ref-2">Open Robotics, &ldquo;Installation,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation.html</a>.</li>
+                                <li id="ref-3">Open Robotics, &ldquo;Distributions,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Releases.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases.html</a>.</li>
+                                <li id="ref-4">Open Robotics, &ldquo;Lyrical Luth (codename &lsquo;lyrical&rsquo;; May, 2026),&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Releases/Release-Lyrical-Luth.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/Release-Lyrical-Luth.html</a>.</li>
+                                <li id="ref-5">Open Robotics, &ldquo;Platform support tiers,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/The-ROS2-Project/Platform-Support-Tiers.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/The-ROS2-Project/Platform-Support-Tiers.html</a>.</li>
+                                <li id="ref-6">M. Arguedas, S. Ragnarok, D. Thomas, A. Nash, G. Biggs and M. A. Gutierrez, <em>REP 2000: ROS 2 Releases and Target Platforms</em>, ROS Enhancement Proposals. <a href="https://reps.openrobotics.org/rep-2000/" target="_blank" rel="noopener noreferrer">reps.openrobotics.org/rep-2000/</a>.</li>
+                                <li id="ref-7">Open Robotics, &ldquo;Lyrical Luth supported platforms,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html</a>.</li>
+                                <li id="ref-8">Open Robotics, &ldquo;Installing on Ubuntu,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Ubuntu-Install-Debs.html</a>.</li>
+                                <li id="ref-9">Open Robotics, &ldquo;Setting up your environment,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Configuring-ROS2-Environment.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Configuring-ROS2-Environment.html</a>.</li>
+                                <li id="ref-10">ament developers, &ldquo;ament_package environment hook templates (path.sh, library_path.sh, pythonpath.sh.in, ament_prefix_path.sh),&rdquo; <em>ament/ament_package</em>, GitHub. <a href="https://github.com/ament/ament_package/tree/rolling/ament_package/template/environment_hook" target="_blank" rel="noopener noreferrer">github.com/ament/ament_package/tree/rolling/ament_package/template/environment_hook</a>.</li>
+                                <li id="ref-11">Open Robotics, &ldquo;Installation (Windows),&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Integrations-and-related/Simulators/Webots/Installation-Windows.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Integrations-and-related/Simulators/Webots/Installation-Windows.html</a>.</li>
+                                <li id="ref-12">Microsoft, &ldquo;Run Linux GUI apps on the Windows Subsystem for Linux,&rdquo; <em>Microsoft Learn</em>. <a href="https://learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps" target="_blank" rel="noopener noreferrer">learn.microsoft.com/en-us/windows/wsl/tutorials/gui-apps</a>.</li>
+                                <li id="ref-13">Canonical, &ldquo;Install Ubuntu on WSL 2,&rdquo; <em>Ubuntu on WSL documentation</em>. <a href="https://ubuntu.com/wsl/docs/stable/howto/install-ubuntu-wsl2/" target="_blank" rel="noopener noreferrer">ubuntu.com/wsl/docs/stable/howto/install-ubuntu-wsl2/</a>.</li>
+                                <li id="ref-14">Open Robotics, &ldquo;Installation troubleshooting,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Installation-Troubleshooting.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Installation-Troubleshooting.html</a>.</li>
+                                <li id="ref-15">Open Robotics, &ldquo;Installing on Windows (binary),&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Installation/Windows-Install-Binary.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Installation/Windows-Install-Binary.html</a>.</li>
+                                <li id="ref-16">Open Robotics, &ldquo;Running 2 nodes in a single Docker container or two separate containers,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Build/Run-2-nodes-in-single-or-separate-docker-containers.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Build/Run-2-nodes-in-single-or-separate-docker-containers.html</a>.</li>
+                                <li id="ref-17">ROS 2 demos maintainers, &ldquo;demo_nodes_cpp/src/topics/talker.cpp,&rdquo; <em>ros2/demos</em> (lyrical branch), GitHub. <a href="https://github.com/ros2/demos/blob/lyrical/demo_nodes_cpp/src/topics/talker.cpp" target="_blank" rel="noopener noreferrer">github.com/ros2/demos/blob/lyrical/demo_nodes_cpp/src/topics/talker.cpp</a>.</li>
+                                <li id="ref-18">Open Robotics, &ldquo;Discovery,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Discovery.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Discovery.html</a>.</li>
+                                <li id="ref-19">Open Robotics, &ldquo;Using colcon to build packages,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Colcon-Tutorial.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Colcon-Tutorial.html</a>.</li>
+                                <li id="ref-20">Open Robotics, &ldquo;Managing dependencies with rosdep,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, 2026. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Rosdep.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Rosdep.html</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
