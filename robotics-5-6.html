@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -202,6 +202,13 @@
                                 Because the right wheel traveled farther than the left, \(d\theta = +0.20\text{ rad}\), representing a counter-clockwise left turn.
                             </p>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 260" role="img" aria-label="Top view of a differential-drive robot driving to the right. The left wheel is on top and the right wheel below; the wheels are a wheelbase b apart. The left wheel rolls d_L, the right wheel rolls d_R, the center moves d_center equal to their average, and the heading changes by d theta equal to d_R minus d_L over b." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-dd" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="150" y="120" width="150" height="90" rx="12"/><rect class="d-box-gold" x="140" y="104" width="60" height="16" rx="3"/><rect class="d-box-gold" x="140" y="210" width="60" height="16" rx="3"/><text class="d-muted" x="130" y="116" text-anchor="end">left</text><text class="d-muted" x="130" y="226" text-anchor="end">right</text><text class="d-muted" x="250" y="170" text-anchor="middle">forward →</text><circle class="d-fill" cx="170" cy="165" r="4"/><path class="d-line" d="M80,112 L80,218"/><text class="d-title" x="72" y="170" text-anchor="end">b</text><path class="d-strong" d="M200,112 Q255,104 300,76" marker-end="url(#arrow-dd)"/><text class="d-title" x="306" y="82">d_L</text><path class="d-strong" d="M200,218 Q330,210 400,120" marker-end="url(#arrow-dd)"/><text class="d-title" x="340" y="236">d_R</text><path class="d-line" d="M174,165 Q290,150 350,98" marker-end="url(#arrow-dd)" stroke-dasharray="5 4"/><text class="d-text" x="358" y="96">d_center</text><text class="d-text" x="440" y="60">d_center = (d_R + d_L) / 2</text><text class="d-text" x="440" y="90">dθ = (d_R − d_L) / b</text><text class="d-muted" x="440" y="130">d_R &gt; d_L: turns left</text><text class="d-muted" x="440" y="150">d_R = d_L: straight</text><text class="d-muted" x="440" y="170">d_R = −d_L: spins in place</text>
+                                </svg>
+                                <figcaption>The two wheel distances fix both how far the robot's midpoint moves and how much it turns. Here the right wheel rolls farther, so the robot curves to the left.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">04. Numerical integration: Euler forward versus midpoint Runge-Kutta</h2>
                             <p>
                                 Once \(d_{center}\) and \(d\theta\) are known for a step, the robot must turn this local motion into a change of \(x\) and \(y\) in the global frame.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-4">[4]</a></sup>
@@ -346,6 +353,10 @@ void loop() {
                                 Running in both directions separates the two dominant errors. Borenstein and Feng call a wheelbase error a <em>Type A</em> error: it reduces (or increases) the total amount of rotation in <em>both</em> the CW and CCW runs. Unequal wheel diameters cause a <em>Type B</em> error: the robot's slight curve adds to its turns in one direction and subtracts from them in the other.<sup><a href="#ref-5">[5]</a></sup> Comparing the CW and CCW results therefore lets each error be estimated and corrected with scaling factors. In their experiments, the correction improved odometric accuracy with respect to systematic errors by at least one order of magnitude; in the main example the largest systematic error fell from 317 mm to 21 mm, about 15 times smaller.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
 
+                            <div data-widget="odometry">
+                                <p class="widget-note">The odometry simulator needs JavaScript. With it on, you can add wheel and wheelbase errors and watch the UMBmark square drift.</p>
+                            </div>
+
                             <h2 class="article-section-title">09. Multi-sensor fusion: limiting slip with IMU gyroscopes</h2>
                             <p>
                                 Systematic errors can be calibrated away, but non-systematic errors such as wheel slip on smooth floors cannot.<sup><a href="#ref-5">[5]</a></sup> Encoders count wheel rotation, not chassis motion, so when a wheel slips, for example during hard acceleration or a fast turn, the encoders still register rotation and odometry records motion that did not fully happen. Because the error is locked into every later pose, one bad slip during a turn can spoil the estimate for the rest of the run.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>
@@ -373,6 +384,7 @@ void loop() {
                             </div>
 
                             <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">U.S. Space Force and National Coordination Office for Space-Based Positioning, Navigation, and Timing, &ldquo;GPS Accuracy,&rdquo; GPS.gov. <a href="https://archive.gps.gov/systems/gps/performance/accuracy/" target="_blank" rel="noopener noreferrer">archive.gps.gov/systems/gps/performance/accuracy/</a>.</li>
                                 <li id="ref-2">J. Borenstein, H. R. Everett, and L. Feng (with S. W. Lee and R. H. Byrne), <em>&ldquo;Where am I?&rdquo; Sensors and Methods for Mobile Robot Positioning</em>, technical report, University of Michigan, prepared for Oak Ridge National Laboratory and the U.S. Department of Energy, April 1996. <a href="https://courses.cs.duke.edu/spring06/cps296.1/handouts/robot%20positioning%2096.pdf" target="_blank" rel="noopener noreferrer">courses.cs.duke.edu/.../robot positioning 96.pdf</a>.</li>
@@ -419,6 +431,7 @@ void loop() {
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.5" defer></script>
             <script src="assets/js/glossary-data.js?v=1.2" defer></script>
+            <script src="assets/js/widgets.js?v=1.1" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

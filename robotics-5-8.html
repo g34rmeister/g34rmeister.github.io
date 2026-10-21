@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -197,6 +197,13 @@
                                 </li>
                             </ul>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 220" role="img" aria-label="Kalman filter loop: the predict step moves the estimate with the motion model and grows the variance by Q; the update step compares the measurement with the prediction, computes the gain K, and shrinks the variance. The result feeds the next predict step." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-ku" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="40" y="50" width="230" height="110" rx="6"/><text class="d-title" x="155" y="85" text-anchor="middle">Predict</text><text class="d-muted" x="155" y="103" text-anchor="middle">x⁻ = A x + B u</text><text class="d-muted" x="155" y="118" text-anchor="middle">P⁻ = A P Aᵀ + Q</text><text class="d-muted" x="155" y="133" text-anchor="middle">uncertainty grows</text><rect class="d-box-gold" x="410" y="50" width="230" height="110" rx="6"/><text class="d-title" x="525" y="85" text-anchor="middle">Update</text><text class="d-muted" x="525" y="103" text-anchor="middle">K = P⁻Hᵀ(HP⁻Hᵀ + R)⁻¹</text><text class="d-muted" x="525" y="118" text-anchor="middle">x = x⁻ + K(z − Hx⁻)</text><text class="d-muted" x="525" y="133" text-anchor="middle">uncertainty shrinks</text><path class="d-line" d="M270,80 L408,80" marker-end="url(#arrow-ku)"/><text class="d-muted" x="339" y="72" text-anchor="middle">prediction</text><path class="d-line" d="M410,130 L272,130" marker-end="url(#arrow-ku)"/><text class="d-muted" x="339" y="150" text-anchor="middle">next step k+1</text><line class="d-line" x1="155" y1="200" x2="155" y2="162" marker-end="url(#arrow-ku)"/><text class="d-muted" x="165" y="196">control u (e.g. wheel odometry)</text><line class="d-line" x1="525" y1="18" x2="525" y2="48" marker-end="url(#arrow-ku)"/><text class="d-muted" x="535" y="30">measurement z (sensor)</text>
+                                </svg>
+                                <figcaption>The two steps repeat every cycle. Prediction adds process noise Q, and each measurement pulls the estimate toward the sensor by the gain K.</figcaption>
+                            </figure>
+
                             <h2 class="article-section-title">04. One-dimensional scalar worked example</h2>
                             <p>
                                 This section is the lesson's own worked example; the numbers are chosen for illustration, and the equations are the standard ones from Section 03 reduced to one dimension.<sup><a href="#ref-2">[2]</a></sup> To develop concrete numerical intuition, examine a one-dimensional robot driving along a hallway. Its state is a single scalar \(x\), representing position along the hallway in meters. The variance of its position estimate is denoted by scalar \(P\).
@@ -251,6 +258,10 @@
                             <p>
                                 Second, the resulting variance \(P = 0.025\text{ m}^2\) is strictly smaller than <em>both</em> the prediction variance (\(0.05\)) and the sensor noise (\(0.05\)). By fusing two uncertain sources of information, the Kalman filter produced an estimate that is more certain than either source alone. In one dimension this always holds, because \(P = \frac{P_{pred} R}{P_{pred} + R}\), which is smaller than both \(P_{pred}\) and \(R\).
                             </p>
+
+                            <div data-widget="kalman">
+                                <p class="widget-note">The Kalman filter simulator needs JavaScript. With it on, you can step the hallway robot from section 04 and tune Q and R.</p>
+                            </div>
 
                             <h2 class="article-section-title">05. Embedded C++ implementation</h2>
                             <p>
@@ -395,6 +406,7 @@ void handleSensors() {
                             </div>
 
                             <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">J. Borenstein and L. Feng, &ldquo;Measurement and Correction of Systematic Odometry Errors in Mobile Robots,&rdquo; <em>IEEE Transactions on Robotics and Automation</em>, vol. 12, no. 5, October 1996. Author copy: <a href="https://cs.au.dk/~ocaprani/legolab/DigitalControl.dir/NXT/Lesson10.dir/paper58.pdf" target="_blank" rel="noopener noreferrer">cs.au.dk/.../paper58.pdf</a>.</li>
                                 <li id="ref-2">G. Welch and G. Bishop, &ldquo;An Introduction to the Kalman Filter,&rdquo; Technical Report TR 95-041, Department of Computer Science, University of North Carolina at Chapel Hill, updated April 5, 2004. <a href="https://techreports.cs.unc.edu/papers/95-041.pdf" target="_blank" rel="noopener noreferrer">techreports.cs.unc.edu/papers/95-041.pdf</a>.</li>
@@ -442,6 +454,7 @@ void handleSensors() {
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.5" defer></script>
             <script src="assets/js/glossary-data.js?v=1.2" defer></script>
+            <script src="assets/js/widgets.js?v=1.1" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
