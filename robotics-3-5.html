@@ -137,56 +137,56 @@
 
                             <h2 class="article-section-title">01. The ROS developer toolchain</h2>
                             <p>
-                                Writing code for robots presents debugging challenges that do not exist in conventional web or desktop development. A mobile robot or articulated arm combines asynchronous processes, mechanical dynamics, multi-sensor telemetry, and complex 3D coordinate frame transformations. If a robot begins driving in the wrong direction or fails to detect a doorway, looking at raw terminal text logs is rarely sufficient to understand why.
+                                Writing code for robots brings debugging problems that ordinary web or desktop programs do not have. A mobile robot or robot arm combines many processes running at once, moving mechanical parts, several sensors and many 3D coordinate frames. If a robot drives the wrong way or misses a doorway, scrolling through terminal text is rarely enough to find out why.
                             </p>
                             <p>
-                                To make complex robotic systems transparent and debuggable, the ROS ecosystem provides a specialized suite of developer utilities:<sup><a href="#ref-1">[1]</a></sup>
+                                To make robotic systems easier to see into and debug, the ROS ecosystem provides a set of developer tools:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">RViz2:</span> A 3D visualizer that displays what the robot "sees" and "thinks" by rendering live topic streams in space.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">rqt & rqt_graph:</span> A modular graphical user interface framework for introspecting active computational graphs and monitoring signals.<sup><a href="#ref-2">[2]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">ros2 bag:</span> A high-throughput telemetry recorder that saves message streams to disk for offline playback and algorithm verification.<sup><a href="#ref-3">[3]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Gazebo:</span> A 3D multi-physics simulator that models rigid-body dynamics, friction, lighting, and synthetic sensors in virtual worlds.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">RViz2:</span> A 3D visualizer for ROS that draws the data flowing through the system, such as sensor readings, maps and the robot model.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">rqt and rqt_graph:</span> rqt is a graphical framework whose tools are plugins; rqt_graph is the plugin that shows which nodes are connected over which topics.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ros2 bag:</span> A command-line tool that records data published on topics (and services and actions) so it can be replayed later.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Gazebo:</span> A robot simulator with physics engines and simulated sensors such as cameras, lidars and IMUs.<sup><a href="#ref-5">[5]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">02. RViz2: visualizing robot perception in 3D</h2>
                             <p>
-                                <strong>RViz2</strong> (ROS Visualization 2) is the primary 3D visualization tool in the ROS 2 ecosystem.<sup><a href="#ref-1">[1]</a></sup> What is the difference between RViz and Gazebo? RViz displays data already flowing through ROS; Gazebo simulates the robot and its world with physics.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                                <strong>RViz</strong> (run in ROS 2 as the <code>rviz2</code> package) is the 3D visualizer of the ROS framework.<sup><a href="#ref-1">[1]</a></sup> What is the difference between RViz and Gazebo? RViz displays data already flowing through ROS; Gazebo simulates the robot and its world with physics.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
-                                RViz2 simulates nothing. It has no physics engine, no gravity, and no collision dynamics. Instead, RViz2 acts as an interactive 3D rendering canvas. It listens to active ROS 2 topics and displays sensor telemetry, planned navigation paths, costmaps, and robot geometric models directly in 3D space:<sup><a href="#ref-1">[1]</a></sup>
+                                RViz2 simulates nothing: it has no physics engine. It draws what arrives on ROS topics. Each thing it draws is called a <em>display</em>, and you add displays from a list of built-in types, including:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">RobotModel Display:</span> Parses the robot's Unified Robot Description Format (URDF) XML model and renders the 3D visual mesh files (such as STL or Collada files) of every link, animated in real time using joint positions from <code>/joint_states</code>.</li>
-                                <li class="article-spec-item"><span class="spec-label">LaserScan & PointCloud2 Displays:</span> Renders 2D planar lidar sweeps and 3D RGB-D depth camera point clouds. Points can be colored dynamically by height, distance, or laser reflection intensity.</li>
-                                <li class="article-spec-item"><span class="spec-label">Map & Costmap Displays:</span> Visualizes 2D occupancy grids produced by SLAM or navigation algorithms, displaying free space as light gray, occupied obstacles as black, and safety inflation margins as colored gradients.</li>
-                                <li class="article-spec-item"><span class="spec-label">Interactive Markers:</span> Lets human operators drag 3D directional arrows inside the viewport to set target navigation destinations or position a robotic gripper in Cartesian space.</li>
+                                <li class="article-spec-item"><span class="spec-label">RobotModel:</span> Shows the robot in its current pose, as defined by the current TF transforms.<sup><a href="#ref-1">[1]</a></sup> Those transforms usually come from <code>robot_state_publisher</code>, which reads the robot's URDF description and joint positions (<code>sensor_msgs/msg/JointState</code> messages) and calculates the transforms between all of the robot's parts.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Laser Scan and Point Cloud(2):</span> Show data from a laser scanner (<code>sensor_msgs/msg/LaserScan</code>) or a point cloud (<code>sensor_msgs/msg/PointCloud2</code>), with options for rendering modes and accumulation.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Map and Grid Cells:</span> Map draws an occupancy grid (<code>nav_msgs/msg/OccupancyGrid</code>) on the ground plane; Grid Cells draws cells from a grid, usually obstacles from a navigation costmap.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">InteractiveMarker:</span> Shows 3D objects from interactive marker servers and lets you move them with the mouse.<sup><a href="#ref-1">[1]</a></sup></li>
                             </ul>
                             <p>
-                                To launch RViz2 from your terminal, run:
+                                To start RViz2 from your terminal, run:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 run rviz2 rviz2</code></pre>
 
                             <h2 class="article-section-title">03. The tf2 transform library and the Fixed Frame</h2>
                             <p>
-                                To render multiple sensors in the same 3D viewport, RViz2 relies on <strong>tf2</strong>, the spatial transform library of ROS.<sup><a href="#ref-5">[5]</a></sup>
+                                To draw data from several sensors in the same 3D view, RViz2 uses the tf transform system to convert each piece of data from the coordinate frame it arrived in into a common reference frame.<sup><a href="#ref-1">[1]</a></sup> In ROS 2 this is the <strong>tf2</strong> library, which keeps track of multiple coordinate frames over time.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <p>
-                                On a real robot, sensors are mounted at different physical locations. The front lidar might sit 30 cm forward and 15 cm above the robot's wheel center, while a depth camera is mounted on a tilting mast. When the lidar reports an obstacle at distance (x = 1.2 m, y = 0.5 m) in its own sensor coordinates, navigation algorithms must know where that obstacle is located relative to the map or the robot's base.
+                                On a real robot, sensors are mounted in different places. As an example of our own: a front lidar might sit 30 cm ahead of and 15 cm above the robot's wheel centre, while a depth camera sits on a mast. When the lidar reports an obstacle at (x = 1.2 m, y = 0.5 m) in its own frame, the navigation software needs to know where that obstacle is relative to the robot's base or to the map.
                             </p>
                             <p>
-                                <code>tf2</code> maintains a spatial relationship tree over time.<sup><a href="#ref-5">[5]</a></sup> At the top left of the RViz2 interface sits the <strong>Fixed Frame</strong> dropdown. The Fixed Frame represents the static reference anchor (typically <code>map</code> or <code>odom</code>) against which all other coordinates are rendered. If <code>tf2</code> cannot calculate a mathematical transform between a sensor's frame and the selected Fixed Frame, RViz2 displays a red warning and refuses to render the data.
+                                tf2 stores the relationships between frames as a tree, buffered in time, and can transform points and vectors between any two frames at any desired time.<sup><a href="#ref-7">[7]</a></sup> In RViz the most important setting is the <strong>Fixed Frame</strong>, the frame treated as the "world": usually <code>map</code> or <code>world</code>, though it can also be the odometry frame. For correct results, the fixed frame should not move relative to the world. If you set it to a moving frame such as the robot's base, everything the robot has seen will appear in front of the robot instead of where it really is.<sup><a href="#ref-1">[1]</a></sup> Each display also shows a status (OK, Warning, Error or Disabled), which is the first place to look when data does not appear.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">04. rqt and rqt_graph: computational graph inspection</h2>
                             <p>
-                                <strong>rqt</strong> is a modular, Qt-based graphical user interface framework that hosts dozens of debugging plugins inside a single customizable dashboard.<sup><a href="#ref-2">[2]</a></sup>
+                                <strong>rqt</strong> is a graphical user interface framework that implements its tools as plugins. You can run the tools as dockable windows inside one rqt window, or on their own.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                The most widely used plugin is <strong>rqt_graph</strong>.<sup><a href="#ref-2">[2]</a></sup> <code>rqt_graph</code> queries active DDS discovery traffic on the network to generate an interactive, real-time directed graph illustrating every active node and topic connection.
+                                One of the most useful plugins is <strong>rqt_graph</strong>, a GUI plugin for visualising the ROS computation graph: it shows the running nodes and the topics that connect them.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                Launch it directly from the terminal while Turtlesim is running:<sup><a href="#ref-2">[2]</a></sup>
+                                Start it from the terminal while Turtlesim and the teleop node are running (or open <code>rqt</code> and choose <strong>Plugins &gt; Introspection &gt; Node Graph</strong>):<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 run rqt_graph rqt_graph</code></pre>
                             <figure class="lesson-diagram">
@@ -197,99 +197,99 @@
                                 <figcaption>What rqt_graph shows while you drive the turtle: two nodes (ovals) joined by the topic they share (box).</figcaption>
                             </figure>
                             <p>
-                                In the diagram above, <code>rqt_graph</code> renders running nodes as ovals (<code>/teleop_turtle</code> and <code>/turtlesim</code>) and active topics as rectangular boxes (<code>/turtle1/cmd_vel</code>). Directed arrows indicate the flow of published messages. If a newly developed sensor driver is failing to talk to your path planner, opening <code>rqt_graph</code> immediately reveals whether the topic name matches or if a typo isolated the node.
+                                In rqt_graph, running nodes are drawn as ovals (here <code>/teleop_turtle</code> and <code>/turtlesim</code>) and topics as boxes (<code>/turtle1/cmd_vel</code>), with arrows showing which way messages flow.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup> In this graph, <code>/teleop_turtle</code> publishes your keystrokes on <code>/turtle1/cmd_vel</code> and <code>/turtlesim</code> subscribes to it.<sup><a href="#ref-3">[3]</a></sup> If a new sensor driver is not reaching your planner, rqt_graph quickly shows whether the two nodes are really joined by the same topic or whether a typo in a topic name has left one of them disconnected. Recent versions also flag topics whose publishers and subscribers have incompatible message types or QoS settings.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">05. Specialized rqt plugins</h2>
                             <p>
-                                Beyond graph inspection, the rqt suite provides several powerful specialized tools:<sup><a href="#ref-2">[2]</a></sup>
+                                Besides rqt_graph, rqt comes with other plugins that are useful for debugging:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">rqt_plot:</span> A 2D oscilloscope utility. You type in a topic name and field (such as <code>/turtle1/pose/x</code> or <code>/motor/current</code>), and <code>rqt_plot</code> generates a real-time scrolling strip-chart graph of the numerical values over time. It is invaluable for tuning motor PID controllers and observing sensor noise.</li>
-                                <li class="article-spec-item"><span class="spec-label">rqt_console:</span> A centralized log viewer that subscribes to the <code>/rosout</code> system topic. It aggregates log messages across every running node, allowing engineers to filter messages by severity level (DEBUG, INFO, WARN, ERROR, FATAL) and search by node name or keyword.</li>
-                                <li class="article-spec-item"><span class="spec-label">rqt_service_caller:</span> A graphical tool that queries all advertised services and generates input form fields matching the service request structure, letting you test hardware actions with custom numbers via click.</li>
+                                <li class="article-spec-item"><span class="spec-label">rqt_plot:</span> A GUI plugin that plots numeric values in a 2D graph.<sup><a href="#ref-9">[9]</a></sup> You enter a topic field (for example <code>/turtle1/pose/x</code>) and watch it change over time, which helps when tuning controllers or looking at sensor noise.</li>
+                                <li class="article-spec-item"><span class="spec-label">rqt_console:</span> A log viewer that collects log messages over time and lets you view, filter, save and reload them.<sup><a href="#ref-10">[10]</a></sup> ROS 2 nodes send their log messages to the <code>/rosout</code> topic by default, and each message has a severity level: <code>DEBUG</code>, <code>INFO</code>, <code>WARN</code>, <code>ERROR</code> or <code>FATAL</code>.<sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">rqt_service_caller:</span> A GUI plugin for calling services.<sup><a href="#ref-12">[12]</a></sup> In rqt it is under <strong>Plugins &gt; Services &gt; Service Caller</strong>; you pick a service such as <code>/spawn</code>, fill in the request fields and click <strong>Call</strong>.<sup><a href="#ref-13">[13]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">06. ros2 bag: telemetry recording and playback</h2>
                             <p>
-                                In experimental robotics, physical field tests are expensive and difficult to reproduce. If an autonomous rover encounters an edge-case navigation failure while mapping an outdoor quarry, an engineer cannot easily re-stage the exact physical event to debug code back at the laboratory bench.
+                                Field tests with real robots are expensive and hard to repeat. If a rover fails at a tricky spot outdoors, an engineer back at the lab cannot easily recreate exactly the same situation to debug the code.
                             </p>
                             <p>
-                                The solution is <strong>ros2 bag</strong>.<sup><a href="#ref-3">[3]</a></sup> Which tool records messages on chosen topics so you can replay them later without the robot? The answer is <code>ros2 bag</code>.<sup><a href="#ref-3">[3]</a></sup>
+                                The solution is <strong>ros2 bag</strong>. Which tool records messages on chosen topics so you can replay them later without the robot? The answer is <code>ros2 bag</code>.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                <code>ros2 bag</code> intercepts serialized DDS messages directly from the network transport and writes them losslessly to disk along with high-precision nanosecond timestamps.<sup><a href="#ref-3">[3]</a></sup>
+                                <code>ros2 bag</code> is a command-line tool that records the data published on any number of topics (and, in recent releases, services and actions) and saves it to disk. You can then replay the data to reproduce your tests and experiments, or share it so others can recreate your work.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                With Turtlesim running, you can record a telemetry session:
+                                With Turtlesim and the teleop node running, record a session. The <code>-o</code> option names the bag directory, and the topics to record are listed after <code>--topics</code>:<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 bag record -o my_turtle_session --topics /turtle1/cmd_vel /turtle1/pose</code></pre>
                             <p>
-                                While recording, drive the turtle around with the keyboard teleop for twenty seconds, then press <code>Ctrl+C</code>. <code>ros2 bag</code> creates a folder named <code>my_turtle_session</code> containing metadata and serialized data files.
+                                While recording, drive the turtle around with the keyboard teleop for about twenty seconds, then press <code>Ctrl+C</code>. <code>ros2 bag</code> creates a directory named <code>my_turtle_session</code> containing a <code>metadata.yaml</code> file and the recorded data file.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                To inspect the recorded dataset, query its metadata:<sup><a href="#ref-3">[3]</a></sup>
+                                To inspect the recording, run:<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 bag info my_turtle_session</code></pre>
                             <p>
-                                The terminal prints the recording duration, start and end timestamps, total message count, serialization format, and a list of recorded topics with their exact message types and sample frequencies.
+                                The terminal prints the files, bag size, storage format (<code>mcap</code> by default), ROS distribution, duration, start and end times, total message count, and for each topic its message type, message count and serialization format.<sup><a href="#ref-4">[4]</a></sup> In the official example, <code>/turtle1/cmd_vel</code> had only 9 messages (one per key press) while <code>/turtle1/pose</code> had over 3000, because Turtlesim publishes the pose at regular intervals the whole time it runs.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                Now, reset the simulator:
+                                Before replaying, stop the teleop node with <code>Ctrl+C</code>. You can also put the turtle back in its starting position with Turtlesim's <code>/reset</code> service, whose type is <code>std_srvs/srv/Empty</code>:<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-14">[14]</a></sup>
                             </p>
-                            <pre class="article-code"><code>ros2 service call /reset std_srvs/srv/Empty "{}"</code></pre>
+                            <pre class="article-code"><code>ros2 service call /reset std_srvs/srv/Empty</code></pre>
                             <p>
-                                The turtle jumps back to the center of the screen. Now replay your recorded bag file:<sup><a href="#ref-3">[3]</a></sup>
+                                Now replay the bag:<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 bag play my_turtle_session</code></pre>
                             <p>
-                                The <code>ros2 bag play</code> process begins publishing the recorded messages back onto <code>/turtle1/cmd_vel</code> with the exact microsecond timing of the original run. The turtle moves autonomously across the screen, retracing its previous path perfectly.
+                                <code>ros2 bag play</code> publishes the recorded messages again, and the turtle follows the path you drove while recording, though not 100% exactly, because Turtlesim is sensitive to small changes in timing.<sup><a href="#ref-4">[4]</a></sup> Because this bag also contains <code>/turtle1/pose</code>, playback keeps going for as long as Turtlesim was running during the recording, even if the turtle was standing still.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">07. Storage backends: sqlite3 and MCAP</h2>
                             <p>
-                                In early ROS 2 releases, <code>ros2 bag</code> stored data inside SQLite databases (<code>.db3</code> files). While SQLite is universal, its write throughput and file locking mechanisms struggled to keep up with modern multi-gigabyte robotics data streams, such as high-frequency 4K stereo vision and 128-beam 3D lidars.
+                                In early ROS 2 releases, <code>ros2 bag</code> recorded into sqlite3 databases by default. Testing showed that in many cases this was not fast enough and lacked features wanted for offline processing.<sup><a href="#ref-15">[15]</a></sup>
                             </p>
                             <p>
-                                Modern ROS 2 distributions (including Jazzy and Lyrical) support the <strong>MCAP</strong> storage container format as a primary backend.<sup><a href="#ref-6">[6]</a></sup> MCAP (developed by Foxglove) is a modern, modular container format engineered specifically for robotics telemetry:<sup><a href="#ref-6">[6]</a></sup>
+                                Starting with ROS 2 Iron, the default format for new bags is <strong>MCAP</strong>, and this is still the default in Jazzy and Lyrical. The older sqlite3 format can still be chosen for recording, and bags in either format can be played back.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-15">[15]</a></sup> MCAP is an open-source container file format for multimodal log data, maintained as a Foxglove project. Its documentation highlights:<sup><a href="#ref-16">[16]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Zero-Copy Streaming:</span> MCAP structures data sequentially, allowing logging nodes to stream sensor frames to NVMe drives at memory bus speeds without database transaction locks.</li>
-                                <li class="article-spec-item"><span class="spec-label">Built-in Indexing:</span> High-speed chunk indexing lets visualization tools jump to any point in an 80 GB recording instantly without scanning through the entire file.</li>
-                                <li class="article-spec-item"><span class="spec-label">Self-Describing Schemas:</span> Message definition schemas are embedded directly inside the MCAP file header, ensuring the data can still be decoded years later even if message definitions change.</li>
+                                <li class="article-spec-item"><span class="spec-label">Append-only writing:</span> MCAP uses a row-oriented, append-only design to minimise disk I/O while recording.<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Built-in indexing:</span> Files can contain an optional index for fast, efficient reading, so tools can jump to a point in a recording without reading the whole file.<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Self-describing schemas:</span> MCAP stores message schemas alongside the data, so files stay readable in the future even as your code changes.<sup><a href="#ref-16">[16]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">08. Gazebo: multi-physics simulation</h2>
                             <p>
-                                While RViz2 visualizes data, <strong>Gazebo</strong> creates the virtual reality where robots live.<sup><a href="#ref-4">[4]</a></sup>
+                                While RViz2 visualizes data, <strong>Gazebo</strong> creates the virtual world the robot lives in.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
-                                Gazebo is an open-source, multi-robot 3D physics simulator. It incorporates advanced physics engines (including ODE, Bullet, DART, and Simbody) to calculate rigid-body dynamics, joint constraints, friction, mass inertia, and surface contact forces.<sup><a href="#ref-4">[4]</a></sup> In Gazebo:
+                                Gazebo is an open-source robot simulator. Current Gazebo (Gazebo Sim) ships physics engine plugins for DART and Bullet, plus its own simple TPE engine; the ODE and Simbody engines used by Gazebo Classic are not supported in the new Gazebo.<sup><a href="#ref-5">[5]</a></sup> In Gazebo:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item">A four-wheeled mobile robot sliding on wet concrete experiences realistic wheel slip governed by friction coefficients.</li>
-                                <li class="article-spec-item">A six-axis articulated arm lifting a heavy payload deflects slightly due to gravitational torques.</li>
-                                <li class="article-spec-item">Simulated sensors (lidars, depth cameras, IMUs, ultrasonic sensors) produce synthetic measurements with realistic Gaussian noise and optical occlusions.</li>
+                                <li class="article-spec-item">Wheeled robots can be given wheel slip with the WheelSlip plugin.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item">Simulated sensors include cameras, depth and RGBD cameras, GPU lidars, IMUs, contact sensors, air pressure and thermal cameras.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item">Sensor readings can include Gaussian noise, so algorithms are tested on imperfect data, as on a real robot.<sup><a href="#ref-5">[5]</a></sup></li>
                             </ul>
                             <p>
-                                An important historical milestone occurred on <strong>January 31, 2025</strong>, when the older simulator, <strong>Gazebo Classic</strong> (versions 1 through 11), officially reached End-of-Life (EOL).<sup><a href="#ref-7">[7]</a></sup> All modern robotics engineering has transitioned to modern Gazebo (formerly known as Ignition Gazebo). Modern Gazebo releases are synchronized with ROS 2 LTS distributions: ROS 2 Jazzy is paired with Gazebo Harmonic, and ROS 2 Lyrical Luth is paired with <strong>Gazebo Jetty</strong>.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                                An important milestone came on <strong>January 31, 2025</strong>, when <strong>Gazebo Classic</strong> (Gazebo 11, the last Classic release) officially reached end of life.<sup><a href="#ref-17">[17]</a></sup> New work uses the current Gazebo, which was called Ignition Gazebo until the Ignition name was retired in 2022.<sup><a href="#ref-18">[18]</a></sup> Each ROS 2 release has a recommended Gazebo release: ROS 2 Jazzy pairs with Gazebo Harmonic, and ROS 2 Lyrical Luth pairs with <strong>Gazebo Jetty</strong>.<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-20">[20]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">09. Bridging worlds: the ros_gz architecture</h2>
                             <p>
-                                Gazebo does not use DDS internally. Instead, Gazebo operates its own lightweight, inter-process transport protocol optimized for fast simulation stepping.
+                                Gazebo does not talk to other programs through ROS itself. It has its own messaging system, called Gazebo Transport, with its own message types (such as <code>gz.msgs.LaserScan</code>).<sup><a href="#ref-21">[21]</a></sup>
                             </p>
                             <p>
-                                To connect Gazebo to ROS 2, developers use the <strong>ros_gz</strong> bridge suite.<sup><a href="#ref-8">[8]</a></sup> The bridge node acts as an automated protocol translator:
+                                To connect Gazebo to ROS 2, you use the <strong>ros_gz</strong> packages (installed with <code>sudo apt-get install ros-${ROS_DISTRO}-ros-gz</code>). Its <code>ros_gz_bridge</code> provides a network bridge that exchanges messages between ROS 2 and Gazebo Transport.<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-21">[21]</a></sup> For example:<sup><a href="#ref-21">[21]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 run ros_gz_bridge parameter_bridge /scan@sensor_msgs/msg/LaserScan[gz.msgs.LaserScan</code></pre>
                             <p>
-                                When the simulated lidar sensor in Gazebo casts rays in its virtual 3D world, it publishes a <code>gz.msgs.LaserScan</code> packet. The bridge receives this packet, converts it into a standard ROS <code>sensor_msgs/msg/LaserScan</code>, and republishes it across DDS. The autonomous navigation stack (Nav2) subscribes to <code>/scan</code>, completely unaware that the laser points originate from simulated software rays rather than a physical glass sensor.
+                                The argument gives the topic name, the ROS message type and the Gazebo message type. The symbol between the two types sets the direction: <code>@</code> is a two-way bridge, <code>[</code> bridges from Gazebo to ROS, and <code>]</code> bridges from ROS to Gazebo.<sup><a href="#ref-21">[21]</a></sup> Here the simulated lidar's <code>gz.msgs.LaserScan</code> messages are converted into ROS <code>sensor_msgs/msg/LaserScan</code> messages on <code>/scan</code>. Any ROS node subscribed to <code>/scan</code> (for example a navigation stack) receives them just as it would from a real lidar driver, which is what lets you test the same code in simulation first.
                             </p>
 
                             <h2 class="article-section-title">10. Essential community packages</h2>
                             <p>
-                                Modern robotics engineering rarely builds foundational autonomy algorithms from scratch. Instead, engineers combine well-tested community packages:<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-11">[11]</a></sup>
+                                Robotics engineers rarely write core autonomy algorithms from scratch. Instead, they build on well-tested community packages such as these:
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -301,53 +301,67 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><strong>Nav2</strong></td>
+                                        <td><strong>Nav2</strong><sup><a href="#ref-22">[22]</a></sup></td>
                                         <td>Mobile Navigation</td>
-                                        <td>Behavior-tree path planning, dynamic costmap inflation, obstacle avoidance, and recovery behaviors.</td>
+                                        <td>Successor of the ROS Navigation Stack: perception, planning, control, localization and behaviors, with navigation logic built from behavior trees.</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>MoveIt 2</strong></td>
+                                        <td><strong>MoveIt 2</strong><sup><a href="#ref-23">[23]</a></sup></td>
                                         <td>Arm Manipulation</td>
-                                        <td>3D inverse kinematics, collision checking with environment meshes, and trajectory planning for multi-axis arms.</td>
+                                        <td>The robotic manipulation platform for ROS 2: kinematics, motion planning and planning around objects.</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>slam_toolbox</strong></td>
-                                        <td>Mapping & Localization</td>
-                                        <td>2D laser-based Simultaneous Localization and Mapping, graph optimization, and map serialization.</td>
+                                        <td><strong>slam_toolbox</strong><sup><a href="#ref-24">[24]</a></sup></td>
+                                        <td>Mapping &amp; Localization</td>
+                                        <td>2D Simultaneous Localization and Mapping (SLAM) with pose-graph optimization, a localization mode, lifelong mapping and map serialization.</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>ros2_control</strong></td>
-                                        <td>Hardware Abstraction</td>
-                                        <td>Real-time motor drive interfaces, transmission modeling, and closed-loop trajectory controllers.</td>
+                                        <td><strong>ros2_control</strong><sup><a href="#ref-25">[25]</a></sup></td>
+                                        <td>Robot Control</td>
+                                        <td>A framework for (real-time) control of robots using ROS 2, with hardware interfaces and ready-made controllers such as joint trajectory and differential drive controllers.</td>
                                     </tr>
                                 </tbody>
                             </table>
                             <p>
-                                Together, RViz2, rqt, ros2 bag, Gazebo, and these community packages provide an end-to-end engineering workbench, empowering a single developer to build systems that once required fifty-person corporate teams.
+                                Together, RViz2, rqt, ros2 bag, Gazebo and these community packages give a single developer or a small team a complete workbench for building, testing and debugging robot software.
                             </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Launch Turtlesim and keyboard teleop, then open <code>rqt_graph</code>. Experiment with the graph filters: check "Hide Debug" and note which topics disappear.</li>
-                                    <li>Record a 15-second bag file while teleoperating the turtle in a figure-eight pattern. Inspect the resulting dataset with <code>ros2 bag info</code> and verify message frequency on <code>/turtle1/pose</code>.</li>
+                                    <li>Launch Turtlesim and keyboard teleop, then open <code>rqt_graph</code>. Experiment with the graph filters: uncheck "Debug" under Hide, refresh, and note which extra nodes and topics appear.</li>
+                                    <li>Record a 15-second bag file while teleoperating the turtle in a figure-eight pattern. Inspect the resulting dataset with <code>ros2 bag info</code>, then divide the message count on <code>/turtle1/pose</code> by the duration to estimate its publishing rate. Compare your answer with <code>ros2 topic hz /turtle1/pose</code>.</li>
                                     <li>Explain in your own words why an engineer testing an autonomous driving algorithm prefers testing against a recorded ros2 bag file before testing on real hardware on public roads.</li>
                                 </ol>
                             </div>
 
                             <h2 class="article-section-title">11. References</h2>
                             <ol class="article-spec-list">
-                                <li id="ref-1">Open Source Robotics Foundation (OSRF), &ldquo;RViz2 User Guide and Display Reference,&rdquo; <em>ROS 2 Documentation: Lyrical Luth</em>, Open Robotics, 2024. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Visualization/RViz/RViz-User-Guide/RViz-User-Guide.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Visualization/RViz/RViz-User-Guide/RViz-User-Guide.html</a>.</li>
-                                <li id="ref-2">ROS 2 Documentation, &ldquo;Overview and Using RQt Diagnostic Plugins,&rdquo; Open Robotics, 2024. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Visualization/About-RQt.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Visualization/About-RQt.html</a>.</li>
-                                <li id="ref-3">ROS 2 Documentation, &ldquo;Recording and Playing Back Data with ros2bag,&rdquo; Open Robotics, 2024. Guide: <a href="https://docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Beginner-CLI-Tools/Recording-And-Playing-Back-Data/</a>.</li>
-                                <li id="ref-4">Gazebo Community, &ldquo;Gazebo Multi-Physics Simulation Documentation: Harmonic and Jetty Releases,&rdquo; Open Robotics / Gazebo developers, 2024. <a href="https://gazebosim.org" target="_blank" rel="noopener noreferrer">gazebosim.org</a>.</li>
-                                <li id="ref-5">ROS 2 Documentation, &ldquo;Introducing tf2 and Coordinate Transformations,&rdquo; Open Robotics, 2024. <a href="https://docs.ros.org/en/lyrical/Tutorials/Intermediate/Tf2/Introduction-To-Tf2.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Tutorials/Intermediate/Tf2/Introduction-To-Tf2.html</a>.</li>
-                                <li id="ref-6">Foxglove Technologies, &ldquo;MCAP: An Open Source Container File Format for Robotics Data,&rdquo; Foxglove, San Francisco, CA, 2024. Specification: <a href="https://mcap.dev" target="_blank" rel="noopener noreferrer">mcap.dev</a>.</li>
-                                <li id="ref-7">Open Robotics, &ldquo;Gazebo Classic End-of-Life Notice (January 31, 2025),&rdquo; ROS Discourse announcement, 2025. <a href="https://discourse.openrobotics.org/t/gazebo-classic-end-of-life/48748" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/gazebo-classic-end-of-life/48748</a>.</li>
-                                <li id="ref-8">Open Robotics, &ldquo;ros_gz: Bridge Architecture between ROS 2 and Gazebo Transport,&rdquo; Open Robotics open-source documentation, 2024. <a href="https://github.com/gazebosim/ros_gz" target="_blank" rel="noopener noreferrer">github.com/gazebosim/ros_gz</a>.</li>
-                                <li id="ref-9">Open Navigation LLC, &ldquo;Navigation 2 (Nav2) Complete Architectural Guide,&rdquo; 2024. <a href="https://docs.nav2.org" target="_blank" rel="noopener noreferrer">docs.nav2.org</a>.</li>
-                                <li id="ref-10">PickNik Robotics, &ldquo;MoveIt 2 Documentation and Tutorials,&rdquo; PickNik Inc., 2024. <a href="https://moveit.picknik.ai" target="_blank" rel="noopener noreferrer">moveit.picknik.ai</a>.</li>
-                                <li id="ref-11">S. Macenski, &ldquo;slam_toolbox: Unified 2D SLAM Framework for ROS 2,&rdquo; <em>Journal of Open Source Software</em>, 2021. <a href="https://github.com/SteveMacenski/slam_toolbox" target="_blank" rel="noopener noreferrer">github.com/SteveMacenski/slam_toolbox</a>.</li>
+                                <li id="ref-1">Open Robotics, &ldquo;Using RViz,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Visualization/RViz/RViz-User-Guide/RViz-User-Guide.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Visualization/RViz/RViz-User-Guide/RViz-User-Guide.html</a>.</li>
+                                <li id="ref-2">Open Robotics, &ldquo;Overview and using RQt,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Visualization/About-RQt.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Developer-Tools/Visualization/About-RQt.html</a>.</li>
+                                <li id="ref-3">Open Robotics, &ldquo;Learning about topics,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/topics/Understanding-ROS2-Topics/Understanding-ROS2-Topics.html</a>.</li>
+                                <li id="ref-4">Open Robotics, &ldquo;Recording and playing back data,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/Working-with-interfaces/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/Working-with-interfaces/Recording-And-Playing-Back-Data/Recording-And-Playing-Back-Data.html</a>.</li>
+                                <li id="ref-5">Open Robotics, &ldquo;Feature Comparison&rdquo; (Gazebo Classic vs. Gazebo Sim), <em>Gazebo Jetty Documentation</em>. Available: <a href="https://gazebosim.org/docs/latest/comparison/" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/comparison/</a>.</li>
+                                <li id="ref-6">Open Robotics, &ldquo;Building a movable robot model,&rdquo; <em>ROS 2 Documentation: Lyrical</em> (section &ldquo;Specifying the Pose&rdquo;). Available: <a href="https://docs.ros.org/en/lyrical/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.html</a>.</li>
+                                <li id="ref-7">Open Robotics, &ldquo;Tf2,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/About-Tf2/About-Tf2.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/About-Tf2/About-Tf2.html</a>.</li>
+                                <li id="ref-8">ROS visualization developers, <em>rqt_graph</em> source code (<code>package.xml</code> and <code>src/rqt_graph/dotcode.py</code>), ros-visualization/rqt_graph repository, <code>lyrical</code> branch. Available: <a href="https://github.com/ros-visualization/rqt_graph/tree/lyrical" target="_blank" rel="noopener noreferrer">github.com/ros-visualization/rqt_graph/tree/lyrical</a>.</li>
+                                <li id="ref-9">ROS visualization developers, <em>rqt_plot</em> package manifest, ros-visualization/rqt_plot repository. Available: <a href="https://github.com/ros-visualization/rqt_plot/blob/rolling/package.xml" target="_blank" rel="noopener noreferrer">github.com/ros-visualization/rqt_plot/blob/rolling/package.xml</a>.</li>
+                                <li id="ref-10">Open Robotics, &ldquo;Using rqt_console to view logs,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/nodes/Working-with-nodes/Using-Rqt-Console/Using-Rqt-Console.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/nodes/Working-with-nodes/Using-Rqt-Console/Using-Rqt-Console.html</a>.</li>
+                                <li id="ref-11">Open Robotics, &ldquo;Logging and logger configuration,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Logging/About-Logging.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/nodes/About-Logging/About-Logging.html</a>.</li>
+                                <li id="ref-12">ROS visualization developers, <em>rqt_service_caller</em> package manifest, ros-visualization/rqt_service_caller repository. Available: <a href="https://github.com/ros-visualization/rqt_service_caller/blob/rolling/package.xml" target="_blank" rel="noopener noreferrer">github.com/ros-visualization/rqt_service_caller/blob/rolling/package.xml</a>.</li>
+                                <li id="ref-13">Open Robotics, &ldquo;Setting up Turtlesim,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html</a>.</li>
+                                <li id="ref-14">Open Robotics, &ldquo;Learning about services,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/services/Working-with-services/Understanding-ROS2-Services/Understanding-ROS2-Services.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/interfaces/services/Working-with-services/Understanding-ROS2-Services/Understanding-ROS2-Services.html</a>.</li>
+                                <li id="ref-15">Open Robotics, &ldquo;Iron Irwini (iron)&rdquo; release notes, section &ldquo;Change default bag file type to mcap,&rdquo; <em>ROS 2 Documentation</em>. Available: <a href="https://docs.ros.org/en/lyrical/Releases/Release-Iron-Irwini.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/Release-Iron-Irwini.html</a>.</li>
+                                <li id="ref-16">Foxglove, &ldquo;MCAP,&rdquo; project website. Available: <a href="https://mcap.dev" target="_blank" rel="noopener noreferrer">mcap.dev</a>.</li>
+                                <li id="ref-17">Gazebo Dev Team (azeey), &ldquo;Gazebo Classic and Citadel End of Life,&rdquo; Open Robotics Discourse, Dec. 2, 2024. Available: <a href="https://discourse.openrobotics.org/t/gazebo-classic-and-citadel-end-of-life/48152" target="_blank" rel="noopener noreferrer">discourse.openrobotics.org/t/gazebo-classic-and-citadel-end-of-life/48152</a>.</li>
+                                <li id="ref-18">Open Robotics, &ldquo;Migration from Ignition,&rdquo; <em>Gazebo Jetty Documentation</em>. Available: <a href="https://gazebosim.org/docs/latest/migration_from_ignition/" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/migration_from_ignition/</a>.</li>
+                                <li id="ref-19">Open Robotics, &ldquo;Installing Gazebo with ROS,&rdquo; <em>Gazebo Jetty Documentation</em>. Available: <a href="https://gazebosim.org/docs/latest/ros_installation/" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/ros_installation/</a>.</li>
+                                <li id="ref-20">Open Robotics, &ldquo;Lyrical Luth Supported Platforms,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Releases/lyrical/supported-platforms.html</a>.</li>
+                                <li id="ref-21">Open Robotics, &ldquo;Use ROS 2 to interact with Gazebo,&rdquo; <em>Gazebo Jetty Documentation</em>. Available: <a href="https://gazebosim.org/docs/latest/ros2_integration/" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/ros2_integration/</a>.</li>
+                                <li id="ref-22">Open Navigation and Nav2 contributors, &ldquo;Nav2,&rdquo; <em>Nav2 Documentation</em>. Available: <a href="https://docs.nav2.org/rolling/" target="_blank" rel="noopener noreferrer">docs.nav2.org</a>.</li>
+                                <li id="ref-23">PickNik Robotics and MoveIt contributors, &ldquo;MoveIt 2 Documentation.&rdquo; Available: <a href="https://moveit.picknik.ai/main/index.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/index.html</a>.</li>
+                                <li id="ref-24">S. Macenski and I. Jambrecic, &ldquo;SLAM Toolbox: SLAM for the dynamic world,&rdquo; <em>Journal of Open Source Software</em>, vol. 6, no. 61, p. 2783, 2021, doi: <a href="https://doi.org/10.21105/joss.02783" target="_blank" rel="noopener noreferrer">10.21105/joss.02783</a>. Project README: <a href="https://github.com/SteveMacenski/slam_toolbox" target="_blank" rel="noopener noreferrer">github.com/SteveMacenski/slam_toolbox</a>.</li>
+                                <li id="ref-25">ros2_control developers, &ldquo;Welcome to the ros2_control documentation,&rdquo; <em>ros2_control Documentation: Jazzy</em>. Available: <a href="https://control.ros.org/jazzy/index.html" target="_blank" rel="noopener noreferrer">control.ros.org/jazzy/index.html</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -383,7 +397,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/course-data.js?v=1.5" defer></script>
             <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 

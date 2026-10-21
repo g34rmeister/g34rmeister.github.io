@@ -134,53 +134,55 @@
                         </header>
 
                         <article class="robotics-article-body">
-
                             <h2 class="article-section-title">01. Why proprietary vendor languages persist</h2>
                             <p>
-                                When software engineers first encounter industrial robotics, their immediate question is almost always: why does every robot manufacturer invent its own programming language? In web, cloud, and embedded systems, developers converge around universal languages like Python, C++, Rust, and Java. In the industrial robot sector, however, ABB robots are programmed in RAPID, KUKA arms in KRL, Universal Robots in URScript, and FANUC arms in TP or KAREL.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                                When software engineers first encounter industrial robotics, their immediate question is almost always: why does every robot manufacturer invent its own programming language? In web, cloud, and embedded systems, developers converge around general-purpose languages like Python, C++, Rust, and Java. In the industrial robot sector, however, ABB robots are programmed in RAPID, Universal Robots arms in URScript, KUKA arms in KRL, and FANUC arms in TP (teach pendant) programs or KAREL.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
-                                The reason stems from real-time determinism and mechanical safety. An industrial robot controller is not a desktop operating system running user-space processes. It is a certified hard real-time motion system that evaluates inverse kinematics, gravity compensation, acceleration profiles, and emergency stop circuits every single millisecond.<sup><a href="#ref-1">[1]</a></sup>
+                                Part of the reason is timing. A robot controller is not a desktop computer running ordinary programs whenever it gets around to them. It runs a real-time motion system that must send fresh commands to the arm on a fixed, very short cycle. Universal Robots' e-Series manual, for example, states that the robot must be controlled at 500 Hz, which means the controller has to tell the arm what to do every 0.002 seconds, and that URScript programs are executed in real time in the controller's RuntimeMachine.<sup><a href="#ref-2">[2]</a></sup> A vendor language lets the manufacturer run user programs inside that tightly controlled loop.
                             </p>
                             <p>
-                                Proprietary vendor languages were designed specifically around the physics of spatial manipulators. Their fundamental primitives are not strings or integers, but Cartesian poses, tool center point (TCP) frames, velocity profiles, and corner blending zones. While graphical interfaces like PolyScope or RobotStudio handle routine setups, text-based vendor languages expose the raw, unconstrained power of the robot controller.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                                Vendor languages are also built around the physics of robot arms. Their basic building blocks are not just strings and integers but target positions, tool definitions, speeds, and corner-blending zones: a single RAPID motion instruction names its target, its speed, its zone, and its tool.<sup><a href="#ref-6">[6]</a></sup> Graphical tools such as ABB's RobotStudio and UR's PolyScope sit on top of these languages: RobotStudio converts the targets you place in its 3D view into RAPID <code>robtarget</code> data when it synchronizes them to the controller, and PolyScope connects to the UR controller as a client.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-2">[2]</a></sup> Writing the language directly gives you access to everything the controller offers.
                             </p>
 
                             <h2 class="article-section-title">02. ABB RAPID: architecture and routines</h2>
                             <p>
-                                RAPID is ABB's strongly typed, multitasking procedural language, introduced in the mid-1990s with the S4 controller and refined through the IRC5 and current OmniCore platforms.<sup><a href="#ref-1">[1]</a></sup> It is an imperative language with syntax reminiscent of Ada and Pascal.
+                                RAPID is ABB's high-level robot programming language. It was introduced with ABB's S4 control system in the 1990s, replacing the earlier ARLA language,<sup><a href="#ref-8">[8]</a></sup> and it is still the language of ABB's IRC5 controllers, documented in a reference manual of well over a thousand pages.<sup><a href="#ref-1">[1]</a></sup> Its code is written in keyword blocks such as <code>PROC ... ENDPROC</code> and <code>IF ... ENDIF</code>, and every data item is declared with a type.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <p>
-                                A RAPID program is structured in a clear execution hierarchy:<sup><a href="#ref-1">[1]</a></sup>
+                                A RAPID program is organized in a clear hierarchy:<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Tasks:</span> Independent threads of execution. A controller can execute a motion task controlling physical arm joints alongside several non-motion background tasks handling sensor communications or safety monitoring.</li>
-                                <li class="article-spec-item"><span class="spec-label">Modules:</span> Within each task, code and data are organized into modules (declared with <code>MODULE ... ENDMODULE</code>). System modules store permanent tool definitions and cell coordinate frames, while program modules hold user logic.</li>
-                                <li class="article-spec-item"><span class="spec-label">Routines:</span> Executable blocks within modules. RAPID recognizes three distinct routine types:
+                                <li class="article-spec-item"><span class="spec-label">Tasks:</span> A task is a robot program that can run on its own or alongside other programs on the same controller. This lets one task drive the arm while another handles background jobs such as communication.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Modules:</span> Within a task, code and data are organized into modules (declared with <code>MODULE ... ENDMODULE</code>). Program modules (<code>.mod</code> files) hold the user's logic and can be loaded and unloaded; system modules (<code>.sys</code> files) hold data and routines that should survive a program change, such as a calibrated tool definition. Only one program module may contain the <code>main</code> procedure.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Routines:</span> Executable blocks within modules. RAPID recognizes three routine types:<sup><a href="#ref-7">[7]</a></sup>
                                     <ul style="margin-top: 0.5rem; margin-bottom: 0;">
-                                        <li><strong>Procedures (PROC):</strong> Execute a sequence of instructions without returning a value (e.g., <code>PROC main() ... ENDPROC</code>).</li>
-                                        <li><strong>Functions (FUNC):</strong> Compute and return a typed value, such as a calculated Cartesian distance or mathematical transformation.</li>
-                                        <li><strong>Trap Routines (TRAP):</strong> Asynchronous interrupt handlers. When a digital input fires (such as a part-drop optical sensor), the controller pauses main execution and jumps immediately to the assigned TRAP routine.</li>
+                                        <li><strong>Procedures (PROC):</strong> A set of instructions that does not return a value (e.g., <code>PROC main() ... ENDPROC</code>).<sup><a href="#ref-6">[6]</a></sup></li>
+                                        <li><strong>Functions (FUNC):</strong> Routines that compute and return a value of a given type, such as a calculated distance.<sup><a href="#ref-7">[7]</a></sup></li>
+                                        <li><strong>Trap routines (TRAP):</strong> Routines triggered by an interrupt. For example, an interrupt tied to a digital input (such as a part-drop sensor) can make the controller run a TRAP routine as soon as the signal changes.<sup><a href="#ref-7">[7]</a></sup></li>
                                     </ul>
                                 </li>
                             </ul>
+                            <p>
+                                Data is declared as <code>CONST</code> (a constant that cannot change after it is declared), <code>PERS</code> (a persistent value that keeps its last assigned value even when the program is stopped and restarted), or <code>VAR</code> (a variable that is reset if the program pointer is moved back to <code>main</code>).<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
 
                             <h2 class="article-section-title">03. RAPID data types: robtarget, speed, and zones</h2>
                             <p>
-                                To control spatial motion, RAPID relies on heavily structured composite data types:<sup><a href="#ref-1">[1]</a></sup>
+                                To control spatial motion, RAPID relies on structured composite data types:<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">robtarget:</span> Defines a full spatial destination:
+                                <li class="article-spec-item"><span class="spec-label">robtarget:</span> Defines a full spatial destination with four parts, <code>trans</code>, <code>rot</code>, <code>robconf</code> and <code>extax</code>:<sup><a href="#ref-6">[6]</a></sup>
                                     <pre class="article-code" style="margin-top: 0.5rem;"><code>[[500, 0, 600], [0, 0, 1, 0], [0, -1, 1, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]</code></pre>
-                                    The first array contains X, Y, Z coordinates in millimeters. The second array defines orientation as a four-component unit quaternion <code>[q1, q2, q3, q4]</code>. Quaternions eliminate mathematical gimbal lock, which plagues Euler angle systems.<sup><a href="#ref-5">[5]</a></sup> The third array defines axis configuration flags <code>[cf1, cf4, cf6, cfx]</code>, which instruct the controller which quadrant each joint should assume, resolving the ambiguity where multiple distinct arm postures reach the exact same Cartesian coordinate.<sup><a href="#ref-1">[1]</a></sup> The fourth array reserves positions for external auxiliary axes (such as linear track gantries or rotating positioner tables).
+                                    The first array is the X, Y, Z position. The second array is the tool orientation written as a four-component quaternion.<sup><a href="#ref-9">[9]</a></sup> Quaternions avoid gimbal lock, a problem in which a three-angle (Euler angle) description loses one degree of rotational freedom at certain orientations.<sup><a href="#ref-10">[10]</a></sup> The third array holds the axis configuration <code>[cf1, cf4, cf6, cfx]</code>: integers that give the quadrant of the arm's significant axes, so the controller knows which of several possible arm postures to use when more than one can reach the same point.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-7">[7]</a></sup> The fourth array holds up to six additional (external) axes, such as a linear track or a rotating positioner; unused axes are set to <code>9E9</code>.<sup><a href="#ref-6">[6]</a></sup>
                                 </li>
-                                <li class="article-spec-item"><span class="spec-label">speeddata:</span> Specifies the speed profile: <code>[v_tcp, v_ori, v_leax, v_reax]</code>. <code>v_tcp</code> defines the linear velocity of the tool center point in mm/s (e.g., <code>v1000</code> or <code>v200</code>), while <code>v_ori</code> defines the tool reorientation velocity in degrees per second.</li>
-                                <li class="article-spec-item"><span class="spec-label">zonedata:</span> Governs path corner blending: <code>[finep, pebax, pex, pez, peori, peax]</code>. If set to <code>fine</code>, the robot comes to a complete physical standstill at the waypoint before reading the next line. If set to a zone like <code>z50</code>, the controller blends the corner, allowing the tool to curve smoothly within a 50 mm radius sphere around the point, maintaining constant tool momentum and reducing cycle time.</li>
+                                <li class="article-spec-item"><span class="spec-label">speeddata:</span> Specifies the speed with four values, <code>[v_tcp, v_ori, v_leax, v_reax]</code>.<sup><a href="#ref-9">[9]</a></sup> <code>v_tcp</code> is the speed of the tool center point; the predefined value <code>v1000</code>, for example, means 1000 mm/s, <code>v100</code> means 100 mm/s, and <code>vmax</code> means the robot's maximum speed.<sup><a href="#ref-6">[6]</a></sup> The other three values limit the speed of tool reorientation and of external axes; the reference manual gives their exact definitions.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">zonedata:</span> Governs corner blending. Its fields are <code>[finep, pzone_tcp, pzone_ori, pzone_eax, zone_ori, zone_leax, zone_reax]</code>.<sup><a href="#ref-9">[9]</a></sup> If the zone is <code>fine</code>, the robot goes exactly to the programmed position before continuing. With a zone such as <code>z50</code>, the robot is allowed to cut the corner once its path is within 50 mm of the point, so it keeps moving smoothly and saves cycle time.<sup><a href="#ref-6">[6]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">04. Real-world RAPID program walkthrough</h2>
                             <p>
-                                The following complete RAPID module demonstrates industrial pick-and-place logic, illustrating joint motion, linear motion, digital input validation, and zone blending:<sup><a href="#ref-1">[1]</a></sup>
+                                The following RAPID module is this lesson's own pick-and-place example. It uses only instructions and data types documented by ABB: <code>MoveJ</code>, <code>MoveL</code>, <code>Offs</code>, <code>WaitDI</code>, <code>SetDO</code>, <code>WaitTime</code>, <code>Stop</code>, and the <code>robtarget</code> and <code>tooldata</code> types.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-1">[1]</a></sup> The <code>tooldata</code> value follows ABB's layout: whether the robot holds the tool (<code>robhold</code>), the tool frame (<code>tframe</code>, a position and a quaternion), and the tool load (<code>tload</code>: mass, center of gravity, and inertia values).<sup><a href="#ref-9">[9]</a></sup> The signal names (<code>diPartInPosition</code> and so on) are examples that would have to be configured on a real controller.
                             </p>
                             <pre class="article-code"><code>MODULE PickAndPlaceModule
     ! Predefined Cartesian targets: position (mm), quaternion, config, external axes
@@ -223,41 +225,48 @@
         MoveJ pHome, v1000, fine, tGripper;
     ENDPROC
 ENDMODULE</code></pre>
+                            <p>
+                                Lines that start with <code>!</code> are comments that the controller ignores. <code>Offs(point, x, y, z)</code> returns a copy of a point shifted by the given offsets, which is how the program makes approach points 100 mm above the pick and drop targets. <code>MoveJ</code> moves the arm without forcing a straight-line path, while <code>MoveL</code> moves the tool in a straight line.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
 
                             <h2 class="article-section-title">05. Universal Robots URScript: syntax and execution</h2>
                             <p>
-                                Universal Robots chose an accessible design for its collaborative robot script language, <strong>URScript</strong>.<sup><a href="#ref-2">[2]</a></sup> Rather than compiling to binary or requiring complex type declarations, URScript is an interpreted, Python-like language with dynamic variable typing and clean indentation syntax.
+                                Universal Robots' script language, <strong>URScript</strong>, looks friendlier than RAPID.<sup><a href="#ref-2">[2]</a></sup> Functions are defined with <code>def</code> and closed with <code>end</code>, the lines inside a block must be indented, and variables do not need type declarations: the manual states that a variable's type is deduced from its first assignment. If you know Python, the syntax will feel familiar.
                             </p>
                             <p>
-                                Programs execute in the controller's real-time URControl process. On the older CB-series robots, the motion cycle operates at 125 Hz (8 ms loop). On the modern e-Series and heavy-payload UR20 and UR30 cobots, the controller executes at 500 Hz (2 ms loop).<sup><a href="#ref-2">[2]</a></sup> Every two milliseconds, the URScript engine computes forward kinematics, checks safety boundaries, and computes motor torques.
+                                URScript programs are executed in real time by the URControl RuntimeMachine, the low-level controller software that runs on the embedded PC in the control box.<sup><a href="#ref-2">[2]</a></sup> On the e-Series, the RuntimeMachine communicates with the robot at 500 Hz, a 2 ms frame.<sup><a href="#ref-2">[2]</a></sup> The older CB-series manual gives 125 Hz, a frame of 0.008 seconds.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <p>
-                                URScript supports native multi-threading. A developer can spawn lightweight background threads with the <code>thread ... end</code> block. A thread can continuously poll an analog laser distance sensor or watch an emergency stop relay while the main arm trajectory proceeds without pausing.<sup><a href="#ref-2">[2]</a></sup>
+                                URScript supports threads. A developer declares a thread with a <code>thread ... end</code> block, starts it with <code>run</code>, and waits for it with <code>join</code>.<sup><a href="#ref-2">[2]</a></sup> A thread can, for example, keep watching a sensor input while the main program moves the arm.
                             </p>
 
                             <h2 class="article-section-title">06. URScript motion and rotation vectors</h2>
                             <p>
-                                In URScript, spatial points are represented by the composite <code>pose</code> type, written with the prefix <code>p</code>:<sup><a href="#ref-2">[2]</a></sup>
+                                In URScript, spatial points are represented by the <code>pose</code> type, written with the prefix <code>p</code>:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <pre class="article-code"><code>p[x, y, z, rx, ry, rz]</code></pre>
                             <p>
-                                Unlike RAPID, which records Cartesian position in millimeters, URScript adheres strictly to standard SI units: positions <code>x, y, z</code> are in meters. Furthermore, orientation is not specified by quaternions or Euler angles, but as a three-dimensional <strong>rotation vector</strong> (an axis-angle representation).<sup><a href="#ref-2">[2]</a></sup>
+                                Unlike RAPID, which works in millimeters, URScript uses SI units: positions are in meters, tool speeds in m/s, and blend radii in meters. Orientation is written neither as a quaternion nor as Euler angles, but as an axis-angle <strong>rotation vector</strong>.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                In a rotation vector <code>[rx, ry, rz]</code>, the directional unit vector defines the spatial axis around which the tool rotates. The total mathematical length (Euclidean norm) of the vector, \(\theta = \sqrt{rx^2 + ry^2 + rz^2}\), defines the rotation angle in radians. For example, a pure 180-degree rotation (\(\pi\) radians) around the tool's Y axis is represented compactly as <code>p[0, 0, 0, 0, 3.14159, 0]</code>.
+                                A rotation vector <code>[rx, ry, rz]</code> points along the axis of rotation, and its length is the rotation angle.<sup><a href="#ref-12">[12]</a></sup> The angle is therefore \(\theta = \sqrt{rx^2 + ry^2 + rz^2}\), in radians. For example, a 180-degree (\(\pi\) radian) rotation about the Y axis of the base frame is written <code>p[0, 0, 0, 0, 3.14159, 0]</code>.
                             </p>
                             <p>
-                                URScript defines three fundamental motion instructions:<sup><a href="#ref-2">[2]</a></sup>
+                                URScript's main motion functions are:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">movej(q, a=1.4, v=1.05, t=0, r=0):</span> Moves the robot in joint space to a list of target joint angles <code>q</code> (in radians) or to a pose. All joints accelerate and decelerate synchronously, reaching the target at the same time. The tool tip follows a curved arc through Cartesian space.</li>
-                                <li class="article-spec-item"><span class="spec-label">movel(pose, a=1.2, v=0.25, t=0, r=0):</span> Moves the tool center point along a straight line in Cartesian space from its current position to the target <code>pose</code>. Joint motors vary their speeds dynamically to maintain linear tool travel.</li>
-                                <li class="article-spec-item"><span class="spec-label">movep(pose, a=1.2, v=0.25, r=0):</span> Process move. Unlike <code>movel</code>, which varies speed near blended waypoints, <code>movep</code> maintains a constant linear velocity throughout blended paths, which is critical for dispensing adhesive beads, applying paint, or arc welding.</li>
+                                <li class="article-spec-item"><span class="spec-label">movej(q, a=1.4, v=1.05, t=0, r=0):</span> Move to a position, linear in joint space. <code>q</code> is a list of joint angles, or a pose, in which case inverse kinematics is used to find the matching joint positions. <code>a</code> and <code>v</code> are the acceleration and speed of the leading joint (rad/s&sup2; and rad/s). Because the joints move together in joint space, the tool tip follows a curved path rather than a straight line.</li>
+                                <li class="article-spec-item"><span class="spec-label">movel(pose, a=1.2, v=0.25, t=0, r=0):</span> Move to a position, linear in tool space: the tool center point travels in a straight line. Here <code>a</code> is in m/s&sup2; and <code>v</code> in m/s.</li>
+                                <li class="article-spec-item"><span class="spec-label">movep(pose, a=1.2, v=0.25, r=0):</span> &ldquo;Move process.&rdquo; It blends circular and linear moves in tool space and accelerates to, then holds, a constant tool speed <code>v</code>. A steady tool speed is what processes such as dispensing a bead of glue need.</li>
+                                <li class="article-spec-item"><span class="spec-label">movec(pose_via, pose_to, a=1.2, v=0.25, r=0, mode=0):</span> Moves the tool along a circular arc through a via point.</li>
                             </ul>
+                            <p>
+                                In each case, a non-zero blend radius <code>r</code> lets the robot round off the corner instead of stopping at the point.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
 
                             <h2 class="article-section-title">07. Real-world URScript program walkthrough</h2>
                             <p>
-                                The following script demonstrates a complete URScript routine, showcasing pose manipulation, digital I/O control, sleep timers, and linear tool moves:<sup><a href="#ref-2">[2]</a></sup>
+                                The following script is this lesson's own example. It uses functions listed in the URScript manual (<code>movej</code>, <code>movel</code>, <code>pose_add</code>, <code>get_digital_in</code>, <code>set_digital_out</code> and <code>sleep</code>) to show pose manipulation, digital I/O, timers, and linear tool moves:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <pre class="article-code"><code>def pick_and_place_demo():
   # Define base positions (x, y, z in meters; rx, ry, rz in radians)
@@ -301,46 +310,45 @@ end</code></pre>
 
                             <h2 class="article-section-title">08. KUKA Robot Language (KRL)</h2>
                             <p>
-                                KUKA Robot Language (KRL) is the proprietary language running on KUKA industrial controllers.<sup><a href="#ref-3">[3]</a></sup> KRL is structured around Pascal-like syntax with strict compile-time type verification.
+                                KUKA Robot Language (KRL) is the language of KUKA's robot controllers. Researchers who studied it describe it as an imperative programming language similar to Pascal, with predefined robot-specific structures such as <code>AXIS</code> and <code>POS</code>.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <p>
-                                A unique architectural feature of KRL is its <strong>dual-file program structure</strong>.<sup><a href="#ref-3">[3]</a></sup> Every KRL program consists of two separate files sharing the same name:
+                                A distinctive feature of KRL is its <strong>two-file program structure</strong>: each program is made of two files with the same name.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Source File (.src):</span> Contains procedural execution code, logic loops, I/O instructions, and motion calls (such as <code>PTP</code> for point-to-point joint motion, <code>LIN</code> for linear motion, and <code>CIRC</code> for circular paths).</li>
-                                <li class="article-spec-item"><span class="spec-label">Data File (.dat):</span> Contains persistent variables, tool definitions, coordinate frames, and target position coordinates. In KUKA controllers, when an operator touches up a point using the teach pendant, the numerical values in the <code>.dat</code> file are updated automatically without modifying the logic statements in the <code>.src</code> file.</li>
+                                <li class="article-spec-item"><span class="spec-label">Source file (.src):</span> Holds the movement commands and program logic, including the motion types <code>PTP</code> (point-to-point), <code>LIN</code> (linear), and <code>CIRC</code> (circular).<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Data file (.dat):</span> Holds permanent data, such as the stored positions the program moves to.<sup><a href="#ref-14">[14]</a></sup> Keeping data apart from logic means a taught point can be changed without editing the motion code.</li>
                             </ul>
                             <p>
-                                KRL represents spatial targets as <code>E6POS</code> or <code>FRAME</code> structures. An <code>E6POS</code> defines Cartesian coordinates <code>X, Y, Z</code> (in mm), Z-Y-X Euler angles <code>A, B, C</code> (in degrees), external axis values <code>E1</code> through <code>E6</code>, and two integer bitmasks: <strong>Status (S)</strong> and <strong>Turn (T)</strong>. Status and Turn uniquely resolve robot arm configuration flags and joint wrap-around ambiguity.<sup><a href="#ref-3">[3]</a></sup>
+                                KRL represents Cartesian targets with structures such as <code>FRAME</code>, <code>POS</code> and <code>E6POS</code>. A <code>FRAME</code> holds a position <code>X, Y, Z</code> and orientation angles <code>A, B, C</code>; <code>POS</code> adds two integers, <strong>Status (S)</strong> and <strong>Turn (T)</strong>, which store flags that pick out one arm configuration among several; and <code>E6POS</code> adds the external axis values <code>E1</code> to <code>E6</code>.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-3">[3]</a></sup> Motions can be blended (KUKA calls this approximate positioning) with parameters such as <code>C_DIS</code>.<sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">09. FANUC TP and KAREL</h2>
                             <p>
-                                FANUC manipulators utilize two distinct programming languages operating at different system levels:<sup><a href="#ref-4">[4]</a></sup>
+                                FANUC robots offer two programming languages working at different levels:<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Teach Pendant (TP) Language:</span> The standard programming language used on the shop floor. TP is a tokenized, line-numbered language written and edited using menu-driven softkeys on the FANUC iPendant.<sup><a href="#ref-4">[4]</a></sup> A typical motion instruction reads:
+                                <li class="article-spec-item"><span class="spec-label">Teach Pendant (TP) programs:</span> The everyday shop-floor language, taught on the teach pendant. Programs use joint and linear motion instructions; speed is given as a percentage of joint speed or as a tool speed in mm/sec; and each move ends with a termination type, either <code>FINE</code> (stop at the point) or <code>CNT</code> with a value from 0 to 100 (blend through it). Number registers (<code>R[x]</code>), labels, <code>IF</code> and <code>JMP</code> statements, digital I/O (<code>DI[x]</code>, <code>DO[x]</code>) and position registers (<code>PR[x]</code>) provide program control.<sup><a href="#ref-5">[5]</a></sup> Two typical motion lines look like this:
                                     <pre class="article-code" style="margin-top: 0.3rem;"><code>1: J P[1:Home] 100% FINE
 2: L P[2:Pick] 500mm/sec CNT50</code></pre>
-                                    Targets are stored in numbered Position Registers (<code>PR[i]</code>) or local Positions (<code>P[i]</code>). Because TP programs are tokenized rather than plain text, syntax errors cannot be typed into the pendant: every command is generated through guided menus.
                                 </li>
-                                <li class="article-spec-item"><span class="spec-label">KAREL:</span> A compiled, high-level programming language named in honor of Karel Čapek.<sup><a href="#ref-4">[4]</a></sup> Derived from Pascal, KAREL is used for complex algorithmic calculations, string parsing, TCP/IP socket communications, and vision guidance routines. Because KAREL runs as a background task, industrial best practice uses KAREL to handle data and communication while delegating actual robot arm motion to TP programs for safety compliance.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">KAREL:</span> A high-level language whose programs are compiled before being loaded onto the controller (FANUC's WinOLPC tool compiles, debugs, and downloads them).<sup><a href="#ref-5">[5]</a></sup> FANUC's KAREL reference manual covers string handling, file input and output, socket messaging over a network, and multi-tasking, and it includes built-in routines for working with TP programs.<sup><a href="#ref-4">[4]</a></sup> These features suit KAREL to data handling and communication jobs, while TP programs cover everyday motion sequences.</li>
                             </ul>
 
                             <h2 class="article-section-title">10. RRL and historical standardization</h2>
                             <p>
-                                Unlike URScript and RAPID, RRL is not a language you will find on today&rsquo;s commercial robots. The only documented robot language by that name is <em>RRL</em>, &ldquo;an integrated environment of robot programming&rdquo; built at the Jo&zcaron;ef Stefan Institute in Ljubljana, Slovenia, and published by Bojan Nemec, Anton Ru&zcaron;i&cacute; and Vinko Ilc in 1992.<sup><a href="#ref-6">[6]</a></sup> It was an academic research system designed to integrate sensor feedback and trajectory generation, but it was never adopted by commercial robot manufacturers.
+                                Unlike URScript and RAPID, RRL is not a language you will find on today&rsquo;s commercial robots. The only documented robot language by that name is <em>RRL</em>, &ldquo;an integrated environment of robot programming,&rdquo; published by Bojan Nemec, Anton Ru&zcaron;i&cacute; and Vinko Ilc in the journal <em>Informatica</em> in 1992.<sup><a href="#ref-15">[15]</a></sup> Nemec has been a researcher at the Jo&zcaron;ef Stefan Institute in Ljubljana, Slovenia, since 1983.<sup><a href="#ref-16">[16]</a></sup> RRL was an academic research system, not a product sold by a robot manufacturer.
                             </p>
                             <p>
-                                The robotics community has long recognized the inefficiency of proprietary language fragmentation. In 1992, the German national standards body published <strong>DIN 66312: Industrial Robot Language (IRL)</strong>.<sup><a href="#ref-7">[7]</a></sup> DIN 66312 defined a standardized, high-level robot language intended to allow robot programs to execute across any vendor's arm.
+                                Robotics researchers and standards bodies have also tried to reduce the number of incompatible languages. In 1992, the German standard <strong>DIN 66312, Industrial Robot Language (IRL)</strong>, was published by Beuth Verlag, defining a high-level language for programming industrial robots.<sup><a href="#ref-17">[17]</a></sup> European research projects such as the ESPRIT project InterRob later built standardized interfaces around IRL to connect product design, simulation, programming, and robot control.<sup><a href="#ref-18">[18]</a></sup>
                             </p>
                             <p>
-                                While DIN 66312 influenced European controller architectures, major robot vendors declined to adopt IRL across their product lines. Proprietary controller languages allowed vendors to tightly integrate their specialized servo algorithms, protect intellectual property, and create customer lock-in. Real vendor-agnostic standardization did not gain traction until the development of open-source middleware like ROS, examined in <a href="robotics-2-4.html">lesson 2.4</a>.
+                                Even so, the major vendors kept their own languages, as sections 02 to 09 show. One likely reason, and this is this lesson's interpretation rather than a documented vendor policy, is that a proprietary language lets a vendor tie programs closely to its own controller and motion features. Vendor-neutral programming gained much wider traction later through open-source middleware such as ROS, examined in <a href="robotics-2-4.html">lesson 2.4</a>.
                             </p>
 
                             <h2 class="article-section-title">11. Side-by-side technical comparison</h2>
                             <p>
-                                The following table summarizes how the leading robot languages compare across architecture, types, and orientation math:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                                The following table summarizes how the four vendor languages compare, using only details documented in this lesson's sources:<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -355,45 +363,45 @@ end</code></pre>
                                 <tbody>
                                     <tr>
                                         <td><strong>Language Style</strong></td>
-                                        <td>Structured, strongly typed (Pascal/Ada style)</td>
-                                        <td>Interpreted, dynamic typing (Python style)</td>
-                                        <td>Compiled, structured (Pascal style)</td>
-                                        <td>TP: Menu tokenized; KAREL: Compiled Pascal</td>
+                                        <td>Keyword blocks, typed declarations (CONST, PERS, VAR)</td>
+                                        <td>Interpreted in real time, dynamic typing, indented blocks</td>
+                                        <td>Imperative, similar to Pascal</td>
+                                        <td>TP: teach pendant instructions; KAREL: compiled high-level language</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Position Units</strong></td>
-                                        <td>Millimeters (mm)</td>
-                                        <td>Meters (m)</td>
-                                        <td>Millimeters (mm)</td>
-                                        <td>Millimeters (mm)</td>
+                                        <td>Millimeters (speeds in mm/s, zones in mm)</td>
+                                        <td>Meters (speeds in m/s)</td>
+                                        <td>X, Y, Z fields of FRAME / POS</td>
+                                        <td>X, Y, Z of an XYZWPR position; tool speeds in mm/sec</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>Orientation Math</strong></td>
-                                        <td>Unit Quaternions [q1, q2, q3, q4]</td>
-                                        <td>Rotation Vector [rx, ry, rz] (rad)</td>
-                                        <td>Z-Y-X Euler Angles [A, B, C] (deg)</td>
-                                        <td>W, P, R Euler Angles (deg)</td>
+                                        <td><strong>Orientation</strong></td>
+                                        <td>Quaternion (four values)</td>
+                                        <td>Rotation vector [rx, ry, rz] (rad)</td>
+                                        <td>Angles A, B, C</td>
+                                        <td>Angles W, P, R</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Motion Commands</strong></td>
                                         <td>MoveJ, MoveL, MoveC</td>
                                         <td>movej, movel, movep, movec</td>
                                         <td>PTP, LIN, CIRC</td>
-                                        <td>J (Joint), L (Linear), C (Circular)</td>
+                                        <td>J (joint), L (linear)</td>
                                     </tr>
                                     <tr>
                                         <td><strong>Corner Blending</strong></td>
                                         <td>zonedata (e.g. fine, z10, z50)</td>
                                         <td>Blend radius r in meters (e.g. r=0.02)</td>
-                                        <td>Approximation (C_PTP, C_DIS)</td>
-                                        <td>CNT parameter (e.g. CNT0 to CNT100)</td>
+                                        <td>Approximate positioning (e.g. C_DIS)</td>
+                                        <td>FINE, or CNT0 to CNT100</td>
                                     </tr>
                                     <tr>
-                                        <td><strong>File Structure</strong></td>
-                                        <td>Single or multiple .mod files</td>
-                                        <td>Single text script file (.script)</td>
-                                        <td>Dual file (.src logic + .dat data)</td>
-                                        <td>Binary TP (.tp) or KAREL (.kl / .pc)</td>
+                                        <td><strong>Program Structure</strong></td>
+                                        <td>Program modules (.mod) and system modules (.sys)</td>
+                                        <td>Text script of <code>def ... end</code> functions</td>
+                                        <td>Paired files (.src logic + .dat data)</td>
+                                        <td>TP programs plus separately compiled KAREL programs</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -409,13 +417,24 @@ end</code></pre>
 
                             <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li id="ref-1">ABB Robotics, <em>Technical Reference Manual: RAPID Instructions, Functions and Data Types</em>, Document ID 3HAC16581-1, Revision AH, ABB, V&auml;ster&aring;s, Sweden, 2023.</li>
-                                <li id="ref-2">Universal Robots, <em>The URScript Programming Language: e-Series and CB-Series Manual</em>, Version 5.14, Universal Robots A/S, Odense, Denmark, 2023. Reference manual: <a href="https://www.universal-robots.com/download/" target="_blank" rel="noopener noreferrer">universal-robots.com/download/</a>.</li>
-                                <li id="ref-3">KUKA Roboter GmbH, <em>KUKA System Software 8.6: Expert Programming Manual (KRL)</em>, Document KSS 8.6 EXP V5, KUKA AG, Augsburg, Germany, 2021.</li>
-                                <li id="ref-4">FANUC Robotics, <em>FANUC Robot Series: KAREL Reference Manual</em>, Document B-83144EN-1/01, FANUC Corporation, Oshino-mura, Japan, 2022.</li>
-                                <li id="ref-5">J. J. Craig, <em>Introduction to Robotics: Mechanics and Control</em>, 4th ed., Pearson, Boston, MA, 2018. ISBN 978-0133489798.</li>
-                                <li id="ref-6">B. Nemec, A. Ru&zcaron;i&cacute; and V. Ilc, &ldquo;RRL &ndash; an integrated environment of robot programming,&rdquo; <em>Informatica</em>, vol. 16, no. 1, pp. 27&ndash;33, 1992. Digital library record: <a href="https://dlib.si/details/URN:NBN:SI:DOC-J2F7J67I" target="_blank" rel="noopener noreferrer">dlib.si/details/URN:NBN:SI:DOC-J2F7J67I</a>.</li>
-                                <li id="ref-7">Deutsches Institut f&uuml;r Normung, <em>DIN 66312-1: Industrial Robot Language (IRL) &mdash; Part 1: Language Specification</em>, Beuth Verlag, Berlin, Germany, 1992. Catalogue: <a href="https://www.din.de/en" target="_blank" rel="noopener noreferrer">din.de/en</a>.</li>
+                                <li id="ref-1">ABB Robotics, <em>Technical reference manual: RAPID Instructions, Functions and Data types</em>, RobotWare 6.06, Document ID 3HAC050917-001, Revision F, ABB AB, 2017. Available: <a href="https://library.e.abb.com/public/b227fcd260204c4dbeb8a58f8002fe64/Rapid_instructions.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com (PDF)</a>.</li>
+                                <li id="ref-2">Universal Robots, <em>The URScript Programming Language for SW5 (Script Manual, e-Series)</em>, Version 5.14, Universal Robots A/S, 2023. Available: <a href="https://docs.universal-robots.com/PolyScopeX_SDK_Documentation/build/SDK-v0.13/_static/pdf/scriptManualG5.pdf" target="_blank" rel="noopener noreferrer">docs.universal-robots.com (PDF)</a>.</li>
+                                <li id="ref-3">KUKA Roboter GmbH, <em>KUKA System Software 8.3: Operating and Programming Instructions for System Integrators</em>, KSS 8.3 SI V4, 14 January 2015 (sections 9.2 to 9.5, 9.10 and 11.3.1). Copy hosted by a parts supplier: <a href="https://www.mroelectric.com/static/app/product/pdfs/00-291-556.pdf" target="_blank" rel="noopener noreferrer">mroelectric.com (PDF)</a>.</li>
+                                <li id="ref-4">FANUC Robotics America Corporation, <em>FANUC Robotics SYSTEM R-30iA and R-30iB Controller KAREL Reference Manual</em>, MARRC75KR07091E Rev D, version 7.50 and higher, 2012. Copy hosted by a parts supplier: <a href="https://www.mroelectric.com/static/app/product/pdfs/A05B-2255-C105.pdf" target="_blank" rel="noopener noreferrer">mroelectric.com (PDF)</a>.</li>
+                                <li id="ref-5">A. Sirinterlikci, &ldquo;Practical Hands-On Industrial Robotics Laboratory Development,&rdquo; paper AC 2012-3073, <em>ASEE Annual Conference &amp; Exposition</em>, 2012. Available: <a href="https://peer.asee.org/21807.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/21807.pdf</a>.</li>
+                                <li id="ref-6">ABB Robotics, <em>Operating manual: Introduction to RAPID</em>, RobotWare 5.60, Document ID 3HAC029364-001, Revision B, ABB AB, 2007. University-hosted copy: <a href="http://rovart.cimr.pub.ro/docs/OpIntroRAPID.pdf" target="_blank" rel="noopener noreferrer">rovart.cimr.pub.ro (PDF)</a>.</li>
+                                <li id="ref-7">ABB Robotics, <em>Operating manual: RobotStudio</em>, RobotStudio 5.14, Document ID 3HAC032104-001, Revision F, ABB AB, 2011. Available: <a href="https://library.e.abb.com/public/d11e7784c590c24dc1257b5900503e1f/3HAC032104-en.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com (PDF)</a>.</li>
+                                <li id="ref-8">Wikipedia contributors, &ldquo;RAPID,&rdquo; <em>Wikipedia, The Free Encyclopedia</em>. Available: <a href="https://en.wikipedia.org/wiki/RAPID" target="_blank" rel="noopener noreferrer">en.wikipedia.org/wiki/RAPID</a> (accessed October 2026).</li>
+                                <li id="ref-9">Wason Technology and Rensselaer Polytechnic Institute, &ldquo;abb_motion_program_exec: Readme&rdquo; (data type definitions mirroring RAPID <code>robtarget</code>, <code>confdata</code>, <code>speeddata</code>, <code>zonedata</code> and <code>tooldata</code>), 2022. Available: <a href="https://abb-motion-program-exec.readthedocs.io/en/stable/readme.html" target="_blank" rel="noopener noreferrer">abb-motion-program-exec.readthedocs.io</a>.</li>
+                                <li id="ref-10">Wikipedia contributors, &ldquo;Quaternions and spatial rotation,&rdquo; <em>Wikipedia, The Free Encyclopedia</em>. Available: <a href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation" target="_blank" rel="noopener noreferrer">en.wikipedia.org/wiki/Quaternions_and_spatial_rotation</a> (accessed October 2026).</li>
+                                <li id="ref-11">Universal Robots, <em>The URScript Programming Language (Script Manual, CB-Series)</em>, Version 3.15, Universal Robots A/S, 2021. Available: <a href="https://s3-eu-west-1.amazonaws.com/ur-support-site/124999/scriptManual_3.15.4.pdf" target="_blank" rel="noopener noreferrer">ur-support-site (PDF)</a>; download page: <a href="https://www.universal-robots.com/download/manuals-cb-series/script/script-manual-cb-series-sw3154/" target="_blank" rel="noopener noreferrer">universal-robots.com</a>.</li>
+                                <li id="ref-12">Wikipedia contributors, &ldquo;Axis&ndash;angle representation,&rdquo; <em>Wikipedia, The Free Encyclopedia</em>. Available: <a href="https://en.wikipedia.org/wiki/Axis%E2%80%93angle_representation" target="_blank" rel="noopener noreferrer">en.wikipedia.org/wiki/Axis&ndash;angle_representation</a> (accessed October 2026).</li>
+                                <li id="ref-13">H. M&uuml;he, A. Angerer, A. Hoffmann and W. Reif, &ldquo;On reverse-engineering the KUKA Robot Language,&rdquo; arXiv:1009.5004, 2010. Available: <a href="https://arxiv.org/abs/1009.5004" target="_blank" rel="noopener noreferrer">arxiv.org/abs/1009.5004</a>.</li>
+                                <li id="ref-14">Wikipedia contributors, &ldquo;KUKA Robot Language,&rdquo; <em>Wikipedia, The Free Encyclopedia</em>. Available: <a href="https://en.wikipedia.org/wiki/KUKA_Robot_Language" target="_blank" rel="noopener noreferrer">en.wikipedia.org/wiki/KUKA_Robot_Language</a> (accessed October 2026).</li>
+                                <li id="ref-15">B. Nemec, A. Ru&zcaron;i&cacute; and V. Ilc, &ldquo;RRL &ndash; an integrated environment of robot programming,&rdquo; <em>Informatica</em>, vol. 16, no. 1, pp. 27&ndash;33, 1992. Digital library record: <a href="https://dlib.si/details/URN:NBN:SI:DOC-J2F7J67I" target="_blank" rel="noopener noreferrer">dlib.si/details/URN:NBN:SI:DOC-J2F7J67I</a>.</li>
+                                <li id="ref-16">Jo&zcaron;ef Stefan Institute, Department for Automatics, Biocybernetics and Robotics, &ldquo;prof. dr. Bojan Nemec&rdquo; (staff profile). Available: <a href="https://abr.ijs.si/people/bojan-nemec/" target="_blank" rel="noopener noreferrer">abr.ijs.si/people/bojan-nemec/</a>.</li>
+                                <li id="ref-17">&ldquo;Industrial Robot Language,&rdquo; <em>The Free On-line Dictionary of Computing (FOLDOC)</em>, citing DIN 66312, <em>IRL, Industrial Robot Language</em>, Beuth-Verlag, 1992. Available: <a href="https://www.foldoc.org/Industrial+Robot+Language" target="_blank" rel="noopener noreferrer">foldoc.org/Industrial+Robot+Language</a>.</li>
+                                <li id="ref-18">European Commission CORDIS, &ldquo;Interoperability of standards for robotics in CIME&rdquo; (ESPRIT project InterRob), 1997. Available: <a href="https://cordis.europa.eu/article/id/7889-interoperability-of-standards-for-robotics-in-cime/it" target="_blank" rel="noopener noreferrer">cordis.europa.eu</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -451,7 +470,7 @@ end</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/course-data.js?v=1.5" defer></script>
             <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
