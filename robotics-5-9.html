@@ -1,0 +1,475 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 5.9 Motion Profiles and Interpolation
+-->
+<html lang="en">
+    <head>
+        <title>5.9 Motion Profiles and Interpolation — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How robots turn a target into smooth setpoints: trapezoidal, triangular and S-curve profiles, cubic and quintic time scaling, joint, linear and circular interpolation, zones, and time parameterization in MoveIt." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-5-9.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="5.9 Motion Profiles and Interpolation — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="How robots turn a target into smooth setpoints: trapezoidal, triangular and S-curve profiles, cubic and quintic time scaling, joint, linear and circular interpolation, zones, and time parameterization in MoveIt." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-5-9.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="5.9 Motion Profiles and Interpolation, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="5.9 Motion Profiles and Interpolation — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="How robots turn a target into smooth setpoints: trapezoidal, triangular and S-curve profiles, cubic and quintic time scaling, joint, linear and circular interpolation, zones, and time parameterization in MoveIt." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-control.html">Chapter 5 &middot; Extra: Electronics and Control Basics</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">5.9 Motion Profiles and Interpolation</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. From "go there" to a plan in time</h2>
+                            <p>
+                                In lessons 1.6 and 2.3 you wrote motion commands such as MoveJ, MoveL and MoveC and chose a speed and a zone for each one. In this chapter you met the hardware underneath: PWM drives the motor, the encoder measures the shaft, and a PID loop pushes the measured position toward a setpoint. This lesson connects the two. Between "move to this target at 250 mm/s" and the PID loop sits a <strong>motion profile</strong> generator, which turns one target into a smooth stream of setpoints, a new one every control cycle.
+                            </p>
+                            <p>
+                                The WPILib robot library describes its trapezoidal profile in exactly these terms: it generates "a sequence of setpoints that smoothly interpolate" between the current state and the goal state, while respecting a maximum velocity and a maximum acceleration.<sup><a href="#ref-1">[1]</a></sup> Sent the final target in one step, the PID error would jump to its largest value at once. A profile asks for the motion a little at a time, so the controller only corrects small errors.
+                            </p>
+                            <p>
+                                It helps to split every move into two separate questions:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">The path (interpolation):</span> Which points in space does the robot pass through? A joint move, a straight line and a circular arc are three different paths.</li>
+                                <li class="article-spec-item"><span class="spec-label">The time scaling (profile):</span> How fast does the robot move along that path at each instant? A trapezoid, an S-curve, a cubic and a quintic are four different time scalings.</li>
+                            </ul>
+                            <p>
+                                The Modern Robotics code library is built this way. Its trajectory functions take a time-scaling method (cubic or quintic) as one argument and compute the path separately, either in joint space or in Cartesian space.<sup><a href="#ref-2">[2]</a></sup> Any profile can drive any path. Sections 02 to 05 cover profiles; sections 06 and 07 cover paths and corners.
+                            </p>
+
+                            <h2 class="article-section-title">02. The trapezoidal velocity profile</h2>
+                            <p>
+                                The most widely taught profile is the <strong>trapezoidal velocity profile</strong>. Picture a rest-to-rest move of distance D. The axis accelerates at a constant rate a<sub>max</sub> until it reaches the speed limit v<sub>max</sub>, cruises at v<sub>max</sub>, and then decelerates at a<sub>max</sub> until it stops exactly at the target. Plotted against time, the velocity rises in a straight ramp, stays flat, and falls in a straight ramp: a trapezoid. One survey describes this profile, with its constant-acceleration, constant-velocity and constant-deceleration phases, as the most common one for industrial robot trajectory planning.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                Production code uses the same three phases. WPILib's <code>TrapezoidProfile</code> class works out the acceleration time as <code>maxVelocity / maxAcceleration</code> and then computes how much distance is left for the cruise phase.<sup><a href="#ref-4">[4]</a></sup> Peter Corke's Robotics Toolbox for Python describes its <code>trapezoidal()</code> function as "a linear motion segment with parabolic blends": in the position plot, a parabola, a straight line, then a parabola.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                The equations below follow from constant-acceleration kinematics (s = &frac12;at<sup>2</sup>, v = at). They are written for a rest-to-rest move with D &gt; 0. This lesson's own Python check (section 03) confirms that they land exactly on D.
+                            </p>
+                            <pre class="article-code"><code>Accel time and distance:  t_a = v_max / a_max         d_a = v_max^2 / (2 a_max)
+Trapezoid exists if:      D &gt;= v_max^2 / a_max        (that is, 2 d_a &lt;= D)
+Cruise time:              t_c = (D - v_max^2 / a_max) / v_max
+Total time:               T   = 2 t_a + t_c  =  D / v_max + v_max / a_max
+
+Phase 1  (0 &lt;= t &lt; t_a):          a = +a_max   v = a_max t         s = 0.5 a_max t^2
+Phase 2  (t_a &lt;= t &lt; t_a + t_c):  a = 0        v = v_max           s = d_a + v_max (t - t_a)
+Phase 3  (t_a + t_c &lt;= t &lt;= T):   a = -a_max   v = a_max (T - t)   s = D - 0.5 a_max (T - t)^2</code></pre>
+                            <p>
+                                A useful self-check is the area under the velocity curve. Distance is the integral of velocity, so the area of the trapezoid must equal D. The area is v<sub>max</sub> &times; (t<sub>a</sub> + t<sub>c</sub>): the two triangular ramps together make one rectangle of width t<sub>a</sub>.
+                            </p>
+                            <p>
+                                <strong>Worked example.</strong> Take D = 0.5 m, v<sub>max</sub> = 0.25 m/s and a<sub>max</sub> = 0.5 m/s&sup2;.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Check the case:</span> v<sub>max</sub>&sup2; / a<sub>max</sub> = 0.0625 / 0.5 = 0.125 m. Since 0.5 m &ge; 0.125 m, the axis does reach full speed.</li>
+                                <li class="article-spec-item"><span class="spec-label">Accelerate:</span> t<sub>a</sub> = 0.25 / 0.5 = 0.5 s, covering d<sub>a</sub> = 0.0625 m.</li>
+                                <li class="article-spec-item"><span class="spec-label">Cruise:</span> t<sub>c</sub> = (0.5 &minus; 0.125) / 0.25 = 1.5 s, covering 0.375 m.</li>
+                                <li class="article-spec-item"><span class="spec-label">Total:</span> T = 2(0.5) + 1.5 = 2.5 s. The shortcut D/v<sub>max</sub> + v<sub>max</sub>/a<sub>max</sub> = 2 + 0.5 = 2.5 s agrees.</li>
+                                <li class="article-spec-item"><span class="spec-label">Area check:</span> 0.25 &times; (0.5 + 1.5) = 0.5 m = D.</li>
+                            </ul>
+                            <p>
+                                In the total-time formula, D/v<sub>max</sub> is the time at full speed the whole way, and v<sub>max</sub>/a<sub>max</sub> is the extra time spent on the ramps.
+                            </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 250" role="img" aria-label="Velocity against time for the worked example. The solid trapezoid ramps from zero to 0.25 metres per second in 0.5 seconds, cruises for 1.5 seconds, and ramps down to zero at 2.5 seconds. A dashed triangle for the 0.05 metre move peaks at 0.158 metres per second at 0.316 seconds and ends at 0.632 seconds." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-tp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><line class="d-line" x1="60" y1="200" x2="610" y2="200" marker-end="url(#arrow-tp)"/><line class="d-line" x1="60" y1="200" x2="60" y2="30" marker-end="url(#arrow-tp)"/><text class="d-text" x="616" y="205">t</text><text class="d-text" x="40" y="30">v</text><path class="d-strong" d="M60,200 L160,60 L460,60 L560,200"/><path class="d-line" d="M60,200 L123,112 L187,200" stroke-dasharray="5 4"/><line class="d-line" x1="160" y1="60" x2="160" y2="200" stroke-dasharray="2 4"/><line class="d-line" x1="460" y1="60" x2="460" y2="200" stroke-dasharray="2 4"/><text class="d-muted" x="54" y="64" text-anchor="end">0.25</text><text class="d-muted" x="54" y="116" text-anchor="end">0.158</text><text class="d-muted" x="60" y="218" text-anchor="middle">0</text><text class="d-muted" x="160" y="218" text-anchor="middle">0.5</text><text class="d-muted" x="187" y="234" text-anchor="middle">0.632</text><text class="d-muted" x="460" y="218" text-anchor="middle">2.0</text><text class="d-muted" x="560" y="218" text-anchor="middle">2.5 s</text><text class="d-title" x="110" y="52" text-anchor="middle">t_a</text><text class="d-title" x="310" y="52" text-anchor="middle">t_c (cruise at v_max)</text><text class="d-title" x="510" y="52" text-anchor="middle">t_a</text><text class="d-text" x="310" y="140" text-anchor="middle">area = D = 0.5 m</text><text class="d-muted" x="200" y="160">dashed: D = 0.05 m, triangle</text>
+                                </svg>
+                                <figcaption>Velocity against time for the worked example (solid) and for the short move in section 03 (dashed). The area under each curve equals its distance.</figcaption>
+                            </figure>
+
+                            <h2 class="article-section-title">03. When the move is too short: the triangular profile</h2>
+                            <p>
+                                The trapezoid needs room to speed up and slow down. Accelerating to v<sub>max</sub> takes d<sub>a</sub> and braking takes another d<sub>a</sub>, so the move must be at least 2d<sub>a</sub> = v<sub>max</sub>&sup2;/a<sub>max</sub> long. For a shorter move the axis must start braking before it reaches v<sub>max</sub>. The cruise phase disappears and the velocity plot becomes a <strong>triangular profile</strong>. Setting t<sub>c</sub> = 0 and requiring the two ramps to cover D gives:
+                            </p>
+                            <pre class="article-code"><code>Triangular case (D &lt; v_max^2 / a_max):
+  t_a    = sqrt(D / a_max)
+  v_peak = a_max t_a = sqrt(D a_max)     (always less than v_max)
+  t_c    = 0
+  T      = 2 sqrt(D / a_max)</code></pre>
+                            <p>
+                                WPILib handles this case explicitly. After computing the cruise distance, the code checks whether it is negative, with the comment "Handle the case where the profile never reaches full speed". If it is, the code sets the acceleration time to <code>sqrt(dist / maxAcceleration)</code> and the cruise distance to zero, which is the triangle above.<sup><a href="#ref-4">[4]</a></sup> Corke's toolbox approaches the same limit from a different direction. Its <code>trapezoidal()</code> function takes the move duration as given and checks the requested speed V: it raises "V too small" if the speed could not cover the distance in time, and "V too big" if V is more than twice the average speed, which is the point where the trapezoid has collapsed into a triangle.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Worked example.</strong> Keep v<sub>max</sub> = 0.25 m/s and a<sub>max</sub> = 0.5 m/s&sup2; but shorten the move to D = 0.05 m. Since 0.05 m &lt; 0.125 m, the profile is triangular: t<sub>a</sub> = &radic;(0.05 / 0.5) = &radic;0.1 = 0.316 s, v<sub>peak</sub> = 0.5 &times; 0.316 = 0.158 m/s and T = 0.632 s. The area check is &frac12; &times; 0.632 &times; 0.158 = 0.05 m. For short moves, cycle time is set by acceleration, not by the programmed speed.
+                            </p>
+                            <p>
+                                The short script below is the lesson's own example. It implements both branches and checks the area under v(t). It was run with Python 3 and prints the output shown after it.
+                            </p>
+                            <pre class="article-code"><code>import math
+
+def trapezoid(D, v_max, a_max):
+    """Rest-to-rest trapezoidal (or triangular) profile timing."""
+    if D &gt;= v_max**2 / a_max:          # full trapezoid: v_max is reached
+        t_a = v_max / a_max
+        v_peak = v_max
+        t_c = (D - v_max**2 / a_max) / v_max
+    else:                              # triangle: v_max is never reached
+        t_a = math.sqrt(D / a_max)
+        v_peak = a_max * t_a
+        t_c = 0.0
+    T = 2 * t_a + t_c
+    return t_a, t_c, T, v_peak
+
+for D in (0.5, 0.05):
+    t_a, t_c, T, v_peak = trapezoid(D, v_max=0.25, a_max=0.5)
+    area = v_peak * (t_a + t_c)        # area under v(t) must equal D
+    print(f"D={D} m: t_a={t_a:.3f} s, t_c={t_c:.3f} s, "
+          f"T={T:.3f} s, v_peak={v_peak:.3f} m/s, area={area:.3f} m")</code></pre>
+                            <pre class="article-code"><code>D=0.5 m: t_a=0.500 s, t_c=1.500 s, T=2.500 s, v_peak=0.250 m/s, area=0.500 m
+D=0.05 m: t_a=0.316 s, t_c=0.000 s, T=0.632 s, v_peak=0.158 m/s, area=0.050 m</code></pre>
+
+                            <h2 class="article-section-title">04. Jerk and the S-curve profile</h2>
+                            <p>
+                                Look at the acceleration plot of a trapezoidal profile. It is a set of rectangles: +a<sub>max</sub>, then 0, then &minus;a<sub>max</sub>. At each corner the acceleration changes instantly. <strong>Jerk</strong> is the rate of change of acceleration, so at those corners the jerk is, in theory, infinite. Engineering sources describe trapezoidal profiles as having effectively infinite jerk at the corners, and give this as the reason S-curve profiles are used.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                There is a physical reason to care, and it ties back to this chapter. Motor torque is roughly proportional to motor current, and the acceleration demand sets the torque. A step in acceleration is therefore a step in the torque the drive is asked for, and so a sudden change in current and PWM duty. Real arms and gearboxes are slightly flexible, so a torque step makes them ring. Motion-control references note that higher jerk produces more unwanted vibration energy.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <p>
+                                An <strong>S-curve profile</strong> adds a jerk limit to the trapezoid. Instead of jumping to a<sub>max</sub>, the acceleration ramps up at a constant jerk, holds, and ramps down again. The full move then has seven segments: jerk up, constant acceleration, jerk down, cruise, and the mirror image of the first three for braking.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup> The velocity plot gets rounded "S"-shaped shoulders, which gives the profile its name. The same idea moves one derivative higher: the trapezoid's acceleration plot is made of rectangles, while the S-curve's acceleration plot is made of trapezoids. A study of third-order (jerk-limited) trajectories reports that this 7-segment profile produces less vibration than a trapezoidal profile.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <p>
+                                The price is more algebra: the seven segment durations depend on whether the move is long enough to reach a<sub>max</sub> and v<sub>max</sub>, so there are several cases. In practice, engineers use a library. <strong>Ruckig</strong> is an open-source example: it generates trajectories "limited by velocity, acceleration, and jerk constraints" and its README says it "guarantees a time-optimal solution" for moves from one state to another.<sup><a href="#ref-10">[10]</a></sup> The README also points out a subtle feasibility rule. If an axis is already near its velocity limit, any remaining positive acceleration will carry it past the limit, because the jerk limit means acceleration cannot drop to zero instantly. Ruckig's check is |a| &le; &radic;(2 &middot; j<sub>max</sub> &middot; (v<sub>max</sub> &minus; |v|)).<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">05. Polynomial time scaling: cubic and quintic</h2>
+                            <p>
+                                Another way to time a move is to choose a smooth function s(t) that rises from 0 at the start to 1 at the end, then place the robot at the fraction s of the way along its path. This function is called a <strong>time scaling</strong>. The Modern Robotics library offers two polynomial time scalings, where T is the move duration:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>CubicTimeScaling(T, t)   = 3 (t/T)^2 - 2 (t/T)^3
+QuinticTimeScaling(T, t) = 10 (t/T)^3 - 15 (t/T)^4 + 6 (t/T)^5</code></pre>
+                            <p>
+                                The library's documentation says the cubic is "for a third-order polynomial motion that begins and ends at zero velocity", and the quintic "begins and ends at zero velocity and zero acceleration". Its worked examples use T = 2 s and t = 0.6 s, which give 0.216 (cubic) and 0.16308 (quintic).<sup><a href="#ref-2">[2]</a></sup> You can check both by hand: t/T = 0.3, so the cubic gives 3(0.09) &minus; 2(0.027) = 0.216.
+                            </p>
+                            <p>
+                                Where do the coefficients come from? A cubic q(t) = a<sub>0</sub> + a<sub>1</sub>t + a<sub>2</sub>t&sup2; + a<sub>3</sub>t&sup3; has four unknown coefficients, and a rest-to-rest move gives four conditions: start position, end position, zero start velocity and zero end velocity. Solving them gives a<sub>0</sub> = q<sub>0</sub>, a<sub>1</sub> = 0, a<sub>2</sub> = 3(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup2; and a<sub>3</sub> = &minus;2(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup3;, which is the normalized cubic above. A quintic has six coefficients, so it can also meet zero start and end acceleration. Those six conditions lead to the 10, &minus;15, 6 form. Differentiating gives these peak values for a move of distance D in time T (this lesson's own calculation, checked numerically):
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Time scaling</th>
+                                        <th scope="col">Peak velocity</th>
+                                        <th scope="col">Peak acceleration</th>
+                                        <th scope="col">Acceleration at start and end</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Cubic</strong></td>
+                                        <td>1.5 D/T</td>
+                                        <td>6 D/T&sup2;</td>
+                                        <td>Jumps from 0 to its peak at t = 0 (and back at t = T)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Quintic</strong></td>
+                                        <td>1.875 D/T</td>
+                                        <td>about 5.77 D/T&sup2;</td>
+                                        <td>Starts and ends at 0, so no jump</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                The cubic shares the trapezoid's weakness: its acceleration jumps at the ends, so jerk is infinite there. The quintic pays with a higher peak velocity but starts and stops gently. Corke's toolbox provides both kinds of tool: <code>quintic</code> and <code>jtraj</code> for joint-space polynomial trajectories, alongside <code>trapezoidal</code>.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">06. Interpolation: joint, linear and circular paths</h2>
+                            <p>
+                                Now for the path. In <strong>joint interpolation</strong> (MoveJ) each joint moves along a straight line in joint space, from its start angle to its end angle. The Modern Robotics function <code>JointTrajectory(thetastart, thetaend, Tf, N, method)</code> "computes a straight-line trajectory in joint space" and applies one time scaling (method 3 for cubic, 5 for quintic) to every joint.<sup><a href="#ref-2">[2]</a></sup> Because all joints share the same s(t), they start together, reach the halfway point together, and finish together. The tool, however, traces a curve in space, because the forward kinematics that map joint angles to tool position are not linear.
+                            </p>
+                            <p>
+                                Universal Robots' parameter units show the same idea. For <code>moveJ</code>, velocity is the "Joint speed of leading axis [rad/s]" and acceleration is in rad/s&sup2;.<sup><a href="#ref-11">[11]</a></sup> The leading axis is the joint with the largest move. It sets the duration, and the other joints are slowed so that everyone arrives at once.
+                            </p>
+                            <p>
+                                In <strong>linear interpolation (MoveL)</strong> the tool center point (TCP) follows a straight line in Cartesian space. The Modern Robotics <code>CartesianTrajectory</code> function makes "the origin of the end-effector frame follow a straight line, decoupled from the rotational motion". It interpolates position as s&middot;p<sub>end</sub> + (1 &minus; s)&middot;p<sub>start</sub>, and orientation as a rotation about one fixed axis from the start orientation to the end orientation.<sup><a href="#ref-2">[2]</a></sup> Corke's <code>ctraj</code> does the same job with a trapezoidal velocity profile along the path, and its documentation says "orientation interpolation is performed using unit-quaternion interpolation".<sup><a href="#ref-5">[5]</a></sup> This quaternion method is often called SLERP (spherical linear interpolation). For UR's <code>moveL</code>, <code>moveP</code> and <code>moveC</code>, the units change to "Tool speed [m/s]" and "Tool acceleration [m/s&sup2;]", because these moves are planned in Cartesian space. The client library's default values are a = 1.4 and v = 1.04.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Circular interpolation (MoveC)</strong> sends the TCP along an arc. UR's <code>moveC(via, target, ...)</code> moves "in a circular motion going through via", where the circle is defined by the current pose, the via point and the target.<sup><a href="#ref-11">[11]</a></sup> ABB's RAPID has the same three-point idea in <code>MoveC circPoint, toPoint, speed, zone, tool</code>, which appears in the open_abb RAPID server.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">07. Corners: zones, blend radius and parabolic blends</h2>
+                            <p>
+                                If every move in a chain used a full rest-to-rest profile, the robot would stop at every point. That is right where the gripper must open, and wasteful everywhere else. Lesson 2.3 introduced the fix: <strong>blending (zones)</strong>.
+                            </p>
+                            <p>
+                                In ABB RAPID, a stop point is set with <code>fine</code>, and a fly-by point is set with zone data. The open_abb RAPID server shows the fields of <code>zonedata</code>: <code>finep</code> (TRUE means a stop point), <code>pzone_tcp</code> (the TCP zone), <code>pzone_ori</code> (the zone for orientation) and further zone sizes. The same program defines z0 as <code>[FALSE, 0.3, 0.3, 0.3, 0.03, 0.3, 0.03]</code> and builds "fine" by setting finep to TRUE with all zone sizes at 0.<sup><a href="#ref-12">[12]</a></sup> ABB's community forum describes z0 as a fly-by point that passes through a 0.3 mm zone without stopping, which matches those values.<sup><a href="#ref-13">[13]</a></sup> Sources disagree on whether the zone number gives a radius or a diameter: an ABB API page calls <code>pzone_tcp</code> the radius of the TCP zone in mm, while a university course page calls it a diameter.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> Check your controller's own manual before relying on the exact size. Position and orientation have separate zone parameters, so their blends can start and end independently.<sup><a href="#ref-16">[16]</a></sup>
+                            </p>
+                            <p>
+                                Once the TCP enters the zone around a fly-by point, the controller starts on the next segment. The braking ramp of one move overlaps the speeding-up ramp of the next, so the TCP keeps moving and rounds the corner instead of passing through the programmed point. A bigger zone is faster and smoother but stays farther from the point. Users of ABB's community forum report that a "Corner path failure" (event 50024) is commonly caused by a zone point where the robot has to stop anyway, for example because a wait follows it.<sup><a href="#ref-17">[17]</a></sup>
+                            </p>
+                            <p>
+                                Universal Robots uses a <strong>blend radius</strong>. In the UR client library every move type (<code>moveJ</code>, <code>moveL</code>, <code>moveP</code>, <code>moveC</code>) takes a <code>blend_radius</code> parameter, and its default of 0 means no blending.<sup><a href="#ref-11">[11]</a></sup> URScript sources describe the radius r, in meters, as what prevents a stop at the waypoint. They add that if a move's blend region overlaps the previous or next one, the move is skipped with an "Overlapping Blends" warning.<sup><a href="#ref-18">[18]</a></sup> For processes such as extrusion or dispensing, users recommend <code>movep</code>, which moves at constant tool speed with circular blends.<sup><a href="#ref-19">[19]</a></sup>
+                            </p>
+                            <p>
+                                The textbook version of a blended corner is the <strong>LSPB</strong> (linear segments with parabolic blends) trajectory. Corke's <code>trapezoidal()</code> function is literally "a linear motion segment with parabolic blends", and the toolbox keeps the old name <code>lspb()</code> as an alias.<sup><a href="#ref-5">[5]</a></sup> A parabolic blend in position is a ramp in velocity, so a trapezoid and an LSPB are two views of one motion. MoveIt applies the same idea to whole paths: its time-optimal planner states that "the intermediate waypoints of the input path need to be blended so that the entire path is differentiable", and its default path tolerance of 0.1 (rad or m) sets how far the blended path may stray from a waypoint.<sup><a href="#ref-20">[20]</a></sup> That tolerance plays the same role as a zone size.
+                            </p>
+
+                            <h2 class="article-section-title">08. Time parameterization in ROS and MoveIt</h2>
+                            <p>
+                                In ROS 2 these steps are visible. The MoveIt tutorial states: "MoveIt is currently primarily a kinematic motion planning framework &ndash; it plans for joint or end effector positions but not velocity or acceleration."<sup><a href="#ref-21">[21]</a></sup> A planner first returns a geometric path, a list of joint positions with no timing. A post-processing step called <strong>time parameterization</strong> then adds a timestamp, velocity and acceleration to every waypoint.<sup><a href="#ref-21">[21]</a></sup>
+                            </p>
+                            <p>
+                                The limits come from the robot's URDF or a <code>joint_limits.yaml</code> file (<code>max_velocity</code>, <code>max_acceleration</code>, <code>max_jerk</code>). Users can also slow a motion with velocity and acceleration scaling factors between 0 and 1.<sup><a href="#ref-21">[21]</a></sup> The default algorithm is Time-Optimal Trajectory Generation (TOTG), written by Tobias Kunz at Georgia Tech. Its <code>computeTimeStamps</code> function takes the trajectory and the two scaling factors, and it resamples the result every 0.1 s by default.<sup><a href="#ref-20">[20]</a></sup> The tutorial says TOTG "produces trajectories with very smooth and continuous velocity profiles" and that "it is the default everywhere in MoveIt 2". It also warns that resampled waypoints "may divert from the original trajectory within a certain tolerance", so extra collision checks may be needed.<sup><a href="#ref-21">[21]</a></sup>
+                            </p>
+                            <p>
+                                TOTG limits velocity and acceleration but not jerk. The tutorial is direct about the risk: "None of the time parameterization algorithms support jerk limits", and "large jerks along a trajectory can cause jerky motion or damage hardware". Its remedy is to add a Ruckig smoothing step (<code>AddRuckigTrajectorySmoothing</code>) after <code>AddTimeOptimalParameterization</code>.<sup><a href="#ref-21">[21]</a></sup> If limits are missing from the robot description, MoveIt's Ruckig smoother falls back to defaults of 5 rad/s, 10 rad/s&sup2; and 1000 rad/s&sup3;.<sup><a href="#ref-22">[22]</a></sup> Do not rely on those numbers for a real arm. Set the limits yourself.
+                            </p>
+                            <p>
+                                One way to remember the pair, in rough terms: TOTG finds the fastest trapezoid-like timing along the whole path, and Ruckig rounds off the acceleration corners into an S-curve. That is the same trapezoid versus S-curve contrast as in section 04. Ruckig itself is described as "Instantaneous Motion Generation for Robots and Machines". It works from any initial state (position, velocity and acceleration) to a target state, runs inside a real-time control loop, is used by MoveIt 2 and CoppeliaSim, and installs with <code>pip install ruckig</code>.<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">09. Why MoveL can fail where MoveJ succeeds</h2>
+                            <p>
+                                The choice of path has a practical side effect that every robot programmer meets. A joint move commands joint angles directly, so the motion is always well defined. A linear move commands TCP poses. The Modern Robotics <code>CartesianTrajectory</code> function returns only a list of poses, and turning each pose into joint angles requires inverse kinematics at every step. <code>JointTrajectory</code> needs none.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                Near a <strong>singularity</strong> that step becomes a problem. A classic case on a six-axis arm is the wrist singularity, where joint 5 is close to zero and two wrist axes line up. Holding a constant TCP speed through that region can demand very large joint speeds, so the controller slows, stops or reports an error. Users on ABB's forum recommend two ways through: use <code>SingArea \Wrist</code>, which lets the controller relax the tool orientation so a linear move can pass, or replace the move with a MoveJ. They add that SingArea stays active until <code>SingArea \Off</code>, and that a risky target can be spotted by checking whether axis 5 is close to 0.<sup><a href="#ref-23">[23]</a></sup><sup><a href="#ref-24">[24]</a></sup> Forum users also note that RAPID has no error code for catching a singularity, and suggest testing the path in simulation first.<sup><a href="#ref-25">[25]</a></sup>
+                            </p>
+                            <p>
+                                The practical rule: use MoveJ for large repositioning moves in the air, and save MoveL for the approach, the process and the retreat. If a linear move fails near "axis 5 = 0", tilt the wrist in the taught target or switch to a joint move.
+                            </p>
+
+                            <h2 class="article-section-title">10. Choosing a profile in practice</h2>
+                            <p>
+                                The table brings the profiles together. "Continuous" means the quantity has no jumps from start to finish of a rest-to-rest move.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Profile</th>
+                                        <th scope="col">Limits it respects</th>
+                                        <th scope="col">Continuous up to</th>
+                                        <th scope="col">Typical use</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Trapezoid / triangle</strong></td>
+                                        <td>v<sub>max</sub>, a<sub>max</sub></td>
+                                        <td>Velocity (acceleration jumps)</td>
+                                        <td>Simple axes, WPILib mechanisms, LSPB corners</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>S-curve (7 segments)</strong></td>
+                                        <td>v<sub>max</sub>, a<sub>max</sub>, j<sub>max</sub></td>
+                                        <td>Acceleration (jerk is limited)</td>
+                                        <td>Arms and machines where vibration matters; Ruckig</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cubic</strong></td>
+                                        <td>Duration T</td>
+                                        <td>Velocity (acceleration jumps at the ends)</td>
+                                        <td>Simple point-to-point joint moves</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Quintic</strong></td>
+                                        <td>Duration T</td>
+                                        <td>Acceleration (starts and ends at 0)</td>
+                                        <td>Smooth joint moves, such as <code>jtraj</code> or <code>QuinticTimeScaling</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Note the difference in the "Limits" column. The trapezoid and the S-curve start from the limits and compute the shortest time that respects them. The polynomials start from a chosen duration T. For a quintic you must then check 1.875 D/T &le; v<sub>max</sub> and about 5.77 D/T&sup2; &le; a<sub>max</sub>, so T must be large enough to satisfy both.
+                            </p>
+                            <p>
+                                Whichever profile you use, it feeds the loop from this chapter: the profile produces the setpoint, the encoder reports the position, and PID corrects the small difference.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>By hand, plan a move with D = 0.5 m, v<sub>max</sub> = 0.25 m/s and a<sub>max</sub> = 0.5 m/s&sup2;. First check that D &ge; v<sub>max</sub>&sup2;/a<sub>max</sub>, then compute t<sub>a</sub>, t<sub>c</sub> and T (you should get 0.5 s, 1.5 s and 2.5 s). Sketch v(t) on graph paper and confirm that the area under it is 0.5 m.</li>
+                                    <li>Repeat for the short move D = 0.05 m with the same limits. Explain why the profile becomes a triangle, and compute T (0.632 s) and the peak speed (0.158 m/s).</li>
+                                    <li>Run the Python script from section 03 and check that it prints your hand results. Then try D = 0.125 m, exactly on the boundary between the two cases, and explain what happens to t<sub>c</sub>.</li>
+                                    <li>Double a<sub>max</sub> to 1.0 m/s&sup2; and rerun both moves. Which move gets faster by a larger fraction, and why does the total-time formula predict this?</li>
+                                    <li>For D = 0.5 m and a quintic time scaling, find the smallest T that keeps the peak velocity under 0.25 m/s and the peak acceleration under 0.5 m/s&sup2;. Compare it with the trapezoid's 2.5 s.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">11. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">WPILib, frc-docs documentation on trapezoidal motion profiles (source file <code>source/docs/software/advanced-controls/controllers/trapezoidal-profiles.rst</code>), GitHub, main branch, accessed October 21, 2026. <a href="https://github.com/wpilibsuite/frc-docs/blob/main/source/docs/software/advanced-controls/controllers/trapezoidal-profiles.rst" target="_blank" rel="noopener noreferrer">github.com/wpilibsuite/frc-docs/blob/main/source/docs/software/advanced-controls/controllers/trapezoidal-profiles.rst</a>.</li>
+                                <li id="ref-2">NxRLab, Modern Robotics code library (companion to K. M. Lynch and F. C. Park, <em>Modern Robotics: Mechanics, Planning, and Control</em>), &ldquo;core.py,&rdquo; Python package <code>modern_robotics</code>, Chapter 9 trajectory functions, GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/NxRLab/ModernRobotics/blob/master/packages/Python/modern_robotics/core.py" target="_blank" rel="noopener noreferrer">github.com/NxRLab/ModernRobotics/blob/master/packages/Python/modern_robotics/core.py</a>.</li>
+                                <li id="ref-3">Preprint on industrial robot trajectory planning, arXiv:2306.05329, 2023 (statement seen in a search summary; page not opened). <a href="https://arxiv.org/pdf/2306.05329" target="_blank" rel="noopener noreferrer">arxiv.org/pdf/2306.05329</a>.</li>
+                                <li id="ref-4">WPILib, &ldquo;TrapezoidProfile.java,&rdquo; allwpilib repository, <code>wpimath</code> module, release v2025.3.2, GitHub. <a href="https://github.com/wpilibsuite/allwpilib/blob/v2025.3.2/wpimath/src/main/java/edu/wpi/first/math/trajectory/TrapezoidProfile.java" target="_blank" rel="noopener noreferrer">github.com/wpilibsuite/allwpilib/blob/v2025.3.2/wpimath/src/main/java/edu/wpi/first/math/trajectory/TrapezoidProfile.java</a>.</li>
+                                <li id="ref-5">P. Corke, &ldquo;trajectory.py,&rdquo; Robotics Toolbox for Python (implements <code>trapezoidal</code>/<code>lspb</code>, <code>quintic</code>, <code>jtraj</code> and <code>ctraj</code>; accompanies P. Corke, <em>Robotics, Vision &amp; Control in Python</em>, 3rd ed., Springer, 2023, Ch. 3), GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/petercorke/robotics-toolbox-python/blob/master/src/roboticstoolbox/tools/trajectory.py" target="_blank" rel="noopener noreferrer">github.com/petercorke/robotics-toolbox-python/blob/master/src/roboticstoolbox/tools/trajectory.py</a>.</li>
+                                <li id="ref-6">United States Patent and Trademark Office, U.S. Patent No. 12,443,187 (motion profile patent; statement seen in a search summary; document not opened). <a href="https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12443187" target="_blank" rel="noopener noreferrer">image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12443187</a>.</li>
+                                <li id="ref-7">Performance Motion Control, motion profiles reference document, copy hosted on Scribd, document 495862315 (seen in a search summary; not opened). <a href="https://www.scribd.com/document/495862315/PerformanceMotionControlProfiles" target="_blank" rel="noopener noreferrer">scribd.com/document/495862315/PerformanceMotionControlProfiles</a>.</li>
+                                <li id="ref-8">Technosoft Motion, article on S-curve motion profiles, technosoftmotion.com (seen in a search summary; not opened). <a href="https://technosoftmotion.com/?p=10187" target="_blank" rel="noopener noreferrer">technosoftmotion.com/?p=10187</a>.</li>
+                                <li id="ref-9">&ldquo;Optimization of third-order trajectory to reduce the vibration&hellip;,&rdquo; <em>Vietnam Journal of Science and Technology</em> (seen in a search summary; not opened). <a href="https://vjs.ac.vn/jst/article/view/20303" target="_blank" rel="noopener noreferrer">vjs.ac.vn/jst/article/view/20303</a>.</li>
+                                <li id="ref-10">Ruckig project, &ldquo;Ruckig: Instantaneous Motion Generation for Robots and Machines,&rdquo; README, GitHub repository pantor/ruckig, accessed October 21, 2026. Accompanying paper: L. Berscheid and T. Kr&ouml;ger, &ldquo;Jerk-limited Real-time Trajectory Generation with Arbitrary Target States,&rdquo; <em>Robotics: Science and Systems XVII</em>, 2021, arXiv:2105.04830. <a href="https://github.com/pantor/ruckig" target="_blank" rel="noopener noreferrer">github.com/pantor/ruckig</a>.</li>
+                                <li id="ref-11">Universal Robots, &ldquo;instruction_executor.h,&rdquo; Universal_Robots_Client_Library, GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/include/ur_client_library/ur/instruction_executor.h" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/include/ur_client_library/ur/instruction_executor.h</a>.</li>
+                                <li id="ref-12">open_abb project, &ldquo;SERVER.mod&rdquo; (RAPID server module for ABB robots), GitHub repository robotics/open_abb, master branch, accessed October 21, 2026. <a href="https://github.com/robotics/open_abb/blob/master/RAPID/SERVER.mod" target="_blank" rel="noopener noreferrer">github.com/robotics/open_abb/blob/master/RAPID/SERVER.mod</a>.</li>
+                                <li id="ref-13">ABB Robotics tech community, &ldquo;Does ABB robot support continuous trajectory control?&rdquo; forum thread (seen in a search summary; not opened). <a href="https://tech-community.robotics.abb.com/t/does-abb-robot-support-continuous-trajectory-control/11270" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/does-abb-robot-support-continuous-trajectory-control/11270</a>.</li>
+                                <li id="ref-14">ABB, RobotStudio Developer Center, FlexPendant SDK API reference, zonedata (<code>pzone_tcp</code>) page (seen in a search summary; not opened). <a href="https://developercenter.robotstudio.com/api/fpsdk/html/fb6df07f-0116-77ed-cd7f-7a5aab872b19.htm" target="_blank" rel="noopener noreferrer">developercenter.robotstudio.com/api/fpsdk/html/fb6df07f-0116-77ed-cd7f-7a5aab872b19.htm</a>.</li>
+                                <li id="ref-15">CityTech OpenLab, City University of New York, robotics course &ldquo;Assignment 2&rdquo; page (seen in a search summary; not opened). <a href="https://openlab.citytech.cuny.edu/robot/assignment2/" target="_blank" rel="noopener noreferrer">openlab.citytech.cuny.edu/robot/assignment2</a>.</li>
+                                <li id="ref-16">FZI Research Center for Information Technology, &ldquo;ABB,&rdquo; Robot Interface Proposal documentation, industry section, Read the Docs (seen in a search summary; not opened). <a href="https://fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html" target="_blank" rel="noopener noreferrer">fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html</a>.</li>
+                                <li id="ref-17">ABB Robotics tech community, &ldquo;Corner Path failure 50024,&rdquo; forum thread (seen in a search summary; not opened). <a href="https://tech-community.robotics.abb.com/t/corner-path-failure-50024/3188" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/corner-path-failure-50024/3188</a>.</li>
+                                <li id="ref-18">UGA Innovation Factory, &ldquo;URScript.py,&rdquo; UR10-Sentry repository (URScript wrapper with movel/movep documentation; seen in a search summary; not opened). <a href="https://git.factory.uga.edu/UGA-Innovation-Factory/UR10-Sentry/src/branch/main/Robot/UR/URScript.py" target="_blank" rel="noopener noreferrer">git.factory.uga.edu/UGA-Innovation-Factory/UR10-Sentry/src/branch/main/Robot/UR/URScript.py</a>.</li>
+                                <li id="ref-19">Universal Robots forum, &ldquo;How to create smooth robot motion for extrusion,&rdquo; forum thread (seen in a search summary; not opened). <a href="https://forum.universal-robots.com/t/how-to-create-smooth-robot-motion-for-extrusion/37075" target="_blank" rel="noopener noreferrer">forum.universal-robots.com/t/how-to-create-smooth-robot-motion-for-extrusion/37075</a>.</li>
+                                <li id="ref-20">T. Kunz (Georgia Tech) and MoveIt contributors, &ldquo;time_optimal_trajectory_generation.hpp&rdquo; and source, MoveIt 2 <code>moveit_core/trajectory_processing</code>, GitHub, main branch, accessed October 21, 2026. <a href="https://github.com/moveit/moveit2/blob/main/moveit_core/trajectory_processing/include/moveit/trajectory_processing/time_optimal_trajectory_generation.hpp" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2/blob/main/moveit_core/trajectory_processing/include/moveit/trajectory_processing/time_optimal_trajectory_generation.hpp</a>.</li>
+                                <li id="ref-21">MoveIt 2 Tutorials, &ldquo;Time Parameterization&rdquo; (source file <code>doc/examples/time_parameterization/time_parameterization_tutorial.rst</code>), GitHub, main branch, accessed October 21, 2026. <a href="https://github.com/moveit/moveit2_tutorials/blob/main/doc/examples/time_parameterization/time_parameterization_tutorial.rst" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2_tutorials/blob/main/doc/examples/time_parameterization/time_parameterization_tutorial.rst</a>.</li>
+                                <li id="ref-22">MoveIt 2, &ldquo;ruckig_traj_smoothing.cpp,&rdquo; <code>moveit_core/trajectory_processing</code>, GitHub, main branch, accessed October 21, 2026. <a href="https://github.com/moveit/moveit2/blob/main/moveit_core/trajectory_processing/src/ruckig_traj_smoothing.cpp" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2/blob/main/moveit_core/trajectory_processing/src/ruckig_traj_smoothing.cpp</a>.</li>
+                                <li id="ref-23">ABB Robotics tech community, &ldquo;How do I check if a MoveL instruction can be completed without a singularity or avoid it?&rdquo; forum thread (seen in a search summary; not opened). <a href="https://tech-community.robotics.abb.com/t/how-do-i-check-if-a-movel-instruction-can-be-completed-without-a-singularity-or-avoid-it/7883" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/how-do-i-check-if-a-movel-instruction-can-be-completed-without-a-singularity-or-avoid-it/7883</a>.</li>
+                                <li id="ref-24">ABB Robotics tech community, &ldquo;SingArea help,&rdquo; forum thread (seen in a search summary; not opened). <a href="https://tech-community.robotics.abb.com/t/singarea-help/7164" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/singarea-help/7164</a>.</li>
+                                <li id="ref-25">RobotStudio forums (ABB), discussion comment 25437 on detecting singularities in RAPID (seen in a search summary; not opened). <a href="https://forums.robotstudio.com/discussion/comment/25437" target="_blank" rel="noopener noreferrer">forums.robotstudio.com/discussion/comment/25437</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-5-8.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">5.8 Intro to Kalman Filters</span>
+                                </a>
+                                <a href="robotics-5-10.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">5.10 Kinematics of a 2-Link Arm</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.7" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.4" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 3.8 Moving an Arm with MoveIt 2
+-->
+<html lang="en">
+    <head>
+        <title>3.8 Moving an Arm with MoveIt 2 — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Plan and execute arm motions with MoveIt 2 on ROS 2 Lyrical: URDF and SRDF, ros2_control mock hardware, move_group, OMPL and Pilz PTP/LIN, and a UR5e in RViz." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-8.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.8 Moving an Arm with MoveIt 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Plan and execute arm motions with MoveIt 2 on ROS 2 Lyrical: URDF and SRDF, ros2_control mock hardware, move_group, OMPL and Pilz PTP/LIN, and a UR5e in RViz." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-8.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.8 Moving an Arm with MoveIt 2, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.8 Moving an Arm with MoveIt 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Plan and execute arm motions with MoveIt 2 on ROS 2 Lyrical: URDF and SRDF, ros2_control mock hardware, move_group, OMPL and Pilz PTP/LIN, and a UR5e in RViz." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-ros.html">Chapter 3 &middot; Robot Operating System (ROS)</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">3.8 Moving an Arm with MoveIt 2</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. From teach-pendant moves to motion planning</h2>
+                            <p>
+                                In <a href="robotics-2-6.html">lesson 2.6</a> you programmed a pick-and-place by hand: a joint move (MoveJ) to get near the part, then a linear move (MoveL) straight down to it. You chose every waypoint and checked by eye that the arm would not hit anything. That gets hard when the target changes every cycle or the cell is crowded.
+                            </p>
+                            <p>
+                                <strong>MoveIt 2</strong> is the standard ROS 2 framework for this problem. You give it a goal for the arm (a joint configuration, a named pose, or a pose for the tool), and it works out the joint angles, checks the motion against a model of the robot and its surroundings for collisions, produces a timed trajectory, and sends that trajectory to the robot's controllers.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> In this lesson you will see what MoveIt needs to know about a robot and how it plans, then run a Universal Robots UR5e on <em>mock hardware</em>, a software stand-in for the robot, and plan motions in RViz with no robot attached.
+                            </p>
+                            <p>
+                                The course targets ROS 2 <strong>Lyrical Luth</strong>, the long-term support release from May 2026, supported until May 2031, with Ubuntu 26.04 "Resolute" as its Tier 1 platform.<sup><a href="#ref-3">[3]</a></sup> All three pieces used here are released for Lyrical. The UR driver has its own <code>lyrical</code> branch, released as version 6.2.0.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> The UR robot description is built for Lyrical from its <code>rolling</code> branch (version 4.3.1).<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> MoveIt itself is released into Lyrical as version 2.15.2 from its <code>main</code> branch; as of October 2026 there is no separate <code>lyrical</code> branch in the MoveIt repository.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-7">[7]</a></sup> The MoveIt tutorials site still calls Jazzy "the latest stable version," so its docs lag behind the released code.<sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">02. Describing the arm: URDF and xacro</h2>
+                            <p>
+                                Before anything can plan for a robot, the software needs a model of it. In ROS that model is the <strong>URDF</strong> (Unified Robot Description Format), an XML file that describes the robot as a tree of <em>links</em> (rigid bodies) connected by <em>joints</em>. Each joint names a parent link and a child link and gives an <code>&lt;origin xyz rpy&gt;</code> that places the child relative to the parent.<sup><a href="#ref-9">[9]</a></sup> This is the base-to-tool chain of frames from <a href="robotics-1-6.html">lesson 1.6</a> in machine-readable form.
+                            </p>
+                            <p>
+                                The joint type says how the child can move. A <code>fixed</code> joint does not move at all. A <code>continuous</code> joint spins to any angle and needs only an <code>&lt;axis&gt;</code>. A <code>revolute</code> joint rotates like a continuous one but has strict limits, and a <code>prismatic</code> joint slides along an axis instead of turning around it.<sup><a href="#ref-9">[9]</a></sup> Revolute and prismatic joints must carry a <code>&lt;limit&gt;</code> tag with lower and upper bounds (radians for revolute, meters for prismatic) plus a maximum velocity and effort. The ROS 2 tutorial gives this prismatic example:<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>&lt;limit effort="1000.0" lower="0.0" upper="0.548" velocity="0.5"/&gt;</code></pre>
+                            <p>
+                                The same tutorial shows how a URDF reaches the screen. A joint state publisher reads the movable joints and their limits and publishes <code>sensor_msgs/msg/JointState</code> messages; <code>robot_state_publisher</code> turns the joint values into the tf2 transform tree; and RViz draws the result.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <p>
+                                Writing a full URDF by hand for every robot model would mean a lot of repeated XML. Universal Robots avoids this with <strong>xacro</strong>, the XML macro language used in ROS. Their documentation explains that all UR models have roughly the same kinematics and differ only in meshes, DH parameters and physical parameters, so "the description uses xacro macros in order to make it reuse as much as possible."<sup><a href="#ref-10">[10]</a></sup> The file <code>urdf/ur_macro.xacro</code> is the macro that other projects include, and <code>urdf/ur.urdf.xacro</code> is an example scene with the robot standing alone.<sup><a href="#ref-10">[10]</a></sup> Each model is configured by four YAML files in <code>config/urXX/</code>: <code>default_kinematics.yaml</code> (calibration values, which you can replace with values extracted from a real robot so the model matches it exactly at <code>tool0</code>), <code>joint_limits.yaml</code>, <code>physical_parameters.yaml</code> (inertias) and <code>visual_parameters.yaml</code> (meshes).<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                Inside the macro, the six arm joints are <code>shoulder_pan_joint</code>, <code>shoulder_lift_joint</code>, <code>elbow_joint</code>, <code>wrist_1_joint</code>, <code>wrist_2_joint</code> and <code>wrist_3_joint</code>. The first five are revolute, and the type of <code>wrist_3_joint</code> is set by a parameter. Each joint's <code>&lt;limit&gt;</code> is filled in from the YAML files, and a <code>tf_prefix</code> is added in front of every name.<sup><a href="#ref-11">[11]</a></sup> For the UR5e, for example, <code>shoulder_pan_joint</code> may turn from -360&deg; to +360&deg; at up to 180&deg;/s. The file sets <code>has_acceleration_limits: false</code> because, in its own words, "acceleration limits are not publicly available"; the values come from the UR5e user manual.<sup><a href="#ref-11">[11]</a></sup> If you only want to look at the model, the description package has a viewer launch file:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 launch ur_description view_ur.launch.xml ur_type:=ur5e</code></pre>
+
+                            <h2 class="article-section-title">03. The SRDF: what MoveIt adds on top</h2>
+                            <p>
+                                The URDF says what the robot <em>is</em>: its geometry, kinematics and hard limits. MoveIt also needs to know how to <em>think</em> about the robot. That information lives in a second file, the <strong>SRDF</strong> (Semantic Robot Description Format). The header comment in UR's SRDF puts it plainly: "This does not replace URDF, and is not an extension of URDF. This is a format for representing semantic information about the robot structure."<sup><a href="#ref-12">[12]</a></sup> An SRDF can define planning groups, named group states, end effectors, a virtual joint that fixes the robot to the world, and pairs of links whose collisions can be ignored.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                UR's SRDF defines exactly one <strong>planning group</strong>, called <code>ur_manipulator</code>, as the chain of links from the base to the tool flange:<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>&lt;group name="ur_manipulator"&gt;
+    &lt;chain base_link="base_link" tip_link="tool0"/&gt;
+&lt;/group&gt;</code></pre>
+                            <p>
+                                It also defines three named poses: <code>home</code> (shoulder_lift at -1.5707 rad, all other joints 0), <code>up</code> (shoulder_lift and wrist_1 both at -1.5707 rad) and <code>test_configuration</code>.<sup><a href="#ref-12">[12]</a></sup> Two sections of the file are only comments with no elements in them: the end effector and the virtual joint.<sup><a href="#ref-12">[12]</a></sup> There is no end effector because the stock UR description has no gripper. That has a direct consequence for this lesson: the "pick" you plan later is an approach motion of <code>tool0</code> to a pose above and at a part. Nothing opens or closes.
+                            </p>
+                            <p>
+                                The last part of the SRDF is a list of 11 <code>&lt;disable_collisions&gt;</code> pairs, each marked with a reason of <code>Adjacent</code> or <code>Never</code>. For example, <code>forearm_link</code> and <code>upper_arm_link</code> are adjacent (they are always touching at the elbow), and <code>tool0</code> and <code>wrist_1_link</code> can never reach each other.<sup><a href="#ref-12">[12]</a></sup> MoveIt stores this in its <strong>Allowed Collision Matrix (ACM)</strong> and skips those checks. That matters for speed: according to the MoveIt docs, collision checking "often account[s] for close to 90% of the computational expense during motion planning."<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <p>
+                                MoveIt's central node reads the URDF from the <code>robot_description</code> parameter and the SRDF from <code>robot_description_semantic</code>.<sup><a href="#ref-1">[1]</a></sup> The SRDF "is typically created (once) by a user using the MoveIt Setup Assistant," covered in section 09.<sup><a href="#ref-1">[1]</a></sup> UR ships one already, in the <code>ur_moveit_config</code> package. Its documentation calls this package an <em>example</em> that contains only the arm. For real work, UR recommends building a description of the robot together with its workcell (table, fixtures, objects) and generating your own <code>scenario_moveit_config</code> from it.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">04. ros2_control and mock hardware</h2>
+                            <p>
+                                MoveIt does not talk to motors. It hands a trajectory to a controller, and in ROS 2 the controllers live in the <strong>ros2_control</strong> framework. The main component of ros2_control is the <strong>controller manager</strong>, which "manages lifecycle of controllers, access to the hardware interfaces and offers services to the ROS-world."<sup><a href="#ref-15">[15]</a></sup> It connects <em>hardware interfaces</em> (plugins that read and write the joints) to <em>controllers</em> (plugins that turn goals into commands). The hardware plugin is declared in a <code>&lt;ros2_control&gt;</code> tag inside the URDF, with each joint listing its <code>&lt;command_interface&gt;</code> and <code>&lt;state_interface&gt;</code> entries (position, velocity, acceleration).<sup><a href="#ref-16">[16]</a></sup>
+                            </p>
+                            <p>
+                                ros2_control also provides <strong>mock components</strong>, which the documentation describes as "trivial 'simulations' of the hardware components". They "provide ideal behavior by mirroring commands to their states": if a controller commands a joint to 0.5 rad, the mock reports that the joint is now at 0.5 rad.<sup><a href="#ref-16">[16]</a></sup> This lets you test the "piping," "and even integrations with, e.g., MoveIt," without a robot.<sup><a href="#ref-16">[16]</a></sup> The mock system plugin is selected with <code>&lt;plugin&gt;mock_components/GenericSystem&lt;/plugin&gt;</code>.<sup><a href="#ref-16">[16]</a></sup>
+                            </p>
+                            <p>
+                                The UR driver uses this directly. In its <code>ur.ros2_control.xacro</code>, an <code>xacro:if</code> on the argument <code>use_mock_hardware</code> selects <code>mock_components/GenericSystem</code>, and the matching <code>xacro:unless</code> branch selects the real UR hardware plugin.<sup><a href="#ref-17">[17]</a></sup> The argument defaults to <code>false</code>, and the URDF also passes in initial joint positions "for simulations (Mock Hardware, Gazebo, Ignition)."<sup><a href="#ref-17">[17]</a></sup> The driver's launch file <code>ur_control.launch.py</code> exposes the same switch, described as "Start robot with mock hardware mirroring command to its states."<sup><a href="#ref-18">[18]</a></sup> UR's startup guide adds that it is "Useful for testing launch files, descriptions, etc."<sup><a href="#ref-19">[19]</a></sup>
+                            </p>
+                            <p>
+                                Mock hardware is not a physics simulator. Commands simply become states, so the arm can jump to positions instead of accelerating like a real one. UR's simulation page also lists driver features that do not work on mock hardware: the TCP pose broadcaster, the passthrough trajectory controller, force mode, and GPIO verification (setting an I/O pin reports a failure).<sup><a href="#ref-20">[20]</a></sup> That is fine for seeing MoveIt plan and send trajectories; timing, contact and I/O need Gazebo, URSim or a real arm.
+                            </p>
+                            <p>
+                                <strong>Watch out for old tutorials.</strong> The argument used to be called <code>use_fake_hardware</code> (with <code>fake_sensor_commands</code>). The UR changelogs record the rename as "Use mock_hardware and mock_sensor_commands instead of fake (#739)."<sup><a href="#ref-21">[21]</a></sup> On Lyrical, use <code>use_mock_hardware:=true</code>.
+                            </p>
+                            <p>
+                                Two controllers matter for MoveIt. The <strong>joint_trajectory_controller</strong> (JTC) executes "joint-space trajectories on a group of joints," interpolating in time between waypoints that hold positions and optional velocities and accelerations. It accepts goals on the action <code>&lt;controller_name&gt;/follow_joint_trajectory</code> of type <code>control_msgs::action::FollowJointTrajectory</code>.<sup><a href="#ref-22">[22]</a></sup> On the UR <code>lyrical</code> branch it is configured as <code>joint_trajectory_controller/JointTrajectoryController</code> over the six UR joints, and it is the driver's default <code>initial_joint_controller</code>.<sup><a href="#ref-23">[23]</a></sup><sup><a href="#ref-18">[18]</a></sup> The <strong>joint_state_broadcaster</strong> "reads all state interfaces and reports them on <code>/joint_states</code>." It is not a real controller and takes no commands.<sup><a href="#ref-24">[24]</a></sup>
+                            </p>
+                            <p>
+                                Put together, the data flows in a loop: MoveIt sends a goal to the JTC, the JTC commands the mock hardware, the mock copies commands into states, and the joint_state_broadcaster publishes them on <code>/joint_states</code> for MoveIt and <code>robot_state_publisher</code>. Swapping the mock for a real UR changes only the hardware plugin.
+                            </p>
+
+                            <h2 class="article-section-title">05. Inside move_group</h2>
+                            <p>
+                                MoveIt's central node is <strong>move_group</strong>. The documentation describes it as "an integrator: pulling all the individual components together to provide a set of ROS actions and services." You reach it from the RViz Motion Planning plugin or from code.<sup><a href="#ref-1">[1]</a></sup> It reads three kinds of configuration: the URDF, the SRDF, and the MoveIt configuration files (joint limits, kinematics, planning and perception) from a <code>*_moveit_config</code> package.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                move_group depends on the rest of the ROS graph in a few specific ways:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Joint states:</span> it listens on <code>/joint_states</code> and does not start its own joint state publisher.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Transforms:</span> it only listens to TF, so a <code>robot_state_publisher</code> must be running.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Controllers:</span> "move_group talks to the controllers on the robot using the FollowJointTrajectoryAction interface." It creates only the action client; the robot side (here the JTC) must provide the server.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Plugins:</span> capabilities such as kinematics, motion planning, and pick and place are pluginlib plugins configured in YAML, usually generated by the Setup Assistant.<sup><a href="#ref-1">[1]</a></sup></li>
+                            </ul>
+                            <p>
+                                This is why the hands-on uses two terminals. The first starts the robot side (driver, ros2_control, controllers, <code>robot_state_publisher</code>); the second starts move_group and RViz.
+                            </p>
+
+                            <h2 class="article-section-title">06. Planning scene, collisions and kinematics</h2>
+                            <p>
+                                To avoid collisions, move_group keeps a <strong>planning scene</strong>: "the representation of the world around the robot and also the state of the robot itself." A Planning Scene Monitor keeps it up to date. move_group's monitor listens on <code>/planning_scene</code> and republishes on <code>monitored_planning_scene</code>, which is what the RViz plugin displays.<sup><a href="#ref-25">[25]</a></sup> Objects in the world can come from sensors (point clouds and depth images turned into an Octomap) or be added by the user.<sup><a href="#ref-25">[25]</a></sup> From code, the "Planning Around Objects" tutorial adds a collision box through the <code>PlanningSceneInterface</code> with the operation <code>ADD</code>.<sup><a href="#ref-26">[26]</a></sup>
+                            </p>
+                            <p>
+                                Collision checks are done with the FCL library, which handles meshes (<code>.stl</code>, <code>.dae</code>), primitive shapes (box, cylinder, cone, sphere, plane) and Octomaps, with the ACM from the SRDF turning off checks for listed pairs.<sup><a href="#ref-13">[13]</a></sup> By default every motion plan request is checked for collisions "(including self-collisions and attached objects)," and a request can add position, orientation, visibility and joint constraints.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                The other half of planning is <strong>kinematics</strong>. Forward kinematics (joint angles to tool pose) and Jacobians are computed by MoveIt's <code>RobotState</code>. Inverse kinematics (tool pose to joint angles, see <a href="robotics-1-6.html">1.6</a>) is a plugin, and the default is "the KDL numerical Jacobian-based solver."<sup><a href="#ref-13">[13]</a></sup> UR's config uses exactly that for the <code>ur_manipulator</code> group: <code>kdl_kinematics_plugin/KDLKinematicsPlugin</code> with a search resolution of 0.005 and a timeout of 0.005 s.<sup><a href="#ref-27">[27]</a></sup> A pose outside the arm's reach simply has no solution, which you will try in RViz.
+                            </p>
+
+                            <h2 class="article-section-title">07. Choosing a planner: OMPL or Pilz</h2>
+                            <p>
+                                Planners plug into MoveIt through a common interface. The Setup Assistant configures <strong>OMPL</strong> (the Open Motion Planning Library) as the default, and "other planners that are available by default are the Pilz industrial motion planner and CHOMP." You pick one with the <code>planning_pipeline</code> and <code>planner_id</code> parameters.<sup><a href="#ref-2">[2]</a></sup> UR's config package ships settings for all three.<sup><a href="#ref-27">[27]</a></sup>
+                            </p>
+                            <p>
+                                OMPL "primarily implements randomized motion planners" and "has no concept of a robot"; MoveIt supplies the robot model and collision checks.<sup><a href="#ref-2">[2]</a></sup> A randomized planner searches for some path that avoids obstacles. It handles clutter well but promises nothing about the shape of the tool path, and two plans to the same goal can differ.
+                            </p>
+                            <p>
+                                The <strong>Pilz industrial motion planner</strong> works the way a teach pendant does. It "provides a trajectory generator to plan standard robot motions like point-to-point, linear, and circular," selected with the <code>planner_id</code> <code>"PTP"</code>, <code>"LIN"</code> or <code>"CIRC"</code>.<sup><a href="#ref-28">[28]</a></sup> These map onto the moves you programmed in Chapter 2:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr><th scope="col">Pilz planner</th><th scope="col">What it does</th><th scope="col">Pendant equivalent</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><code>PTP</code></td><td>"Fully synchronized point-to-point trajectories with trapezoidal joint velocity profiles." The slowest axis leads and the others are slowed so all finish together. The goal can be in joint or Cartesian space.<sup><a href="#ref-28">[28]</a></sup></td><td>MoveJ</td></tr>
+                                    <tr><td><code>LIN</code></td><td>"A linear Cartesian trajectory between goal and start poses," with a trapezoidal speed profile in Cartesian space.<sup><a href="#ref-28">[28]</a></sup></td><td>MoveL</td></tr>
+                                    <tr><td><code>CIRC</code></td><td>A circular arc in Cartesian space, defined by a center point (always the shorter arc, so no half circle) or an interim point the tool passes through (no full circle).<sup><a href="#ref-28">[28]</a></sup></td><td>MoveC</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Pilz limits come from two places. The <code>joint_limits.yaml</code> in the MoveIt config overrides the URDF limits, and acceleration limits can only be set there. Cartesian limits for LIN and CIRC (<code>max_trans_vel</code>, <code>max_trans_acc</code>, <code>max_trans_dec</code>, <code>max_rot_vel</code>) go in <code>pilz_cartesian_limits.yaml</code>.<sup><a href="#ref-28">[28]</a></sup> UR's file sets a maximum translational velocity of 1.0, acceleration of 2.25, deceleration of -5.0 and rotational velocity of 1.57, and its Pilz pipeline uses <code>PTP</code> as the default planner.<sup><a href="#ref-27">[27]</a></sup> Pilz can also chain moves into a <code>MotionSequenceRequest</code> with a <code>blend_radius</code>, so the tool rounds a corner instead of stopping, much like a zone or blend on an industrial controller. If any command in a sequence fails to plan, none are executed.<sup><a href="#ref-28">[28]</a></sup>
+                            </p>
+                            <p>
+                                A simple rule for a pick: use OMPL or PTP to get to a safe pose above the part when you care about avoiding obstacles more than the path shape, and use LIN for the short final approach, where the tool must travel straight down. That is the same MoveJ-then-MoveL pattern from <a href="robotics-2-6.html">2.6</a>.
+                            </p>
+
+                            <h2 class="article-section-title">08. From path to trajectory to execution</h2>
+                            <p>
+                                A planner first finds a <em>path</em>, a list of joint configurations. A robot needs a <em>trajectory</em>, which adds timing, velocity and acceleration to every point. MoveIt's output "is a trajectory and not just a path."<sup><a href="#ref-2">[2]</a></sup> <strong>Planning request adapters</strong> do the work around the planner. Before planning they check that the start state is within joint bounds (<code>CheckStartStateBounds</code>), that the goal is inside the workspace (<code>ValidateWorkspaceBounds</code>, a 10 m cube by default), and that the start state is not in collision (<code>CheckStartStateCollision</code>), and they resolve constraint frames (<code>ResolveConstraintFrames</code>). After planning, time parameterization turns the path into a trajectory that respects velocity and acceleration limits.<sup><a href="#ref-2">[2]</a></sup> UR's OMPL pipeline uses those four request adapters plus the response adapters <code>AddTimeOptimalParameterization</code>, <code>ValidateSolution</code> and <code>DisplayMotionPath</code>.<sup><a href="#ref-27">[27]</a></sup>
+                            </p>
+                            <p>
+                                Execution is set in <code>moveit_controllers.yaml</code>. UR's file uses <code>moveit_simple_controller_manager/MoveItSimpleControllerManager</code> with one controller, <code>joint_trajectory_controller</code>, reached through the action namespace <code>follow_joint_trajectory</code> with type <code>FollowJointTrajectory</code> over the six joints.<sup><a href="#ref-27">[27]</a></sup> It also sets <code>allowed_start_tolerance: 0.01</code> and turns <code>execution_duration_monitoring</code> off.<sup><a href="#ref-27">[27]</a></sup> The UR docs explain that a real UR can run slower than planned because of speed scaling, and that monitoring "will in most cases unnecessarily (and unexpectedly) abort goals."<sup><a href="#ref-14">[14]</a></sup> They also make a useful distinction about limits: "the URDF describes the hardware's limits, while the moveit_config provides limits on an application / planning level."<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">09. The Setup Assistant and the code interfaces</h2>
+                            <p>
+                                Where do the SRDF and all these YAML files come from for a new robot? The <strong>MoveIt Setup Assistant</strong> is a graphical wizard that reads a URDF and generates a <code>*_moveit_config</code> package. You start it with <code>ros2 launch moveit_setup_assistant setup_assistant.launch.py</code>.<sup><a href="#ref-29">[29]</a></sup> Its panes step through the self-collision matrix, virtual joints, planning groups (with the KDL kinematics plugin), named poses, end effectors (needed to attach objects for pick and place), ros2_control and MoveIt controllers, and launch files, then generate the package.<sup><a href="#ref-29">[29]</a></sup> You do not need it for the bare UR, but you would after adding a gripper or table to your workcell description.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <p>
+                                Everything you do in RViz can also be done from code. C++ programs use <code>MoveGroupInterface</code>, for example <code>setPoseTarget(target_pose)</code>, with <code>PlanningSceneInterface</code> for collision objects.<sup><a href="#ref-26">[26]</a></sup> Python programs use <strong>MoveItPy</strong>. The documented pattern is: create a <code>MoveItPy</code> object, get a planning component for a group, set the start state to the current state, set a goal (a named configuration, a robot state, or a pose for a link), call <code>plan()</code>, and pass the resulting trajectory to <code>execute()</code>.<sup><a href="#ref-30">[30]</a></sup> Planning parameters can select a pipeline and planner per request, for example <code>planning_pipeline: pilz_industrial_motion_planner</code> with <code>planner_id: "PTP"</code>.<sup><a href="#ref-30">[30]</a></sup> Adapted to the UR group names, the core looks like this. It is an untested example; running it needs a MoveItPy parameter file and launch file that UR does not ship, so treat it as an extension and test it in simulation first.
+                            </p>
+                            <pre class="article-code"><code>from moveit.planning import MoveItPy
+
+robot = MoveItPy(node_name="moveit_py")
+arm = robot.get_planning_component("ur_manipulator")
+
+arm.set_start_state_to_current_state()
+arm.set_goal_state(configuration_name="home")   # named pose from the SRDF
+
+plan_result = arm.plan()
+if plan_result:
+    robot.execute(plan_result.trajectory, controllers=[])</code></pre>
+
+                            <h2 class="article-section-title">10. Launching a UR5e on mock hardware</h2>
+                            <p>
+                                The UR README installs the driver with the <code>ur</code> meta-package (its example is <code>sudo apt-get install ros-rolling-ur</code>), which bundles <code>ur_robot_driver</code>, <code>ur_controllers</code>, <code>ur_moveit_config</code>, <code>ur_calibration</code> and <code>ur_dashboard_msgs</code>.<sup><a href="#ref-4">[4]</a></sup> The Lyrical release lists the same packages at version 6.2.0, so on Lyrical the package should be <code>ros-lyrical-ur</code>.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>sudo apt update
+sudo apt install ros-lyrical-ur</code></pre>
+                            <p>
+                                UR documents starting the driver on mock hardware with <code>ur_type</code>, a placeholder <code>robot_ip</code> and <code>use_mock_hardware:=true</code>.<sup><a href="#ref-31">[31]</a></sup> The <code>robot_ip</code> argument is required even with mock hardware, because the launch file declares it with no default; any address works.<sup><a href="#ref-18">[18]</a></sup> The driver's launch file opens its own RViz by default (<code>launch_rviz</code> is <code>true</code>), so this lesson adds <code>launch_rviz:=false</code> to avoid two RViz windows.<sup><a href="#ref-18">[18]</a></sup> MoveIt is then started with <code>ur_moveit.launch.py</code>, which UR documents for "real hardware, URSim or mocked hardware."<sup><a href="#ref-14">[14]</a></sup> It waits for the robot description, then starts <code>move_group</code> and RViz.<sup><a href="#ref-32">[32]</a></sup>
+                            </p>
+                            <pre class="article-code"><code># Terminal 1: driver on mock hardware (no robot needed; the IP is a placeholder)
+ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101 \
+  use_mock_hardware:=true launch_rviz:=false
+
+# Terminal 2: MoveIt and RViz with the MotionPlanning plugin
+ros2 launch ur_moveit_config ur_moveit.launch.py ur_type:=ur5e launch_rviz:=true
+
+# Optional, in a third terminal: check that the controllers are active
+ros2 control list_controllers</code></pre>
+                            <p>
+                                These commands were put together from the UR and MoveIt documentation for this lesson and were <strong>not run</strong> while researching it, so test them on your own Lyrical install before class. Use the same <code>ur_type</code> in both terminals. If MoveIt cannot execute, check the controllers first: <code>ros2 control list_controllers</code> should list <code>joint_trajectory_controller</code> as active, and UR's smoke test <code>ros2 launch ur_robot_driver test_joint_trajectory_controller.launch.py</code> moves the arm without MoveIt. UR warns that "the robot should move (or jump when using emulation)."<sup><a href="#ref-31">[31]</a></sup>
+                            </p>
+                            <p>
+                                In RViz, the Motion Planning panel is the tool UR points to for using MoveIt with its arms.<sup><a href="#ref-31">[31]</a></sup> The robot model shows the start state in green and the goal state in orange, and you drag the goal with an interactive marker; if no marker appears, press <strong>Interact</strong> in the toolbar.<sup><a href="#ref-33">[33]</a></sup> Links in collision turn red. With "Use Collision-Aware IK" checked, the IK solver keeps searching for a collision-free solution as you drag.<sup><a href="#ref-33">[33]</a></sup> In the Planning tab, <strong>Plan</strong> computes a trajectory, "Show Trail" draws it, and <strong>Execute</strong> (or <strong>Plan &amp; Execute</strong>) sends it to the robot. "Use Cartesian Path" makes the tool move in a straight line. Velocity and acceleration scaling both default to 10% (0.1).<sup><a href="#ref-33">[33]</a></sup> The "Trajectory - Trajectory Slider" panel (Panels menu) steps through the waypoints.<sup><a href="#ref-33">[33]</a></sup>
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Start the two terminals from section 10 (test the commands on your install first; they were not run for this lesson). In RViz, open the MotionPlanning panel, set the Planning Group to <code>ur_manipulator</code> and the Start State to <code>&lt;current&gt;</code>. Run <code>ros2 control list_controllers</code> and confirm <code>joint_trajectory_controller</code> and <code>joint_state_broadcaster</code> are active.</li>
+                                    <li>Pick a "part" location on the floor in front of the robot. Set the Goal State to <code>up</code>, then drag the orange marker to a <strong>pre-grasp</strong> pose about 10 cm above that spot with the tool pointing down. Press Plan, watch the trail, then Execute. Remember there is no gripper in the stock description: you are moving <code>tool0</code>, not grasping anything.</li>
+                                    <li>Return to <code>up</code>, plan the same pre-grasp goal twice more with the default OMPL planner, and compare the trails. Then, if your Planning tab lists the <code>pilz_industrial_motion_planner</code> pipeline, choose it with planner <code>PTP</code> and plan again. Which one behaves like the MoveJ from 2.6?</li>
+                                    <li>From the pre-grasp pose, drag the marker straight down 10 cm to the <strong>grasp</strong> pose. Plan once with Pilz <code>LIN</code> (or OMPL with "Use Cartesian Path" checked) and once with <code>PTP</code>. Use the Trajectory Slider to see which keeps the tool on a straight vertical line. This is your MoveL approach.</li>
+                                    <li>Drag the marker far outside the arm's reach and press Plan. Explain what happens using what you learned about numerical IK.</li>
+                                    <li>Raise the velocity scaling from 0.1 to 0.5 and execute again. On mock hardware the motion has no physics; write one sentence on what you would need to test next before running this on a real UR5e.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">11. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">MoveIt maintainers (PickNik Robotics), &ldquo;MoveGroup: the MoveIt Node (move_group),&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/concepts/move_group.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/concepts/move_group.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/concepts/move_group.html</a>.</li>
+                                <li id="ref-2">MoveIt maintainers (PickNik Robotics), &ldquo;Motion Planning,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/concepts/motion_planning.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/concepts/motion_planning.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/concepts/motion_planning.html</a>.</li>
+                                <li id="ref-3">Open Robotics, &ldquo;Lyrical Luth (codename &lsquo;lyrical&rsquo;; May, 2026)&rdquo; and &ldquo;Lyrical Luth supported platforms,&rdquo; <em>ROS 2 Documentation</em>; files <code>source/Releases/Release-Lyrical-Luth.rst</code> and <code>source/Releases/lyrical/supported-platforms.rst</code> (source read on GitHub: ros2/ros2_documentation, <code>rolling</code> branch), October 2026. Available: <a href="https://docs.ros.org/en/rolling/Releases/Release-Lyrical-Luth.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/rolling/Releases/Release-Lyrical-Luth.html</a>.</li>
+                                <li id="ref-4">Universal Robots, &ldquo;Universal Robots ROS 2 Driver,&rdquo; repository README (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>main</code> branch; <code>lyrical</code> branch at ur_robot_driver 6.2.0), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver</a>.</li>
+                                <li id="ref-5">Open Robotics, &ldquo;lyrical/distribution.yaml,&rdquo; ROS distribution index (source read on GitHub: ros/rosdistro, <code>master</code> branch), read October 21, 2026. Available: <a href="https://github.com/ros/rosdistro/blob/master/lyrical/distribution.yaml" target="_blank" rel="noopener noreferrer">github.com/ros/rosdistro/blob/master/lyrical/distribution.yaml</a>.</li>
+                                <li id="ref-6">Universal Robots, &ldquo;Universal Robots ROS 2 Description,&rdquo; repository README (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Description, <code>rolling</code> branch, ur_description 4.3.1), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Description" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Description</a>.</li>
+                                <li id="ref-7">MoveIt maintainers (PickNik Robotics), &ldquo;MoveIt 2,&rdquo; repository README and branch list (source read on GitHub: moveit/moveit2, <code>main</code> branch), read October 21, 2026. Available: <a href="https://github.com/moveit/moveit2" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2</a>.</li>
+                                <li id="ref-8">MoveIt maintainers (PickNik Robotics), &ldquo;Getting Started,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/tutorials/getting_started/getting_started.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html</a>.</li>
+                                <li id="ref-9">Open Robotics, &ldquo;Building a movable robot model with URDF,&rdquo; <em>ROS 2 Documentation</em> (Rolling); file <code>source/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.rst</code> (source read on GitHub: ros2/ros2_documentation, <code>rolling</code> branch; web path inferred from the repository layout), October 2026. Available: <a href="https://docs.ros.org/en/rolling/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/rolling/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.html</a>.</li>
+                                <li id="ref-10">Universal Robots, &ldquo;ur_description&rdquo; package documentation, <code>doc/index.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Description, <code>rolling</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/doc/index.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/doc/index.rst</a>.</li>
+                                <li id="ref-11">Universal Robots, UR robot macro, mock-hardware macro and UR5e joint limits, <code>urdf/ur_macro.xacro</code>, <code>urdf/ros2_control_mock_hardware.xacro</code> and <code>config/ur5e/joint_limits.yaml</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Description, <code>rolling</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/urdf/ur_macro.xacro" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/urdf/ur_macro.xacro</a>.</li>
+                                <li id="ref-12">Universal Robots, UR semantic robot description (SRDF macro), <code>ur_moveit_config/srdf/ur_macro.srdf.xacro</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/srdf/ur_macro.srdf.xacro" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/srdf/ur_macro.srdf.xacro</a>.</li>
+                                <li id="ref-13">MoveIt maintainers (PickNik Robotics), &ldquo;Kinematics,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/concepts/kinematics.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/concepts/kinematics.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/concepts/kinematics.html</a>.</li>
+                                <li id="ref-14">Universal Robots, &ldquo;ur_moveit_config&rdquo; package documentation, <code>ur_moveit_config/doc/index.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/doc/index.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/doc/index.rst</a>.</li>
+                                <li id="ref-15">ros2_control Development Team, &ldquo;Controller Manager,&rdquo; <em>ros2_control Documentation</em> (Rolling); file <code>controller_manager/doc/userdoc.rst</code> (source read on GitHub: ros-controls/ros2_control, <code>master</code> branch), October 2026. Available: <a href="https://control.ros.org/rolling/doc/ros2_control/controller_manager/doc/userdoc.html" target="_blank" rel="noopener noreferrer">control.ros.org/rolling/doc/ros2_control/controller_manager/doc/userdoc.html</a>.</li>
+                                <li id="ref-16">ros2_control Development Team, &ldquo;Mock Components,&rdquo; <em>ros2_control Documentation</em> (Rolling); file <code>hardware_interface/doc/mock_components_userdoc.rst</code> (source read on GitHub: ros-controls/ros2_control, <code>master</code> branch), October 2026. Available: <a href="https://control.ros.org/rolling/doc/ros2_control/hardware_interface/doc/mock_components_userdoc.html" target="_blank" rel="noopener noreferrer">control.ros.org/rolling/doc/ros2_control/hardware_interface/doc/mock_components_userdoc.html</a>.</li>
+                                <li id="ref-17">Universal Robots, driver URDF and ros2_control macros, <code>ur_robot_driver/urdf/ur.ros2_control.xacro</code> and <code>ur_robot_driver/urdf/ur.urdf.xacro</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/urdf/ur.ros2_control.xacro" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/urdf/ur.ros2_control.xacro</a>.</li>
+                                <li id="ref-18">Universal Robots, driver launch file, <code>ur_robot_driver/launch/ur_control.launch.py</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>main</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py</a>.</li>
+                                <li id="ref-19">Universal Robots, &ldquo;Startup the driver,&rdquo; <em>Universal Robots ROS 2 Documentation</em>; file <code>ur_robot_driver/doc/usage/startup.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/startup.html" target="_blank" rel="noopener noreferrer">docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/startup.html</a>.</li>
+                                <li id="ref-20">Universal Robots, &ldquo;Simulation,&rdquo; <em>Universal Robots ROS 2 Documentation</em>; file <code>ur_robot_driver/doc/usage/simulation.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/simulation.html" target="_blank" rel="noopener noreferrer">docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/simulation.html</a>.</li>
+                                <li id="ref-21">Universal Robots, changelogs for ur_robot_driver and ur_moveit_config, <code>ur_robot_driver/CHANGELOG.rst</code> and <code>ur_moveit_config/CHANGELOG.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/CHANGELOG.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/CHANGELOG.rst</a>.</li>
+                                <li id="ref-22">ros2_control Development Team, &ldquo;joint_trajectory_controller,&rdquo; <em>ros2_control Documentation</em> (Rolling); file <code>joint_trajectory_controller/doc/userdoc.rst</code> (source read on GitHub: ros-controls/ros2_controllers, <code>master</code> branch), October 2026. Available: <a href="https://control.ros.org/rolling/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html" target="_blank" rel="noopener noreferrer">control.ros.org/rolling/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html</a>.</li>
+                                <li id="ref-23">Universal Robots, controller configuration, <code>ur_robot_driver/config/ur_controllers.yaml</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/config/ur_controllers.yaml" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/config/ur_controllers.yaml</a>.</li>
+                                <li id="ref-24">ros2_control Development Team, &ldquo;joint_state_broadcaster,&rdquo; <em>ros2_control Documentation</em> (Rolling); file <code>joint_state_broadcaster/doc/userdoc.rst</code> (source read on GitHub: ros-controls/ros2_controllers, <code>master</code> branch), October 2026. Available: <a href="https://control.ros.org/rolling/doc/ros2_controllers/joint_state_broadcaster/doc/userdoc.html" target="_blank" rel="noopener noreferrer">control.ros.org/rolling/doc/ros2_controllers/joint_state_broadcaster/doc/userdoc.html</a>.</li>
+                                <li id="ref-25">MoveIt maintainers (PickNik Robotics), &ldquo;Planning Scene Monitor,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/concepts/planning_scene_monitor.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/concepts/planning_scene_monitor.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/concepts/planning_scene_monitor.html</a>.</li>
+                                <li id="ref-26">MoveIt maintainers (PickNik Robotics), &ldquo;Planning Around Objects,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/tutorials/planning_around_objects/planning_around_objects.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/tutorials/planning_around_objects/planning_around_objects.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/tutorials/planning_around_objects/planning_around_objects.html</a>.</li>
+                                <li id="ref-27">Universal Robots, MoveIt configuration files (kinematics.yaml, moveit_controllers.yaml, ompl_planning.yaml, pilz_industrial_motion_planner_planning.yaml, pilz_cartesian_limits.yaml), <code>ur_moveit_config/config/</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/lyrical/ur_moveit_config/config" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/lyrical/ur_moveit_config/config</a>.</li>
+                                <li id="ref-28">MoveIt maintainers (PickNik Robotics), &ldquo;Pilz Industrial Motion Planner,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/how_to_guides/pilz_industrial_motion_planner/pilz_industrial_motion_planner.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/how_to_guides/pilz_industrial_motion_planner/pilz_industrial_motion_planner.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/how_to_guides/pilz_industrial_motion_planner/pilz_industrial_motion_planner.html</a>.</li>
+                                <li id="ref-29">MoveIt maintainers (PickNik Robotics), &ldquo;MoveIt Setup Assistant,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/examples/setup_assistant/setup_assistant_tutorial.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/examples/setup_assistant/setup_assistant_tutorial.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/examples/setup_assistant/setup_assistant_tutorial.html</a>.</li>
+                                <li id="ref-30">MoveIt maintainers (PickNik Robotics), &ldquo;Motion Planning Python API,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/examples/motion_planning_python_api/motion_planning_python_api_tutorial.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/examples/motion_planning_python_api/motion_planning_python_api_tutorial.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/examples/motion_planning_python_api/motion_planning_python_api_tutorial.html</a>.</li>
+                                <li id="ref-31">Universal Robots, &ldquo;Moving the robot,&rdquo; <em>Universal Robots ROS 2 Documentation</em>; file <code>ur_robot_driver/doc/usage/move.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>lyrical</code> branch), October 2026. Available: <a href="https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/move.html" target="_blank" rel="noopener noreferrer">docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/move.html</a>.</li>
+                                <li id="ref-32">Universal Robots, MoveIt launch file, <code>ur_moveit_config/launch/ur_moveit.launch.py</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>main</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_moveit_config/launch/ur_moveit.launch.py" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_moveit_config/launch/ur_moveit.launch.py</a>.</li>
+                                <li id="ref-33">MoveIt maintainers (PickNik Robotics), &ldquo;MoveIt Quickstart in RViz,&rdquo; <em>MoveIt 2 Documentation</em> (main); file <code>doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://moveit.picknik.ai/main/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html" target="_blank" rel="noopener noreferrer">moveit.picknik.ai/main/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-3-7.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.7 Launch Files and Parameters</span>
+                                </a>
+                                <a href="robotics-3-9.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">3.9 ROS-Industrial and Vendor Drivers</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.7" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.4" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>

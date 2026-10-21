@@ -1,0 +1,475 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 3.9 ROS-Industrial and Vendor Drivers
+-->
+<html lang="en">
+    <head>
+        <title>3.9 ROS-Industrial and Vendor Drivers — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How ROS 2 drives real industrial arms: ROS-Industrial, the common driver pattern, and the UR, ABB, FANUC, KUKA and Yaskawa drivers, with real-time and safety limits." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-9.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.9 ROS-Industrial and Vendor Drivers — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="How ROS 2 drives real industrial arms: ROS-Industrial, the common driver pattern, and the UR, ABB, FANUC, KUKA and Yaskawa drivers, with real-time and safety limits." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-9.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.9 ROS-Industrial and Vendor Drivers, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.9 ROS-Industrial and Vendor Drivers — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="How ROS 2 drives real industrial arms: ROS-Industrial, the common driver pattern, and the UR, ABB, FANUC, KUKA and Yaskawa drivers, with real-time and safety limits." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html" class="active"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-ros.html">Chapter 3 &middot; Robot Operating System (ROS)</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">3.9 ROS-Industrial and Vendor Drivers</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Why ROS needs a driver for every robot brand</h2>
+                            <p>
+                                In <a href="robotics-2-3.html">lesson 2.3</a> you met four vendor languages: RAPID for ABB, URScript for Universal Robots, KRL for KUKA and TP for FANUC. Each one runs inside the maker's own robot controller, the cabinet that drives the motors, reads the encoders and runs the certified safety functions. In <a href="robotics-3-8.html">lesson 3.8</a> you planned arm motions with MoveIt 2 on an ordinary Linux PC. This lesson connects the two worlds. How does a trajectory computed on a PC reach a real industrial controller that only understands its own language?
+                            </p>
+                            <p>
+                                The answer is a <strong>vendor driver</strong>: a pair of programs, one on the robot controller and one on the ROS 2 PC, that pass motion commands and robot state between them. Drivers differ a lot in who maintains them, which ROS 2 distributions they support and what they can do. This lesson looks at the community behind industrial ROS, the pattern all drivers share, five brands in turn, and when a factory should use ROS at all.
+                            </p>
+
+                            <h2 class="article-section-title">02. ROS-Industrial: a community, not a single program</h2>
+                            <p>
+                                <strong>ROS-Industrial</strong> (ROS-I) is an open-source project that applies ROS to manufacturing automation. Its repositories include interfaces for common industrial manipulators, grippers, sensors and device networks, and its intended audience is robot makers, component suppliers, system integrators and end users.<sup><a href="#ref-1">[1]</a></sup> The project grew out of a partnership between Yaskawa Motoman, Southwest Research Institute (SwRI) and Willow Garage.<sup><a href="#ref-2">[2]</a></sup> Today it is run by membership-funded regional consortia: SwRI leads the Americas, Fraunhofer IPA in Stuttgart leads Europe, and ARTC (A*STAR) with Nanyang Technological University leads Asia-Pacific.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                ROS-I is best thought of as a community rather than one piece of software. Its work covers drivers for industrial hardware and application tools that vendor languages do not provide, for example:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Tesseract:</span> a lightweight motion-planning framework whose core packages are "ROS agnostic and have full python support", with a monthly public meeting.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Scan-N-Plan:</span> a ROS 2 framework that plans robot paths from 3D scan data, aimed at high-mix parts, parts without a CAD model and flexible parts, for processes such as painting, sanding, deburring and inspection.<sup><a href="#ref-5">[5]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ros2_canopen:</span> a ROS 2 stack for CANopen devices, released into Lyrical, whose README still warns that it is "not yet ready for production use".<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup></li>
+                            </ul>
+                            <p>
+                                <strong>Support level</strong> is the first thing to check on any ROS-I package. The ROS 1 core communication packages, <code>industrial_core</code>, are labelled "community supported": they get no support from a robot maker or from the consortia directly, and volunteers maintain them on a best-effort basis.<sup><a href="#ref-8">[8]</a></sup> The older ROS 1 driver repositories <code>abb_driver</code> and <code>kuka_experimental</code> carry the same "community" badge, and <code>kuka_experimental</code> warns that its APIs "are to be considered unstable and are not guaranteed to be complete and / or functional".<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> By contrast, Yaskawa's MotoROS2 carries a "consortium / vendor" badge.<sup><a href="#ref-11">[11]</a></sup> The broad trend in ROS 2 is that drivers have moved out of community repositories and into repositories owned by the robot makers themselves: Universal Robots, KUKA, Yaskawa and FANUC all publish their own. For a factory this matters: a vendor-owned driver comes with someone to call when it breaks.
+                            </p>
+
+                            <h2 class="article-section-title">03. The common pattern: three layers</h2>
+                            <p>
+                                Past the brand names, every driver in this lesson is built the same way:
+                            </p>
+                            <ol class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">1. A small program on the controller, written in the vendor's language.</span> This might be a URScript program started by a URCap, a RAPID module with EGM instructions, a KUKA program using RSI, a FANUC TP program using Stream Motion, or a MotoPlus application on a Yaskawa controller. It opens a network channel (TCP or UDP), accepts setpoints or whole trajectories, and sends back joint positions and status.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">2. A ros2_control hardware interface on the PC.</span> This C++ plugin wraps that network channel. To the rest of ROS it looks like any other robot: a set of joints with position, velocity or effort interfaces. It takes the place of the mock hardware you used in <a href="robotics-3-8.html">lesson 3.8</a>.</li>
+                                <li class="article-spec-item"><span class="spec-label">3. Standard ROS 2 controllers on top.</span> The usual one is the <code>joint_trajectory_controller</code>, which offers a <code>control_msgs/FollowJointTrajectory</code> action. MoveIt 2 sends its planned motions to that action.<sup><a href="#ref-16">[16]</a></sup></li>
+                            </ol>
+                            <p>
+                                Because layer 3 is the same for every brand, swapping a UR arm for a KUKA arm changes only the bottom two layers.
+                            </p>
+                            <p>
+                                The <strong>FollowJointTrajectory</strong> action is the shared language at the top. Its goal holds a <code>trajectory</code> (a list of joint names and a list of points, each with positions and a <code>time_from_start</code>), plus <code>path_tolerance</code>, <code>goal_tolerance</code> and <code>goal_time_tolerance</code>. While the motion runs, feedback reports the desired, actual and error values. The result carries an <code>error_code</code>: 0 means SUCCESSFUL, and negative values mean failures such as INVALID_GOAL (-1), INVALID_JOINTS (-2), OLD_HEADER_TIMESTAMP (-3), PATH_TOLERANCE_VIOLATED (-4) and GOAL_TOLERANCE_VIOLATED (-5).<sup><a href="#ref-17">[17]</a></sup> Recall from <a href="robotics-3-1.html">lesson 3.1</a> that an action is a long-running request with feedback and a result, which is exactly what moving an arm is.
+                            </p>
+                            <p>
+                                Drivers come in two styles. In a <strong>streaming</strong> driver, the PC interpolates the trajectory and sends a new setpoint every control cycle, a few milliseconds apart. In a <strong>trajectory-forwarding</strong> driver, the PC sends the whole trajectory once and the controller interpolates it itself. Forwarding asks much less of the PC's timing.
+                            </p>
+
+                            <h2 class="article-section-title">04. Universal Robots: the official driver</h2>
+                            <p>
+                                Universal Robots maintains its own ROS 2 driver, built on the Universal_Robots_Client_Library. It works with all UR robots from 3 kg to 30 kg payload on PolyScope X, PolyScope 5 and CB3 controllers, and it supports pausing at an emergency stop or safeguard stop, "automatic speed scaling to avoid violate the safety setting" and manual speed scaling from the teach pendant.<sup><a href="#ref-18">[18]</a></sup> Its release table lists Humble, Jazzy, Kilted, Lyrical and Rolling, and the README states that "a fundamental requirement for the driver is using Linux".<sup><a href="#ref-18">[18]</a></sup> It is one of the few drivers already released for ROS 2 Lyrical: the Lyrical distribution file lists <code>ur_robot_driver</code> version 6.2.0-1 with its calibration, controller, dashboard, MoveIt configuration and driver packages.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                You start it with one launch command, giving the robot type and its IP address:<sup><a href="#ref-18">[18]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101</code></pre>
+                            <p>
+                                The robot side is URScript. In the default <strong>teach pendant mode</strong>, you install the <strong>External Control URCap</strong> on the robot, enter the ROS PC's IP address and a port matching <code>script_sender_port</code> (default 50002), add the External Control node to a pendant program and press play.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-19">[19]</a></sup> When the program reaches that node, "the URCap will request script code from the ROS driver and execute it".<sup><a href="#ref-12">[12]</a></sup> On the PC, a component called the ScriptSender listens on a TCP socket for this request and replies with the predefined URScript program; PolyScope X uses a URCapX instead.<sup><a href="#ref-20">[20]</a></sup> That program, <code>external_control.urscript</code>, runs threads that call <code>servoj</code> or <code>speedj</code> once every control step, so the "driver" on the robot is itself just URScript.<sup><a href="#ref-21">[21]</a></sup>
+                            </p>
+                            <p>
+                                Commands flow over a <strong>reverse interface</strong>, a TCP connection with a small custom protocol. Each message holds eight 32-bit integers: a read timeout, six motion-target values and a control mode. The modes include SERVOJ (high-rate joint positions), SPEEDJ (joint velocities), FORWARD (a whole trajectory interpolated on the robot), FREEDRIVE and, since PolyScope 5.23.0 and 10.10.0, TORQUE.<sup><a href="#ref-22">[22]</a></sup> Robot state comes back through UR's Real-Time Data Exchange (RTDE) interface.<sup><a href="#ref-23">[23]</a></sup>
+                            </p>
+                            <p>
+                                The driver also has a <strong>headless mode</strong>, off by default, in which the URScript is sent directly to the controller and started without a pendant program.<sup><a href="#ref-24">[24]</a></sup><sup><a href="#ref-12">[12]</a></sup> On e-Series robots this needs <em>remote control mode</em>, which locks the pendant so it cannot start any motion, not even freedrive. Starting another program or pressing a pendant motion button stops the driver's program, and it must be restarted with the <code>/io_and_status_controller/resend_robot_program</code> service.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Timing.</strong> The controller manager runs at 500 Hz for e-Series robots and 125 Hz for CB3 robots.<sup><a href="#ref-25">[25]</a></sup><sup><a href="#ref-26">[26]</a></sup> At 500 Hz the PC has 2 ms per cycle to read state, update the controller and write the next command.
+                            </p>
+                            <p>
+                                <strong>Speed scaling.</strong> The robot may run slower than the PC asked, because the pendant speed slider is turned down or because the controller is slowing the arm to stay within its safety settings. The driver multiplies the RTDE values <code>speed_scaling</code> (the slider) and <code>target_speed_fraction</code> (the controller's own slowdown) and publishes the result, from 0 to 1, through the <code>speed_scaling_state_broadcaster</code>.<sup><a href="#ref-27">[27]</a></sup> The trajectory controller uses that factor to stretch time so the robot does not fall behind its plan.
+                            </p>
+                            <p>
+                                <strong>A distro difference to watch.</strong> Which controller does this depends on your ROS 2 distribution. On the Humble, Jazzy and Kilted branches, the driver defines its own <code>scaled_joint_trajectory_controller</code> (type <code>ur_controllers/ScaledJointTrajectoryController</code>).<sup><a href="#ref-28">[28]</a></sup> On the Lyrical and main branches that entry is gone. The stock <code>joint_trajectory_controller</code> instead takes a <code>speed_scaling</code> parameter pointing at the <code>speed_scaling/speed_scaling_factor</code> state interface, and the launch file starts <code>joint_trajectory_controller</code> by default.<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-24">[24]</a></sup> In practice this means the action name changes: on Lyrical you send goals to <code>/joint_trajectory_controller/follow_joint_trajectory</code>, while older tutorials written for Jazzy or Humble use <code>/scaled_joint_trajectory_controller/follow_joint_trajectory</code>.
+                            </p>
+                            <p>
+                                Speed scaling also explains a surprising setting: UR's MoveIt configuration ships with MoveIt's Trajectory Execution Monitoring turned off, because a scaled trajectory may run slower than planned and the monitor "will in most cases unnecessarily (and unexpectedly) abort goals".<sup><a href="#ref-16">[16]</a></sup> Finally, the <strong>passthrough trajectory controller</strong> uses FORWARD mode to hand the whole trajectory to the robot for interpolation. UR's documentation says this means "the realtime requirements for the control PC can be massively decreased", though it cannot replace a trajectory that is already running.<sup><a href="#ref-27">[27]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">05. ABB: a community driver built on EGM</h2>
+                            <p>
+                                No official ABB ROS 2 driver was found for this lesson. The main option is <code>abb_ros2</code>, maintained by PickNik Robotics. It contains a ros2_control hardware interface built on <code>abb_libegm</code>, a client for ABB's Robot Web Services (RWS), bringup files, robot descriptions and RobotStudio resources.<sup><a href="#ref-30">[30]</a></sup> It has a single <code>rolling</code> branch and is not released into Humble, Jazzy, Kilted or Lyrical, so you build it from source.<sup><a href="#ref-30">[30]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                It uses two ABB channels. <strong>RWS</strong> lets software talk to the controller over HTTP; the driver uses it to read information about the robot. Only RWS 1.0 is supported: "RobotWare 7.0 and higher use RWS 2.0 and are not currently supported".<sup><a href="#ref-31">[31]</a></sup> Motion goes through <strong>Externally Guided Motion (EGM)</strong>, a paid RobotWare option (689-1) that needs RobotWare 6.07.01 or later. The library uses EGM's UDP variant in joint and pose modes, and "the robot controller requests new references over a UDP channel, at the rate specified with RAPID <code>EGMAct</code> instructions".<sup><a href="#ref-13">[13]</a></sup> EGM commonly runs at about 250 Hz (a 4 ms cycle).<sup><a href="#ref-32">[32]</a></sup>
+                            </p>
+                            <p>
+                                The vendor language stays in the loop. The supplied RAPID module first runs <code>MoveAbsJ</code> to a home position, then sets up EGM and loops on <code>EGMRunJoint</code>, with an error handler for UDP communication faults:<sup><a href="#ref-33">[33]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>EGMGetId egm_id;
+EGMSetupUC ROB_1, egm_id, "default", "ROB_1", \Joint;
+EGMActJoint egm_id \J1:=egm_condition ... \MaxSpeedDeviation:=20.0;
+WHILE TRUE DO
+  EGMRunJoint egm_id, EGM_STOP_HOLD, \J1 \J2 \J3 \J4 \J5 \J6 \CondTime:=5 \RampOutTime:=5;
+ENDWHILE</code></pre>
+                            <p>
+                                In RobotStudio you add the EGM option, configure a <code>UDPUC</code> transmission protocol and load this module into task T_ROB1.<sup><a href="#ref-34">[34]</a></sup> By default EGM uses UDP port 6511 and RWS uses port 80, and simulating with RobotStudio needs two computers, one running Windows and one running Linux.<sup><a href="#ref-31">[31]</a></sup> The <code>abb_libegm</code> library itself "has not been productized" and is provided as-is; its README advises testing in RobotStudio before using a real robot and thinking about cyber security before connecting robot controllers to networks.<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">06. FANUC and KUKA: drivers from the robot makers</h2>
+                            <p>
+                                <strong>FANUC.</strong> FANUC published an official driver, <code>fanuc_driver</code>, in 2025. It describes itself as "a ros2_control high-bandwidth streaming driver" for real or simulated FANUC robots. The <code>main</code> branch targets ROS 2 Jazzy on Ubuntu 24.04, a <code>humble</code> branch covers Humble, and the code is Apache-2.0 licensed by FANUC America and FANUC CORPORATION.<sup><a href="#ref-35">[35]</a></sup> It talks to the controller through two channels: <strong>Stream Motion</strong>, a UDP stream run by a TP program on the controller, and the <strong>Remote Motion Interface (RMI)</strong>; the two cannot be used at once.<sup><a href="#ref-14">[14]</a></sup> Its controller manager runs at 500 Hz, and like UR it ships its own scaled joint trajectory controller.<sup><a href="#ref-36">[36]</a></sup> FANUC's December 2025 announcement mentioned CRX and other models with payloads from 3 to 2,300 kg.<sup><a href="#ref-37">[37]</a></sup> The older community <code>ros-industrial/fanuc</code> repository is a ROS 1 project whose default branch is <code>noetic-devel</code>.<sup><a href="#ref-38">[38]</a></sup>
+                            </p>
+                            <p>
+                                <strong>KUKA.</strong> KUKA's official repository, <code>kuka-ros/kuka_drivers</code>, "contains ROS2 drivers for all KUKA operating systems", with a Jazzy branch (master) and a Humble branch. It installs with <code>sudo apt install ros-jazzy-kuka-drivers</code>, recommends a real-time kernel "as all three drivers require cyclic, real-time communication", and does not recommend Windows.<sup><a href="#ref-39">[39]</a></sup> The <code>kroshu/kuka_drivers</code> repository combines this official code with community code for older KUKA systems.<sup><a href="#ref-40">[40]</a></sup> The package is in the Humble and Jazzy distributions but not in Kilted or Lyrical.<sup><a href="#ref-41">[41]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                KUKA has several controller operating systems, and each has its own real-time interface. The driver project aims to give them one common ROS API:<sup><a href="#ref-15">[15]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">KSS (industrial robots) and iiQKA.OS2:</span> the Robot Sensor Interface (<strong>RSI</strong>).<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-40">[40]</a></sup> RSI cycles every 12 ms (normal) or 4 ms (fast), and it shuts the connection down if the PC misses too many answers.<sup><a href="#ref-42">[42]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Sunrise (LBR iiwa cobots):</span> the Fast Robot Interface (<strong>FRI</strong>), with a cycle time settable from 1 to 10 ms.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-43">[43]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">iiQKA (LBR iisy):</span> ExternalAPI.Control (<strong>EAC</strong>).<sup><a href="#ref-15">[15]</a></sup></li>
+                            </ul>
+                            <p>
+                                One design detail is worth knowing. "All 3 of the KUKA real-time interfaces handle the timing on the controller side", so the hardware interface's read call blocks until the controller sends an update. For that reason KUKA wrote its own control node instead of the default <code>ros2_control_node</code>. Start-up uses a lifecycle node called <code>robot_manager</code> (<code>ros2 lifecycle set robot_manager configure</code>, then <code>activate</code>), so external control never starts unless the controllers are active.<sup><a href="#ref-15">[15]</a></sup> You met lifecycle nodes in <a href="robotics-3-2.html">lesson 3.2</a>.
+                            </p>
+
+                            <h2 class="article-section-title">07. Yaskawa MotoROS2 and a side-by-side comparison</h2>
+                            <p>
+                                Yaskawa's <strong>MotoROS2</strong> takes a different approach: ROS 2 itself runs on the controller. MotoROS2 is a MotoPlus application loaded onto the controller in Maintenance mode. It is built on micro-ROS, so a <strong>micro-ROS Agent</strong> on the PC bridges it to the rest of ROS 2 and "must always be running". It supports the DX200, YRC1000 and YRC1000micro controllers, with binaries for Humble and Jazzy, and works only with the Fast DDS middleware.<sup><a href="#ref-11">[11]</a></sup> No Kilted or Lyrical support is stated.
+                            </p>
+                            <p>
+                                MotoROS2 offers a <code>follow_joint_trajectory</code> action, so it fits the common pattern, but it is a trajectory-forwarding driver with clear limits. Before sending a goal, a client must check <code>robot_status</code>, make the trajectory start at the robot's current state ("MotoROS2 will reject any trajectory which does not start at the current state") and call <code>start_traj_mode</code>. A trajectory may hold at most 200 points, state publishing is capped at about 100 Hz, and there is no Cartesian motion, no asynchronous multi-group motion and not yet any replacing of a trajectory while it runs.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                The table below sums up the five brands as of October 2026. Driver support changes quickly, so check each README before starting a project.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Brand</th>
+                                        <th scope="col">Program on the controller</th>
+                                        <th scope="col">Link to the PC</th>
+                                        <th scope="col">ROS 2 distros</th>
+                                        <th scope="col">Maintained by</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Universal Robots</strong></td>
+                                        <td>URScript via External Control URCap (or headless)</td>
+                                        <td>RTDE plus TCP script and reverse-interface sockets</td>
+                                        <td>Humble, Jazzy, Kilted, Lyrical, Rolling</td>
+                                        <td>Vendor</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>ABB</strong></td>
+                                        <td>RAPID module with EGM instructions</td>
+                                        <td>EGM over UDP, RWS 1.0 over HTTP</td>
+                                        <td>Rolling branch, source build only</td>
+                                        <td>Community (PickNik)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>FANUC</strong></td>
+                                        <td>TP program with Stream Motion; RMI</td>
+                                        <td>Stream Motion over UDP</td>
+                                        <td>Jazzy, Humble</td>
+                                        <td>Vendor (since 2025)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>KUKA</strong></td>
+                                        <td>RSI, FRI or EAC, depending on the controller OS</td>
+                                        <td>Controller-timed real-time link</td>
+                                        <td>Jazzy, Humble</td>
+                                        <td>Vendor, plus community legacy code</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Yaskawa</strong></td>
+                                        <td>MotoROS2 MotoPlus application</td>
+                                        <td>micro-ROS Agent on the PC</td>
+                                        <td>Humble, Jazzy</td>
+                                        <td>Vendor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                For a course built on Lyrical, only the UR driver was confirmed as released for Lyrical. The others need a Jazzy or Humble machine, or a source build.
+                            </p>
+
+                            <h2 class="article-section-title">08. Real time and safety: the controller stays in charge</h2>
+                            <p>
+                                Every driver above runs at a rate set by the robot controller: 500 Hz for UR e-Series and for FANUC, about 4 ms for ABB EGM, 4 or 12 ms for KUKA RSI, and 1 to 10 ms for KUKA FRI.<sup><a href="#ref-25">[25]</a></sup><sup><a href="#ref-36">[36]</a></sup><sup><a href="#ref-32">[32]</a></sup><sup><a href="#ref-42">[42]</a></sup><sup><a href="#ref-43">[43]</a></sup> If the PC misses its deadlines, the controller drops the link.<sup><a href="#ref-42">[42]</a></sup> UR's client library notes that "it is quite critical that arriving RTDE messages are read before the next message arrives", runs its receive thread at real-time priority, and warns that the robot will shut down RTDE communication if data is not read fast enough.<sup><a href="#ref-23">[23]</a></sup> UR recommends a PREEMPT_RT kernel, says a low-latency kernel (<code>sudo apt install linux-lowlatency</code>) "has shown to be sufficient in many situations", and warns that e-Series robots may move unevenly without a real-time-enabled system.<sup><a href="#ref-44">[44]</a></sup> Trajectory-forwarding modes, such as UR's passthrough controller and MotoROS2, avoid much of this problem because the controller does the fine-grained interpolation.<sup><a href="#ref-27">[27]</a></sup>
+                            </p>
+                            <p>
+                                The more important point is about safety. <strong>ROS 2 is not the robot's safety system.</strong> The certified safety functions, such as the safety configuration, emergency stops, protective stops, speed limits and zone limits, live in the vendor's controller and keep working whatever the PC sends. ROS only sends requests, and the robot may slow down or stop at any time. The drivers make this visible:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">UR:</span> the driver pauses at emergency and safeguard stops and scales speed to respect the safety settings.<sup><a href="#ref-18">[18]</a></sup> The <code>io_and_status_controller</code> publishes the safety mode (for example PROTECTIVE_STOP or ROBOT_EMERGENCY_STOP) and whether the robot program is running; if it is not, "no commands can be sent to the robot".<sup><a href="#ref-27">[27]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">KUKA:</span> stopping the ROS side is "a non-realtime process", and "in cases where an abrupt stop is needed, the safety stop of the Teach Pendant should be used!"<sup><a href="#ref-45">[45]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Yaskawa:</span> the Functional Safety Unit (FSU) can reduce speed, restrict the workspace or stop motion. Trajectories continue at reduced speed, but MotoROS2 "does not currently publish speed reduction ratios imposed by an FSU", so your planner must tolerate slowdowns it cannot see.<sup><a href="#ref-11">[11]</a></sup></li>
+                            </ul>
+                            <p>
+                                Your ROS application must cope with the safety system, not fight it; turning off MoveIt's execution monitor on UR robots (section 04) is one example. As a general rule, your risk assessment should assume that ROS commands can be wrong, and rely on the controller's safety functions and the cell safeguards from <a href="robotics-4-4.html">lesson 4.4</a> to keep people safe.
+                            </p>
+
+                            <h2 class="article-section-title">09. ROS or the vendor language?</h2>
+                            <p>
+                                Factories still write most robot programs in the vendor's own language. For a fixed path in a validated cell, the vendor language brings vendor support, matches the skills of plant staff and integrators, and uses the maker's tested tools. Each brand having its own incompatible language and tools is also a known barrier: programmers tend to specialize by brand.<sup><a href="#ref-46">[46]</a></sup> ROS-I's own representatives describe its focus as tasks with no off-the-shelf vendor solution, such as perception-driven work where the path is not known in advance, and describe it as running alongside vendor software rather than replacing it.<sup><a href="#ref-47">[47]</a></sup>
+                            </p>
+                            <p>
+                                The drivers are built for that kind of cooperation. A UR pendant program can do its normal work, reach the External Control node to let ROS take over, and then continue with the rest of the program once the driver calls <code>hand_back_control</code>.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-27">[27]</a></sup> ABB's RAPID template likewise moves the robot home with a normal RAPID instruction before handing motion to EGM.<sup><a href="#ref-33">[33]</a></sup> The projects are also honest about their limits: <code>abb_libegm</code> offers "only limited support", MotoROS2 has no Cartesian motion, and the legacy <code>abb_driver</code> supports joint motion only, with no I/O.<sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                A reasonable rule of thumb:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Use the vendor language</span> when the path is fixed, cycle time and uptime matter most, the cell must be validated, and the plant's staff support that brand.</li>
+                                <li class="article-spec-item"><span class="spec-label">Use ROS 2</span> when the motion depends on sensing (scan-then-plan, bin picking), the cell mixes brands or mobile bases, you need planners such as MoveIt 2 or Tesseract, or you are prototyping and researching.</li>
+                                <li class="article-spec-item"><span class="spec-label">Use both</span> (the most common case): the vendor program owns safety, I/O and the process sequence, and calls into ROS only for the "smart" segment.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">10. Hands-on: one move, two languages</h2>
+                            <p>
+                                To see the difference concretely, here is the same two-pose move written both ways for a UR arm. The first pose is the home pose used by UR's own test client, <code>[0, -1.57, 0, -1.57, 0, 0]</code> radians, with joints named <code>shoulder_pan_joint</code>, <code>shoulder_lift_joint</code>, <code>elbow_joint</code>, <code>wrist_1_joint</code>, <code>wrist_2_joint</code> and <code>wrist_3_joint</code>.<sup><a href="#ref-16">[16]</a></sup> Both examples are this lesson's own and have not been run on a robot, so test them in URSim first.
+                            </p>
+                            <p>
+                                In URScript, using <code>movej</code> from <a href="robotics-2-3.html">lesson 2.3</a>, you give each move a joint speed and acceleration:
+                            </p>
+                            <pre class="article-code"><code>def move_two_poses():
+  movej([0, -1.57, 0, -1.57, 0, 0], a=1.0, v=0.5)
+  movej([0.5, -1.2, 0.8, -1.57, 0, 0], a=1.0, v=0.5)
+end</code></pre>
+                            <p>
+                                In ROS 2, with the driver running and the External Control program playing on the pendant (or headless mode on), you send one <code>FollowJointTrajectory</code> goal from the command line. On Lyrical the action server is <code>/joint_trajectory_controller/follow_joint_trajectory</code>:<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-17">[17]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>ros2 action send_goal /joint_trajectory_controller/follow_joint_trajectory \
+  control_msgs/action/FollowJointTrajectory "{trajectory: {
+    joint_names: [shoulder_pan_joint, shoulder_lift_joint, elbow_joint,
+                  wrist_1_joint, wrist_2_joint, wrist_3_joint],
+    points: [
+      {positions: [0, -1.57, 0, -1.57, 0, 0], time_from_start: {sec: 4}},
+      {positions: [0.5, -1.2, 0.8, -1.57, 0, 0], time_from_start: {sec: 8}} ]}}"</code></pre>
+                            <p>
+                                On Jazzy or Humble, replace the action name with <code>/scaled_joint_trajectory_controller/follow_joint_trajectory</code>.<sup><a href="#ref-28">[28]</a></sup> UR's documentation also provides a ready-made test, <code>ros2 launch ur_robot_driver test_joint_trajectory_controller.launch.py</code>, which checks that the robot starts near the home pose.<sup><a href="#ref-16">[16]</a></sup> Compare the two versions:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Speed versus time:</span> URScript states a speed and acceleration for each move. The ROS goal states a <em>time</em> for each waypoint, and the joint trajectory controller interpolates on the PC (at 500 Hz on e-Series) and streams setpoints to the robot.<sup><a href="#ref-25">[25]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Who interpolates:</span> with the passthrough controller, the whole trajectory would instead be sent to the robot and interpolated there.<sup><a href="#ref-27">[27]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Slowdowns:</span> turning down the pendant speed slider stretches the ROS trajectory through speed scaling, so the 8 s motion takes longer.<sup><a href="#ref-27">[27]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Errors:</span> instead of a pendant pop-up, a failure comes back as an <code>error_code</code>, for example -4 for PATH_TOLERANCE_VIOLATED.<sup><a href="#ref-17">[17]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Portability:</span> on a Yaskawa robot, MotoROS2 would reject this same goal unless its first point matched the robot's current position.<sup><a href="#ref-11">[11]</a></sup></li>
+                            </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Start URSim, install the External Control URCap, and launch <code>ur_control.launch.py</code> against it. Run the URScript version from the pendant, then the <code>ros2 action send_goal</code> version, and time both with the speed slider at 100% and at 50%.</li>
+                                    <li>Run <code>ros2 control list_controllers</code> while the driver is up. Which trajectory controller is active on your distribution, and what is its action name?</li>
+                                    <li>Pick one of ABB, FANUC, KUKA or Yaskawa. From its README, write down what program must run on the controller, which network link it uses, which ROS 2 distributions it supports and who maintains it. Would you use it in a production cell today? Give one reason for and one against.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">11. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">ROS-Industrial, &ldquo;Description,&rdquo; rosindustrial.org, accessed October 21, 2026. <a href="https://rosindustrial.org/about/description" target="_blank" rel="noopener noreferrer">rosindustrial.org/about/description</a>.</li>
+                                <li id="ref-2">ROS-Industrial, &ldquo;Brief History,&rdquo; rosindustrial.org, accessed October 21, 2026. <a href="https://rosindustrial.org/briefhistory" target="_blank" rel="noopener noreferrer">rosindustrial.org/briefhistory</a>.</li>
+                                <li id="ref-3">Southwest Research Institute, &ldquo;SwRI collaborating with Singapore researchers to expand ROS-Industrial,&rdquo; SwRI press release, accessed October 21, 2026. <a href="https://www.swri.org/newsroom/press-releases/swri-collaborating-singapore-researchers-expand-ros-industrial" target="_blank" rel="noopener noreferrer">www.swri.org/newsroom/press-releases/swri-collaborating-singapore-researchers-expand-ros-industrial</a>.</li>
+                                <li id="ref-4">Tesseract Robotics, &ldquo;tesseract README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/tesseract-robotics/tesseract/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/tesseract-robotics/tesseract/blob/master/README.md</a>.</li>
+                                <li id="ref-5">ROS-Industrial, &ldquo;Scan-N-Plan,&rdquo; rosindustrial.org, accessed October 21, 2026. <a href="https://rosindustrial.org/scan-n-plan" target="_blank" rel="noopener noreferrer">rosindustrial.org/scan-n-plan</a>.</li>
+                                <li id="ref-6">ROS-Industrial, &ldquo;ros2_canopen README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-industrial/ros2_canopen/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/ros2_canopen/blob/master/README.md</a>.</li>
+                                <li id="ref-7">Open Robotics, &ldquo;rosdistro: Lyrical distribution.yaml,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros/rosdistro/blob/master/lyrical/distribution.yaml" target="_blank" rel="noopener noreferrer">github.com/ros/rosdistro/blob/master/lyrical/distribution.yaml</a>.</li>
+                                <li id="ref-8">ROS-Industrial, &ldquo;industrial_core README (melodic-devel),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-industrial/industrial_core/blob/melodic-devel/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/industrial_core/blob/melodic-devel/README.md</a>.</li>
+                                <li id="ref-9">ROS-Industrial, &ldquo;kuka_experimental README (indigo-devel),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-industrial/kuka_experimental/blob/indigo-devel/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/kuka_experimental/blob/indigo-devel/README.md</a>.</li>
+                                <li id="ref-10">ROS-Industrial, &ldquo;abb_driver README (kinetic-devel),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-industrial/abb_driver/blob/kinetic-devel/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/abb_driver/blob/kinetic-devel/README.md</a>.</li>
+                                <li id="ref-11">Yaskawa Motoman, &ldquo;MotoROS2 README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/Yaskawa-Global/motoros2/blob/main/README.md" target="_blank" rel="noopener noreferrer">github.com/Yaskawa-Global/motoros2/blob/main/README.md</a>.</li>
+                                <li id="ref-12">Universal Robots, &ldquo;Operation modes, Universal_Robots_ROS2_Driver documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/operation_modes.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/operation_modes.rst</a>.</li>
+                                <li id="ref-13">ROS-Industrial, &ldquo;abb_libegm README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-industrial/abb_libegm/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/abb_libegm/blob/master/README.md</a>.</li>
+                                <li id="ref-14">FANUC CORPORATION, &ldquo;fanuc_driver: fanuc_libs README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/FANUC-CORPORATION/fanuc_driver/blob/main/fanuc_libs/README.md" target="_blank" rel="noopener noreferrer">github.com/FANUC-CORPORATION/fanuc_driver/blob/main/fanuc_libs/README.md</a>.</li>
+                                <li id="ref-15">kroshu, &ldquo;kuka_drivers wiki: Home,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/kroshu/kuka_drivers/blob/master/doc/wiki/Home.md" target="_blank" rel="noopener noreferrer">github.com/kroshu/kuka_drivers/blob/master/doc/wiki/Home.md</a>.</li>
+                                <li id="ref-16">Universal Robots, &ldquo;Moving the robot, Universal_Robots_ROS2_Driver documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/move.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/move.rst</a>.</li>
+                                <li id="ref-17">ros-controls, &ldquo;control_msgs: FollowJointTrajectory.action,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-controls/control_msgs/blob/master/control_msgs/action/FollowJointTrajectory.action" target="_blank" rel="noopener noreferrer">github.com/ros-controls/control_msgs/blob/master/control_msgs/action/FollowJointTrajectory.action</a>.</li>
+                                <li id="ref-18">Universal Robots, &ldquo;Universal_Robots_ROS2_Driver README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/README.md" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/README.md</a>.</li>
+                                <li id="ref-19">Universal Robots, &ldquo;Universal_Robots_ExternalControl_URCap README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ExternalControl_URCap/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ExternalControl_URCap/blob/master/README.md</a>.</li>
+                                <li id="ref-20">Universal Robots, &ldquo;ScriptSender, Universal_Robots_Client_Library documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/architecture/script_sender.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/architecture/script_sender.rst</a>.</li>
+                                <li id="ref-21">Universal Robots, &ldquo;external_control.urscript, Universal_Robots_Client_Library,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/resources/external_control.urscript" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/resources/external_control.urscript</a>.</li>
+                                <li id="ref-22">Universal Robots, &ldquo;ReverseInterface, Universal_Robots_Client_Library documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/architecture/reverse_interface.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/architecture/reverse_interface.rst</a>.</li>
+                                <li id="ref-23">Universal Robots, &ldquo;Universal_Robots_Client_Library README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/README.md</a>.</li>
+                                <li id="ref-24">Universal Robots, &ldquo;ur_control.launch.py,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py</a>.</li>
+                                <li id="ref-25">Universal Robots, &ldquo;ur5e_update_rate.yaml,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/config/ur5e_update_rate.yaml" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/config/ur5e_update_rate.yaml</a>.</li>
+                                <li id="ref-26">Universal Robots, &ldquo;ur5_update_rate.yaml,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/config/ur5_update_rate.yaml" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/config/ur5_update_rate.yaml</a>.</li>
+                                <li id="ref-27">Universal Robots, &ldquo;ur_controllers documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_controllers/doc/index.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_controllers/doc/index.rst</a>.</li>
+                                <li id="ref-28">Universal Robots, &ldquo;ur_controllers.yaml (jazzy branch),&rdquo; GitHub (the humble branch defines the same controller), accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/jazzy/ur_robot_driver/config/ur_controllers.yaml" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/jazzy/ur_robot_driver/config/ur_controllers.yaml</a>.</li>
+                                <li id="ref-29">Universal Robots, &ldquo;ur_controllers.yaml (lyrical branch),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/config/ur_controllers.yaml" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/config/ur_controllers.yaml</a>.</li>
+                                <li id="ref-30">PickNik Robotics, &ldquo;abb_ros2 README (rolling branch),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/PickNikRobotics/abb_ros2/blob/rolling/README.md" target="_blank" rel="noopener noreferrer">github.com/PickNikRobotics/abb_ros2/blob/rolling/README.md</a>.</li>
+                                <li id="ref-31">PickNik Robotics, &ldquo;abb_ros2 documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/PickNikRobotics/abb_ros2/blob/rolling/docs/README.md" target="_blank" rel="noopener noreferrer">github.com/PickNikRobotics/abb_ros2/blob/rolling/docs/README.md</a>.</li>
+                                <li id="ref-32">abb-robot-client project, &ldquo;EGM API reference, abb-robot-client documentation,&rdquo; Read the Docs, accessed October 21, 2026. <a href="https://abb-robot-client.readthedocs.io/en/latest/abb_robot_client/api/egm.html" target="_blank" rel="noopener noreferrer">abb-robot-client.readthedocs.io/en/latest/abb_robot_client/api/egm.html</a>.</li>
+                                <li id="ref-33">PickNik Robotics, &ldquo;abb_ros2: TRob1Main.mod (RAPID module),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/PickNikRobotics/abb_ros2/blob/rolling/robot_studio_resources/TRob1Main.mod" target="_blank" rel="noopener noreferrer">github.com/PickNikRobotics/abb_ros2/blob/rolling/robot_studio_resources/TRob1Main.mod</a>.</li>
+                                <li id="ref-34">PickNik Robotics, &ldquo;abb_ros2: RobotStudio setup,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/PickNikRobotics/abb_ros2/blob/rolling/docs/RobotStudioSetup.md" target="_blank" rel="noopener noreferrer">github.com/PickNikRobotics/abb_ros2/blob/rolling/docs/RobotStudioSetup.md</a>.</li>
+                                <li id="ref-35">FANUC CORPORATION, &ldquo;fanuc_driver README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/FANUC-CORPORATION/fanuc_driver/blob/main/README.md" target="_blank" rel="noopener noreferrer">github.com/FANUC-CORPORATION/fanuc_driver/blob/main/README.md</a>.</li>
+                                <li id="ref-36">FANUC CORPORATION, &ldquo;fanuc_driver: ros2_controllers.yaml,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/FANUC-CORPORATION/fanuc_driver/blob/main/fanuc_hardware_interface/config/ros2_controllers.yaml" target="_blank" rel="noopener noreferrer">github.com/FANUC-CORPORATION/fanuc_driver/blob/main/fanuc_hardware_interface/config/ros2_controllers.yaml</a>.</li>
+                                <li id="ref-37">FANUC CORPORATION, &ldquo;New product news, December 2025 (ROS 2 driver announcement),&rdquo; fanuc.co.jp, December 2025. <a href="https://www.fanuc.co.jp/en/product/new_product/2025/202512_robot_physicalai.html" target="_blank" rel="noopener noreferrer">www.fanuc.co.jp/en/product/new_product/2025/202512_robot_physicalai.html</a>.</li>
+                                <li id="ref-38">ROS-Industrial, &ldquo;fanuc (repository metadata),&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros-industrial/fanuc" target="_blank" rel="noopener noreferrer">github.com/ros-industrial/fanuc</a>.</li>
+                                <li id="ref-39">KUKA, &ldquo;kuka-ros/kuka_drivers README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/kuka-ros/kuka_drivers/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/kuka-ros/kuka_drivers/blob/master/README.md</a>.</li>
+                                <li id="ref-40">kroshu, &ldquo;kuka_drivers README,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/kroshu/kuka_drivers/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/kroshu/kuka_drivers/blob/master/README.md</a>.</li>
+                                <li id="ref-41">Open Robotics, &ldquo;rosdistro: Jazzy distribution.yaml,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/ros/rosdistro/blob/master/jazzy/distribution.yaml" target="_blank" rel="noopener noreferrer">github.com/ros/rosdistro/blob/master/jazzy/distribution.yaml</a>.</li>
+                                <li id="ref-42">ROS Wiki, &ldquo;kuka_rsi_hw_interface/Troubleshooting,&rdquo; University of Maryland mirror, accessed October 21, 2026. <a href="https://mirror.umd.edu/roswiki/kuka_rsi_hw_interface(2f)Troubleshooting.html" target="_blank" rel="noopener noreferrer">mirror.umd.edu/roswiki/kuka_rsi_hw_interface(2f)Troubleshooting.html</a>.</li>
+                                <li id="ref-43">kroshu, &ldquo;kuka_drivers wiki: Sunrise FRI,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/kroshu/kuka_drivers/blob/master/doc/wiki/3_Sunrise_FRI.md" target="_blank" rel="noopener noreferrer">github.com/kroshu/kuka_drivers/blob/master/doc/wiki/3_Sunrise_FRI.md</a>.</li>
+                                <li id="ref-44">Universal Robots, &ldquo;Real-time setup, Universal_Robots_Client_Library documentation,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/real_time.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/real_time.rst</a>.</li>
+                                <li id="ref-45">kroshu, &ldquo;kuka_drivers wiki: iiQKA ExternalAPI.Control,&rdquo; GitHub, accessed October 21, 2026. <a href="https://github.com/kroshu/kuka_drivers/blob/master/doc/wiki/1_iiQKA_EAC.md" target="_blank" rel="noopener noreferrer">github.com/kroshu/kuka_drivers/blob/master/doc/wiki/1_iiQKA_EAC.md</a>.</li>
+                                <li id="ref-46">arXiv, &ldquo;Preprint arXiv:2303.02340,&rdquo; arxiv.org, 2023. <a href="https://arxiv.org/pdf/2303.02340" target="_blank" rel="noopener noreferrer">arxiv.org/pdf/2303.02340</a>.</li>
+                                <li id="ref-47">ABB Robotics User Forum, &ldquo;ABB and ROS (Robot Operating System),&rdquo; tech-community.robotics.abb.com, accessed October 21, 2026. <a href="https://tech-community.robotics.abb.com/t/abb-and-ros-robot-operating-system/5962" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/abb-and-ros-robot-operating-system/5962</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-3-8.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.8 Moving an Arm with MoveIt 2</span>
+                                </a>
+                                <a href="robotics-ethics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-target">Chapter 4: Ethics</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.7" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.4" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>
