@@ -100,7 +100,7 @@
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
                     <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
-                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-ethics.html" class="active"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
@@ -135,87 +135,209 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What is an encoder?</h2>
+                            <h2 class="article-section-title">01. Closing the loop: sensing motion and displacement</h2>
                             <p>
-                                A robot that drives &ldquo;for two seconds&rdquo; and hopes it went one meter is running open loop: it has no idea how far it actually moved. An encoder fixes that. It converts motion into an electrical signal, the opposite of what a motor does. Shaft (rotary) encoders mount on a motor shaft or wheel and report how far it has rotated. They give the robot a sense of where its own parts are.
+                                When a robotics engineer writes a program commanding a mobile robot to drive forward for two seconds, or instructs a robotic arm joint to power on for 500 milliseconds, the system is operating in an <strong>open-loop configuration</strong>. The microcontroller has commanded electrical power to the actuators, but it possesses zero sensory confirmation of what physical movement actually occurred. If the battery voltage drops, if the floor surface transitions from slick vinyl to thick carpet, or if the wheels encounter a mechanical obstacle, the robot's physical displacement will deviate drastically from the commanded trajectory.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                To achieve deterministic precision, robotic systems require <strong>closed-loop feedback control</strong>.<sup><a href="#ref-2">[2]</a></sup> The fundamental sensory component providing this feedback is the <strong>rotary encoder</strong> (commonly termed a shaft encoder). Mounted directly to motor armatures or wheel axles, an encoder converts mechanical angular displacement into a stream of digital electrical signals. Encoders provide the foundational proprioceptive data that enables mobile robots to track odometry, empowers multi-axis manipulators to hold millimeter-accurate poses, and allows velocity controllers to stabilize speeds under dynamic mechanical payloads.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. Incremental vs. absolute</h2>
+                            <h2 class="article-section-title">02. Incremental versus absolute encoders</h2>
+                            <p>
+                                Rotary encoders fall into two overarching architectural categories: incremental and absolute.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> The selection between them determines how a robotic system initializes and recovers from electrical power interruptions:
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Incremental encoders:</span> output a pulse (a &ldquo;tick&rdquo;) for each small step of rotation, and the controller counts them. They are cheap, simple and high resolution, but they only measure change: if the power goes off, the position is forgotten and the robot has to &ldquo;home&rdquo; to a known point again.</li>
-                                <li class="article-spec-item"><span class="spec-label">Absolute encoders:</span> output a unique code for every shaft angle, so the controller knows the exact position the moment it powers on. They cost more and use more complex serial protocols (such as SSI or BiSS).</li>
+                                <li class="article-spec-item"><span class="spec-label">Incremental Encoders:</span> Incremental encoders generate repetitive digital square-wave pulses as the shaft rotates. The microcontroller counts these pulses to compute relative displacement from an arbitrary starting location. Incremental encoders are mechanically simple, low-cost, and capable of extremely high rotational speeds. However, they possess no non-volatile memory of their position: <strong>what happens to an incremental encoder's position when the power goes off? It is forgotten, so the robot has to home again</strong>. When powered on, an incremental system must execute a mechanical calibration routine, driving its joints until physical limit switches or an optical index pulse (Channel Z) are triggered to re-establish a global coordinate origin.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Absolute Encoders:</span> Absolute encoders output a unique digital binary or Gray code value for every distinct angular position across the shaft's 360-degree rotation. The controller queries the encoder over a digital serial bus and receives the exact physical shaft angle instantaneously upon bootup, with zero motion required. Absolute encoders eliminate the need for homing routines entirely.<sup><a href="#ref-3">[3]</a></sup></li>
                             </ul>
-
-                            <h2 class="article-section-title">03. How encoders sense motion</h2>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Type</th><th scope="col">Principle</th><th scope="col">Good for</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Optical</td><td>Light from an LED shines through a disk of clear and opaque lines onto a photodetector.</td><td>High precision in clean environments; dust and oil block the light.</td></tr>
-                                    <tr><td>Magnetic</td><td>A magnetized disk or magnet turns past a Hall-effect or magnetoresistive sensor.</td><td>Dust, oil and rough conditions, though strong magnetic fields from nearby motors can disturb it.</td></tr>
-                                    <tr><td>Capacitive</td><td>Measures changing capacitance between a rotor and stator.</td><td>Industrial use and resistance to magnetic interference.</td></tr>
-                                </tbody>
-                            </table>
-
-                            <h2 class="article-section-title">04. Quadrature: which way is it turning?</h2>
                             <p>
-                                A single channel of pulses tells you speed but not direction. Quadrature encoders add a second channel (B) offset by a quarter cycle (90&deg;) from the first (A). If A changes before B, the shaft is turning one way; if B changes before A, it is turning the other. Counting both the rising and falling edges of both channels gives four counts per pulse, which is why:
+                                Absolute encoders are further classified into <strong>single-turn</strong> and <strong>multi-turn</strong> devices.<sup><a href="#ref-3">[3]</a></sup> Single-turn encoders resolve position within one 360-degree revolution (standard industrial resolutions range from 13-bit to 24-bit, or 8,192 to 16,777,216 distinct angular increments per turn). Multi-turn absolute encoders incorporate internal miniature gear trains or non-volatile magnetic Wiegand-effect wire sensors, tracking both the precise sub-degree angle and the exact count of full revolutions (typically up to 4,096 or 65,536 turns) even if the shaft rotates while main system power is completely disconnected.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
-                            <pre class="article-code"><code>CPR = PPR * 4   (counts per revolution, with 4x decoding)</code></pre>
+
+                            <h2 class="article-section-title">03. Quadrature decoding: direction and resolution</h2>
                             <p>
-                                Datasheets do not always use these terms the same way; some manufacturers use &ldquo;CPR&rdquo; to mean <em>cycles</em> per revolution, which equals PPR. If a &ldquo;1000 PPR&rdquo; encoder is treated as 1000 counts per turn while the code counts every edge, every distance will be off by a factor of four. The simplest check is to turn the wheel exactly one revolution by hand and see what the code reports.
+                                If an incremental encoder possesses only a single optical pulse channel (Channel A), the controller can calculate rotational speed by measuring the pulse frequency, but it cannot determine the direction of rotation. Clockwise rotation and counter-clockwise rotation produce identical pulse trains.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                To solve this, <strong>quadrature encoders</strong> incorporate two distinct sensing channels, labeled <strong>Channel A</strong> and <strong>Channel B</strong>, physically arranged so their electrical square waves are offset by exactly <strong>90 degrees of electrical phase</strong> (one quarter of a full cycle).<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                By observing which channel transitions first, the microcontroller determines directional polarity:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Clockwise (Forward) Rotation:</span> Channel A leads Channel B by 90 degrees. When Channel A experiences a rising edge (transition from LOW to HIGH), Channel B is currently in a LOW state.</li>
+                                <li class="article-spec-item"><span class="spec-label">Counter-Clockwise (Reverse) Rotation:</span> Channel B leads Channel A by 90 degrees. When Channel A experiences a rising edge, Channel B is already in a HIGH state.</li>
+                            </ul>
+                            <p>
+                                The resolution extracted from a quadrature encoder depends on the software decoding mode implemented in the microcontroller:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">1x Decoding:</span> The microcontroller triggers an interrupt only on the rising edges of Channel A. The number of registered counts per revolution (CPR) equals the physical Pulses Per Revolution (PPR) of the encoder: \(\text{CPR} = \text{PPR} \times 1\).<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">2x Decoding:</span> The microcontroller counts both the rising edges and falling edges of Channel A: \(\text{CPR} = \text{PPR} \times 2\).<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">4x Decoding (Full Quadrature):</span> The microcontroller counts every state transition (both rising and falling edges) across BOTH Channel A and Channel B. Because each complete electrical period contains four discrete state transitions (00 &rarr; 10 &rarr; 11 &rarr; 01 &rarr; 00), 4x decoding quadruples the effective angular resolution:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup></li>
+                            </ul>
+                            <div class="article-callout">
+                                <p>\[\text{CPR} = \text{PPR} \times 4\]</p>
+                            </div>
+                            <p>
+                                Consider a practical design problem: a quadrature encoder is rated at 500 PPR. With 4x decoding, how many counts per revolution does the code see? Using the quadrature multiplier, the calculation yields:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\text{CPR} = 500 \times 4 = 2000\text{ counts per revolution}\]</p>
+                            </div>
+                            <p>
+                                Terminology across commercial datasheets requires careful scrutiny. In standard definitions, <strong>PPR</strong> denotes Pulses Per Revolution (electrical cycles on one channel), while <strong>CPR</strong> denotes Counts Per Revolution (the decoded transitions, which is \(4 \times \text{PPR}\) under 4x decoding). However, several major manufacturers use "CPR" to mean <em>Cycles</em> Per Revolution, setting CPR equal to PPR. If an engineer assumes a 1,000 "CPR" encoder yields 1,000 counts per turn, but the software runs full 4x decoding, the calculated robot travel distance will be off by an exact factor of four. Engineers should always physically rotate a newly mounted wheel exactly one full turn by hand while logging raw count increments to verify the true multiplier.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">04. Interactive quadrature encoder simulation</h2>
+                            <p>
+                                Interact with the simulator below to rotate the virtual encoder wheel step by step. Observe how the 90-degree phase shift between Channel A and Channel B dictates whether counts increment or decrement:
                             </p>
 
                             <div data-widget="encoder">
                                 <p class="widget-note">The encoder simulator needs JavaScript. With it on, you can turn a wheel step by step and watch channels A and B and the count.</p>
                             </div>
 
-                            <h2 class="article-section-title">05. From ticks to distance and speed</h2>
+                            <h2 class="article-section-title">05. Physical sensing technologies</h2>
                             <p>
-                                With the counts per revolution (CPR) and the wheel diameter (<em>d</em>), distance traveled is:
+                                How an encoder physically detects shaft movement dictates its environmental durability and operating envelope:<sup><a href="#ref-5">[5]</a></sup>
                             </p>
-                            <pre class="article-code"><code>distance = (ticks / CPR) * (pi * d)</code></pre>
-                            <p>
-                                Angular velocity over a time interval &Delta;t, in radians per second, is:
-                            </p>
-                            <pre class="article-code"><code>omega = (delta_ticks / (CPR * dt)) * 2 * pi</code></pre>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Transducer Technology</th>
+                                        <th scope="col">Physical Operating Principle</th>
+                                        <th scope="col">Engineering Trade-Offs</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Optical Encoders</strong></td>
+                                        <td>An infrared LED projects light through a patterned glass or etched metal disk featuring microscopic radial lines onto a matched photodiode array.<sup><a href="#ref-5">[5]</a></sup></td>
+                                        <td>Highest angular resolution and precision. However, glass disks are fragile under heavy shock, and contamination from oil, airborne dust, or condensation will blind the optical path.<sup><a href="#ref-5">[5]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Magnetic Encoders</strong></td>
+                                        <td>A diametrically magnetized multi-pole permanent magnet wheel spins adjacent to a Hall-effect or Giant Magnetoresistive (GMR) sensor IC.<sup><a href="#ref-5">[5]</a></sup></td>
+                                        <td>Extremely rugged, completely sealed against moisture, dust, and cutting fluid. However, vulnerable to strong external magnetic fields from high-power motor windings or dynamic brake coils.<sup><a href="#ref-5">[5]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Capacitive Encoders</strong></td>
+                                        <td>An asymmetric conductive rotor pattern modulates high-frequency electrical capacitance between transmitter and receiver PCB stators.<sup><a href="#ref-5">[5]</a></sup></td>
+                                        <td>Impervious to airborne dust, oil, and magnetic fields. Low current consumption, high temperature tolerance, and highly reliable for industrial field robotics.<sup><a href="#ref-5">[5]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
-                            <h2 class="article-section-title">06. Reading an encoder in code</h2>
+                            <h2 class="article-section-title">06. Kinematic calculations: from ticks to linear distance and velocity</h2>
                             <p>
-                                Encoders can produce thousands of pulses per second, far too fast to catch by calling <code>digitalRead()</code> in the main loop. Use hardware interrupts: the microcontroller pauses whatever it is doing when an encoder pin changes, updates the count, and returns. On an Arduino Uno only pins 2 and 3 work with <code>attachInterrupt()</code>, so a two-wheeled robot can connect one channel of each wheel&rsquo;s encoder to those pins. For demanding robots, a dedicated hardware counter (many microcontrollers have timer peripherals that can decode quadrature) frees the main processor entirely.
+                                In mobile robotics, encoders convert raw integer count increments (&ldquo;ticks&rdquo;) into physical SI units of linear displacement and angular velocity.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                Given a wheel of outer diameter \(d\) (in meters) and an encoder with a verified resolution of \(\text{CPR}\) counts per revolution, the physical distance traveled by the wheel contact patch is:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\text{Distance } s = \left(\frac{\text{ticks}}{\text{CPR}}\right) \times (\pi \cdot d)\]</p>
+                            </div>
+                            <p>
+                                To calculate wheel rotational velocity in discrete-time control loops running at a fixed sampling interval \(\Delta t\) seconds, the change in encoder counts \(\Delta\text{ticks} = \text{ticks}_{curr} - \text{ticks}_{prev}\) is converted to angular velocity \(\omega\) in radians per second:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\omega = \left(\frac{\Delta\text{ticks}}{\text{CPR} \times \Delta t}\right) \times 2\pi\]</p>
+                            </div>
+                            <p>
+                                The linear velocity \(v\) of the wheel rim in meters per second is then directly determined by multiplying angular velocity by the wheel radius \(r = d / 2\):<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[v = \omega \cdot r = \left(\frac{\Delta\text{ticks}}{\text{CPR} \times \Delta t}\right) \times (\pi \cdot d)\]</p>
+                            </div>
+
+                            <h2 class="article-section-title">07. Microcontroller decoding: interrupts and state tables</h2>
+                            <p>
+                                In real robotic hardware, motor armatures spin at thousands of revolutions per minute. Consider a DC gearmotor running at 3,000 RPM whose rear armature shaft carries a modest 500 PPR encoder running full 4x decoding. The resulting pulse transition frequency is:<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[f_{interrupt} = \left(\frac{3000\text{ RPM}}{60\text{ s}}\right) \times 500\text{ PPR} \times 4 = 100,000\text{ transitions/sec (100 kHz)}\]</p>
+                            </div>
+                            <p>
+                                If a programmer attempts to sample encoder pins inside an Arduino <code>loop()</code> function using <code>digitalRead()</code>, the execution loop (which takes hundreds of microseconds per pass) will miss tens of thousands of pulses, causing disastrous positioning drift.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                Microcontrollers must process encoder transitions using <strong>hardware interrupts</strong>.<sup><a href="#ref-6">[6]</a></sup> When an electrical transition occurs on an interrupt-enabled pin, the microcontroller CPU immediately freezes its main execution thread, jumps to an Interrupt Service Routine (ISR) to increment or decrement the count variable, and resumes execution within microseconds:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>volatile long encoderCount = 0;
+const byte pinA = 2;
+const byte pinB = 3;
+
+void IRAM_ATTR encoderISR() {
+    // Read current state of both channels
+    byte a = digitalRead(pinA);
+    byte b = digitalRead(pinB);
+    if (a == b) {
+        encoderCount++;
+    } else {
+        encoderCount--;
+    }
+}
+
+void setup() {
+    pinMode(pinA, INPUT_PULLUP);
+    pinMode(pinB, INPUT_PULLUP);
+    attachInterrupt(digitalPinToInterrupt(pinA), encoderISR, CHANGE);
+}</code></pre>
+                            <p>
+                                On an <strong>Arduino Uno R3</strong>, external hardware interrupts via <code>attachInterrupt()</code> are legally restricted to <strong>pins 2 and 3 only</strong>.<sup><a href="#ref-6">[6]</a></sup> On a two-wheeled differential robot, only one channel from each wheel's encoder can be connected to hardware interrupts, restricting the Uno R3 to 1x or 2x decoding unless complex Pin Change Interrupts (PCINT) are configured. In contrast, modern 32-bit microcontrollers such as the <strong>Arduino Uno R4 (RA4M1)</strong> feature dedicated hardware <strong>Quadrature Encoder Interface (QEI)</strong> timers. The hardware timers automatically decode quadrature pulses and update an internal 32-bit hardware register with zero CPU interrupt overhead.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">07. Where encoders are used</h2>
+                            <h2 class="article-section-title">08. Absolute encoders in industrial robotics: multi-axis arms and serial protocols</h2>
+                            <p>
+                                In 6-axis industrial articulated arms (such as those manufactured by ABB, FANUC, KUKA, and Universal Robots), joint feedback is handled almost exclusively by high-resolution <strong>multi-turn absolute encoders</strong>.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <p>
+                                Why do 6-axis industrial robot arms use absolute multi-turn encoders on their joints rather than incremental encoders? Because <strong>absolute encoders allow the arm to know its exact physical pose immediately on power-on without requiring dangerous homing movements through the cell</strong>.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                Consider an industrial robot cell where an arm holds a 200-kilogram welding fixture inside an automobile chassis. If incremental encoders were employed, any emergency stop, safety gate breach, or factory power outage would erase joint coordinates. To re-home, the massive robot would have to blindly swing its axes until each joint struck a homing limit switch, destroying the car body and ripping tooling fixtures apart. With absolute encoders, the controller reads the exact angular position of every joint within microseconds of power restoration, allowing safe resumption of production.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                Industrial absolute encoders communicate with motion controllers over high-speed, noise-immune digital serial fieldbus protocols:<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Odometry:</span> encoders on the left and right wheels of a differential-drive robot let it estimate its position relative to where it started.</li>
-                                <li class="article-spec-item"><span class="spec-label">Speed control:</span> with an encoder, a robot can hold a target speed on carpet and on hardwood alike by adjusting power, using <a href="robotics-5-4.html">PID control</a>.</li>
-                                <li class="article-spec-item"><span class="spec-label">Robot arms:</span> encoders at each joint tell the controller the exact angle of every axis.</li>
+                                <li class="article-spec-item"><span class="spec-label">BiSS-C (Bidirectional Synchronous Serial):</span> An open-source, point-to-point digital protocol operating over RS-422 differential pairs at clock rates up to 10 MHz. BiSS-C provides cyclic position transmission with embedded Cyclic Redundancy Checks (CRC) and internal sensor health telemetry.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">SSI (Synchronous Serial Interface):</span> A legacy industrial master-slave protocol that streams position bits synchronously on clock edges, widely used in factory automation.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">EnDat 2.2 (Heidenhain):</span> A proprietary high-speed bidirectional interface capable of transferring absolute position data along with encoder diagnostics, electronic calibration datasheets, and temperature monitoring.<sup><a href="#ref-8">[8]</a></sup></li>
                             </ul>
 
-                            <h2 class="article-section-title">08. Common pitfalls</h2>
+                            <h2 class="article-section-title">09. Engineering pitfalls: backlash, frequency limits, and electrical noise</h2>
+                            <p>
+                                Integrating encoders into dynamic robotic hardware requires avoiding several classic failure modes:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Backlash:</span> an encoder on the motor side of a gearbox cannot see play in the gears. Mount it close to the output when precision matters.</li>
-                                <li class="article-spec-item"><span class="spec-label">Too much resolution:</span> a very high-resolution encoder on a slow microcontroller can generate interrupts faster than the processor can handle, so counts get missed.</li>
-                                <li class="article-spec-item"><span class="spec-label">Electrical noise:</span> encoder signals are low voltage and high frequency. Keep them away from motor power wires and use twisted-pair or shielded cable.</li>
-                                <li class="article-spec-item"><span class="spec-label">Mounting:</span> use a flexible coupling between the motor and encoder shafts, since no two shafts are perfectly aligned.</li>
+                                <li class="article-spec-item"><span class="spec-label">Gearbox Backlash:</span> Mounting an encoder directly to the high-speed armature shaft of a DC gearmotor provides excellent resolution, but the encoder cannot see mechanical play ("backlash") in the planetary or spur gear teeth. When the motor reverses direction, the motor shaft turns several degrees before the gearbox teeth re-engage the output wheel, introducing unobservable deadband in position control. When sub-millimeter precision is required, encoders must be mounted on the final output shaft or load side.</li>
+                                <li class="article-spec-item"><span class="spec-label">Processor Interrupt Saturation:</span> Specifying an encoder with excessively high PPR on a high-speed shaft can trigger interrupts faster than an 8-bit microcontroller can execute its ISR. The CPU spends 100% of its execution time inside the interrupt handler, starving the main loop and causing the robot to lock up.</li>
+                                <li class="article-spec-item"><span class="spec-label">Electromagnetic Interference (EMI):</span> Encoder signals are high-speed, low-voltage digital pulses. Routing unshielded encoder wires parallel to high-current PWM motor cables induces capacitive noise spikes, causing false counts. Encoders must use shielded, twisted-pair cabling with the cable shield grounded at a single chassis point.</li>
                             </ul>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>In the encoder simulator above, turn forward 8 steps and back 3. Check that the count is 5 and that B changes first when you turn back.</li>
-                                    <li>Set PPR to 12 and a 65 mm wheel. How many counts make one revolution, and how far does the wheel roll in 100 counts?</li>
+                                    <li>In the encoder simulator above, rotate the wheel clockwise by 12 steps, then reverse direction counter-clockwise by 4 steps. Verify that the final displayed count equals 8, and observe how Channel B leads Channel A during reverse rotation.</li>
+                                    <li>Calculate the linear distance traveled by a mobile robot with 80 mm diameter wheels equipped with 360 PPR encoders running 4x decoding, if the microcontroller registers 4,520 encoder ticks.</li>
+                                    <li>Wire an incremental encoder to an Arduino, attach interrupts to pin 2 and pin 3, and write an ISR. Manually rotate the shaft exactly 360 degrees, verify that the logged count matches your calculated CPR, and confirm that no counts are dropped during rapid manual spins.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">09. References</h2>
+                            <h2 class="article-section-title">10. References</h2>
                             <ol class="article-spec-list">
-                            <li>Same Sky (formerly CUI Devices), &ldquo;What&rsquo;s the Difference Between an Incremental Encoder&rsquo;s PPR, CPR, and LPR?&rdquo; <a href="https://www.sameskydevices.com/blog/what-is-encoder-ppr-cpr-and-lpr" target="_blank" rel="noopener noreferrer">sameskydevices.com/blog/what-is-encoder-ppr-cpr-and-lpr</a>.</li>
-                            <li>Same Sky, &ldquo;Capacitive, Magnetic, and Optical Encoders &ndash; Comparing the Technologies.&rdquo; <a href="https://www.sameskydevices.com/blog/capacitive-magnetic-and-optical-encoders-comparing-the-technologies" target="_blank" rel="noopener noreferrer">sameskydevices.com/blog/capacitive-magnetic-and-optical-encoders-comparing-the-technologies</a>.</li>
-                            <li>D. Collins, &ldquo;Absolute encoder interfaces: Differences between SSI, BiSS, Hiperface, and EnDat,&rdquo; <em>Motion Control Tips</em>. <a href="https://www.motioncontroltips.com/absolute-encoder-intefaces-differences-between-ssi-biss-hiperface-endat/" target="_blank" rel="noopener noreferrer">motioncontroltips.com/&hellip;ssi-biss-hiperface-endat</a>.</li>
-                            <li>Arduino, &ldquo;attachInterrupt().&rdquo; <a href="https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt</a>.</li>
-                            <li>R. Siegwart, I. R. Nourbakhsh and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., ch. 4 &ldquo;Perception.&rdquo; MIT Press, 2011.</li>
+                                <li id="ref-1">Same Sky, &ldquo;What's the Difference Between an Incremental Encoder's PPR, CPR, and LPR?&rdquo; <em>Same Sky Technical Blog</em>, 2023. <a href="https://www.sameskydevices.com/blog/what-is-encoder-ppr-cpr-and-lpr" target="_blank" rel="noopener noreferrer">sameskydevices.com/blog/what-is-encoder-ppr-cpr-and-lpr</a>.</li>
+                                <li id="ref-2">R. Siegwart, I. R. Nourbakhsh, and D. Scaramuzza, <em>Introduction to Autonomous Mobile Robots</em>, 2nd ed., Chapter 4: &ldquo;Perception,&rdquo; MIT Press, Cambridge, MA, 2011.</li>
+                                <li id="ref-3">D. Collins, &ldquo;Absolute Encoder Interfaces: Differences Between SSI, BiSS, Hiperface, and EnDat,&rdquo; <em>Motion Control Tips</em>, Design World, 2021. <a href="https://www.motioncontroltips.com/absolute-encoder-intefaces-differences-between-ssi-biss-hiperface-endat/" target="_blank" rel="noopener noreferrer">motioncontroltips.com/.../absolute-encoder-interfaces</a>.</li>
+                                <li id="ref-4">US Digital, <em>Quadrature Encoder Primer: Principles of Quadrature Decoding</em>, Technical Bulletin, Vancouver, WA, 2022. <a href="https://www.usdigital.com/support/resources/primer/quadrature-encoder-primer/" target="_blank" rel="noopener noreferrer">usdigital.com/.../quadrature-encoder-primer/</a>.</li>
+                                <li id="ref-5">Same Sky, &ldquo;Capacitive, Magnetic, and Optical Encoders &mdash; Comparing the Technologies,&rdquo; <em>Same Sky Technical Blog</em>, 2023. <a href="https://www.sameskydevices.com/blog/capacitive-magnetic-and-optical-encoders-comparing-the-technologies" target="_blank" rel="noopener noreferrer">sameskydevices.com/blog/capacitive-magnetic-and-optical-encoders-comparing-the-technologies</a>.</li>
+                                <li id="ref-6">Arduino, &ldquo;attachInterrupt() Function Reference,&rdquo; <em>Arduino Docs</em>, 2024. <a href="https://docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/external-interrupts/attachInterrupt/</a>.</li>
+                                <li id="ref-7">Renesas Electronics, <em>RA4M1 Group User's Manual: Hardware (General PWM Timer and Encoder Interface)</em>, Document R01UH0887EJ0100, Rev. 1.00, 2020. <a href="https://www.renesas.com/en/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ra4m1-32-bit-microcontrollers-48mhz-arm-cortex-m4" target="_blank" rel="noopener noreferrer">renesas.com/en/products/.../ra4m1</a>.</li>
+                                <li id="ref-8">Heidenhain, <em>EnDat 2.2: Bidirectional Interface for Position Encoders</em>, Technical Product Information, Traunreut, Germany, 2022. <a href="https://www.heidenhain.com/products/interfaces/endat" target="_blank" rel="noopener noreferrer">heidenhain.com/products/interfaces/endat</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -251,8 +373,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
             <script src="assets/js/widgets.js?v=1.0" defer></script>
 

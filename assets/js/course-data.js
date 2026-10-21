@@ -20,211 +20,76 @@ window.RISE_COURSE = {
 			id: 1,
 			title: 'Intro to Robotics',
 			url: 'robotics-intro.html',
-			prerequisites: 'None. This chapter is the starting point.',
-			handsOn: 'the Try it boxes ask you to classify real robots and trace the sense, think, act loop.',
-			summary: 'What robots are, where they came from, the main types, the skills to learn first, and where robots work.',
+			prerequisites: "None. This chapter is the starting point.",
+			handsOn: "the Try it boxes ask you to classify real robots and trace the sense, think, act loop.",
+			summary: "What robots are, where they came from, the main types, the skills to learn first, and where robots work.",
 			lessons: [
-				{"id": "1-1", "minutes": 16, "title": "Definition of Robots", "objectives": ["Define a robot using ISO 8373:2021 and compare it with dictionary, RIA and sense-think-act definitions.", "Explain autonomy as a matter of degree and tell a robot from a robotic device.", "Explain where the words \"robot\" (Josef and Karel Čapek, R.U.R.) and \"robotics\" (Asimov) came from.", "Describe the sense, think, act loop and compare sense-plan-act, reactive and hybrid control architectures."], "keyTerms": ["robot", "ISO 8373", "autonomy", "robotic device", "industrial robot", "R.U.R.", "sensor", "controller", "actuator", "subsumption architecture"]},
-				{"id": "1-2", "minutes": 14, "title": "History and Evolution of Robots", "objectives": ["Describe early automata (Hero, al-Jazari, Su Song, Jaquet-Droz) and the stored-program idea behind Jacquard's loom and numerical control.", "Place Unimate, the Stanford Arm, the 1970s European and Japanese firsts, SCARA, cobots and ROS on a timeline.", "Trace how robots went from fixed arms to machines that move around, from Grey Walter's tortoises and Shakey to Kiva and humanoids.", "Quote the current installed base of industrial robots from IFR World Robotics 2026."], "keyTerms": ["automaton", "escapement", "Jacquard loom", "numerical control", "Unimate", "degree of freedom", "Stanford Arm", "SCARA", "cobot", "ROS"]},
-				{"id": "1-3", "minutes": 13, "title": "Types of Robots", "objectives": ["Classify an industrial robot by mechanical structure (articulated, SCARA, Cartesian, parallel/delta, cylindrical, polar) separately from its application.", "Read a robot spec sheet and compare payload, reach and repeatability across real models.", "Explain why ISO 10218:2025 speaks of collaborative applications and describe the four collaborative modes.", "Tell AGVs from AMRs by how they navigate, and place service robots and humanoids in the wider robot population."], "keyTerms": ["industrial robot", "articulated robot", "SCARA", "delta robot", "Cartesian robot", "repeatability", "cobot", "collaborative application", "AGV", "AMR", "mobile robot"]},
-				{"id": "1-4", "minutes": 12, "title": "Preliminary Requirements", "objectives": ["Apply the basic safety rules for working near an industrial robot: reduced teach speed, the enabling device and lockout/tagout.", "Explain where Python, C++ and vendor robot languages are used, and name the ROS 2 client libraries.", "Compute the forward kinematics of a planar two-link arm and connect it to trigonometry, matrices and derivatives.", "Plan a learning path using free resources, simulators and vendor training, treating assembly as optional enrichment."], "keyTerms": ["enabling device", "lockout/tagout", "Python", "C++", "rclpy", "forward kinematics", "Ohm's law", "Gazebo", "Modbus TCP", "assembly", "TCP", "UDP"]},
-				{"id": "1-5", "minutes": 13, "title": "Common Applications of Robotics", "objectives": ["Use IFR World Robotics figures to describe how many industrial robots are installed and operating, and which countries and industries use them most.", "Explain the difference between total robot numbers and robot density, using China and Korea as examples.", "Describe real applications in logistics, car plants, medicine, service, space and agriculture, and say what each case shows about current robot capabilities.", "Explain how robots protect human lives, using the Mars, World Trade Center and Fukushima cases, and why humanoids and AI foundation models are still early applications."], "keyTerms": ["industrial robot", "operational stock", "robot density", "service robot", "teleoperation", "humanoid robot", "foundation model", "Mars rover", "AutoNav", "search and rescue"]},
-				{"id": "1-6", "minutes": 14, "title": "Robot Anatomy and Coordinate Frames", "objectives": ["Distinguish joint types, count degrees of freedom with Grübler's formula, and explain why six axes are needed to position and orient a tool.", "Read a robot datasheet, explain how reducers affect precision, and tell pose accuracy from pose repeatability (ISO 9283).", "Explain the tool center point, tool frame and work object, how a TCP is taught with the 4-point method, and why defining frames makes a program reusable.", "Solve forward and inverse kinematics for a two-link arm, recognize singularities, and compare joint, linear and circular moves with blending."], "keyTerms": ["degree of freedom", "Grübler's formula", "reducer", "backlash", "pose repeatability", "tool center point (TCP)", "work object (user frame)", "inverse kinematics", "singularity", "blending (zone)", "end effector", "workspace (work envelope)", "linear interpolation (MoveL)"]}
+				{"id": "1-1", "minutes": 16, "title": "Definition of Robots", "objectives": ["Define a robot using ISO 8373:2021 and compare it with dictionary, RIA and sense-think-act definitions.","Explain autonomy as a matter of degree and tell a robot from a robotic device.","Explain where the words \"robot\" (Josef and Karel Čapek, R.U.R.) and \"robotics\" (Asimov) came from.","Describe the sense, think, act loop and compare sense-plan-act, reactive and hybrid control architectures."], "keyTerms": ["robot","ISO 8373","autonomy","robotic device","industrial robot","R.U.R.","sensor","controller","actuator","subsumption architecture"]},
+				{"id": "1-2", "minutes": 14, "title": "History and Evolution of Robots", "objectives": ["Describe early automata (Hero, al-Jazari, Su Song, Jaquet-Droz) and the stored-program idea behind Jacquard's loom and numerical control.","Place Unimate, the Stanford Arm, the 1970s European and Japanese firsts, SCARA, cobots and ROS on a timeline.","Trace how robots went from fixed arms to machines that move around, from Grey Walter's tortoises and Shakey to Kiva and humanoids.","Quote the current installed base of industrial robots from IFR World Robotics 2026."], "keyTerms": ["automaton","escapement","Jacquard loom","numerical control","Unimate","degree of freedom","Stanford Arm","SCARA","cobot","ROS"]},
+				{"id": "1-3", "minutes": 13, "title": "Types of Robots", "objectives": ["Classify an industrial robot by mechanical structure (articulated, SCARA, Cartesian, parallel/delta, cylindrical, polar) separately from its application.","Read a robot spec sheet and compare payload, reach and repeatability across real models.","Explain why ISO 10218:2025 speaks of collaborative applications and describe the four collaborative modes.","Tell AGVs from AMRs by how they navigate, and place service robots and humanoids in the wider robot population."], "keyTerms": ["industrial robot","articulated robot","SCARA","delta robot","Cartesian robot","repeatability","cobot","collaborative application","AGV","AMR","mobile robot"]},
+				{"id": "1-4", "minutes": 12, "title": "Preliminary Requirements", "objectives": ["Apply the basic safety rules for working near an industrial robot: reduced teach speed, the enabling device and lockout/tagout.","Explain where Python, C++ and vendor robot languages are used, and name the ROS 2 client libraries.","Compute the forward kinematics of a planar two-link arm and connect it to trigonometry, matrices and derivatives.","Plan a learning path using free resources, simulators and vendor training, treating assembly as optional enrichment."], "keyTerms": ["enabling device","lockout/tagout","Python","C++","rclpy","forward kinematics","Ohm's law","Gazebo","Modbus TCP","assembly","TCP","UDP"]},
+				{"id": "1-5", "minutes": 13, "title": "Common Applications of Robotics", "objectives": ["Use IFR World Robotics figures to describe how many industrial robots are installed and operating, and which countries and industries use them most.","Explain the difference between total robot numbers and robot density, using China and Korea as examples.","Describe real applications in logistics, car plants, medicine, service, space and agriculture, and say what each case shows about current robot capabilities.","Explain how robots protect human lives, using the Mars, World Trade Center and Fukushima cases, and why humanoids and AI foundation models are still early applications."], "keyTerms": ["industrial robot","operational stock","robot density","service robot","teleoperation","humanoid robot","foundation model","Mars rover","AutoNav","search and rescue"]},
+				{"id": "1-6", "minutes": 14, "title": "Robot Anatomy and Coordinate Frames", "objectives": ["Distinguish joint types, count degrees of freedom with Grübler's formula, and explain why six axes are needed to position and orient a tool.","Read a robot datasheet, explain how reducers affect precision, and tell pose accuracy from pose repeatability (ISO 9283).","Explain the tool center point, tool frame and work object, how a TCP is taught with the 4-point method, and why defining frames makes a program reusable.","Solve forward and inverse kinematics for a two-link arm, recognize singularities, and compare joint, linear and circular moves with blending."], "keyTerms": ["degree of freedom","Grübler's formula","reducer","backlash","pose repeatability","tool center point (TCP)","work object (user frame)","inverse kinematics","singularity","blending (zone)","end effector","workspace (work envelope)","linear interpolation (MoveL)"]}
 			]
 		},
 		{
 			id: 2,
 			title: 'Robot Programming',
 			url: 'robotics-programming.html',
-			prerequisites: 'Chapter 1, especially 1.6 Robot Anatomy and Coordinate Frames.',
-			handsOn: 'edit short URScript and RAPID programs and compare programming methods.',
-			summary: 'How industrial robots are programmed online and offline, in environments like RobotStudio and PolyScope, and in vendor languages.',
+			prerequisites: "Chapter 1, especially 1.6 Robot Anatomy and Coordinate Frames.",
+			handsOn: "edit short URScript and RAPID programs and compare programming methods.",
+			summary: "How industrial robots are programmed online and offline, in environments like RobotStudio and PolyScope, and in vendor languages.",
 			lessons: [
-				{
-					id: '2-1',
-					title: 'Types of Programming', minutes: 5,
-					objectives: [
-						'Compare online (teach pendant, lead-through) and offline programming.',
-						'Explain how block-based programming works and when it fits.',
-						'Choose a method for a given job.'
-					],
-					keyTerms: ['offline programming', 'teach pendant', 'lead-through', 'block-based programming', 'MoveJ', 'MoveL']
-				},
-				{
-					id: '2-2',
-					title: 'Common Programming Environments', minutes: 4,
-					objectives: [
-						'Describe what ABB RobotStudio is used for.',
-						'Describe how PolyScope programs are built and where URScript fits in.'
-					],
-					keyTerms: ['RobotStudio', 'Virtual Controller', 'PolyScope', 'program tree', 'URCaps']
-				},
-				{
-					id: '2-3',
-					title: 'Common Programming Languages', minutes: 3,
-					objectives: [
-						'Read a short URScript and RAPID program.',
-						'Compare URScript and RAPID.',
-						'Explain what RRL was and name KRL and IRL.'
-					],
-					keyTerms: ['URScript', 'RAPID', 'movej', 'movel', 'robtarget', 'KRL']
-				},
-				{
-					id: '2-4',
-					title: 'Intro to ROS (Vendor-Agnostic)', minutes: 2,
-					objectives: [
-						'Explain why vendor-neutral middleware like ROS is useful.',
-						'Describe what ROS-Industrial adds for manufacturing.',
-						'Explain what a vendor ROS driver does, using Universal Robots as the example.'
-					],
-					keyTerms: ['middleware', 'ROS', 'digital twin', 'ROS-Industrial', 'ROS driver']
-				}
+				{"id": "2-1", "minutes": 14, "title": "Types of Programming", "objectives": ["Compare online programming (teach pendant, lead-through) with offline programming (OLP) and block-based visual tools.","Explain the safety interlocks on an industrial teach pendant, including the three-position enabling device and the 250 mm/s reduced teach speed.","Explain how the simulation-to-reality gap is bridged through work object and robot kinematic calibration.","Evaluate the economic and operational trade-offs of programming methods based on cell downtime and batch size."], "keyTerms": ["offline programming","teach pendant","lead-through","enabling device","reduced teach speed","simulation-to-reality gap","kinematic calibration","post-processor","block-based programming","MoveJ"]},
+				{"id": "2-2", "minutes": 13, "title": "Common Programming Environments", "objectives": ["Explain how ABB RobotStudio uses the Virtual Controller (TrueMove and QuickMove) to achieve cycle-time and path parity with physical robots.","Describe the architecture of Universal Robots PolyScope (5 and X), including the program tree, freedrive, and safety boundaries.","Explain the role of plugin ecosystems like URCaps in expanding robot capabilities without custom low-level driver development.","Compare vendor simulation suites (RobotStudio, ROBOGUIDE, MotoSim) with brand-agnostic environments like RoboDK and tools for virtual commissioning."], "keyTerms": ["RobotStudio","Virtual Controller","PolyScope","program tree","URCaps","virtual commissioning","ROBOGUIDE","TrueMove","QuickMove","safety planes"]},
+				{"id": "2-3", "minutes": 14, "title": "Common Programming Languages", "objectives": ["Analyze the syntax and program structure of ABB RAPID, including modules, routines (PROC, FUNC, TRAP), robtarget, and zonedata.","Examine Universal Robots URScript syntax, poses as rotation vectors, motion commands (movej, movel, movep), and real-time thread execution.","Compare vendor languages with KUKA KRL, FANUC TP/Karel, and historical standards like DIN 66312 IRL and academic RRL.","Explain how robot languages handle physical I/O, error recovery traps, and kinematic ambiguity."], "keyTerms": ["URScript","RAPID","movej","movel","robtarget","KRL","zonedata","speeddata","rotation vector","KAREL"]},
+				{"id": "2-4", "minutes": 14, "title": "Intro to ROS (Vendor-Agnostic)", "objectives": ["Trace the evolution of ROS from Willow Garage and PR2 to decentralized, real-time ROS 2 targeting releases like Lyrical Luth.","Explain how Data Distribution Service (DDS) eliminates the central roscore single point of failure and provides configurable Quality of Service (QoS).","Describe the problems ROS solves in robotics: hardware abstraction, message passing, package management, and reusable community stacks (Nav2, MoveIt 2).","Examine how ROS-Industrial consortia and vendor drivers (e.g. Universal Robots ROS 2 Driver) bring open-source software to factory manipulators."], "keyTerms": ["middleware","ROS","digital twin","ROS-Industrial","ROS driver","DDS","roscore","hardware abstraction layer","MoveIt 2","Nav2"]}
 			]
 		},
 		{
 			id: 3,
 			title: 'Robot Operating System (ROS)',
 			url: 'robotics-ros.html',
-			prerequisites: 'Chapter 2, and a computer where you can install Ubuntu, WSL 2 or a virtual machine.',
-			handsOn: 'install ROS 2, drive Turtlesim, call services, record a bag and read the node graph.',
-			summary: 'What ROS is, how ROS 2 differs from ROS 1, installing it, a first Turtlesim example, and the most useful tools.',
+			prerequisites: "Chapter 2, and a computer where you can install Ubuntu, WSL 2 or a virtual machine.",
+			handsOn: "install ROS 2, drive Turtlesim, call services, record a bag and read the node graph.",
+			summary: "What ROS is, how ROS 2 differs from ROS 1, installing it, a first Turtlesim example, and the most useful tools.",
 			lessons: [
-				{
-					id: '3-1',
-					title: 'Definition and Introduction', minutes: 3,
-					objectives: [
-						'Explain what ROS is and is not.',
-						'Define nodes, topics, services, actions and parameters.',
-						'Use ROS_DOMAIN_ID to keep robots apart on a shared network.'
-					],
-					keyTerms: ['node', 'topic', 'service', 'action', 'parameter', 'SLAM', 'ROS_DOMAIN_ID', 'Willow Garage']
-				},
-				{
-					id: '3-2',
-					title: 'ROS 1 vs. ROS 2', minutes: 4,
-					objectives: [
-						'Explain how ROS 2 discovery with DDS differs from the ROS 1 master.',
-						'Choose Quality of Service settings and a middleware for a topic.',
-						'Describe launch files and why new projects should use ROS 2.'
-					],
-					keyTerms: ['roscore', 'DDS', 'QoS', 'launch file', 'Noetic']
-				},
-				{
-					id: '3-3',
-					title: 'Installing ROS on Your Local Environment', minutes: 4,
-					objectives: [
-						'Pick an install route for your operating system.',
-						'Install and source ROS 2 on Ubuntu.',
-						'Check the install with talker and listener, and fix common errors.'
-					],
-					keyTerms: ['Lyrical Luth', 'Jazzy Jalisco', 'WSL 2', 'setup.bash']
-				},
-				{
-					id: '3-4',
-					title: 'Running Your First Example (Turtlesim)', minutes: 3,
-					objectives: [
-						'Run Turtlesim and drive the turtle from the keyboard.',
-						'Inspect nodes, topics and message types with the ros2 command.',
-						'Call a service to spawn a turtle, and remap topics to drive it.'
-					],
-					keyTerms: ['turtlesim', 'teleop', 'ros2 topic echo', '/turtle1/cmd_vel', 'Twist', '/spawn', 'remapping']
-				},
-				{
-					id: '3-5',
-					title: 'ROS Tools', minutes: 3,
-					objectives: [
-						'Tell RViz (visualization) apart from Gazebo (simulation).',
-						'See the running node graph with rqt_graph.',
-						'Record and replay topics with ros2 bag.',
-						'Name widely used ROS packages and what they do.'
-					],
-					keyTerms: ['RViz', 'rqt_graph', 'Gazebo', 'ros2 bag', 'Nav2', 'MoveIt 2', 'tf2']
-				}
+				{"id": "3-1", "minutes": 14, "title": "Definition and Introduction", "objectives": ["Define ROS 2 as open-source robot middleware and contrast its architecture with traditional monolithic robot controllers.","Differentiate the core communication primitives: nodes, topics (pub/sub), services (req/res), actions (goal/feedback), and parameters.","Explain network discovery under DDS and how ROS_DOMAIN_ID calculates port offsets to isolate robots on a shared subnet.","Quote global ROS adoption trends from the annual ROS Metrics Report, highlighting the transition to ROS 2."], "keyTerms": ["node","topic","service","action","parameter","SLAM","ROS_DOMAIN_ID","Willow Garage","publish-subscribe","Open Source Robotics Alliance"]},
+				{"id": "3-2", "minutes": 14, "title": "ROS 1 vs. ROS 2", "objectives": ["Contrast the centralized master architecture of ROS 1 (roscore) with the distributed peer-to-peer DDS discovery of ROS 2.","Explain the ROS Middleware (RMW) abstraction layer and how to switch implementations (Fast DDS, Cyclone DDS, Zenoh) via environment variables.","Evaluate Quality of Service (QoS) policies (Reliability, Durability, History, Depth) and explain why mismatched QoS settings prevent communication.","Describe the lifecycle states of a ROS 2 managed node and the programmatic flexibility of Python-based launch files."], "keyTerms": ["DDS","RMW","Quality of Service (QoS)","Reliable","Best Effort","Transient Local","Volatile","Zenoh","lifecycle node","launch file"]},
+				{"id": "3-3", "minutes": 14, "title": "Installing ROS on Your Local Environment", "objectives": ["Navigate the platform support tiers (REP 2000) for ROS 2 Lyrical Luth across Ubuntu 26.04, Windows 11, and macOS.","Execute the complete Debian package installation pipeline on Ubuntu, including UTF-8 locale generation, GPG keyring verification, and desktop package selection.","Configure shell environment variables (PATH, AMENT_PREFIX_PATH, ROS_DISTRO) via setup.bash and automate startup via .bashrc.","Troubleshoot common post-installation errors: missing environment sourcing, UDP multicast firewall blocks, and locale decoding failures."], "keyTerms": ["Ubuntu 26.04","Lyrical Luth","Tier 1","WSL 2","setup.bash","colcon","rosdep","GPG key","multicast discovery","REP 2000"]},
+				{"id": "3-4", "minutes": 15, "title": "Running Your First Example (Turtlesim)", "objectives": ["Run and teleoperate the Turtlesim simulator, introspecting nodes, topics, and message types using the ros2 CLI.","Call ROS 2 services from the command line and use runtime remapping arguments to control multiple simulated robots.","Structure a standard ROS 2 workspace (src, build, install, log) and compile packages using colcon.","Write, build, and execute custom publisher and subscriber nodes in Python using rclpy and geometry_msgs."], "keyTerms": ["Turtlesim","teleop","geometry_msgs/msg/Twist","remapping","rclpy","colcon build","package.xml","setup.py","spin","entry_points"]},
+				{"id": "3-5", "minutes": 14, "title": "ROS Tools", "objectives": ["Differentiate the purpose of 3D data visualizers (RViz2) from physics simulators (Gazebo), explaining coordinate transforms via tf2.","Inspect and diagnose running ROS 2 computational graph topologies using rqt_graph and associated GUI debugging plugins.","Record, inspect, and replay high-bandwidth sensor telemetry datasets using ros2 bag with sqlite3 and MCAP storage plugins.","Explain how the ros_gz bridge interfaces simulated rigid-body physics, sensor noise models, and Gazebo transport with ROS 2 topics."], "keyTerms": ["RViz","rqt_graph","Gazebo","ros2 bag","tf2","ros_gz","MCAP","Fixed Frame","robot_state_publisher","SDF"]}
 			]
 		},
 		{
 			id: 4,
 			title: 'Ethics',
 			url: 'robotics-ethics.html',
-			prerequisites: 'Chapters 1 and 2.',
-			handsOn: 'work through ethical scenarios and safety checklists for real robot cells.',
-			summary: 'Ethics in engineering in general, and the specific questions robots raise in hardware and software.',
+			prerequisites: "Chapters 1 and 2.",
+			handsOn: "work through ethical scenarios and safety checklists for real robot cells.",
+			summary: "Ethics in engineering in general, and the specific questions robots raise in hardware and software.",
 			lessons: [
-				{
-					id: '4-1',
-					title: 'Ethics in Engineering', minutes: 3,
-					objectives: [
-						'State the first duty in engineering codes of ethics.',
-						'List the core duties shared by the NSPE and IEEE codes.',
-						'Name the NSPE Fundamental Canons and the three principles of the IEEE code.'
-					],
-					keyTerms: ['NSPE Code of Ethics', 'Fundamental Canons', 'IEEE Code of Ethics', 'conflict of interest']
-				},
-				{
-					id: '4-2',
-					title: 'Ethics in Robotics (Hardware, Software)', minutes: 3,
-					objectives: [
-						'Name the main robot safety standards.',
-						'Describe hardware safeguards and the software safety layer.',
-						'Explain what makes an application collaborative and how people stay safe while teaching a robot.'
-					],
-					keyTerms: ['ISO 10218', 'emergency stop', 'power and force limiting', 'watchdog timer', 'geofencing']
-				},
-				{"id": "4-3", "minutes": 6, "title": "Robots and Society", "objectives": ["Summarize what research finds about robots' effects on jobs and wages, including tasks versus whole jobs.", "Explain the privacy risks of robot sensors and how data minimization reduces them.", "Describe who is accountable for autonomous systems and how the EU AI Act and IEEE frameworks address human oversight."], "keyTerms": ["displacement effect", "reinstatement effect", "data minimization", "human in the loop", "EU AI Act", "IEEE 7000"]}
+				{"id": "4-1", "minutes": 14, "title": "Ethics in Engineering", "objectives": ["Apply the Fundamental Canons of the NSPE and IEEE Codes of Ethics to robotics, emphasizing paramount public safety and conflict of interest disclosure.","Examine ISO 10218:2025 and ISO/TS 15066 collaborative modes (monitored stop, hand guiding, speed-and-separation, power-and-force limiting).","Analyze OSHA industrial robot accident statistics, identifying why non-routine tasks (maintenance, teaching, jam clearing) carry the highest fatality risks.","Evaluate legal liability, strict product liability, and the European Union Machinery Regulation 2023/1230 governing autonomous and AI-driven machines."], "keyTerms": ["Fundamental Canons","conflict of interest","ISO 10218:2025","ISO/TS 15066","collaborative application","OSHA","EU Machinery Regulation","strict product liability","lockout/tagout","biomechanical threshold"]},
+				{"id": "4-2", "minutes": 14, "title": "Ethics in Robotics (Hardware, Software)", "objectives": ["Analyze functional hardware safety mechanisms including ISO 13850 emergency stop categories, three-position enabling devices, and dual-channel redundant safety architectures.","Evaluate software safety systems including hardware watchdog timers, geofencing safety zones, and ISO 13849 Performance Levels (PL d/e).","Examine privacy risks and algorithmic bias in robotics perception systems, from sensor data harvesting to demographic disparities in vision models.","Assess governance frameworks for autonomous systems, including the UN CCW debate on lethal autonomous weapons, IEEE 7000 value-based design, and EU AI Act risk tiers."], "keyTerms": ["emergency stop","watchdog timer","enabling device","functional safety","geofencing","algorithmic bias","meaningful human control","IEEE 7000","EU AI Act"]},
+				{"id": "4-3", "minutes": 15, "title": "Robots and Society", "objectives": ["Analyze empirical labor economics research on industrial robotics, including Acemoglu and Restrepo's local labor market findings and task framework.","Evaluate global robot density metrics from the International Federation of Robotics (IFR) and OECD workforce transformation data.","Apply data minimization and privacy engineering principles to autonomous mobile robots equipped with ambient perception sensors.","Examine moral crumple zones, human-in-the-loop governance, and legal accountability architectures for autonomous robotic systems."], "keyTerms": ["robot density","displacement effect","reinstatement effect","data minimization","edge processing","moral crumple zone","human-in-the-loop","IFR World Robotics"]}
 			]
 		},
 		{
 			id: 5,
 			title: 'Extra: Electronics and Control Basics',
 			url: 'robotics-control.html',
-			prerequisites: 'This chapter is optional. Basic C++ (see 1.4) helps; an Arduino Uno kit lets you build the examples.',
-			handsOn: 'the PWM, encoder and PID simulators in the lessons, plus Arduino sketches you can run.',
-			summary: 'How a microcontroller drives a motor with PWM, measures the result with an encoder, and closes the loop with PID.',
+			prerequisites: "This chapter is optional. Basic C++ (see 1.4) helps; an Arduino Uno kit lets you build the examples.",
+			handsOn: "the PWM, encoder and PID simulators in the lessons, plus Arduino sketches you can run.",
+			summary: "How a microcontroller drives a motor with PWM, measures the result with an encoder, and closes the loop with PID.",
 			lessons: [
-				{
-					id: '5-1',
-					title: 'Arduino for Robotics', minutes: 3,
-					objectives: [
-						'Choose the right Arduino pin type for a job.',
-						'Structure a sketch with setup() and loop().',
-						'Drive servos and DC motors and read an ultrasonic sensor.'
-					],
-					keyTerms: ['digital pin', 'PWM pin', 'analog input', 'H-bridge', 'HC-SR04', 'INPUT_PULLUP']
-				},
-				{
-					id: '5-2',
-					title: 'Pulse Width Modulation (PWM)', minutes: 4,
-					objectives: [
-						'Explain duty cycle and frequency.',
-						'Compute average voltage from duty cycle.',
-						'Compare DC motor PWM with servo PWM.'
-					],
-					keyTerms: ['duty cycle', 'frequency', 'analogWrite', 'H-bridge', 'flyback diode']
-				},
-				{
-					id: '5-3',
-					title: 'Encoders and Shaft Encoders', minutes: 4,
-					objectives: [
-						'Compare incremental and absolute encoders.',
-						'Explain quadrature decoding and CPR = PPR × 4.',
-						'Convert ticks to distance and speed.'
-					],
-					keyTerms: ['incremental encoder', 'absolute encoder', 'quadrature', 'CPR', 'odometry']
-				},
-				{
-					id: '5-4',
-					title: 'PID Control', minutes: 4,
-					objectives: [
-						'Explain what the P, I and D terms each do.',
-						'Write a discrete-time PID update and tune it by hand.',
-						'Avoid integral windup and derivative kick.'
-					],
-					keyTerms: ['setpoint', 'error', 'Kp', 'Ki', 'Kd', 'Ziegler–Nichols', 'integral windup']
-				},
-				{"id": "5-5", "minutes": 7, "title": "Sensors for Robots", "objectives": ["Distinguish proprioceptive from exteroceptive sensors.", "Compare how common robot sensors work and where each fails.", "Explain why robots combine several sensors."], "keyTerms": ["proprioceptive sensor", "exteroceptive sensor", "ultrasonic range finder", "IMU", "gyro drift", "reflectance sensor", "LiDAR"]},
-				{"id": "5-6", "minutes": 6, "title": "Odometry", "objectives": ["Compute a differential-drive pose update from encoder ticks.", "Distinguish systematic from non-systematic odometry errors.", "Calibrate wheel diameter and wheelbase."], "keyTerms": ["odometry", "dead reckoning", "pose", "wheelbase", "systematic error", "non-systematic error", "UMBmark"]},
-				{"id": "5-7", "minutes": 6, "title": "State Machines", "objectives": ["Identify the states, events, guards, transitions and actions of a robot behavior.", "Write a state-transition table.", "Implement a non-blocking state machine with enum, switch and millis()."], "keyTerms": ["finite state machine", "state", "transition", "guard", "entry action", "millis()", "lifecycle node"]},
-				{"id": "5-8", "minutes": 6, "title": "Intro to Kalman Filters", "objectives": ["Explain the predict and update steps of a Kalman filter.", "Compute one step of a 1-D Kalman filter.", "Describe how Q and R change the filter's behavior."], "keyTerms": ["sensor fusion", "Kalman gain", "process noise (Q)", "measurement noise (R)", "innovation", "extended Kalman filter", "complementary filter"]}
+				{"id": "5-1", "minutes": 15, "title": "Arduino for Robotics", "objectives": ["Compare the hardware architectures of the Arduino Uno R3 (ATmega328P) and Uno R4 (Renesas RA4M1), analyzing pin current limits and voltage ratings.","Configure digital GPIO modes including high-impedance floating inputs and internal pull-up resistors (INPUT_PULLUP).","Evaluate H-bridge motor drivers (bipolar L298N vs. MOSFET TB6612FNG) and implement proper power isolation with shared electrical grounds.","Apply critical Lithium Polymer (LiPo) battery safety protocols, including cell voltage thresholds, C-ratings, and thermal runaway mitigation."], "keyTerms": ["Arduino Uno","ATmega328P","pinMode","INPUT_PULLUP","H-bridge","L298N","TB6612FNG","LiPo battery","common ground"]},
+				{"id": "5-2", "minutes": 15, "title": "Pulse Width Modulation (PWM)", "objectives": ["Calculate duty cycle, period, and average output voltage for high-speed PWM motor drives.","Analyze microcontroller hardware timers (Timer0, Timer1, Timer2 on ATmega328P) and their default carrier frequencies.","Differentiate DC motor duty-cycle modulation from RC servomotor microsecond pulse width control (1.0 ms to 2.0 ms at 50 Hz).","Identify real-world actuation challenges including acoustic coil whine, gearbox stiction dead zones, and inductive flyback suppression."], "keyTerms": ["pulse width modulation","duty cycle","carrier frequency","average voltage","Timer1","servo pulse timing","audible whine","dead zone","flyback diode"]},
+				{"id": "5-3", "minutes": 15, "title": "Encoders and Shaft Encoders", "objectives": ["Differentiate incremental and absolute rotary encoders, analyzing power-loss recovery and homing requirements.","Apply quadrature decoding mathematics (1x, 2x, 4x) to calculate Counts Per Revolution (CPR) from Pulses Per Revolution (PPR).","Evaluate physical transducer technologies (optical, magnetic, capacitive) and their operational trade-offs in harsh robotic environments.","Implement interrupt-driven microcontroller decoding algorithms and evaluate industrial serial protocols (SSI, BiSS-C) used in articulated manipulators."], "keyTerms": ["rotary encoder","incremental encoder","absolute encoder","quadrature decoding","PPR","CPR","hardware interrupt","BiSS-C","homing"]},
+				{"id": "5-4", "minutes": 15, "title": "PID Control", "objectives": ["Formulate continuous and discrete-time Proportional-Integral-Derivative (PID) control equations for robotic systems.","Apply classical tuning methodologies, including Ziegler-Nichols closed-loop oscillation and Cohen-Coon reaction curve methods.","Implement industrial anti-windup clamping, derivative filtering, and derivative-on-measurement architectures to prevent actuator saturation and derivative kick.","Analyze cascaded multi-loop servo architectures (current, velocity, position) and dynamic feed-forward compensation utilized in industrial robotic arms."], "keyTerms": ["PID control","proportional term","integral term","derivative term","integral windup","derivative kick","Ziegler-Nichols","cascaded control","feed-forward"]},
+				{"id": "5-5", "minutes": 15, "title": "Sensors for Robots", "objectives": ["Categorize robotic sensors into proprioceptive, exteroceptive, active, and passive functional classifications.","Evaluate distance measurement modalities, contrasting ultrasonic acoustics (HC-SR04), optical triangulation (Sharp GP2Y0A21YK0F), and laser Time-of-Flight (VL53L1X).","Analyze MEMS Inertial Measurement Unit (IMU) architectures (MPU-6050 and ICM-20948), calculating tilt angles and evaluating mathematical mechanisms of gyroscope bias drift.","Assess line reflectance (QTR-8RC) and spectral color sensing (TCS34725), establishing multi-sensor fusion architectures to mitigate single-sensor noise modes."], "keyTerms": ["proprioceptive sensor","exteroceptive sensor","ultrasonic rangefinder","time-of-flight","optical triangulation","IMU","gyroscope drift","reflectance sensor","sensor fusion"]},
+				{"id": "5-6", "minutes": 15, "title": "Odometry", "objectives": ["Formulate forward kinematic odometry update equations for two-wheeled differential-drive robots.","Implement midpoint numerical integration (2nd-order Runge-Kutta) and heading normalization in embedded robot software.","Classify odometry drift using Borenstein and Feng's taxonomy into systematic and non-systematic error mechanisms.","Apply calibration procedures including the University of Michigan Benchmark (UMBmark) and design sensor fusion pipelines using IMU gyroscopes."], "keyTerms": ["odometry","dead reckoning","differential drive","wheelbase","midpoint integration","systematic error","non-systematic error","UMBmark","heading drift"]},
+				{"id": "5-7", "minutes": 14, "title": "State Machines", "objectives": ["Model complex robot behavioral logic using Finite State Machine (FSM) formalisms including states, events, guards, and transition tables.","Implement non-blocking, multi-rate embedded execution loops using C++ enum, switch statements, and Arduino millis() timer arithmetic.","Analyze industrial automation state standards including IEC 61131-3 Sequential Function Charts (SFC) and OMAC PackML.","Differentiate ROS 2 managed lifecycle node states and contrast FSM scalability limits against Nav2 Behavior Tree architectures."], "keyTerms": ["finite state machine","state transition table","guard condition","cooperative multitasking","millis()","IEC 61131-3 SFC","PackML","ROS 2 lifecycle node","Behavior Tree"]},
+				{"id": "5-8", "minutes": 14, "title": "Intro to Kalman Filters", "objectives": ["Explain the probabilistic principles of recursive state estimation and sensor fusion.","Derive and compute the predict and update stages of a one-dimensional discrete Kalman filter.","Analyze the physical effects of process noise covariance (Q) and measurement noise covariance (R) on the Kalman gain (K).","Compare non-linear state estimators (EKF vs UKF) and examine the dual-EKF state estimation architecture of the ROS 2 robot_localization package."], "keyTerms": ["sensor fusion","Kalman filter","predict step","update step","Kalman gain","process noise (Q)","measurement noise (R)","innovation","extended Kalman filter","robot_localization"]}
 			]
 		}
 	],
@@ -232,227 +97,99 @@ window.RISE_COURSE = {
 	/* One quiz per chapter. answer is the index of the correct choice. */
 	quizzes: {
 		1: [
-			{
-				lesson: '1-1',
-				question: 'The word "robot" comes from the Czech word robota. What does it mean?',
-				choices: ['Machine', 'Forced labor', 'Artificial person', 'Worker that thinks'],
-				answer: 1,
-				explanation: 'Robota means "forced labor." Karel Čapek made the word famous in his 1920 play R.U.R.'
-			},
-			{
-				lesson: '1-1',
-				question: 'In the sense, think, act loop, which part is a motor or gripper?',
-				choices: ['Sense', 'Think', 'Act', 'None of them'],
-				answer: 2,
-				explanation: 'Actuators such as motors and grippers carry out the decision, which is the "act" step.'
-			},
-			{
-				lesson: '1-2',
-				question: 'What was Unimate?',
-				choices: ['An early clockwork automaton', 'The first industrial robot, put to work at General Motors in 1961', 'The first collaborative robot', 'The first version of ROS'],
-				answer: 1,
-				explanation: 'Unimate, developed by George Devol and Joseph Engelberger, handled hot die-cast parts at a General Motors plant from 1961.'
-			},
-			{
-				lesson: '1-3',
-				question: 'What is the main difference between an AGV and an AMR?',
-				choices: ['AGVs fly, AMRs drive', 'AGVs follow guidance built into the facility, AMRs map their surroundings and plan their own path', 'AMRs are always bolted to the floor', 'There is no difference'],
-				answer: 1,
-				explanation: 'AGVs follow wires, tape, markers or reflectors. AMRs map their surroundings and plan their own path around obstacles.'
-			},
-			{
-				lesson: '1-5',
-				question: 'Why can\'t Mars rovers be driven live with a joystick from Earth?',
-				choices: ['Rovers have no cameras', 'A radio signal can take up to about 22 minutes to reach Mars one way', 'Joysticks are not allowed by NASA', 'The rovers do not have motors'],
-				answer: 1,
-				explanation: 'The signal delay is minutes long, so rovers like Perseverance use AutoNav to plan their own paths around hazards.'
-			},
-			{"lesson": "1-6", "question": "A fixture is moved slightly, and all program targets were defined relative to a work object on that fixture. What is the simplest fix?", "choices": ["Re-teach every target point in the program", "Re-teach the work object so all targets move with it", "Change tool0 to a new tool", "Switch every MoveL to MoveJ"], "answer": 1, "explanation": "Targets are measured relative to the work object, so re-teaching the work object moves every target with it and the program itself does not change."},
-			{"lesson": "1-6", "question": "Which move instruction makes the tool center point travel in a straight line in Cartesian space?", "choices": ["MoveJ / movej", "MoveL / movel", "MoveC / movec", "Any move with a zone such as z50"], "answer": 1, "explanation": "A linear move (MoveL / movel) moves the TCP in a straight line, while a joint move interpolates in joint space and the tool follows a curved path."},
-			{"lesson": "1-1", "question": "Under ISO 8373:2021, what is a teleoperated remote manipulator that has no autonomy?", "choices": ["A service robot", "A robotic device", "An industrial robot", "A medical robot"], "answer": 1, "explanation": "ISO 8373 calls a mechanism built with robotic technology that does not meet every part of the robot definition a robotic device, and gives a teleoperated remote manipulator as an example."},
-			{"lesson": "1-1", "question": "Who suggested the word \"robot\" to Karel Čapek?", "choices": ["Isaac Asimov", "His brother, the painter Josef Čapek", "Joseph Engelberger", "George Devol"], "answer": 1, "explanation": "Karel first thought of \"labori\"; his brother Josef, a painter, suggested \"robots\" instead."},
-			{"lesson": "1-1", "question": "In Brooks's subsumption architecture, what happens to the lower layers when higher layers are added?", "choices": ["They are deleted", "They keep running, and higher layers can suppress their outputs", "They are replaced by a global world model", "They only run when the robot is idle"], "answer": 1, "explanation": "Brooks wrote that higher-level layers can subsume lower ones by suppressing their outputs, but lower levels continue to function as higher levels are added."},
-			{"lesson": "1-2", "question": "Willow Garage began developing ROS in 2007. When did the first release of ROS come out?", "choices": ["2005", "2007", "2009", "2012"], "answer": 2, "explanation": "Development started in 2007 and Willow Garage released ROS for the first time in 2009."},
-			{"lesson": "1-2", "question": "Which 1974 robot does the IFR describe as the first fully electric, microprocessor-controlled industrial robot?", "choices": ["Unimate", "KUKA FAMULUS", "ASEA IRB 6", "Cincinnati Milacron T3"], "answer": 2, "explanation": "The ASEA IRB 6 (Sweden, 1974) was the first fully electric, microprocessor-controlled industrial robot. FAMULUS (1973) was the first with six electromechanically driven axes, and the T3 was the first commercial minicomputer-controlled robot."},
-			{"lesson": "1-2", "question": "How many vehicles finished the first DARPA Grand Challenge in March 2004?", "choices": ["None", "One", "Five", "All of them"], "answer": 0, "explanation": "No vehicle finished in 2004; the best, CMU's Sandstorm, covered 7.32 miles. In 2005 Stanford's Stanley won."},
-			{"lesson": "1-3", "question": "Which term does the 2025 revision of ISO 10218 use in place of \"collaborative robot\"?", "choices": ["Cobot system", "Collaborative application", "Human-safe robot", "Power-limited manipulator"], "answer": 1, "explanation": "ISO 10218-1/-2:2025 speak of a collaborative application, because only the actual application, not the robot alone, can be confirmed as collaborative."},
-			{"lesson": "1-3", "question": "In which robot structure do the arms' links form a closed loop?", "choices": ["Articulated", "SCARA", "Parallel (delta)", "Cartesian"], "answer": 2, "explanation": "The IFR defines parallel or delta robots as arms whose links form a closed-loop structure, like the ABB IRB 360 FlexPicker."},
-			{"lesson": "1-3", "question": "How many axes does each arm of ABB's dual-arm YuMi (IRB 14000) have?", "choices": ["4", "6", "7", "14"], "answer": 2, "explanation": "YuMi has 7 axes on each arm, 14 in total, so not every cobot has the six-axis shape."},
-			{"lesson": "1-4", "question": "According to OSHA, how fast should a robot move while it is being programmed?", "choices": ["1,000 mm/s or less", "250 mm/s (10 inches per second) or less", "Its full rated speed", "There is no limit if the operator wears PPE"], "answer": 1, "explanation": "OSHA says speeds during programming should be 10 inches per second (250 mm/s) or less."},
-			{"lesson": "1-4", "question": "A planar two-link arm has L1 = L2 = 1 m, θ1 = 30° and θ2 = 60°. What is the x-coordinate of its tip?", "choices": ["0 m", "0.5 m", "0.866 m", "1.5 m"], "answer": 2, "explanation": "x = L1·cos θ1 + L2·cos(θ1 + θ2) = 0.866 + cos 90° = 0.866 m (and y = 1.5 m)."},
-			{"lesson": "1-4", "question": "How does the lesson recommend treating assembly language?", "choices": ["As the first language to learn", "As required for ROS 2", "As optional enrichment for understanding what the processor does", "As the language most robot jobs ask for"], "answer": 2, "explanation": "Assembly is not a prerequisite; C and C++ dominate embedded work, and assembly is mainly useful for understanding registers, timing and interrupts."},
-			{"lesson": "1-5", "question": "Which country had the highest robot density (robots per 10,000 manufacturing employees) in 2024, according to IFR?", "choices": ["China", "Republic of Korea", "Germany", "United States"], "answer": 1, "explanation": "Korea led with 1,220 robots per 10,000 manufacturing employees. China installs by far the most robots, but ranks 22nd for density because its factories also employ very many people."},
-			{"lesson": "1-5", "question": "How does the da Vinci surgical system work?", "choices": ["It performs whole operations autonomously", "A surgeon at a console controls the instruments and the robot follows", "It only delivers medicine around the hospital", "It is programmed once and then repeats the same operation on every patient"], "answer": 1, "explanation": "da Vinci is a teleoperated robot: the surgeon controls the instruments from a console, and the robot does not operate on its own."},
-			{"lesson": "1-5", "question": "What did the rescue robots at the World Trade Center find in 2001?", "choices": ["Several survivors trapped in voids", "Nothing at all, because they never entered the rubble", "No survivors, but several sets of human remains, some spotted only later on video", "Only structural cracks in nearby buildings"], "answer": 2, "explanation": "The robots found no survivors, but did find several sets of human remains. Some were missed by the people watching live and were spotted only when the video was reviewed."},
-			{"lesson": "1-6", "question": "Using Grübler's formula, how many degrees of freedom does a planar four-bar linkage (4 links including ground, 4 revolute joints) have?", "choices": ["0", "1", "2", "3"], "answer": 1, "explanation": "DOF = 3(4 − 1 − 4) + 4 = 1, so a four-bar linkage moves with a single degree of freedom."},
-			{"lesson": "1-6", "question": "A datasheet lists \"±0.03 mm (ISO 9283)\" for a robot. What does this figure describe?", "choices": ["Absolute accuracy: how close the robot gets to a commanded position", "Pose repeatability: how tightly repeated moves to the same pose cluster", "The maximum tool speed", "The backlash of the base reducer"], "answer": 1, "explanation": "Datasheets quote pose repeatability. Absolute accuracy is usually worse and can be improved by calibration."},
-			{"lesson": "1-6", "question": "For a two-link planar arm, a reachable point inside the workspace (not at its edge) usually has how many inverse kinematics solutions?", "choices": ["None", "Exactly one", "Two, elbow up and elbow down", "Infinitely many"], "answer": 2, "explanation": "cos θ2 gives θ2 = ±value, so there are two solutions, elbow up and elbow down. They merge into one only at the workspace edge, where θ2 = 0."}
+			{"lesson": "1-1", "question": "The word \"robot\" comes from the Czech word robota. What does it mean?", "choices": ["Machine","Forced labor","Artificial person","Worker that thinks"], "answer": 1, "explanation": "Robota means \"forced labor.\" Karel Čapek made the word famous in his 1920 play R.U.R."},
+			{"lesson": "1-1", "question": "In the sense, think, act loop, which part is a motor or gripper?", "choices": ["Sense","Think","Act","None of them"], "answer": 2, "explanation": "Actuators such as motors and grippers carry out the decision, which is the \"act\" step."},
+			{"lesson": "1-2", "question": "What was Unimate?", "choices": ["An early clockwork automaton","The first industrial robot, put to work at General Motors in 1961","The first collaborative robot","The first version of ROS"], "answer": 1, "explanation": "Unimate, developed by George Devol and Joseph Engelberger, handled hot die-cast parts at a General Motors plant from 1961."},
+			{"lesson": "1-3", "question": "What is the main difference between an AGV and an AMR?", "choices": ["AGVs fly, AMRs drive","AGVs follow guidance built into the facility, AMRs map their surroundings and plan their own path","AMRs are always bolted to the floor","There is no difference"], "answer": 1, "explanation": "AGVs follow wires, tape, markers or reflectors. AMRs map their surroundings and plan their own path around obstacles."},
+			{"lesson": "1-5", "question": "Why can't Mars rovers be driven live with a joystick from Earth?", "choices": ["Rovers have no cameras","A radio signal can take up to about 22 minutes to reach Mars one way","Joysticks are not allowed by NASA","The rovers do not have motors"], "answer": 1, "explanation": "The signal delay is minutes long, so rovers like Perseverance use AutoNav to plan their own paths around hazards."},
+			{"lesson": "1-6", "question": "A fixture is moved slightly, and all program targets were defined relative to a work object on that fixture. What is the simplest fix?", "choices": ["Re-teach every target point in the program","Re-teach the work object so all targets move with it","Change tool0 to a new tool","Switch every MoveL to MoveJ"], "answer": 1, "explanation": "Targets are measured relative to the work object, so re-teaching the work object moves every target with it and the program itself does not change."},
+			{"lesson": "1-6", "question": "Which move instruction makes the tool center point travel in a straight line in Cartesian space?", "choices": ["MoveJ / movej","MoveL / movel","MoveC / movec","Any move with a zone such as z50"], "answer": 1, "explanation": "A linear move (MoveL / movel) moves the TCP in a straight line, while a joint move interpolates in joint space and the tool follows a curved path."},
+			{"lesson": "1-1", "question": "Under ISO 8373:2021, what is a teleoperated remote manipulator that has no autonomy?", "choices": ["A service robot","A robotic device","An industrial robot","A medical robot"], "answer": 1, "explanation": "ISO 8373 calls a mechanism built with robotic technology that does not meet every part of the robot definition a robotic device, and gives a teleoperated remote manipulator as an example."},
+			{"lesson": "1-1", "question": "Who suggested the word \"robot\" to Karel Čapek?", "choices": ["Isaac Asimov","His brother, the painter Josef Čapek","Joseph Engelberger","George Devol"], "answer": 1, "explanation": "Karel first thought of \"labori\"; his brother Josef, a painter, suggested \"robots\" instead."},
+			{"lesson": "1-1", "question": "In Brooks's subsumption architecture, what happens to the lower layers when higher layers are added?", "choices": ["They are deleted","They keep running, and higher layers can suppress their outputs","They are replaced by a global world model","They only run when the robot is idle"], "answer": 1, "explanation": "Brooks wrote that higher-level layers can subsume lower ones by suppressing their outputs, but lower levels continue to function as higher levels are added."},
+			{"lesson": "1-2", "question": "Willow Garage began developing ROS in 2007. When did the first release of ROS come out?", "choices": ["2005","2007","2009","2012"], "answer": 2, "explanation": "Development started in 2007 and Willow Garage released ROS for the first time in 2009."},
+			{"lesson": "1-2", "question": "Which 1974 robot does the IFR describe as the first fully electric, microprocessor-controlled industrial robot?", "choices": ["Unimate","KUKA FAMULUS","ASEA IRB 6","Cincinnati Milacron T3"], "answer": 2, "explanation": "The ASEA IRB 6 (Sweden, 1974) was the first fully electric, microprocessor-controlled industrial robot. FAMULUS (1973) was the first with six electromechanically driven axes, and the T3 was the first commercial minicomputer-controlled robot."},
+			{"lesson": "1-2", "question": "How many vehicles finished the first DARPA Grand Challenge in March 2004?", "choices": ["None","One","Five","All of them"], "answer": 0, "explanation": "No vehicle finished in 2004; the best, CMU's Sandstorm, covered 7.32 miles. In 2005 Stanford's Stanley won."},
+			{"lesson": "1-3", "question": "Which term does the 2025 revision of ISO 10218 use in place of \"collaborative robot\"?", "choices": ["Cobot system","Collaborative application","Human-safe robot","Power-limited manipulator"], "answer": 1, "explanation": "ISO 10218-1/-2:2025 speak of a collaborative application, because only the actual application, not the robot alone, can be confirmed as collaborative."},
+			{"lesson": "1-3", "question": "In which robot structure do the arms' links form a closed loop?", "choices": ["Articulated","SCARA","Parallel (delta)","Cartesian"], "answer": 2, "explanation": "The IFR defines parallel or delta robots as arms whose links form a closed-loop structure, like the ABB IRB 360 FlexPicker."},
+			{"lesson": "1-3", "question": "How many axes does each arm of ABB's dual-arm YuMi (IRB 14000) have?", "choices": ["4","6","7","14"], "answer": 2, "explanation": "YuMi has 7 axes on each arm, 14 in total, so not every cobot has the six-axis shape."},
+			{"lesson": "1-4", "question": "According to OSHA, how fast should a robot move while it is being programmed?", "choices": ["1,000 mm/s or less","250 mm/s (10 inches per second) or less","Its full rated speed","There is no limit if the operator wears PPE"], "answer": 1, "explanation": "OSHA says speeds during programming should be 10 inches per second (250 mm/s) or less."},
+			{"lesson": "1-4", "question": "A planar two-link arm has L1 = L2 = 1 m, θ1 = 30° and θ2 = 60°. What is the x-coordinate of its tip?", "choices": ["0 m","0.5 m","0.866 m","1.5 m"], "answer": 2, "explanation": "x = L1·cos θ1 + L2·cos(θ1 + θ2) = 0.866 + cos 90° = 0.866 m (and y = 1.5 m)."},
+			{"lesson": "1-4", "question": "How does the lesson recommend treating assembly language?", "choices": ["As the first language to learn","As required for ROS 2","As optional enrichment for understanding what the processor does","As the language most robot jobs ask for"], "answer": 2, "explanation": "Assembly is not a prerequisite; C and C++ dominate embedded work, and assembly is mainly useful for understanding registers, timing and interrupts."},
+			{"lesson": "1-5", "question": "Which country had the highest robot density (robots per 10,000 manufacturing employees) in 2024, according to IFR?", "choices": ["China","Republic of Korea","Germany","United States"], "answer": 1, "explanation": "Korea led with 1,220 robots per 10,000 manufacturing employees. China installs by far the most robots, but ranks 22nd for density because its factories also employ very many people."},
+			{"lesson": "1-5", "question": "How does the da Vinci surgical system work?", "choices": ["It performs whole operations autonomously","A surgeon at a console controls the instruments and the robot follows","It only delivers medicine around the hospital","It is programmed once and then repeats the same operation on every patient"], "answer": 1, "explanation": "da Vinci is a teleoperated robot: the surgeon controls the instruments from a console, and the robot does not operate on its own."},
+			{"lesson": "1-5", "question": "What did the rescue robots at the World Trade Center find in 2001?", "choices": ["Several survivors trapped in voids","Nothing at all, because they never entered the rubble","No survivors, but several sets of human remains, some spotted only later on video","Only structural cracks in nearby buildings"], "answer": 2, "explanation": "The robots found no survivors, but did find several sets of human remains. Some were missed by the people watching live and were spotted only when the video was reviewed."},
+			{"lesson": "1-6", "question": "Using Grübler's formula, how many degrees of freedom does a planar four-bar linkage (4 links including ground, 4 revolute joints) have?", "choices": ["0","1","2","3"], "answer": 1, "explanation": "DOF = 3(4 − 1 − 4) + 4 = 1, so a four-bar linkage moves with a single degree of freedom."},
+			{"lesson": "1-6", "question": "A datasheet lists \"±0.03 mm (ISO 9283)\" for a robot. What does this figure describe?", "choices": ["Absolute accuracy: how close the robot gets to a commanded position","Pose repeatability: how tightly repeated moves to the same pose cluster","The maximum tool speed","The backlash of the base reducer"], "answer": 1, "explanation": "Datasheets quote pose repeatability. Absolute accuracy is usually worse and can be improved by calibration."},
+			{"lesson": "1-6", "question": "For a two-link planar arm, a reachable point inside the workspace (not at its edge) usually has how many inverse kinematics solutions?", "choices": ["None","Exactly one","Two, elbow up and elbow down","Infinitely many"], "answer": 2, "explanation": "cos θ2 gives θ2 = ±value, so there are two solutions, elbow up and elbow down. They merge into one only at the workspace edge, where θ2 = 0."}
 		],
 		2: [
-			{"lesson": "2-1", "question": "In ABB's Wizard Easy Programming, what happens to the blocks a user snaps together on the FlexPendant?", "choices": ["The controller runs the blocks directly with no translation", "They are converted in real time into ABB's RAPID language", "They are uploaded to a cloud service that rewrites them in Python", "They are only a drawing of the program and must be retyped by hand"], "answer": 1, "explanation": "Wizard is built on the Blockly concept, and the blocks are converted in real time into RAPID, which the controller then runs."},
-			{
-				lesson: '2-1',
-				question: 'What is the main advantage of offline programming?',
-				choices: ['It needs no computer', 'The robot can keep working while the next program is written in simulation', 'It is always free', 'It does not need any training'],
-				answer: 1,
-				explanation: 'Offline programming happens in simulation on a computer, so the real robot stays in production.'
-			},
-			{
-				lesson: '2-1',
-				question: 'Lead-through programming, where you guide the arm by hand, is the main method for which robots?',
-				choices: ['SCARA robots', 'Collaborative robots (cobots)', 'Mars rovers', 'AGVs'],
-				answer: 1,
-				explanation: 'Lead-through (hand guiding) is the main programming method for cobots.'
-			},
-			{
-				lesson: '2-2',
-				question: 'Why can RobotStudio programs move to a real ABB robot with little adjustment?',
-				choices: ['They are written in Python', 'RobotStudio runs a Virtual Controller, the same software as the real controller', 'The robot copies the simulation video', 'RobotStudio only supports one robot model'],
-				answer: 1,
-				explanation: 'RobotStudio is built on ABB\'s Virtual Controller, a copy of the software that runs the real robot controller.'
-			},
-			{
-				lesson: '2-3',
-				question: 'In URScript, which command moves the tool center point in a straight line?',
-				choices: ['movej', 'movel', 'force_mode', 'set_digital_out'],
-				answer: 1,
-				explanation: 'movel moves the TCP in a straight line; movej moves in joint space.'
-			},
-			{
-				lesson: '2-4',
-				question: 'What problem does ROS solve that vendor languages do not?',
-				choices: ['It makes robots cheaper', 'It gives a common layer so skills and code carry over between robot brands', 'It replaces the robot controller hardware', 'It removes the need for safety systems'],
-				answer: 1,
-				explanation: 'Vendor languages are tied to one brand. ROS adds a common layer, with drivers translating to each robot\'s native interface.'
-			}
+			{"lesson": "2-1", "question": "Lead-through programming, where you guide the arm by hand, is the main method for which robots?", "choices": ["SCARA robots","Collaborative robots (cobots)","Mars rovers","AGVs"], "answer": 1, "explanation": "Lead-through (hand guiding) is the primary online programming method for cobots, using built-in joint torque sensors or wrist force/torque sensors."},
+			{"lesson": "2-1", "question": "Under ISO 10218-1, what is the maximum speed permitted for the tool center point during manual teach mode?", "choices": ["50 mm/s","100 mm/s","250 mm/s","1000 mm/s"], "answer": 2, "explanation": "ISO 10218-1 mandates a reduced teach speed limit of 250 mm/s in manual mode so the programmer has adequate reaction time to avoid collisions."},
+			{"lesson": "2-1", "question": "Why must offline programs often be touched up or calibrated before running in production?", "choices": ["Offline software cannot output the correct vendor language syntax","Physical tolerances, deflection, and cell setup differences create a gap between the CAD model and reality","Industrial robots refuse to run programs generated on a computer","Offline programming tools do not support 6-axis kinematics"], "answer": 1, "explanation": "The simulation-to-reality gap arises from physical differences between ideal CAD geometry and actual cell dimensions, requiring work object and kinematic calibration."},
+			{"lesson": "2-2", "question": "Why can RobotStudio programs move to a real ABB robot with little adjustment?", "choices": ["They are written in Python","RobotStudio runs a Virtual Controller, the same software as the real controller","The robot copies the simulation video","RobotStudio only supports one robot model"], "answer": 1, "explanation": "RobotStudio is built on ABB's Virtual Controller, an exact copy of the RobotWare software that runs on the physical IRC5 and OmniCore controllers."},
+			{"lesson": "2-2", "question": "In Universal Robots PolyScope, what is a URCap?", "choices": ["A physical plastic cover for the robot arm","A plugin that integrates third-party grippers, sensors, or custom commands directly into the GUI","A safety emergency stop switch","A calibration tool for measuring gear backlash"], "answer": 1, "explanation": "URCaps are plugin software modules that allow peripheral vendors to provide native graphical configuration blocks inside the PolyScope program tree."},
+			{"lesson": "2-2", "question": "What is the primary benefit of virtual commissioning in an environment like RobotStudio or Process Simulate?", "choices": ["It eliminates the need for any industrial safety fencing","It lets engineers debug robot motion, PLC logic, and cell interlocks in simulation before physical hardware arrives","It converts 6-axis articulated arms into Cartesian gantry systems","It replaces electric servo motors with hydraulic cylinders"], "answer": 1, "explanation": "Virtual commissioning connects 3D robot simulations to real or simulated PLCs via protocols like OPC UA, validating cell logic before hardware installation."},
+			{"lesson": "2-3", "question": "In URScript, which command moves the tool center point in a straight line?", "choices": ["movej","movel","force_mode","set_digital_out"], "answer": 1, "explanation": "movel moves the tool center point in a straight line through Cartesian space; movej moves in joint space."},
+			{"lesson": "2-3", "question": "In ABB RAPID, what is the effect of using 'fine' instead of a zone like 'z50' in a MoveL instruction?", "choices": ["It increases the maximum velocity of the tool","It causes the robot to stop completely at the programmed point before executing the next instruction","It disables all safety collision detection","It switches the coordinate frame from World to Tool"], "answer": 1, "explanation": "Using 'fine' zonedata creates a stop point where velocity reaches zero before proceeding, whereas 'z50' blends the path within a 50 mm radius."},
+			{"lesson": "2-3", "question": "How does KUKA Robot Language (KRL) structure its program files?", "choices": ["Everything must be stored inside a single binary spreadsheet","It separates programs into a source code file (.src) and a data declaration file (.dat)","It only accepts uncompiled Python scripts","Programs are compiled into raw Arduino C++ sketches"], "answer": 1, "explanation": "KRL programs use a dual-file structure: the .src file contains executable procedural logic and motion commands, while the .dat file stores persistent target positions and variables."},
+			{"lesson": "2-4", "question": "What problem does ROS solve that vendor languages do not?", "choices": ["It makes robots cheaper","It gives a common layer so skills and code carry over between robot brands","It replaces the robot controller hardware","It removes the need for safety systems"], "answer": 1, "explanation": "Vendor languages are tied to a single brand. ROS adds a common abstraction layer so algorithms and skills transfer across different robot platforms."},
+			{"lesson": "2-4", "question": "How does ROS 2 eliminate the central 'roscore' master node that existed in ROS 1?", "choices": ["By routing all messages through a cloud server hosted by Open Robotics","By utilizing Data Distribution Service (DDS) for decentralized peer-to-peer discovery","By requiring all nodes to be compiled into a single executable binary","By using Bluetooth low energy beacons on each circuit board"], "answer": 1, "explanation": "ROS 2 adopts Data Distribution Service (DDS) as its underlying middleware, allowing nodes to discover each other dynamically over the network without a single point of failure."},
+			{"lesson": "2-4", "question": "What was the primary purpose behind the founding of ROS-Industrial at SwRI in 2012?", "choices": ["To replace standard Python with industrial assembly language","To bring open-source ROS capabilities, robust drivers, and 3D perception to factory automation and industrial manipulators","To ban commercial industrial robots in favor of DIY hobby kits","To design battery chargers for autonomous guided vehicles"], "answer": 1, "explanation": "ROS-Industrial was established to extend ROS into industrial manufacturing, providing factory-hardened robot drivers, Cartesian path planning, and advanced perception."}
 		],
 		3: [
-			{
-				lesson: '3-1',
-				question: 'In ROS, what is a topic?',
-				choices: ['A request/response call between nodes', 'A named channel nodes publish messages to and subscribe to', 'A configuration value read at start-up', 'A long-running goal with feedback'],
-				answer: 1,
-				explanation: 'Topics carry continuous data like sensor readings. Services are request/response, actions are long-running goals, parameters are configuration.'
-			},
-			{
-				lesson: '3-2',
-				question: 'How do ROS 2 nodes find each other?',
-				choices: ['They register with roscore', 'They discover each other automatically through DDS, with no master', 'Through a cloud server', 'They must be listed by hand in a file'],
-				answer: 1,
-				explanation: 'ROS 1 needs a central master. ROS 2\'s default DDS middleware lets nodes discover each other automatically.'
-			},
-			{
-				lesson: '3-3',
-				question: 'Why do you run "source /opt/ros/lyrical/setup.bash"?',
-				choices: ['To download ROS', 'So the ros2 command can be found in that terminal', 'To update Ubuntu', 'To start Turtlesim'],
-				answer: 1,
-				explanation: 'Sourcing sets up the environment; it must run in every new terminal or be added to ~/.bashrc.'
-			},
-			{
-				lesson: '3-4',
-				question: 'In Turtlesim, which topic carries the velocity commands from the teleop node?',
-				choices: ['/turtle1/pose', '/turtle1/cmd_vel', '/rosout', '/parameter_events'],
-				answer: 1,
-				explanation: 'The teleop node publishes on /turtle1/cmd_vel and the simulator subscribes to it.'
-			},
-			{
-				lesson: '3-1',
-				question: 'Your class shares one network and every robot hears every other robot. What should you set?',
-				choices: ['A different ROS_DOMAIN_ID for each robot', 'A new roscore for each robot', 'A different message type', 'Nothing, ROS 2 cannot be separated'],
-				answer: 0,
-				explanation: 'Nodes only discover nodes on the same domain. Every node uses domain 0 by default, so set a different ROS_DOMAIN_ID, for example export ROS_DOMAIN_ID=7.'
-			},
-			{
-				lesson: '3-5',
-				question: 'What is the difference between RViz and Gazebo?',
-				choices: ['They are the same tool', 'RViz displays data already flowing through ROS; Gazebo simulates the robot and its world with physics', 'RViz simulates physics; Gazebo only draws maps', 'Gazebo is for ROS 1 only'],
-				answer: 1,
-				explanation: 'RViz visualizes existing data and simulates nothing. Gazebo is a physics simulator connected through ros_gz.'
-			},
-			{
-				lesson: '3-5',
-				question: 'Which tool records messages on chosen topics so you can replay them later without the robot?',
-				choices: ['rqt_graph', 'ros2 bag', 'RViz', 'tf2'],
-				answer: 1,
-				explanation: 'ros2 bag record saves the messages to a file and ros2 bag play republishes them.'
-			}
+			{"lesson": "3-1", "question": "In ROS, what is a topic?", "choices": ["A request/response call between nodes","A named channel nodes publish messages to and subscribe to","A configuration value read at start-up","A long-running goal with feedback"], "answer": 1, "explanation": "Topics carry continuous, unidirectional data streams like sensor telemetry using the publish-subscribe pattern."},
+			{"lesson": "3-1", "question": "Your class shares one network and every robot hears every other robot. What should you set?", "choices": ["A different ROS_DOMAIN_ID for each robot","A new roscore for each robot","A different message type","Nothing, ROS 2 cannot be separated"], "answer": 0, "explanation": "Setting ROS_DOMAIN_ID shifts the DDS UDP multicast port ranges, preventing robots on different domain IDs from discovering each other on the same subnet."},
+			{"lesson": "3-1", "question": "Which ROS 2 communication mechanism is specifically designed for long-running, preemptible tasks that provide continuous progress feedback?", "choices": ["Topics","Parameters","Actions","Services"], "answer": 2, "explanation": "Actions provide goal submission, periodic feedback while running, and a final result, with the ability for the client to cancel the goal if necessary."},
+			{"lesson": "3-2", "question": "How do ROS 2 nodes find each other?", "choices": ["They register with roscore","They discover each other automatically through DDS, with no master","Through a cloud server","They must be listed by hand in a file"], "answer": 1, "explanation": "ROS 2 replaces the central roscore master with Data Distribution Service (DDS), which discovers peer nodes automatically via network multicast."},
+			{"lesson": "3-2", "question": "A subscriber requests 'Reliable' reliability on a topic, but the publisher offers 'Best Effort'. What happens?", "choices": ["The publisher automatically upgrades its protocol to Reliable","The connection fails and no messages are delivered due to a QoS incompatibility","The message data is stored on a cloud server instead","The subscriber drops its request and accepts whatever is sent"], "answer": 1, "explanation": "In ROS 2, a connection requires Offered QoS >= Requested QoS. A Reliable subscriber requires a Reliable publisher; connecting it to a Best Effort publisher causes a QoS mismatch."},
+			{"lesson": "3-2", "question": "How can an engineer switch the underlying middleware implementation in ROS 2 (e.g. from Fast DDS to Cyclone DDS or Zenoh)?", "choices": ["By modifying and recompiling the Linux kernel","By setting the RMW_IMPLEMENTATION environment variable before running nodes","By re-soldering the robot's Ethernet transceiver","By rewriting all publisher and subscriber code in C++"], "answer": 1, "explanation": "Because of the ROS Middleware (RMW) abstraction layer, changing middleware simply requires setting the RMW_IMPLEMENTATION environment variable in the terminal."},
+			{"lesson": "3-3", "question": "Why do you run 'source /opt/ros/lyrical/setup.bash'?", "choices": ["To download ROS","So the ros2 command can be found in that terminal","To update Ubuntu","To start Turtlesim"], "answer": 1, "explanation": "Sourcing setup.bash sets up essential environment variables like PATH, AMENT_PREFIX_PATH, and PYTHONPATH so the ros2 CLI tools and libraries can be found."},
+			{"lesson": "3-3", "question": "Why does the ROS 2 installation guide require configuring a UTF-8 locale (such as en_US.UTF-8)?", "choices": ["Without UTF-8, robot motors will run in reverse","Python 3 and ROS 2 command-line tools fail with character decoding errors in ASCII or POSIX locales","DDS middleware only operates on computers located in the United States","UTF-8 is required to connect to Wi-Fi networks"], "answer": 1, "explanation": "ROS 2 client libraries and Python utilities expect UTF-8 text encoding. In bare environments using ASCII or POSIX locales, scripts crash with UnicodeDecodeError."},
+			{"lesson": "3-3", "question": "If two ROS 2 nodes running on the same local network cannot discover each other, which firewall setting should you inspect?", "choices": ["HTTP port 80","SSH port 22","UDP multicast traffic on 224.0.0.0/4 used by DDS discovery","DNS port 53"], "answer": 2, "explanation": "DDS peer discovery broadcasts over UDP multicast (subnet 224.0.0.0/4). If the host firewall blocks UDP multicast, nodes cannot discover each other."},
+			{"lesson": "3-4", "question": "In Turtlesim, which topic carries the velocity commands from the teleop node?", "choices": ["/turtle1/pose","/turtle1/cmd_vel","/rosout","/parameter_events"], "answer": 1, "explanation": "The teleop node publishes on /turtle1/cmd_vel and the simulator subscribes to it to move the simulated turtle."},
+			{"lesson": "3-4", "question": "In a standard ROS 2 workspace (ros2_ws), where must developer source code packages be placed?", "choices": ["Inside /opt/ros/lyrical/","Inside the src/ directory","Inside the build/ directory","Directly in the user's home folder"], "answer": 1, "explanation": "Source code packages must be located in the src/ directory. The build/, install/, and log/ directories are generated automatically by colcon."},
+			{"lesson": "3-4", "question": "In an rclpy Python node script, what is the primary role of calling rclpy.spin(node)?", "choices": ["It spins the physical robot motors at maximum speed","It blocks execution to keep the node alive and process incoming callbacks from timers and subscriptions","It deletes temporary compiler files from disk","It downloads missing packages from the Ubuntu repository"], "answer": 1, "explanation": "rclpy.spin() blocks the main thread, entering an event loop that executes callbacks whenever a timer fires or a message arrives on a subscribed topic."},
+			{"lesson": "3-5", "question": "What is the difference between RViz and Gazebo?", "choices": ["They are the same tool","RViz displays data already flowing through ROS; Gazebo simulates the robot and its world with physics","RViz simulates physics; Gazebo only draws maps","Gazebo is for ROS 1 only"], "answer": 1, "explanation": "RViz visualizes telemetry already flowing across topics and simulates nothing. Gazebo is a multi-physics simulator that models mass, friction, gravity, and sensors."},
+			{"lesson": "3-5", "question": "Which tool records messages on chosen topics so you can replay them later without the robot?", "choices": ["rqt_graph","ros2 bag","RViz","tf2"], "answer": 1, "explanation": "ros2 bag record serializes topic messages into storage files, and ros2 bag play republishes them with original timestamps."},
+			{"lesson": "3-5", "question": "In the rqt_graph visual interface, how are computational entities displayed?", "choices": ["Nodes are drawn as ovals and topics are drawn as rectangles, connected by directed communication arrows","Nodes are drawn as 3D meshes and topics are drawn as audio waveforms","Everything is represented as a text terminal spreadsheet","Topics are drawn as circles and nodes are hidden"], "answer": 0, "explanation": "rqt_graph renders active nodes as ovals and communication topics as boxes or labeled arrows, illustrating pub/sub relationships."}
 		],
 		4: [
-			{"lesson": "4-3", "question": "Acemoglu and Restrepo studied US labor markets from 1990 to 2007. What did they find about one more robot per thousand workers?", "choices": ["It raised employment by 2 percentage points", "It reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42%", "It had no measurable effect on jobs or wages", "It eliminated 14% of all jobs"], "answer": 1, "explanation": "One more robot per thousand workers reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42% in the most exposed areas."},
-			{"lesson": "4-3", "question": "Which practice best applies data minimization to a robot vacuum's camera?", "choices": ["Upload every image to the cloud in case it is useful later", "Collect only what the task needs, process it on the robot when possible and keep it no longer than necessary", "Share images with labeling contractors without telling users", "Record audio as well, to improve navigation"], "answer": 1, "explanation": "Data minimization means collecting only what the task needs, processing on the robot when possible, keeping data no longer than necessary and telling people what is recorded."},
-			{
-				lesson: '4-1',
-				question: 'According to the NSPE Code of Ethics, what must engineers hold paramount?',
-				choices: ['Profit for their employer', 'The safety, health and welfare of the public', 'Finishing on schedule', 'Their own reputation'],
-				answer: 1,
-				explanation: 'The NSPE code puts the safety, health and welfare of the public first.'
-			},
-			{
-				lesson: '4-1',
-				question: 'What should an engineer do about a conflict of interest?',
-				choices: ['Ignore it if it is small', 'Disclose it', 'Hide it from the client', 'Ask the robot to decide'],
-				answer: 1,
-				explanation: 'Engineering codes ask engineers to disclose anything that could bias their judgment.'
-			},
-			{
-				lesson: '4-2',
-				question: 'Which standard covers the safety of industrial robots and robot cells?',
-				choices: ['ISO 9001', 'ISO 10218', 'IEEE 802.11', 'ISO 13850'],
-				answer: 1,
-				explanation: 'ISO 10218 Part 1 covers industrial robots and Part 2 covers applications and cells. ISO 13850 covers emergency stop design.'
-			},
-			{
-				lesson: '4-2',
-				question: 'What does a watchdog timer do?',
-				choices: ['Counts encoder ticks', 'Triggers a safe stop if the main program stops responding', 'Measures how long a program took to write', 'Speeds up the robot when idle'],
-				answer: 1,
-				explanation: 'A watchdog is part of the software safety layer that does not depend on the "smart" code.'
-			}
+			{"lesson": "4-1", "question": "According to the NSPE Code of Ethics, what must engineers hold paramount?", "choices": ["Profit for their employer","The safety, health and welfare of the public","Finishing on schedule","Their own reputation"], "answer": 1, "explanation": "Fundamental Canon 1 of the NSPE Code of Ethics explicitly mandates that engineers hold paramount the safety, health, and welfare of the public."},
+			{"lesson": "4-1", "question": "What should an engineer do about a conflict of interest?", "choices": ["Ignore it if it is small","Disclose it","Hide it from the client","Ask the robot to decide"], "answer": 1, "explanation": "Both the NSPE and IEEE codes require engineers to disclose all known or potential conflicts of interest that could influence professional judgment."},
+			{"lesson": "4-1", "question": "According to industrial accident data from OSHA and robotics literature, when do the vast majority of fatal robot accidents occur?", "choices": ["During normal automatic production when the cell is locked","During non-routine operations such as maintenance, teaching, troubleshooting, and clearing jams","While robots are being transported on delivery trucks","During overnight facility shutdowns when power is disconnected"], "answer": 1, "explanation": "OSHA and NIOSH accident analyses reveal that over 80% of robot fatalities occur during non-routine maintenance, programming, and clearing jams when safety interlocks are bypassed."},
+			{"lesson": "4-2", "question": "Which standard covers the safety of industrial robots and robot cells?", "choices": ["ISO 9001","ISO 10218","IEEE 802.11","ISO 13850"], "answer": 1, "explanation": "ISO 10218 Part 1 covers industrial robots and Part 2 covers applications and cells. ISO 13850 covers emergency stop design."},
+			{"lesson": "4-2", "question": "What does a watchdog timer do?", "choices": ["Counts encoder ticks","Triggers a safe stop if the main program stops responding","Measures how long a program took to write","Speeds up the robot when idle"], "answer": 1, "explanation": "A watchdog is part of the software safety layer that triggers a safe stop state if the main controller program hangs or stops responding."},
+			{"lesson": "4-2", "question": "Under the EU AI Act (Regulation 2024/1689), how are safety components of industrial machinery and collaborative robotics classified?", "choices": ["Unacceptable risk (banned entirely)","High risk, requiring formal risk management and human oversight","Minimal risk with no requirements","Transparency risk, requiring only a user disclaimer"], "answer": 1, "explanation": "Safety components of machinery and collaborative robots governed by harmonized European safety legislation are classified as high risk under the EU AI Act, requiring formal risk management, data governance, and human oversight."},
+			{"lesson": "4-3", "question": "Acemoglu and Restrepo studied US labor markets from 1990 to 2007. What did they find about one more robot per thousand workers?", "choices": ["It raised employment by 2 percentage points","It reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42%","It had no measurable effect on jobs or wages","It eliminated 14% of all jobs"], "answer": 1, "explanation": "One more robot per thousand workers reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42% in the most exposed areas."},
+			{"lesson": "4-3", "question": "Which practice best applies data minimization to a robot vacuum's camera?", "choices": ["Upload every image to the cloud in case it is useful later","Collect only what the task needs, process it on the robot when possible and keep it no longer than necessary","Share images with labeling contractors without telling users","Record audio as well, to improve navigation"], "answer": 1, "explanation": "Data minimization means collecting only what the task needs, processing on the robot when possible, keeping data no longer than necessary and telling people what is recorded."},
+			{"lesson": "4-3", "question": "According to the task framework of automation (Acemoglu and Restrepo), what is the 'reinstatement effect'?", "choices": ["Rehiring laid-off workers at lower wages","Technological change creating new complex tasks and occupations in which humans have a comparative advantage","Replacing worn-out robotic manipulators on assembly lines","Restoring factory software to its original factory state after a cyberattack"], "answer": 1, "explanation": "The reinstatement effect describes how technological progress creates entirely new tasks and job roles—such as robot programming, maintenance, and cell integration—where human workers excel."}
 		],
 		5: [
-			{
-				lesson: '5-1',
-				question: 'How should you power a DC motor in an Arduino robot?',
-				choices: ['Directly from an Arduino pin', 'From the Arduino\'s 5V pin', 'From a separate battery through a motor driver, with grounds connected', 'From the USB cable'],
-				answer: 2,
-				explanation: 'Motors need more current than the board can supply. Use a separate battery and a motor driver, and connect the grounds.'
-			},
-			{
-				lesson: '5-2',
-				question: 'A motor driver runs at a 25% duty cycle from a 12 V supply. What is the average voltage?',
-				choices: ['1.2 V', '3 V', '6 V', '12 V'],
-				answer: 1,
-				explanation: 'V_avg = D × V_cc = 0.25 × 12 V = 3 V.'
-			},
-			{
-				lesson: '5-3',
-				question: 'A quadrature encoder is rated 500 PPR. With 4x decoding, how many counts per revolution does the code see?',
-				choices: ['125', '500', '1000', '2000'],
-				answer: 3,
-				explanation: 'CPR = PPR × 4 = 2000 counts per revolution.'
-			},
-			{
-				lesson: '5-3',
-				question: 'What happens to an incremental encoder\'s position when the power goes off?',
-				choices: ['It is saved automatically', 'It is forgotten, so the robot has to home again', 'It doubles', 'Nothing, it never measured position'],
-				answer: 1,
-				explanation: 'Incremental encoders only measure change. Absolute encoders know their position at power-on.'
-			},
-			{
-				lesson: '5-4',
-				question: 'A robot is blocked, its integral term keeps growing, and it lurches when released. What is this called?',
-				choices: ['Derivative kick', 'Integral windup', 'Backlash', 'Dead zone'],
-				answer: 1,
-				explanation: 'The integral keeps adding up error while the robot cannot move. Clamp the integral, or stop integrating while the output is at its limit.'
-			},
-			{"lesson": "5-5", "question": "According to its datasheet, roughly how wide is the HC-SR04 ultrasonic sensor's measuring angle?", "choices": ["About 1°", "About 15°", "About 90°", "A full 360°"], "answer": 1, "explanation": "The HC-SR04 has a measuring angle of about 15°, so it reports the nearest object anywhere in that cone."},
-			{"lesson": "5-5", "question": "Why does the heading from a gyroscope slowly wander even when the robot's motion is measured correctly?", "choices": ["The accelerometer overrides it", "Its small bias is integrated along with the rotation rate, so the error keeps growing", "I²C communication loses data", "Gravity pulls the gyroscope off axis"], "answer": 1, "explanation": "Integrating the rate to get an angle also integrates the gyro's small bias, so heading error grows the longer the robot runs."},
-			{"lesson": "5-6", "question": "In one update the left wheel travels 0.10 m and the right wheel 0.14 m on a robot with a 0.20 m wheelbase. What is d_theta?", "choices": ["0.04 rad", "0.12 rad", "0.20 rad", "0.70 rad"], "answer": 2, "explanation": "d_theta = (d_R − d_L) / b = (0.14 − 0.10) / 0.20 = 0.20 rad, a left (counterclockwise) turn."},
-			{"lesson": "5-6", "question": "Which of these is a non-systematic odometry error?", "choices": ["Unequal wheel diameters", "Wrong wheelbase value in the code", "Wheel slip on a slippery floor", "Limited encoder resolution"], "answer": 2, "explanation": "Wheel slip comes from the robot's interaction with the floor and is unpredictable, so Borenstein and Feng class it as non-systematic."},
-			{"lesson": "5-7", "question": "Why does the example state machine time its 600 ms turn with millis() instead of delay(600)?", "choices": ["delay() only works in setup()", "delay() would freeze loop(), so the robot would ignore its sensors and stop button", "millis() makes the motors faster", "delay() cannot count past 255 ms"], "answer": 1, "explanation": "Comparing millis() timestamps keeps loop() running, so every pass still reads the sensors and the stop button."},
-			{"lesson": "5-7", "question": "Which are the primary states of a ROS 2 managed (lifecycle) node?", "choices": ["Idle, Listening, Responding, Stopped", "Unconfigured, Inactive, Active, Finalized", "FOLLOW_LINE, AVOID_OBSTACLE, SEARCH, STOP", "Starting, Execute, Held, Aborted"], "answer": 1, "explanation": "ROS 2 lifecycle nodes follow a state machine whose primary states are Unconfigured, Inactive, Active and Finalized."},
-			{"lesson": "5-8", "question": "If P_pred = 0.05 and R = 0.05, what is the Kalman gain K?", "choices": ["0.025", "0.1", "0.5", "1.0"], "answer": 2, "explanation": "K = P_pred / (P_pred + R) = 0.05 / 0.10 = 0.5, so the estimate lands halfway between the prediction and the measurement."},
-			{"lesson": "5-8", "question": "What happens when the sensor's noise R is small compared with the predicted uncertainty P_pred?", "choices": ["K is close to 0 and the filter ignores the sensor", "K is close to 1 and the filter follows the sensor", "P grows after the update", "The filter stops predicting"], "answer": 1, "explanation": "A small R relative to P_pred pushes K toward 1, so the estimate moves almost all the way to the measurement."}
+			{"lesson": "5-1", "question": "How should you power a DC motor in an Arduino robot?", "choices": ["Directly from an Arduino pin","From the Arduino's 5V pin","From a separate battery through a motor driver, with grounds connected","From the USB cable"], "answer": 2, "explanation": "Motors need more current than the board can supply. Use a separate battery and a motor driver, and connect the grounds."},
+			{"lesson": "5-1", "question": "What happens if you do not connect the Arduino ground (GND) to the motor battery ground (GND)?", "choices": ["The motor spins at double speed","The logic signals float without a shared 0V reference, causing erratic motor behavior or failure to switch","The Arduino automatically charges the motor battery","Nothing, ground isolation is required for safety"], "answer": 1, "explanation": "Connecting the logic ground and motor power ground creates a common electrical reference plane. Without it, logic signals float unpredictably."},
+			{"lesson": "5-1", "question": "What is the critical minimum safe discharge voltage per cell for a Lithium Polymer (LiPo) battery?", "choices": ["0.0 V per cell","1.5 V per cell","3.0 V per cell","4.2 V per cell"], "answer": 2, "explanation": "Discharging a LiPo battery below 3.0 V per cell causes permanent chemical degradation, copper dendrite formation, and severe risk of thermal runaway during subsequent charging."},
+			{"lesson": "5-2", "question": "A motor driver runs at a 25% duty cycle from a 12 V supply. What is the average voltage?", "choices": ["1.2 V","3 V","6 V","12 V"], "answer": 1, "explanation": "V_avg = D × V_cc = 0.25 × 12 V = 3 V."},
+			{"lesson": "5-2", "question": "What pulse width sent at 50 Hz commands a standard hobby servomotor to its neutral center position (90 degrees)?", "choices": ["0.5 ms","1.5 ms","2.5 ms","20.0 ms"], "answer": 1, "explanation": "A standard hobby servomotor decodes pulse width over a 20 ms (50 Hz) period: 1.0 ms commands 0 degrees, 1.5 ms commands the center 90 degrees, and 2.0 ms commands 180 degrees."},
+			{"lesson": "5-2", "question": "Why does calling myServo.attach() on an Arduino Uno R3 disable analogWrite() PWM on pins 9 and 10?", "choices": ["Pins 9 and 10 are physically disconnected by a relay","The Servo library commandeers the 16-bit hardware Timer1 to generate microsecond pulses, disabling Timer1's PWM outputs","Pins 9 and 10 can only be used for analog inputs","The ATmega328P runs out of RAM"], "answer": 1, "explanation": "The Arduino Servo library takes over the hardware 16-bit Timer1 to generate precise servo pulse timing, which disables the hardware PWM output channels on pins 9 and 10."},
+			{"lesson": "5-3", "question": "A quadrature encoder is rated 500 PPR. With 4x decoding, how many counts per revolution does the code see?", "choices": ["125","500","1000","2000"], "answer": 3, "explanation": "CPR = PPR × 4 = 500 × 4 = 2000 counts per revolution."},
+			{"lesson": "5-3", "question": "What happens to an incremental encoder's position when the power goes off?", "choices": ["It is saved automatically","It is forgotten, so the robot has to home again","It doubles","Nothing, it never measured position"], "answer": 1, "explanation": "Incremental encoders only measure change. Absolute encoders know their position at power-on."},
+			{"lesson": "5-3", "question": "Why do 6-axis industrial robot arms use absolute multi-turn encoders on their joints rather than incremental encoders?", "choices": ["Absolute encoders are much cheaper than incremental encoders","Absolute encoders allow the arm to know its exact physical pose immediately on power-on without requiring dangerous homing movements through the cell","Absolute encoders eliminate the need for motor brakes","Incremental encoders cannot turn faster than 10 RPM"], "answer": 1, "explanation": "Industrial robot arms require absolute encoders so joint positions are known immediately upon startup, eliminating hazardous homing routines that could collide with workpieces or tooling."},
+			{"lesson": "5-4", "question": "A robot is blocked, its integral term keeps growing, and it lurches when released. What is this called?", "choices": ["Derivative kick","Integral windup","Backlash","Dead zone"], "answer": 1, "explanation": "The integral keeps adding up error while the robot cannot move. Clamp the integral, or stop integrating while the output is at its limit."},
+			{"lesson": "5-4", "question": "In the Ziegler–Nichols closed-loop tuning method, how is the ultimate gain (Ku) determined?", "choices": ["By setting all gains to zero and measuring the motor resistance","By setting Ki and Kd to zero and increasing Kp until the output sustains continuous, steady oscillations","By setting Kp to maximum and timing how long the robot takes to crash","By calculating the ratio of motor inductance to winding resistance"], "answer": 1, "explanation": "In the Ziegler–Nichols method, Ki and Kd are zeroed and Kp is increased until the system enters a sustained, continuous oscillation of constant amplitude, which defines Ku."},
+			{"lesson": "5-4", "question": "How do industrial servo controllers prevent 'derivative kick' when a setpoint changes abruptly?", "choices": ["By turning off the power to the motor","By computing the derivative on the process measurement rather than on the error","By doubling the integral gain","By disconnecting the encoder"], "answer": 1, "explanation": "Because a step setpoint change has an infinite instantaneous derivative, computing the derivative term on the process measurement instead of the error completely eliminates derivative kick."},
+			{"lesson": "5-5", "question": "According to its datasheet, roughly how wide is the HC-SR04 ultrasonic sensor's measuring angle?", "choices": ["About 1°","About 15°","About 90°","A full 360°"], "answer": 1, "explanation": "The HC-SR04 has a measuring angle of about 15°, so it reports the nearest object anywhere in that cone."},
+			{"lesson": "5-5", "question": "Why does the heading from a gyroscope slowly wander even when the robot's motion is measured correctly?", "choices": ["The accelerometer overrides it","Its small bias is integrated along with the rotation rate, so the error keeps growing","I²C communication loses data","Gravity pulls the gyroscope off axis"], "answer": 1, "explanation": "Integrating the rate to get an angle also integrates the gyro's small bias, so heading error grows the longer the robot runs."},
+			{"lesson": "5-5", "question": "What primary advantage does a Time-of-Flight laser distance sensor (such as the VL53L1X) have over an infrared optical triangulation sensor (such as the Sharp GP2Y0A21YK0F)?", "choices": ["The ToF sensor requires a 120V power outlet","The ToF sensor measures photon transit time, making its distance measurement largely independent of target color and surface reflectance","The ToF sensor can see through solid brick walls","The ToF sensor produces an analog voltage that floats randomly"], "answer": 1, "explanation": "Time-of-Flight sensors measure the direct transit time of laser light pulses, which makes distance measurements immune to variations in object color, texture, and surface reflectivity."},
+			{"lesson": "5-6", "question": "In one update the left wheel travels 0.10 m and the right wheel 0.14 m on a robot with a 0.20 m wheelbase. What is d_theta?", "choices": ["0.04 rad","0.12 rad","0.20 rad","0.70 rad"], "answer": 2, "explanation": "d_theta = (d_R − d_L) / b = (0.14 − 0.10) / 0.20 = 0.20 rad, a left (counterclockwise) turn."},
+			{"lesson": "5-6", "question": "Which of these is a non-systematic odometry error?", "choices": ["Unequal wheel diameters","Wrong wheelbase value in the code","Wheel slip on a slippery floor","Limited encoder resolution"], "answer": 2, "explanation": "Wheel slip comes from the robot's interaction with the floor and is unpredictable, so Borenstein and Feng class it as non-systematic."},
+			{"lesson": "5-6", "question": "Why does a 1-degree heading error cause far more position drift than a 1-centimeter wheel diameter calibration error over a 50-meter trip?", "choices": ["Encoders cannot measure turns","Heading errors rotate the entire subsequent coordinate frame, causing lateral position error to grow proportionally to total distance traveled","The microcontroller runs out of memory during turns","Heading errors reverse the direction of motor rotation"], "answer": 1, "explanation": "Because dead reckoning integrates forward displacement along the current heading angle, any angular error tilts all future displacement vectors, causing lateral position error to compound linearly with distance."},
+			{"lesson": "5-7", "question": "Why does the example state machine time its 600 ms turn with millis() instead of delay(600)?", "choices": ["delay() only works in setup()","delay() would freeze loop(), so the robot would ignore its sensors and stop button","millis() makes the motors faster","delay() cannot count past 255 ms"], "answer": 1, "explanation": "Comparing millis() timestamps keeps loop() running, so every pass still reads the sensors and the stop button."},
+			{"lesson": "5-7", "question": "Which are the primary states of a ROS 2 managed (lifecycle) node?", "choices": ["Idle, Listening, Responding, Stopped","Unconfigured, Inactive, Active, Finalized","FOLLOW_LINE, AVOID_OBSTACLE, SEARCH, STOP","Starting, Execute, Held, Aborted"], "answer": 1, "explanation": "ROS 2 lifecycle nodes follow a state machine whose primary states are Unconfigured, Inactive, Active and Finalized."},
+			{"lesson": "5-7", "question": "In a Behavior Tree used by ROS 2 Nav2, what occurs when a child node inside a Sequence control node returns FAILURE?", "choices": ["The Sequence node ticks the next child in line to recover","The Sequence node immediately halts execution of subsequent children and returns FAILURE to its parent","The Behavior Tree resets to the root and reinitializes all hardware nodes","The child node is retried infinitely until it succeeds"], "answer": 1, "explanation": "A Sequence node requires all child nodes to succeed in sequential order; if any child returns FAILURE, the Sequence immediately halts remaining children and returns FAILURE."},
+			{"lesson": "5-8", "question": "If P_pred = 0.05 and R = 0.05, what is the Kalman gain K?", "choices": ["0.025","0.1","0.5","1.0"], "answer": 2, "explanation": "K = P_pred / (P_pred + R) = 0.05 / 0.10 = 0.5, so the estimate lands halfway between the prediction and the measurement."},
+			{"lesson": "5-8", "question": "What happens when the sensor's noise R is small compared with the predicted uncertainty P_pred?", "choices": ["K is close to 0 and the filter ignores the sensor","K is close to 1 and the filter follows the sensor","P grows after the update","The filter stops predicting"], "answer": 1, "explanation": "A small R relative to P_pred pushes K toward 1, so the estimate moves almost all the way to the measurement."},
+			{"lesson": "5-8", "question": "In the dual-EKF architecture of the ROS 2 robot_localization package, why does the local EKF fuse wheel odometry and IMU without GPS data?", "choices": ["GPS satellites cannot transmit messages over ROS 2 topics","To provide a smooth, continuous state estimate in the odom frame without discrete jumps that could destabilize motor control loops","Wheel odometry is more accurate than RTK-GPS over kilometer journeys","The local EKF can only accept a single sensor stream at a time"], "answer": 1, "explanation": "The local EKF produces a smooth, continuous transform in the odom frame for real-time trajectory controllers, while the global EKF incorporates GPS in the map frame where discrete satellite fixes will not cause control jumps."}
 		]
 	}
 };

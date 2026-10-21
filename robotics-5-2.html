@@ -135,85 +135,198 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What is PWM?</h2>
+                            <h2 class="article-section-title">01. Simulating analog control in a digital world</h2>
                             <p>
-                                In digital electronics, everything is either on or off. Real robots need something in between: you rarely want a motor at exactly 0% or 100% power. Pulse Width Modulation (PWM) is the trick that makes a digital signal act like an analog one. The pin switches on and off very quickly, and by changing how long it stays on in each cycle, you change the average power delivered.
+                                Digital microcontrollers are fundamentally binary devices. Internally, their logic gates and output pins operate strictly at two voltage rails: logic LOW (0 V, Ground) or logic HIGH (5.0 V or 3.3 V). However, the physical world inhabited by robots is analog and continuous. A mobile robot rarely navigates by running its drive motors at either 0% standstill or 100% full-throttle maximum speed. To turn smoothly, track a line, or hold a steady velocity down an incline, the robot controller must command intermediate power levels.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                Generating true intermediate analog voltages would require an onboard Digital-to-Analog Converter (DAC) paired with a high-current linear power amplifier. However, linear regulators control voltage by dropping excess voltage across internal transistors, converting surplus power directly into waste heat. In battery-powered mobile robotics, this inefficiency is unacceptable.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                The universal engineering solution is <strong>Pulse Width Modulation (PWM)</strong>.<sup><a href="#ref-1">[1]</a></sup> Instead of outputting a steady partial voltage, a digital pin switches between 0 V and full supply voltage thousands of times per second. By modulating the relative duration of time the pulse remains HIGH versus LOW, the circuit delivers an adjustable average electrical power to actuators with near 90% power efficiency.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. Duty cycle and frequency</h2>
+                            <h2 class="article-section-title">02. Mathematics of duty cycle and average voltage</h2>
                             <p>
-                                Two numbers describe a PWM signal.
+                                A periodic square wave is characterized by two fundamental variables: its <strong>period</strong> \(T\) (the duration of one complete cycle in seconds, or frequency \(f = 1/T\) in Hertz) and the active pulse duration \(t_{on}\).<sup><a href="#ref-1">[1]</a></sup>
                             </p>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Duty cycle:</span> the percentage of each cycle the signal is on. 0% is always off, 50% is on half the time, and 100% is always on.</li>
-                                <li class="article-spec-item"><span class="spec-label">Frequency:</span> how many on/off cycles happen per second, in hertz (Hz). At low frequencies an LED visibly flickers and a motor can &ldquo;chug&rdquo;; at high frequencies the motor&rsquo;s inertia smooths the pulses into steady motion.</li>
-                            </ul>
                             <p>
-                                The average voltage delivered is the duty cycle times the supply voltage:
+                                The <strong>duty cycle</strong> \(D\) represents the proportion of each repetitive period during which the digital signal remains in the active HIGH state:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
-                            <pre class="article-code"><code>V_avg = D * V_cc</code></pre>
+                            <div class="article-callout">
+                                <p>\[D = \frac{t_{on}}{T} = \frac{t_{on}}{t_{on} + t_{off}}\]</p>
+                            </div>
                             <p>
-                                On an Arduino, <code>analogWrite(pin, value)</code> sets the duty cycle with a value from 0 (0%) to 255 (100%). On the Uno it works on pins 3, 5, 6, 9, 10 and 11, at about 490&nbsp;Hz (about 980&nbsp;Hz on pins 5 and 6).
+                                When expressed as a percentage, a 0% duty cycle is permanently OFF (0 V), a 50% duty cycle is ON for half the period and OFF for half the period, and a 100% duty cycle is permanently ON (continuous supply voltage). Because mechanical actuators like DC motors possess mechanical inertia and electrical inductance, they act as natural low-pass filters, integrating the fast electrical pulses into a smooth mechanical response.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                The effective <strong>average voltage</strong> \(V_{avg}\) delivered across the load is directly proportional to the duty cycle and peak supply voltage \(V_{cc}\):<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[V_{avg} = D \times V_{cc}\]</p>
+                            </div>
+                            <p>
+                                Consider a practical robotics example: a motor driver runs at a 25% duty cycle from a 12 V battery supply. What is the average voltage delivered to the motor? The calculation is straightforward:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[V_{avg} = 0.25 \times 12\text{ V} = 3.0\text{ V}\]</p>
+                            </div>
+                            <p>
+                                In the Arduino programming environment, the built-in function <code>analogWrite(pin, value)</code> controls hardware PWM.<sup><a href="#ref-2">[2]</a></sup> Despite its name, <code>analogWrite()</code> does not produce an analog voltage; it configures the internal microcontroller timer to generate a PWM square wave. The parameter <code>value</code> is an 8-bit integer ranging from 0 (0% duty cycle, permanently 0 V) to 255 (100% duty cycle, permanently 5.0 V). For instance, commanding an average 3.0 V from a 5.0 V Arduino rail corresponds to:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\text{value} = \text{round}\left(\frac{3.0\text{ V}}{5.0\text{ V}} \times 255\right) = \text{round}(0.60 \times 255) = 153\]</p>
+                            </div>
+
+                            <h2 class="article-section-title">03. Interactive PWM simulation</h2>
+                            <p>
+                                Adjust the interactive sliders below to explore how varying duty cycle and supply voltage changes the digital waveform and the resulting average voltage delivered to an actuator:
                             </p>
 
                             <div data-widget="pwm">
                                 <p class="widget-note">The PWM simulator needs JavaScript. With it on, you can change the duty cycle and supply voltage and see the waveform and average voltage.</p>
                             </div>
 
-                            <h2 class="article-section-title">03. Three common uses</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">DC motor speed:</span> a motor averages out the pulses, so a 25% duty cycle behaves roughly like 25% of the supply voltage: slower, with less torque.</li>
-                                <li class="article-spec-item"><span class="spec-label">Servo position:</span> a standard hobby servo reads the <em>width</em> of a pulse repeated about 50 times a second. Around 1.0&nbsp;ms is one end of travel, 1.5&nbsp;ms is center and 2.0&nbsp;ms is the other end. Exact ranges vary by servo; many respond to roughly 0.7&ndash;2.3&nbsp;ms, and the Arduino Servo library&rsquo;s default limits are 544 to 2400&nbsp;&micro;s.</li>
-                                <li class="article-spec-item"><span class="spec-label">LED brightness:</span> pulsing an LED faster than the eye can follow makes it look dimmer. Doing this on red, green and blue channels mixes colors.</li>
-                            </ul>
-
-                            <h2 class="article-section-title">04. The H-bridge</h2>
+                            <h2 class="article-section-title">04. Microcontroller hardware timers: ATmega328P and RA4M1</h2>
                             <p>
-                                A microcontroller can generate PWM, but it cannot supply the current a motor needs. An H-bridge motor driver (for example the L298N or DRV8833) takes the low-power PWM signal from the controller and uses it to switch high-power current from the battery to the motor. The &ldquo;H&rdquo; arrangement of switches also lets the driver reverse the motor&rsquo;s direction.
+                                Generating PWM by manually toggling pins in software (using loops and microsecond delays) wastes CPU processing cycles and results in timing jitter whenever an interrupt triggers. Professional microcontrollers generate PWM entirely through autonomous <strong>hardware timer/counter peripherals</strong>.<sup><a href="#ref-1">[1]</a></sup> Once configured, the hardware timer toggles the output pin automatically at the clock level without any CPU software overhead.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                On the <strong>Arduino Uno R3 (ATmega328P)</strong>, PWM output is driven by three internal hardware timers across six dedicated pins:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Timer0 (8-bit):</span> Drives PWM on <strong>pins 5 and 6</strong>. It operates in Fast PWM mode with a clock prescaler of 64, yielding a base carrier frequency of approximately <strong>976.56 Hz</strong> (commonly rounded to 980 Hz). Note: Timer0 also drives the internal system tick counter for <code>millis()</code> and <code>delay()</code>, so altering Timer0 registers directly alters sketch timekeeping!<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Timer1 (16-bit):</span> Drives PWM on <strong>pins 9 and 10</strong>. It operates in Phase-Correct PWM mode with a clock prescaler of 64, generating a carrier frequency of approximately <strong>490.20 Hz</strong> (commonly rounded to 490 Hz). Phase-correct mode counts up to 255 and then counts down to 0, producing symmetrical pulses that reduce electrical motor noise.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Timer2 (8-bit):</span> Drives PWM on <strong>pins 3 and 11</strong>. It operates in Phase-Correct PWM mode with a prescaler of 64, resulting in a carrier frequency of approximately <strong>490.20 Hz</strong> (490 Hz).<sup><a href="#ref-1">[1]</a></sup></li>
+                            </ul>
+                            <p>
+                                On the modern 32-bit <strong>Arduino Uno R4 (Renesas RA4M1)</strong>, timing is handled by General PWM Timers (GPT) clocked up to 48 MHz.<sup><a href="#ref-3">[3]</a></sup> The R4 supports native 16-bit and 32-bit resolution across all PWM pins, allowing frequencies to be configured into the tens of kilohertz without sacrificing resolution.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">05. Practical details</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Audible whine:</span> if the PWM frequency is in the range of human hearing (roughly 20&nbsp;Hz to 20&nbsp;kHz), motor coils vibrate and whistle. The Uno&rsquo;s default 490&nbsp;Hz is well within that range. Many motor controllers switch above about 20&nbsp;kHz to stay silent, at the cost of more heat in the driver from switching.</li>
-                                <li class="article-spec-item"><span class="spec-label">Use hardware PWM:</span> let the microcontroller&rsquo;s timers generate the signal instead of toggling a pin by hand in code, so the signal stays steady while the program is busy.</li>
-                                <li class="article-spec-item"><span class="spec-label">Dead zone:</span> most DC motors will not move at very low duty cycles because of friction in the gears. Find the minimum value that actually moves your motor and treat it as the floor.</li>
-                                <li class="article-spec-item"><span class="spec-label">Inductive kickback:</span> a motor is an inductor, so cutting its power causes a voltage spike. Make sure the motor driver has flyback diodes to protect the electronics. The L298 datasheet says an external bridge of diodes is required when driving inductive loads, so check that your L298N module includes them.</li>
-                            </ul>
-
-                            <h2 class="article-section-title">06. DC motor PWM vs. servo PWM</h2>
+                            <h2 class="article-section-title">05. DC motor PWM versus RC servo pulse timing</h2>
+                            <p>
+                                A frequent source of confusion among roboticists is the difference between PWM used for <strong>DC motor speed control</strong> and PWM used for <strong>RC servomotor position control</strong>. While both signals are pulse-width modulated square waves, they communicate fundamentally different physical quantities:<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                            </p>
                             <table class="article-table">
                                 <thead>
-                                    <tr><th scope="col">Feature</th><th scope="col">DC motor PWM</th><th scope="col">Servo PWM</th></tr>
+                                    <tr>
+                                        <th scope="col">Feature</th>
+                                        <th scope="col">DC Motor PWM</th>
+                                        <th scope="col">RC Servomotor PWM</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Controls</td><td>Voltage, and so speed</td><td>Shaft angle</td></tr>
-                                    <tr><td>Signal</td><td>Duty cycle, 0&ndash;100%</td><td>Pulse width, about 1&ndash;2&nbsp;ms</td></tr>
-                                    <tr><td>Typical frequency</td><td>Hundreds of Hz to 20&nbsp;kHz or more (Uno default about 490&nbsp;Hz)</td><td>About 50&nbsp;Hz</td></tr>
-                                    <tr><td>Power stage</td><td>Needs an H-bridge driver</td><td>Driver built into the servo</td></tr>
+                                    <tr>
+                                        <td><strong>Controlled Variable</strong></td>
+                                        <td>Electrical power, armature voltage, and rotational speed</td>
+                                        <td>Angular shaft position (0&deg; to 180&deg;)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Signal Metric</strong></td>
+                                        <td><strong>Duty cycle percentage</strong> (0% to 100%)</td>
+                                        <td><strong>Absolute high-pulse duration</strong> (1.0 ms to 2.0 ms)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Carrier Frequency</strong></td>
+                                        <td>490 Hz, 980 Hz, or ultrasonic (>20 kHz)</td>
+                                        <td>Fixed at <strong>50 Hz</strong> (period \(T = 20\text{ ms}\))</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Power Handling</strong></td>
+                                        <td>Carries motor drive current through external H-bridge</td>
+                                        <td>Logic control signal only; power delivered on separate lines</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Internal Driver</strong></td>
+                                        <td>Requires external H-bridge (L298N, TB6612FNG)</td>
+                                        <td>Control circuit, H-bridge, and gear train built inside servo</td>
+                                    </tr>
                                 </tbody>
                             </table>
-
-                            <h2 class="article-section-title">07. Example: a gripper</h2>
                             <p>
-                                A gripper shows PWM and encoders working together. The duty cycle sets how hard the fingers squeeze, and an encoder reports how far they have closed. A simple strategy closes quickly at a high duty cycle, drops to a low duty cycle as the fingers near the object, and holds with just enough power to keep it from slipping. When the encoder stops changing while PWM is still applied, the fingers have stalled against the object, which means it has been grabbed. The next article covers <a href="robotics-5-3.html">encoders</a> in detail.
+                                A standard hobby servomotor (such as the SG90, MG996R, or Dynamixel series) contains an internal potentiometer connected to the output shaft, a small DC motor, an H-bridge driver, and a feedback control chip.<sup><a href="#ref-5">[5]</a></sup> The servo decodes the absolute width of a positive pulse sent once every 20 milliseconds (50 Hz):<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">1.0 millisecond pulse:</span> Commands the servo to its minimum angle (0 degrees).</li>
+                                <li class="article-spec-item"><span class="spec-label">1.5 millisecond pulse:</span> Commands the servo to its neutral center position (90 degrees).</li>
+                                <li class="article-spec-item"><span class="spec-label">2.0 millisecond pulse:</span> Commands the servo to its maximum angle (180 degrees).</li>
+                            </ul>
+                            <p>
+                                What pulse width sent at 50 Hz commands a standard hobby servomotor to its neutral center position? The answer is <strong>1.5 milliseconds</strong> (1500 microseconds).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> In practice, manufacturing tolerances mean real servos vary slightly; the Arduino <code>Servo</code> library defaults to a pulse range between 544 microseconds and 2400 microseconds to accommodate extended travel.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">06. The Timer1 conflict: Servo library and pin trade-offs</h2>
+                            <p>
+                                When programming robotic arms or mobile robots that combine DC motors and hobby servos, engineers encounter a critical architectural conflict on the Arduino Uno R3.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                To generate jitter-free microsecond pulses for servos, the Arduino <code>Servo</code> library commandeers the 16-bit <strong>Timer1</strong> peripheral.<sup><a href="#ref-4">[4]</a></sup> Why does calling <code>myServo.attach()</code> on an Arduino Uno R3 disable <code>analogWrite()</code> PWM on pins 9 and 10? The answer is that the Servo library reconfigures Timer1 into input capture/interrupt mode, which disables the hardware PWM output channels connected to pins 9 and 10.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                If an engineer attempts to drive a DC motor driver using PWM on pin 9 or pin 10 while simultaneously controlling a servo on any pin, <code>analogWrite(9, speed)</code> will fail to generate a proper PWM wave. The motor will either stop completely or jump to full speed. Therefore, when designing an Arduino robot incorporating servos, motor PWM lines must always be allocated to pins 3, 5, 6, or 11.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">07. Acoustic whine and ultrasonic modulation</h2>
+                            <p>
+                                When driving DC motors at standard Arduino PWM frequencies (490 Hz or 980 Hz), robots frequently emit an irritating, high-pitched acoustic whistle.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                Human hearing spans roughly <strong>20 Hz to 20,000 Hz</strong> (20 kHz), with maximum acoustic sensitivity between 1,000 Hz and 4,000 Hz.<sup><a href="#ref-6">[6]</a></sup> The carrier frequencies of 490 Hz and 980 Hz sit squarely within this audible window. As the square wave pulses current through the motor coils, the rapidly expanding and collapsing magnetic fields induce mechanical stress within the iron core laminations and copper windings (a phenomenon known as magnetostriction). The entire motor acts as an acoustic loudspeaker, radiating sound into the robot chassis.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                To silence robotic drives, industrial motor controllers and advanced hobby ESCs (electronic speed controllers) elevate the PWM carrier frequency to <strong>ultrasonic rates</strong> above 20 kHz (typically 20 kHz to 32 kHz). At 25 kHz, mechanical coil vibrations occur beyond the upper limit of human hearing, making the motor completely silent.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                However, ultrasonic PWM introduces an electrical trade-off: <strong>switching power losses</strong>. Every time a power MOSFET or BJT transitions between fully ON and fully OFF, it passes through a linear resistance zone where both voltage and current are non-zero, dissipating energy as heat:<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[P_{switching} = \frac{1}{2} V_{supply} I_{load} (t_{rise} + t_{fall}) f_{PWM}\]</p>
+                            </div>
+                            <p>
+                                Switching at 25 kHz dissipates approximately 50 times more switching heat in the motor driver than switching at 500 Hz. Engineers must ensure driver MOSFETs feature low gate capacitance, fast gate drivers, and adequate heat dissipation when operating at ultrasonic frequencies.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">08. Mechanical dead zones, stiction, and flyback protection</h2>
+                            <p>
+                                When applying PWM to physical DC motors, two practical electrical and mechanical constraints must be managed:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Mechanical Dead Zone (Stiction):</span> Real gearboxes suffer from static friction, or "stiction." At low duty cycles (for example, <code>analogWrite</code> values below 40 out of 255, or ~15% duty cycle), the electromagnetic torque produced by the rotor is insufficient to overcome the mechanical friction of the gear teeth and bearings. Current flows through the windings, dissipating resistive heat, but the shaft remains motionless. Robotic controllers must incorporate a software <strong>dead zone compensation offset</strong>, mapping output commands so that the lowest non-zero command jumps immediately to the minimum breakaway threshold.</li>
+                                <li class="article-spec-item"><span class="spec-label">Inductive Flyback Voltage Spikes:</span> Because motor windings are inductors, abruptly turning off current generates a destructive reverse voltage spike (\(V = -L \frac{di}{dt}\)). H-bridge motor drivers must incorporate high-speed <strong>flyback diodes</strong> (Schottky or fast-recovery diodes) across each switching transistor to clamp these inductive spikes and recirculate current safely back to the power rails.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">09. Application case study: precision robotic gripper</h2>
+                            <p>
+                                A robotic parallel gripper illustrates the power of combining PWM with sensor feedback. If a gripper is driven purely by a binary on/off switch, the fingers slam shut at maximum speed and force, either crushing delicate objects (such as eggs or fruit) or causing the motor to stall and overheat.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                By modulating the motor with PWM, the robot executes a sophisticated staged grasping routine:
+                            </p>
+                            <ol class="article-spec-list">
+                                <li><strong>Approach Phase:</strong> The gripper closes at a high duty cycle (e.g., 70% PWM) to minimize cycle time while moving through free air.</li>
+                                <li><strong>Deceleration Phase:</strong> Optical distance sensors or tactile switches detect proximity to the target object, prompting the controller to drop PWM to a gentle 20% duty cycle.</li>
+                                <li><strong>Contact and Grip Holding:</strong> Current sensors or stall-detecting shaft encoders indicate that finger motion has stopped against the object. The controller applies a continuous holding duty cycle (e.g., 15% PWM), supplying sufficient torque to prevent the object from slipping without overheating the motor windings or crushing the payload.</li>
+                            </ol>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>In the PWM simulator above, find the duty cycle that gives 6 V from a 12 V supply, and note its analogWrite value.</li>
-                                    <li>With a real motor and driver, raise the duty cycle slowly from 0 and write down the lowest value that makes the motor turn. That is its dead zone.</li>
+                                    <li>In the interactive PWM simulator above, set the supply voltage to 12 V and adjust the duty cycle slider until the average output voltage displays 6.0 V. Calculate the corresponding 8-bit integer value required by Arduino <code>analogWrite()</code>.</li>
+                                    <li>Connect a standard hobby servomotor to an Arduino board and write a sketch using <code>myServo.writeMicroseconds()</code>. Sweep pulse widths between 1000 and 2000 microseconds in 100-microsecond increments, observing the resulting shaft angles.</li>
+                                    <li>Connect a DC gearmotor to an H-bridge driver and slowly ramp the PWM duty cycle from 0 to 255 in steps of 5. Identify the exact threshold value at which the shaft begins turning; this represents your motor's static friction dead zone.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">08. References</h2>
+                            <h2 class="article-section-title">10. References</h2>
                             <ol class="article-spec-list">
-                            <li>Arduino, &ldquo;analogWrite().&rdquo; <a href="https://docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite</a>.</li>
-                            <li>Arduino, &ldquo;Servo library&rdquo; and &ldquo;Servo.writeMicroseconds().&rdquo; <a href="https://docs.arduino.cc/libraries/servo/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/libraries/servo</a>.</li>
-                            <li>R. Corpuz, H. Peng and J. Liang, &ldquo;Servo Motor PWM App Note,&rdquo; ECE 492, University of Alberta, 2015. <a href="https://sites.ualberta.ca/~delliott/ece492/appnotes/2015w/G4_Servo_PWM_V2/G4_Servo_PWM_AppNote_W2015.pdf" target="_blank" rel="noopener noreferrer">sites.ualberta.ca/&hellip;/G4_Servo_PWM_AppNote_W2015.pdf</a>.</li>
-                            <li>STMicroelectronics, &ldquo;L298: Dual full-bridge driver&rdquo; datasheet. <a href="https://www.st.com/en/motor-drivers/l298.html" target="_blank" rel="noopener noreferrer">st.com/en/motor-drivers/l298.html</a>.</li>
-                            <li>Texas Instruments, &ldquo;DRV8833 dual H-bridge motor driver.&rdquo; <a href="https://www.ti.com/product/DRV8833" target="_blank" rel="noopener noreferrer">ti.com/product/DRV8833</a>.</li>
-                            <li>OpenStax, <em>University Physics Volume 1</em>, sec. 17.3 &ldquo;Speed of Sound&rdquo; (audible range about 20&nbsp;Hz to 20&nbsp;kHz). <a href="https://phys.libretexts.org/Bookshelves/University_Physics/Book%3A_University_Physics_(OpenStax)/Book%3A_University_Physics_I_-_Mechanics_Sound_Oscillations_and_Waves_(OpenStax)/17%3A_Sound/17.03%3A_Speed_of_Sound" target="_blank" rel="noopener noreferrer">phys.libretexts.org/&hellip;/17.03:_Speed_of_Sound</a>.</li>
+                                <li id="ref-1">Microchip Technology, <em>ATmega328P 8-bit AVR Microcontroller with 32K Bytes In-System Programmable Flash Datasheet</em>, Document DS40002061B, 2018. <a href="https://www.microchip.com/en-us/product/ATmega328P" target="_blank" rel="noopener noreferrer">microchip.com/en-us/product/ATmega328P</a>.</li>
+                                <li id="ref-2">Arduino, &ldquo;analogWrite() Language Reference,&rdquo; <em>Arduino Docs</em>, 2024. <a href="https://docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/</a>.</li>
+                                <li id="ref-3">Renesas Electronics, <em>RA4M1 Group User's Manual: Hardware</em>, Document R01UH0887EJ0100, Rev. 1.00, 2020. <a href="https://www.renesas.com/en/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ra4m1-32-bit-microcontrollers-48mhz-arm-cortex-m4" target="_blank" rel="noopener noreferrer">renesas.com/en/products/.../ra4m1</a>.</li>
+                                <li id="ref-4">Arduino, &ldquo;Servo Library Documentation and writeMicroseconds(),&rdquo; <em>Arduino Docs</em>, 2024. <a href="https://docs.arduino.cc/libraries/servo/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/libraries/servo/</a>.</li>
+                                <li id="ref-5">R. Corpuz, H. Peng, and J. Liang, &ldquo;Servo Motor PWM Application Note,&rdquo; <em>ECE 492 Design Project</em>, Department of Electrical and Computer Engineering, University of Alberta, 2015. <a href="https://sites.ualberta.ca/~delliott/ece492/appnotes/2015w/G4_Servo_PWM_V2/G4_Servo_PWM_AppNote_W2015.pdf" target="_blank" rel="noopener noreferrer">sites.ualberta.ca/.../G4_Servo_PWM_AppNote_W2015.pdf</a>.</li>
+                                <li id="ref-6">OpenStax, &ldquo;Speed of Sound and Hearing Range,&rdquo; <em>University Physics Volume 1</em>, Section 17.3, OpenStax CNX, 2021. <a href="https://phys.libretexts.org/Bookshelves/University_Physics/Book%3A_University_Physics_(OpenStax)/Book%3A_University_Physics_I_-_Mechanics_Sound_Oscillations_and_Waves_(OpenStax)/17%3A_Sound/17.03%3A_Speed_of_Sound" target="_blank" rel="noopener noreferrer">phys.libretexts.org/.../17.03:_Speed_of_Sound</a>.</li>
+                                <li id="ref-7">STMicroelectronics, <em>L298: Dual Full-Bridge Driver Datasheet</em>, Document DocID 1773, Rev. 6, 2000. <a href="https://www.st.com/en/motor-drivers/l298.html" target="_blank" rel="noopener noreferrer">st.com/en/motor-drivers/l298.html</a>.</li>
+                                <li id="ref-8">Texas Instruments, <em>DRV8833 Dual H-Bridge Motor Driver Datasheet</em>, Document SLVSAR1E, 2015. <a href="https://www.ti.com/product/DRV8833" target="_blank" rel="noopener noreferrer">ti.com/product/DRV8833</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -249,8 +362,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
             <script src="assets/js/widgets.js?v=1.0" defer></script>
 

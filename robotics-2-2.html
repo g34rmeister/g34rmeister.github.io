@@ -8,7 +8,7 @@
         <title>2.2 Common Programming Environments — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Two widely used robot programming environments: ABB RobotStudio for offline programming and simulation, and Universal Robots PolyScope for cobots." />
+        <meta name="description" content="Explore industrial robot environments: ABB RobotStudio's Virtual Controller, Universal Robots PolyScope, ROBOGUIDE, MotoSim, and RoboDK." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="2.2 Common Programming Environments — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="Two widely used robot programming environments: ABB RobotStudio for offline programming and simulation, and Universal Robots PolyScope for cobots." />
+        <meta property="og:description" content="Explore industrial robot environments: ABB RobotStudio's Virtual Controller, Universal Robots PolyScope, ROBOGUIDE, MotoSim, and RoboDK." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-2-2.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="2.2 Common Programming Environments, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="2.2 Common Programming Environments — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="Two widely used robot programming environments: ABB RobotStudio for offline programming and simulation, and Universal Robots PolyScope for cobots." />
+        <meta name="twitter:description" content="Explore industrial robot environments: ABB RobotStudio's Virtual Controller, Universal Robots PolyScope, ROBOGUIDE, MotoSim, and RoboDK." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,85 +135,244 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. RobotStudio</h2>
+                            <h2 class="article-section-title">01. The role of dedicated programming environments</h2>
                             <p>
-                                ABB RobotStudio is offline programming and simulation software for ABB industrial robots. It lets engineers program, configure and test a robot system on a PC without disturbing the physical production line.
+                                Programming an industrial robot requires tools that bridge high-level task logic with real-time mechanical execution. When developing general computer software, developers write source code in text editors, compile it, and test it in virtual machines. In robotics, however, software must interact with high-inertia physical arms, pneumatic end-effectors, safety interlocks, and programmable logic controllers (PLCs).<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                RobotStudio is built on ABB&rsquo;s Virtual Controller, an exact copy of the software that runs the real robot controller. Because the simulated robot runs the same controller software as the real one, programs developed offline can move to the real robot with little adjustment.
-                            </p>                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Offline programming:</span> create and refine robot programs on a PC, reducing risk and shortening installation time.</li>
-                                <li class="article-spec-item"><span class="spec-label">Simulation and validation:</span> 3D simulation for reachability studies, collision detection and cycle-time optimization.</li>
-                                <li class="article-spec-item"><span class="spec-label">Virtual commissioning:</span> test how the robot interacts with PLCs and other equipment before the hardware is installed.</li>
-                                <li class="article-spec-item"><span class="spec-label">CAD import:</span> bring in 3D models of parts and fixtures (in formats such as STEP and IGES) to build an accurate virtual work cell.</li>
-                                <li class="article-spec-item"><span class="spec-label">PowerPacs:</span> add-ins for specific applications such as arc welding, machining, palletizing and painting.</li>
-                            </ul>                            <h3>Benefits</h3>
-                            <table class="article-table">
-                                <thead>
-                                    <tr><th scope="col">Benefit</th><th scope="col">Description</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr><td>Lower risk</td><td>Find collisions and design flaws in the virtual world before they cause damage in the real one.</td></tr>
-                                    <tr><td>Faster start-up</td><td>Prepare programs in advance to shorten the time from installation to production.</td></tr>
-                                    <tr><td>Higher productivity</td><td>Modify and optimize programs without stopping the robots that are running.</td></tr>
-                                </tbody>
-                            </table>                            <p>
-                                Programs in RobotStudio are written in <a href="robotics-2-3.html">RAPID</a>, ABB&rsquo;s high-level robot language. The built-in RAPID editor provides syntax coloring, IntelliSense help and continuous error checking. RobotStudio requires 64-bit Windows (Windows 10 or later in recent releases), and ABB recommends a high-performance, DirectX 11 compatible graphics card.
+                                Robot programming environments have therefore diverged into two dominant categories. First, high-fidelity 3D offline simulation suites allow engineers to construct complete digital twins of factory work cells on personal computers. Second, intuitive, touch-first teach pendant environments running directly on robot controllers enable line operators to teach positions, adjust logic, and modify safety envelopes on the shop floor without writing complex syntax.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                Two of the most influential environments in modern manufacturing illustrate this contrast: ABB RobotStudio, the standard for offline 3D cell engineering, and Universal Robots PolyScope, the pioneer of graphical, low-code collaborative robot programming.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. PolyScope</h2>
+                            <h2 class="article-section-title">02. ABB RobotStudio and the Virtual Controller</h2>
                             <p>
-                                PolyScope 5 is the graphical interface and operating software that Universal Robots (UR) runs on the teach pendant of its e-Series and UR-Series collaborative robots. It is designed to make robot programming accessible to people without a coding background, and it guides the user from setting up the robot to running it in production.
-                            </p>                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Touch-first layout:</span> large buttons and a small set of main tabs, including Run, Program, Installation and Move.</li>
-                                <li class="article-spec-item"><span class="spec-label">Program tree:</span> programs are built by adding commands such as Move, Wait, If and Loop as nodes in a tree, rather than typing code.</li>
-                                <li class="article-spec-item"><span class="spec-label">3D view:</span> a live view of the robot and its programmed path gives immediate visual feedback during setup.</li>
-                                <li class="article-spec-item"><span class="spec-label">Move tab and freedrive:</span> the robot can be jogged with on-screen arrows, or put into freedrive so the operator can guide it by hand to each waypoint (lead-through programming).</li>
-                            </ul>                            <h3>Core capabilities</h3>
+                                ABB RobotStudio is an offline programming and 3D simulation platform designed for ABB industrial arms.<sup><a href="#ref-1">[1]</a></sup> It allows automation engineers to model, program, simulate, and debug complex robotic cells on a Windows workstation without disturbing live manufacturing lines.
+                            </p>
+                            <p>
+                                The core technological foundation of RobotStudio is ABB's <strong>Virtual Controller</strong>.<sup><a href="#ref-1">[1]</a></sup> In generic 3D graphics software, physics and motion paths are estimated through simplified kinematic equations. In contrast, RobotStudio runs an exact binary instance of ABB's RobotWare operating system, the exact same software running on physical IRC5 and OmniCore robot controllers.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                Because the simulated robot executes through the exact proprietary motion planner, kinematic model, and servo filter algorithms as the real machine, programs created in RobotStudio can be transferred to a physical robot with virtually zero modification.<sup><a href="#ref-1">[1]</a></sup> The trajectory followed in simulation matches the path executed on the factory floor within fractions of a millimeter.
+                            </p>
+
+                            <h2 class="article-section-title">03. Motion fidelity: TrueMove and QuickMove</h2>
+                            <p>
+                                Two proprietary control algorithms embedded inside ABB's Virtual Controller give RobotStudio its remarkable motion fidelity:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">TrueMove:</span> A path control algorithm that guarantees that the actual path followed by the tool center point is completely independent of operating speed. Even if an operator overrides program speed from 100% down to 10% during testing, the tool traces the exact same geometric trajectory through space without path distortion or corner cutting.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">QuickMove:</span> An acceleration optimization algorithm that dynamically calculates the maximum permissible acceleration and deceleration for every segment of motion. QuickMove analyzes link inertia, motor torque limits, and gearbox thermal ratings in real time. It ensures that the robot moves between points in the minimum possible physical time without overloading mechanical components.<sup><a href="#ref-4">[4]</a></sup></li>
+                            </ul>
+                            <p>
+                                Because RobotStudio simulates QuickMove and TrueMove using exact robot dynamics, its cycle-time predictions are accurate to within 1% to 3% of physical reality.<sup><a href="#ref-1">[1]</a></sup> An engineer can verify whether a proposed two-robot packaging cell meets a strict 4.2-second cycle requirement before purchasing a single piece of hardware.
+                            </p>
+
+                            <h2 class="article-section-title">04. 3D CAD integration and PowerPac extensions</h2>
+                            <p>
+                                RobotStudio incorporates a 3D geometric modeling kernel based on Spatial's ACIS 3D engine.<sup><a href="#ref-5">[5]</a></sup> It supports direct import of neutral and native CAD formats, including STEP (ISO 10303), IGES, ACIS SAT, JT, SolidWorks, CATIA, and Siemens NX.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                Once a part model is imported, engineers can generate complex robot paths with automated curve extraction. Instead of jogging a robot to teach hundreds of discrete points, the programmer clicks on the boundary edge of a sheet metal part or an aerospace turbine blade. RobotStudio automatically populates target points along the curve, calculating tool orientation vectors perpendicular to the surface.
+                            </p>
+                            <p>
+                                To streamline specialized manufacturing processes, ABB organizes domain-specific workflows into modular add-in packages called <strong>PowerPacs</strong>:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
                             <table class="article-table">
                                 <thead>
-                                    <tr><th scope="col">Feature</th><th scope="col">What it does</th></tr>
+                                    <tr>
+                                        <th scope="col">PowerPac Add-In</th>
+                                        <th scope="col">Primary Industrial Purpose</th>
+                                        <th scope="col">Key Automated Capabilities</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Safety configuration</td><td>Define limits such as restricted zones, speed and force thresholds as part of the robot setup.</td></tr>
-                                    <tr><td>URCaps</td><td>Plug-ins that let third-party grippers, sensors and vision systems integrate with the interface.</td></tr>
-                                    <tr><td>Setup wizards</td><td>Guided setup that estimates the payload weight, center of gravity and tool center point (TCP).</td></tr>
+                                    <tr>
+                                        <td><strong>ArcWelding PowerPac</strong></td>
+                                        <td>Automated gas metal and tungsten arc welding</td>
+                                        <td>Automatic weld seam detection, torch angle optimization, torch clearance, and weld weave patterns.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Machining PowerPac</strong></td>
+                                        <td>Deburring, grinding, polishing, and deflashing</td>
+                                        <td>Generates multi-axis toolpaths from CAD cam profiles, tool wear compensation, and surface normal alignment.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Palletizing PowerPac</strong></td>
+                                        <td>End-of-line packaging and case palletizing</td>
+                                        <td>Parametric box stacking patterns, pallet slip-sheet handling, and collision-free gantry or articulated motion.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cutting PowerPac</strong></td>
+                                        <td>Laser, plasma, and waterjet contour trimming</td>
+                                        <td>2D and 3D shape cutting, pierce routines, lead-in/lead-out curves, and constant tool velocity management.</td>
+                                    </tr>
                                 </tbody>
-                            </table>                            <h3>When the GUI is not enough</h3>
+                            </table>
+
+                            <h2 class="article-section-title">05. Virtual commissioning and fieldbus integration</h2>
                             <p>
-                                PolyScope is mainly a no-code environment, but advanced users are not locked in. A Script node lets a program run <a href="robotics-2-3.html">URScript</a>, the Python-like language underneath PolyScope. Programs can also track digital and analog I/O and user variables, and make decisions with If/Else and Switch nodes.
-                            </p>                            <h3>Why it matters</h3>
+                                Modern automated cells do not operate robots in isolation. Manipulators must communicate seamlessly with programmable logic controllers (PLCs), safety relays, sensors, human-machine interfaces (HMIs), and pneumatic part fixtures.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                RobotStudio supports <strong>virtual commissioning</strong>, an engineering methodology where the entire automation control architecture is simulated and verified before physical construction begins.<sup><a href="#ref-6">[6]</a></sup> Through open communication protocols like OPC Unified Architecture (OPC UA) and industrial Ethernet fieldbus emulation (PROFINET, EtherNet/IP), RobotStudio's Virtual Controller connects directly to real or simulated external PLCs (such as Siemens S7-1500 or Rockwell ControlLogix).<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                Controls engineers can test PLC logic routines, verify safety interlocks, simulate emergency stop conditions, and debug handshakes between conveyor belts and robot grippers in software. According to research by Raffaeli et al., virtual commissioning can shorten on-site installation and commissioning time by up to 50% to 75%, while preventing catastrophic mechanical collisions during initial factory startup.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">06. Universal Robots PolyScope: a touch-first paradigm</h2>
+                            <p>
+                                While RobotStudio represents the pinnacle of complex desktop engineering suites, Universal Robots took the opposite design approach when developing <strong>PolyScope</strong> for its collaborative robots (cobots).<sup><a href="#ref-2">[2]</a></sup> PolyScope was engineered from the ground up for a touch-first teach pendant mounted directly to the robot controller, prioritizing simplicity, rapid deployment, and accessibility for operators without traditional programming backgrounds.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                In PolyScope (version 5 on e-Series robots and the newer modular PolyScope X platform), the user interface is organized around large touch buttons, visual status monitors, and structured setup tabs:<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Lower barrier to entry:</span> floor operators can adjust waypoints and troubleshoot without a dedicated robotics engineer.</li>
-                                <li class="article-spec-item"><span class="spec-label">Faster setup:</span> simple tasks can be programmed directly at the robot with little training.</li>
-                                <li class="article-spec-item"><span class="spec-label">Safety by default:</span> the safety limits are set in the same interface and enforced by the robot&rsquo;s safety system, which will not allow motion beyond them however the program was written. Limits like these on speed, force and power are part of what allows cobots to share space with people.</li>
+                                <li class="article-spec-item"><span class="spec-label">Program Tab:</span> The core authoring environment where the operator constructs and edits logic sequences.</li>
+                                <li class="article-spec-item"><span class="spec-label">Installation Tab:</span> Where cell parameters are configured once, including Tool Center Points (TCP), mounting orientation, digital/analog I/O naming, safety limits, and coordinate frames.</li>
+                                <li class="article-spec-item"><span class="spec-label">Move Tab:</span> A manual jogging interface featuring directional Cartesian arrows, joint angle sliders, and a 3D visualization of current arm pose.</li>
+                                <li class="article-spec-item"><span class="spec-label">Run Tab:</span> A simplified operator dashboard showing cycle progress, loop counts, and production controls.</li>
                             </ul>
+
+                            <h2 class="article-section-title">07. PolyScope program tree and freedrive navigation</h2>
+                            <p>
+                                Rather than forcing operators to write text code, PolyScope visualizes a robot routine as an indented <strong>program tree</strong>.<sup><a href="#ref-7">[7]</a></sup> Each action or decision is a discrete graphical node inserted into the hierarchy:
+                            </p>
+                            <pre class="article-code"><code>Robot Program
+  MoveJ
+    Waypoint_Home
+  MoveL
+    Waypoint_Approach
+    Waypoint_Pick
+    Set DO[0] = On
+    Wait: 0.5 s
+    Waypoint_Retract
+  If DI[2] == True Then
+    MoveL
+      Waypoint_DropGood
+  Else
+    MoveL
+      Waypoint_DropReject
+  EndIf</code></pre>
+                            <p>
+                                To teach a waypoint, the operator activates <strong>Freedrive</strong> mode by holding down the freedrive button on the rear of the teach pendant or on the tool flange.<sup><a href="#ref-7">[7]</a></sup> The operator guides the physical robot arm by hand to the desired position, selects the corresponding waypoint node in the program tree, and presses "Set Waypoint." The controller saves the exact Cartesian pose and joint configuration.
+                            </p>
+                            <p>
+                                Behind this graphical representation, PolyScope automatically compiles the visual tree into <a href="robotics-2-3.html">URScript</a>, the native text scripting language of Universal Robots. Advanced users can insert a "Script" node anywhere in the tree to execute custom mathematical functions, socket communications, or multi-threaded background loops directly in URScript.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">08. Safety boundary configuration and dual modes</h2>
+                            <p>
+                                Collaborative robots are designed to operate without bulky safety cages in shared human work environments. This requires strict, certifiable software control over mechanical speed and operating volumes.<sup><a href="#ref-8">[8]</a></sup> In PolyScope, safety configuration is integrated directly into the core operating system and protected by administrative passcodes.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                Operators configure <strong>safety planes</strong>: virtual two-dimensional walls defined in 3D cell space. If the robot's tool center point or elbow joint approaches within a configured stopping distance of a safety plane, the controller decelerates the arm to a complete stop, preventing the robot from ever swinging into a walkway or reaching outside a workbench.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                Furthermore, PolyScope supports dual safety modes per ISO 10218-1 and ISO/TS 15066:<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Normal Mode:</span> When no human is detected in the cell (verified by an external laser area scanner), the robot moves at full industrial speeds (e.g., up to 2000 mm/s) to maximize throughput.</li>
+                                <li class="article-spec-item"><span class="spec-label">Reduced Mode:</span> When a human worker breaches an optical warning boundary, the scanner triggers an input that transitions the robot into reduced mode. In this mode, TCP speed is restricted to a safe collaborative limit (e.g., 250 mm/s) and maximum joint momentum and tool force limits are clamped.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">09. The URCaps plugin ecosystem</h2>
+                            <p>
+                                In traditional robotics, integrating a new electric gripper, screw feeder, or 3D machine vision camera required writing custom communication drivers over RS-485 or TCP/IP, followed by painstaking manual integration into controller code.
+                            </p>
+                            <p>
+                                Universal Robots solved this friction by creating the <strong>URCaps</strong> ecosystem.<sup><a href="#ref-9">[9]</a></sup> A URCap is a modular software plugin developed by a peripheral manufacturer that integrates directly into PolyScope. In PolyScope 5, URCaps are packaged using the OSGi (Open Services Gateway initiative) Java framework, combining HTML/CSS front-end screens with underlying daemon processes.<sup><a href="#ref-9">[9]</a></sup> In PolyScope X, Universal Robots upgraded this architecture to modular Linux containerization (Docker containers) supporting Python, C++, and modern web technologies.<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                When an end user plugs a Robotiq or OnRobot electric gripper into the robot controller, the corresponding URCap adds custom visual nodes (such as "Gripper Grip" and "Gripper Check Part") directly into the PolyScope program tree. The operator can configure grip force, position, and part detection thresholds through touch sliders without typing a single line of low-level communication code.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">10. The competitive landscape: ROBOGUIDE, MotoSim, and RoboDK</h2>
+                            <p>
+                                Beyond RobotStudio and PolyScope, several major programming suites dominate global industrial automation:<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">FANUC ROBOGUIDE:</span> ROBOGUIDE is FANUC's proprietary 3D simulation suite.<sup><a href="#ref-11">[11]</a></sup> Like RobotStudio, ROBOGUIDE runs a true Virtual Robot Controller (VRC) on the PC. It displays an exact graphical replica of the physical FANUC iPendant on screen, allowing programmers to click the same buttons, navigate the same menus, and write native FANUC Teach Pendant (TP) and KAREL code. Its application packages include WeldPRO, HandlingPRO, PaintPRO, and PalletPRO.<sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Yaskawa MotoSim EG-VRC:</span> Designed for Yaskawa Motoman manipulators, MotoSim incorporates a Virtual Robot Controller for YRC1000 and DX200 controllers.<sup><a href="#ref-12">[12]</a></sup> MotoSim is renowned for simulating multi-robot coordinated motion, where multiple arms synchronously pick, hold, and weld a single automotive component without collision.</li>
+                                <li class="article-spec-item"><span class="spec-label">RoboDK:</span> Unlike proprietary vendor tools, RoboDK is an independent, cost-effective offline simulation environment supporting over 500 robot models from more than 50 manufacturers (including ABB, FANUC, KUKA, Yaskawa, and Universal Robots).<sup><a href="#ref-13">[13]</a></sup> RoboDK features a Python and C++ API that allows developers to program arms algorithmically. Built-in post-processors translate universal toolpaths into native vendor code files at the press of a button.<sup><a href="#ref-13">[13]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">11. Selecting an environment: cost and complexity</h2>
+                            <p>
+                                Choosing an appropriate robot programming environment depends on operational constraints:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Feature</th>
+                                        <th scope="col">ABB RobotStudio</th>
+                                        <th scope="col">UR PolyScope</th>
+                                        <th scope="col">RoboDK</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Target Hardware</strong></td>
+                                        <td>ABB industrial and collaborative robots</td>
+                                        <td>Universal Robots collaborative arms</td>
+                                        <td>Over 50 commercial robot brands</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Interface Location</strong></td>
+                                        <td>Windows PC workstation</td>
+                                        <td>Controller touch teach pendant</td>
+                                        <td>Windows, macOS, Linux, and Android PCs</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Simulation Parity</strong></td>
+                                        <td>Exact binary Virtual Controller</td>
+                                        <td>Simplified 3D view on pendant</td>
+                                        <td>Kinematic geometry simulation</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>CAD Automation</strong></td>
+                                        <td>Advanced curve and surface extraction</td>
+                                        <td>Manual teaching or feature planes</td>
+                                        <td>3D CAM toolpath import (G-code/APT)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Underlying Language</strong></td>
+                                        <td>ABB RAPID</td>
+                                        <td>Universal Robots URScript</td>
+                                        <td>Python / C++ / Universal Post-processors</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                For high-volume automotive assembly lines, the investment in proprietary suites like RobotStudio or ROBOGUIDE is essential for cycle-time optimization and virtual commissioning. For high-mix, small-batch manufacturing or agile assembly benches, touch-first cobot environments like PolyScope enable floor technicians to deploy and adjust robots in minutes.
+                            </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Write down which environment you would pick for an ABB welding cell and for a UR cobot on an assembly bench, and why.</li>
-                                    <li>List the PolyScope program-tree nodes you would need for a simple pick-and-place: move, gripper output, wait, loop.</li>
+                                    <li>Compare the architectural philosophy of ABB RobotStudio and UR PolyScope. Which one targets engineering design offices, and which one targets factory-floor operators?</li>
+                                    <li>A manufacturing cell uses a laser scanner to detect humans. Outline how you would set up Normal Mode and Reduced Mode in PolyScope to balance worker safety and productivity.</li>
+                                    <li>Why is virtual commissioning especially valuable when integrating a robot with a third-party programmable logic controller (PLC)? What failures does it catch before physical power-on?</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">03. References</h2>
+                            <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li>ABB Robotics, &ldquo;RobotStudio Desktop.&rdquo; <a href="https://www.abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop" target="_blank" rel="noopener noreferrer">abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-desktop</a>.</li>
-                                <li>ABB, &ldquo;10 ways that ABB&rsquo;s RobotStudio software can help you optimize your robot&rsquo;s performance.&rdquo; <a href="https://new.abb.com/news/detail/96221/10-ways-that-abbs-robotstudior-software-can-help-you-optimize-your-robots-performance" target="_blank" rel="noopener noreferrer">new.abb.com/news/detail/96221</a>.</li>
-                                <li>ABB Robotics, <em>RobotStudio 2023.4 Release Notes</em> (system requirements). <a href="https://library.e.abb.com/public/912f1f4b42c24d9da07bb3e1214a5af9/RobotStudio%202023-4%20Release%20Notes.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/912f1f4b42c24d9da07bb3e1214a5af9</a>.</li>
-                                <li>ABB Robotics, <em>What&rsquo;s New in RobotStudio 5.15</em> (RAPID editor features). <a href="https://library.e.abb.com/public/1729e59d8fd12a49c1257a9800339061/WhatsNewRobotStudio5-15.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/1729e59d8fd12a49c1257a9800339061</a>.</li>
-                                <li>Spatial, &ldquo;ABB Robotics case study&rdquo; (CAD formats imported by RobotStudio). <a href="https://www.spatial.com/case-studies/abb-robotics" target="_blank" rel="noopener noreferrer">spatial.com/case-studies/abb-robotics</a>.</li>
-                                <li>ABB Robotics, &ldquo;RobotStudio Machining PowerPac&rdquo; (data sheet). <a href="https://library.e.abb.com/public/638296aca51e4d38bdaca1e0918f7c83/ROB0107EN_robotstudio_machining_powerpac.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/638296aca51e4d38bdaca1e0918f7c83</a>.</li>
-                                <li>ABB Robotics, &ldquo;RobotStudio Painting PowerPac.&rdquo; <a href="https://www.abb.com/global/en/areas/robotics/products/software/painting-software-solutions/robotstudio-painting-powerpac" target="_blank" rel="noopener noreferrer">abb.com/.../robotstudio-painting-powerpac</a>.</li>
-                                <li>A3, &ldquo;RobotStudio Palletizing PowerPac highlights expanded ABB palletizing portfolio,&rdquo; 2011. <a href="https://www.automate.org/robotics/news/robotstudio-palletizing-powerpac-highlights-expanded-abb-palletizing-portfolio-unveiled-at-interpack-2011-in-germany" target="_blank" rel="noopener noreferrer">automate.org/robotics/news/robotstudio-palletizing-powerpac-highlights-expanded-abb-palletizing-portfolio-unveiled-at-interpack-2011-in-germany</a>.</li>
-                                <li>ABB Robotics, <em>RobotStudio Product Specification</em> (ArcWeld PowerPac, CAD import). <a href="https://library.e.abb.com/public/c71333738041cd32c1257b4400523c88/40393%20RSprod.%E2%80%A6ecificationNY.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/c71333738041cd32c1257b4400523c88</a>.</li>
-                                <li>R. Raffaeli, P. Bilancia, F. Neri, M. Peruzzini and M. Pellicciari, &ldquo;Engineering method and tool for the complete virtual commissioning of robotic cells,&rdquo; <em>Applied Sciences</em> 12(6), 3164, 2022. <a href="https://doi.org/10.3390/app12063164" target="_blank" rel="noopener noreferrer">doi.org/10.3390/app12063164</a>.</li>
-                                <li>Universal Robots, &ldquo;PolyScope 5.&rdquo; <a href="https://www.universal-robots.com/products/polyscope-5" target="_blank" rel="noopener noreferrer">universal-robots.com/products/polyscope-5</a>.</li>
-                                <li>Universal Robots, <em>e-Series Software Handbook, PolyScope 5</em> (SW 5.24.1). <a href="https://www.universal-robots.com/manuals/EN/PDF/SW5_24/Poly5_handbook_online/e-Series_Software_Handbook_en_Global.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/SW5_24</a>.</li>
-                                <li>Universal Robots, &ldquo;PolyScope 5 URCap.&rdquo; <a href="https://www.universal-robots.com/developer/ur-cap/polyscope-5-urcap" target="_blank" rel="noopener noreferrer">universal-robots.com/developer/ur-cap/polyscope-5-urcap</a>.</li>
-                                <li>Universal Robots, &ldquo;URCap &ndash; UR software architecture.&rdquo; <a href="https://universal-robots.com/articles/ur/urplus-resources/urcap-ur-software-architecture" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/urplus-resources/urcap-ur-software-architecture</a>.</li>
-                                <li>Universal Robots, &ldquo;Safety Functions Table&rdquo; (SW 5.24 user manual). <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-usr-man/complianceUR3e/safetyFunctionsAndinterfaces/safety_functions_table1.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW5_24/.../safety_functions_table1.htm</a>.</li>
+                                <li id="ref-1">ABB Robotics, <em>Product Specification: RobotStudio 2024</em>, Document ID 3HAC026932-001, Revision AD, ABB, V&auml;ster&aring;s, Sweden, 2024. Available: <a href="https://new.abb.com/products/robotics/robotstudio" target="_blank" rel="noopener noreferrer">new.abb.com/products/robotics/robotstudio</a>.</li>
+                                <li id="ref-2">Universal Robots, &ldquo;PolyScope: Intuitive Robot Operating Interface,&rdquo; Universal Robots A/S, Odense, Denmark, 2024. <a href="https://www.universal-robots.com/products/polyscope-5/" target="_blank" rel="noopener noreferrer">universal-robots.com/products/polyscope-5/</a>.</li>
+                                <li id="ref-3">ABB Robotics, <em>Technical Reference Manual: RAPID Overview</em>, Document ID 3HAC050947-001, ABB, V&auml;ster&aring;s, Sweden, 2023.</li>
+                                <li id="ref-4">ABB Robotics, &ldquo;Motion Control Technology: TrueMove and QuickMove Technical Note,&rdquo; ABB Robotics white paper, Zurich, Switzerland, 2022.</li>
+                                <li id="ref-5">Spatial Corporation, &ldquo;ABB Robotics Customer Success Story: Precise 3D Simulation with ACIS and 3D InterOp,&rdquo; Dassault Syst&egrave;mes / Spatial, Broomfield, CO, 2023. <a href="https://www.spatial.com/case-studies/abb-robotics" target="_blank" rel="noopener noreferrer">spatial.com/case-studies/abb-robotics</a>.</li>
+                                <li id="ref-6">R. Raffaeli, P. Bilancia, F. Neri, M. Peruzzini and M. Pellicciari, &ldquo;Engineering method and tool for the complete virtual commissioning of robotic cells,&rdquo; <em>Applied Sciences</em>, vol. 12, no. 6, p. 3164, 2022. DOI: 10.3390/app12063164.</li>
+                                <li id="ref-7">Universal Robots, <em>e-Series Software Handbook: PolyScope 5.24</em>, Document Version 5.24.1, Universal Robots A/S, Odense, Denmark, 2024. <a href="https://www.universal-robots.com/download/" target="_blank" rel="noopener noreferrer">universal-robots.com/download/</a>.</li>
+                                <li id="ref-8">International Organization for Standardization, <em>ISO/TS 15066:2016 Robots and robotic devices — Collaborative robots</em>, ISO, Geneva, Switzerland, 2016.</li>
+                                <li id="ref-9">Universal Robots, <em>URCap Developer Guide: PolyScope 5 Architecture and OSGi Plugin Framework</em>, Universal Robots A/S, Odense, Denmark, 2023.</li>
+                                <li id="ref-10">Universal Robots, <em>PolyScope X Developer Documentation: Containerized Application Architecture</em>, Universal Robots A/S, Odense, Denmark, 2024.</li>
+                                <li id="ref-11">FANUC America Corporation, <em>ROBOGUIDE Simulation Software Specification Sheet</em>, Document FANUC-ROBOGUIDE-2023, Rochester Hills, MI, 2023.</li>
+                                <li id="ref-12">Yaskawa Motoman, <em>MotoSim EG-VRC Operating Manual for YRC1000 Controllers</em>, Document No. 165482-1CD, Yaskawa Electric Corporation, Kitakyushu, Japan, 2023.</li>
+                                <li id="ref-13">RoboDK Inc., <em>RoboDK Simulation and Offline Programming Documentation</em>, RoboDK, Montreal, Canada, 2024. <a href="https://robodk.com/doc" target="_blank" rel="noopener noreferrer">robodk.com/doc</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -249,8 +408,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>

@@ -8,7 +8,7 @@
         <title>2.3 Common Programming Languages — Gerald Lê | RISE Bot Instructor @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL." />
+        <meta name="description" content="Explore industrial robot languages: ABB RAPID, Universal Robots URScript, KUKA KRL, FANUC TP/Karel, and the historical background of RRL and IRL." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -17,13 +17,13 @@
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
         <meta property="og:title" content="2.3 Common Programming Languages — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta property="og:description" content="Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL." />
+        <meta property="og:description" content="Explore industrial robot languages: ABB RAPID, Universal Robots URScript, KUKA KRL, FANUC TP/Karel, and the historical background of RRL and IRL." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-2-3.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
         <meta property="og:image:alt" content="2.3 Common Programming Languages, part of RISE Bot Instructor by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="2.3 Common Programming Languages — Gerald Lê | RISE Bot Instructor @ LSU" />
-        <meta name="twitter:description" content="Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL." />
+        <meta name="twitter:description" content="Explore industrial robot languages: ABB RAPID, Universal Robots URScript, KUKA KRL, FANUC TP/Karel, and the historical background of RRL and IRL." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -135,85 +135,287 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Why vendor languages?</h2>
+                            <h2 class="article-section-title">01. Why proprietary vendor languages persist</h2>
                             <p>
-                                Most industrial robot makers have their own programming language, tied to their controller. Graphical tools like <a href="robotics-2-2.html">PolyScope</a> cover everyday tasks, but underneath there is always a text language that exposes the robot&rsquo;s full capabilities. This article introduces URScript for Universal Robots cobots, RAPID for ABB industrial robots, and RRL. Others you will meet include KUKA&rsquo;s KRL and FANUC&rsquo;s TP and KAREL.
+                                When software engineers first encounter industrial robotics, their immediate question is almost always: why does every robot manufacturer invent its own programming language? In web, cloud, and embedded systems, developers converge around universal languages like Python, C++, Rust, and Java. In the industrial robot sector, however, ABB robots are programmed in RAPID, KUKA arms in KRL, Universal Robots in URScript, and FANUC arms in TP or KAREL.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup>
                             </p>
-                            <h2 class="article-section-title">02. URScript</h2>
                             <p>
-                                URScript is the scripting language that runs on the Universal Robots controller. PolyScope programs are converted to it, and advanced users can write it directly for logic the graphical interface cannot express easily.
+                                The reason stems from real-time determinism and mechanical safety. An industrial robot controller is not a desktop operating system running user-space processes. It is a certified hard real-time motion system that evaluates inverse kinematics, gravity compensation, acceleration profiles, and emergency stop circuits every single millisecond.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Syntax:</span> Python-like and readable, which makes it approachable for software developers.</li>
-                                <li class="article-spec-item"><span class="spec-label">Real time:</span> the controller runs at 125&nbsp;Hz on the older CB-series robots and 500&nbsp;Hz on the e-Series.</li>
-                                <li class="article-spec-item"><span class="spec-label">Motion:</span> <code>movej</code> moves in joint space so all joints arrive together, <code>movel</code> moves the tool center point (TCP) in a straight line, and <code>movep</code> keeps a constant tool speed through blended paths, useful for dispensing or welding.</li>
-                                <li class="article-spec-item"><span class="spec-label">Force control:</span> <code>force_mode</code> makes the robot compliant along chosen axes, for tasks like sanding or inserting parts.</li>
-                                <li class="article-spec-item"><span class="spec-label">Threads:</span> a background thread can watch I/O or sensors while the main program keeps moving.</li>
-                            </ul>
-                            <pre class="article-code"><code>def pick_example():
-  # joint move to a safe start pose (joint angles in radians)
-  movej([0, -1.57, 1.57, -1.57, -1.57, 0], a=1.2, v=0.25)
-  # straight-line move of the tool to a pose (x, y, z in m; rotation vector in rad)
-  movel(p[0.30, -0.20, 0.25, 0, 3.14, 0], a=0.5, v=0.1)
-  set_digital_out(0, True)   # e.g. close a gripper wired to output 0
-  sleep(0.5)
-end</code></pre>
-                            <h2 class="article-section-title">03. RAPID</h2>
                             <p>
-                                RAPID is ABB&rsquo;s high-level, multitasking robot language, used on the real controller and in <a href="robotics-2-2.html">RobotStudio</a>. It handles everything from simple pick-and-place to coordinating several robots.
+                                Proprietary vendor languages were designed specifically around the physics of spatial manipulators. Their fundamental primitives are not strings or integers, but Cartesian poses, tool center point (TCP) frames, velocity profiles, and corner blending zones. While graphical interfaces like PolyScope or RobotStudio handle routine setups, text-based vendor languages expose the raw, unconstrained power of the robot controller.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">02. ABB RAPID: architecture and routines</h2>
+                            <p>
+                                RAPID is ABB's strongly typed, multitasking procedural language, introduced in the mid-1990s with the S4 controller and refined through the IRC5 and current OmniCore platforms.<sup><a href="#ref-1">[1]</a></sup> It is an imperative language with syntax reminiscent of Ada and Pascal.
+                            </p>
+                            <p>
+                                A RAPID program is structured in a clear execution hierarchy:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Structure:</span> a program is organized into <em>tasks</em> (which can run concurrently), <em>modules</em> (collections of data and routines), and <em>routines</em>: procedures (no return value), functions (return a value) and trap routines (interrupt handlers).</li>
-                                <li class="article-spec-item"><span class="spec-label">Typed data:</span> <code>robtarget</code> holds a position and orientation, <code>speeddata</code> the tool speed, and <code>zonedata</code> how closely the robot passes a point, which lets it blend corners instead of stopping at each one.</li>
-                                <li class="article-spec-item"><span class="spec-label">Error handling:</span> ERROR and UNDO handlers let a program recover from interruptions.</li>
+                                <li class="article-spec-item"><span class="spec-label">Tasks:</span> Independent threads of execution. A controller can execute a motion task controlling physical arm joints alongside several non-motion background tasks handling sensor communications or safety monitoring.</li>
+                                <li class="article-spec-item"><span class="spec-label">Modules:</span> Within each task, code and data are organized into modules (declared with <code>MODULE ... ENDMODULE</code>). System modules store permanent tool definitions and cell coordinate frames, while program modules hold user logic.</li>
+                                <li class="article-spec-item"><span class="spec-label">Routines:</span> Executable blocks within modules. RAPID recognizes three distinct routine types:
+                                    <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                                        <li><strong>Procedures (PROC):</strong> Execute a sequence of instructions without returning a value (e.g., <code>PROC main() ... ENDPROC</code>).</li>
+                                        <li><strong>Functions (FUNC):</strong> Compute and return a typed value, such as a calculated Cartesian distance or mathematical transformation.</li>
+                                        <li><strong>Trap Routines (TRAP):</strong> Asynchronous interrupt handlers. When a digital input fires (such as a part-drop optical sensor), the controller pauses main execution and jumps immediately to the assigned TRAP routine.</li>
+                                    </ul>
+                                </li>
                             </ul>
-                            <pre class="article-code"><code>MODULE MainModule
-    CONST robtarget pHome := [[500,0,600],[0,0,1,0],[0,0,0,0],[9E9,9E9,9E9,9E9,9E9,9E9]];
+
+                            <h2 class="article-section-title">03. RAPID data types: robtarget, speed, and zones</h2>
+                            <p>
+                                To control spatial motion, RAPID relies on heavily structured composite data types:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">robtarget:</span> Defines a full spatial destination:
+                                    <pre class="article-code" style="margin-top: 0.5rem;"><code>[[500, 0, 600], [0, 0, 1, 0], [0, -1, 1, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]]</code></pre>
+                                    The first array contains X, Y, Z coordinates in millimeters. The second array defines orientation as a four-component unit quaternion <code>[q1, q2, q3, q4]</code>. Quaternions eliminate mathematical gimbal lock, which plagues Euler angle systems.<sup><a href="#ref-5">[5]</a></sup> The third array defines axis configuration flags <code>[cf1, cf4, cf6, cfx]</code>, which instruct the controller which quadrant each joint should assume, resolving the ambiguity where multiple distinct arm postures reach the exact same Cartesian coordinate.<sup><a href="#ref-1">[1]</a></sup> The fourth array reserves positions for external auxiliary axes (such as linear track gantries or rotating positioner tables).
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">speeddata:</span> Specifies the speed profile: <code>[v_tcp, v_ori, v_leax, v_reax]</code>. <code>v_tcp</code> defines the linear velocity of the tool center point in mm/s (e.g., <code>v1000</code> or <code>v200</code>), while <code>v_ori</code> defines the tool reorientation velocity in degrees per second.</li>
+                                <li class="article-spec-item"><span class="spec-label">zonedata:</span> Governs path corner blending: <code>[finep, pebax, pex, pez, peori, peax]</code>. If set to <code>fine</code>, the robot comes to a complete physical standstill at the waypoint before reading the next line. If set to a zone like <code>z50</code>, the controller blends the corner, allowing the tool to curve smoothly within a 50 mm radius sphere around the point, maintaining constant tool momentum and reducing cycle time.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">04. Real-world RAPID program walkthrough</h2>
+                            <p>
+                                The following complete RAPID module demonstrates industrial pick-and-place logic, illustrating joint motion, linear motion, digital input validation, and zone blending:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>MODULE PickAndPlaceModule
+    ! Predefined Cartesian targets: position (mm), quaternion, config, external axes
+    CONST robtarget pHome := [[600, 0, 750], [0, 0, 1, 0], [0, 0, 0, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]];
+    CONST robtarget pPick := [[450, 200, 120], [0, 0, 1, 0], [0, -1, 1, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]];
+    CONST robtarget pDrop := [[450, -200, 120], [0, 0, 1, 0], [0, 1, -1, 0], [9E9, 9E9, 9E9, 9E9, 9E9, 9E9]];
+
+    ! Tool definition: mass 2.5 kg, TCP offset 150 mm along tool Z-axis
+    PERS tooldata tGripper := [TRUE, [[0, 0, 150], [1, 0, 0, 0]], [2.5, [0, 0, 50], [1, 0, 0, 0], 0, 0, 0]];
 
     PROC main()
-        MoveJ pHome, v1000, z50, tool0;                 ! joint move, blend within 50 mm
-        MoveL Offs(pHome, 0, 0, -100), v200, fine, tool0; ! straight down 100 mm, stop exactly
+        ! Move to safe home position using joint interpolation at 1000 mm/s with 50 mm zone
+        MoveJ pHome, v1000, z50, tGripper;
+
+        ! Wait for conveyor part sensor (Digital Input 1) to go HIGH
+        WaitDI diPartInPosition, 1;
+
+        ! Approach 100 mm above pick point linearly, then descend
+        MoveL Offs(pPick, 0, 0, 100), v500, z10, tGripper;
+        MoveL pPick, v100, fine, tGripper;
+
+        ! Actuate pneumatic gripper (Digital Output 1) and confirm grip switch
+        SetDO doGripClose, 1;
+        WaitTime 0.3;
+        IF diGripConfirmed = 0 THEN
+            ! If part missing, branch to fault recovery
+            SetDO doAlarmLight, 1;
+            Stop;
+        ENDIF
+
+        ! Retract vertically, transfer across cell, and lower to drop target
+        MoveL Offs(pPick, 0, 0, 100), v300, z20, tGripper;
+        MoveJ Offs(pDrop, 0, 0, 100), v800, z30, tGripper;
+        MoveL pDrop, v100, fine, tGripper;
+
+        ! Release gripper and return to home
+        SetDO doGripClose, 0;
+        WaitTime 0.2;
+        MoveL Offs(pDrop, 0, 0, 100), v300, z10, tGripper;
+        MoveJ pHome, v1000, fine, tGripper;
     ENDPROC
 ENDMODULE</code></pre>
-                            <h2 class="article-section-title">04. RRL</h2>
+
+                            <h2 class="article-section-title">05. Universal Robots URScript: syntax and execution</h2>
                             <p>
-                                Unlike URScript and RAPID, RRL is not a language you will find on today&rsquo;s commercial robots. The only documented robot language by that name is <em>RRL</em>, &ldquo;an integrated environment of robot programming&rdquo; built at the Jo&zcaron;ef Stefan Institute in Ljubljana, Slovenia, and published by Bojan Nemec, Anton Ru&zcaron;i&cacute; and Vinko Ilc in 1992. It was a research system, and no vendor manual or industry survey lists it as a production language.
+                                Universal Robots chose an accessible design for its collaborative robot script language, <strong>URScript</strong>.<sup><a href="#ref-2">[2]</a></sup> Rather than compiling to binary or requiring complex type declarations, URScript is an interpreted, Python-like language with dynamic variable typing and clean indentation syntax.
                             </p>
                             <p>
-                                If you are looking for a third language to compare with URScript and RAPID, two with similar names are worth knowing:
+                                Programs execute in the controller's real-time URControl process. On the older CB-series robots, the motion cycle operates at 125 Hz (8 ms loop). On the modern e-Series and heavy-payload UR20 and UR30 cobots, the controller executes at 500 Hz (2 ms loop).<sup><a href="#ref-2">[2]</a></sup> Every two milliseconds, the URScript engine computes forward kinematics, checks safety boundaries, and computes motor torques.
+                            </p>
+                            <p>
+                                URScript supports native multi-threading. A developer can spawn lightweight background threads with the <code>thread ... end</code> block. A thread can continuously poll an analog laser distance sensor or watch an emergency stop relay while the main arm trajectory proceeds without pausing.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">06. URScript motion and rotation vectors</h2>
+                            <p>
+                                In URScript, spatial points are represented by the composite <code>pose</code> type, written with the prefix <code>p</code>:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>p[x, y, z, rx, ry, rz]</code></pre>
+                            <p>
+                                Unlike RAPID, which records Cartesian position in millimeters, URScript adheres strictly to standard SI units: positions <code>x, y, z</code> are in meters. Furthermore, orientation is not specified by quaternions or Euler angles, but as a three-dimensional <strong>rotation vector</strong> (an axis-angle representation).<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                In a rotation vector <code>[rx, ry, rz]</code>, the directional unit vector defines the spatial axis around which the tool rotates. The total mathematical length (Euclidean norm) of the vector, \(\theta = \sqrt{rx^2 + ry^2 + rz^2}\), defines the rotation angle in radians. For example, a pure 180-degree rotation (\(\pi\) radians) around the tool's Y axis is represented compactly as <code>p[0, 0, 0, 0, 3.14159, 0]</code>.
+                            </p>
+                            <p>
+                                URScript defines three fundamental motion instructions:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">KRL (KUKA Robot Language):</span> the proprietary, Pascal-like language used to program KUKA industrial robots.</li>
-                                <li class="article-spec-item"><span class="spec-label">IRL (Industrial Robot Language):</span> a high-level robot language standardized in Germany as DIN 66312 in 1992.</li>
+                                <li class="article-spec-item"><span class="spec-label">movej(q, a=1.4, v=1.05, t=0, r=0):</span> Moves the robot in joint space to a list of target joint angles <code>q</code> (in radians) or to a pose. All joints accelerate and decelerate synchronously, reaching the target at the same time. The tool tip follows a curved arc through Cartesian space.</li>
+                                <li class="article-spec-item"><span class="spec-label">movel(pose, a=1.2, v=0.25, t=0, r=0):</span> Moves the tool center point along a straight line in Cartesian space from its current position to the target <code>pose</code>. Joint motors vary their speeds dynamically to maintain linear tool travel.</li>
+                                <li class="article-spec-item"><span class="spec-label">movep(pose, a=1.2, v=0.25, r=0):</span> Process move. Unlike <code>movel</code>, which varies speed near blended waypoints, <code>movep</code> maintains a constant linear velocity throughout blended paths, which is critical for dispensing adhesive beads, applying paint, or arc welding.</li>
                             </ul>
 
-                            <h2 class="article-section-title">05. URScript and RAPID side by side</h2>
+                            <h2 class="article-section-title">07. Real-world URScript program walkthrough</h2>
+                            <p>
+                                The following script demonstrates a complete URScript routine, showcasing pose manipulation, digital I/O control, sleep timers, and linear tool moves:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>def pick_and_place_demo():
+  # Define base positions (x, y, z in meters; rx, ry, rz in radians)
+  p_home = p[0.400, 0.000, 0.500, 0.0, 3.14159, 0.0]
+  p_pick = p[0.350, 0.250, 0.150, 0.0, 3.14159, 0.0]
+  p_drop = p[0.350, -0.250, 0.150, 0.0, 3.14159, 0.0]
+
+  # Move to home position in joint space (a = joint acceleration, v = joint velocity)
+  movej(p_home, a=1.4, v=1.05)
+
+  # Check part presence sensor on digital input 0
+  if (get_digital_in(0) == True):
+    # Approach 8 cm above pick point with 2 cm blend radius (r=0.02)
+    p_approach = pose_add(p_pick, p[0, 0, 0.080, 0, 0, 0])
+    movel(p_approach, a=0.8, v=0.4, r=0.02)
+
+    # Descend to pick location in a straight line and stop exactly (r=0)
+    movel(p_pick, a=0.4, v=0.1, r=0.0)
+
+    # Trigger pneumatic gripper on digital output 0
+    set_digital_out(0, True)
+    sleep(0.3)
+
+    # Lift vertically to clear fixture
+    movel(p_approach, a=0.8, v=0.3, r=0.02)
+
+    # Transfer linearly across cell to drop location
+    p_drop_approach = pose_add(p_drop, p[0, 0, 0.080, 0, 0, 0])
+    movel(p_drop_approach, a=0.8, v=0.5, r=0.02)
+    movel(p_drop, a=0.4, v=0.1, r=0.0)
+
+    # Open gripper and retract
+    set_digital_out(0, False)
+    sleep(0.2)
+    movel(p_drop_approach, a=0.8, v=0.3)
+  end
+
+  # Return safely to home
+  movej(p_home, a=1.4, v=1.05)
+end</code></pre>
+
+                            <h2 class="article-section-title">08. KUKA Robot Language (KRL)</h2>
+                            <p>
+                                KUKA Robot Language (KRL) is the proprietary language running on KUKA industrial controllers.<sup><a href="#ref-3">[3]</a></sup> KRL is structured around Pascal-like syntax with strict compile-time type verification.
+                            </p>
+                            <p>
+                                A unique architectural feature of KRL is its <strong>dual-file program structure</strong>.<sup><a href="#ref-3">[3]</a></sup> Every KRL program consists of two separate files sharing the same name:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Source File (.src):</span> Contains procedural execution code, logic loops, I/O instructions, and motion calls (such as <code>PTP</code> for point-to-point joint motion, <code>LIN</code> for linear motion, and <code>CIRC</code> for circular paths).</li>
+                                <li class="article-spec-item"><span class="spec-label">Data File (.dat):</span> Contains persistent variables, tool definitions, coordinate frames, and target position coordinates. In KUKA controllers, when an operator touches up a point using the teach pendant, the numerical values in the <code>.dat</code> file are updated automatically without modifying the logic statements in the <code>.src</code> file.</li>
+                            </ul>
+                            <p>
+                                KRL represents spatial targets as <code>E6POS</code> or <code>FRAME</code> structures. An <code>E6POS</code> defines Cartesian coordinates <code>X, Y, Z</code> (in mm), Z-Y-X Euler angles <code>A, B, C</code> (in degrees), external axis values <code>E1</code> through <code>E6</code>, and two integer bitmasks: <strong>Status (S)</strong> and <strong>Turn (T)</strong>. Status and Turn uniquely resolve robot arm configuration flags and joint wrap-around ambiguity.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">09. FANUC TP and KAREL</h2>
+                            <p>
+                                FANUC manipulators utilize two distinct programming languages operating at different system levels:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Teach Pendant (TP) Language:</span> The standard programming language used on the shop floor. TP is a tokenized, line-numbered language written and edited using menu-driven softkeys on the FANUC iPendant.<sup><a href="#ref-4">[4]</a></sup> A typical motion instruction reads:
+                                    <pre class="article-code" style="margin-top: 0.3rem;"><code>1: J P[1:Home] 100% FINE
+2: L P[2:Pick] 500mm/sec CNT50</code></pre>
+                                    Targets are stored in numbered Position Registers (<code>PR[i]</code>) or local Positions (<code>P[i]</code>). Because TP programs are tokenized rather than plain text, syntax errors cannot be typed into the pendant: every command is generated through guided menus.
+                                </li>
+                                <li class="article-spec-item"><span class="spec-label">KAREL:</span> A compiled, high-level programming language named in honor of Karel Čapek.<sup><a href="#ref-4">[4]</a></sup> Derived from Pascal, KAREL is used for complex algorithmic calculations, string parsing, TCP/IP socket communications, and vision guidance routines. Because KAREL runs as a background task, industrial best practice uses KAREL to handle data and communication while delegating actual robot arm motion to TP programs for safety compliance.<sup><a href="#ref-4">[4]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">10. RRL and historical standardization</h2>
+                            <p>
+                                Unlike URScript and RAPID, RRL is not a language you will find on today&rsquo;s commercial robots. The only documented robot language by that name is <em>RRL</em>, &ldquo;an integrated environment of robot programming&rdquo; built at the Jo&zcaron;ef Stefan Institute in Ljubljana, Slovenia, and published by Bojan Nemec, Anton Ru&zcaron;i&cacute; and Vinko Ilc in 1992.<sup><a href="#ref-6">[6]</a></sup> It was an academic research system designed to integrate sensor feedback and trajectory generation, but it was never adopted by commercial robot manufacturers.
+                            </p>
+                            <p>
+                                The robotics community has long recognized the inefficiency of proprietary language fragmentation. In 1992, the German national standards body published <strong>DIN 66312: Industrial Robot Language (IRL)</strong>.<sup><a href="#ref-7">[7]</a></sup> DIN 66312 defined a standardized, high-level robot language intended to allow robot programs to execute across any vendor's arm.
+                            </p>
+                            <p>
+                                While DIN 66312 influenced European controller architectures, major robot vendors declined to adopt IRL across their product lines. Proprietary controller languages allowed vendors to tightly integrate their specialized servo algorithms, protect intellectual property, and create customer lock-in. Real vendor-agnostic standardization did not gain traction until the development of open-source middleware like ROS, examined in <a href="robotics-2-4.html">lesson 2.4</a>.
+                            </p>
+
+                            <h2 class="article-section-title">11. Side-by-side technical comparison</h2>
+                            <p>
+                                The following table summarizes how the leading robot languages compare across architecture, types, and orientation math:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                            </p>
                             <table class="article-table">
                                 <thead>
-                                    <tr><th scope="col">Feature</th><th scope="col">URScript</th><th scope="col">RAPID</th></tr>
+                                    <tr>
+                                        <th scope="col">Feature</th>
+                                        <th scope="col">ABB RAPID</th>
+                                        <th scope="col">UR URScript</th>
+                                        <th scope="col">KUKA KRL</th>
+                                        <th scope="col">FANUC TP / KAREL</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>Robot maker</td><td>Universal Robots</td><td>ABB</td></tr>
-                                    <tr><td>Style</td><td>Python-like scripting</td><td>Structured, strongly typed</td></tr>
-                                    <tr><td>Graphical front end</td><td>PolyScope</td><td>FlexPendant and RobotStudio</td></tr>
-                                    <tr><td>Typical use</td><td>Collaborative tasks</td><td>Heavy industrial and multi-robot cells</td></tr>
+                                    <tr>
+                                        <td><strong>Language Style</strong></td>
+                                        <td>Structured, strongly typed (Pascal/Ada style)</td>
+                                        <td>Interpreted, dynamic typing (Python style)</td>
+                                        <td>Compiled, structured (Pascal style)</td>
+                                        <td>TP: Menu tokenized; KAREL: Compiled Pascal</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Position Units</strong></td>
+                                        <td>Millimeters (mm)</td>
+                                        <td>Meters (m)</td>
+                                        <td>Millimeters (mm)</td>
+                                        <td>Millimeters (mm)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Orientation Math</strong></td>
+                                        <td>Unit Quaternions [q1, q2, q3, q4]</td>
+                                        <td>Rotation Vector [rx, ry, rz] (rad)</td>
+                                        <td>Z-Y-X Euler Angles [A, B, C] (deg)</td>
+                                        <td>W, P, R Euler Angles (deg)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Motion Commands</strong></td>
+                                        <td>MoveJ, MoveL, MoveC</td>
+                                        <td>movej, movel, movep, movec</td>
+                                        <td>PTP, LIN, CIRC</td>
+                                        <td>J (Joint), L (Linear), C (Circular)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Corner Blending</strong></td>
+                                        <td>zonedata (e.g. fine, z10, z50)</td>
+                                        <td>Blend radius r in meters (e.g. r=0.02)</td>
+                                        <td>Approximation (C_PTP, C_DIS)</td>
+                                        <td>CNT parameter (e.g. CNT0 to CNT100)</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>File Structure</strong></td>
+                                        <td>Single or multiple .mod files</td>
+                                        <td>Single text script file (.script)</td>
+                                        <td>Dual file (.src logic + .dat data)</td>
+                                        <td>Binary TP (.tp) or KAREL (.kl / .pc)</td>
+                                    </tr>
                                 </tbody>
                             </table>
+
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Change the URScript example so the robot moves 10 cm higher before closing the gripper (hint: the third value of the pose is z, in meters).</li>
-                                    <li>In the RAPID example, change <code>fine</code> to <code>z10</code> on the MoveL line and explain in one sentence how the motion changes.</li>
+                                    <li>In the RAPID pick-and-place code, modify the <code>MoveL</code> command approaching the pick position so that it blends through the point with a 30 mm radius instead of stopping fine. Write out the exact instruction.</li>
+                                    <li>Calculate the Euclidean length of the rotation vector <code>[0.0, 1.5708, 0.0]</code> in URScript. What physical rotation does this vector represent in degrees, and around which axis?</li>
+                                    <li>Why does KUKA KRL divide programs into separate <code>.src</code> and <code>.dat</code> files? How does this benefit an operator teaching points on a factory floor?</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">06. References</h2>
+                            <h2 class="article-section-title">12. References</h2>
                             <ol class="article-spec-list">
-                                <li>Universal Robots, <em>The URScript Programming Language</em> (script manual for CB-series and e-Series).</li>
-                                <li>ABB Robotics, <em>Technical Reference Manual: RAPID Instructions, Functions and Data Types</em>.</li>
-                                <li>B. Nemec, A. Ru&zcaron;i&cacute; and V. Ilc, &ldquo;RRL &ndash; an integrated environment of robot programming,&rdquo; <em>Informatica</em> 16(1), 1992, pp. 27&ndash;33. <a href="https://dlib.si/details/URN:NBN:SI:DOC-J2F7J67I" target="_blank" rel="noopener noreferrer">dlib.si/details/URN:NBN:SI:DOC-J2F7J67I</a>.</li>
-                                <li>H. M&uuml;he, A. Angerer, A. Hoffmann and W. Reif, &ldquo;On reverse-engineering the KUKA Robot Language,&rdquo; arXiv:1009.5004. <a href="https://arxiv.org/abs/1009.5004" target="_blank" rel="noopener noreferrer">arxiv.org/abs/1009.5004</a>.</li>
-                                <li>&ldquo;Industrial Robot Language.&rdquo; <em>FOLDOC</em>. <a href="https://www.foldoc.org/Industrial+Robot+Language" target="_blank" rel="noopener noreferrer">foldoc.org/Industrial+Robot+Language</a>.</li>
+                                <li id="ref-1">ABB Robotics, <em>Technical Reference Manual: RAPID Instructions, Functions and Data Types</em>, Document ID 3HAC16581-1, Revision AH, ABB, V&auml;ster&aring;s, Sweden, 2023.</li>
+                                <li id="ref-2">Universal Robots, <em>The URScript Programming Language: e-Series and CB-Series Manual</em>, Version 5.14, Universal Robots A/S, Odense, Denmark, 2023. Reference manual: <a href="https://www.universal-robots.com/download/" target="_blank" rel="noopener noreferrer">universal-robots.com/download/</a>.</li>
+                                <li id="ref-3">KUKA Roboter GmbH, <em>KUKA System Software 8.6: Expert Programming Manual (KRL)</em>, Document KSS 8.6 EXP V5, KUKA AG, Augsburg, Germany, 2021.</li>
+                                <li id="ref-4">FANUC Robotics, <em>FANUC Robot Series: KAREL Reference Manual</em>, Document B-83144EN-1/01, FANUC Corporation, Oshino-mura, Japan, 2022.</li>
+                                <li id="ref-5">J. J. Craig, <em>Introduction to Robotics: Mechanics and Control</em>, 4th ed., Pearson, Boston, MA, 2018. ISBN 978-0133489798.</li>
+                                <li id="ref-6">B. Nemec, A. Ru&zcaron;i&cacute; and V. Ilc, &ldquo;RRL &ndash; an integrated environment of robot programming,&rdquo; <em>Informatica</em>, vol. 16, no. 1, pp. 27&ndash;33, 1992. Digital library record: <a href="https://dlib.si/details/URN:NBN:SI:DOC-J2F7J67I" target="_blank" rel="noopener noreferrer">dlib.si/details/URN:NBN:SI:DOC-J2F7J67I</a>.</li>
+                                <li id="ref-7">Deutsches Institut f&uuml;r Normung, <em>DIN 66312-1: Industrial Robot Language (IRL) &mdash; Part 1: Language Specification</em>, Beuth Verlag, Berlin, Germany, 1992. Catalogue: <a href="https://www.din.de/en" target="_blank" rel="noopener noreferrer">din.de/en</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -249,8 +451,8 @@ ENDMODULE</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=1.6" defer></script>
-            <script src="assets/js/course-data.js?v=1.3" defer></script>
-            <script src="assets/js/glossary-data.js?v=1.1" defer></script>
+            <script src="assets/js/course-data.js?v=1.4" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.2" defer></script>
             <script src="assets/js/learning.js?v=1.2" defer></script>
 
     </body>
