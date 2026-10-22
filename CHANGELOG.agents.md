@@ -32,5 +32,8 @@ Short log of agent-made changes so new sessions can skip re-exploring. Newest fi
 ## Earlier (#4 to #8)
 - #8 deepened Chapters 2 to 5; #7 deepened Chapter 1 and introduced inline `ref-N` citations; #6 added 1-6 and 4-3 from the roadmap assessment; #4/#5 added history, ROS, ethics sections and matching quiz/objectives.
 
-## Sonnet citation-check trial: 4-3
-- Checked 4-3 refs against sources (14 of 17 recorded; refs 4, 11, 15 still unchecked). Reworded the China robot-density sentence (IFR text says "push to use automation technology", not "massive investment"). Registry and index regenerated.
+## Citation checks for the remaining 25 lessons (PR #17)
+- Checked every ref in 1-1..1-6, 2-1..2-4, 3-1, 3-2, 3-4, 3-5, 4-1..4-3, 5-1..5-7 and 5-9 against fetched sources and recorded results in `docs/sources.json` (no lesson has unchecked refs now). Many publisher sites block fetches (Cloudflare, EUR-Lex, ISO), so those refs are `unreachable` with corroboration noted where found.
+- Text fix: 4-3 China robot-density sentence reworded to match the IFR text.
+- Dead Nav2 links replaced with versioned Lyrical URLs in 2-4, 5-6 and 5-7 (five refs in 5-7). Still-dead links with no replacement found: 4-2 ref 22 (UNODA), 1-6 refs 9 and 11, 5-1 ref 14 and 5-2 ref 12 (Arduino Servo GitHub path), 2-4 ref 1 (Quigley ROS paper copy).
+- Docs pages on docs.ros.org are read from the ros2_documentation repo (`lyrical` branch) because the site serves a bot challenge; Arduino docs from the arduino/reference-en repo.
