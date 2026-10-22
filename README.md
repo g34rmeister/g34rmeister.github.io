@@ -20,8 +20,8 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `resume.html` - Interactive CV viewer (self-hosted PDF)
 * `contact.html` - Direct contact channels
 * `robotics.html` - RISE Bot Instructor course hub (honors research project)
-* `robotics-intro.html` / `robotics-programming.html` / `robotics-ros.html` / `robotics-ethics.html` / `robotics-control.html` - Chapter overview pages (Intro to Robotics, Robot Programming, ROS, Ethics, and an extra Electronics and Control chapter)
-* `robotics-<chapter>-<n>.html` - Chapter articles (6, 4, 5, 3 and 8 per chapter); unwritten topics are marked "(This is blank)"
+* `robotics-intro.html` / `robotics-programming.html` / `robotics-ros.html` / `robotics-ethics.html` / `robotics-control.html` / `robotics-capstone.html` - Chapter overview pages (Intro to Robotics, Robot Programming, ROS, Ethics, an extra Electronics and Control chapter, and Capstone Projects)
+* `robotics-<chapter>-<n>.html` - Chapter articles (7, 8, 9, 5, 10 and 3 per chapter)
 * `robotics-glossary.html` - Glossary of every key term, rendered from `assets/js/glossary-data.js`
 * `robotics-method.html` - How This Course Was Made: sources policy, where AI tools helped draft lessons, and the review steps. Every lesson's References heading links to it
 * `robotics-quiz.html` - Chapter quizzes (`robotics-quiz.html?chapter=N`), rendered from the course data
