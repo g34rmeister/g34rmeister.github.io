@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -225,6 +225,14 @@ Solution B (&theta;2 &lt; 0): &theta;1 = 21.801&deg; + 33.319&deg; =  55.120&deg
                             <p>
                                 Check by running FK on both. Solution A puts the elbow at (0.392, &minus;0.080), below the line from the shoulder to the target. Solution B puts it at (0.229, 0.328), above that line. Both tips land on (0.500, 0.200). The labels A and B match the simulator, whose buttons are named &ldquo;Solution A (&theta;2 &ge; 0)&rdquo; and &ldquo;Solution B (&theta;2 &lt; 0)&rdquo;.
                             </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 300" role="img" aria-label="Planar two-link arm with L1 = 0.4 m and L2 = 0.3 m reaching the target (0.5, 0.2) m in two ways. The shoulder is at the origin and a dashed line of length r = 0.539 m joins it to the target, forming a triangle with the two links. Solution B, elbow up, drawn solid, has its elbow at (0.229, 0.328), theta1 = 55.120 degrees measured from the x-axis and theta2 = minus 80.406 degrees measured from the extension of link 1. Solution A, elbow down, drawn dashed, has its elbow at (0.392, minus 0.080), theta1 = minus 11.517 degrees and theta2 = plus 80.406 degrees. The law of cosines r squared = L1 squared + L2 squared + 2 L1 L2 cos theta2 gives cos theta2 = 0.04 / 0.24 = 0.1667." xmlns="http://www.w3.org/2000/svg">
+                                    <line class="d-line" x1="90" y1="215" x2="250" y2="215" stroke-dasharray="2 4"/><text class="d-muted" x="256" y="219">x</text><line class="d-line" x1="90" y1="215" x2="330.0" y2="119.0" stroke-dasharray="6 4"/><path class="d-strong" d="M90,215 L278.1,253.3 L330.0,119.0" stroke-dasharray="8 5"/><path class="d-strong" d="M90,215 L199.8,57.5 L330.0,119.0"/><line class="d-line" x1="199.8" y1="57.5" x2="226.1" y2="19.8" stroke-dasharray="2 4"/><path class="d-line" d="M142.0,215.0 A52,52 0 0 0 119.7,172.3"/><text class="d-text" x="139.0" y="170.8">&#952;1</text><path class="d-line" d="M218.1,31.2 A32,32 0 0 1 228.7,71.2"/><text class="d-text" x="241.6" y="47.9">&#952;2</text><text class="d-text" x="118" y="120" text-anchor="end">L1 = 0.4</text><text class="d-text" x="292" y="76">L2 = 0.3</text><text class="d-muted" x="168" y="258">L1</text><text class="d-muted" x="314" y="196">L2</text><text class="d-muted" x="196" y="196">r = 0.539</text><circle class="d-box" cx="90" cy="215" r="6"/><circle class="d-box" cx="199.8" cy="57.5" r="6"/><circle class="d-box" cx="278.1" cy="253.3" r="6"/><circle class="d-box-gold" cx="330.0" cy="119.0" r="7"/><text class="d-muted" x="80" y="237" text-anchor="middle">shoulder (0, 0)</text><text class="d-title" x="187.8" y="43.5" text-anchor="end">B: elbow up</text><text class="d-muted" x="187.8" y="61.5" text-anchor="end">(0.229, 0.328)</text><text class="d-title" x="292.1" y="255.3">A: elbow down</text><text class="d-muted" x="292.1" y="273.3">(0.392, &#8722;0.080)</text><text class="d-text" x="344.0" y="115.0">target</text><text class="d-muted" x="344.0" y="131.0">(0.5, 0.2)</text><text class="d-title" x="430" y="40">Law of cosines</text><text class="d-muted" x="430" y="62">triangle: shoulder, elbow, target</text><text class="d-text" x="430" y="84">r&#178; = L1&#178; + L2&#178; + 2&#183;L1&#183;L2&#183;cos &#952;2</text><text class="d-text" x="430" y="106">cos &#952;2 = 0.04 / 0.24 = 0.1667</text><text class="d-text" x="430" y="128">&#952;2 = &#177;80.406&#176;</text><text class="d-title" x="430" y="172">Two solutions</text><text class="d-text" x="430" y="194">A (dashed): &#952;1 = &#8722;11.517&#176;</text><text class="d-muted" x="448" y="216">&#952;2 = +80.406&#176;</text><text class="d-text" x="430" y="242">B (solid): &#952;1 = 55.120&#176;</text><text class="d-muted" x="448" y="264">&#952;2 = &#8722;80.406&#176;</text>
+                                </svg>
+                                <figcaption>The worked example from section 05. The shoulder, elbow and target form a triangle with sides L<sub>1</sub>, L<sub>2</sub> and r; the law of cosines fixes |&theta;<sub>2</sub>|, and flipping the triangle across the shoulder-to-target line gives the second elbow position. For this target, Solution A is elbow down and Solution B is elbow up.</figcaption>
+                            </figure>
+
                             <p>
                                 For this target, Solution A is the &ldquo;elbow down&rdquo; posture and B is &ldquo;elbow up&rdquo;, the same naming as in lesson 1.6. Be careful with those names, though. The sign of &theta;<sub>2</sub> only says which side of the shoulder-to-target line the elbow is on (positive &theta;<sub>2</sub> puts it on the clockwise side). Whether that side looks &ldquo;down&rdquo; depends on where the target is. Mirror the target to (&minus;0.5, 0.2): Solution A becomes (124.880&deg;, +80.406&deg;) with its elbow at (&minus;0.229, 0.328), now <em>above</em> the line, so A is the elbow-up posture there. Judge &ldquo;up&rdquo; and &ldquo;down&rdquo; from the picture, not from the sign.
                             </p>
@@ -436,7 +444,7 @@ if __name__ == "__main__":
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>

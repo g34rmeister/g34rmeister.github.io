@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -486,6 +486,13 @@ ENDMODULE</code></pre>
                             <p>
                                 The counter is the part that makes restarts work. Because <code>nPlaced</code> is PERS, it keeps its value even if the program is stopped and started from the beginning,<sup><a href="#ref-5">[5]</a></sup> so after a stop at slot 5 the loop resumes at slot 5 instead of stacking a part on slot 0. It is written only after a successful place. The FOR loop's counter <code>i</code> is declared by the FOR statement itself and needs no declaration.
                             </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 326" role="img" aria-label="Structure of the Pallet3x3 RAPID program. PROC main does the start-up (BookErrNo, open the gripper, MoveAbsJ to jHome), then loops FOR i FROM nPlaced TO 8: it calls PickPart, then PlaceAt i DIV 3, i MOD 3, then sets nPlaced to i plus 1. After the loop it resets nPlaced to 0 and moves home. PickPart calls TryPick, which approaches, descends, closes the gripper, waits and raises ERR_MISSED_PICK if no part is present. TryPick&#39;s ERROR handler opens the gripper, backs off and raises the error to PickPart. PickPart&#39;s ERROR handler adds 1 to nTries and, below 3 tries, uses RETRY to run the whole TryPick call again; otherwise it writes an error and raises it, and with no handler above, the program stops." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-ps27" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="10" y="10" width="220" height="310"/><text class="d-title" x="22" y="32">PROC main</text><rect class="d-box" x="22" y="44" width="196" height="60"/><text class="d-text" x="32" y="63">Start-up</text><text class="d-muted" x="32" y="80">BookErrNo, open gripper,</text><text class="d-muted" x="32" y="96">MoveAbsJ jHome</text><rect class="d-line" x="22" y="114" width="196" height="150" stroke-dasharray="5 4"/><text class="d-muted" x="32" y="132">FOR i FROM nPlaced TO 8</text><rect class="d-box-gold" x="32" y="142" width="176" height="30"/><text class="d-text" x="42" y="162">PickPart;</text><rect class="d-box" x="32" y="180" width="176" height="30"/><text class="d-muted" x="42" y="200">PlaceAt i DIV 3, i MOD 3;</text><rect class="d-box" x="32" y="218" width="176" height="34"/><text class="d-muted" x="42" y="240">nPlaced := i + 1; (PERS)</text><rect class="d-box" x="22" y="274" width="196" height="36"/><text class="d-muted" x="32" y="297">nPlaced := 0; MoveAbsJ jHome</text><rect class="d-box" x="270" y="40" width="190" height="190"/><text class="d-title" x="282" y="62">PROC PickPart</text><rect class="d-box" x="282" y="74" width="146" height="30"/><text class="d-text" x="292" y="94">TryPick;</text><rect class="d-box-gold" x="282" y="130" width="146" height="88"/><text class="d-text" x="292" y="150">ERROR</text><text class="d-muted" x="292" y="168">nTries := nTries + 1</text><text class="d-muted" x="292" y="184">if below 3: RETRY</text><text class="d-muted" x="292" y="200">else ErrWrite, RAISE</text><path class="d-strong" d="M208,157 C246,157 244,96 280,96" marker-end="url(#arrow-ps27)"/><path class="d-strong" d="M428,146 C452,146 452,100 430,100" marker-end="url(#arrow-ps27)" stroke-dasharray="5 4"/><rect class="d-box" x="500" y="40" width="170" height="250"/><text class="d-title" x="512" y="62">PROC TryPick</text><text class="d-muted" x="512" y="84">approach, descend,</text><text class="d-muted" x="512" y="100">close gripper, wait,</text><text class="d-muted" x="512" y="116">no part present?</text><text class="d-muted" x="512" y="132">RAISE ERR_MISSED_PICK</text><text class="d-muted" x="512" y="148">otherwise retract</text><rect class="d-box-gold" x="512" y="176" width="146" height="74"/><text class="d-text" x="522" y="196">ERROR</text><text class="d-muted" x="522" y="214">open gripper,</text><text class="d-muted" x="522" y="230">back off, RAISE</text><line class="d-strong" x1="428" y1="82" x2="498" y2="82" marker-end="url(#arrow-ps27)"/><text class="d-muted" x="464" y="74" text-anchor="middle">call</text><line class="d-strong" x1="512" y1="210" x2="430" y2="210" marker-end="url(#arrow-ps27)" stroke-dasharray="5 4"/><text class="d-muted" x="480" y="226" text-anchor="middle">RAISE</text><line class="d-strong" x1="355" y1="218" x2="355" y2="260" marker-end="url(#arrow-ps27)" stroke-dasharray="5 4"/><text class="d-muted" x="364" y="250">after 3 tries</text><rect class="d-box" x="270" y="262" width="190" height="48"/><text class="d-text" x="365" y="282" text-anchor="middle">Program stops</text><text class="d-muted" x="365" y="300" text-anchor="middle">no handler above</text>
+                                </svg>
+                                <figcaption>How the pieces of sections 06, 08 and 10 fit together. Solid arrows are calls; dashed arrows are the error path. Because <code>RETRY</code> sits in the caller, it repeats the whole <code>TryPick</code> call, and <code>nPlaced</code> counts a slot only after a good place.</figcaption>
+                            </figure>
                             <p>
                                 The patterns add up to a checklist of recommended practice, drawn from the production code above rather than vendor rules:
                             </p>
@@ -580,7 +587,7 @@ ENDMODULE</code></pre>
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>

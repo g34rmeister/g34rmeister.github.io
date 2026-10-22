@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -173,6 +173,47 @@
                             <p>
                                 Because layer 3 is the same for every brand, swapping a UR arm for a KUKA arm changes only the bottom two layers.
                             </p>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 420" role="img" aria-label="The three-layer pattern shared by every ROS 2 industrial driver. MoveIt 2 sends its planned motions as a FollowJointTrajectory action to layer 3, the standard ROS 2 controllers such as the joint_trajectory_controller. Layer 3 uses the joint interfaces of layer 2, a ros2_control hardware interface on the PC that takes the place of mock hardware. Over a TCP or UDP network channel, layer 2 sends setpoints or whole trajectories to layer 1 and receives joint positions and status back. Layer 1 is a small program on the controller in the vendor's language, such as URScript, RAPID with EGM, KUKA RSI, FANUC Stream Motion or a Yaskawa MotoPlus application. It runs inside the robot controller cabinet, which drives the motors, reads the encoders and runs the certified safety functions. MoveIt and layer 3 are the same for every brand; swapping brands changes only layers 2 and 1." xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-dr39" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                <rect class="d-box" x="20" y="14" width="400" height="38" rx="4"/>
+                                <text class="d-text" x="220" y="38" text-anchor="middle">MoveIt 2 (planned motions)</text>
+                                <line class="d-strong" x1="220" y1="52" x2="220" y2="78" marker-end="url(#arrow-dr39)"/>
+                                <text class="d-muted" x="232" y="70">FollowJointTrajectory action</text>
+                                <rect class="d-box" x="20" y="80" width="400" height="50" rx="4"/>
+                                <text class="d-text" x="32" y="100">3. Standard ROS 2 controllers</text>
+                                <text class="d-muted" x="32" y="120">joint_trajectory_controller</text>
+                                <line class="d-strong" x1="220" y1="130" x2="220" y2="158" marker-end="url(#arrow-dr39)"/>
+                                <text class="d-muted" x="232" y="149">joint interfaces</text>
+                                <rect class="d-box" x="20" y="160" width="400" height="50" rx="4"/>
+                                <text class="d-text" x="32" y="180">2. ros2_control hardware interface</text>
+                                <text class="d-muted" x="32" y="200">C++ plugin on the PC; replaces mock hardware</text>
+                                <line class="d-strong" x1="110" y1="210" x2="110" y2="288" marker-end="url(#arrow-dr39)"/>
+                                <line class="d-strong" x1="300" y1="290" x2="300" y2="212" marker-end="url(#arrow-dr39)"/>
+                                <text class="d-muted" x="118" y="234">setpoints or trajectories</text>
+                                <text class="d-muted" x="310" y="234">positions, status</text>
+                                <line class="d-line" x1="20" y1="252" x2="420" y2="252" stroke-dasharray="6 4"/>
+                                <text class="d-muted" x="120" y="274">network: TCP or UDP</text>
+                                <rect class="d-box-gold" x="20" y="290" width="400" height="54" rx="4"/>
+                                <text class="d-text" x="32" y="311">1. Program on the controller, vendor language</text>
+                                <text class="d-muted" x="32" y="332">URScript, RAPID + EGM, RSI, Stream Motion, MotoPlus</text>
+                                <line class="d-line" x1="220" y1="344" x2="220" y2="364" marker-end="url(#arrow-dr39)"/>
+                                <rect class="d-box-gold" x="20" y="366" width="400" height="48" rx="4"/>
+                                <text class="d-text" x="32" y="386">Robot controller cabinet</text>
+                                <text class="d-muted" x="32" y="404">drives motors, reads encoders, runs certified safety</text>
+                                <path class="d-line" d="M436,14 H446 V130 H436"/>
+                                <text class="d-text" x="458" y="66">Same for every brand</text>
+                                <text class="d-muted" x="458" y="84">MoveIt sends goals to the</text>
+                                <text class="d-muted" x="458" y="100">FollowJointTrajectory action</text>
+                                <path class="d-line" d="M436,160 H446 V344 H436"/>
+                                <text class="d-text" x="458" y="236">Changes with the brand</text>
+                                <text class="d-muted" x="458" y="254">swapping UR for KUKA changes</text>
+                                <text class="d-muted" x="458" y="270">only these two layers</text>
+                                <text class="d-muted" x="458" y="196">on the ROS 2 PC</text>
+                                <text class="d-muted" x="458" y="320">on the robot controller</text>
+                                </svg>
+                                <figcaption>The three layers every driver in this lesson shares. MoveIt 2 and the controllers in layer 3 stay the same for every brand; the hardware interface and the program on the controller are what change.</figcaption>
+                            </figure>
                             <p>
                                 The <strong>FollowJointTrajectory</strong> action is the shared language at the top. Its goal holds a <code>trajectory</code> (a list of joint names and a list of points, each with positions and a <code>time_from_start</code>), plus <code>path_tolerance</code>, <code>goal_tolerance</code> and <code>goal_time_tolerance</code>. While the motion runs, feedback reports the desired, actual and error values. The result carries an <code>error_code</code>: 0 means SUCCESSFUL, and negative values mean failures such as INVALID_GOAL (-1), INVALID_JOINTS (-2), OLD_HEADER_TIMESTAMP (-3), PATH_TOLERANCE_VIOLATED (-4) and GOAL_TOLERANCE_VIOLATED (-5).<sup><a href="#ref-17">[17]</a></sup> Recall from <a href="robotics-3-1.html">lesson 3.1</a> that an action is a long-running request with feedback and a result, which is exactly what moving an arm is.
                             </p>
@@ -471,7 +512,7 @@ end</code></pre>
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>

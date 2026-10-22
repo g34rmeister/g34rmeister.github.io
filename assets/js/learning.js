@@ -3,7 +3,9 @@
 	Reads window.RISE_COURSE (assets/js/course-data.js) and adds:
 	  - "In this lesson" objectives at the top of each lesson
 	  - "Mark as complete" progress, shown again on the hub and chapter pages
-	  - chapter quizzes on robotics-quiz.html?chapter=N
+	  - chapter quizzes on robotics-quiz.html?chapter=N, and the same questions
+	    as "Check yourself" boxes at the end of each lesson
+	  - a lesson search box on the hub
 	  - reading time, key terms linked to the glossary, a "Continue" button on
 	    the hub, and a plan box on each chapter page
 	  - the glossary page (robotics-glossary.html, from assets/js/glossary-data.js)
@@ -200,6 +202,9 @@
 			hidden: ''
 		});
 
+		var check = selfCheck(id);
+		if (check) body.insertBefore(check, footerNav || null);
+
 		if (footerNav) {
 			body.insertBefore(panel, footerNav);
 			body.insertBefore(slot, footerNav);
@@ -207,6 +212,66 @@
 			body.appendChild(panel);
 			body.appendChild(slot);
 		}
+	}
+
+	/* ---------- Lessons: "Check yourself" questions from the chapter quiz ---------- */
+
+	function selfCheck(id) {
+		var chapter = chapterOfLesson(id);
+		var qs = ((chapter && course.quizzes[chapter.id]) || []).filter(function (q) { return q.lesson === id; });
+		if (!qs.length) return null;
+		var box = el('section', { 'class': 'article-callout self-check', 'aria-label': 'Check yourself' }, [
+			el('div', { 'class': 'article-callout-header', html: '<i class="fas fa-clipboard-check" aria-hidden="true"></i> Check yourself' }),
+			el('p', { text: 'Pick an answer to see if you got it. These questions also appear in the Chapter ' + chapter.id + ' quiz.' })
+		]);
+		qs.forEach(function (q, qi) {
+			var name = 'sc' + qi;
+			var fb = el('div', { 'class': 'quiz-feedback', 'aria-live': 'polite', hidden: '' });
+			var fs = el('fieldset', { 'class': 'quiz-question' }, [el('legend', { text: (qi + 1) + '. ' + q.question })]);
+			q.choices.forEach(function (c, ci) {
+				var input = el('input', { type: 'radio', name: name, id: name + '-' + ci, value: String(ci) });
+				input.addEventListener('change', function () {
+					var right = ci === q.answer;
+					fs.classList.remove('is-right', 'is-wrong');
+					fs.classList.add(right ? 'is-right' : 'is-wrong');
+					fb.hidden = false;
+					fb.innerHTML = '';
+					fb.appendChild(el('strong', { text: right ? 'Correct. ' : 'Not quite. ' }));
+					fb.appendChild(document.createTextNode(right ? q.explanation : 'Have another look at the lesson and try again.'));
+				});
+				fs.appendChild(el('label', { 'class': 'quiz-choice', 'for': name + '-' + ci }, [input, el('span', { text: ' ' + c })]));
+			});
+			fs.appendChild(fb);
+			box.appendChild(fs);
+		});
+		return box;
+	}
+
+	/* ---------- Hub: lesson search ---------- */
+
+	function initSearch() {
+		var section = document.querySelector('#fleet-grid .hltv-feed-section-header');
+		if (!section) return;
+		var index = allLessons().map(function (l) {
+			return { l: l, text: [l.id.replace('-', '.'), l.title].concat(l.objectives || [], l.keyTerms || []).join(' ').toLowerCase() };
+		});
+		var input = el('input', { type: 'search', id: 'lesson-search', 'class': 'lesson-search-input', placeholder: 'Search lessons and key terms, e.g. PID, MoveIt, safety', autocomplete: 'off' });
+		var results = el('ol', { 'class': 'lesson-search-results', 'aria-live': 'polite' });
+		var wrap = el('div', { 'class': 'lesson-search' }, [
+			el('label', { 'for': 'lesson-search', 'class': 'lesson-search-label', html: '<i class="fas fa-search" aria-hidden="true"></i> Find a lesson' }),
+			input, results
+		]);
+		section.appendChild(wrap);
+		input.addEventListener('input', function () {
+			var words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+			results.innerHTML = '';
+			if (!words.length) return;
+			var hits = index.filter(function (x) { return words.every(function (w) { return x.text.indexOf(w) !== -1; }); });
+			if (!hits.length) { results.appendChild(el('li', { text: 'No lessons match. Try a shorter word, or the glossary.' })); return; }
+			hits.slice(0, 12).forEach(function (x) {
+				results.appendChild(el('li', {}, [el('a', { href: lessonUrl(x.l.id), text: x.l.id.replace('-', '.') + ' ' + x.l.title })]));
+			});
+		});
 	}
 
 	/* ---------- Hub and chapter pages: progress marks ---------- */
@@ -235,6 +300,7 @@
 
 	function initHub() {
 		markLessonLinks();
+		initSearch();
 		var actions = document.querySelector('.thesis-masthead-actions');
 		var next = nextLesson();
 		if (actions && next) {
@@ -287,6 +353,12 @@
 
 	/* ---------- Quiz page ---------- */
 
+	// Compare lesson ids like "5-2" and "5-10" by number, so 5.10 comes after 5.9
+	function lessonOrder(a, b) {
+		var x = a.split('-').map(Number), y = b.split('-').map(Number);
+		return x[0] - y[0] || x[1] - y[1];
+	}
+
 	function initQuiz() {
 		var root = document.getElementById('rise-quiz');
 		if (!root) return;
@@ -296,7 +368,7 @@
 		// Ask questions in lesson order, keeping the data file's order within a lesson
 		if (questions) questions = questions
 			.map(function (q, i) { return { q: q, i: i }; })
-			.sort(function (a, b) { return a.q.lesson.localeCompare(b.q.lesson) || a.i - b.i; })
+			.sort(function (a, b) { return lessonOrder(a.q.lesson, b.q.lesson) || a.i - b.i; })
 			.map(function (x) { return x.q; });
 		var picker = document.getElementById('quiz-chapter-picker');
 
