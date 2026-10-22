@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -380,6 +380,14 @@ void setup() {
                                 <li class="article-spec-item"><span class="spec-label">RAMP_DOWN:</span> the setpoint falls at the same rate to 0, then the machine returns to IDLE.</li>
                                 <li class="article-spec-item"><span class="spec-label">FAULT:</span> PWM is forced to 0 and the PID goes to MANUAL. Entered from any moving state on a stall, an encoder loss or the STOP button held down. Leaving it needs a deliberate manual reset, not a timeout.</li>
                             </ul>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 336" role="img" aria-label="State machine with five states. IDLE, with PWM 0 and the PID in MANUAL, goes to RAMP_UP when START is pressed. In RAMP_UP the setpoint rises until it reaches the target, then the machine moves to RUN, where the PID holds speed. Pressing STOP moves to RAMP_DOWN, where the setpoint falls to 0, and then back to IDLE. From any moving state, RAMP_UP, RUN or RAMP_DOWN, a stall, an encoder loss or STOP held down leads to FAULT, where PWM is forced to 0 and the PID goes to MANUAL. FAULT returns to IDLE only on a manual reset." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-fsm63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="20" y="135" width="150" height="56" rx="6"/><text class="d-title" x="95" y="159" text-anchor="middle">IDLE</text><text class="d-muted" x="95" y="179" text-anchor="middle">PWM 0, PID MANUAL</text><rect class="d-box" x="255" y="20" width="170" height="56" rx="6"/><text class="d-title" x="340" y="44" text-anchor="middle">RAMP_UP</text><text class="d-muted" x="340" y="64" text-anchor="middle">setpoint rises</text><rect class="d-box" x="510" y="135" width="150" height="56" rx="6"/><text class="d-title" x="585" y="159" text-anchor="middle">RUN</text><text class="d-muted" x="585" y="179" text-anchor="middle">PID holds speed</text><rect class="d-box" x="255" y="250" width="170" height="56" rx="6"/><text class="d-title" x="340" y="274" text-anchor="middle">RAMP_DOWN</text><text class="d-muted" x="340" y="294" text-anchor="middle">setpoint falls to 0</text><rect class="d-box-gold" x="270" y="135" width="140" height="56" rx="6"/><text class="d-title" x="340" y="159" text-anchor="middle">FAULT</text><text class="d-muted" x="340" y="179" text-anchor="middle">PWM 0, PID MANUAL</text><path class="d-line" d="M95,135 Q100,48 253,48" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="100" y="62" text-anchor="end">START</text><path class="d-line" d="M425,48 Q580,48 585,133" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="584" y="62">target reached</text><path class="d-line" d="M585,191 Q580,278 427,278" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="584" y="270">STOP pressed</text><path class="d-line" d="M255,278 Q100,278 95,193" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="100" y="270" text-anchor="end">setpoint at 0</text><line class="d-line" x1="340" y1="76" x2="340" y2="133" stroke-dasharray="5 4" marker-end="url(#arrow-fsm63)"/><line class="d-line" x1="340" y1="250" x2="340" y2="193" stroke-dasharray="5 4" marker-end="url(#arrow-fsm63)"/><line class="d-line" x1="510" y1="163" x2="412" y2="163" stroke-dasharray="5 4" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="461" y="155" text-anchor="middle">fault</text><line class="d-strong" x1="270" y1="163" x2="172" y2="163" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="221" y="155" text-anchor="middle">RESET</text><text class="d-muted" x="221" y="181" text-anchor="middle">manual only</text><text class="d-muted" x="340" y="326" text-anchor="middle">Dashed: a stall, an encoder loss or STOP held down, from any moving state.</text>
+                                </svg>
+                                <figcaption>The five states and their transitions. The normal cycle runs around the outside; the dashed fault transitions lead from every moving state into FAULT, which forces PWM to 0 and clears only on a deliberate manual reset, never on a timeout.</figcaption>
+                            </figure>
+
                             <p>
                                 <strong>Detecting a stall or a lost encoder.</strong> Both look the same from the controller's point of view: the commanded PWM is high but the measured speed is about zero. Start a timer when that condition becomes true and clear it when it stops being true; if it stays true longer than a limit you choose (a few hundred milliseconds is a reasonable starting point), go to FAULT. Choose the PWM threshold from your open-loop table: it should be clearly above the dead zone. Given the stall current, this check is what protects the driver, so test it in M3.
                             </p>
@@ -615,7 +623,7 @@ void loop() {
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>

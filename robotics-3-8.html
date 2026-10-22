@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -272,6 +272,50 @@
                             <p>
                                 Execution is set in <code>moveit_controllers.yaml</code>. UR's file uses <code>moveit_simple_controller_manager/MoveItSimpleControllerManager</code> with one controller, <code>joint_trajectory_controller</code>, reached through the action namespace <code>follow_joint_trajectory</code> with type <code>FollowJointTrajectory</code> over the six joints.<sup><a href="#ref-27">[27]</a></sup> It also sets <code>allowed_start_tolerance: 0.01</code> and turns <code>execution_duration_monitoring</code> off.<sup><a href="#ref-27">[27]</a></sup> The UR docs explain that a real UR can run slower than planned because of speed scaling, and that monitoring "will in most cases unnecessarily (and unexpectedly) abort goals."<sup><a href="#ref-14">[14]</a></sup> They also make a useful distinction about limits: "the URDF describes the hardware's limits, while the moveit_config provides limits on an application / planning level."<sup><a href="#ref-14">[14]</a></sup>
                             </p>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 410" role="img" aria-label="The MoveIt 2 loop on mock hardware. The RViz MotionPlanning plugin or MoveItPy sends a goal to move_group. move_group reads the URDF, the SRDF and the moveit_config files, and inside it the planning scene with FCL collision checks, the KDL inverse kinematics plugin, the OMPL or Pilz planner, and the planning adapters that turn the path into a timed trajectory. move_group sends a FollowJointTrajectory action goal to the joint_trajectory_controller, which sends commands to the mock hardware, mock_components GenericSystem. The mock mirrors the commands into states, the joint_state_broadcaster publishes them on /joint_states, and move_group and robot_state_publisher listen to them; robot_state_publisher provides the TF that move_group also listens to." xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-mi38" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                <rect class="d-box" x="190" y="14" width="250" height="36" rx="4"/>
+                                <text class="d-text" x="315" y="37" text-anchor="middle">RViz MotionPlanning or MoveItPy</text>
+                                <line class="d-strong" x1="315" y1="50" x2="315" y2="70" marker-end="url(#arrow-mi38)"/>
+                                <text class="d-muted" x="330" y="65">goal</text>
+                                <rect class="d-box-gold" x="12" y="72" width="156" height="46" rx="4"/><text class="d-text" x="24" y="91">URDF</text><text class="d-muted" x="24" y="109">links, joints, limits</text>
+                                <rect class="d-box-gold" x="12" y="130" width="156" height="46" rx="4"/><text class="d-text" x="24" y="149">SRDF</text><text class="d-muted" x="24" y="167">groups, poses, ACM</text>
+                                <rect class="d-box-gold" x="12" y="188" width="156" height="46" rx="4"/><text class="d-text" x="24" y="207">*_moveit_config</text><text class="d-muted" x="24" y="225">kinematics, planning</text>
+                                <line class="d-line" x1="168" y1="95" x2="188" y2="95" marker-end="url(#arrow-mi38)"/>
+                                <line class="d-line" x1="168" y1="153" x2="188" y2="153" marker-end="url(#arrow-mi38)"/>
+                                <line class="d-line" x1="168" y1="211" x2="188" y2="211" marker-end="url(#arrow-mi38)"/>
+                                <rect class="d-box" x="190" y="72" width="250" height="190" rx="4"/>
+                                <text class="d-title" x="315" y="94" text-anchor="middle">move_group</text>
+                                <rect class="d-box" x="202" y="106" width="226" height="30" rx="3"/><text class="d-text" x="315" y="126" text-anchor="middle">Planning scene + FCL</text>
+                                <rect class="d-box" x="202" y="144" width="226" height="30" rx="3"/><text class="d-text" x="315" y="164" text-anchor="middle">IK: KDL plugin</text>
+                                <rect class="d-box" x="202" y="182" width="226" height="30" rx="3"/><text class="d-text" x="315" y="202" text-anchor="middle">Planner: OMPL or Pilz</text>
+                                <rect class="d-box" x="202" y="220" width="226" height="30" rx="3"/><text class="d-text" x="315" y="240" text-anchor="middle">Adapters: path → trajectory</text>
+                                <line class="d-strong" x1="315" y1="262" x2="315" y2="290" marker-end="url(#arrow-mi38)"/>
+                                <text class="d-muted" x="330" y="281">FollowJointTrajectory action</text>
+                                <rect class="d-box" x="190" y="292" width="250" height="34" rx="4"/>
+                                <text class="d-text" x="315" y="314" text-anchor="middle">joint_trajectory_controller</text>
+                                <line class="d-strong" x1="315" y1="326" x2="315" y2="344" marker-end="url(#arrow-mi38)"/>
+                                <text class="d-muted" x="330" y="340">commands</text>
+                                <rect class="d-box-gold" x="190" y="346" width="250" height="50" rx="4"/>
+                                <text class="d-text" x="315" y="366" text-anchor="middle">Mock hardware (GenericSystem)</text>
+                                <text class="d-muted" x="315" y="386" text-anchor="middle">mirrors commands into states</text>
+                                <line class="d-strong" x1="440" y1="371" x2="478" y2="371" marker-end="url(#arrow-mi38)"/>
+                                <rect class="d-box" x="480" y="346" width="188" height="50" rx="4"/>
+                                <text class="d-text" x="574" y="366" text-anchor="middle">joint_state_broadcaster</text>
+                                <text class="d-muted" x="574" y="386" text-anchor="middle">reads all state interfaces</text>
+                                <rect class="d-box" x="480" y="110" width="188" height="44" rx="4"/>
+                                <text class="d-text" x="574" y="130" text-anchor="middle">robot_state_publisher</text>
+                                <text class="d-muted" x="574" y="147" text-anchor="middle">joint values → TF tree</text>
+                                <line class="d-strong" x1="574" y1="346" x2="574" y2="156" marker-end="url(#arrow-mi38)"/>
+                                <text class="d-muted" x="582" y="300">/joint_states</text>
+                                <line class="d-strong" x1="574" y1="236" x2="442" y2="236" marker-end="url(#arrow-mi38)"/>
+                                <text class="d-muted" x="452" y="228">/joint_states</text>
+                                <line class="d-line" x1="480" y1="132" x2="442" y2="132" marker-end="url(#arrow-mi38)"/>
+                                <text class="d-muted" x="452" y="124">TF</text>
+                                </svg>
+                                <figcaption>The loop from sections 04 to 08 on mock hardware. <code>move_group</code> plans with the robot model and the planning scene, sends a timed trajectory to the <code>joint_trajectory_controller</code>, and reads the result back on <code>/joint_states</code> and TF. Swapping the mock for a real UR changes only the hardware plugin.</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">09. The Setup Assistant and the code interfaces</h2>
                             <p>
@@ -402,7 +446,7 @@ ros2 control list_controllers</code></pre>
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>
