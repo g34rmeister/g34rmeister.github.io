@@ -352,7 +352,16 @@
    "refText": "Asian Robotics Review, “Is 3D Machine Vision Right for Vision-Guided Robotics?,” asianroboticsreview.com, n.d. (search summary; page not opened). asianroboticsreview.com/home346.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Is 3D Machine Vision Right for Vision-Guided Robotics? – Asian Robotics Review"
+   "title": "Is 3D Machine Vision Right for Vision-Guided Robotics? – Asian Robotics Review",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "2D/2.5D/3D definitions, 2D weak at low contrast, 2.5D tilt, 3D rotations about 3 axes, 3D VGR starter systems from ~US$40k",
+     "evidence": "\"2D machine vision sees only height and width; 3D sees all three\"; \"Basic 3D VGR starter systems can begin at $40k, making them more expensive than the cobots they direct.\"",
+     "note": "Page supports the 2D (height/width) definition and the $40k figure only. Low-contrast weakness, 2.5D tilt estimation and 3D rotation about all three axes come from the A3 article [3]; cite [3] on those sentences instead of [1].",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://assatec.co.il/2026/05/28/industrial-robot-roi-2026/": {
    "citedBy": [
@@ -400,11 +409,19 @@
   },
   "https://assets.robotiq.com/website-assets/support_archives/document_en/Wrist_Camera_Instruction_Manual_PDF_20220615.pdf": {
    "citedBy": [
-    "2-8#ref-5"
+    "2-8#ref-6"
    ],
    "refText": "Robotiq, “Wrist Camera Instruction Manual,” PDF manual, June 15, 2022 (search summary; document not opened). assets.robotiq.com/website-assets/support_archives/document_en/Wrist_Camera_Instruction_Manual_PDF_20220615.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Robotiq Wrist Camera: taught snapshot position, calibration board, Find/Apply Visual Offset nodes shift program",
+     "evidence": "Manual s.1.1.1/4.2 Snapshot Position \"Robot pose used to take snapshots\"; calibration board; s.4.9 \"Visual Offset capabilities are based on two nodes: Find Visual Offset and Apply Visual Offset\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://assets.robotiq.com/website-assets/support_documents/document/online/Hand-E_Instruction_Manual_Web_20190329.zip/Hand-E_Instruction_Manual_Web/Content/6.%20Specifications.htm": {
    "citedBy": [
@@ -1317,12 +1334,20 @@
   },
   "https://docs.cognex.com/is_581/web/en/ezb/content/EasyBuilder/Inspect_Calib_SeqNPt.htm": {
    "citedBy": [
-    "2-8#ref-13"
+    "2-8#ref-14"
    ],
    "refText": "Cognex, “Sequential N Point calibration,” In-Sight EasyBuilder documentation, version 5.8.1 (search summary; page not opened). docs.cognex.com/is_581/web/en/ezb/content/EasyBuilder/Inspect_Calib_SeqNPt.htm.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Calibration Tools - Sequential N Point"
+   "title": "Calibration Tools - Sequential N Point",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Cognex Sequential N Point pairs feature with robot coords over images; recalibrate if optics/mounting change",
+     "evidence": "\"robot controller presents an object... one location and image acquisition at a time\"; \"If any of these items is altered, the system must be re-calibrated.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.nav2.org/behavior_trees/overview/detailed_behavior_tree_walkthrough.html": {
    "citedBy": [
@@ -1430,7 +1455,17 @@
    "refText": "GraspIt! API documentation, “Puma560 Class Reference,” ROS Diamondback documentation. docs.ros.org/en/diamondback/api/graspit/html/classPuma560.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "5-10": {
+     "status": "unreachable",
+     "claim": "Puma 560 reference page gives 8 IK solutions 'because of the different possible arm configurations'",
+     "evidence": "docs.ros.org blocked by Anubis bot challenge (fetch_text and WebFetch).",
+     "note": "Quoted phrase not seen. ARTE toolbox Puma560 IK page says \"returns 8 possible solutions\" and elbow up/down pairs; supports the count but not the quote. Keep the quote only if re-checked in a browser.",
+     "corroboratedBy": "https://arvc.umh.es/arte/doc/arte3.2.0/robots/UNIMATE/puma560/inversekinematic_puma560.html",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/iron/Concepts/Basic/About-Client-Libraries.html": {
    "citedBy": [
@@ -2596,7 +2631,15 @@
    "refText": "Robotiq DoF community, “Wrist camera accuracy,” forum discussion 1957 (search summary; page not opened). dof.robotiq.com/discussion/1957.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Using visual offset to place object"
+   "title": "Using visual offset to place object",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Wrist camera users report parts 'a few mm off' when calibration is poor",
+     "evidence": "\"the calibration does not seem to be exact enough... the object ends up being a few mm off\" (UR10 + Robotiq visual offset tag)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://dof.robotiq.com/discussion/267": {
    "citedBy": [
@@ -2688,12 +2731,21 @@
   },
   "https://dronebotworkshop.com/tb6612fng-h-bridge/": {
    "citedBy": [
-    "6-3#ref-7"
+    "6-3#ref-9"
    ],
    "refText": "DroneBot Workshop, “TB6612FNG H-Bridge” tutorial, dronebotworkshop.com (third-party figures; seen in a search summary, page not opened). dronebotworkshop.com/tb6612fng-h-bridge.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "TB6612FNG H-Bridge with Arduino - Better Than L298N?"
+   "title": "TB6612FNG H-Bridge with Arduino - Better Than L298N?",
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "TB6612FNG MOSFET drop ~0.2-0.5 V vs L298N bipolar ~1.4-3 V per bridge",
+     "evidence": "\"A typical BJT has a voltage drop of approximately 0.7 volts... total voltage drop is 1.4 volts\"; MOSFET: \"extremely low, almost negligible, voltage drop\"",
+     "note": "DroneBot supports MOSFET vs BJT and ~1.4 V for L298N only; no 0.2-0.5 V TB6612 figure and no ~3 V. ST L298 datasheet gives total drop 1.8-3.2 V at 1 A; cite it for the L298 range and say TB6612 drop is 'small' unless a source for 0.2-0.5 V is added.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://dspace.mit.edu/handle/1721.1/109476": {
    "citedBy": [
@@ -3064,7 +3116,15 @@
    "refText": "Universal Robots Forum, “Defining points with respect to plane,” forum thread (search summary; page not opened). forum.universal-robots.com/t/defining-points-with-respect-to-plane/934.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Defining points with respect to plane - URScript - Universal Robots Forum"
+   "title": "Defining points with respect to plane - URScript - Universal Robots Forum",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "UR: points defined relative to a feature plane; vision result moves the feature",
+     "evidence": "\"setting the pick point inside a MoveL with a plane selected as in our feature... Then we transform the plane with a pose_trans and the offset from the vision system\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/electrical-interfaces/25": {
    "citedBy": [
@@ -3185,16 +3245,6 @@
    "finalUrl": "https://tech-community.robotics.abb.com/t/tool-load-when-exchanging-end-effector/9722/5",
    "title": "Tool load when exchanging end effector - #5 by j_proulxFB - RAPID Programming - ABB Robotics Community"
   },
-  "https://forums.robotstudio.com/discussion/comment/31823": {
-   "citedBy": [
-    "2-8#ref-12"
-   ],
-   "refText": "RobotStudio Forums, “Integrated Vision calibration grid,” discussion comment 31823 (search summary; page not opened). forums.robotstudio.com/discussion/comment/31823.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "finalUrl": "https://tech-community.robotics.abb.com/t/calibrate-work-object-with-vision/9729/2",
-   "title": "Calibrate work object with vision - #2 by EricH - RAPID Programming - ABB Robotics Community"
-  },
   "https://forums.robotstudio.com/discussion/comment/33030": {
    "citedBy": [
     "2-6#ref-24"
@@ -3298,7 +3348,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/AtsushiSakai/PythonRobotics/master/ArmNavigation/two_joint_arm_to_point_control/two_joint_arm_to_point_control.py",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-10": {
+     "status": "verified",
+     "claim": "PythonRobotics 2-link demo: FK elbow/wrist formulas, arccos theta2, theta1 atan2 formula, sign flip if theta1<0, reach check, ValueError, cites Corke",
+     "evidence": "plot_arm: elbow = shoulder + [l1 cos t1, l1 sin t1]; theta2_goal = np.arccos(...); if theta1_goal < 0: theta2_goal = -theta2_goal; if hypot>(l1+l2): theta2_goal=0; l1 = l2 = 1; Ref: Corke p102",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/AtsushiSakai/PythonRobotics/blob/master/Localization/extended_kalman_filter/extended_kalman_filter.py": {
    "citedBy": [
@@ -3431,7 +3489,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/NxRLab/ModernRobotics/master/doc/MRlib.pdf",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-10": {
+     "status": "verified",
+     "claim": "Same MR library facts from the user manual (FK, 6xn Jacobians, IKinBody Newton-Raphson)",
+     "evidence": "MRlib.pdf: \"T = FKinSpace(M,Slist,thetalist)\"; \"Js(θ) ∈ R6×n\"; IKinBody \"uses an iterative Newton-Raphson root-finding method starting from the initial guess\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/NxRLab/ModernRobotics/blob/master/packages/Python/modern_robotics/core.py": {
    "citedBy": [
@@ -3443,7 +3509,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/NxRLab/ModernRobotics/master/packages/Python/modern_robotics/core.py",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-10": {
+     "status": "verified",
+     "claim": "MR library: FKinSpace/FKinBody, JacobianSpace/Body; IKinBody Newton-Raphson with pinv, tolerances, close initial guess, 20 iterations, success flag",
+     "evidence": "core.py IKinBody docstring: \"Uses an iterative Newton-Raphson root-finding method\"; \"initial guess... close to satisfying Tsd\"; maxiterations = 20; pinv(JacobianBody); returns (thetalist, not err)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/PX4/PX4-user_guide/blob/main/en/advanced_config/tuning_the_ecl_ekf.md": {
    "citedBy": [
@@ -3480,14 +3554,24 @@
   },
   "https://github.com/PaulStoffregen/Encoder/blob/master/README.md": {
    "citedBy": [
-    "6-3#ref-12"
+    "6-3#ref-14"
    ],
    "refText": "P. Stoffregen (PJRC), Encoder library, “README.md” and “Encoder.h,” GitHub, master branch, accessed October 21, 2026. github.com/PaulStoffregen/Encoder/blob/master/README.md.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/PaulStoffregen/Encoder/master/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "PJRC Encoder 'counts pulses from quadrature encoded signals', uses interrupts, best with two interrupt pins; Encoder enc(p1,p2), read() 32-bit, write(0)",
+     "evidence": "README: \"Encoder counts pulses from quadrature encoded signals\"; Encoder.h: inline int32_t read(), inline void write(int32_t p)",
+     "note": "Interrupt use and 'best performance when both pins are interrupt pins' are not in README/Encoder.h; they are on the PJRC page linked from README ('Best Performance: Both signals connect to interrupt pins'). Add that URL to the ref.",
+     "suggestedUrl": "https://www.pjrc.com/teensy/td_libs_Encoder.html",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/PickNikRobotics/abb_ros2/blob/rolling/README.md": {
    "citedBy": [
@@ -4278,37 +4362,63 @@
   },
   "https://github.com/arduino/reference-en/blob/master/Language/Functions/Analog%20IO/analogWrite.adoc": {
    "citedBy": [
-    "6-3#ref-13"
+    "6-3#ref-16"
    ],
    "refText": "Arduino, “analogWrite()” language reference (source file analogWrite.adoc), reference-en repository, GitHub, master branch, accessed October 21, 2026. github.com/arduino/reference-en/blob/master/Language/Functions/Analog%20IO/analogWrite.adoc.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/arduino/reference-en/master/Language/Functions/Analog%20IO/analogWrite.adoc",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "Pin 3 is PWM; use 5,6,9,10; analogWrite 0-255; Uno/Nano 490 Hz, pins 5 and 6 at 980 Hz",
+     "evidence": "\"UNO (R3 and earlier), Nano, Mini | 3, 5, 6, 9, 10, 11 | 490 Hz (pins 5 and 6: 980 Hz)\"; value \"between 0 (always off) and 255 (always on)\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/arduino/reference-en/blob/master/Language/Functions/External%20Interrupts/attachInterrupt.adoc": {
    "citedBy": [
-    "6-3#ref-3"
+    "6-3#ref-4"
    ],
    "refText": "Arduino, “attachInterrupt()” language reference (source file attachInterrupt.adoc), reference-en repository, GitHub, master branch, accessed October 21, 2026. github.com/arduino/reference-en/blob/master/Language/Functions/External%20Interrupts/attachInterrupt.adoc.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/arduino/reference-en/master/Language/Functions/External%20Interrupts/attachInterrupt.adoc",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "Uno/Nano interrupts only on pins 2,3; Mega adds 18-21; Nano Every all pins; attachInterrupt syntax, modes, short ISR, volatile, delay/millis",
+     "evidence": "Table: \"Uno Rev3, Nano, Mini, other 328-based | 2, 3\"; \"Mega... 2, 3, 18, 19, 20, 21\"; \"Nano Every | All digital pins\"; \"delay() won't work and... millis() will not increment\"; declare volatile",
+     "note": "Mega pins 20/21 are unavailable while I2C is in use; optional caveat.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/br3ttb/Arduino-PID-Library/blob/master/PID_v1.cpp": {
    "citedBy": [
     "5-4#ref-9",
-    "6-3#ref-14"
+    "6-3#ref-3"
    ],
    "refText": "B. Beauregard, “PID_v1.cpp,” Arduino PID Library, v1, GitHub, accessed 21 Oct. 2026. github.com/br3ttb/Arduino-PID-Library/.../PID_v1.cpp.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/br3ttb/Arduino-PID-Library/master/PID_v1.cpp",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "PID_v1.cpp: 100 ms sample time via millis, 0-255 limits, clamped integral, derivative on measurement, bumpless MANUAL->AUTO, Ki/Kd pre-scaled so gains tied to…",
+     "evidence": "SampleTime = 100; SetOutputLimits(0,255); outputSum clamped to outMin/outMax; output -= kd*dInput; Initialize() 'bumpless transfer'; ki = Ki*SampleTimeInSec; SetSampleTime: ki *= ratio; kd /= ratio",
+     "note": "All listed details verified, except 'gains are tied to the 100 ms period: if you change the period, retune' is wrong for this library: SetSampleTime() rescales ki/kd by the ratio, so Kp/Ki/Kd keep their meaning. Reword: 'SetSampleTime() rescales Ki and Kd for you; retune only for…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/br3ttb/Arduino-PID-Library/blob/master/PID_v1.h": {
    "citedBy": [
@@ -4319,7 +4429,16 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/br3ttb/Arduino-PID-Library/master/PID_v1.h",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "Arduino PID Library is free (MIT); constructor PID(&In,&Out,&Set,Kp,Ki,Kd,DIRECT); SetMode, Compute, SetTunings, SetSampleTime, SetOutputLimits",
+     "evidence": "PID_v1.h: PID(double*, double*, double*, ...) constructors; SetMode, Compute, SetTunings, SetSampleTime, SetOutputLimits; #define DIRECT 0, AUTOMATIC 1",
+     "note": "API fully verified. The MIT licence line is not in PID_v1.h; it is in PID_v1.cpp header ([14]: 'licensed under the MIT License'). Cite [14] for the licence or leave as is.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/cra-ros-pkg/robot_localization/blob/ros2/doc/integrating_gps.rst": {
    "citedBy": [
@@ -4721,37 +4840,61 @@
   },
   "https://github.com/opencv/opencv/blob/4.x/doc/opencv.bib": {
    "citedBy": [
-    "2-8#ref-7",
-    "2-8#ref-9"
+    "2-8#ref-8",
+    "2-8#ref-10"
    ],
    "refText": "R. Y. Tsai and R. K. Lenz, “A new technique for fully autonomous and efficient 3D robotics hand/eye calibration,” IEEE Transactions on Robotics and Automation, vol. 5, no. 3, pp. 345–358, June 1989. Bibliographic entry as listed in OpenCV's bibliography file, accessed October 21, 2026. github.com/op",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/opencv/opencv/4.x/doc/opencv.bib",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Park & Martin 1994 framed hand-eye as AX=XB on the Euclidean group",
+     "evidence": "opencv.bib @article{Park94}: \"Robot sensor calibration: solving AX=XB on the Euclidean group\", IEEE T-RA 1994, oct, vol 10, no 5, pp 717-721",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/opencv/opencv/blob/4.x/doc/tutorials/calib3d/camera_calibration/camera_calibration.markdown": {
    "citedBy": [
-    "2-8#ref-6"
+    "2-8#ref-7"
    ],
    "refText": "OpenCV, “Camera calibration With OpenCV,” OpenCV tutorial source (4.x branch), GitHub, accessed October 21, 2026. github.com/opencv/opencv/blob/4.x/doc/tutorials/calib3d/camera_calibration/camera_calibration.markdown.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/opencv/opencv/4.x/doc/tutorials/calib3d/camera_calibration/camera_calibration.markdown",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "OpenCV calibration tutorial: distortion, camera matrix, radial/tangential model, patterns, >=10 snapshots, cornerSubPix, reprojection error",
+     "evidence": "\"significant distortion... these are constants\"; k1..k3 radial, p1,p2 tangential; chessboard/ChArUco/circle grids; \"at least 10 good snapshots\"; calibrateCamera \"returns the average re-projection…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/opencv/opencv/blob/4.x/modules/calib3d/include/opencv2/calib3d.hpp": {
    "citedBy": [
-    "2-8#ref-4"
+    "2-8#ref-5"
    ],
    "refText": "OpenCV, “calib3d.hpp: calibrateHandEye documentation,” OpenCV source repository (4.x branch), GitHub, accessed October 21, 2026. github.com/opencv/opencv/blob/4.x/modules/calib3d/include/opencv2/calib3d.hpp.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/opencv/opencv/4.x/modules/calib3d/include/opencv2/calib3d.hpp",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "OpenCV calibrateHandEye: eye-in-hand/eye-to-hand, procedure, AX=XB, signature, min 2 motions / 3 poses, default Tsai",
+     "evidence": "\"This configuration is called eye-in-hand\"; \"also known as solving the AX=XB equation\"; \"at least 3 different poses are required, but it is strongly recommended to use many more poses\";…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/openvla/openvla": {
    "citedBy": [
@@ -4792,7 +4935,16 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/petercorke/robotics-toolbox-python/HEAD/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-10": {
+     "status": "fixed",
+     "claim": "RTB Python: Levenberg-Marquardt solver ik_LM(Tep), Panda demo, check with fkine(q), IK 'in as little as 4 microseconds'",
+     "evidence": "README: \"numerical inverse kinematics can be solved in as little as 4 microseconds\"; rtb.models.Panda() 7 joints; sol = robot.ik_LM(Tep); print(robot.fkine(q_pickup))",
+     "note": "All details present except the README never spells out 'Levenberg-Marquardt' (only 'ik_LM ... fast C++ solver'). Fine to keep; optionally cite RTB IK docs for the LM expansion.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/petercorke/robotics-toolbox-python/blob/master/src/roboticstoolbox/tools/trajectory.py": {
    "citedBy": [
@@ -6437,7 +6589,15 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://modernrobotics.northwestern.edu/nu-gm-book-resource/inverse-kinematics-of-open-chains/",
-   "title": "Inverse Kinematics of Open Chains – Modern Robotics"
+   "title": "Inverse Kinematics of Open Chains – Modern Robotics",
+   "checks": {
+    "5-10": {
+     "status": "verified",
+     "claim": "2R workspace is an annulus (inner L1-L2, outer L1+L2), solution count by region; MR uses atan2 and law of cosines",
+     "evidence": "\"inner circle has radius L_1 minus L_2, and the outer circle has radius L_1 plus L_2\"; outside: none, boundary: one, interior: two; \"atan2 function and law of cosines\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/concepts/concepts.html": {
    "citedBy": [
@@ -6663,11 +6823,20 @@
    "citedBy": [
     "6-1#ref-4",
     "6-2#ref-6",
-    "6-3#ref-11"
+    "6-3#ref-18"
    ],
    "refText": "American Society for Engineering Education (ASEE), capstone milestone-evaluation paper 48955, ASEE conference papers (search summary; not opened), accessed October 21, 2026. nemo.asee.org/public/conferences/365/papers/48955/download.",
    "http": 200,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "One engineering capstone used milestone evaluations to hold each team member accountable to the group",
+     "evidence": "Paper 48955 is Edmondson & Gupta (NCSU, 2025) 'Project Health as a Capstone Rubric Element'; it is about rubric specificity and gate reviews, with no milestone-accountability finding.",
+     "note": "Refs 11 and 16 are swapped. This claim is in PEER 49669 (Ericson & Kiefer, York College): \"milestone evaluations holding individual team members responsible to the group\". Cite [16] here and [11] for the creativity sentence.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://new.abb.com/news/detail/109742/prsrl-abb-extends-no-code-wizard-easy-programming-to-industrial-robots": {
    "citedBy": [
@@ -6892,6 +7061,25 @@
     }
    }
   },
+  "https://peer.asee.org/15865.pdf": {
+   "citedBy": [
+    "6-3#ref-17"
+   ],
+   "refText": "D. K. Jones and A. Tadros, “Successful use of rubrics to assess student performance in capstone projects,” ASEE Annual Conference, paper AC 2010-359, 2010. peer.asee.org/15865.pdf.",
+   "http": 200,
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "Capstone rubric 1 'Not Acceptable' to 4 'Exemplary'; even number of levels chosen so evaluator decides if expectations met",
+     "evidence": "Cited strategy.asee.org PDF unreachable (HTTP 0). Same paper on PEER: \"(1-Not Acceptable, 2-Below Expectations, 3-Meets Expectations, 4-Exemplary) was intentionally chosen so that the instructor had…",
+     "note": "Claim supported (Jones & Tadros, AC 2010-359, SUNYIT). But the next sentence 'The two middle labels are this course's own' is false: the paper uses the same 'Below Expectations'/'Meets Expectations'. Delete it; switch URL to PEER and add authors.",
+     "suggestedUrl": "https://peer.asee.org/15865.pdf",
+     "corroboratedBy": "https://peer.asee.org/15865.pdf",
+     "checked": "2026-10-22"
+    }
+   }
+  },
   "https://peer.asee.org/21807.pdf": {
    "citedBy": [
     "2-3#ref-5"
@@ -6904,11 +7092,20 @@
    "citedBy": [
     "6-1#ref-3",
     "6-2#ref-9",
-    "6-3#ref-16"
+    "6-3#ref-13"
    ],
    "refText": "American Society for Engineering Education (ASEE), capstone rubric paper 49669, ASEE PEER repository (title and authors not retrieved; search summary, not opened), accessed October 21, 2026. peer.asee.org/49669.pdf.",
    "http": 200,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "Capstone research warns very detailed rubrics can narrow students' creativity",
+     "evidence": "PEER 49669 is Ericson & Kiefer, 'Capstone Design Assessment and Student Motivation' (York College); no mention of rubrics limiting creativity.",
+     "note": "Swapped with [11]. The creativity warning is in nemo 48955 (Edmondson & Gupta): \"providing detailed rubrics shunts student creativity, as students view their project only through the lens of the rubric\". Cite [11] here; update ref titles/authors.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://peer.asee.org/microcontrollers-for-non-electrical-engineering-students-do-we-need-to-teach-assembly-language": {
    "citedBy": [
@@ -6958,13 +7155,21 @@
   },
   "https://pololu.com/product/4750/specs": {
    "citedBy": [
-    "6-3#ref-10"
+    "6-3#ref-12"
    ],
    "refText": "Pololu, 37D metal gearmotor 12 V variants (10:1, 30:1, 50:1), product listings via item #4750 specifications (statement seen in a search summary; page not opened). pololu.com/product/4750/specs.",
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://www.pololu.com/product/4750/specs",
-   "title": "Pololu - 12V Motor with 64 CPR Encoder for 37D mm Metal Gearmotors (No Gearbox, Helical Pinion)"
+   "title": "Pololu - 12V Motor with 64 CPR Encoder for 37D mm Metal Gearmotors (No Gearbox, Helical Pinion)",
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "Every 12 V 37D variant stalls at 5.5 A whatever the gear ratio",
+     "evidence": "#4750 (motor, no gearbox): stall current @12V 5.5 A; #4752 (30:1) 5.5 A; #4753 (50:1) 5.5 A",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://pr.mono.ipros.com/en/piab/product/detail/2000951425": {
    "citedBy": [
@@ -7149,12 +7354,20 @@
   },
   "https://research.ibm.com/publications/a-new-technique-for-fully-autonomous-and-efficient-3d-robotics-handeye-calibration": {
    "citedBy": [
-    "2-8#ref-8"
+    "2-8#ref-9"
    ],
    "refText": "IBM Research, “A new technique for fully autonomous and efficient 3D robotics hand/eye calibration,” publication page (abstract of Tsai and Lenz, 1989) (search summary; page not opened). research.ibm.com/publications/a-new-technique-for-fully-autonomous-and-efficient-3d-robotics-handeye-calibration.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "A New Technique for Fully Autonomous and Efficient 3D Robotics Hand/Eye Calibration for IEEE Transactions on Robotics and Automation - IBM Research"
+   "title": "A New Technique for Fully Autonomous and Efficient 3D Robotics Hand/Eye Calibration for IEEE Transactions on Robotics and Automation - IBM Research",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Tsai-Lenz derived simple efficient algorithms from geometric lemmas, tested on IBM Cartesian robot",
+     "evidence": "Abstract: \"generic geometric properties or lemmas... final algorithms... aimed at simplicity, efficiency\"; \"real experiments on an IBM Cartesian robot\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://researchgate.net/publication/331090220_A_Brief_History_of_Industrial_Robotics_in_the_20th_Century/fulltext/5c656ddb92851c48a9d3b879/A-Brief-History-of-Industrial-Robotics-in-the-20th-Century.pdf": {
    "citedBy": [
@@ -7588,8 +7801,7 @@
   "https://strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-projects.pdf": {
    "citedBy": [
     "6-1#ref-2",
-    "6-2#ref-7",
-    "6-3#ref-15"
+    "6-2#ref-7"
    ],
    "refText": "American Society for Engineering Education (ASEE), “Successful use of rubrics to assess student performance in capstone projects,” conference paper PDF (search summary; not opened), accessed October 21, 2026. strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-proje",
    "http": 0,
@@ -7648,7 +7860,16 @@
    "refText": "Virginia Tech Technology-enhanced Learning and Online Strategies (TLOS), “Assessing and reflecting on project work,” Project-Based Learning teaching resources (search summary; page not opened), accessed October 21, 2026. teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecti",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Assessing and Reflecting on Project Work | Center for Excellence in Teaching and Learning | Virginia Tech"
+   "title": "Assessing and Reflecting on Project Work | Center for Excellence in Teaching and Learning | Virginia Tech",
+   "checks": {
+    "6-3": {
+     "status": "fixed",
+     "claim": "Teaching-center PBL advice: share rubric at start, milestones (plan/prototype/briefing), individual evidence, brief or substantial reflection, grade group vs…",
+     "evidence": "\"Share criteria and rubrics when the project launches\"; milestones \"proposal, plan... prototype... progress briefing\"; \"contribution statements, progress notes\"; \"Reflection can be brief and…",
+     "note": "Minor: page is general project-based-learning guidance, not specifically 'capstone guidance'; say 'project-based learning guidance'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/abb-and-ros-robot-operating-system/5962": {
    "citedBy": [
@@ -7903,12 +8124,40 @@
   },
   "https://tech-community.robotics.abb.com/t/using-vision-to-modify-modify-object-frame-of-work-object/9308": {
    "citedBy": [
-    "2-8#ref-14"
+    "2-8#ref-12"
    ],
    "refText": "ABB Robotics Tech Community, “Using vision to modify object frame of work object,” forum thread (search summary; page not opened). tech-community.robotics.abb.com/t/using-vision-to-modify-modify-object-frame-of-work-object/9308.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Using vision to modify modify object frame of work object. - RAPID Programming - ABB Robotics Community"
+   "title": "Using vision to modify modify object frame of work object. - RAPID Programming - ABB Robotics Community",
+   "checks": {
+    "2-8": {
+     "status": "partial",
+     "claim": "ABB wobj has uframe and oframe; teach only uframe, camera pose copied into oframe at run time; targets follow",
+     "evidence": "Thread: \"you can use the workobject oframe or the PDispSet\" to apply the camera offset; reply: calibrate grid \"at the same distance as your part\".",
+     "note": "Supports modifying oframe from camera data; 'teach only the user frame' is in [11], not here. Together [11]+[14] cover the sentence; no text change needed.",
+     "checked": "2026-10-22"
+    }
+   }
+  },
+  "https://tech-community.robotics.abb.com/t/vision-calibration-grid/8000/2": {
+   "citedBy": [
+    "2-8#ref-13"
+   ],
+   "refText": "ABB Robotics Tech Community, “Vision calibration grid,” forum thread, reply 2 (quotes the Integrated Vision manual), accessed October 22, 2026. tech-community.robotics.abb.com/t/vision-calibration-grid/8000/2.",
+   "http": 200,
+   "title": "Vision calibration grid - #2 by drm0hr - Collaborative Robots - ABB Robotics Community",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "IV grids are printed for ISO paper; on US Letter measure the real square size",
+     "evidence": "Cited comment 31823 redirects to ABB thread 'Calibrate work object with vision' #2, which only says Z might be measured from the object's visual size.",
+     "note": "Wrong link. The claim is supported verbatim by the IV manual quote in ABB thread 8000 #2: 'calibration patterns are all on ISO paper sizes... measure the actual printed size of the squares'. Replace URL.",
+     "suggestedUrl": "https://tech-community.robotics.abb.com/t/vision-calibration-grid/8000/2",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/work-object-points/1253": {
    "citedBy": [
@@ -7958,39 +8207,74 @@
   },
   "https://techtransfer.fanucamerica.com/tech-transfer/irvision-camera-calibration": {
    "citedBy": [
-    "2-8#ref-10"
+    "2-8#ref-11"
    ],
    "refText": "FANUC America, “iRVision Camera Calibration,” FANUC Tech Transfer, n.d. (search summary; page not opened). techtransfer.fanucamerica.com/tech-transfer/irvision-camera-calibration.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "iRVision - Camera Calibration | Tech Transfer"
+   "title": "iRVision - Camera Calibration | Tech Transfer",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "FANUC iRVision grid-based camera calibration with GRID_UFRAME and GRID_UTOOL utilities",
+     "evidence": "Page: \"use a calibration grid to determine the camera's location\"; GRID_UFRAME/GRID_UTOOL appear only as the title of a related video on the page.",
+     "note": "Grid calibration supported; utility names only appear as a related-video title ('iRVision GRID_UFRAME and GRID_UTOOL'). Acceptable but better to say 'FANUC also offers GRID_UFRAME and GRID_UTOOL utilities' or cite that video page.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://techtransfer.fanucamerica.com/tech-transfer/irvision-part-z-height-amp-offset-frame": {
    "citedBy": [
-    "2-8#ref-2"
+    "2-8#ref-4"
    ],
    "refText": "FANUC America, “iRVision Part Z Height & Offset Frame,” FANUC Tech Transfer, n.d. (search summary; page not opened). techtransfer.fanucamerica.com/tech-transfer/irvision-part-z-height-amp-offset-frame.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "iRVision Part Z Height & Offset Frame | Tech Transfer"
+   "title": "iRVision Part Z Height & Offset Frame | Tech Transfer",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "2D gives X,Y,R; part assumed on taught offset frame (plane in which part moves); correct part Z height needed; perspective shifts/scales",
+     "evidence": "\"The offset frame defines the plane in which the part moves\"; Part Z Height \"ensures accurate XY measurements by accounting for the distance between the camera and the part\" (perspective calibration).",
+     "note": "Public page is a video summary (video behind login). It does not state that a 2D result is X, Y plus rotation, nor that wrong height makes parts appear shifted/scaled. Soften to 'accounts for camera-to-part distance' or cite another source for X,Y,R.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://techtransfer.fanucamerica.com/tech-transfer/irvision-subtract-offsets-when-to-answer-yes-or-no": {
    "citedBy": [
-    "2-8#ref-16"
+    "2-8#ref-15"
    ],
    "refText": "FANUC America, “iRVision Subtract Offsets: When to Answer Yes or No,” FANUC Tech Transfer, n.d. (search summary; page not opened). techtransfer.fanucamerica.com/tech-transfer/irvision-subtract-offsets-when-to-answer-yes-or-no.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "iRVision Subtract Offsets (when to answer yes or no) | Tech Transfer"
+   "title": "iRVision Subtract Offsets (when to answer yes or no) | Tech Transfer",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Subtract offset removes current offset so a point is taught in the unshifted frame",
+     "evidence": "\"subtract offset function, which mathematically removes the current vision offset, allowing the user to teach a position in the original, unshifted frame\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://techtransfer.fanucamerica.com/tech-transfer/irvision-tool-offset-vs-frame-offset": {
    "citedBy": [
-    "2-8#ref-15"
+    "2-8#ref-16"
    ],
    "refText": "FANUC America, “iRVision Tool Offset vs Frame Offset,” FANUC Tech Transfer, n.d. (search summary; page not opened). techtransfer.fanucamerica.com/tech-transfer/irvision-tool-offset-vs-frame-offset.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "iRVision Tool Offset vs Frame Offset | Tech Transfer"
+   "title": "iRVision Tool Offset vs Frame Offset | Tech Transfer",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "FANUC stores result in vision register, applied as offset; fixed frame offset for picking, tool offset for placing",
+     "evidence": "Summary: \"use of fixed frame offset when picking a part and tool offset when placing the part\"; tool offset \"to locate a blind picked part\".",
+     "note": "Pick/place advice verified. Page does not mention vision registers or how the motion instruction applies the offset; cite a FANUC manual for that or drop the detail.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://techtransfer.fanucamerica.com/tech-transfer/singularity-what-it-is-and-how-to-avoid-it": {
    "citedBy": [
@@ -8242,14 +8526,24 @@
    "linkChecked": "2026-10-22",
    "title": "Tepco surveys interior of unit 2 containment vessel - World Nuclear News"
   },
-  "https://www.1stvision.com/machine-vision-solutions/page/50": {
+  "https://www.1stvision.com/machine-vision-solutions/2015/07/imaging-basics-calculating-resolution.html": {
    "citedBy": [
     "2-8#ref-20"
    ],
-   "refText": "1stVision, “Imaging Basics: How to Calculate Resolution for Machine Vision,” 1stvision.com, n.d. (search summary; page not opened). 1stvision.com/machine-vision-solutions/page/50.",
+   "refText": "1stVision, “Imaging Basics: How to Calculate Resolution for Machine Vision,” 1stvision.com, July 2015, accessed October 22, 2026. 1stvision.com/machine-vision-solutions/2015/07/imaging-basics-calculating-resolution.html.",
    "http": 200,
+   "title": "Imaging Basics: How to Calculate Resolution for Machine Vision",
    "linkChecked": "2026-10-22",
-   "title": "1stVision Inc. - Machine Vision Articles - Page 50 of 66 - Industrial Imaging technical blog"
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "1stVision: >=2 px for edge at excellent contrast, 3-4 robust; 0.25 mm/4 px -> 0.0625 mm/px, 40 mm FOV -> 640 px",
+     "evidence": "At suggestedUrl: \"minimum of 2 pixels given excellent contrast... 3-4 pixels\"; \"Ri = 40mm / 0.0625 = 640 pixels\"; \"depends on... lighting, optics and algorithms\"; assumes perfect lens.",
+     "note": "Cited URL is a paginated blog listing (page 50) that only shows a teaser; content shifts over time. Article itself fully supports the claim; replace URL.",
+     "suggestedUrl": "https://www.1stvision.com/machine-vision-solutions/2015/07/imaging-basics-calculating-resolution.html",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.abb.com/gb/en/areas/robotics/products/software/application-templates/palletizing-template": {
    "citedBy": [
@@ -8708,13 +9002,22 @@
   },
   "https://www.automate.org/vision/industry-insights/2d-or-3d-machine-vision-why-not-both": {
    "citedBy": [
-    "2-8#ref-3"
+    "2-8#ref-2"
    ],
    "refText": "Association for Advancing Automation (A3), “2D or 3D Machine Vision? Why Not Both?,” A3 vision industry insights, n.d. (search summary; page not opened). automate.org/vision/industry-insights/2d-or-3d-machine-vision-why-not-both.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "FANUC's Ed Roney: 2.5D fine when robot only needs distance; bin picking needs 3D; non-flat/unknown scale -> point cloud; low contrast boxes on pallet -> 3D",
+     "evidence": "\"many times all the robot needs to know is the distance to the object... 2.5D can work fine. But if the part isn't located on a flat surface, or the scale... unknown, a 3D point cloud\"; boxes on a…",
+     "note": "Minor: article says 'boxes on a pallet', not 'brown boxes on a brown pallet'; drop 'brown' or keep as illustration.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.automation.com/article/abb-introduces-two-laser-cutting-software-products": {
    "citedBy": [
@@ -8910,7 +9213,17 @@
    ],
    "refText": "Northeastern University, “Inverse Kinematics,” CS5335 lecture slides, 2016. ccs.neu.edu/home/rplatt/cs5335_2016/slides/inverse_kinematics.pdf.",
    "http": 0,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-10": {
+     "status": "unreachable",
+     "claim": "Closed-form IK for spherical wrist traced to Pieper 1968; position/orientation split; up to 8 solutions",
+     "evidence": "ccs.neu.edu returns 503 / no TLS from sandbox and WebFetch; slides not seen.",
+     "note": "Could not open slides. Wikipedia '321 kinematic structure' confirms Pieper (Stanford PhD 1968): 6R arms with three consecutive intersecting axes solvable in closed form. 8-solution count corroborated by ARTE Puma560 IK (\"returns 8 possible solutions\").",
+     "corroboratedBy": "https://en.wikipedia.org/wiki/321_kinematic_structure",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.cdc.gov/mmwr/preview/mmwrhtml/00000505.htm": {
    "citedBy": [
@@ -9089,7 +9402,15 @@
    ],
    "refText": "P. Allen, “Jacobians,” course notes, Department of Computer Science, Columbia University, Fall 2015. cs.columbia.edu/~allen/F15/NOTES/jacobians.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-10": {
+     "status": "verified",
+     "claim": "Lecture notes: 2-link det J = l1 l2 sin(theta2); singular at theta2 = 0 and 180 deg (stretched/folded)",
+     "evidence": "\"det (J) = L1 L2 SΘ2\"; \"if S2 = 0, arm is at full extension (θ2 = 0), or looped back onto link 1 (θ2 = 180)\" (s.4)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.cs.princeton.edu/courses/archive/fall11/cos495/COS495-Lecture5-Odometry.pdf": {
    "citedBy": [
@@ -9155,12 +9476,21 @@
   },
   "https://www.dmcinfo.com/blog/22600/abb-vision-guided-movement-these-are-the-droids-youre-looking-for/": {
    "citedBy": [
-    "2-8#ref-11"
+    "2-8#ref-3"
    ],
    "refText": "DMC, Inc., “ABB Vision Guided Movement: These Are the Droids You're Looking For,” DMC blog, n.d. (search summary; page not opened). dmcinfo.com/blog/22600/abb-vision-guided-movement-these-are-the-droids-youre-looking-for.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "ABB Vision-Guided Movement | DMC, Inc."
+   "title": "ABB Vision-Guided Movement | DMC, Inc.",
+   "checks": {
+    "2-8": {
+     "status": "fixed",
+     "claim": "ABB IV: grid calibration, teach camera wobj user frame along grid X/Y at part height; wrong axes -> parts move wrong way; oframe set from camera",
+     "evidence": "\"define the camera workobject along the same X/Y axis as is on the taped calibration grid (only calibrate the user frame, as the object frame will then be used to shift...)\"",
+     "note": "DMC does not mention part height or parts moving in wrong directions. Height point is supported by ABB thread [14] (calibrate grid 'at the same distance as the part'); the wrong-direction consequence is unsourced, reword as an inference.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.dti.dk/services/type-examination-of-machines-that-use-ai-for-safety-functions/47581": {
    "citedBy": [
@@ -9175,6 +9505,22 @@
      "status": "verified",
      "claim": "DTI working definition of self-evolving behaviour: ML software operating on generalisations from data, during training and operation",
      "evidence": "\"term that has not yet been officially defined\"; \"software or an algorithm that makes use of machine learning and operates on the basis of generalisations derived from data... before... and while the…",
+     "checked": "2026-10-22"
+    }
+   }
+  },
+  "https://www.ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf": {
+   "citedBy": [
+    "6-3#ref-10"
+   ],
+   "refText": "STMicroelectronics, “L298: Dual full-bridge driver,” datasheet (copy hosted by the National University of Singapore), electrical characteristics, VCEsat total drop, accessed October 22, 2026. ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf.",
+   "http": 206,
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "ST L298 datasheet: total drop 1.8 to 3.2 V per bridge at 1 A",
+     "evidence": "\"VCEsat Total Drop IL = 1A 1.80 ... 3.2 V\"; also \"OPERATING SUPPLY VOLTAGE UP TO 46 V\", \"TOTAL DC CURRENT UP TO 4 A\"",
      "checked": "2026-10-22"
     }
    }
@@ -10265,6 +10611,23 @@
     }
    }
   },
+  "https://www.pjrc.com/teensy/td_libs_Encoder.html": {
+   "citedBy": [
+    "6-3#ref-15"
+   ],
+   "refText": "P. Stoffregen (PJRC), “Encoder Library,” PJRC Teensy documentation, accessed October 22, 2026. pjrc.com/teensy/td_libs_Encoder.html.",
+   "http": 206,
+   "title": "Encoder Library, for Measuring Quadarature Encoded Position or Rotation Signals",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "PJRC Encoder uses interrupts; best performance when both pins are interrupt pins",
+     "evidence": "\"Best Performance: Both signals connect to interrupt pins.\"; \"If both pins have interrupt capability, both will be used for best performance.\"",
+     "checked": "2026-10-22"
+    }
+   }
+  },
   "https://www.plantengineering.com/?p=23158": {
    "citedBy": [
     "1-3#ref-14"
@@ -10313,30 +10676,55 @@
   },
   "https://www.pololu.com/product/4752/specs": {
    "citedBy": [
-    "6-3#ref-4"
+    "6-3#ref-5"
    ],
    "refText": "Pololu, 30:1 metal gearmotor 37D, 12 V, with 64 CPR encoder, item #4752, specifications (statement seen in a search summary; page not opened). pololu.com/product/4752/specs.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Pololu - 30:1 Metal Gearmotor 37Dx68L mm 12V with 64 CPR Encoder (Helical Pinion)"
+   "title": "Pololu - 30:1 Metal Gearmotor 37Dx68L mm 12V with 64 CPR Encoder (Helical Pinion)",
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "Pololu #4752 37D 12V 30:1 64CPR: ~330 RPM, 200 mA no-load, 14 kg·cm, 5.5 A stall, 1920 CPR output, US$60.95",
+     "evidence": "Specs: 30:1; No-load 330 rpm, 0.2 A @12V; Stall 5.5 A, 14 kg·cm; \"64 counts per revolution... and 1920 CPR of the gearbox's output shaft\"; unit price 60.95",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.pololu.com/product/4753/specs": {
    "citedBy": [
-    "6-3#ref-6"
+    "6-3#ref-7"
    ],
    "refText": "Pololu, 37D metal gearmotors with 64 CPR encoder, 12 V family, item #4753 specifications (statement seen in a search summary; page not opened). pololu.com/product/4753/specs.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Pololu - 50:1 Metal Gearmotor 37Dx70L mm 12V with 64 CPR Encoder (Helical Pinion)"
+   "title": "Pololu - 50:1 Metal Gearmotor 37Dx70L mm 12V with 64 CPR Encoder (Helical Pinion)",
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "37D has 6 mm D-shaft 16 mm long; 64 CPR at motor shaft counting both edges of both channels; output CPR = 64 x gear ratio",
+     "evidence": "\"16 mm-long, 6 mm-diameter D-shaped output shaft\"; product page: \"64 counts per revolution of the motor shaft when counting both edges of both channels... multiply the gear ratio by 64\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.pololu.com/product/713/specs": {
    "citedBy": [
-    "6-3#ref-5"
+    "6-3#ref-6"
    ],
    "refText": "Pololu, “TB6612FNG Dual Motor Driver Carrier,” item #713, specifications (price snapshots in search results conflicted) (statement seen in a search summary; page not opened). pololu.com/product/713/specs.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Pololu - TB6612FNG Dual Motor Driver Carrier"
+   "title": "Pololu - TB6612FNG Dual Motor Driver Carrier",
+   "checks": {
+    "6-3": {
+     "status": "verified",
+     "claim": "TB6612FNG carrier #713: 4.5-13.5 V, 1 A cont/3 A peak per channel, PWM to 100 kHz, logic 2.7-5.5 V, ~US$5-6",
+     "evidence": "Specs: min 4.5 V, max 13.5 V; 1 A continuous, 3 A peak per channel; max PWM 100 kHz; logic 2.7-5.5 V; unit price US$4.95",
+     "note": "Current price is $4.95 (qty 1); 'about US$5' is fine, the '$5 to $6' range could be shortened to 'about US$5'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.pololu.com/product/961": {
    "citedBy": [
@@ -10574,11 +10962,21 @@
   },
   "https://www.st.com/en/motor-drivers/l298.html": {
    "citedBy": [
-    "6-3#ref-9"
+    "6-3#ref-11"
    ],
    "refText": "STMicroelectronics, “L298: Dual full-bridge driver,” product page (statement seen in a search summary; page not opened). st.com/en/motor-drivers/l298.html.",
    "http": 0,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-3": {
+     "status": "unreachable",
+     "claim": "ST rates the L298 for supplies up to 46 V and up to 4 A total DC current",
+     "evidence": "st.com product page and st.com datasheet: upstream request failed (HTTP 0).",
+     "note": "ST L298 datasheet (mirror) states \"OPERATING SUPPLY VOLTAGE UP TO 46 V\" and \"TOTAL DC CURRENT UP TO 4 A\"; claim supported.",
+     "corroboratedBy": "https://www.ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.st.com/resource/en/datasheet/l298.pdf": {
    "citedBy": [
@@ -10642,7 +11040,15 @@
    "refText": "The Imaging Source, “Field of view in machine vision,” glossary, n.d. (search summary; page not opened). theimagingsource.com/en-us/resource/glossary/field-of-view-in-machine-vision.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Field of View in Machine Vision - Glossary"
+   "title": "Field of View in Machine Vision - Glossary",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "Pixel size = FOV/pixels; 1920 px over 200 mm = 9.6 px/mm; 2-3 px across a feature",
+     "evidence": "\"A 2 MP camera with a 1920-pixel horizontal sensor imaging a 200 mm wide field provides 9.6 pixels per mm\"; \"at least 2-3 pixels\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.theregister.com/2024/01/22/microsoft_so_you_want_to/": {
    "citedBy": [
@@ -10797,7 +11203,15 @@
    "http": 206,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://www.universal-robots.com/articles/ur/programming/simple-vision-system/",
-   "title": "Simple vision system - 23871"
+   "title": "Simple vision system - 23871",
+   "checks": {
+    "2-8": {
+     "status": "verified",
+     "claim": "UR: camera offset in mm/degrees turned into a pose and applied to reference point with pose_trans",
+     "evidence": "\"X, Y and rotation data... in respectively millimeters and degrees\"; \"target = pose_trans(refrence_point, offset)\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/articles/ur/urscript-move-with-respect-to-a-custom-featureframe/": {
    "citedBy": [
@@ -11221,7 +11635,17 @@
    "refText": "Wampler, “6R Generic-Case Solution,” preprint (MMT 1991), hosted at the University of Notre Dame. www3.nd.edu/~cwample1/Preprints/MMT1991 6R Generic-Case Solution.pdf.",
    "http": 0,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://academicweb.nd.edu/~cwample1/Preprints/MMT1991%206R%20Generic-Case%20Solution.pdf?utm_campaign=redirect&utm_medium=web&utm_source=www3.nd.edu"
+   "finalUrl": "https://academicweb.nd.edu/~cwample1/Preprints/MMT1991%206R%20Generic-Case%20Solution.pdf?utm_campaign=redirect&utm_medium=web&utm_source=www3.nd.edu",
+   "checks": {
+    "5-10": {
+     "status": "unreachable",
+     "claim": "General 6R arm has at most 16 IK solutions",
+     "evidence": "www3.nd.edu PDF unreachable (HTTP 0 via curl and Chromium).",
+     "note": "IK-Geo paper (Elias & Wen, arXiv 2211.05737) refers to \"the (up to) 16 solutions\" for a general 6R arm and finds \"all 16 solutions\"; supports the claim.",
+     "corroboratedBy": "https://arxiv.org/pdf/2211.05737",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://zbotic.in/motor-driver-ic-comparison-l298n-vs-drv8833-vs-tb6612fng/": {
    "citedBy": [
@@ -11231,7 +11655,17 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "6-3": {
+     "status": "unreachable",
+     "claim": "Third-party drop figures: TB6612FNG ~0.2-0.5 V vs L298N ~1.4-3 V",
+     "evidence": "zbotic.in behind Cloudflare challenge (403 via curl, Chromium and WebFetch).",
+     "note": "Not seen. L298 range is corroborated by the ST datasheet (VCEsat total drop 1.80-3.2 V at IL=1 A); no reachable source checked for the TB6612 0.2-0.5 V figure.",
+     "corroboratedBy": "https://www.ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf",
+     "checked": "2026-10-22"
+    }
+   }
   }
  }
 }
