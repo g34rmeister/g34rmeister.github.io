@@ -14,7 +14,7 @@ window.RISE_COURSE = {
 	title: 'RISE Bot Instructor',
 	author: 'Gerald Lê',
 	institution: 'Louisiana State University',
-	version: '2026-10',
+	version: '2026-10b',
 	chapters: [
 		{
 			id: 1,
