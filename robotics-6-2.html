@@ -1,0 +1,553 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
+-->
+<html lang="en">
+    <head>
+        <title>6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2 — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-6-2.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-6-2.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2 — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-capstone.html">Chapter 6 &middot; Capstone Projects</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. What you will build and why</h2>
+                            <p>
+                                In this capstone you will program a simulated Universal Robots arm to pick up an object from a table and put it down somewhere else, using ROS 2 and MoveIt 2. The arm never touches real hardware. It runs on ros2_control <strong>mock hardware</strong>, and if you want physics you can move it into Gazebo. The planning is done with the <strong>MoveIt Task Constructor</strong> (MTC), which breaks a pick-and-place job into a chain of small, inspectable steps called stages.
+                            </p>
+                            <p>
+                                You do not start from a blank page. The official MoveIt 2 tutorial "Pick and Place with MoveIt Task Constructor" is a complete, staged pipeline: it reads the current state, opens the hand, approaches, generates grasp poses and solves inverse kinematics for them, allows contact with the object, attaches it, lifts, generates place poses, detaches, retreats and returns home.<sup><a href="#ref-1">[1]</a></sup> The catch is that the tutorial uses the Franka Panda robot.<sup><a href="#ref-1">[1]</a></sup> Your job is to get that pipeline working as-is, then move it onto a UR5e, add your own planning scene, and show with evidence how reliable it is.
+                            </p>
+                            <p>
+                                Pick and place is the "hello world" of industrial manipulation. It pulls together most of the ROS chapter (workspaces, launch files, robot descriptions, ros2_control, MoveIt and RViz), and it has a clear pass or fail result that you can test and measure.
+                            </p>
+                            <p>
+                                This page is a project brief, not a lecture. Read all of it, including the rubric, before you write any code. Teaching guidance on project work recommends sharing the criteria and rubric when the project starts, not at the end, so you know what "good" looks like while you still have time to aim for it.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">02. Prerequisites</h2>
+                            <p>
+                                If one of these lessons feels shaky, revisit it first.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">3.3 Installing ROS:</span> a working ROS 2 install that you can source in every terminal (see <a href="robotics-3-3.html">3.3</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">3.6 Your first package:</span> creating a workspace, cloning packages into <code>src</code>, running <code>rosdep</code> and <code>colcon build</code> (see <a href="robotics-3-6.html">3.6</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">3.7 Launch files and parameters:</span> reading a launch file, passing launch arguments such as <code>ur_type:=ur5e</code>, and knowing which nodes a launch starts (see <a href="robotics-3-7.html">3.7</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">3.8 MoveIt 2:</span> the URDF and SRDF, planning groups, the planning scene, mock hardware, and bringing up a UR5e with MoveIt in RViz (see <a href="robotics-3-8.html">3.8</a>). This is the most important prerequisite.</li>
+                                <li class="article-spec-item"><span class="spec-label">3.9 Vendor drivers:</span> what the UR ROS 2 driver does and how URSim fits in (see <a href="robotics-3-9.html">3.9</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">2.8 Vision-guided picking:</span> the idea of a grasp pose relative to an object, approach and retreat moves, and why the pick pose comes from somewhere else in a real cell (see <a href="robotics-2-8.html">2.8</a>).</li>
+                            </ul>
+                            <p>
+                                You will also read and edit C++. The MTC tutorial node, <code>mtc_node.cpp</code>, is written in C++, so be ready to work in that language even if you write most of your other ROS code in Python.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">03. Equipment and software</h2>
+                            <p>
+                                Everything here is free software and runs on one Linux computer or virtual machine. You need no robot.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">ROS 2 and MoveIt 2:</span> the same install you used in 3.8.</li>
+                                <li class="article-spec-item"><span class="spec-label">MoveIt Task Constructor:</span> built from source in your workspace. The tutorial says to clone <code>moveit_task_constructor</code> on the <code>humble</code> branch for ROS 2 Humble, or on the <code>ros2</code> branch to build against MoveIt 2 main, then run rosdep and colcon build.<sup><a href="#ref-1">[1]</a></sup> The tutorial names only these two branches, so check the repository's branch list for your ROS 2 release before you clone.</li>
+                                <li class="article-spec-item"><span class="spec-label">The UR ROS 2 driver and MoveIt config:</span> <code>ur_robot_driver</code> and <code>ur_moveit_config</code>, as in 3.8. The driver can run against ros2_control mock hardware or against URSim, and from the driver's point of view the two are equivalent.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Optional, Gazebo:</span> the separate <code>ur_simulation_gz</code> package (repository Universal_Robots_ROS2_GZ_Simulation). Its branches are <code>humble</code>, <code>jazzy</code> (also used for Kilted) and <code>ros2</code> (for Lyrical and Rolling).<sup><a href="#ref-5">[5]</a></sup> Gazebo Classic and GZ Sim support live in separate packages from the driver itself.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Optional, URSim:</span> Universal Robots' simulator in Docker. With URSim running, the driver connects with <code>ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101 launch_rviz:=true</code>.<sup><a href="#ref-4">[4]</a></sup> It is not needed for the core project.</li>
+                            </ul>
+                            <p>
+                                <strong>Choosing mock hardware or Gazebo.</strong> Start with mock hardware: it is the lightest option and enough to test planning and the MTC stage chain. Know its limits. UR's simulation page lists that on mock hardware there is no TCP pose broadcaster, the passthrough trajectory controller and force mode do not work, and the GPIO controller reports a failure when you try to set I/O.<sup><a href="#ref-4">[4]</a></sup> So if you planned to open and close a gripper through UR digital outputs, you cannot check that in mock mode.<sup><a href="#ref-4">[4]</a></sup> Gazebo adds a physics simulation and comes with its own MoveIt launch (milestone 4).<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">04. Milestones and what to hand in</h2>
+                            <p>
+                                Complex project work is easier to manage, and to grade fairly, when it is split into milestones such as a plan, a prototype and a progress briefing.<sup><a href="#ref-2">[2]</a></sup> Each milestone below has a short, concrete hand-in. Hand them in as you go, not all at the end. If you work in a team, add a short <strong>contribution statement</strong> to every hand-in that says who did what. Teaching guidance recommends collecting individual evidence of this kind alongside the team product, and grading group, individual, process and product parts separately.<sup><a href="#ref-2">[2]</a></sup> One engineering capstone used milestone evaluations for exactly this purpose: to keep each team member accountable to the group.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Milestone</th>
+                                        <th scope="col">Goal</th>
+                                        <th scope="col">Hand in</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>M0 Plan and baseline</strong></td>
+                                        <td>Build MTC and run the Panda pick-and-place demo unchanged.</td>
+                                        <td>One-page plan (scope, risks, test plan), a screenshot of the demo's stage tree in RViz, and a short reflection.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M1 UR5e moves</strong></td>
+                                        <td>Bring up a UR5e on mock hardware with MoveIt and plan joint and pose goals in RViz.</td>
+                                        <td>Screenshots of one joint goal and one pose goal planned and executed; the exact launch commands you used.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M2 Planning scene</strong></td>
+                                        <td>Add a table and a box or cylinder as collision objects.</td>
+                                        <td>Screenshot of the scene; a plan that moves around the table instead of through it.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M3 MTC on the UR</strong></td>
+                                        <td>Port the MTC node to UR group and frame names and complete a full pick and place.</td>
+                                        <td>Your source code in a Git repository, a stage tree screenshot, and a screen recording of one full run.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M4 Gazebo (optional)</strong></td>
+                                        <td>Run the same task through the Gazebo MoveIt launch.</td>
+                                        <td>Screen recording and a note on anything that behaved differently from mock hardware.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M5 Test evidence and report</strong></td>
+                                        <td>Measure success over many runs with randomised object poses and analyse failures.</td>
+                                        <td>Test table, failure analysis, final report (3 to 5 pages) and final reflection.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                This structure (a plan, working subsystems, an integrated demo, test evidence and a written report) mirrors capstones described in the engineering education literature, where students wrote specifications, planned milestones, gave oral presentations and wrote a final report.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">05. M0: run the Panda demo and read the stage tree</h2>
+                            <p>
+                                Begin with code that is known to work. Clone <code>moveit_task_constructor</code> into the <code>src</code> folder of your workspace on the right branch, install dependencies and build:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>cd ~/ws_moveit/src
+git clone https://github.com/moveit/moveit_task_constructor.git -b ros2
+cd ~/ws_moveit
+rosdep install --from-paths src --ignore-src -r -y
+colcon build
+source install/setup.bash</code></pre>
+                            <p>
+                                Use <code>-b humble</code> instead if you are on Humble.<sup><a href="#ref-1">[1]</a></sup> Then start the demo environment in one terminal and the pick-and-place demo in a second one:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <pre class="article-code"><code># Terminal 1: move_group, ros2_control, RViz and the robot
+ros2 launch moveit_task_constructor_demo demo.launch.py
+
+# Terminal 2: the pick-and-place task
+ros2 launch moveit_task_constructor_demo run.launch.py exe:=pick_place_demo</code></pre>
+                            <p>
+                                The first launch file starts <code>move_group</code>, <code>ros2_control</code>, a static TF publisher, <code>robot_state_publisher</code> and RViz.<sup><a href="#ref-1">[1]</a></sup> In RViz, add the <strong>Motion Planning Tasks</strong> display and set its Task Solution Topic to <code>/solution</code>.<sup><a href="#ref-1">[1]</a></sup> You can now click on each stage to see its successful and failed solutions and their costs.<sup><a href="#ref-1">[1]</a></sup> Take your stage-tree screenshot here.
+                            </p>
+                            <p>
+                                <strong>How MTC thinks.</strong> MTC splits a task into stages of three kinds.<sup><a href="#ref-1">[1]</a></sup> <strong>Generators</strong> create states on their own (the current state, candidate grasp poses). <strong>Propagators</strong> take a neighbour's state and push it forward or backward ("move 10 cm up"). <strong>Connectors</strong> plan a free motion between two states that already exist. Stages can be grouped in containers: wrappers, serial containers and parallel containers.<sup><a href="#ref-1">[1]</a></sup> MTC also has three planners (solvers) a stage can use: a Cartesian planner for straight-line moves, joint interpolation for simple moves, and the full planning pipeline (OMPL). The tutorial uses joint interpolation for the simple hand move.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                The tutorial's task is this sequence of stages:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <ol class="article-spec-list">
+                                <li><code>CurrentState</code>: start from where the robot is now.</li>
+                                <li><code>MoveTo</code> "open hand", to the named SRDF pose <code>open</code>.</li>
+                                <li>Connect: plan a free move to the pre-grasp area.</li>
+                                <li>"approach object": a <code>MoveRelative</code> of between 0.1 and 0.15 m.</li>
+                                <li><code>GenerateGraspPose</code>, wrapped in <code>ComputeIK</code> (up to 8 IK solutions).</li>
+                                <li><code>ModifyPlanningScene</code>: allow collisions between hand and object.</li>
+                                <li>Close the hand.</li>
+                                <li><code>ModifyPlanningScene</code>: <code>attachObject("object", hand_frame)</code>.</li>
+                                <li>"lift object": a <code>MoveRelative</code> of between 0.1 and 0.3 m.</li>
+                                <li><code>GeneratePlacePose</code> plus <code>ComputeIK</code>.</li>
+                                <li>Open the hand.</li>
+                                <li><code>allowCollisions(..., false)</code>: forbid hand and object contact again.</li>
+                                <li><code>detachObject("object", hand_frame)</code>.</li>
+                                <li>Retreat.</li>
+                                <li><code>MoveTo</code> "return home".</li>
+                            </ol>
+                            <p>
+                                In your M0 reflection, label each stage as a generator, propagator or connector, and say in one sentence why the grasp pose generator has to be wrapped in <code>ComputeIK</code>. (Hint: a grasp pose is a pose for the hand in space. The planner needs joint angles.)
+                            </p>
+
+                            <h2 class="article-section-title">06. M1 and M2: a UR5e and its planning scene</h2>
+                            <p>
+                                <strong>M1.</strong> Bring up the UR5e on mock hardware with MoveIt exactly as you did in <a href="robotics-3-8.html">3.8</a>, with the driver in one terminal and <code>ur_moveit_config</code> in another, using the same <code>ur_type</code> in both. In RViz, drag the interactive marker to plan a pose goal, then pick a named state for a joint goal, and execute both. Record the exact commands in your hand-in.
+                            </p>
+                            <p>
+                                <strong>M2.</strong> Now give the robot something to work with. The MTC tutorial adds a cylinder to the planning scene as a <strong>collision object</strong>, and it shows that if you move the cylinder out of the robot's reach, planning fails.<sup><a href="#ref-1">[1]</a></sup> Add two objects: a flat box for the table and a small box or cylinder for the part. The snippet below follows the pattern of the tutorial node. It is an example: try it in simulation first, and set the sizes, positions and <code>frame_id</code> to match your own scene (check the Fixed Frame in RViz).
+                            </p>
+                            <pre class="article-code"><code>moveit_msgs::msg::CollisionObject object;
+object.id = "object";
+object.header.frame_id = "world";          // use your scene's fixed frame
+object.primitives.resize(1);
+object.primitives[0].type = shape_msgs::msg::SolidPrimitive::CYLINDER;
+object.primitives[0].dimensions = { 0.10, 0.02 };   // height, radius in m
+
+geometry_msgs::msg::Pose pose;
+pose.position.x = 0.5;
+pose.position.y = -0.25;
+pose.position.z = 0.05;
+pose.orientation.w = 1.0;
+object.pose = pose;
+
+moveit::planning_interface::PlanningSceneInterface psi;
+psi.applyCollisionObject(object);</code></pre>
+                            <p>
+                                Keep the object id as <code>"object"</code> for now, because the tutorial's attach and detach stages refer to it by that name.<sup><a href="#ref-1">[1]</a></sup> Add the table the same way with a <code>BOX</code> primitive and a different id. Your M2 hand-in should show a plan that clearly goes around the table. If MoveIt happily plans through it, the table is in the wrong frame or was never applied.
+                            </p>
+
+                            <h2 class="article-section-title">07. M3: port the MTC node to the UR</h2>
+                            <p>
+                                This is the main engineering step. Copy the tutorial's <code>mtc_node.cpp</code> into your own package (as in 3.6) and change the robot-specific names. The tutorial node uses <code>panda_arm</code> as the arm group, <code>hand</code> as the hand group and <code>panda_hand</code> as the hand frame.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> On the UR the arm group is the <code>ur_manipulator</code> chain you met in 3.8, which ends at <code>tool0</code>.
+                            </p>
+                            <pre class="article-code"><code>// Panda names in the tutorial:
+//   arm "panda_arm", hand group "hand", hand frame "panda_hand"
+const auto&amp; arm_group_name = "ur_manipulator";
+const auto&amp; hand_frame     = "tool0";   // or your gripper's TCP link</code></pre>
+                            <p>
+                                <strong>The gripper problem.</strong> The default UR description has no gripper, so there is no hand group and no SRDF poses called <code>open</code> or <code>close</code>. You have two options. Choose one in your M0 plan and justify it.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Option A, fixed tool (recommended):</span> delete the "open hand" and "close hand" <code>MoveTo</code> stages. Keep the <code>allowCollisions</code>, <code>attachObject</code> and <code>detachObject</code> stages, pointed at <code>tool0</code> or a simple tool link you add. The part is "picked" when it is attached to the tool in the planning scene. This is a common simplification, and it isolates the planning problem.</li>
+                                <li class="article-spec-item"><span class="spec-label">Option B, add a gripper:</span> add a gripper's links, a hand planning group and open and closed poses to your URDF and SRDF. One lead is PickNik Robotics' <code>ros2_robotiq_gripper</code>, which provides "the ROS 2 driver, controller and description packages for working with a Robotiq Gripper", starting with the 2F-85.<sup><a href="#ref-8">[8]</a></sup> It is not sponsored or maintained by Robotiq, and its README lists its <code>main</code> branch for Humble, Iron and Rolling, not Jazzy.<sup><a href="#ref-8">[8]</a></sup> No source used for this page covers combining it with the UR description, so treat Option B as a stretch goal.</li>
+                            </ul>
+                            <p>
+                                For Option A, the attach stage looks like this in the tutorial's style. Again, it is an example to try in simulation first:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>auto stage = std::make_unique&lt;mtc::stages::ModifyPlanningScene&gt;("attach object");
+stage-&gt;attachObject("object", hand_frame);
+grasp-&gt;insert(std::move(stage));   // inside the "pick object" container</code></pre>
+                            <p>
+                                In the tutorial, <code>allowCollisions</code> uses the links of the hand group. Without a hand group, you must list the link names of your tool yourself. Read the tutorial's version of that stage carefully before you change it.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Plan, then execute.</strong> At the end of the node, <code>task.plan(5)</code> searches until it has found 5 complete solutions, and <code>task.execute()</code> runs the chosen solution through an action server.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> On mock hardware the "execution" just copies commanded positions into the joint states, but the arm still moves in RViz. Watch the object: when it is attached, RViz draws it in a different colour and it moves with the tool. When it is detached, it stays at the place pose.
+                            </p>
+                            <p>
+                                Tune one thing at a time. The tutorial's approach and lift distances (0.1 to 0.15 m and 0.1 to 0.3 m) were set for the Panda hand.<sup><a href="#ref-1">[1]</a></sup> With a bare <code>tool0</code> you will probably need to change the grasp transform and approach direction. Log each change and its effect; that log feeds your failure analysis.
+                            </p>
+
+                            <h2 class="article-section-title">08. M4 (optional): run it in Gazebo</h2>
+                            <p>
+                                Once the task works on mock hardware, try it with physics. The UR Gazebo package has a launch that starts the simulated robot with its controllers, and another that adds MoveIt:<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <pre class="article-code"><code># Robot and controllers only
+ros2 launch ur_simulation_gz ur_sim_control.launch.py
+
+# Robot, controllers and MoveIt
+ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
+                            <p>
+                                Use the branch of <code>ur_simulation_gz</code> that matches your ROS 2 release (<code>humble</code>, <code>jazzy</code> for Jazzy and Kilted, or <code>ros2</code> for Lyrical and Rolling).<sup><a href="#ref-5">[5]</a></sup> Start your MTC node against this MoveIt instance instead of the mock-hardware one.
+                            </p>
+                            <p>
+                                Be careful what you claim. The sources for this page do not cover whether a part attached in MoveIt's planning scene also follows the tool in Gazebo's physics. If the part stays on the table while MoveIt shows it attached, explain that in your report; a physically gripped part is a stretch goal.
+                            </p>
+
+                            <h2 class="article-section-title">09. M5: testing and verification</h2>
+                            <p>
+                                One successful run proves very little. Your test plan must show how often the task works and why it fails. As in the 6.1 test sheets, record for each test an ID, the expected and actual result, pass or fail, and evidence (a screenshot or log).
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Test</th>
+                                        <th scope="col">Pass if</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>T1</td>
+                                        <td>Attach and detach</td>
+                                        <td>The object visibly changes to attached at pick, moves with the tool, and is detached at the place pose.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T2</td>
+                                        <td>Table clearance</td>
+                                        <td>No stage solution passes through the table, and no collision is reported.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T3</td>
+                                        <td>Planning time</td>
+                                        <td>A plan is found within the time limit you set in your M0 plan.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T4</td>
+                                        <td>Out of reach</td>
+                                        <td>With the object moved out of reach, planning fails and your node prints a clear message instead of crashing or executing anything.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>T5</td>
+                                        <td>Success rate</td>
+                                        <td>Over N runs (N of at least 20) with randomised object positions inside a stated area, you report successes and failures and classify every failure.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                T4 builds on a behaviour the tutorial itself points out: moving the object out of reach makes planning fail.<sup><a href="#ref-1">[1]</a></sup> Your node should check the result of <code>plan()</code> and report it. For T5, randomise the object's x and y within a rectangle on the table and log the seed, so that a failing case can be repeated exactly. For each failure, note which stage failed. The Motion Planning Tasks panel shows failed solutions per stage, and the tutorial has a section on the debugging information MTC prints to the terminal.<sup><a href="#ref-1">[1]</a></sup> Typical classes are "no IK solution", "connect failed" and "table collision".
+                            </p>
+
+                            <h2 class="article-section-title">10. Common problems</h2>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">The Motion Planning Tasks panel is empty.</span> Check that the display is added and its Task Solution Topic is <code>/solution</code>.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Every run fails at the grasp stage.</span> Click the <code>ComputeIK</code> stage and look at its failed solutions.<sup><a href="#ref-1">[1]</a></sup> Usually the object is out of reach, the grasp transform points the tool the wrong way, or the frame names still say <code>panda_hand</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label">The node crashes at start-up with an unknown group.</span> A Panda name is left over. Search your code for <code>panda</code> and <code>hand</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label">Setting a gripper output fails on mock hardware.</span> That is a documented limit: the GPIO controller reports a failure when setting I/O in mock mode.<sup><a href="#ref-4">[4]</a></sup> Use attach and detach in the planning scene instead, or move to a simulator that supports it.</li>
+                                <li class="article-spec-item"><span class="spec-label">The build fails inside <code>moveit_task_constructor</code>.</span> The most likely cause is a branch that does not match your ROS 2 and MoveIt version. Re-check the branch before anything else.<sup><a href="#ref-1">[1]</a></sup></li>
+                            </ul>
+                            <p>
+                                <strong>From simulation to a real cell.</strong> Nothing you verify here is a safety validation. Mock hardware has no physics, Gazebo is an approximation, and the speeds, accelerations and collision margins that work in simulation do not carry straight over to a real robot. A real UR cell would need its own risk assessment, a safety configuration on the robot controller, reduced-speed first runs and the safeguards discussed in <a href="robotics-4-4.html">4.4 Making a Robot Cell Safe</a>. Your reflection should name at least two things you would have to check before running your node on real hardware.
+                            </p>
+
+                            <h2 class="article-section-title">11. Grading rubric</h2>
+                            <p>
+                                The rubric uses four levels with no neutral middle. An ASEE paper on capstone rubrics used a 1 to 4 scale from "Not Acceptable" to "Exemplary" and chose an even number of levels on purpose, so that evaluators must decide whether expectations were met.<sup><a href="#ref-7">[7]</a></sup> (The two middle labels below are this course's own.) Capstone research also warns that very detailed rubrics can narrow students' creativity, so the rows describe outcomes, not one fixed way to reach them.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Criterion</th>
+                                        <th scope="col">1 Not acceptable</th>
+                                        <th scope="col">2 Developing</th>
+                                        <th scope="col">3 Meets expectations</th>
+                                        <th scope="col">4 Exemplary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Functionality</strong></td>
+                                        <td>The UR task does not complete.</td>
+                                        <td>Completes for one hand-placed object pose only.</td>
+                                        <td>Completes a full pick and place with attach and detach for the stated area.</td>
+                                        <td>As 3, plus a stretch goal (gripper, Gazebo, several objects) working.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Planning scene and collisions</strong></td>
+                                        <td>No table, or plans pass through it.</td>
+                                        <td>Table present, but collisions are allowed too broadly.</td>
+                                        <td>No table collisions; collisions with the object are allowed only between grasp and release.</td>
+                                        <td>As 3, and the scene is built from parameters, not hard-coded numbers.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Test evidence</strong></td>
+                                        <td>No test results.</td>
+                                        <td>A few runs, with no randomisation or failure classes.</td>
+                                        <td>T1 to T5 done, with N of at least 20 and every failure classified by stage.</td>
+                                        <td>As 3, plus a change made in response to the failure analysis and re-tested.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Robustness and safety awareness</strong></td>
+                                        <td>The node crashes or hangs when planning fails.</td>
+                                        <td>Failure is logged, but the message is unclear.</td>
+                                        <td>Clear out-of-reach message; the report states the sim-to-real limits.</td>
+                                        <td>As 3, plus a concrete list of real-cell checks tied to 4.4.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Code and documentation</strong></td>
+                                        <td>Code missing or does not build.</td>
+                                        <td>Builds, but no README or launch instructions.</td>
+                                        <td>Git repository with a README that lets someone else reproduce a run.</td>
+                                        <td>As 3, with clear commits, comments where the UR port differs from the tutorial, and a launch file that starts everything.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Reflection</strong></td>
+                                        <td>Missing.</td>
+                                        <td>Describes what was done, not what was learned.</td>
+                                        <td>Answers the milestone prompts with specific examples.</td>
+                                        <td>As 3, and connects the failures to what would change in a real cell.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">12. Reflection questions</h2>
+                            <p>
+                                Reflection can be brief and frequent, or longer at key milestones.<sup><a href="#ref-2">[2]</a></sup> This project uses both: a few sentences with every hand-in, and a longer reflection with the M5 report.
+                            </p>
+                            <ol class="article-spec-list">
+                                <li>What failed first, and how did you work out why? Name the tool you used (stage tree, terminal output, RViz).</li>
+                                <li>Which stage was hardest to get working on the UR, and what was different about it compared with the Panda?</li>
+                                <li>What does your success rate mean? Over what range of object poses does it hold, and where does it break down?</li>
+                                <li>In a real cell the object pose would come from a camera (see 2.8). What new failure modes would that add to your test plan?</li>
+                                <li>What would you change, check or measure before running this node on a real UR in a real cell?</li>
+                            </ol>
+
+                            <h2 class="article-section-title">13. Stretch goals</h2>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">A real gripper model.</span> Add a gripper to the UR description and SRDF (Option B) and restore the open and close stages.<sup><a href="#ref-8">[8]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Gazebo physics.</span> Make the part physically move with the tool in Gazebo, and document how you did it.</li>
+                                <li class="article-spec-item"><span class="spec-label">URSim.</span> Run the driver against URSim instead of mock hardware, which from the driver's point of view is equivalent, and compare the behaviour.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Choose by cost.</span> Plan more than 5 solutions and compare the costs shown in the stage tree before executing the cheapest.<sup><a href="#ref-1">[1]</a></sup></li>
+                            </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Before you start: confirm that you can still launch the UR5e on mock hardware with MoveIt from 3.8, and plan one pose goal in RViz.</li>
+                                    <li>Clone and build <code>moveit_task_constructor</code> on the branch that matches your ROS 2 release, run <code>demo.launch.py</code> and the <code>pick_place_demo</code>, and add the Motion Planning Tasks display on <code>/solution</code>.</li>
+                                    <li>Click through all the stages, then move the cylinder out of reach in the demo code, rebuild and run again. Screenshot the stage that fails. That screenshot and a one-page plan are your M0 hand-in.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">14. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">MoveIt maintainers (PickNik Robotics), &ldquo;Pick and Place with MoveIt Task Constructor,&rdquo; <em>MoveIt 2 Tutorials</em>; file <code>doc/tutorials/pick_and_place_with_moveit_task_constructor/pick_and_place_with_moveit_task_constructor.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/pick_and_place_with_moveit_task_constructor.rst" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor</a>.</li>
+                                <li id="ref-2">Virginia Tech, Teaching and Learning Online Support (TLOS), &ldquo;Assessing and reflecting on project work,&rdquo; <em>Project-Based Learning</em> teaching resources (page not opened; content taken from a search summary, October 2026). <a href="https://teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html" target="_blank" rel="noopener noreferrer">teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html</a>.</li>
+                                <li id="ref-3">MoveIt maintainers (PickNik Robotics), MTC pick-and-place tutorial node, <code>doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp</a>.</li>
+                                <li id="ref-4">Universal Robots, &ldquo;Simulation,&rdquo; <em>Universal Robots ROS 2 Documentation</em>; file <code>ur_robot_driver/doc/usage/simulation.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>main</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/simulation.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/simulation.rst</a>.</li>
+                                <li id="ref-5">Universal Robots, <em>Universal_Robots_ROS2_GZ_Simulation</em> README (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_GZ_Simulation, <code>ros2</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_GZ_Simulation/blob/ros2/README.md" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_GZ_Simulation/blob/ros2/README.md</a>.</li>
+                                <li id="ref-6">American Society for Engineering Education (ASEE), conference paper 48955 on milestone evaluations in a capstone (PDF not opened; content taken from a search summary, October 2026). <a href="https://nemo.asee.org/public/conferences/365/papers/48955/download" target="_blank" rel="noopener noreferrer">nemo.asee.org/public/conferences/365/papers/48955/download</a>.</li>
+                                <li id="ref-7">American Society for Engineering Education (ASEE), &ldquo;Successful use of rubrics to assess student performance in capstone projects&rdquo; (PDF not opened; content taken from a search summary, October 2026). <a href="https://strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-projects.pdf" target="_blank" rel="noopener noreferrer">strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-projects.pdf</a>.</li>
+                                <li id="ref-8">PickNik Robotics, <em>ros2_robotiq_gripper</em> README (source read on GitHub: PickNikRobotics/ros2_robotiq_gripper, <code>main</code> branch), October 2026. Available: <a href="https://github.com/PickNikRobotics/ros2_robotiq_gripper/blob/main/README.md" target="_blank" rel="noopener noreferrer">github.com/PickNikRobotics/ros2_robotiq_gripper/blob/main/README.md</a>.</li>
+                                <li id="ref-9">American Society for Engineering Education (ASEE), PEER conference paper 49669 on capstone teamwork and communication rubrics (PDF not opened; title and authors not confirmed; content taken from a search summary, October 2026). <a href="https://peer.asee.org/49669.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/49669.pdf</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-6-1.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">6.1 Capstone: Build a Simulated Work Cell</span>
+                                </a>
+                                <a href="robotics-6-3.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">6.3 Capstone: Speed-Controlled Wheel</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>
