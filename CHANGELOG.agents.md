@@ -31,3 +31,6 @@ Short log of agent-made changes so new sessions can skip re-exploring. Newest fi
 
 ## Earlier (#4 to #8)
 - #8 deepened Chapters 2 to 5; #7 deepened Chapter 1 and introduced inline `ref-N` citations; #6 added 1-6 and 4-3 from the roadmap assessment; #4/#5 added history, ROS, ethics sections and matching quiz/objectives.
+
+## Sonnet citation-check trial: 4-3
+- Checked 4-3 refs against sources (14 of 17 recorded; refs 4, 11, 15 still unchecked). Reworded the China robot-density sentence (IFR text says "push to use automation technology", not "massive investment"). Registry and index regenerated.
