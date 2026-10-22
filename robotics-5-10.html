@@ -1,0 +1,441 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 5.10 Kinematics of a 2-Link Arm
+-->
+<html lang="en">
+    <head>
+        <title>5.10 Kinematics of a 2-Link Arm — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="The full math of a planar two-link arm: forward kinematics, the reachable ring, closed-form inverse kinematics with atan2, rounding edge cases, and the Jacobian singularity." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-5-10.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="5.10 Kinematics of a 2-Link Arm — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="The full math of a planar two-link arm: forward kinematics, the reachable ring, closed-form inverse kinematics with atan2, rounding edge cases, and the Jacobian singularity." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-5-10.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="5.10 Kinematics of a 2-Link Arm, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="5.10 Kinematics of a 2-Link Arm — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="The full math of a planar two-link arm: forward kinematics, the reachable ring, closed-form inverse kinematics with atan2, rounding edge cases, and the Jacobian singularity." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-control.html">Chapter 5 &middot; Extra: Electronics and Control Basics</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">5.10 Kinematics of a 2-Link Arm</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+                            <h2 class="article-section-title">01. From the idea to the full math</h2>
+                            <p>
+                                Lesson <a href="robotics-1-6.html">1.6</a> introduced forward and inverse kinematics with a small planar arm: two revolute joints, a first link L<sub>1</sub> = 0.4 m long and a second link L<sub>2</sub> = 0.3 m long. This lesson works through the complete math for the same arm: where the formulas come from, which targets it can reach, how to write inverse kinematics code that does not break at the edges, and how the Jacobian predicts the poses where the arm loses a direction of motion.
+                            </p>
+                            <p>
+                                Every number here uses the 1.6 arm, so you can check each answer in the <a href="robotics-1-6.html">lesson 1.6 simulator</a>: its sliders set &theta;<sub>1</sub> and &theta;<sub>2</sub>, and tapping inside its ring places the tool and solves inverse kinematics.
+                            </p>
+                            <p>
+                                The conventions are the same as in the simulator:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Frame:</span> the shoulder joint is at the origin, x points right, y points up, and positive angles turn counter-clockwise.</li>
+                                <li class="article-spec-item"><span class="spec-label">&theta;<sub>1</sub>:</span> the angle of link 1, measured from the x-axis.</li>
+                                <li class="article-spec-item"><span class="spec-label">&theta;<sub>2</sub>:</span> the angle of link 2 <em>relative to link 1</em>. &theta;<sub>2</sub> = 0 means the arm is straight. &theta;<sub>2</sub> = &plusmn;180&deg; means link 2 is folded back on top of link 1.</li>
+                                <li class="article-spec-item"><span class="spec-label">Units:</span> lengths in meters. The formulas use radians, but the worked answers are given in degrees, to match the simulator's readout.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">02. Forward kinematics: adding two rotating vectors</h2>
+                            <p>
+                                The tool position is the sum of two vectors. Link 1 points along the angle &theta;<sub>1</sub>, so the elbow is at (L<sub>1</sub> cos &theta;<sub>1</sub>, L<sub>1</sub> sin &theta;<sub>1</sub>). Link 2 is mounted on link 1, so its direction is &theta;<sub>1</sub> plus its own joint angle: joint angles add along a serial chain. That gives the forward kinematics (FK):
+                            </p>
+                            <pre class="article-code"><code>x = L1&middot;cos &theta;1 + L2&middot;cos(&theta;1 + &theta;2)
+y = L1&middot;sin &theta;1 + L2&middot;sin(&theta;1 + &theta;2)
+tool angle &phi; = &theta;1 + &theta;2</code></pre>
+                            <p>
+                                The open-source PythonRobotics collection uses exactly these two steps in its two-joint arm demo. It computes the elbow as the shoulder plus (l1 cos &theta;1, l1 sin &theta;1), then the wrist as the elbow plus (l2 cos(&theta;1 + &theta;2), l2 sin(&theta;1 + &theta;2)). The file names Peter Corke's textbook <em>Robotics, Vision and Control</em> as its reference.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                Forward kinematics always has exactly one answer. Lesson 1.6 worked the example &theta;<sub>1</sub> = 30&deg;, &theta;<sub>2</sub> = 45&deg;, which puts the tool at (0.4241, 0.4898) m, the same point the simulator's readout shows.
+                            </p>
+
+                            <h2 class="article-section-title">03. The workspace is a ring</h2>
+                            <p>
+                                Before solving inverse kinematics, it helps to know which points the arm can reach at all. Draw the triangle formed by the shoulder, the elbow and the tool. Its sides are L<sub>1</sub>, L<sub>2</sub> and r, where r = &radic;(x&sup2; + y&sup2;) is the distance from the shoulder to the tool. A triangle can exist only if each side is no longer than the sum of the other two (the triangle inequality). For the side r, that means:
+                            </p>
+                            <pre class="article-code"><code>|L1 &minus; L2| &le; r &le; L1 + L2
+0.1 m &le; r &le; 0.7 m      (for L1 = 0.4 m, L2 = 0.3 m)</code></pre>
+                            <p>
+                                So the reachable workspace is a ring (in geometry, an annulus): a disk of radius 0.7 m with a hole of radius 0.1 m cut out of the middle. The simulator draws both circles. The number of inverse kinematics solutions depends on where the target sits relative to that ring:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Strictly inside the ring:</span> two solutions. The triangle can be flipped across the line from shoulder to tool, giving an elbow on either side.</li>
+                                <li class="article-spec-item"><span class="spec-label">On the outer circle (r = 0.7 m):</span> one solution, the arm fully stretched (&theta;<sub>2</sub> = 0). The triangle has collapsed into a straight line, so there is nothing to flip.</li>
+                                <li class="article-spec-item"><span class="spec-label">On the inner circle (r = 0.1 m):</span> one solution, the arm fully folded (&theta;<sub>2</sub> = 180&deg;). The triangle has collapsed the other way.</li>
+                                <li class="article-spec-item"><span class="spec-label">Outside the ring or inside the hole:</span> no solution.</li>
+                            </ul>
+                            <p>
+                                Two practical notes. First, the hole exists only because the links have different lengths. If L<sub>1</sub> = L<sub>2</sub>, the hole shrinks to the single point r = 0, and at that point there are infinitely many solutions (&theta;<sub>2</sub> = 180&deg; with any &theta;<sub>1</sub>), which no IK function can list. Unequal links, like 0.4 m and 0.3 m, make the inner boundary visible. Second, this ring is the ideal workspace. A real arm has joint limits, cables and its own body in the way, so it reaches only part of the ring.
+                            </p>
+
+                            <h2 class="article-section-title">04. Closed-form inverse kinematics</h2>
+                            <p>
+                                Inverse kinematics (IK) runs the other way: given a target (x, y), find &theta;<sub>1</sub> and &theta;<sub>2</sub>. For this arm there is a closed-form answer in two steps.
+                            </p>
+                            <p>
+                                <span class="spec-label">Step 1: the elbow angle.</span> Square both FK equations and add them. The cross terms combine into cos &theta;<sub>1</sub> cos(&theta;<sub>1</sub> + &theta;<sub>2</sub>) + sin &theta;<sub>1</sub> sin(&theta;<sub>1</sub> + &theta;<sub>2</sub>) = cos &theta;<sub>2</sub>, and the squared terms collapse because cos&sup2; + sin&sup2; = 1. &theta;<sub>1</sub> drops out completely:
+                            </p>
+                            <pre class="article-code"><code>x&sup2; + y&sup2; = L1&sup2; + L2&sup2; + 2&middot;L1&middot;L2&middot;cos &theta;2
+
+cos &theta;2 = (x&sup2; + y&sup2; &minus; L1&sup2; &minus; L2&sup2;) / (2&middot;L1&middot;L2)
+sin &theta;2 = &plusmn;&radic;(1 &minus; cos&sup2; &theta;2)
+&theta;2     = atan2(sin &theta;2, cos &theta;2)</code></pre>
+                            <p>
+                                This is the law of cosines for the shoulder-elbow-tool triangle from section 03. The &plusmn; sign is the choice between the two elbow positions. If the formula gives |cos &theta;<sub>2</sub>| &gt; 1, the target is outside the ring and there is no solution.
+                            </p>
+                            <p>
+                                <span class="spec-label">Step 2: the shoulder angle.</span> The direction from the shoulder to the target is atan2(y, x). That direction is &theta;<sub>1</sub> plus the extra angle that link 2 adds, seen from the shoulder. That extra angle is just the FK of the arm with &theta;<sub>1</sub> = 0: the tip would be at (L<sub>1</sub> + L<sub>2</sub> cos &theta;<sub>2</sub>, L<sub>2</sub> sin &theta;<sub>2</sub>). Subtract it:
+                            </p>
+                            <pre class="article-code"><code>&theta;1 = atan2(y, x) &minus; atan2(L2&middot;sin &theta;2, L1 + L2&middot;cos &theta;2)</code></pre>
+                            <p>
+                                PythonRobotics uses the same pair of formulas: it computes &theta;<sub>2</sub> with an arccosine of the law-of-cosines expression and then &theta;<sub>1</sub> = atan2(y, x) &minus; atan2(l2 sin &theta;2, l1 + l2 cos &theta;2).<sup><a href="#ref-1">[1]</a></sup> The Modern Robotics course materials describe the 2R solution with the same two tools, the two-argument arctangent and the law of cosines.<sup><a href="#ref-2">[2]</a></sup> Section 06 explains why this lesson uses atan2 for &theta;<sub>2</sub> instead of an arccosine.
+                            </p>
+
+                            <h2 class="article-section-title">05. Worked example: two answers for one target</h2>
+                            <p>
+                                Take the target (x, y) = (0.5, 0.2) m. Its distance from the shoulder is r = &radic;0.29 = 0.539 m, which is inside the ring, so expect two solutions.
+                            </p>
+                            <pre class="article-code"><code>cos &theta;2 = (0.25 + 0.04 &minus; 0.16 &minus; 0.09) / (2&middot;0.4&middot;0.3) = 0.04 / 0.24 = 0.1667
+sin &theta;2 = &plusmn;&radic;(1 &minus; 0.1667&sup2;) = &plusmn;0.9860
+&theta;2     = &plusmn;80.406&deg;
+
+atan2(y, x)                          = atan2(0.2, 0.5)     = 21.801&deg;
+atan2(L2&middot;sin &theta;2, L1 + L2&middot;cos &theta;2) = atan2(&plusmn;0.2958, 0.45) = &plusmn;33.319&deg;
+
+Solution A (&theta;2 &ge; 0): &theta;1 = 21.801&deg; &minus; 33.319&deg; = &minus;11.517&deg;,  &theta;2 = +80.406&deg;
+Solution B (&theta;2 &lt; 0): &theta;1 = 21.801&deg; + 33.319&deg; =  55.120&deg;,  &theta;2 = &minus;80.406&deg;</code></pre>
+                            <p>
+                                Check by running FK on both. Solution A puts the elbow at (0.392, &minus;0.080), below the line from the shoulder to the target. Solution B puts it at (0.229, 0.328), above that line. Both tips land on (0.500, 0.200). The labels A and B match the simulator, whose buttons are named &ldquo;Solution A (&theta;2 &ge; 0)&rdquo; and &ldquo;Solution B (&theta;2 &lt; 0)&rdquo;.
+                            </p>
+                            <p>
+                                For this target, Solution A is the &ldquo;elbow down&rdquo; posture and B is &ldquo;elbow up&rdquo;, the same naming as in lesson 1.6. Be careful with those names, though. The sign of &theta;<sub>2</sub> only says which side of the shoulder-to-target line the elbow is on (positive &theta;<sub>2</sub> puts it on the clockwise side). Whether that side looks &ldquo;down&rdquo; depends on where the target is. Mirror the target to (&minus;0.5, 0.2): Solution A becomes (124.880&deg;, +80.406&deg;) with its elbow at (&minus;0.229, 0.328), now <em>above</em> the line, so A is the elbow-up posture there. Judge &ldquo;up&rdquo; and &ldquo;down&rdquo; from the picture, not from the sign.
+                            </p>
+                            <p>
+                                Which solution should a controller use? A common rule is to pick the branch closest to the current joint angles, within the joint limits. PythonRobotics uses a simpler rule: if &theta;<sub>1</sub> comes out negative, it flips the sign of &theta;<sub>2</sub> to take the other branch.<sup><a href="#ref-1">[1]</a></sup> Whatever the rule, a controller should not switch branches in the middle of a straight-line move. To get from one elbow posture to the other, link 2 has to swing through the straight (&theta;<sub>2</sub> = 0) or folded (&theta;<sub>2</sub> = 180&deg;) pose, which section 09 shows is a singularity. This is one reason industrial controllers store a configuration with each taught point (see ABB's <code>robconf</code> in lesson <a href="robotics-2-3.html">2.3</a>).
+                            </p>
+
+                            <h2 class="article-section-title">06. Why atan2, and not atan or acos</h2>
+                            <p>
+                                The ordinary arctangent, atan(y/x), only sees the ratio y/x. That ratio is the same for (0.5, 0.2) and (&minus;0.5, &minus;0.2), and the same for (&minus;0.5, 0.2) and (0.5, &minus;0.2), so atan cannot tell opposite quadrants apart. For the target (&minus;0.5, 0.2), atan(y/x) returns &minus;21.80&deg;, while the true direction, atan2(0.2, &minus;0.5), is 158.20&deg;. The arm would point the wrong way. atan(y/x) also divides by zero for any target on the y-axis, such as (0, 0.7). atan2(y, x) takes both numbers separately, uses their signs to find the quadrant, and works for x = 0.
+                            </p>
+                            <p>
+                                For &theta;<sub>2</sub> it is tempting to write &theta;<sub>2</sub> = acos(cos &theta;<sub>2</sub>), as PythonRobotics does.<sup><a href="#ref-1">[1]</a></sup> That works, but it has two weaknesses:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">It hides one branch.</span> acos only returns angles between 0 and 180&deg;, so it always gives Solution A. You must remember to add the negative branch yourself.</li>
+                                <li class="article-spec-item"><span class="spec-label">It is touchy at the edges.</span> The slope of acos becomes infinite as its input approaches &plusmn;1, which is exactly the boundary of the ring. A tiny error in cos &theta;<sub>2</sub> there becomes a large error in &theta;<sub>2</sub>. And an input even slightly outside [&minus;1, 1] is an error, as the next section shows.</li>
+                            </ul>
+                            <p>
+                                Writing &theta;<sub>2</sub> = atan2(sin &theta;<sub>2</sub>, cos &theta;<sub>2</sub>) uses both pieces of information, gives either branch by the sign you choose for sin &theta;<sub>2</sub>, and is well behaved everywhere except at (0, 0).
+                            </p>
+
+                            <h2 class="article-section-title">07. Edge cases: rounding at the boundary</h2>
+                            <p>
+                                The formulas in section 04 are exact on paper. On a computer, every number carries a small rounding error, and the boundary of the ring is where those errors cause trouble. The following results come from running the code in this lesson in Python with ordinary double-precision floats, using L<sub>1</sub> = 0.4 and L<sub>2</sub> = 0.3.
+                            </p>
+                            <p>
+                                <span class="spec-label">Problem 1: cos &theta;<sub>2</sub> slightly above 1.</span> Compute the tip of the fully stretched arm at &theta;<sub>1</sub> = 60&deg;, &theta;<sub>2</sub> = 0 with FK, then feed that point back into the cos &theta;<sub>2</sub> formula. Mathematically the result is exactly 1. The computer gets 1.0000000000000004. Python's <code>math.acos</code> then raises <code>ValueError: math domain error</code>, and NumPy's <code>np.arccos</code> returns <code>nan</code> with only a warning. The folded pose is similar: at &theta;<sub>2</sub> = 180&deg;, the computed value was &minus;1.0000000000000002 for every &theta;<sub>1</sub> tried. A point you computed from a perfectly valid pose is rejected as unreachable.
+                            </p>
+                            <p>
+                                <span class="spec-label">Problem 2: two solutions where there should be one.</span> Now type the target (0, 0.7), which is exactly on the outer circle. The computed cos &theta;<sub>2</sub> is 0.99999999999999989, just <em>below</em> 1. No error this time, but &radic;(1 &minus; cos&sup2; &theta;<sub>2</sub>) turns that error of about 10<sup>&minus;16</sup> into sin &theta;<sub>2</sub> &asymp; 1.5 &times; 10<sup>&minus;8</sup>. A naive &ldquo;if sin &theta;<sub>2</sub> == 0&rdquo; test fails, and the code reports two solutions that differ by about 10<sup>&minus;8</sup> rad. The square root amplifies rounding near the boundary.
+                            </p>
+                            <p>
+                                <span class="spec-label">The fix: clamp and snap with a tolerance.</span>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item">If |cos &theta;<sub>2</sub>| &gt; 1 + tol, the target really is out of reach: return no solution.</li>
+                                <li class="article-spec-item">Otherwise clamp cos &theta;<sub>2</sub> into [&minus;1, 1], so rounding noise can never reach acos or the square root as an invalid value.</li>
+                                <li class="article-spec-item">If |cos &theta;<sub>2</sub>| &gt; 1 &minus; tol, treat the target as on a boundary circle: set sin &theta;<sub>2</sub> = 0 and return one solution.</li>
+                            </ul>
+                            <p>
+                                The code below uses tol = 10<sup>&minus;9</sup>. Points within that tolerance of a boundary are snapped to the single boundary solution, which moves the tip by a tiny amount. In a round-trip test over 100,000 random joint pairs (FK, then IK, then FK again), the largest tip error with this snapping was 5 &times; 10<sup>&minus;12</sup> m, far below anything a real robot can resolve.
+                            </p>
+                            <p>
+                                These edge cases are not only academic. The PythonRobotics demo only checks the outer boundary: if the target is farther than l1 + l2, it sets &theta;<sub>2</sub> = 0 and points the arm straight at the target. It has no check for the inner hole, because its two links are equal (l1 = l2 = 1), and it catches <code>ValueError</code> as &ldquo;Unreachable goal&rdquo;.<sup><a href="#ref-1">[1]</a></sup> Since <code>np.arccos</code> returns <code>nan</code> instead of raising <code>ValueError</code>, that handler would not catch an out-of-range value. The file is a good visual demo, but not robust IK to copy.
+                            </p>
+
+                            <h2 class="article-section-title">08. Robust IK in Python</h2>
+                            <p>
+                                Here is the full solver, written for this lesson and tested with the round-trip check above. It returns a list: two solutions inside the ring, one on a boundary circle and none outside. The first entry always has &theta;<sub>2</sub> &ge; 0 (Solution A), and &theta;<sub>1</sub> is wrapped into (&minus;180&deg;, 180&deg;] like the simulator's slider.
+                            </p>
+                            <pre class="article-code"><code>from math import atan2, sqrt, cos, sin, pi
+
+def fk(t1, t2, L1, L2):
+    """Planar 2R forward kinematics: joint angles (rad) -> tip (x, y)."""
+    return (L1*cos(t1) + L2*cos(t1 + t2),
+            L1*sin(t1) + L2*sin(t1 + t2))
+
+def ik(x, y, L1, L2, tol=1e-9):
+    """Closed-form IK. Returns a list of (t1, t2): 2 inside the annulus,
+    1 on its boundary, 0 if unreachable. First entry has t2 &gt;= 0."""
+    c2 = (x*x + y*y - L1*L1 - L2*L2) / (2*L1*L2)    # law of cosines
+    if abs(c2) &gt; 1 + tol:
+        return []                                    # outside annulus
+    c2 = max(-1.0, min(1.0, c2))                     # clamp rounding noise
+    if abs(c2) &gt; 1 - tol:                            # on a boundary circle
+        branches = [0.0]                             # sin(t2) = 0: one solution
+    else:
+        s = sqrt(1 - c2*c2)
+        branches = [s, -s]                           # two elbow branches
+    sols = []
+    for s2 in branches:
+        t2 = atan2(s2, c2)
+        t1 = atan2(y, x) - atan2(L2*s2, L1 + L2*c2)
+        sols.append(((t1 + pi) % (2*pi) - pi, t2))   # wrap t1 to (-pi, pi]
+    return sols
+
+if __name__ == "__main__":
+    L1, L2 = 0.4, 0.3                                # the arm from lesson 1.6
+    for target in [(0.5, 0.2), (0.0, 0.7), (0.1, 0.0), (0.6, 0.5)]:
+        sols = ik(*target, L1, L2)
+        print(target, len(sols), "solution(s)")
+        for t1, t2 in sols:
+            x, y = fk(t1, t2, L1, L2)
+            print(f"  t1={t1*180/pi:8.3f} deg  t2={t2*180/pi:8.3f} deg"
+                  f"  -> FK ({x:.6f}, {y:.6f})")</code></pre>
+                            <p>
+                                Output:
+                            </p>
+                            <pre class="article-code"><code>(0.5, 0.2) 2 solution(s)
+  t1= -11.517 deg  t2=  80.406 deg  -> FK (0.500000, 0.200000)
+  t1=  55.120 deg  t2= -80.406 deg  -> FK (0.500000, 0.200000)
+(0.0, 0.7) 1 solution(s)
+  t1=  90.000 deg  t2=   0.000 deg  -> FK (0.000000, 0.700000)
+(0.1, 0.0) 1 solution(s)
+  t1=   0.000 deg  t2= 180.000 deg  -> FK (0.100000, 0.000000)
+(0.6, 0.5) 0 solution(s)</code></pre>
+                            <p>
+                                The four targets cover every case from section 03. (0.5, 0.2) is inside the ring. (0, 0.7) is on the outer circle: the arm points straight up, fully stretched. (0.1, 0) is on the inner circle: link 1 points along x to (0.4, 0) and link 2 folds straight back to (0.1, 0). (0.6, 0.5) is 0.781 m away, beyond the 0.7 m reach, and its cos &theta;<sub>2</sub> works out to 1.5.
+                            </p>
+
+                            <h2 class="article-section-title">09. The Jacobian and singularities</h2>
+                            <p>
+                                Kinematics so far was about positions. The <em>Jacobian</em> is about velocities. Differentiate the FK equations with respect to time and collect the joint speeds &theta;&#775;<sub>1</sub> and &theta;&#775;<sub>2</sub>:
+                            </p>
+                            <pre class="article-code"><code>[ x&#775; ]   [ &minus;L1&middot;sin &theta;1 &minus; L2&middot;sin(&theta;1+&theta;2)   &minus;L2&middot;sin(&theta;1+&theta;2) ] [ &theta;&#775;1 ]
+[ y&#775; ] = [  L1&middot;cos &theta;1 + L2&middot;cos(&theta;1+&theta;2)    L2&middot;cos(&theta;1+&theta;2) ] [ &theta;&#775;2 ]
+             \_____________________________ J(&theta;) _____________________________/</code></pre>
+                            <p>
+                                Each column of J is the tool velocity produced by one joint turning at 1 rad/s. At the 1.6 example pose, &theta;<sub>1</sub> = 30&deg; and &theta;<sub>2</sub> = 45&deg;, J = [[&minus;0.4898, &minus;0.2898], [0.4241, 0.0776]]. Notice that the first column is (&minus;y, x) of the tool: turning the shoulder swings the whole arm around the origin.
+                            </p>
+                            <p>
+                                The determinant of J tells you whether the joints can move the tool in every direction. Multiply it out and use the identity sin(a &minus; b) = sin a cos b &minus; cos a sin b:
+                            </p>
+                            <pre class="article-code"><code>det J = (&minus;L1&middot;s1 &minus; L2&middot;s12)(L2&middot;c12) + (L2&middot;s12)(L1&middot;c1 + L2&middot;c12)
+      = L1&middot;L2&middot;(s12&middot;c1 &minus; c12&middot;s1)
+      = L1&middot;L2&middot;sin &theta;2            (s1 = sin &theta;1, s12 = sin(&theta;1+&theta;2), and so on)</code></pre>
+                            <p>
+                                For the 1.6 pose that is 0.12 &middot; sin 45&deg; = 0.0849 m&sup2;, which matches a numerical determinant of the matrix above. Lecture notes on Jacobians reach the same formula and the same conclusions.<sup><a href="#ref-3">[3]</a></sup> Three things follow from it:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">The singular poses are &theta;<sub>2</sub> = 0 and &theta;<sub>2</sub> = 180&deg;.</span> det J = 0 exactly when the arm is fully stretched or fully folded.<sup><a href="#ref-3">[3]</a></sup> &theta;<sub>1</sub> does not appear, so the shoulder angle never matters.</li>
+                                <li class="article-spec-item"><span class="spec-label">The singular poses are the edges of the ring.</span> Stretched means r = 0.7 m and folded means r = 0.1 m. The poses where IK has one solution instead of two (section 03) and the poses where J is singular are the same set.</li>
+                                <li class="article-spec-item"><span class="spec-label">The arm loses the radial direction.</span> At &theta;<sub>1</sub> = 0, &theta;<sub>2</sub> = 0 the Jacobian is [[0, 0], [0.7, 0.3]]. Both columns point along y, sideways to the arm. Neither joint can move the tool along x, toward or away from the shoulder. The arm has dropped from two directions of motion to one.</li>
+                            </ul>
+                            <p>
+                                Near a singularity the arm can still move radially, but only with very fast joints. To command a tool velocity you solve J&middot;&theta;&#775; = v for &theta;&#775;, which divides by det J. Take &theta;<sub>1</sub> = 0 and ask for a radial tool speed of 0.1 m/s (outward along the line from shoulder to tool):
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item">&theta;<sub>2</sub> = 10&deg;: the joints must turn at about 82&deg;/s and &minus;192&deg;/s.</li>
+                                <li class="article-spec-item">&theta;<sub>2</sub> = 5&deg;: about 164&deg;/s and &minus;383&deg;/s.</li>
+                                <li class="article-spec-item">&theta;<sub>2</sub> = 1&deg;: about 821&deg;/s and &minus;1,915&deg;/s.</li>
+                            </ul>
+                            <p>
+                                The joint speeds grow like 1/&theta;<sub>2</sub>. The condition number of J, a measure of how much it amplifies errors, grows the same way: about 4.4 at &theta;<sub>2</sub> = 1 rad, 48 at 0.1 rad, 483 at 0.01 rad and 4,830 at 0.001 rad. This is the outer-workspace singularity from lesson 1.6, now with the formula behind it: a straight-line tool move near the edge of the ring asks for joint speeds that grow without limit.
+                            </p>
+
+                            <h2 class="article-section-title">10. From two links to a six-axis robot</h2>
+                            <p>
+                                An industrial arm uses the same ideas in 3D. Each joint adds a rotation and an offset, so forward kinematics becomes a product of 4 &times; 4 homogeneous transforms, one per joint, written either with Denavit&ndash;Hartenberg parameters (see 1.6) or as a <em>product of exponentials</em>. The Modern Robotics code library implements product-of-exponentials FK as <code>FKinSpace(M, Slist, thetalist)</code> and <code>FKinBody</code>, and computes the full 6 &times; n Jacobian with <code>JacobianSpace</code> and <code>JacobianBody</code>, the general version of the 2 &times; 2 matrix in section 09.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                <span class="spec-label">Closed-form IK when the wrist is spherical.</span> Most industrial arms have a spherical wrist: the last three joint axes meet at one point. Course slides and research papers trace closed-form solutions for this case to Pieper's 1968 work on arms with three consecutive axes intersecting at a point.<sup><a href="#ref-6">[6]</a></sup> The wrist-centre position then depends only on joints 1 to 3, so IK splits into a position problem (find the wrist centre, with law-of-cosines geometry much like this lesson's elbow) and an orientation problem for joints 4 to 6. Each split brings its own two-way choices, such as elbow up or down and wrist flipped or not. Sources describe up to 8 solutions for this kind of arm; a reference page for the Puma 560 gives 8 &ldquo;because of the different possible arm configurations&rdquo;.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup> A general 6R arm with no special geometry is reported to have at most 16 solutions.<sup><a href="#ref-8">[8]</a></sup> Treat these two counts as reported figures: they come from summaries of the sources, and a standard robotics textbook is the place to confirm them.
+                            </p>
+                            <p>
+                                <span class="spec-label">Numerical IK when there is no closed form.</span> For a general arm, or a 7-axis arm, controllers solve IK numerically. The Modern Robotics library documents its function <code>IKinBody</code> as one that &ldquo;Uses an iterative Newton-Raphson root-finding method&rdquo;. It repeats &theta; &larr; &theta; + J<sup>+</sup>(&theta;)&middot;error, where J<sup>+</sup> is the pseudoinverse of the Jacobian, until the orientation and position errors are below set tolerances. It needs an initial guess of joint angles that is already close to the target pose, stops after a hard-coded 20 iterations, and reports <code>success = False</code> if it has not converged.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> Peter Corke's Robotics Toolbox for Python offers a Levenberg&ndash;Marquardt solver, <code>robot.ik_LM(Tep)</code>, and its README demonstrates it on the 7-axis Franka Panda, then checks the answer by running FK with <code>robot.fkine(q)</code>. The README claims numerical IK can be solved &ldquo;in as little as 4 microseconds&rdquo;.<sup><a href="#ref-9">[9]</a></sup>
+                            </p>
+                            <p>
+                                The same update works on our 2-link arm and shows two weaknesses of numerical IK. Starting from &theta; = (0.1, 0.1) rad toward the target (0.5, 0.2), it converged to an error below 10<sup>&minus;10</sup> m in 7 iterations. It found only one answer, Solution B (55.12&deg;, &minus;80.41&deg;), chosen by the starting guess; Solution A was never reported. Its raw angles, &minus;304.88&deg; and 639.59&deg;, match that pose only after wrapping: plain Newton-Raphson ignores joint limits. It also divides by the Jacobian, so it struggles exactly where det J &rarr; 0, which is one reason practical solvers use damped methods such as Levenberg&ndash;Marquardt.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Solve IK by hand for the target (0.5, 0.2) with L<sub>1</sub> = 0.4 m and L<sub>2</sub> = 0.3 m. You should get Solution A (&minus;11.5&deg;, +80.4&deg;) and Solution B (55.1&deg;, &minus;80.4&deg;). In the <a href="robotics-1-6.html">lesson 1.6 simulator</a>, set &theta;<sub>1</sub> = &minus;12&deg; and &theta;<sub>2</sub> = 80&deg;: the readout should show the tool near (0.504, 0.195), off slightly because the sliders move in whole degrees. Then press &ldquo;Solution B (&theta;2 &lt; 0)&rdquo; and check that the arm jumps to about (54&deg;, &minus;80&deg;) with the tool in the same place. The simulator solves from the rounded tool position, which is why it shows 54&deg; rather than the exact 55.1&deg;.</li>
+                                    <li>Outer edge: solve the target (0, 0.7). You should get one solution, (90&deg;, 0&deg;). Set it on the sliders; the readout should report 0.700 m from the base and warn that the arm is fully stretched, a singularity.</li>
+                                    <li>Inner edge: solve the target (0.1, 0), on the 0.1 m inner circle. You should get one solution, (0&deg;, 180&deg;). Set it on the sliders and look at the drawing: link 2 lies on top of link 1. The simulator only flags the stretched case, so decide for yourself, using det J = L<sub>1</sub>L<sub>2</sub> sin &theta;<sub>2</sub>, whether this pose is also singular.</li>
+                                    <li>Unreachable: compute cos &theta;<sub>2</sub> for (0.6, 0.5) and for (0.05, 0.05). You should get 1.5 and about &minus;1.02, both outside [&minus;1, 1]. Tap near each point in the simulator and read its out-of-reach message.</li>
+                                    <li>Run the Python code from section 08 with your own targets. Then write a naive version that computes <code>t2 = acos(c2)</code> with no tolerance checks, and give it the point <code>fk(pi/3, 0.0, 0.4, 0.3)</code>. What happens, and which lines of the section 08 code prevent it? (Compare with section 07.)</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">11. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">PythonRobotics contributors, &ldquo;two_joint_arm_to_point_control.py,&rdquo; <em>PythonRobotics</em>, GitHub repository, ArmNavigation section (cites P. Corke, <em>Robotics, Vision and Control</em>, 2017, p. 102). <a href="https://github.com/AtsushiSakai/PythonRobotics/blob/master/ArmNavigation/two_joint_arm_to_point_control/two_joint_arm_to_point_control.py" target="_blank" rel="noopener noreferrer">github.com/AtsushiSakai/PythonRobotics/.../two_joint_arm_to_point_control.py</a>.</li>
+                                <li id="ref-2">Northwestern University, &ldquo;Inverse Kinematics of Open Chains,&rdquo; <em>Modern Robotics</em> (Lynch and Park) online book resources. <a href="https://modernrobotics.northwestern.edu/nu-gm-book-resource/inverse-kinematics-of-open-chains" target="_blank" rel="noopener noreferrer">modernrobotics.northwestern.edu/nu-gm-book-resource/inverse-kinematics-of-open-chains</a>.</li>
+                                <li id="ref-3">P. Allen, &ldquo;Jacobians,&rdquo; course notes, Department of Computer Science, Columbia University, Fall 2015. <a href="https://www.cs.columbia.edu/~allen/F15/NOTES/jacobians.pdf" target="_blank" rel="noopener noreferrer">cs.columbia.edu/~allen/F15/NOTES/jacobians.pdf</a>.</li>
+                                <li id="ref-4">NxR Lab (Northwestern University), <code>core.py</code>, <em>ModernRobotics</em> Python package (functions FKinSpace, FKinBody, JacobianSpace, JacobianBody, IKinBody, IKinSpace), GitHub repository. <a href="https://github.com/NxRLab/ModernRobotics/blob/master/packages/Python/modern_robotics/core.py" target="_blank" rel="noopener noreferrer">github.com/NxRLab/ModernRobotics/.../modern_robotics/core.py</a>.</li>
+                                <li id="ref-5">NxR Lab (Northwestern University), &ldquo;Modern Robotics: Mechanics, Planning, and Control, Code Library&rdquo; (user manual, <code>doc/MRlib.pdf</code>), <em>ModernRobotics</em> GitHub repository. <a href="https://github.com/NxRLab/ModernRobotics/blob/master/doc/MRlib.pdf" target="_blank" rel="noopener noreferrer">github.com/NxRLab/ModernRobotics/blob/master/doc/MRlib.pdf</a>.</li>
+                                <li id="ref-6">Northeastern University, &ldquo;Inverse Kinematics,&rdquo; CS5335 lecture slides, 2016. <a href="https://www.ccs.neu.edu/home/rplatt/cs5335_2016/slides/inverse_kinematics.pdf" target="_blank" rel="noopener noreferrer">ccs.neu.edu/home/rplatt/cs5335_2016/slides/inverse_kinematics.pdf</a>.</li>
+                                <li id="ref-7">GraspIt! API documentation, &ldquo;Puma560 Class Reference,&rdquo; ROS Diamondback documentation. <a href="https://docs.ros.org/en/diamondback/api/graspit/html/classPuma560.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/diamondback/api/graspit/html/classPuma560.html</a>.</li>
+                                <li id="ref-8">Wampler, &ldquo;6R Generic-Case Solution,&rdquo; preprint (MMT 1991), hosted at the University of Notre Dame. <a href="https://www3.nd.edu/~cwample1/Preprints/MMT1991%206R%20Generic-Case%20Solution.pdf" target="_blank" rel="noopener noreferrer">www3.nd.edu/~cwample1/Preprints/MMT1991 6R Generic-Case Solution.pdf</a>.</li>
+                                <li id="ref-9">P. Corke, &ldquo;Robotics Toolbox for Python,&rdquo; README, <em>robotics-toolbox-python</em> GitHub repository. <a href="https://github.com/petercorke/robotics-toolbox-python" target="_blank" rel="noopener noreferrer">github.com/petercorke/robotics-toolbox-python</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-5-9.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">5.9 Motion Profiles and Interpolation</span>
+                                </a>
+                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Finished -&gt;</span>
+                                    <span class="article-nav-target">Course home</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.7" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.4" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>
+

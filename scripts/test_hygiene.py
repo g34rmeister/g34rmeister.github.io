@@ -32,7 +32,7 @@ expected = {
     'project-sample.html', 'resume.html', 'contact.html', 'robotics.html',
     'robotics-intro.html', 'robotics-programming.html', 'robotics-ros.html',
     'robotics-ethics.html', 'robotics-control.html', 'robotics-quiz.html', 'robotics-glossary.html', 'robotics-method.html',
-} | {f'robotics-{c}-{n}.html' for c, count in ((1, 7), (2, 6), (3, 7), (4, 4), (5, 8)) for n in range(1, count + 1)}
+} | {f'robotics-{c}-{n}.html' for c, count in ((1, 7), (2, 8), (3, 9), (4, 5), (5, 10)) for n in range(1, count + 1)}
 actual_pages = {p.name for p in root.glob('*.html') if p.name != '404.html'}
 if actual_pages != expected:
     print(f'Page set drift. Actual: {sorted(actual_pages)} Expected: {sorted(expected)}')

@@ -1,0 +1,427 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 2.8 Vision-Guided Picking
+-->
+<html lang="en">
+    <head>
+        <title>2.8 Vision-Guided Picking — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How robots use cameras to pick parts that are not in a fixed place: 2D versus 3D guidance, camera mounting, lens and hand-eye calibration, and the frame-shift math that turns a vision result into a correct pick." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-2-8.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="2.8 Vision-Guided Picking — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="How robots use cameras to pick parts that are not in a fixed place: 2D versus 3D guidance, camera mounting, lens and hand-eye calibration, and the frame-shift math that turns a vision result into a correct pick." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-2-8.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="2.8 Vision-Guided Picking, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="2.8 Vision-Guided Picking — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="How robots use cameras to pick parts that are not in a fixed place: 2D versus 3D guidance, camera mounting, lens and hand-eye calibration, and the frame-shift math that turns a vision result into a correct pick." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html" class="active"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-programming.html">Chapter 2 &middot; Robot Programming</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">2.8 Vision-Guided Picking</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Why a taught point is not enough</h2>
+                            <p>
+                                Every program in this chapter so far has assumed that the part is always in the same place. In <a href="robotics-2-6.html">2.6</a> you taught a pick point inside a fixture frame, and the robot returned to exactly that point on every cycle. That works when a fixture or tray holds the part precisely. It fails when parts arrive loose on a conveyor, lie at random angles on a table, or sit in a pile in a bin. A taught point cannot know that today's part landed 15 mm to one side and turned by 30 degrees.
+                            </p>
+                            <p>
+                                <strong>Vision-guided robotics</strong> closes that gap. A camera takes a picture, vision software finds the part and reports where it is, and the robot program adjusts its taught points to match. The motion instructions stay the same as in 2.6. What changes is the frame the points are expressed in: it now moves with the part.
+                            </p>
+                            <p>
+                                How a camera works as a sensor is covered in <a href="robotics-5-5.html">5.5 Sensors for Robots</a>, so it is not repeated here. This lesson covers the robot side: which kind of vision the job needs, where the camera goes, how to calibrate it so that a pixel becomes a millimetre in the robot's world, and how the vision result becomes a correct robot move.
+                            </p>
+
+                            <h2 class="article-section-title">02. 2D, 2.5D and 3D guidance</h2>
+                            <p>
+                                Vision systems for robot guidance are grouped by how much of the part's pose they measure. A 2D system works only in the image plane, with height and width but no depth, and it struggles when parts have little contrast against their background.<sup><a href="#ref-1">[1]</a></sup> A 2D result gives the part's X and Y position plus its rotation about the vertical axis. Height and tilt must come from somewhere else: the program assumes the part lies flat on a known, taught plane. FANUC's training material calls this plane the <em>offset frame</em>, the plane in which the part moves, and stresses that the correct <strong>part Z height</strong> must be set for 2D results to be accurate.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                A 2.5D system adds height, and some also estimate a small amount of tilt.<sup><a href="#ref-1">[1]</a></sup> A FANUC engineer quoted by the Association for Advancing Automation (A3) said that 2.5D works when the robot only needs the distance to the object.<sup><a href="#ref-3">[3]</a></sup> Full 3D vision measures X, Y and Z together with rotation about all three axes.<sup><a href="#ref-1">[1]</a></sup> The same A3 article argues that for bin picking "only 3D will do": when a part is not lying on a flat surface, or its scale is unknown, a 3D point cloud is the way to go. Low contrast, such as brown boxes on a brown pallet, can push a job toward 3D even on a flat surface.<sup><a href="#ref-3">[3]</a></sup> Be aware that vendors do not all use "2.5D" the same way, so check which values a system actually reports.
+                            </p>
+                            <p>
+                                Cost matters too. One industry review reported that basic 3D vision-guided starter systems begin at around 40,000 US dollars, which can be more than the collaborative robot they guide.<sup><a href="#ref-1">[1]</a></sup> That source is partly promotional, so treat the figure as rough. The rule still holds: use the simplest vision that measures everything the job needs. If parts lie flat on a known surface, 2D is usually enough.
+                            </p>
+
+                            <h2 class="article-section-title">03. Where the camera goes: eye-to-hand or eye-in-hand</h2>
+                            <p>
+                                The second choice is where to mount the camera. OpenCV's documentation uses two standard names.<sup><a href="#ref-4">[4]</a></sup> In an <strong>eye-in-hand</strong> setup the camera is mounted on the robot gripper, the robot's "hand", and moves with it. In an <strong>eye-to-hand</strong> setup the camera is static in the cell and looks at the work area (or, during calibration, at a pattern carried by the robot).<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                A typical eye-in-hand product is the Robotiq Wrist Camera for Universal Robots arms. Its workflow is built around a taught <strong>snapshot position</strong>, the robot pose from which the camera takes its pictures. That pose is calibrated with a calibration board, and program nodes called "Find Visual Offset" and "Apply Visual Offset" then shift the rest of the program according to what the camera sees.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Fixed camera (eye-to-hand):</span> it can take the next picture while the robot is still placing the last part, so vision time overlaps with motion, and it needs only one calibration. Its field of view is fixed.</li>
+                                <li class="article-spec-item"><span class="spec-label">Wrist camera (eye-in-hand):</span> it can look at many places in the cell and move closer to a part to see more detail. The cost is time: the robot must stop at the snapshot position before every picture, and the result depends on the robot reaching that pose repeatably.</li>
+                            </ul>
+                            <p>
+                                The table below is a rough starting guide that follows from these trade-offs, not a rule from a standard:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Application</th>
+                                        <th scope="col">Usual vision type</th>
+                                        <th scope="col">Usual mounting</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Picking from a moving conveyor</td>
+                                        <td>2D</td>
+                                        <td>Fixed above the belt, with conveyor tracking</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Locating a part in a tray or fixture</td>
+                                        <td>2D</td>
+                                        <td>Fixed, or on the wrist with a snapshot position</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Random bin picking</td>
+                                        <td>3D</td>
+                                        <td>Fixed 3D sensor over the bin, or one on the arm</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Depalletizing boxes</td>
+                                        <td>2.5D or 3D</td>
+                                        <td>Usually fixed above the pallet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">04. Camera calibration, part 1: the lens</h2>
+                            <p>
+                                A raw camera image is not a measurement. Two things must be calibrated first: the camera itself, called <strong>intrinsic calibration</strong>, and where the camera sits relative to the robot. An easy way to remember the split: intrinsic calibration fixes the <em>lens</em>, and hand-eye calibration fixes <em>where the camera is</em>.
+                            </p>
+                            <p>
+                                OpenCV's calibration tutorial explains why the first step is needed. Inexpensive lenses introduce "significant distortion" into images. The distortion is constant for a given lens, so it can be measured once and corrected, and calibration also gives the relation between pixels and real-world units such as millimetres.<sup><a href="#ref-6">[6]</a></sup> The camera's basic geometry is summarized in a 3&times;3 <strong>camera matrix</strong>:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>        | fx   0   cx |
+    K = |  0  fy   cy |
+        |  0   0    1 |</code></pre>
+                            <p>
+                                Here <code>fx</code> and <code>fy</code> are the focal lengths in pixels, and <code>(cx, cy)</code> is the optical centre of the image in pixels.<sup><a href="#ref-6">[6]</a></sup> On top of this ideal pinhole model, OpenCV models <strong>lens distortion</strong> in two parts. <em>Radial</em> distortion gives the "barrel" or "fish-eye" look: for a point at distance <code>r</code> from the centre, <code>x_d = x(1 + k1&middot;r&sup2; + k2&middot;r&#8308; + k3&middot;r&#8310;)</code>, and the same for <code>y</code>. <em>Tangential</em> distortion appears when the lens is not exactly parallel to the sensor and adds <code>x_d = x + [2&middot;p1&middot;x&middot;y + p2&middot;(r&sup2; + 2x&sup2;)]</code>. That makes five distortion coefficients: <code>k1, k2, p1, p2, k3</code>.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                You find these numbers by showing the camera a pattern of known geometry and letting software solve for them. OpenCV supports a chessboard, a ChArUco board, and symmetric or asymmetric circle grids. Two chessboard pictures are enough in theory, but the tutorial warns that "you will probably need at least 10 good snapshots of the input pattern in different positions".<sup><a href="#ref-6">[6]</a></sup> Tilt the board, move it into the corners of the image and vary the distance, so the distortion near the edges is actually measured.
+                            </p>
+                            <p>
+                                In OpenCV, <code>findChessboardCorners</code> finds the inner corners in each image, <code>cornerSubPix</code> refines them to a fraction of a pixel, and <code>calibrateCamera</code> solves for the camera matrix and distortion coefficients. It returns the average <strong>re-projection error</strong>: the known board points are projected back into each image with <code>projectPoints</code>, and their distance from the detected corners is measured. This error, in pixels, "should be as close to zero as possible".<sup><a href="#ref-6">[6]</a></sup> If it is large, take better images and calibrate again before building anything on the result.
+                            </p>
+
+                            <h2 class="article-section-title">05. Camera calibration, part 2: hand-eye and AX = XB</h2>
+                            <p>
+                                The robot also needs to know where the camera is. For a wrist camera, that is the fixed transform from the camera to the gripper. For a fixed camera, it is the transform from the camera to the robot base. Finding it is <strong>hand-eye calibration</strong>.
+                            </p>
+                            <p>
+                                The procedure documented in OpenCV is: keep a calibration pattern static, move the robot to several poses, and at each pose record two transforms.<sup><a href="#ref-4">[4]</a></sup> One comes from the robot: the gripper-to-base pose the controller computes from its joint angles. The other comes from the camera: the pose of the pattern relative to the camera, found from the image. For each pair of poses, the gripper's motion (<code>A</code>) and the motion the camera sees (<code>B</code>) are linked by the unknown transform <code>X</code>, and the problem "is also known as solving the AX=XB equation".<sup><a href="#ref-4">[4]</a></sup> For eye-to-hand the idea is the same, but <code>X</code> becomes the camera-to-base transform.<sup><a href="#ref-4">[4]</a></sup> OpenCV's documented function is:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>void cv::calibrateHandEye(
+    InputArrayOfArrays R_gripper2base, InputArrayOfArrays t_gripper2base,
+    InputArrayOfArrays R_target2cam,   InputArrayOfArrays t_target2cam,
+    OutputArray R_cam2gripper,         OutputArray t_cam2gripper,
+    HandEyeCalibrationMethod method = CALIB_HAND_EYE_TSAI );</code></pre>
+                            <p>
+                                The inputs are lists of rotations and translations, one pair per robot pose, and the output is the camera-to-gripper rotation and translation. The documentation is clear about how much data is needed: "A minimum of 2 motions with non parallel rotation axes are necessary ... So at least 3 different poses are required, but it is strongly recommended to use many more poses."<sup><a href="#ref-4">[4]</a></sup> Poses that all rotate about the same axis cannot solve the problem.
+                            </p>
+                            <p>
+                                OpenCV implements several published methods, and its default, <code>CALIB_HAND_EYE_TSAI</code>, is the classic 1989 method of R. Y. Tsai and R. K. Lenz.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-7">[7]</a></sup> Their paper derived simple, efficient algorithms from geometric lemmas and tested them on an IBM Cartesian robot.<sup><a href="#ref-8">[8]</a></sup> In 1994, F. C. Park and B. J. Martin framed the same task as solving AX = XB on the Euclidean group, the mathematical group of rigid motions.<sup><a href="#ref-9">[9]</a></sup> You do not need the proofs, but "AX = XB" is what every hand-eye calibration tool is solving underneath.
+                            </p>
+
+                            <h2 class="article-section-title">06. The industrial shortcut for 2D: calibrate to a user frame</h2>
+                            <p>
+                                For planar 2D guidance, vendor tools usually skip the general AX = XB solution. Instead, the camera is calibrated directly to a robot <strong>user frame</strong> (an ABB work object, see <a href="robotics-2-6.html">2.6</a>) taught on a calibration grid. When the camera and the robot both know the same grid, an image position converts straight into millimetres in that frame.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">FANUC iRVision:</span> FANUC's training material describes grid-based camera calibration, with utilities named GRID_UFRAME and GRID_UTOOL that work with the calibration grid.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ABB Integrated Vision:</span> an integrator's guide describes calibrating the camera with the grid, then teaching the camera work object's user frame aligned with the grid's X and Y axes, at the same height as the part. If the axes do not point the same way, detected parts appear to move in the wrong directions.<sup><a href="#ref-11">[11]</a></sup> The grids are printed for ISO paper, so on US Letter paper you must measure the real square size.<sup><a href="#ref-12">[12]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Cognex In-Sight:</span> "Sequential N Point" calibration pairs one feature with its robot coordinates over a sequence of images, with the robot moving the part each time.<sup><a href="#ref-13">[13]</a></sup></li>
+                            </ul>
+                            <p>
+                                Cognex adds a condition that applies to every method in this lesson: the calibration is valid only while the optics and mounting stay unchanged, and it must be redone if either changes.<sup><a href="#ref-13">[13]</a></sup> A bumped bracket, a refocused lens or a new zoom setting all break it. Lock the lens rings and pin the camera mount after calibrating.
+                            </p>
+
+                            <h2 class="article-section-title">07. From vision result to robot move: shifting the frame</h2>
+                            <p>
+                                Once calibrated, the vision system reports the part's pose in a robot user frame. Across vendors the pattern is the same: the taught pick points do not change, and the program runs them inside a frame that the vision result has moved. The descriptions below come from vendor training notes and forum posts that could not be checked against the controller manuals, so confirm exact instruction names in your manual before use.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">ABB:</span> a work object has a user frame and an object frame. With Integrated Vision you teach only the user frame, and the program copies the pose found by the camera into the object frame at run time. Targets taught in that work object then follow the part.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-14">[14]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">FANUC:</span> iRVision stores the result in a vision register, and the motion instruction applies it as an offset. FANUC advises a <em>fixed frame offset</em> when picking, because the part has moved on the table, and a <em>tool offset</em> when placing, because the part has shifted in the gripper.<sup><a href="#ref-15">[15]</a></sup> To re-teach a point that already runs with an offset, the "subtract offset" option removes the current offset so the point is stored in the unshifted frame.<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots:</span> a camera offset in millimetres and degrees is turned into a pose and applied to a reference point with the URScript function <code>pose_trans</code>.<sup><a href="#ref-17">[17]</a></sup> Alternatively, points are defined relative to a feature plane, and the vision result moves the feature.<sup><a href="#ref-18">[18]</a></sup></li>
+                            </ul>
+                            <p>
+                                All of these work because a shift is a full rigid transform: a translation <em>and</em> a rotation. If the part turns, the pick point must swing around with it, like the end of a lever. A simple "add the offset" calculation gets this wrong, as the next section shows.
+                            </p>
+
+                            <h2 class="article-section-title">08. The math of a frame shift, worked through</h2>
+                            <p>
+                                A planar pose, a position <code>(x, y)</code> and a rotation <code>&theta;</code> about Z, can be written as a 3&times;3 homogeneous transform. The numbers below were computed for this lesson and checked numerically; they are not from a vendor manual. Positions are in millimetres, in the robot's user frame.
+                            </p>
+                            <pre class="article-code"><code>              | cos&theta;  -sin&theta;   x |
+    T(x,y,&theta;) = | sin&theta;   cos&theta;   y |
+              |   0       0     1 |</code></pre>
+                            <p>
+                                <strong>At teach time</strong>, vision found the part at <code>T_ref = (200, 150, 0&deg;)</code>, and you taught the pick point at <code>P_taught = (210, 150, 0&deg;)</code>. Seen from the part, the pick point is 10 mm along the part's own X axis: <code>T_ref&#8315;&sup1; &middot; P_taught = (10, 0, 0&deg;)</code>. That local position is what stays constant, because it belongs to the part, not to the table.
+                            </p>
+                            <p>
+                                <strong>At run time</strong>, vision finds the part at <code>T_found = (215, 140, 30&deg;)</code>: it has moved +15 mm in X, &minus;10 mm in Y, and turned 30 degrees.
+                            </p>
+                            <p>
+                                <strong>Method A, part-relative.</strong> Carry the local pick point along with the part: <code>P_new = T_found &middot; (T_ref&#8315;&sup1; &middot; P_taught)</code>. Rotating (10, 0) by 30&deg; gives (10&nbsp;cos&nbsp;30&deg;, 10&nbsp;sin&nbsp;30&deg;) = (8.660, 5.000). Adding the part's new position (215, 140) gives <strong>P_new = (223.660, 145.000, 30&deg;)</strong>. This is what an ABB object frame or a UR <code>pose_trans</code> effectively computes.
+                            </p>
+                            <p>
+                                <strong>Method B, frame offset.</strong> Compute the offset itself, <code>T_off = T_found &middot; T_ref&#8315;&sup1;</code>. Its rotation is 30&deg;, and its translation is (215, 140) minus (200, 150) rotated by 30&deg;: (215 &minus; 98.205, 140 &minus; 229.904) = (116.795, &minus;89.904). Applying it, <code>P_new = T_off &middot; P_taught</code> = (223.660, 145.000, 30&deg;), the same answer. This is the form a fixed frame offset expresses. Its translation looks nothing like "+15, &minus;10" because the rotation is about the frame's origin, not about the part.
+                            </p>
+                            <p>
+                                <strong>The common mistake.</strong> A beginner sees "the part moved +15, &minus;10" and adds that to the taught point, giving (225, 140) with the rotation ignored. The distance to the correct point is the square root of (1.340&sup2; + 5.000&sup2;), which is <strong>5.18 mm</strong>, and the gripper is also 30&deg; out of line with the part. That is enough to miss a small part or hit it with a finger. The cause is the lever arm: the pick point is 10 mm from the part's reference point, and when the part rotates, that arm swings to a new direction.
+                            </p>
+                            <p>
+                                The Python script below repeats the calculation so you can change the numbers and check your hand work. It is this lesson's own example in plain Python with no libraries.
+                            </p>
+                            <pre class="article-code"><code>import math
+
+def T(x, y, deg):
+    """Planar pose (mm, degrees) as a 3x3 homogeneous matrix."""
+    c, s = math.cos(math.radians(deg)), math.sin(math.radians(deg))
+    return [[c, -s, x], [s, c, y], [0, 0, 1]]
+
+def mul(A, B):
+    return [[sum(A[i][k] * B[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+
+def inv(A):
+    # inverse of a rigid transform: transpose the rotation, rotate and negate the translation
+    c, s, x, y = A[0][0], A[1][0], A[0][2], A[1][2]
+    return [[c, s, -(c * x + s * y)], [-s, c, s * x - c * y], [0, 0, 1]]
+
+def pose(A):
+    return (round(A[0][2], 3), round(A[1][2], 3), round(math.degrees(math.atan2(A[1][0], A[0][0])), 3))
+
+T_ref   = T(200, 150, 0)    # where vision saw the part at teach time
+P_teach = T(210, 150, 0)    # pick point taught at teach time
+T_found = T(215, 140, 30)   # where vision sees the part now
+
+local = mul(inv(T_ref), P_teach)   # pick point in the part's own frame
+P_new = mul(T_found, local)        # same point, carried by the moved part
+print("local:", pose(local))       # (10.0, 0.0, 0.0)
+print("P_new:", pose(P_new))       # (223.66, 145.0, 30.0)
+
+T_off = mul(T_found, inv(T_ref))   # the frame offset itself
+print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
+                            <p>
+                                If your vision tool reports in pixels, first convert the result into the user frame through the calibration (the millimetres-per-pixel scale plus the camera-to-frame transform), and only then apply the frame shift.
+                            </p>
+
+                            <h2 class="article-section-title">09. How accurate can it be? Pixels, calibration and light</h2>
+                            <p>
+                                Vision guidance is only as accurate as its weakest link, so estimate the error before you buy a camera. Start with resolution: the size of one pixel on the part is the field of view (FOV) divided by the number of pixels across it. The Imaging Source gives the example of a 1920-pixel sensor viewing 200 mm, which is 9.6 pixels per millimetre, and a rule of thumb of 2 to 3 pixels across a feature.<sup><a href="#ref-19">[19]</a></sup> Machine-vision supplier 1stVision says at least 2 pixels are needed to find an edge when contrast is excellent, and 3 to 4 pixels is more robust. Its example: to resolve a 0.25 mm feature with 4 pixels, you need 0.0625 mm per pixel, so a 40 mm FOV needs 640 pixels. Those figures assume the lens is not the limit, and they depend on lighting, optics and algorithm.<sup><a href="#ref-20">[20]</a></sup>
+                            </p>
+                            <p>
+                                Apply that to a typical cell. A camera 1280 pixels wide viewing a 320 mm field gives 4 pixels per millimetre, or 0.25 mm per pixel, so with the 2 to 4 pixel rule the smallest feature it can locate reliably is about 0.5 to 1 mm. Halve the FOV to 160 mm and each pixel covers half as much. That is why a wrist camera that moves closer can see finer detail than a fixed camera that must see the whole table.
+                            </p>
+                            <p>
+                                Rotation errors grow with distance, for the same lever-arm reason as in section 08. A 0.5&deg; angle error moves a pick point 100 mm from the part's reference point by 100 &times; sin(0.5&deg;), about <strong>0.87 mm</strong>. A badly taught user frame or hand-eye calibration behaves the same way: the error grows as the part rotates more and sits farther from the frame origin. The other contributors stack on top:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Lens calibration:</span> uncorrected distortion makes positions near the image edges wrong. Sub-pixel corner refinement and a low re-projection error are the checks.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Camera-to-robot calibration:</span> users of wrist cameras report parts ending up "a few mm off" when this step is not done well.<sup><a href="#ref-21">[21]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Part height:</span> in 2D, a part taller or shorter than the set-up height appears shifted or scaled because of perspective, which is why FANUC stresses part Z height.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Robot repeatability:</span> the robot adds its own small error to every move, and a wrist camera adds it at both the snapshot position and the pick.</li>
+                                <li class="article-spec-item"><span class="spec-label">Lighting and contrast:</span> these decide whether the part is found reliably at all, and low contrast is a known weakness of 2D vision.<sup><a href="#ref-3">[3]</a></sup> Changing daylight or reflections can make detections jitter from image to image.</li>
+                            </ul>
+                            <p>
+                                No source checked for this lesson gives a reliable typical end-to-end accuracy for 2D vision guidance, so none is quoted here. Measure it on your own cell: place a part at known positions and angles, and record how far the gripper lands from where it should.
+                            </p>
+                            <p>
+                                Whichever product you use, the workflow is the same: choose 2D or 3D, choose where the camera goes, calibrate the lens, calibrate the camera to the robot, teach the pick points once in a frame, and let the vision result shift that frame on every cycle.
+                            </p>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>On paper, use the example from section 08: part taught at (200, 150, 0&deg;), pick point at (210, 150, 0&deg;), part found at (215, 140, 30&deg;). Write the pick point in the part's own frame, rotate it by 30&deg;, and add the new part position. Check that you get (223.660, 145.000, 30&deg;).</li>
+                                    <li>Make the beginner's mistake on purpose: add (+15, &minus;10) to the taught point to get (225, 140). Compute its distance from the correct point and confirm it is 5.18 mm. Sketch both points and the part to see where the 30&deg; lever-arm swing went.</li>
+                                    <li>Run the Python script from section 08 with the camera result changed to (215, 140, 90&deg;). Predict the corrected pick point first. How large is the "just add the offset" error now?</li>
+                                    <li>In URSim or RobotStudio (see <a href="robotics-2-6.html">2.6</a>), create a user frame or work object with its origin at (200, 150) and axes parallel to the original frame, and teach the pick point in it (it should read (10, 0)). Move the frame's origin to (215, 140), rotate it 30&deg; about its own Z axis, and check that the robot now goes to (223.660, 145.000) in the original frame. Test this in the simulator first, never on a real cell.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1"><em>Asian Robotics Review</em>, &ldquo;Is 3D Machine Vision Right for Vision-Guided Robotics?,&rdquo; asianroboticsreview.com, n.d. (search summary; page not opened). <a href="https://asianroboticsreview.com/home346.html" target="_blank" rel="noopener noreferrer">asianroboticsreview.com/home346.html</a>.</li>
+                                <li id="ref-2">FANUC America, &ldquo;iRVision Part Z Height &amp; Offset Frame,&rdquo; FANUC Tech Transfer, n.d. (search summary; page not opened). <a href="https://techtransfer.fanucamerica.com/tech-transfer/irvision-part-z-height-amp-offset-frame" target="_blank" rel="noopener noreferrer">techtransfer.fanucamerica.com/tech-transfer/irvision-part-z-height-amp-offset-frame</a>.</li>
+                                <li id="ref-3">Association for Advancing Automation (A3), &ldquo;2D or 3D Machine Vision? Why Not Both?,&rdquo; A3 vision industry insights, n.d. (search summary; page not opened). <a href="https://www.automate.org/vision/industry-insights/2d-or-3d-machine-vision-why-not-both" target="_blank" rel="noopener noreferrer">automate.org/vision/industry-insights/2d-or-3d-machine-vision-why-not-both</a>.</li>
+                                <li id="ref-4">OpenCV, &ldquo;calib3d.hpp: calibrateHandEye documentation,&rdquo; OpenCV source repository (4.x branch), GitHub, accessed October 21, 2026. <a href="https://github.com/opencv/opencv/blob/4.x/modules/calib3d/include/opencv2/calib3d.hpp" target="_blank" rel="noopener noreferrer">github.com/opencv/opencv/blob/4.x/modules/calib3d/include/opencv2/calib3d.hpp</a>.</li>
+                                <li id="ref-5">Robotiq, &ldquo;Wrist Camera Instruction Manual,&rdquo; PDF manual, June 15, 2022 (search summary; document not opened). <a href="https://assets.robotiq.com/website-assets/support_archives/document_en/Wrist_Camera_Instruction_Manual_PDF_20220615.pdf" target="_blank" rel="noopener noreferrer">assets.robotiq.com/website-assets/support_archives/document_en/Wrist_Camera_Instruction_Manual_PDF_20220615.pdf</a>.</li>
+                                <li id="ref-6">OpenCV, &ldquo;Camera calibration With OpenCV,&rdquo; OpenCV tutorial source (4.x branch), GitHub, accessed October 21, 2026. <a href="https://github.com/opencv/opencv/blob/4.x/doc/tutorials/calib3d/camera_calibration/camera_calibration.markdown" target="_blank" rel="noopener noreferrer">github.com/opencv/opencv/blob/4.x/doc/tutorials/calib3d/camera_calibration/camera_calibration.markdown</a>.</li>
+                                <li id="ref-7">R. Y. Tsai and R. K. Lenz, &ldquo;A new technique for fully autonomous and efficient 3D robotics hand/eye calibration,&rdquo; <em>IEEE Transactions on Robotics and Automation</em>, vol. 5, no. 3, pp. 345&ndash;358, June 1989. Bibliographic entry as listed in OpenCV's bibliography file, accessed October 21, 2026. <a href="https://github.com/opencv/opencv/blob/4.x/doc/opencv.bib" target="_blank" rel="noopener noreferrer">github.com/opencv/opencv/blob/4.x/doc/opencv.bib</a>.</li>
+                                <li id="ref-8">IBM Research, &ldquo;A new technique for fully autonomous and efficient 3D robotics hand/eye calibration,&rdquo; publication page (abstract of Tsai and Lenz, 1989) (search summary; page not opened). <a href="https://research.ibm.com/publications/a-new-technique-for-fully-autonomous-and-efficient-3d-robotics-handeye-calibration" target="_blank" rel="noopener noreferrer">research.ibm.com/publications/a-new-technique-for-fully-autonomous-and-efficient-3d-robotics-handeye-calibration</a>.</li>
+                                <li id="ref-9">F. C. Park and B. J. Martin, &ldquo;Robot sensor calibration: solving AX=XB on the Euclidean group,&rdquo; <em>IEEE Transactions on Robotics and Automation</em>, vol. 10, no. 5, pp. 717&ndash;721, October 1994. Bibliographic entry as listed in OpenCV's bibliography file, accessed October 21, 2026. <a href="https://github.com/opencv/opencv/blob/4.x/doc/opencv.bib" target="_blank" rel="noopener noreferrer">github.com/opencv/opencv/blob/4.x/doc/opencv.bib</a>.</li>
+                                <li id="ref-10">FANUC America, &ldquo;iRVision Camera Calibration,&rdquo; FANUC Tech Transfer, n.d. (search summary; page not opened). <a href="https://techtransfer.fanucamerica.com/tech-transfer/irvision-camera-calibration" target="_blank" rel="noopener noreferrer">techtransfer.fanucamerica.com/tech-transfer/irvision-camera-calibration</a>.</li>
+                                <li id="ref-11">DMC, Inc., &ldquo;ABB Vision Guided Movement: These Are the Droids You're Looking For,&rdquo; DMC blog, n.d. (search summary; page not opened). <a href="https://www.dmcinfo.com/blog/22600/abb-vision-guided-movement-these-are-the-droids-youre-looking-for/" target="_blank" rel="noopener noreferrer">dmcinfo.com/blog/22600/abb-vision-guided-movement-these-are-the-droids-youre-looking-for</a>.</li>
+                                <li id="ref-12">RobotStudio Forums, &ldquo;Integrated Vision calibration grid,&rdquo; discussion comment 31823 (search summary; page not opened). <a href="https://forums.robotstudio.com/discussion/comment/31823" target="_blank" rel="noopener noreferrer">forums.robotstudio.com/discussion/comment/31823</a>.</li>
+                                <li id="ref-13">Cognex, &ldquo;Sequential N Point calibration,&rdquo; In-Sight EasyBuilder documentation, version 5.8.1 (search summary; page not opened). <a href="https://docs.cognex.com/is_581/web/en/ezb/content/EasyBuilder/Inspect_Calib_SeqNPt.htm" target="_blank" rel="noopener noreferrer">docs.cognex.com/is_581/web/en/ezb/content/EasyBuilder/Inspect_Calib_SeqNPt.htm</a>.</li>
+                                <li id="ref-14">ABB Robotics Tech Community, &ldquo;Using vision to modify object frame of work object,&rdquo; forum thread (search summary; page not opened). <a href="https://tech-community.robotics.abb.com/t/using-vision-to-modify-modify-object-frame-of-work-object/9308" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/using-vision-to-modify-modify-object-frame-of-work-object/9308</a>.</li>
+                                <li id="ref-15">FANUC America, &ldquo;iRVision Tool Offset vs Frame Offset,&rdquo; FANUC Tech Transfer, n.d. (search summary; page not opened). <a href="https://techtransfer.fanucamerica.com/tech-transfer/irvision-tool-offset-vs-frame-offset" target="_blank" rel="noopener noreferrer">techtransfer.fanucamerica.com/tech-transfer/irvision-tool-offset-vs-frame-offset</a>.</li>
+                                <li id="ref-16">FANUC America, &ldquo;iRVision Subtract Offsets: When to Answer Yes or No,&rdquo; FANUC Tech Transfer, n.d. (search summary; page not opened). <a href="https://techtransfer.fanucamerica.com/tech-transfer/irvision-subtract-offsets-when-to-answer-yes-or-no" target="_blank" rel="noopener noreferrer">techtransfer.fanucamerica.com/tech-transfer/irvision-subtract-offsets-when-to-answer-yes-or-no</a>.</li>
+                                <li id="ref-17">Universal Robots, &ldquo;Simple vision system,&rdquo; support article, n.d. (search summary; page not opened). <a href="https://www.universal-robots.com/articles/ur/simple-vision-system" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/simple-vision-system</a>.</li>
+                                <li id="ref-18">Universal Robots Forum, &ldquo;Defining points with respect to plane,&rdquo; forum thread (search summary; page not opened). <a href="https://forum.universal-robots.com/t/defining-points-with-respect-to-plane/934" target="_blank" rel="noopener noreferrer">forum.universal-robots.com/t/defining-points-with-respect-to-plane/934</a>.</li>
+                                <li id="ref-19">The Imaging Source, &ldquo;Field of view in machine vision,&rdquo; glossary, n.d. (search summary; page not opened). <a href="https://www.theimagingsource.com/en-us/resource/glossary/field-of-view-in-machine-vision/" target="_blank" rel="noopener noreferrer">theimagingsource.com/en-us/resource/glossary/field-of-view-in-machine-vision</a>.</li>
+                                <li id="ref-20">1stVision, &ldquo;Imaging Basics: How to Calculate Resolution for Machine Vision,&rdquo; 1stvision.com, n.d. (search summary; page not opened). <a href="https://www.1stvision.com/machine-vision-solutions/page/50" target="_blank" rel="noopener noreferrer">1stvision.com/machine-vision-solutions/page/50</a>.</li>
+                                <li id="ref-21">Robotiq DoF community, &ldquo;Wrist camera accuracy,&rdquo; forum discussion 1957 (search summary; page not opened). <a href="https://dof.robotiq.com/discussion/1957" target="_blank" rel="noopener noreferrer">dof.robotiq.com/discussion/1957</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-2-7.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">2.7 Program Structure and Error Handling</span>
+                                </a>
+                                <a href="robotics-ros.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-target">Chapter 3: Robot Operating System (ROS)</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.7" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.4" defer></script>
+            <script src="assets/js/learning.js?v=1.2" defer></script>
+
+    </body>
+</html>
