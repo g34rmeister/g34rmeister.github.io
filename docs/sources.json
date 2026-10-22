@@ -715,39 +715,71 @@
   },
   "https://control.ros.org/rolling/doc/ros2_control/controller_manager/doc/userdoc.html": {
    "citedBy": [
-    "3-8#ref-15"
+    "3-8#ref-17"
    ],
    "refText": "ros2_control Development Team, “Controller Manager,” ros2_control Documentation (Rolling); file controller_manager/doc/userdoc.rst (source read on GitHub: ros-controls/ros2_control, master branch), October 2026. Available: control.ros.org/rolling/doc/ros2_control/controller_manager/doc/userdoc.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Controller Manager — ROS2_Control: Rolling Oct 2026 documentation"
+   "title": "Controller Manager — ROS2_Control: Rolling Oct 2026 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Controller manager 'manages lifecycle of controllers, access to the hardware interfaces and offers services to the ROS-world'",
+     "evidence": "Controller Manager userdoc: 'It manages lifecycle of controllers, access to the hardware interfaces and offers services to the ROS-world.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://control.ros.org/rolling/doc/ros2_control/hardware_interface/doc/mock_components_userdoc.html": {
    "citedBy": [
-    "3-8#ref-16"
+    "3-8#ref-18"
    ],
    "refText": "ros2_control Development Team, “Mock Components,” ros2_control Documentation (Rolling); file hardware_interface/doc/mock_components_userdoc.rst (source read on GitHub: ros-controls/ros2_control, master branch), October 2026. Available: control.ros.org/rolling/doc/ros2_control/hardware_interface/doc/",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Mock Components — ROS2_Control: Rolling Oct 2026 documentation"
+   "title": "Mock Components — ROS2_Control: Rolling Oct 2026 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "ros2_control tag with command/state interfaces; mock components are trivial simulations mirroring commands; test piping and MoveIt…",
+     "evidence": "Mock Components: 'trivial “simulations” of the hardware components'; 'mirroring commands to their states'; 'even integrations with, e.g., MoveIt'; <plugin>mock_components/GenericSystem</plugin>…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://control.ros.org/rolling/doc/ros2_controllers/joint_state_broadcaster/doc/userdoc.html": {
    "citedBy": [
-    "3-8#ref-24"
+    "3-8#ref-26"
    ],
    "refText": "ros2_control Development Team, “joint_state_broadcaster,” ros2_control Documentation (Rolling); file joint_state_broadcaster/doc/userdoc.rst (source read on GitHub: ros-controls/ros2_controllers, master branch), October 2026. Available: control.ros.org/rolling/doc/ros2_controllers/joint_state_broadc",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "joint_state_broadcaster — ROS2_Control: Rolling Oct 2026 documentation"
+   "title": "joint_state_broadcaster — ROS2_Control: Rolling Oct 2026 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "joint_state_broadcaster reads all state interfaces, reports on /joint_states, not a real controller, no commands",
+     "evidence": "userdoc: 'The broadcaster reads all state interfaces and reports them on /joint_states.' 'Broadcasters are not real controllers, and therefore take no commands.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://control.ros.org/rolling/doc/ros2_controllers/joint_trajectory_controller/doc/userdoc.html": {
    "citedBy": [
-    "3-8#ref-22"
+    "3-8#ref-24"
    ],
    "refText": "ros2_control Development Team, “joint_trajectory_controller,” ros2_control Documentation (Rolling); file joint_trajectory_controller/doc/userdoc.rst (source read on GitHub: ros-controls/ros2_controllers, master branch), October 2026. Available: control.ros.org/rolling/doc/ros2_controllers/joint_traj",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "joint_trajectory_controller — ROS2_Control: Rolling Oct 2026 documentation"
+   "title": "joint_trajectory_controller — ROS2_Control: Rolling Oct 2026 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "JTC executes joint-space trajectories, interpolates between waypoints (positions, optional vel/acc); action <controller_name>/follow_joint_trajectory",
+     "evidence": "JTC userdoc: 'Controller for executing joint-space trajectories on a group of joints'; 'Waypoints consist of positions, and optionally velocities and accelerations'; action server…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://cordis.europa.eu/article/id/7889-interoperability-of-standards-for-robotics-in-cime/it": {
    "citedBy": [
@@ -1033,7 +1065,16 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://discourse.openrobotics.org/t/ros2-cannot-run-my-python-script-no-executable-found-error/3912",
-   "title": "ROS2: Cannot run my Python script, \"No executable found\" error - ROS General - Open Robotics Discourse"
+   "title": "ROS2: Cannot run my Python script, \"No executable found\" error - ROS General - Open Robotics Discourse",
+   "checks": {
+    "3-6": {
+     "status": "fixed",
+     "claim": "Community reports trace 'No executable found' to a deleted setup.cfg or a forgotten source",
+     "evidence": "Thread #2/#3 (2018): ros2 run expects <install-prefix>/lib/<pkgname>; without setup.cfg scripts go to bin; specify lib install in setup.cfg. Poster had sourced local_setup.bash",
+     "note": "Thread supports the missing setup.cfg cause (not 'deleted': it was never written), but not a forgotten source; the poster had sourced the overlay. Reword to 'a missing setup.cfg' or cite another report for the sourcing cause.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://dlib.si/details/URN:NBN:SI:DOC-J2F7J67I": {
    "citedBy": [
@@ -1616,6 +1657,12 @@
      "evidence": "Ubuntu-Install-Debs.rst: commands match lesson verbatim; 'These provide keys and apt source configuration'; 'Updates to repository configuration occur automatically'; 'default middleware... is...",
      "note": "Minor: the parenthetical 'Older guides downloaded a ros.key file by hand' and 'apt uses the keys to check packages' are not in this page. Either drop the parenthetical or leave it uncited as background.",
      "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "Ubuntu install: sudo apt update && sudo apt install ros-dev-tools; underlay scripts setup.bash/.sh/.zsh",
+     "evidence": "Ubuntu-Install-Debs.rst: '$ sudo apt update && sudo apt install ros-dev-tools'; 'Possible values are: setup.bash, setup.sh, setup.zsh.' [docs src, lyrical branch]",
+     "checked": "2026-10-22"
     }
    }
   },
@@ -1635,6 +1682,12 @@
      "claim": "Native Win 11-only binary archive; all base + some desktop pkgs; conda-forge via pixi; VS Build Tools 2022; C:\\dev, pixi, download, install deps, source...",
      "evidence": "Windows-Install-Binary.rst: 'Only Windows 11 is supported'; base variant included, subset of desktop; conda-forge/pixi; 'Install Visual Studio Build Tools 2022'...",
      "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "Windows Lyrical install uses pixi + conda-forge; pixi shell then call C:\\dev\\lyrical\\local_setup.bat; VS Build Tools 2022, x64 Native Tools prompt for VS 2022",
+     "evidence": "Windows-Install-Binary.rst: conda-forge backend with pixi frontend; 'pixi shell', 'call C:\\dev\\{DISTRO}\\local_setup.bat'; 'Visual Studio Build Tools 2022'; 'x64 Native Tools Command Prompt for VS…",
+     "checked": "2026-10-22"
     }
    }
   },
@@ -1647,7 +1700,15 @@
    "refText": "Open Robotics, “Setting up Turtlesim,” ROS 2 Documentation: Lyrical. Available: docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "First turtle spawns at x=5.544445, y=5.544445, theta=0.0",
+     "evidence": "Introducing-Turtlesim.rst: '[INFO] [turtlesim]: Spawning turtle [turtle1] at x=[5.544445], y=[5.544445], theta=[0.000000]' [docs src, lyrical branch]",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/lyrical/Integrations-and-related/Simulators/Webots/Installation-Windows.html": {
    "citedBy": [
@@ -1765,6 +1826,12 @@
      "claim": "colcon iterates on catkin_make, catkin_make_isolated, catkin_tools, ament_tools; ament_cmake/ament_python/cmake; parallel by default; apt install",
      "evidence": "Colcon-Tutorial.rst: 'iteration on the ROS build tools catkin_make, catkin_make_isolated, catkin_tools and ament_tools'; 'Also supported are pure cmake packages'; '--executor sequential... instead...",
      "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "colcon build/install/log dirs, no devel, out-of-source; merge-install and setup.bat/ps1 on Windows; ament_cmake/ament_python; REP 149 (format 2 ok)…",
+     "evidence": "Colcon-Tutorial.rst: dirs described as in lesson; 'Compared to catkin there is no devel directory'; 'out-of-source builds'; install\\setup.ps1; REP 149 'format 2 is also supported'; administrator or…",
+     "checked": "2026-10-22"
     }
    }
   },
@@ -1776,7 +1843,15 @@
    "refText": "Open Robotics, “Creating a workspace,” ROS 2 Documentation: Lyrical. Available: docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "Workspace tutorial: redirects from old path; workspace/overlay definitions; best practices; new terminal quote; local_setup vs setup; MyTurtleSim test; rosdep…",
+     "evidence": "Creating-A-Workspace.rst: redirect-from Tutorials/Beginner-Client-Libraries/...; quotes verbatim; 'several layers'; MyTurtleSim; '#All required rosdeps installed successfully'; 'VS 2019'…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Creating-Your-First-ROS2-Package.html": {
    "citedBy": [
@@ -1786,7 +1861,15 @@
    "refText": "Open Robotics, “Creating a package,” ROS 2 Documentation: Lyrical. Available: docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Creating-Your-First-ROS2-Package.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "ros2 pkg create usage, --node-name/--license, no nested packages, documented ament_python file list and required files, field matching, my_py_pkg typo…",
+     "evidence": "Creating-Your-First-ROS2-Package.rst: '--node-name option creates a simple Hello World type executable'; 'You cannot have nested packages.'; output lists 3 tests; 'need to match exactly'; setup.py…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Reading-From-A-Bag-File-Python.html": {
    "citedBy": [
@@ -1813,6 +1896,12 @@
      "claim": "rosdep reads package.xml keys, looks up rosdistro, installs via apt; Linux/macOS not Windows; install python3-rosdep, init, update",
      "evidence": "Rosdep.rst: 'compares those keys with the rosdistro index and installs matching packages through the system package manager'; 'only works on Linux and macOS; Windows is not supported'",
      "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "Dependency tag meanings; pure Python 'should never use' <depend>; rosdep is a meta-package manager via apt/dnf with rosdistro keys; init/update; Linux and…",
+     "evidence": "Rosdep.rst: tag list; exec_depend 'shared libraries, executables, Python modules, launch scripts and other files required when running'; 'should never use this'; 'meta-package manager'; apt/dnf…",
+     "checked": "2026-10-22"
     }
    }
   },
@@ -1831,6 +1920,12 @@
      "claim": "rclpy declare_parameter('my_parameter','world')/get_parameter; inline dict parameters with output='screen', emulate_tty=True",
      "evidence": "Using-Parameters-In-A-Class-Python.rst: declare_parameter('my_parameter', 'world'); launch file parameters=[{'my_parameter': 'earth'}], output='screen', emulate_tty=True 'ensure our output is...",
      "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "Parameters tutorial shows <depend>rclpy</depend>; declare_parameter('my_parameter','world'), get_parameter(...).string_value, ros2 param set",
+     "evidence": "Using-Parameters-In-A-Class-Python.rst: <depend>rclpy</depend>; declare_parameter('my_parameter', 'world'); 'type is inferred from the default value'…",
+     "checked": "2026-10-22"
     }
    }
   },
@@ -1842,7 +1937,15 @@
    "refText": "Open Robotics, “Writing a simple publisher and subscriber (Python),” ROS 2 Documentation: Lyrical. Available: docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "Python pub/sub: entry point format, setup.cfg lib quote, exec_depends, with rclpy.init pattern (no destroy/shutdown), spin quote, QoS queue quote, timer 0.5…",
+     "evidence": "Writing-A-Simple-Py-Publisher-And-Subscriber.rst: 'talker = py_pubsub.publisher_member_function:main'; 'because ros2 run will look for them there'; with rclpy.init(args=args); except…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html": {
    "citedBy": [
@@ -1851,7 +1954,15 @@
    "refText": "Open Robotics, “Writing a simple service and client (Python),” ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). Available: docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Writing-A-Simple-Py-Service-And-Client.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "--dependencies 'will automatically add the necessary dependency lines'; create_service/create_client/wait_for_service/call_async; spin_until_future_complete…",
+     "evidence": "Writing-A-Simple-Py-Service-And-Client.rst: 'The --dependencies argument will automatically add the necessary dependency lines to package.xml.'; code uses these calls; 'Do not use…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/lyrical/ROS-Framework/interfaces/About-Actions.html": {
    "citedBy": [
@@ -2134,6 +2245,12 @@
      "claim": "Lyrical is an LTS release supported until May 2031 (May 2026 release)",
      "evidence": "Release-Lyrical-Luth.rst: '(codename 'lyrical'; May, 2026)'; 'Long Term Support (LTS) release, and it is supported until May 2031'",
      "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "Lyrical Luth: twelfth ROS 2 release, LTS, May 2026, supported to May 2031; adds setup.fish",
+     "evidence": "Release-Lyrical-Luth.rst: 'the twelfth release of ROS 2'; 'LTS release ... supported until May 2031'; heading May, 2026; 'Try out the new setup.fish script.' [docs src, lyrical branch]",
+     "checked": "2026-10-22"
     }
    }
   },
@@ -2153,6 +2270,12 @@
      "status": "verified",
      "claim": "Lyrical tiers: Ubuntu 26.04 amd64/arm64 Tier 1 [d][a], Win 11 amd64 Tier 1 [a], no Win arm64, RHEL 10 Tier 2, macOS/24.04/Trixie Tier 3 = source; Connext...",
      "evidence": "supported-platforms.rst table matches; 'To use ROS Lyrical on any Tier 3 platform, you must build ROS Lyrical from source'; rmw_connextdds 'All Architectures except arm64'",
+     "checked": "2026-10-22"
+    },
+    "3-6": {
+     "status": "verified",
+     "claim": "Tier 1: Ubuntu 26.04 amd64/arm64, Windows 11 VS2022 amd64; Python 3.12-3.14; Ubuntu 26.04 ships 3.14.3",
+     "evidence": "supported-platforms.rst: Resolute amd64/arm64 Tier 1, Windows 11 (VS2022) amd64 Tier 1; '* Python 3.12 - 3.14'; dependency table Python 3.14.3 under Ubuntu Resolute [docs src, lyrical branch]",
      "checked": "2026-10-22"
     }
    }
@@ -2185,12 +2308,55 @@
   },
   "https://docs.ros.org/en/rolling/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.html": {
    "citedBy": [
-    "3-8#ref-9"
+    "3-8#ref-11"
    ],
    "refText": "Open Robotics, “Building a movable robot model with URDF,” ROS 2 Documentation (Rolling); file source/Capabilities/Simulation/URDF/Building-a-Movable-Robot-Model-with-URDF.rst (source read on GitHub: ros2/ros2_documentation, rolling branch; web path inferred from the repository layout), October 2026",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-8": {
+     "status": "fixed",
+     "claim": "URDF links/joints with parent, child, origin; fixed/continuous/revolute/prismatic; limit tag; prismatic example; joint_state_publisher ->…",
+     "evidence": "Tutorial: continuous needs axis; revolute 'strict limits' with limit tag (radians), velocity and effort; prismatic in meters with example; GUI publishes JointState, robot_state_publisher computes…",
+     "note": "Joint types, limits, example and display chain are supported. The definition sentence (URDF acronym, 'tree of links (rigid bodies)') is not on this page; cite the URDF intro tutorial or urdf spec for it, or soften.",
+     "checked": "2026-10-22"
+    }
+   }
+  },
+  "https://docs.ros.org/en/rolling/Capabilities/Simulation/URDF/Building-a-Visual-Robot-Model-with-URDF-from-Scratch.html": {
+   "citedBy": [
+    "3-8#ref-10"
+   ],
+   "refText": "Open Robotics, “Building a visual robot model from scratch,” ROS 2 Documentation (Rolling); file source/Capabilities/Simulation/URDF/Building-a-Visual-Robot-Model-with-URDF-from-Scratch.rst (source read on GitHub: ros2/ros2_documentation, rolling branch), October 2026. Available: docs.ros.org/en/rol",
+   "http": 200,
+   "title": "Making sure you're not a bot!",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "URDF describes the robot as a tree of links connected by joints",
+     "evidence": "Visual-model tutorial (rolling): 'URDF lets you describe a robot model as a tree of links, joints...'; 'The joint is defined in terms of a parent and a child.'; 'ultimately a tree structure'",
+     "checked": "2026-10-22"
+    }
+   }
+  },
+  "https://docs.ros.org/en/rolling/Capabilities/Simulation/URDF/URDF-Main.html": {
+   "citedBy": [
+    "3-8#ref-9"
+   ],
+   "refText": "Open Robotics, “URDF,” ROS 2 Documentation (Rolling); file source/Capabilities/Simulation/URDF/URDF-Main.rst (source read on GitHub: ros2/ros2_documentation, rolling branch), October 2026. Available: docs.ros.org/en/rolling/Capabilities/Simulation/URDF/URDF-Main.html.",
+   "http": 200,
+   "title": "Making sure you're not a bot!",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "URDF stands for Unified Robot Description Format and is an XML file",
+     "evidence": "URDF-Main.rst (rolling): 'URDF (Unified Robot Description Format) is a file format for specifying the geometry and organization of robots in ROS. A URDF file follows the XML format'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/rolling/Releases/Release-Lyrical-Luth.html": {
    "citedBy": [
@@ -2199,7 +2365,15 @@
    "refText": "Open Robotics, “Lyrical Luth (codename ‘lyrical’; May, 2026)” and “Lyrical Luth supported platforms,” ROS 2 Documentation; files source/Releases/Release-Lyrical-Luth.rst and source/Releases/lyrical/supported-platforms.rst (source read on GitHub: ros2/ros2_documentation, rolling branch), October 2026",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Lyrical Luth is LTS from May 2026, supported until May 2031, Ubuntu 26.04 Resolute is Tier 1",
+     "evidence": "Release-Lyrical-Luth.rst: 'Long Term Support (LTS) release... supported until May 2031'; supported-platforms.rst: Ubuntu Resolute (26.04) amd64/arm64 Tier 1 (read via ros2_documentation source…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.ros.org/en/rolling/p/robot_localization/state_estimation_nodes.html": {
    "citedBy": [
@@ -2256,30 +2430,54 @@
   },
   "https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/move.html": {
    "citedBy": [
-    "3-8#ref-31"
+    "3-8#ref-33"
    ],
    "refText": "Universal Robots, “Moving the robot,” Universal Robots ROS 2 Documentation; file ur_robot_driver/doc/usage/move.rst (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_rob",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Move the robot — Universal Robots ROS 2 Driver Documentation 0.1 documentation"
+   "title": "Move the robot — Universal Robots ROS 2 Driver Documentation 0.1 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "UR docs: start on mock hardware with ur_type, placeholder robot_ip, use_mock_hardware:=true; test_joint_trajectory_controller; 'move (or jump when using…",
+     "evidence": "Move the robot page: 'robot_ip:=yyy.yyy.yyy.yyy use_mock_hardware:=true'; 'After a few seconds the robot should move(or jump when using emulation).'; 'use the MoveIt Plugin in rviz2'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/simulation.html": {
    "citedBy": [
-    "3-8#ref-20"
+    "3-8#ref-22"
    ],
    "refText": "Universal Robots, “Simulation,” Universal Robots ROS 2 Documentation; file ur_robot_driver/doc/usage/simulation.rst (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_rob",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Simulation — Universal Robots ROS 2 Driver Documentation 0.1 documentation"
+   "title": "Simulation — Universal Robots ROS 2 Driver Documentation 0.1 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Mock hardware not physics sim; TCP pose broadcaster, passthrough controller, force mode, GPIO verification don't work on mock",
+     "evidence": "Simulation page note lists exactly these four; GPIO 'will report a failure when trying to set an I/O pin'. 'Jumps instead of accelerating' is the lesson's own inference from mirroring",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/ur_robot_driver/ur_robot_driver/doc/usage/startup.html": {
    "citedBy": [
-    "3-8#ref-19"
+    "3-8#ref-21"
    ],
    "refText": "Universal Robots, “Startup the driver,” Universal Robots ROS 2 Documentation; file ur_robot_driver/doc/usage/startup.rst (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: docs.universal-robots.com/Universal_Robots_ROS2_Documentation/doc/u",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Startup the driver — Universal Robots ROS 2 Driver Documentation 0.1 documentation"
+   "title": "Startup the driver — Universal Robots ROS 2 Driver Documentation 0.1 documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "UR startup guide: mock hardware 'Useful for testing launch files, descriptions, etc.'",
+     "evidence": "startup page: 'use_mock_hardware (default: false) - Use simple hardware emulator from ros2_control. Useful for testing launch files, descriptions, etc.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://documentation-be.hexagon.com/bundle/04_ISO9283_Basics/raw/resource/enus/04_ISO9283_Basics.pdf": {
    "citedBy": [
@@ -3479,29 +3677,53 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Description/HEAD/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "UR description built for Lyrical from rolling branch (4.3.1); view_ur.launch.xml viewer",
+     "evidence": "README table: Lyrical -> rolling branch; 'ros2 launch ur_description view_ur.launch.xml ur_type:=ur5e'; package.xml on rolling: 4.3.1",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/doc/index.rst": {
    "citedBy": [
-    "3-8#ref-10"
+    "3-8#ref-12"
    ],
    "refText": "Universal Robots, “ur_description” package documentation, doc/index.rst (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Description, rolling branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/doc/index.rst.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Description/rolling/doc/index.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "UR uses xacro because models differ only in meshes, DH and physical params; ur_macro.xacro vs ur.urdf.xacro; four YAML config files",
+     "evidence": "doc/index.rst: 'the description uses xacro macros in order to make it reuse as much as possible'; lists ur_macro.xacro, ur.urdf.xacro and config/urXX/ four files incl. tool0 calibration note",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Description/blob/rolling/urdf/ur_macro.xacro": {
    "citedBy": [
-    "3-8#ref-11"
+    "3-8#ref-13"
    ],
    "refText": "Universal Robots, UR robot macro, mock-hardware macro and UR5e joint limits, urdf/ur_macro.xacro, urdf/ros2_control_mock_hardware.xacro and config/ur5e/joint_limits.yaml (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Description, rolling branch), October 2026. Available: github.com/Un",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Description/rolling/urdf/ur_macro.xacro",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Six joint names; first five revolute, wrist_3 type parameterized; tf_prefix; UR5e shoulder_pan +/-360 deg, 180 deg/s, no accel limits",
+     "evidence": "ur_macro.xacro: ${tf_prefix}shoulder_pan_joint type=revolute ... wrist_3_joint type=${wrist_3_joint_type}; ur5e/joint_limits.yaml: +/-360, 180 deg/s, 'acceleration limits are not publicly…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver": {
    "citedBy": [
@@ -3520,6 +3742,12 @@
      "status": "verified",
      "claim": "UR ROS 2 driver supports pause at e-stop, safeguard stop, automatic speed scaling, manual speed scaling from pendant",
      "evidence": "\"pause at emergency stop, safeguard stop, automatic speed scaling to avoid violate the safety setting and manually speed scaling from the teach pendant\"",
+     "checked": "2026-10-22"
+    },
+    "3-8": {
+     "status": "verified",
+     "claim": "UR driver has a lyrical branch released as 6.2.0; README installs ur meta-package (ros-rolling-ur) bundling driver, controllers, moveit_config, calibration…",
+     "evidence": "README branch table: Lyrical -> lyrical; 'sudo apt-get install ros-rolling-ur'; ur/package.xml on lyrical: version 6.2.0, exec_depends the five packages",
      "checked": "2026-10-22"
     }
    }
@@ -3545,40 +3773,64 @@
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/doc/index.rst": {
    "citedBy": [
-    "3-8#ref-14"
+    "3-8#ref-16"
    ],
    "refText": "Universal Robots, “ur_moveit_config” package documentation, ur_moveit_config/doc/index.rst (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/doc/index.r",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/lyrical/ur_moveit_config/doc/index.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "ur_moveit_config is an example with only the arm; build scenario_moveit_config; TEM abort quote; URDF vs moveit_config limits quote; launch for real/URSim/mock",
+     "evidence": "doc/index.rst: 'example MoveIt! configuration'; recommends scenario_moveit_config; TEM 'will in most cases unnecessarily (and unexpectedly) abort goals'; limits quote verbatim; 'real hardware, URSim…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_config/srdf/ur_macro.srdf.xacro": {
    "citedBy": [
-    "3-8#ref-12"
+    "3-8#ref-14"
    ],
    "refText": "Universal Robots, UR semantic robot description (SRDF macro), ur_moveit_config/srdf/ur_macro.srdf.xacro (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_moveit_confi",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/lyrical/ur_moveit_config/srdf/ur_macro.srdf.xacro",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "SRDF header quote; one group ur_manipulator chain base_link->tool0; home/up/test_configuration; empty EE and virtual joint sections; 11 disable_collisions",
+     "evidence": "ur_macro.srdf.xacro: header quote verbatim; chain base_link->tool0; home shoulder_lift -1.5707; up adds wrist_1 -1.5707; EE/VIRTUAL JOINT comments only; 11 disable_collisions Adjacent/Never",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/CHANGELOG.rst": {
    "citedBy": [
-    "3-8#ref-21"
+    "3-8#ref-23"
    ],
    "refText": "Universal Robots, changelogs for ur_robot_driver and ur_moveit_config, ur_robot_driver/CHANGELOG.rst and ur_moveit_config/CHANGELOG.rst (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Dri",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/lyrical/ur_robot_driver/CHANGELOG.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "use_fake_hardware renamed; changelog entry 'Use mock_hardware and mock_sensor_commands instead of fake (#739)'",
+     "evidence": "ur_robot_driver and ur_moveit_config CHANGELOG.rst (lyrical): '* Use mock_hardware and mock_sensor_commands instead of fake (#739)'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/config/ur_controllers.yaml": {
    "citedBy": [
-    "3-8#ref-23",
+    "3-8#ref-25",
     "3-9#ref-29"
    ],
    "refText": "Universal Robots, controller configuration, ur_robot_driver/config/ur_controllers.yaml (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/config/ur_contro",
@@ -3593,19 +3845,33 @@
      "claim": "Lyrical: no scaled JTC; stock JTC has speed_scaling param -> speed_scaling/speed_scaling_factor",
      "evidence": "lyrical ur_controllers.yaml: no scaled_joint_trajectory_controller; joint_trajectory_controller: speed_scaling: state_interface: $(var tf_prefix)speed_scaling/speed_scaling_factor.",
      "checked": "2026-10-22"
+    },
+    "3-8": {
+     "status": "verified",
+     "claim": "UR lyrical config: JTC type joint_trajectory_controller/JointTrajectoryController over six joints",
+     "evidence": "ur_controllers.yaml (lyrical): joint_trajectory_controller: type: joint_trajectory_controller/JointTrajectoryController; joints shoulder_pan..wrist_3 with tf_prefix",
+     "checked": "2026-10-22"
     }
    }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/lyrical/ur_robot_driver/urdf/ur.ros2_control.xacro": {
    "citedBy": [
-    "3-8#ref-17"
+    "3-8#ref-19"
    ],
    "refText": "Universal Robots, driver URDF and ros2_control macros, ur_robot_driver/urdf/ur.ros2_control.xacro and ur_robot_driver/urdf/ur.urdf.xacro (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Dr",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/lyrical/ur_robot_driver/urdf/ur.ros2_control.xacro",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "ur.ros2_control.xacro: xacro:if use_mock_hardware -> GenericSystem, unless -> UR plugin; default false; initial positions for simulations",
+     "evidence": "ur.ros2_control.xacro (lyrical): if -> mock_components/GenericSystem, unless -> ur_robot_driver/URPositionHardwareInterface; ur.urdf.xacro: default=\"false\", 'initial position for simulations (Mock…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/README.md": {
    "citedBy": [
@@ -3647,14 +3913,22 @@
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_moveit_config/launch/ur_moveit.launch.py": {
    "citedBy": [
-    "3-8#ref-32"
+    "3-8#ref-34"
    ],
    "refText": "Universal Robots, MoveIt launch file, ur_moveit_config/launch/ur_moveit.launch.py (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, main branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_moveit_config/launch/ur_moveit.launch.py",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/main/ur_moveit_config/launch/ur_moveit.launch.py",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "ur_moveit.launch.py waits for the robot description, then starts move_group and RViz",
+     "evidence": "main: wait_for_robot_description node; on_exit=[move_group_node, rviz_node, servo_node] (also starts a servo node)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/config/ur5_update_rate.yaml": {
    "citedBy": [
@@ -3746,7 +4020,7 @@
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py": {
    "citedBy": [
-    "3-8#ref-18",
+    "3-8#ref-20",
     "3-9#ref-24"
    ],
    "refText": "Universal Robots, driver launch file, ur_robot_driver/launch/ur_control.launch.py (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, main branch), October 2026. Available: github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py",
@@ -3761,19 +4035,33 @@
      "claim": "UR headless mode off by default; launch file starts joint_trajectory_controller by default (main/Lyrical)",
      "evidence": "ur_control.launch.py (main): 'headless_mode' default_value=\"false\"; 'initial_joint_controller' default_value=\"joint_trajectory_controller\" (same on lyrical branch).",
      "checked": "2026-10-22"
+    },
+    "3-8": {
+     "status": "verified",
+     "claim": "ur_control.launch.py: use_mock_hardware description; JTC default initial_joint_controller; robot_ip has no default; launch_rviz defaults true",
+     "evidence": "main: use_mock_hardware 'Start robot with mock hardware mirroring command to its states.'; initial_joint_controller default joint_trajectory_controller (same on lyrical); robot_ip declared without…",
+     "checked": "2026-10-22"
     }
    }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/tree/lyrical/ur_moveit_config/config": {
    "citedBy": [
-    "3-8#ref-27"
+    "3-8#ref-29"
    ],
    "refText": "Universal Robots, MoveIt configuration files (kinematics.yaml, moveit_controllers.yaml, ompl_planning.yaml, pilz_industrial_motion_planner_planning.yaml, pilz_cartesian_limits.yaml), ur_moveit_config/config/ (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, lyrical branch), Octob",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/lyrical/ur_moveit_config/config/README.md",
-   "rawHttp": 404
+   "rawHttp": 404,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "UR config: KDL 0.005/0.005; OMPL+Pilz+CHOMP configs; Pilz cart limits 1.0/2.25/-5.0/1.57, default PTP; OMPL adapters; simple controller manager; start tol…",
+     "evidence": "lyrical ur_moveit_config/config: kinematics.yaml KDL 0.005/0.005; ompl, pilz, chomp_planning.yaml present; pilz_cartesian_limits values match; default_planner_config: PTP; adapters match…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_GZ_Simulation/blob/ros2/README.md": {
    "citedBy": [
@@ -4217,7 +4505,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/moveit/moveit2/HEAD/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "MoveIt released into Lyrical as 2.15.2 from main; no lyrical branch in moveit2 as of Oct 2026",
+     "evidence": "git ls-remote moveit/moveit2 heads: humble, jazzy, kilted, main, no lyrical; README branch policy lists humble/jazzy/kilted stable branches",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/moveit/moveit2/blob/main/moveit_core/trajectory_processing/include/moveit/trajectory_processing/time_optimal_trajectory_generation.hpp": {
    "citedBy": [
@@ -4709,7 +5005,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/ros/ros_tutorials/lyrical/turtlesim_msgs/msg/Pose.msg",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "Pose has five float32 fields; turtlesim_msgs/msg/Pose.msg exists on Kilted/Lyrical, turtlesim/msg/Pose.msg on Humble/Jazzy",
+     "evidence": "turtlesim_msgs/msg/Pose.msg (lyrical): float32 x, y, theta, linear_velocity, angular_velocity; raw files: humble/jazzy turtlesim/msg/Pose.msg 200 and turtlesim_msgs 404; kilted/lyrical the reverse",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/ros/ros_tutorials/blob/rolling/turtlesim/tutorials/mimic.cpp": {
    "citedBy": [
@@ -4740,7 +5044,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/ros/ros_tutorials/lyrical/turtlesim/README.md",
-   "rawHttp": 404
+   "rawHttp": 404,
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "Turtlesim interfaces (cmd_vel Twist, pose, color_sensor, services/action), linear.x/angular.z (+linear.y if holonomic), 1.0 s timeout, wall clamp, y up, QoS…",
+     "evidence": "turtle.cpp (lyrical): <name>/cmd_vel Twist sub; /pose, /color_sensor pubs; set_pen, teleport_*, rotate_absolute; holonomic param; Duration(1.0) zeroes velocities; 'Oh no! I hit the wall!'; qos.hpp…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/ros/rosdistro/blob/master/jazzy/distribution.yaml": {
    "citedBy": [
@@ -4777,6 +5089,12 @@
      "status": "verified",
      "claim": "Lyrical distribution.yaml: ros2_canopen released; ur_robot_driver 6.2.0-1 with its packages; abb_ros2 and KUKA drivers absent",
      "evidence": "lyrical/distribution.yaml: ros2_canopen 0.3.4-1; ur_robot_driver 6.2.0-1 (ur, ur_calibration, ur_controllers, ur_dashboard_msgs, ur_moveit_config, ur_robot_driver); no abb_ros2, no kuka_drivers/krosh…",
+     "checked": "2026-10-22"
+    },
+    "3-8": {
+     "status": "verified",
+     "claim": "rosdistro lyrical: ur_robot_driver 6.2.0 from lyrical, ur_description 4.3.1 from rolling, moveit 2.15.2 from main",
+     "evidence": "distribution.yaml: ur_robot_driver release 6.2.0-1, source lyrical, packages incl. ur; ur_description 4.3.1-1, source rolling; moveit 2.15.2-1, source main",
      "checked": "2026-10-22"
     }
    }
@@ -4872,7 +5190,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/ros2/ros2cli/lyrical/ros2pkg/ros2pkg/resource/ament_python/setup.py.em",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-6": {
+     "status": "verified",
+     "claim": "Lyrical setup.py template shape (data_files, py.typed package_data only Kilted/Lyrical), setup.cfg sections, --dependencies written as <depend>",
+     "evidence": "setup.py.em matches lesson listing incl. package_data={'': ['py.typed']}; absent on humble/jazzy branches, present on kilted; setup.cfg.em [develop]/[install] lib paths; package.xml.em writes…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/ros2/ros2cli/blob/lyrical/ros2pkg/ros2pkg/verb/create.py": {
    "citedBy": [
@@ -4883,7 +5209,16 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/ros2/ros2cli/lyrical/ros2pkg/ros2pkg/verb/create.py",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "3-6": {
+     "status": "fixed",
+     "claim": "--build-type choices cmake/ament_cmake/ament_cargo/ament_python, default ament_cmake; other options; --license ?; Lyrical template writes py.typed not shown…",
+     "evidence": "verb/create.py (lyrical): choices=['cmake','ament_cmake','ament_cargo','ament_python'], default 'ament_cmake'; --package-format choices [2,3] default 3; git config for maintainer; \"pass '?'\"…",
+     "note": "All stated facts check out, but the Lyrical template also writes test/test_mypy.py and test/test_xmllint.py and adds ament_mypy and ament_xmllint test_depends (as in Kilted). Add these to the 'not in the docs' sentence and to the package.xml test-tools list.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/ros2/ros_buildfarm_config/blob/ros2/lyrical/release-ubuntu-arm64-build.yaml": {
    "citedBy": [
@@ -5889,12 +6224,20 @@
   "https://moveit.picknik.ai/main/doc/concepts/kinematics.html": {
    "citedBy": [
     "2-4#ref-5",
-    "3-8#ref-13"
+    "3-8#ref-15"
    ],
    "refText": "MoveIt Documentation (Rolling), “Concepts” (pages: The move_group node; Motion Planning; Kinematics), PickNik Robotics and MoveIt contributors. Available: moveit.picknik.ai/main/doc/concepts/concepts.html; see also Motion Planning and Kinematics.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Kinematics — MoveIt Documentation: Rolling documentation"
+   "title": "Kinematics — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "ACM; collision checking ~90% of planning cost; FCL with meshes, primitives, Octomap; FK/Jacobians in RobotState; default IK is KDL",
+     "evidence": "Kinematics page: 'often accounting for close to 90% of the computational expense'; FCL primary library; .stl/.dae meshes; boxes, cylinders, cones, spheres, planes; Octomap; KDL numerical…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/concepts/motion_planning.html": {
    "citedBy": [
@@ -5904,7 +6247,16 @@
    "refText": "MoveIt Documentation (Rolling), “Concepts” (pages: The move_group node; Motion Planning; Kinematics), PickNik Robotics and MoveIt contributors. Available: moveit.picknik.ai/main/doc/concepts/concepts.html; see also Motion Planning and Kinematics.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Motion Planning — MoveIt Documentation: Rolling documentation"
+   "title": "Motion Planning — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "fixed",
+     "claim": "Planner plugins (OMPL default, Pilz, CHOMP), collision checks, trajectory not path, planning request adapters incl. 10 m workspace",
+     "evidence": "Page quotes match; ValidateWorkspaceBounds 'will specify a default workspace for planning: a cube of size 10 m x 10 m x 10 m' only if the request lacks one",
+     "note": "Page does not say ValidateWorkspaceBounds checks that the goal is inside the workspace; it sets a default 10 m workspace when the request has none. CheckStartStateBounds is described as fixing a slightly-out-of-bounds start state. Reword those two adapter descriptions.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/concepts/move_group.html": {
    "citedBy": [
@@ -5913,43 +6265,83 @@
    "refText": "MoveIt maintainers (PickNik Robotics), “MoveGroup: the MoveIt Node (move_group),” MoveIt 2 Documentation (main); file doc/concepts/move_group.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc/concepts/move_group.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "The move_group node — MoveIt Documentation: Rolling documentation"
+   "title": "The move_group node — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "move_group: integrator node; reads URDF/SRDF/config params; /joint_states, TF-only, FollowJointTrajectory client; pluginlib capabilities",
+     "evidence": "Page: 'This node serves as an integrator...'; robot_description / robot_description_semantic; 'will not set up its own joint state publisher'; 'only listens to TF'; client only; plugins via pluginlib",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/concepts/planning_scene_monitor.html": {
    "citedBy": [
-    "3-8#ref-25"
+    "3-8#ref-27"
    ],
    "refText": "MoveIt maintainers (PickNik Robotics), “Planning Scene Monitor,” MoveIt 2 Documentation (main); file doc/concepts/planning_scene_monitor.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc/concepts/planning_scene_monitor.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Planning Scene Monitor — MoveIt Documentation: Rolling documentation"
+   "title": "Planning Scene Monitor — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Planning scene definition quote; PSM listens on /planning_scene, publishes monitored_planning_scene shown by RViz; objects from sensors (Octomap) or user",
+     "evidence": "PSM page: 'representation of the world around the robot and also the state of the robot itself'; listens /planning_scene, publishes monitored_planning_scene, listened to by rviz plugin; point…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/examples/motion_planning_python_api/motion_planning_python_api_tutorial.html": {
    "citedBy": [
-    "3-8#ref-30"
+    "3-8#ref-32"
    ],
    "refText": "MoveIt maintainers (PickNik Robotics), “Motion Planning Python API,” MoveIt 2 Documentation (main); file doc/examples/motion_planning_python_api/motion_planning_python_api_tutorial.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Motion Planning Python API — MoveIt Documentation: Rolling documentation"
+   "title": "Motion Planning Python API — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "MoveItPy pattern: get_planning_component, set_start_state_to_current_state, set_goal_state (config/robot_state/pose), plan(), execute(); pilz PTP planning…",
+     "evidence": "Tutorial code: MoveItPy(...), get_planning_component('panda_arm'), set_goal_state(configuration_name=/robot_state=/pose_stamped_msg=, pose_link=), plan(), robot.execute(...); params…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/examples/setup_assistant/setup_assistant_tutorial.html": {
    "citedBy": [
-    "3-8#ref-29"
+    "3-8#ref-31"
    ],
    "refText": "MoveIt maintainers (PickNik Robotics), “MoveIt Setup Assistant,” MoveIt 2 Documentation (main); file doc/examples/setup_assistant/setup_assistant_tutorial.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc/examples/setup_assistant/",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "MoveIt Setup Assistant — MoveIt Documentation: Rolling documentation"
+   "title": "MoveIt Setup Assistant — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Setup Assistant launch command and panes (self-collision, virtual joints, groups with KDL, poses, EEs for pick-and-place, ros2_control, controllers, launch…",
+     "evidence": "Tutorial: 'ros2 launch moveit_setup_assistant setup_assistant.launch.py'; Steps 2-14 cover these panes; 'kdl_kinematics_plugin/KDLKinematicsPlugin ... default'; EEs 'used for attaching objects…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/how_to_guides/pilz_industrial_motion_planner/pilz_industrial_motion_planner.html": {
    "citedBy": [
-    "3-8#ref-28"
+    "3-8#ref-30"
    ],
    "refText": "MoveIt maintainers (PickNik Robotics), “Pilz Industrial Motion Planner,” MoveIt 2 Documentation (main); file doc/how_to_guides/pilz_industrial_motion_planner/pilz_industrial_motion_planner.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Pilz Industrial Motion Planner — MoveIt Documentation: Rolling documentation"
+   "title": "Pilz Industrial Motion Planner — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Pilz PTP/LIN/CIRC descriptions, lead axis sync, CIRC center/interim limits, joint_limits.yaml overrides URDF, accel only there, cartesian limits file…",
+     "evidence": "Pilz page: 'trajectory generator to plan standard robot motions like point-to-point, linear, and circular'; lead axis text; shorter arc/no half circle; no full circle; 'acceleration limits is only…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html": {
    "citedBy": [
@@ -5958,25 +6350,49 @@
    "refText": "MoveIt maintainers (PickNik Robotics), “Getting Started,” MoveIt 2 Documentation (main); file doc/tutorials/getting_started/getting_started.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc/tutorials/getting_started/getting_starte",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Getting Started — MoveIt Documentation: Rolling documentation"
+   "title": "Getting Started — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "MoveIt tutorials still call Jazzy the latest stable version",
+     "evidence": "Getting Started: 'we recommend you use the latest stable version of ROS (Jazzy) on Ubuntu 24.04'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/tutorials/planning_around_objects/planning_around_objects.html": {
    "citedBy": [
-    "3-8#ref-26"
+    "3-8#ref-28"
    ],
    "refText": "MoveIt maintainers (PickNik Robotics), “Planning Around Objects,” MoveIt 2 Documentation (main); file doc/tutorials/planning_around_objects/planning_around_objects.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc/tutorials/planni",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Planning Around Objects — MoveIt Documentation: Rolling documentation"
+   "title": "Planning Around Objects — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "Planning Around Objects adds a collision box via PlanningSceneInterface with operation ADD; MoveGroupInterface setPoseTarget",
+     "evidence": "Tutorial: 'collision_object.operation = collision_object.ADD'; PlanningSceneInterface adds it; 'move_group_interface.setPoseTarget(target_pose)'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.html": {
    "citedBy": [
-    "3-8#ref-33"
+    "3-8#ref-35"
    ],
    "refText": "MoveIt maintainers (PickNik Robotics), “MoveIt Quickstart in RViz,” MoveIt 2 Documentation (main); file doc/tutorials/quickstart_in_rviz/quickstart_in_rviz_tutorial.rst (source read on GitHub: moveit/moveit2_tutorials, main branch), October 2026. Available: moveit.picknik.ai/main/doc/tutorials/quick",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "MoveIt Quickstart in RViz — MoveIt Documentation: Rolling documentation"
+   "title": "MoveIt Quickstart in RViz — MoveIt Documentation: Rolling documentation",
+   "checks": {
+    "3-8": {
+     "status": "verified",
+     "claim": "RViz quickstart: green start/orange goal, Interact, red collisions, collision-aware IK, Plan/Show Trail/Execute, Cartesian path, 10% default scaling…",
+     "evidence": "Quickstart: 'Green: start state ... Orange: goal state'; 'press Interact'; 'links in collision will turn red'; 'scaled to 10% (0.1)'; 'Trajectory - Trajectory Slider'; Use Cartesian Path moves EE…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://moveit.picknik.ai/main/index.html": {
    "citedBy": [
