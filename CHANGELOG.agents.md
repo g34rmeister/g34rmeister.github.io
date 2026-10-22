@@ -2,6 +2,12 @@
 
 Short log of agent-made changes so new sessions can skip re-exploring. Newest first. Add one entry per PR: number, title, and the few facts a later agent needs (files touched, conventions introduced). Keep each entry to a few lines.
 
+## #16 Token-saving groundwork: sync script, site checks, source registry, lesson index
+- `scripts/site_sync.py` + `scripts/site_manifest.json`: regenerate sitemap, hub rows, chapter lists, prev/next, navbars and the CI page set from `course-data.js`. Never hand-edit those regions.
+- `scripts/check_site.py` (citations by first use, anchors, assets, course data/glossary), `scripts/renumber_refs.py`, new workflow `site-sync.yml`.
+- `docs/sources.json` (every cited source, link status, per-lesson claim checks) with `scripts/sources.py`, `scripts/fetch_text.py`, `scripts/ref_claims.py`; `docs/lessons-index.md` from `scripts/build_index.py`.
+- Every lesson's citations checked against the opened source; fixes applied in the lessons, results stored in `docs/sources.json`.
+
 ## #14 (this PR): CLAUDE.md and agent changelog
 - Added `CLAUDE.md` (layout, rules, checks) and this file.
 
