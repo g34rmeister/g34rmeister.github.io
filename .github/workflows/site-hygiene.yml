@@ -106,3 +106,22 @@ jobs:
               sys.exit(1)
           print(f'OK: {len(pages)} pages follow SEO/a11y/footer conventions.')
           PY
+
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Playwright and Chromium
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          npx playwright install --with-deps chromium
+
+      - name: Check layout, JS errors and quizzes in a browser
+        run: node scripts/test_playwright.js

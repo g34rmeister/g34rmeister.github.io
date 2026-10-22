@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -209,7 +209,7 @@ def generate_launch_description():
         )
     ])</code></pre>
                             <p>
-                                Read it from the outside in. A Python launch file must define a function called <code>generate_launch_description()</code> that returns a <code>LaunchDescription</code>; the <code>ros2 launch</code> command calls that function.<sup><a href="#ref-8">[8]</a></sup> What does that function return? A <code>LaunchDescription</code>, which is simply a list of <strong>actions</strong> for the launch system to carry out. Here every action is a <code>Node</code> from <code>launch_ros.actions</code>.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                                Read it from the outside in. A Python launch file must define a function called <code>generate_launch_description()</code> that returns a <code>LaunchDescription</code>; the <code>ros2 launch</code> command calls that function.<sup><a href="#ref-8">[8]</a></sup> What does that function return? A <code>LaunchDescription</code>, which wraps a list of <strong>actions</strong> for the launch system to carry out. Here every action is a <code>Node</code> from <code>launch_ros.actions</code>.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
                                 Each <code>Node</code> names the <code>package</code> and the <code>executable</code> to start (the same two words you would type after <code>ros2 run</code>), and can set a node <code>name</code> and a <code>namespace</code>.<sup><a href="#ref-5">[5]</a></sup> Notice that both simulators are called <code>sim</code>. That is allowed only because they live in different namespaces, <code>turtlesim1</code> and <code>turtlesim2</code>. The tutorial explains: "Unique namespaces allow the system to start two nodes without node name or topic name conflicts."<sup><a href="#ref-5">[5]</a></sup> The full names become <code>/turtlesim1/sim</code> and <code>/turtlesim2/sim</code>, and each turtle's topics are prefixed the same way, for example <code>/turtlesim1/turtle1/pose</code>.
@@ -220,6 +220,40 @@ def generate_launch_description():
                             <p>
                                 The third node does the interesting work. In the Turtlesim source code, <code>mimic</code> subscribes to a topic named <code>input/pose</code> (type <code>turtlesim_msgs/msg/Pose</code>) and publishes velocity commands on <code>output/cmd_vel</code> (type <code>geometry_msgs/msg/Twist</code>).<sup><a href="#ref-9">[9]</a></sup> The <code>remappings</code> list connects those generic names to real topics: <code>/input/pose</code> becomes the first turtle's pose and <code>/output/cmd_vel</code> becomes the second turtle's velocity command. "In other words, <code>turtlesim2</code> will mimic <code>turtlesim1</code>'s movements."<sup><a href="#ref-5">[5]</a></sup> This is the same remapping you met in lesson 3.4 with <code>--ros-args --remap</code>, written once in a file instead of typed every time.
                             </p>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 330" role="img" aria-label="The turtlesim_mimic launch file. ros2 launch turtlesim_mimic_launch.py calls generate_launch_description, which returns a LaunchDescription with three Node actions. They start /turtlesim1/sim in namespace turtlesim1 with log level info passed through arguments, the mimic node with remappings, and /turtlesim2/sim in namespace turtlesim2 with log level warn passed through ros_arguments. mimic subscribes to /turtlesim1/turtle1/pose, remapped from /input/pose, and publishes on /turtlesim2/turtle1/cmd_vel, remapped from /output/cmd_vel. Both simulators are named sim, which works because their namespaces differ." xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-lf37" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                <rect class="d-box-gold" x="150" y="12" width="380" height="54" rx="4"/>
+                                <text class="d-text" x="340" y="34" text-anchor="middle">ros2 launch turtlesim_mimic_launch.py</text>
+                                <text class="d-muted" x="340" y="54" text-anchor="middle">generate_launch_description() returns a LaunchDescription</text>
+                                <line class="d-line" x1="250" y1="66" x2="125" y2="106" marker-end="url(#arrow-lf37)"/>
+                                <line class="d-line" x1="340" y1="66" x2="340" y2="106" marker-end="url(#arrow-lf37)"/>
+                                <line class="d-line" x1="430" y1="66" x2="555" y2="106" marker-end="url(#arrow-lf37)"/>
+                                <text class="d-muted" x="185" y="84" text-anchor="end">Node</text>
+                                <text class="d-muted" x="348" y="90">Node</text>
+                                <text class="d-muted" x="495" y="84">Node</text>
+                                <rect class="d-box" x="10" y="110" width="210" height="78" rx="4"/>
+                                <text class="d-title" x="115" y="134" text-anchor="middle">/turtlesim1/sim</text>
+                                <text class="d-muted" x="115" y="155" text-anchor="middle">turtlesim_node, ns turtlesim1</text>
+                                <text class="d-muted" x="115" y="174" text-anchor="middle">log level info (arguments)</text>
+                                <rect class="d-box" x="235" y="110" width="210" height="78" rx="4"/>
+                                <text class="d-title" x="340" y="134" text-anchor="middle">mimic</text>
+                                <text class="d-muted" x="340" y="155" text-anchor="middle">turtlesim2 mimics turtlesim1</text>
+                                <text class="d-muted" x="340" y="174" text-anchor="middle">two remappings</text>
+                                <rect class="d-box" x="460" y="110" width="210" height="78" rx="4"/>
+                                <text class="d-title" x="565" y="134" text-anchor="middle">/turtlesim2/sim</text>
+                                <text class="d-muted" x="565" y="155" text-anchor="middle">turtlesim_node, ns turtlesim2</text>
+                                <text class="d-muted" x="565" y="174" text-anchor="middle">log level warn (ros_arguments)</text>
+                                <path class="d-strong" d="M115,188 V240 H300 V194" marker-end="url(#arrow-lf37)"/>
+                                <path class="d-strong" d="M380,188 V240 H565 V194" marker-end="url(#arrow-lf37)"/>
+                                <text class="d-text" x="207" y="262" text-anchor="middle">/turtlesim1/turtle1/pose</text>
+                                <text class="d-muted" x="207" y="280" text-anchor="middle">remapped from /input/pose</text>
+                                <text class="d-text" x="472" y="262" text-anchor="middle">/turtlesim2/turtle1/cmd_vel</text>
+                                <text class="d-muted" x="472" y="280" text-anchor="middle">remapped from /output/cmd_vel</text>
+                                <text class="d-muted" x="340" y="316" text-anchor="middle">Both simulators are named sim; unique namespaces keep their names and topics apart.</text>
+                                </svg>
+                                <figcaption>What the <code>turtlesim_mimic</code> launch file starts. The two simulators share the node name <code>sim</code> but live in different namespaces, and the <code>remappings</code> connect <code>mimic</code>'s generic topics to the first turtle's pose and the second turtle's velocity command.</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">04. Running the mimic system, and the same file in XML</h2>
                             <p>
@@ -254,7 +288,7 @@ def generate_launch_description():
                                 Running a launch file from a loose path is fine for experiments. For anything you want to keep, put it in a package. "By convention, all launch files for a package are stored in the <code>launch</code> directory inside of the package," at the top level, next to <code>package.xml</code> and <code>setup.py</code>.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                Placing the file there is not enough. When you build, colcon copies files into the workspace's <code>install</code> folder, and <code>ros2 launch &lt;package&gt; &lt;file&gt;</code> looks for launch files there. For an <code>ament_python</code> package, such as the one you made in lesson 3.6, the documentation says: "To enable colcon to locate and utilize our launch files, we need to inform Python's setup tools of their presence."<sup><a href="#ref-8">[8]</a></sup> You do that by adding an entry to <code>data_files</code> in <code>setup.py</code>:<sup><a href="#ref-8">[8]</a></sup>
+                                Placing the file there is not enough. When you build, colcon installs the files that the package lists into the workspace's <code>install</code> folder, and <code>ros2 launch &lt;package&gt; &lt;file&gt;</code> looks for launch files there.<sup><a href="#ref-10">[10]</a></sup> For an <code>ament_python</code> package, such as the one you made in lesson 3.6, the documentation says: "To enable colcon to locate and utilize our launch files, we need to inform Python's setup tools of their presence."<sup><a href="#ref-8">[8]</a></sup> You do that by adding an entry to <code>data_files</code> in <code>setup.py</code>:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <pre class="article-code"><code>import os
 from glob import glob
@@ -372,7 +406,7 @@ def generate_launch_description():
                             <pre class="article-code"><code>self.declare_parameter('my_parameter', 'world')
 my_param = self.get_parameter('my_parameter').get_parameter_value().string_value</code></pre>
                             <p>
-                                The second argument to <code>declare_parameter</code> is the default value, which also fixes the parameter's type; changing a declared parameter's type at runtime fails unless it was declared with dynamic typing allowed.<sup><a href="#ref-3">[3]</a></sup> If a node you write in lesson 3.6 should read a value from a YAML file, it must declare that parameter first.
+                                The second argument to <code>declare_parameter</code> is the default value, which also fixes the parameter's type; changing a declared parameter's type at runtime fails unless it was declared with dynamic typing allowed.<sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-3">[3]</a></sup> If a node you write in lesson 3.6 should read a value from a YAML file, it must declare that parameter first.
                             </p>
                             <p>
                                 Every node automatically offers services such as <code>list_parameters</code>, <code>get_parameters</code> and <code>set_parameters</code>, and the <code>ros2 param</code> command-line tool is built on them.<sup><a href="#ref-3">[3]</a></sup> With a single Turtlesim running you can try the basic workflow:<sup><a href="#ref-14">[14]</a></sup>
@@ -434,7 +468,7 @@ ros2 param load /turtlesim turtlesim.yaml</code></pre>
                                 <li class="article-spec-item"><span class="spec-label">Include arguments without defaults:</span> argument values only flow into an included file automatically for arguments that have a default there; required arguments must be passed explicitly.<sup><a href="#ref-7">[7]</a></sup></li>
                             </ul>
                             <p>
-                                Lyrical Luth keeps the syntax taught above and adds a few conveniences. Launch files can now log at a chosen severity, with a <code>level</code> argument on <code>log</code> and new actions such as <code>&lt;log_warning message="..."/&gt;</code>.<sup><a href="#ref-4">[4]</a></sup> XML and YAML files gain <code>string-join</code> and <code>path-join</code> substitutions, for example <code>$(path-join opt ros lyrical $(string-join . setup bash))</code>.<sup><a href="#ref-4">[4]</a></sup> Parameter files accept YAML type tags such as <code>string_param: !!str true</code> or <code>int_param: !!int 0</code>, which fix cases where an ambiguous value was read as the wrong type.<sup><a href="#ref-4">[4]</a></sup> On the command line, <code>ros2 param get</code> without a node name reads a parameter from all nodes, and <code>get</code> and <code>set</code> can now handle several parameters in one call.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-14">[14]</a></sup> XML and YAML launch files can also pass arguments into an include with <code>let</code>; older distributions may require <code>arg</code> there instead, which matters when you read older tutorials.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                                Lyrical Luth keeps the syntax taught above and adds a few conveniences. Launch files can now log at a chosen severity, with a <code>level</code> argument on <code>log</code> and new actions such as <code>&lt;log_warning message="..."/&gt;</code>.<sup><a href="#ref-4">[4]</a></sup> XML and YAML files gain <code>string-join</code> and <code>path-join</code> substitutions, for example <code>$(path-join opt ros lyrical $(string-join . setup bash))</code>.<sup><a href="#ref-4">[4]</a></sup> Parameter files accept YAML type tags such as <code>string_param: !!str true</code> or <code>int_param: !!int 0</code>, which fix cases where an ambiguous value was read as the wrong type.<sup><a href="#ref-4">[4]</a></sup> On the command line, <code>ros2 param get</code> without a node name reads a parameter from all nodes,<sup><a href="#ref-14">[14]</a></sup> and <code>get</code> and <code>set</code> can now handle several parameters in one call.<sup><a href="#ref-4">[4]</a></sup> XML and YAML launch files can also pass arguments into an include with <code>let</code>; older distributions may require <code>arg</code> there instead, which matters when you read older tutorials.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-10">[10]</a></sup>
                             </p>
 
                             <div class="article-callout try-it">
@@ -540,7 +574,7 @@ def generate_launch_description():
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>

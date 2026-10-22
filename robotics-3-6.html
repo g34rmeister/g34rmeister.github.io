@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=2.7" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -202,7 +202,7 @@ ros2 pkg create --build-type ament_python --license Apache-2.0 --node-name my_no
 
                             <h2 class="article-section-title">04. What the generator wrote</h2>
                             <p>
-                                The documented output for an <code>ament_python</code> package lists <code>package.xml</code>, <code>setup.py</code>, <code>setup.cfg</code>, <code>resource/my_package</code>, <code>my_package/__init__.py</code>, the node file <code>my_package/my_node.py</code>, and three tests: <code>test/test_copyright.py</code>, <code>test/test_flake8.py</code> and <code>test/test_pep257.py</code>.<sup><a href="#ref-7">[7]</a></sup> The Lyrical template also writes a <code>py.typed</code> marker file, which the documentation's sample output does not show.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup> Of these, the following are required for a Python package:<sup><a href="#ref-7">[7]</a></sup>
+                                The documented output for an <code>ament_python</code> package lists <code>package.xml</code>, <code>setup.py</code>, <code>setup.cfg</code>, <code>resource/my_package</code>, <code>my_package/__init__.py</code>, the node file <code>my_package/my_node.py</code>, and three tests: <code>test/test_copyright.py</code>, <code>test/test_flake8.py</code> and <code>test/test_pep257.py</code>.<sup><a href="#ref-7">[7]</a></sup> The Lyrical template also writes a <code>py.typed</code> marker file and two more tests, <code>test/test_mypy.py</code> and <code>test/test_xmllint.py</code>, which the documentation's sample output does not show.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup> Of these, the following are required for a Python package:<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">package.xml:</span> The manifest: name, version, description, maintainer, license, dependencies and the build type.<sup><a href="#ref-7">[7]</a></sup></li>
@@ -254,7 +254,7 @@ setup(
 
                             <h2 class="article-section-title">05. Declaring dependencies: package.xml and rosdep</h2>
                             <p>
-                                The generated Python <code>package.xml</code> uses format 3, has <code>TODO</code> placeholders for the description and license, lists the test tools <code>ament_copyright</code>, <code>ament_flake8</code>, <code>ament_pep257</code> and <code>python3-pytest</code> as test dependencies, and ends with <code>&lt;export&gt;&lt;build_type&gt;ament_python&lt;/build_type&gt;&lt;/export&gt;</code>.<sup><a href="#ref-7">[7]</a></sup> Every package your code imports should also be declared here. The tags say <em>when</em> each dependency is needed:<sup><a href="#ref-11">[11]</a></sup>
+                                The generated Python <code>package.xml</code> uses format 3, has <code>TODO</code> placeholders for the description and license, lists the test tools <code>ament_copyright</code>, <code>ament_flake8</code>, <code>ament_pep257</code> and <code>python3-pytest</code> as test dependencies, and ends with <code>&lt;export&gt;&lt;build_type&gt;ament_python&lt;/build_type&gt;&lt;/export&gt;</code>.<sup><a href="#ref-7">[7]</a></sup> The Lyrical template also adds <code>ament_mypy</code> and <code>ament_xmllint</code> to the test dependencies.<sup><a href="#ref-8">[8]</a></sup> Every package your code imports should also be declared here. The tags say <em>when</em> each dependency is needed:<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">&lt;depend&gt;:</span> Needed at both build time and run time.<sup><a href="#ref-11">[11]</a></sup></li>
@@ -426,6 +426,39 @@ source /opt/ros/lyrical/setup.bash
 cd ~/ros2_ws
 source install/setup.bash
 ros2 run turtle_square square_driver</code></pre>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 380" role="img" aria-label="Left: the folder tree of the ros2_ws workspace. src holds the turtle_square package, which contains package.xml (the manifest), setup.py (entry_points), setup.cfg (lets ros2 run find the executables), the resource/turtle_square marker, the turtle_square Python module with square_driver.py, and a test folder with three tests. Next to src, colcon build creates build, install and log. Right: the build and run steps. 1, source the underlay /opt/ros/lyrical/setup.bash. 2, rosdep install from src. 3, colcon build from the workspace root, which creates build, install and log. 4, in a new terminal, source the underlay and then install/setup.bash. 5, ros2 run turtle_square square_driver." xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-ws36" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs>
+                                <text class="d-title" x="30" y="40">~/ros2_ws/</text>
+                                <path class="d-line" d="M40,48 V280 M40,70 H52"/>
+                                <text class="d-text" x="56" y="75">src/</text>
+                                <path class="d-line" d="M66,82 V96 H78"/>
+                                <text class="d-text" x="82" y="101">turtle_square/</text>
+                                <path class="d-line" d="M92,108 V266 M92,122 H104 M92,146 H104 M92,170 H104 M92,194 H104 M92,218 H104 M92,266 H104"/>
+                                <text class="d-text" x="108" y="127">package.xml</text><text class="d-muted" x="280" y="127">manifest</text>
+                                <text class="d-text" x="108" y="151">setup.py</text><text class="d-muted" x="280" y="151">entry_points</text>
+                                <text class="d-text" x="108" y="175">setup.cfg</text><text class="d-muted" x="280" y="175">for ros2 run</text>
+                                <text class="d-text" x="108" y="199">resource/turtle_square</text><text class="d-muted" x="280" y="199">index marker</text>
+                                <text class="d-text" x="108" y="223">turtle_square/</text><text class="d-muted" x="280" y="223">Python module</text>
+                                <path class="d-line" d="M118,230 V242 H130"/>
+                                <text class="d-text" x="134" y="247">square_driver.py</text><text class="d-muted" x="280" y="247">your node</text>
+                                <text class="d-text" x="108" y="271">test/</text><text class="d-muted" x="280" y="271">three tests</text>
+                                <rect class="d-box-gold" x="30" y="280" width="336" height="86" rx="4"/>
+                                <text class="d-muted" x="42" y="297">created next to src/ by colcon build</text>
+                                <text class="d-text" x="42" y="318">build/</text><text class="d-muted" x="130" y="318">intermediate files</text>
+                                <text class="d-text" x="42" y="338">install/</text><text class="d-muted" x="130" y="338">each installed package</text>
+                                <text class="d-text" x="42" y="358">log/</text><text class="d-muted" x="130" y="358">logs of each colcon run</text>
+                                <text class="d-title" x="405" y="40">Build, then run</text>
+                                <rect class="d-box" x="405" y="52" width="265" height="44" rx="4"/><text class="d-text" x="417" y="70">1. Source the underlay</text><text class="d-muted" x="417" y="88">source /opt/ros/lyrical/setup.bash</text>
+                                <rect class="d-box" x="405" y="116" width="265" height="44" rx="4"/><text class="d-text" x="417" y="134">2. Install dependencies</text><text class="d-muted" x="417" y="152">rosdep install -i --from-path src</text>
+                                <rect class="d-box" x="405" y="180" width="265" height="44" rx="4"/><text class="d-text" x="417" y="198">3. Build from ~/ros2_ws</text><text class="d-muted" x="417" y="216">colcon build</text>
+                                <rect class="d-box-gold" x="405" y="244" width="265" height="44" rx="4"/><text class="d-text" x="417" y="262">4. New terminal: source both</text><text class="d-muted" x="417" y="280">underlay, then install/setup.bash</text>
+                                <rect class="d-box" x="405" y="308" width="265" height="44" rx="4"/><text class="d-text" x="417" y="326">5. Run the node</text><text class="d-muted" x="417" y="344">ros2 run turtle_square square_driver</text>
+                                <line class="d-strong" x1="537" y1="96" x2="537" y2="114" marker-end="url(#arrow-ws36)"/><line class="d-strong" x1="537" y1="160" x2="537" y2="178" marker-end="url(#arrow-ws36)"/><line class="d-strong" x1="537" y1="224" x2="537" y2="242" marker-end="url(#arrow-ws36)"/><line class="d-strong" x1="537" y1="288" x2="537" y2="306" marker-end="url(#arrow-ws36)"/>
+                                <path class="d-line" d="M405,210 L372,290" stroke-dasharray="5 4" marker-end="url(#arrow-ws36)"/>
+                                </svg>
+                                <figcaption>The workspace from this lesson after a build, and the order of the steps that build and run it. Build and run in separate terminals: the run terminal sources the underlay and then the overlay.</figcaption>
+                            </figure>
                             <p>
                                 The turtle should trace four sides and stop, and Terminal 2 should log "Finished side 1" through "Finished side 4". In a third terminal you can watch it work with <code>ros2 topic echo /turtle1/pose</code>, check who is connected with <code>ros2 topic info /turtle1/cmd_vel</code>, or open <code>rqt_graph</code> from lesson 3.5. To clear the drawing and put the turtle back in the centre, call <code>ros2 service call /reset std_srvs/srv/Empty</code>; if that type is rejected, check it with <code>ros2 service type /reset</code>.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
@@ -434,7 +467,7 @@ ros2 run turtle_square square_driver</code></pre>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Package 'turtle_square' not found:</span> This terminal has not sourced <code>install/setup.bash</code>, or the build failed. Source the overlay in a fresh terminal and check the build output.<sup><a href="#ref-3">[3]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">No executable found:</span> <code>ros2 run</code> looks for the program under <code>lib/&lt;package&gt;</code>. Check that <code>setup.cfg</code> exists, that the <code>console_scripts</code> entry is spelled correctly, and that you rebuilt after editing <code>setup.py</code>. Community reports trace this error to a deleted <code>setup.cfg</code> or a forgotten <code>source</code>.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-17">[17]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">No executable found:</span> <code>ros2 run</code> looks for the program under <code>lib/&lt;package&gt;</code>. Check that <code>setup.cfg</code> exists, that the <code>console_scripts</code> entry is spelled correctly, and that you rebuilt after editing <code>setup.py</code>. A community report traces this error to a missing <code>setup.cfg</code>, which left the program installed in <code>bin</code> instead of <code>lib/&lt;package&gt;</code>.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-17">[17]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">ModuleNotFoundError for turtlesim.msg:</span> The code was written for Jazzy or earlier. Import from <code>turtlesim_msgs.msg</code> instead.<sup><a href="#ref-15">[15]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">The node runs but the turtle does not move:</span> Check the topic name with <code>ros2 topic info /turtle1/cmd_vel</code>, and make sure you publish repeatedly from a timer, not once, because of the one-second timeout.<sup><a href="#ref-14">[14]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Strange build problems after sourcing:</span> You built in a terminal where the overlay was sourced. Open a new terminal, source only the underlay, and build again.<sup><a href="#ref-3">[3]</a></sup></li>
@@ -535,7 +568,7 @@ ros2 run turtle_square square_driver</code></pre>
             <script src="assets/js/robotics.js?v=1.6" defer></script>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
-            <script src="assets/js/learning.js?v=1.2" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
 
     </body>
 </html>
