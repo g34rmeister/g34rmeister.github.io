@@ -1,22 +1,31 @@
 """Source registry for lesson References lists.
 
-docs/sources.json records every URL cited in a lesson's References list, which
-refs cite it, whether the link still loads, and whether a person or agent has
-checked the cited claim against the page. Agents read it instead of re-opening
-sources that were already checked.
+docs/sources.json records every source cited in a lesson's References list: which refs cite
+it, whether the link still loads, and, per lesson, whether someone compared the lesson's
+claim with the source. Agents read it instead of re-opening sources that were already checked.
+
+Each entry is keyed by URL (refs with no URL, such as books, get a "book:" key). Fields:
+  citedBy     current refs, e.g. ["2-3#ref-1"] (rebuilt by `sync`, so renumbering is safe)
+  refText     the References entry as plain text
+  http, finalUrl, title, blocked, rawUrl, rawHttp, linkChecked   from `links`
+  checks      {"<lesson>": {"status", "claim", "evidence", "note", "suggestedUrl",
+               "corroboratedBy", "checked"}}: one claim check per citing lesson
 
 Usage (from the repo root):
   python3 scripts/sources.py sync               # add new refs, drop removed ones (no network)
-  python3 scripts/sources.py links [--all]      # fetch unchecked (or all) URLs, record HTTP status
-  python3 scripts/sources.py report             # counts by lesson and status
-  python3 scripts/sources.py check              # CI: registry covers every cited URL
+  python3 scripts/sources.py links [--all]      # fetch new (or all) URLs, record HTTP status
+  python3 scripts/sources.py import FILE.json LESSON   # merge a claim-check result file
+  python3 scripts/sources.py report [LESSON]    # status counts per lesson, or one lesson's problems
+  python3 scripts/sources.py check              # CI: registry covers every cited source
 
-Verification values (set by hand or by a review pass, never by `links`):
-  verified     the page was opened and supports the claim it is cited for
-  partial      the page supports part of the claim; see note
-  mismatch     the page does not support the claim; the lesson needs a fix (see note)
-  unreachable  could not be opened (paywall, 403, dead); claim rests on other evidence
-  unchecked    nobody has compared the claim with the page yet
+Check status values:
+  verified     the source was opened and supports the cited text
+  partial      supports part of it; see note
+  mismatch     does not support it; the lesson needs a fix (see note)
+  dead         link is gone; suggestedUrl gives the new location if one was found
+  unreachable  could not be opened (paywall, bot wall, book); see corroboratedBy
+  fixed        was partial/mismatch/dead and the lesson or link has since been corrected
+A source with no entry under checks for a lesson is unchecked for that lesson.
 """
 from concurrent.futures import ThreadPoolExecutor
 from datetime import date
@@ -47,15 +56,26 @@ def ref_text(body):
     return re.sub(r'\s+', ' ', unescape(TAG_RE.sub('', body))).strip()
 
 
+def source_key(lesson, body):
+    urls = list(dict.fromkeys(unescape(u) for u in URL_RE.findall(body)))
+    return urls or [f'book:{lesson}:{ref_text(body)[:80]}']
+
+
 def scan():
-    """Return {url: [{"ref": "2-3#ref-1", "text": ...}, ...]} from the lesson pages."""
+    """Return {key: [{"ref": "2-3#ref-1", "text": ...}, ...]} from the lesson pages."""
     found = {}
     for page in lesson_pages():
         lesson = page.stem.replace('robotics-', '')
         for num, body in REF_RE.findall(page.read_text(encoding='utf-8')):
-            for url in dict.fromkeys(unescape(u) for u in URL_RE.findall(body)):
-                found.setdefault(url, []).append({'ref': f'{lesson}#ref-{num}', 'text': ref_text(body)})
+            for key in source_key(lesson, body):
+                found.setdefault(key, []).append({'ref': f'{lesson}#ref-{num}', 'text': ref_text(body)})
     return found
+
+
+def refs_of(lesson):
+    """{ref number: [registry keys]} for one lesson page."""
+    text = (ROOT / f'robotics-{lesson}.html').read_text(encoding='utf-8')
+    return {int(num): source_key(lesson, body) for num, body in REF_RE.findall(text)}
 
 
 def load():
@@ -77,9 +97,14 @@ def sync(reg):
         if url not in found:
             del sources[url]
     for url, cites in found.items():
-        entry = sources.setdefault(url, {'verification': 'unchecked'})
+        entry = sources.setdefault(url, {})
+        entry.pop('verification', None)
         entry['citedBy'] = [c['ref'] for c in cites]
         entry['refText'] = cites[0]['text'][:300]
+        lessons = {c['ref'].split('#')[0] for c in cites}
+        for lesson in list(entry.get('checks', {})):
+            if lesson not in lessons:
+                del entry['checks'][lesson]
     return reg
 
 
@@ -128,7 +153,7 @@ def fetch(url):
 
 def links(reg, everything=False):
     today = date.today().isoformat()
-    todo = [u for u, e in reg['sources'].items() if everything or 'http' not in e]
+    todo = [u for u, e in reg['sources'].items() if not u.startswith('book:') and (everything or 'http' not in e)]
     print(f'Fetching {len(todo)} URLs...')
     with ThreadPoolExecutor(max_workers=12) as pool:
         for url, res in zip(todo, pool.map(fetch, todo)):
@@ -140,26 +165,57 @@ def links(reg, everything=False):
     return reg
 
 
-def report(reg):
-    by_lesson = {}
-    for entry in reg['sources'].values():
+def import_checks(reg, path, lesson):
+    today = date.today().isoformat()
+    keys = refs_of(lesson)
+    results = json.loads(Path(path).read_text(encoding='utf-8'))
+    for r in results:
+        check = {k: r[k] for k in ('status', 'claim', 'evidence', 'note', 'suggestedUrl', 'corroboratedBy') if r.get(k)}
+        check['checked'] = r.get('checked', today)
+        for key in keys.get(int(r['ref']), []):
+            reg['sources'][key].setdefault('checks', {})[lesson] = check
+    print(f'{lesson}: imported {len(results)} checks for {len(keys)} refs')
+    return reg
+
+
+def lesson_status(reg):
+    """{lesson: {status: count}} counting each ref once (its worst status)."""
+    rank = ['mismatch', 'dead', 'partial', 'unchecked', 'unreachable', 'fixed', 'verified']
+    worst = {}
+    for key, entry in reg['sources'].items():
         for ref in entry['citedBy']:
-            row = by_lesson.setdefault(ref.split('#')[0], {})
-            row[entry['verification']] = row.get(entry['verification'], 0) + 1
-            if entry.get('http', 200) >= 400 or entry.get('http') == 0:
-                row['badLink'] = row.get('badLink', 0) + 1
-    for lesson in sorted(by_lesson, key=lambda s: [int(x) for x in s.split('-')]):
-        print(lesson, by_lesson[lesson])
+            lesson = ref.split('#')[0]
+            status = entry.get('checks', {}).get(lesson, {}).get('status', 'unchecked')
+            if ref not in worst or rank.index(status) < rank.index(worst[ref]):
+                worst[ref] = status
+    out = {}
+    for ref, status in worst.items():
+        row = out.setdefault(ref.split('#')[0], {})
+        row[status] = row.get(status, 0) + 1
+    return out
+
+
+def report(reg, lesson=None):
+    if lesson:
+        for key, entry in reg['sources'].items():
+            check = entry.get('checks', {}).get(lesson)
+            refs = [r.split('#')[1] for r in entry['citedBy'] if r.startswith(lesson + '#')]
+            if refs and (not check or check['status'] not in ('verified', 'fixed')):
+                status = check['status'] if check else 'unchecked'
+                print(f"{','.join(refs)} {status}: {key}\n    {check.get('note', '') if check else ''}")
+        return
+    for lesson, row in sorted(lesson_status(reg).items(), key=lambda kv: [int(x) for x in kv[0].split('-')]):
+        print(lesson, row)
 
 
 def check(reg):
     missing = set(scan()) - set(reg['sources'])
     if missing:
-        print('docs/sources.json is missing cited URLs. Run: python3 scripts/sources.py sync')
+        print('docs/sources.json is missing cited sources. Run: python3 scripts/sources.py sync')
         for url in sorted(missing):
             print(f'  {url}')
         return 1
-    print(f'OK: docs/sources.json covers all {len(reg["sources"])} cited URLs.')
+    print(f'OK: docs/sources.json covers all {len(reg["sources"])} cited sources.')
     return 0
 
 
@@ -170,8 +226,10 @@ if __name__ == '__main__':
         save(sync(reg))
     elif cmd == 'links':
         save(links(sync(reg), '--all' in sys.argv))
+    elif cmd == 'import':
+        save(import_checks(sync(reg), sys.argv[2], sys.argv[3]))
     elif cmd == 'report':
-        report(reg)
+        report(reg, sys.argv[2] if len(sys.argv) > 2 else None)
     elif cmd == 'check':
         sys.exit(check(reg))
     else:
