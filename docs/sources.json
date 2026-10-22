@@ -99,7 +99,17 @@
    "refText": "Universal Robots Academy, video introduction page (Thai-language site) describing the Before Start sequence. academy.universal-robots.com/th/ว-ด-โอแนะนำ.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "วิดีโอแนะนำ"
+   "title": "วิดีโอแนะนำ",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "UR Academy page: Before Start sequence runs once before main loop, used to avoid collisions/bumps after a program has ended",
+     "evidence": "Thai page title: preventing impacts after the program ends with the 'Before Start Sequence' command set (video intro only)",
+     "note": "Page supports the collision/bump use but does not say the sequence runs once before the main loop. Add a UR manual cite for 'runs once' or drop that clause.",
+     "corroboratedBy": "https://www.universal-robots.com/manuals/EN/HTML/SW10_15/Content/prod-scriptmanual/all_scripts/Logic_Program.htm",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://agilityrobotics.com/content/gxo-signs-industry-first-multi-year-agreement-with-agility-robotics": {
    "citedBy": [
@@ -430,7 +440,15 @@
    "refText": "Robotiq, “Hand-E Instruction Manual: 6. Specifications,” online manual, March 29, 2019. assets.robotiq.com/website-assets/support_documents/document/online/Hand-E_Instruction_Manual_Web_20190329.zip.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Specifications"
+   "title": "Specifications",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "2019 Hand-E manual figures differ from current product page; manual lists coupling GRP-CPL-062 for ISO 9409-1-50-4-M6",
+     "evidence": "Sec 6: 'Coupling for ISO 9409-1-50-4-M6 ... GRP-CPL-062'; specs table: form-fit 5 kg, friction 3 kg, grip force 20-130 N",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://automationforum.co/?p=33081": {
    "citedBy": [
@@ -528,25 +546,50 @@
    "refText": "Robotiq, “Best practices for cup selection,” Robotiq blog, accessed October 21, 2026. blog.robotiq.com/best-practices-for-cup-selection.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Best Practices For Cup Selection"
+   "title": "Best Practices For Cup Selection",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "Robotiq holding-force formulas for horizontal/vertical cup; safety factors 1.5/2.0/4.0/2.5; worked example 59 N",
+     "evidence": "Horizontal cup, vertical force: 'F H = m × (g + a) × S'; horizontal cup, horizontal force: 'm × (g + a/μ) × S'; vertical cup: '(m/μ) x (g + a) x S'; SF 1.5/2.0/4.0, 2.5+ swivel",
+     "note": "Safety factors and vertical-cup formula match. But m(g+a/μ)S is Robotiq's formula for a horizontal cup with HORIZONTAL force; lifting from above uses m(g+a)S. Fix text and example: 2×(9.81+5)×1.5 ≈ 44 N (or reframe as sideways move).",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://blog.robotiq.com/dealing-with-singularities-on-universal-robots": {
    "citedBy": [
-    "2-6#ref-34"
+    "2-6#ref-35"
    ],
-   "refText": "Robotiq, “Dealing with singularities on Universal Robots,” Robotiq blog (search summary; page not opened). blog.robotiq.com/dealing-with-singularities-on-universal-robots.",
+   "refText": "Robotiq, “Dealing with singularities on Universal Robots,” Robotiq blog, accessed October 22, 2026. blog.robotiq.com/dealing-with-singularities-on-universal-robots.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Dealing with Singularities on Universal Robots"
+   "title": "Dealing with Singularities on Universal Robots",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Infeasible straight-line move often shows as joint-limit error; fix by moving/adding waypoints",
+     "evidence": "'the robot stops and shows the error: Joint Limit Violation'; 'just reposition the robot by giving it new waypoints'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://blog.robotiq.com/knowledge/how-object-detection-works-on-robotiq-grippers": {
    "citedBy": [
-    "2-5#ref-38"
+    "2-5#ref-39"
    ],
    "refText": "Robotiq, “How object detection works on Robotiq grippers,” knowledge base, accessed October 21, 2026. blog.robotiq.com/knowledge/how-object-detection-works-on-robotiq-grippers.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "How Object Detection Works on Robotiq Grippers"
+   "title": "How Object Detection Works on Robotiq Grippers",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Robotiq grippers report detection via gOBJ register; sources disagree on some values",
+     "evidence": "KB: '0x01 – Object detected while closing; 0x02 – Object detected while opening; 0x03 – No object detected'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://blog.unchainedrobotics.de/en/how-does-the-commissioning-of-a-turnkey-robotic-solution-work": {
    "citedBy": [
@@ -787,7 +830,7 @@
   "https://control.com/technical-articles/robot-to-plc-handshaking/": {
    "citedBy": [
     "1-7#ref-17",
-    "2-5#ref-40"
+    "2-5#ref-41"
    ],
    "refText": "Control.com, “Robot-to-PLC Handshaking,” Technical Articles. control.com/technical-articles/robot-to-plc-handshaking.",
    "http": 403,
@@ -800,6 +843,14 @@
      "claim": "Control.com: handshakes needed because robots/CNCs 'do not have direct access to the internal programs'; safety signals hard-wired or via CIP Safety/PROFIsafe",
      "evidence": "Mirror of same article (Shawn Dietrich, 2024): 'do not have direct access to the internal programs of the control system or PLC'; 'E-stop ok' and 'guard door closed' as 'hard-wired signals from a...",
      "note": "control.com is behind a Cloudflare challenge; the identical article on the webteractive mirror supports both sentences. 'Each side waits for the other' is a reasonable paraphrase of its handshake-logic section.",
+     "corroboratedBy": "https://ca118.webteractive.co/technical-articles/robot-to-plc-handshaking",
+     "checked": "2026-10-22"
+    },
+    "2-5": {
+     "status": "unreachable",
+     "claim": "PLC owns sequence; permissives (E-stop OK, guard closed) from safety PLC/relays/safety protocol; cycle-start held until ack; busy then complete; bits reset",
+     "evidence": "control.com returns 403 bot wall even in Chromium/WebFetch; same article read on a mirror",
+     "note": "Mirror of the same article supports permissives from 'safety PLC, safety relays, or ... CIP or ProfiSafe', program-running status and 'program complete' handshake. It does not spell out holding cycle-start until ack or the final reset. Soften that step or cite ref 41/42.",
      "corroboratedBy": "https://ca118.webteractive.co/technical-articles/robot-to-plc-handshaking",
      "checked": "2026-10-22"
     }
@@ -910,8 +961,7 @@
   },
   "https://cs.au.dk/~ocaprani/legolab/DigitalControl.dir/NXT/Lesson10.dir/paper58.pdf": {
    "citedBy": [
-    "5-6#ref-11",
-    "5-8#ref-1"
+    "5-6#ref-11"
    ],
    "refText": "J. Borenstein and L. Feng, “Measurement and Correction of Systematic Odometry Errors in Mobile Robots,” IEEE Transactions on Robotics and Automation, vol. 12, no. 6, pp. 869–880, Dec. 1996. doi.org/10.1109/70.544770. Author preprint: cs.au.dk/.../paper58.pdf.",
    "http": 404,
@@ -1055,7 +1105,15 @@
    "refText": "ABB, “RapidStorageType Enumeration,” RobotStudio API reference, RobotStudio Developer Center. developercenter.robotstudio.com/api/robotstudio/api/ABB.Robotics.RobotStudio.Stations.RapidStorageType.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Enum RapidStorageType"
+   "title": "Enum RapidStorageType",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "RobotStudio API lists RAPID storage types CONST, PERS, TASK PERS, VAR",
+     "evidence": "RapidStorageType fields: Constant=CONST, Persistent=PERS, TaskPersistent=TASK PERS, Variable=VAR (plus Invalid)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://developercenter.robotstudio.com/api/robotstudio/api/ABB.Robotics.RobotStudio.Stations.RsMoveInstruction.html": {
    "citedBy": [
@@ -1082,16 +1140,33 @@
    "refText": "ABB, “Rapid Data,” RobotStudio concepts, RobotStudio Developer Center. developercenter.robotstudio.com/api/robotstudio/articles/Concepts/Rapid/Rapid-Data.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Rapid Data"
+   "title": "Rapid Data",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "VAR/PERS restart behavior, PERS needs initial value; also cited for shared-module data being visible to all tasks",
+     "evidence": "\"If the program is stopped and started the variable keeps its value, but if the program pointer is moved to main the variable data value is lost.\" PERS \"remembers the last value...\"; \"an initial…",
+     "note": "Page says nothing about modules loaded as shared. Drop [5] from the sentence 'When a module is loaded as shared...' and keep [6], which supports it.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://developercenter.robotstudio.com/api/robotstudio/articles/How-To/Rapid/RsToolDataExample.html": {
    "citedBy": [
-    "2-5#ref-21"
+    "2-5#ref-22"
    ],
    "refText": "ABB, “RsToolData example,” RobotStudio API How-To, ABB Developer Center, accessed October 21, 2026. developercenter.robotstudio.com/api/robotstudio/articles/How-To/Rapid/RsToolDataExample.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Creating RsToolData"
+   "title": "Creating RsToolData",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "RobotStudio API docs model a load as 5 kg point mass at (0.023, 0, 0.075) m",
+     "evidence": "'myloadData.Mass = 5; myloadData.Cog = new Vector3(0.023, 0, 0.075); // The load can be considered a point mass'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://digital-strategy.ec.europa.eu/en/library/ethics-guidelines-trustworthy-ai": {
    "citedBy": [
@@ -1349,6 +1424,23 @@
     }
    }
   },
+  "https://docs.docker.com/reference/cli/docker/container/run/": {
+   "citedBy": [
+    "2-6#ref-7"
+   ],
+   "refText": "Docker, “docker container run,” Docker CLI reference (option --rm), accessed October 22, 2026. docs.docker.com/reference/cli/docker/container/run.",
+   "http": 206,
+   "title": "docker container run | Docker Docs",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "--rm deletes the container when it stops",
+     "evidence": "Docker CLI reference: '--rm Automatically remove the container and its associated anonymous volumes when it exits'",
+     "checked": "2026-10-22"
+    }
+   }
+  },
   "https://docs.nav2.org/behavior_trees/overview/detailed_behavior_tree_walkthrough.html": {
    "citedBy": [
     "5-7#ref-20"
@@ -1424,12 +1516,20 @@
   },
   "https://docs.pickit3d.com/en/2.1/examples/universal_robots_example_program.html": {
    "citedBy": [
-    "2-6#ref-26"
+    "2-6#ref-27"
    ],
-   "refText": "Pickit, “Universal Robots example program,” Pickit documentation, version 2.1 (search summary; page not opened). docs.pickit3d.com/en/2.1/examples/universal_robots_example_program.html.",
+   "refText": "Pickit, “Universal Robots example program,” Pickit documentation, version 2.1, accessed October 22, 2026. docs.pickit3d.com/en/2.1/examples/universal_robots_example_program.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Universal Robots Example Program — Pickit 2.1 documentation"
+   "title": "Universal Robots Example Program — Pickit 2.1 documentation",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Pickit UR example: pre-pick offset with negative tool-Z, approach computed with pose_trans",
+     "evidence": "'pre_pick_offset := p[0,0,-0.15,0,0,0]'; 'pre_pick_pose := pose_trans(pick_pose, pre_pick_offset)' (15 cm; lesson's 100 mm is its own value)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.quanser.com/quarc/documentation/kuka_rsi_block.html": {
    "citedBy": [
@@ -2519,7 +2619,16 @@
    "refText": "robot_localization package documentation, “State Estimation Nodes” (ROS 2 branch; source file doc/state_estimation_nodes.rst). docs.ros.org/en/rolling/p/robot_localization/state_estimation_nodes.html.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Making sure you're not a bot!"
+   "title": "Making sure you're not a bot!",
+   "checks": {
+    "5-8": {
+     "status": "fixed",
+     "claim": "robot_localization: Mahalanobis rejection thresholds; Q large -> follows measurements; EKF+UKF nodes, 15-D state; odom/map instances; map frame 'subject to discrete jumps'.",
+     "evidence": "state_estimation_nodes.rst: thresholds 'expressed as Mahalanobis distances'; 'larger the value for Q... the faster the filter will converge to the value in the measurement'; '15-D vector'; map 'subject to discrete jumps, e.g., due to the fusion of GPS data'.",
+     "note": "All supported except 'so the two instances are usually remapped to different topic names at launch': the page only lists odometry/filtered as the published topic and says nothing about remapping. Drop that clause or soften to 'must be remapped... to avoid a clash'. docs.ros.org is bot-walled; checked the same rst on GitHub.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://docs.universal-robots.com/PolyScopeX_SDK_Documentation/build/SDK-v0.13/_static/pdf/scriptManualG5.pdf": {
    "citedBy": [
@@ -2643,21 +2752,38 @@
   },
   "https://dof.robotiq.com/discussion/267": {
    "citedBy": [
-    "2-7#ref-24"
+    "2-7#ref-25"
    ],
    "refText": "Robotiq DoF community forum, discussion 267 (re-attempting a grasp until object detection). dof.robotiq.com/discussion/267.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Object Detection: An Important Feature"
+   "title": "Object Detection: An Important Feature",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "Robotiq example re-attempts the grasp until object detected, then prompts operator",
+     "evidence": "Robotiq DoF 'Object Detection': Loop detected=0: if rq_is_object_detected() Popup, detected:=1 Else Gripper Open... Gripper Close; pop-up asks operator to continue",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://dof.robotiq.com/discussion/665": {
    "citedBy": [
-    "2-5#ref-37"
+    "2-5#ref-38"
    ],
    "refText": "Robotiq DoF community, discussion 665 (rq_is_object_detected in URScript), dof.robotiq.com, accessed October 21, 2026. dof.robotiq.com/discussion/665.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "I'm looking for an easy way to tell me if the gripper has a part or not"
+   "title": "I'm looking for an easy way to tell me if the gripper has a part or not",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "rq_is_object_detected() returns True if object picked; call after close command; don't issue gripper commands from a thread",
+     "evidence": "Robotiq staff: 'rq_is_object_detected(). It returns True if an object has been picked or False otherwise.' (2017, read-only archive)",
+     "note": "Return value supported. 'Call it after the close command' and 'gripper commands must not be issued from a thread' are not in this discussion. Fix: cite the Robotiq URCap manual for those two rules or drop them.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://doi.org/10.1016/0167-6423(87)90035-9": {
    "citedBy": [
@@ -2677,7 +2803,17 @@
    "refText": "J. Borenstein and L. Feng, “Measurement and Correction of Systematic Odometry Errors in Mobile Robots,” IEEE Transactions on Robotics and Automation, vol. 12, no. 6, pp. 869–880, Dec. 1996. doi.org/10.1109/70.544770. Author preprint: cs.au.dk/.../paper58.pdf.",
    "http": 202,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://ieeexplore.ieee.org/document/544770/"
+   "finalUrl": "https://ieeexplore.ieee.org/document/544770/",
+   "checks": {
+    "5-8": {
+     "status": "fixed",
+     "claim": "Odometry is simple, inexpensive, real-time but has unbounded error accumulation (bumps, cracks, slip); used in-between periodic absolute measurements.",
+     "evidence": "Preprint p.1: 'Odometry is simple, inexpensive, and easy to accomplish in real-time. The disadvantage of odometry is its unbounded accumulation of errors'; 'in-between periodic absolute position measurements'; bumps, cracks.",
+     "note": "Quotes and content verified, but the cited author-preprint link (cs.au.dk) is 404. Replace with the working mirror. Preprint header says Vol 12 No 5, Oct 1996; IEEE record (DOI) is the authority for no. 6, Dec 1996.",
+     "suggestedUrl": "https://johnloomis.org/ece445/topics/odometry/borenstein/paper58.pdf",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://doi.org/10.1109/ROBOT.1996.503813": {
    "citedBy": [
@@ -2708,7 +2844,17 @@
    "linkChecked": "2026-10-22",
    "finalUrl": "https://asmedigitalcollection.asme.org/fluidsengineering/article/82/1/35/397706/A-New-Approach-to-Linear-Filtering-and-Prediction",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "5-8": {
+     "status": "unreachable",
+     "claim": "Kalman 1960 in Trans. ASME J. Basic Eng.; Wiener solution limited to 'stationary statistics and rational spectra', 'poorly suited to machine computation'; state-transition method.",
+     "evidence": "Full-text copy: '(2) Numerical determination of the optimal impulse response is often quite involved and poorly suited to machine computation'; 'stationary statistics and rational spectra'; 'state transition' method; 'stationary and nonstationary statistics'.",
+     "note": "DOI page is behind an ASME bot challenge. A full-text copy of the same paper confirms every quoted phrase; no lesson change needed.",
+     "corroboratedBy": "https://scispace.com/pdf/a-new-approach-to-linear-filtering-and-prediction-problems-1f1lkk9j5b.pdf",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://doi.org/10.21105/joss.02783": {
    "citedBy": [
@@ -2722,12 +2868,20 @@
   },
   "https://download.epson.biz/robots/ww/data/html/Hand/en/100/100-010/100-010-010.html": {
    "citedBy": [
-    "2-5#ref-17"
+    "2-5#ref-16"
    ],
    "refText": "Seiko Epson, “ISO flange tool adapter,” robot hand documentation, download.epson.biz, accessed October 21, 2026. download.epson.biz/robots/ww/data/html/Hand/en/100/100-010/100-010-010.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "ISO flange compatible tool adapter | Epson Robot Manuals"
+   "title": "ISO flange compatible tool adapter | Epson Robot Manuals",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Epson tool-adapter docs list ISO 31.5-4-M5 alongside 50-4-M6",
+     "evidence": "'conforms to -31.5-4-M5 (No. 2) and -50-4M6 (No. 4) of ISO9409-1. Position 2: PCD ⌀31.5, M5×4; Position 4: PCD ⌀50, M6×4'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://dronebotworkshop.com/tb6612fng-h-bridge/": {
    "citedBy": [
@@ -3072,16 +3226,6 @@
     }
    }
   },
-  "https://foodengineeringmag.com/articles/85823-palletizing-software-system": {
-   "citedBy": [
-    "2-7#ref-17"
-   ],
-   "refText": "Food Engineering, “Palletizing software system” (news item on ABB Palletizing PowerPac). foodengineeringmag.com/articles/85823-palletizing-software-system.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "finalUrl": "https://www.foodengineeringmag.com/articles/85823-palletizing-software-system",
-   "title": "Palletizing software system | Food Engineering"
-  },
   "https://forum.pololu.com/t/pwm-frequency-and-noise/4636": {
    "citedBy": [
     "5-2#ref-9"
@@ -3093,21 +3237,37 @@
   },
   "https://forum.universal-robots.com/t/change-digital-tool-ouput-mode-pnp-to-npn/6037": {
    "citedBy": [
-    "2-5#ref-27"
+    "2-5#ref-28"
    ],
    "refText": "Universal Robots Forum, “Change digital tool output mode PNP to NPN,” forum thread, accessed October 21, 2026. forum.universal-robots.com/t/change-digital-tool-ouput-mode-pnp-to-npn/6037.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Change digital tool ouput mode (PNP to NPN) - URScript - Universal Robots Forum"
+   "title": "Change digital tool ouput mode (PNP to NPN) - URScript - Universal Robots Forum",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "set_tool_digital_output_mode(n, mode): 1 = NPN sinking, 2 = PNP sourcing, 3 = push-pull",
+     "evidence": "Quoted script manual: 'mode: ... [1:3]. 1 = Sinking/NPN, 2 = Sourcing / PNP, 3 = Push-Pull'; UR staff: e-Series only",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/changing-tcp-configurations-quickly/950": {
    "citedBy": [
-    "2-6#ref-15"
+    "2-6#ref-16"
    ],
-   "refText": "Universal Robots Forum, “Changing TCP configurations quickly,” forum thread (search summary; page not opened). forum.universal-robots.com/t/changing-tcp-configurations-quickly/950.",
+   "refText": "Universal Robots Forum, “Changing TCP configurations quickly,” forum thread, accessed October 22, 2026. forum.universal-robots.com/t/changing-tcp-configurations-quickly/950.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Changing TCP Configurations Quickly - Technical Questions - Universal Robots Forum"
+   "title": "Changing TCP Configurations Quickly - Technical Questions - Universal Robots Forum",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "UR TCP Position wizard: touch a fixed pointed tip from four orientations and controller solves the offset",
+     "evidence": "2017 forum reply: 'Position allows you to jog the robot TCP to the same position from 4 different angles ... automatically calculate the X, Y and Z ... use something rather pointy'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/defining-points-with-respect-to-plane/934": {
    "citedBy": [
@@ -3128,12 +3288,20 @@
   },
   "https://forum.universal-robots.com/t/electrical-interfaces/25": {
    "citedBy": [
-    "2-5#ref-26"
+    "2-5#ref-27"
    ],
    "refText": "Universal Robots Forum, “Electrical interfaces,” community wiki (CB3), forum.universal-robots.com, accessed October 21, 2026. forum.universal-robots.com/t/electrical-interfaces/25.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Electrical interfaces - Technical Questions - Universal Robots Forum"
+   "title": "Electrical interfaces - Technical Questions - Universal Robots Forum",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "CB3-era UR wiki: M8 tool connector, 2 DI, 2 DO, 2 AI; 12/24 V switched together; 600 mA total; external PSU does not raise the limit",
+     "evidence": "'M8 connector ... 2 digital inputs 2 digital outputs 2 analog inputs'; 'set to either 12V or 24V mode collectively. Max. current drain is 600 mA'; '#9: an external PSU does not change this limit'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/how-do-i-set-an-overall-condition-for-this-application/32668": {
    "citedBy": [
@@ -3142,7 +3310,15 @@
    "refText": "Universal Robots Forum, “How do I set an overall condition for this application?” user discussion thread. forum.universal-robots.com/t/how-do-i-set-an-overall-condition-for-this-application/32668.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "How do I set an overall condition for this application? - General Application Help: How do I? - Universal Robots Forum"
+   "title": "How do I set an overall condition for this application? - General Application Help: How do I? - Universal Robots Forum",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "UR forum: popup+halt can't resume, popup alone doesn't stop; users directed to safety functions like protective stop",
+     "evidence": "OP: with popup and halt \"I cannot resume\"; with only popup \"the robot does not pause\"; Robpod: \"if... a safety behavior then you should use a safety function as a protective stop\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/how-to-create-smooth-robot-motion-for-extrusion/37075": {
    "citedBy": [
@@ -3155,21 +3331,21 @@
   },
   "https://forum.universal-robots.com/t/how-to-use-urscript/21121": {
    "citedBy": [
-    "2-5#ref-32"
+    "2-5#ref-33"
    ],
    "refText": "Universal Robots Forum, “How to use URScript,” forum thread, accessed October 21, 2026. forum.universal-robots.com/t/how-to-use-urscript/21121.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "How to use URscript - URScript - Universal Robots Forum"
-  },
-  "https://forum.universal-robots.com/t/loop-grip-check/33154": {
-   "citedBy": [
-    "2-7#ref-27"
-   ],
-   "refText": "Universal Robots Forum, “Loop grip check,” user discussion thread. forum.universal-robots.com/t/loop-grip-check/33154.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "title": "Loop grip check - Technical Questions - Universal Robots Forum"
+   "title": "How to use URscript - URScript - Universal Robots Forum",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "Current names get_standard_digital_in / set_standard_digital_out; older get_digital_in / set_digital_out reported deprecated or not working",
+     "evidence": "#2: 'Wasn't get_digital_input() deprecated? ... the currently functions are get_standard_digital_in() and get_tool_digital_in()'",
+     "note": "Thread mentions get_digital_input() (not get_digital_in) and only input functions; set_standard_digital_out / set_digital_out are not discussed. The 'not working' was from sending URScript via RTDE wrongly. Fix: cite UR's script manual (ref 31) for names; soften deprecation claim.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/ur-palletizing-in-polyscope-5-12-only-executes-first-item-unless-i-add-an-external-loop/42363": {
    "citedBy": [
@@ -3178,7 +3354,15 @@
    "refText": "Universal Robots Forum, “UR Palletizing in PolyScope 5.12 only executes first item unless I add an external loop,” user discussion thread. forum.universal-robots.com/t/ur-palletizing-in-polyscope-5-12-only-executes-first-item-unless-i-add-an-external-loop/42363.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "UR Palletizing in Polyscope 5.12 only executes first item unless I add an external loop - Technical Questions - Universal Robots Forum"
+   "title": "UR Palletizing in Polyscope 5.12 only executes first item unless I add an external loop - Technical Questions - Universal Robots Forum",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "PolyScope 5.12 user: Palletizing node ran only first item until an outer loop was added",
+     "evidence": "timm (2026-03-04): Polyscope 5.12, robot executes sequence only for the first item; with 'Loop 6 times / Pallet_1' it places all 6 parts",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forum.universal-robots.com/t/urscript-manual-doesnt-mention-units-for-pose-type/22837": {
    "citedBy": [
@@ -3217,13 +3401,23 @@
   },
   "https://forums.robotstudio.com/discussion/4123/signal-and-rapid-command": {
    "citedBy": [
-    "2-5#ref-30"
+    "2-5#ref-31"
    ],
    "refText": "RobotStudio Forum, “Signal and rapid command,” discussion 4123, forums.robotstudio.com, accessed October 21, 2026. forums.robotstudio.com/discussion/4123/signal-and-rapid-command.",
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://tech-community.robotics.abb.com/t/signal-and-rapid-command/3637",
-   "title": "Signal and rapid command - RobotStudio - ABB Robotics Community"
+   "title": "Signal and rapid command - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "RAPID signals are named in I/O config, not pin numbers; SetDO sets defined output; WaitDI waits for input; 'WaitDI di1, 1;' enough, no event handling",
+     "evidence": "#2: 'SetDO is a RAPID command for setting output signals defined in the controller. Check your I/O configuration'; #1 code uses SetDO doVacuum,1; WaitDI diVacuum,1",
+     "note": "Named signals, SetDO and WaitDI usage are supported. The 'WaitDI di1, 1;' line and 'no event handling needed' are not in this thread; that line is in ref 35's thread. Fix: cite [35] for that example or drop 'no event handling needed'. URL redirects to tech-community /t/signal-and-rapid-command/3637.",
+     "suggestedUrl": "https://tech-community.robotics.abb.com/t/signal-and-rapid-command/3637",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forums.robotstudio.com/discussion/comment/25437": {
    "citedBy": [
@@ -3237,23 +3431,23 @@
   },
   "https://forums.robotstudio.com/discussion/comment/31768": {
    "citedBy": [
-    "2-5#ref-22"
+    "2-5#ref-23"
    ],
    "refText": "RobotStudio Forum, “Tool load when exchanging end effector,” discussion comment 31768, forums.robotstudio.com, accessed October 21, 2026. forums.robotstudio.com/discussion/comment/31768.",
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://tech-community.robotics.abb.com/t/tool-load-when-exchanging-end-effector/9722/5",
-   "title": "Tool load when exchanging end effector - #5 by j_proulxFB - RAPID Programming - ABB Robotics Community"
-  },
-  "https://forums.robotstudio.com/discussion/comment/33030": {
-   "citedBy": [
-    "2-6#ref-24"
-   ],
-   "refText": "RobotStudio Forums, “Offs and RelTool,” discussion comment 33030 (search summary; page not opened). forums.robotstudio.com/discussion/comment/33030.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "finalUrl": "https://tech-community.robotics.abb.com/t/offs-and-reltool/10081/3",
-   "title": "Offs and RelTool - #3 by xerim - Robot Controller - ABB Robotics Community"
+   "title": "Tool load when exchanging end effector - #5 by j_proulxFB - RAPID Programming - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "GripLoad payload is relative to active TCP; tload in tooldata is relative to wrist flange",
+     "evidence": "Post #5: 'GripLoad Mass, CoG and inertia of the payload is referenced from the active TCP'; 'TLoad ... total payload and gripper are referenced in relation to the flange'",
+     "note": "The flange statement is about the \\TLoad move argument (total load), not the tload in tooldata. It also says newer RobotWare (PayloadsInWristCoords) can make GripLoad wrist-relative. Fix: refer to \\TLoad or cite the RAPID manual for tooldata. URL now redirects to tech-community.robotics.abb.com.",
+     "suggestedUrl": "https://tech-community.robotics.abb.com/t/tool-load-when-exchanging-end-effector/9722/5",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://forums.robotstudio.com/discussion/comment/4784/": {
    "citedBy": [
@@ -3263,7 +3457,17 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://tech-community.robotics.abb.com/t/error-handling/1435/5",
-   "title": "Error handling - #5 by claudio - Robot Controller - ABB Robotics Community"
+   "title": "Error handling - #5 by claudio - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "Same RAISE claim (gripper-test error handler thread)",
+     "evidence": "URL redirects to tech-community.robotics.abb.com/t/error-handling/1435/5, the same thread as [20], which contains the RAISE statement quoted above",
+     "note": "Duplicate of [20] after the forum migration; consider merging or updating URL.",
+     "suggestedUrl": "https://tech-community.robotics.abb.com/t/error-handling/1435/5",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html": {
    "citedBy": [
@@ -3367,7 +3571,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/AtsushiSakai/PythonRobotics/master/Localization/extended_kalman_filter/extended_kalman_filter.py",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Differential-drive Jacobian F has -v*dt*sin(theta) in x row and v*dt*cos(theta) in y row of heading column.",
+     "evidence": "jacob_f(): 'dx/dyaw = -v*dt*sin(yaw)', 'dy/dyaw = v*dt*cos(yaw)'; jF rows [1,0,-DT*v*sin(yaw),...], [0,1,DT*v*cos(yaw),...].",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/CamiloSR/GPA546-Robots-Industriels/blob/HEAD/Projet%204/lab4.mod": {
    "citedBy": [
@@ -3378,7 +3590,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/CamiloSR/GPA546-Robots-Industriels/HEAD/Projet%204/lab4.mod",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Lab code: MoveL slow descent to exact stop at grip; blended approach, fine at grip point",
+     "evidence": "MoveJ RelTool(rPriseGli,0,0,Decalage),HighSpeed,z50; MoveL rPriseGli,LowSpeed,fine; SetDO; MoveL RelTool(...,Decalage),LowSpeed,z50",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/FANUC-CORPORATION/fanuc_driver/blob/main/README.md": {
    "citedBy": [
@@ -3448,18 +3668,34 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/Inxton/TcOpen/HEAD/src/TcoAbbRobotics/src/Robot/RAPID/TASK1/PROGMOD/Vision.mod",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Pick pattern: fast blended MoveJ approach above part, slow MoveL down to fine stop; example MoveJ RelTool(target,0,0,-140),v2000,z10",
+     "evidence": "pick_part: MoveJ RelTool(...,0,0,-140),v2000,z10,tool0; MoveL RelTool(...,0,0,0),v500,fine; '!griper' comment; MoveJ back to -140 z20",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/MaryWagura/Vision_System/blob/HEAD/robot/MainModule.mod": {
    "citedBy": [
-    "2-6#ref-25"
+    "2-6#ref-26"
    ],
    "refText": "MaryWagura, “MainModule.mod,” Vision_System repository, GitHub, accessed October 21, 2026. github.com/MaryWagura/Vision_System/blob/HEAD/robot/MainModule.mod.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/MaryWagura/Vision_System/HEAD/robot/MainModule.mod",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Stacking program uses Offs(placeBase,0,0,PLACE_DZ + stackN * SHAPE_THICK) to raise each layer",
+     "evidence": "placeTarget := Offs(placeBase, 0, 0, PLACE_DZ + stackN * SHAPE_THICK); SHAPE_THICK := 10 ('all shapes are 1 cm thick')",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/NVIDIA/Isaac-GR00T": {
    "citedBy": [
@@ -3528,7 +3764,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/PX4/PX4-user_guide/main/en/advanced_config/tuning_the_ecl_ekf.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "PX4 EKF performs innovation consistency checks and rejects inconsistent readings; complementary filter propagates states from delayed fusion horizon with buffered IMU data.",
+     "evidence": "EKF2 guide: 'The EKF performs innovation consistency checks...'; 'A complementary filter is used to propagate the states forward from the fusion time horizon to current time using the buffered IMU data.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/PX4/PX4-user_guide/blob/main/en/flight_stack/controller_diagrams.md": {
    "citedBy": [
@@ -3659,7 +3903,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/PickNikRobotics/ros2_robotiq_gripper/main/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-2": {
+     "status": "verified",
+     "claim": "PickNik ros2_robotiq_gripper: ROS 2 driver/controller/description for Robotiq, started with 2F-85; not Robotiq-sponsored; main for Humble, Iron, Rolling, not…",
+     "evidence": "'contains the ROS 2 driver, controller and description packages for working with a Robotiq Gripper'; 'Initially ... only the 2f-85'; 'main branch is used for ... Humble, Iron and Rolling'; 'not…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/ROBOTIS-GIT/turtlebot3/blob/main/turtlebot3_node/src/odometry.cpp": {
    "citedBy": [
@@ -3685,14 +3937,22 @@
   },
   "https://github.com/SarojDebnath/UR_driver_using_socket/blob/HEAD/driver/TF_bier.script": {
    "citedBy": [
-    "2-6#ref-22"
+    "2-6#ref-23"
    ],
    "refText": "SarojDebnath, “TF_bier.script,” UR_driver_using_socket repository (exported PolyScope program), GitHub, accessed October 21, 2026. github.com/SarojDebnath/UR_driver_using_socket/blob/HEAD/driver/TF_bier.script.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/SarojDebnath/UR_driver_using_socket/HEAD/driver/TF_bier.script",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Exported PolyScope code: feature-relative pose_trans chains; movel(pose_trans(referencePoint, pose_trans(p[...],ToolActionPoint_p)),a=1.2,v=0.15) then…",
+     "evidence": "Line ~2768: movel(pose_trans(referencePoint, pose_trans(p[...], ToolActionPoint_p)), a=1.2, v=0.15); set_tool_digital_out(1, False); sleep(0.15); other waits 1.0, 0.5",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/SteveMacenski/slam_toolbox": {
    "citedBy": [
@@ -3818,6 +4078,13 @@
      "status": "verified",
      "claim": "e-series URSim is distributed as a Docker image",
      "evidence": "ursim_docker.rst: 'docker run ... universalrobots/ursim_e-series'; links Docker Hub image documentation",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "verified",
+     "claim": "URSim Docker setup: docker run command, 127.0.0.1 binds keep GUI off LAN, browser URL, volume mounts for programs/urcaps, start_ursim.sh…",
+     "evidence": "\"If you omit the bind address... exposes the simulator to the local network\"; -v ${HOME}/.ursim/urcaps:/urcaps -v ...:/ursim/programs; start_ursim.sh: 192.168.56.101, ports 30001-30004 and 29999…",
+     "note": "'--rm deletes the container' is Docker behavior, not stated in this doc (minor).",
      "checked": "2026-10-22"
     }
    }
@@ -4219,7 +4486,22 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_Driver/main/ur_robot_driver/doc/usage/simulation.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-1": {
+     "status": "partial",
+     "claim": "UR ROS2 driver docs: URSim Docker images per generation, start_ursim.sh helper and defaults, External Control preinstalled, effort control has no effect in…",
+     "evidence": "Images ursim_polyscopex / ursim_e-series / ursim_cb3; \"If you skip the -v option... latest version of the PolyScope 5... skip -m... UR5(e)\"; effort control \"has no effect in URSim\"",
+     "note": "Supports all but the port list (30001-30004, 29999), which is in [6]; both are cited, so no text change.",
+     "checked": "2026-10-22"
+    },
+    "6-2": {
+     "status": "verified",
+     "claim": "UR driver runs on mock hardware or URSim (equivalent to driver); Gazebo outside scope; ur_control.launch.py with robot_ip 192.168.56.101; mock-hardware limits…",
+     "evidence": "'mock hardware or the URSim simulator (which is equivalent from the driver's perspective)'; Gazebo Classic/GZ Sim 'outside of this driver's scope'; mock: TCP pose broadcaster, passthrough, force…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/launch/ur_control.launch.py": {
    "citedBy": [
@@ -4275,7 +4557,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_ROS2_GZ_Simulation/ros2/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-2": {
+     "status": "verified",
+     "claim": "ur_simulation_gz package; branches humble, jazzy (also Kilted), ros2 (Lyrical, Rolling); sim control launch and MoveIt launch",
+     "evidence": "Branch table: Humble humble, Jazzy jazzy, Kilted jazzy, Lyrical ros2, Rolling ros2; 'ros2 launch ur_simulation_gz ur_sim_control.launch.py'; 'ur_sim_moveit.launch.py'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/Yaskawa-Global/motoros2/blob/main/README.md": {
    "citedBy": [
@@ -4449,7 +4739,16 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/cra-ros-pkg/robot_localization/ros2/doc/integrating_gps.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "GPS jumps make GPS-fused estimate unfit for navigation; recommends odom-frame instance fusing continuous data and map-frame instance fusing all incl. GPS.",
+     "evidence": "integrating_gps.rst: 'a position estimate that includes GPS data will likely be unfit for use by navigation modules, owing to... discrete discontinuities (\"jumps\")'; steps 1-2 describe the two instances.",
+     "note": "Doc calls it 'one potential solution'/'just a suggestion'; lesson's 'recommends' is slightly strong but acceptable.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/docker-library/official-images/blob/master/library/ros": {
    "citedBy": [
@@ -4605,14 +4904,22 @@
   },
   "https://github.com/kuceram2/lab-tasks-public/blob/HEAD/ER-FLEX/programs/BANE/UR/programs/paletize.script": {
    "citedBy": [
-    "2-6#ref-23"
+    "2-6#ref-24"
    ],
    "refText": "kuceram2, “paletize.script,” lab-tasks-public repository (exported PolyScope program), GitHub, accessed October 21, 2026. github.com/kuceram2/lab-tasks-public/blob/HEAD/ER-FLEX/programs/BANE/UR/programs/paletize.script.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/kuceram2/lab-tasks-public/HEAD/ER-FLEX/programs/BANE/UR/programs/paletize.script",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Exported PolyScope programs compute feature-relative waypoints as chains of pose_trans on a reference frame",
+     "evidence": "movel(pose_trans(referencePoint, pose_trans(p[...], ToolActionPoint_p)), a=1.2, v=0.25); T_feature_referencePoint = pose_trans(pose_inv(T_base_feature), ...)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/kuka-ros/kuka_drivers/blob/master/README.md": {
    "citedBy": [
@@ -4642,29 +4949,53 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/laura-jb/projet_ROBVIS/HEAD/projetLauAntBen/MainRightProgram_v1/Mouvement.mod",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Retract is a straight-line MoveL back up to the approach point; RelTool approach form in lab code",
+     "evidence": "MoveL pDepot,v30,fine,...; MoveL RelTool(pDepot,0,0,-100),v1500,fine; approach MoveJ RelTool(PpriseL,0,0,-150),v1500,z100",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/lukasfalk/34764-Pharma/blob/HEAD/UR/pickPlace_v1_grp6.script": {
    "citedBy": [
-    "2-6#ref-14"
+    "2-6#ref-15"
    ],
    "refText": "lukasfalk, “pickPlace_v1_grp6.script,” 34764-Pharma repository (exported PolyScope program), GitHub, accessed October 21, 2026. github.com/lukasfalk/34764-Pharma/blob/HEAD/UR/pickPlace_v1_grp6.script.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/lukasfalk/34764-Pharma/HEAD/UR/pickPlace_v1_grp6.script",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Exported PolyScope program contains set_tcp(p[0.0,0.0,0.0,1.5707963267948966,0.0,0.0]) (meters, radians)",
+     "evidence": "Script line: set_tcp(p[0.0,0.0,0.0,1.5707963267948966,0.0,0.0])",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/lukasfalk/34764-Pharma/blob/HEAD/programs/palletizing_v2.script": {
    "citedBy": [
-    "2-6#ref-31"
+    "2-6#ref-32"
    ],
    "refText": "lukasfalk, “palletizing_v2.script,” 34764-Pharma repository (exported PolyScope program), GitHub, accessed October 21, 2026. github.com/lukasfalk/34764-Pharma/blob/HEAD/programs/palletizing_v2.script.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/lukasfalk/34764-Pharma/HEAD/programs/palletizing_v2.script",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Joint moves to approach point appear as movej(get_inverse_kin(pose_trans(...), qnear=...))",
+     "evidence": "movej(get_inverse_kin(pose_trans(referencePoint, pose_trans(p[...], Approach_p)), qnear=Approach_q), a=1.396..., v=1.047...)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/m-lundberg/simple-pid/blob/master/simple_pid/pid.py": {
    "citedBy": [
@@ -4795,7 +5126,16 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/moveit/moveit2_tutorials/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/pick_and_place_with_moveit_task_constructor.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-2": {
+     "status": "fixed",
+     "claim": "MoveIt 2 MTC pick-and-place tutorial: Panda, stage list, branches humble/ros2, demo launches, /solution topic, stage kinds, 3 planners, cylinder, distances…",
+     "evidence": "'<branch> can be e.g. humble ... or ros2 for ... MoveIt 2 main'; Generators/Propagators/Connectors; Wrappers/Serial/Parallel; setMinMaxDistance(0.1,0.15) and (0.1,0.3); 'out of the robot's reach…",
+     "note": "Nearly all verified. The node list 'move_group, ros2_control, static_tf, robot_state_publisher, rviz' is said of mtc_demo.launch.py (moveit2_tutorials), not of moveit_task_constructor_demo demo.launch.py that the lesson's commands run. Attach the list to the right launch file.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp": {
    "citedBy": [
@@ -4806,7 +5146,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/moveit/moveit2_tutorials/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "6-2": {
+     "status": "verified",
+     "claim": "mtc_node.cpp is C++; uses panda_arm, hand, panda_hand; attach stage style; task.plan(5) then task.execute()",
+     "evidence": "arm_group_name = \"panda_arm\"; hand_group_name = \"hand\"; hand_frame = \"panda_hand\"; attachObject(\"object\", hand_frame); task_.plan(5 /* max_solutions */); task_.execute(*task_.solutions().front())",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/octo-models/octo": {
    "citedBy": [
@@ -4977,7 +5325,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/master/04-One-Dimensional-Kalman-Filters.ipynb",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Labbe calls it the residual; equal variances give the average; posterior variance P_pred*R/(P_pred+R) smaller than both.",
+     "evidence": "Ch.4: 'y = z - x # residual'; 'the average of the two means... equally accurate'; sigma^2 = (sigma_bar^2 sigma_z^2)/(sigma_bar^2+sigma_z^2); variance 'slightly smaller than 2.0'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/08-Designing-Kalman-Filters.ipynb": {
    "citedBy": [
@@ -4988,7 +5344,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/master/08-Designing-Kalman-Filters.ipynb",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Q too large -> filter mimics measurement noise; Q too small -> over-trusts model, 'smug' filter whose P shrinks while estimate diverges.",
+     "evidence": "Ch.8: 'A large process noise tells the filter to favor the measurements... closely mimic the noise'; 'P implies... estimates are getting better... This is sometimes referred to a smug filter'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/10-Unscented-Kalman-Filter.ipynb": {
    "citedBy": [
@@ -4999,7 +5363,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/master/10-Unscented-Kalman-Filter.ipynb",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Gaussian through nonlinear fn is no longer Gaussian; EKF one of first and most common nonlinear technique; UKF often more accurate, not guaranteed; Van der Merwe scaled points.",
+     "evidence": "Ch.11: 'no longer Gaussian'; 'one of the very first techniques used for nonlinear problems, and it remains the most common'. Ch.10: 'UKF is often more accurate... not true that the UKF is guaranteed'; industry 'mostly settled' on Van der Merwe.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/11-Extended-Kalman-Filters.ipynb": {
    "citedBy": [
@@ -5010,7 +5382,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/master/11-Extended-Kalman-Filters.ipynb",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Gaussian through nonlinear fn is no longer Gaussian; EKF one of first and most common nonlinear technique; UKF often more accurate, not guaranteed; Van der Merwe scaled points.",
+     "evidence": "Ch.11: 'no longer Gaussian'; 'one of the very first techniques used for nonlinear problems, and it remains the most common'. Ch.10: 'UKF is often more accurate... not true that the UKF is guaranteed'; industry 'mostly settled' on Van der Merwe.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/rlabbe/filterpy/blob/master/filterpy/kalman/kalman_filter.py": {
    "citedBy": [
@@ -5021,7 +5401,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/rlabbe/filterpy/master/filterpy/kalman/kalman_filter.py",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "FilterPy KalmanFilter class implements predict/update; FilterPy uses Van der Merwe scaled sigma points.",
+     "evidence": "kalman_filter.py: 'class KalmanFilter' with predict() and update(); sigma_points.py: 'class MerweScaledSigmaPoints... according to Van der Merwe's' (plus JulierSigmaPoints).",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/robotics/open_abb/blob/master/RAPID/SERVER.mod": {
    "citedBy": [
@@ -5210,7 +5598,15 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/ros-infrastructure/rep/master/rep-0105.rst",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "REP 105: odom pose continuous but drifts without bound; map frame not continuous, can change in discrete jumps.",
+     "evidence": "REP 105 (Meeussen, created 27-Oct-2010): odom pose 'can drift over time, without any bounds'; 'guaranteed to be continuous'; map 'is not continuous... can change in discrete jumps at any time'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/ros-infrastructure/rep/blob/master/rep-0145.rst": {
    "citedBy": [
@@ -5512,14 +5908,22 @@
   },
   "https://github.com/sequenceplanner/robotiq_2f": {
    "citedBy": [
-    "2-5#ref-39"
+    "2-5#ref-40"
    ],
    "refText": "sequenceplanner, “robotiq_2f,” GitHub repository, accessed October 21, 2026. github.com/sequenceplanner/robotiq_2f.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/sequenceplanner/robotiq_2f/HEAD/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Second gOBJ source with different meanings (shows the disagreement)",
+     "evidence": "README: '0x01 - ... contact while opening ...; 0x02 - ... contact while closing ...; 0x03 - ... No object detected or object has been loss' (01/02 swapped vs ref 38)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://github.com/tesseract-robotics/tesseract/blob/master/README.md": {
    "citedBy": [
@@ -5671,7 +6075,16 @@
    "linkChecked": "2026-10-22",
    "blocked": "sandbox-proxy",
    "rawUrl": "https://raw.githubusercontent.com/xioTechnologies/Fusion/HEAD/README.md",
-   "rawHttp": 206
+   "rawHttp": 206,
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Gyro fast but drifts, accel drift-free but corrupted by accelerations; Fusion AHRS is a complementary filter of high-pass gyro and low-pass other sensors; more gyro trust = more drift.",
+     "evidence": "Fusion README: 'functions as a complementary filter that combines high-pass filtered gyroscope measurements with low-pass filtered measurements from other sensors'; low gain trusts gyro, 'more susceptible to drift'; errors 'from accelerations'.",
+     "note": "README speaks of gain (inverse of alpha) and does not mention vibration explicitly; tradeoff direction matches.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://hades.mech.northwestern.edu/images/2/25/MR-v2.pdf": {
    "citedBy": [
@@ -5723,16 +6136,33 @@
    "refText": "Universal Robots, “universalrobots/ursim_e-series,” Docker Hub image page, accessed October 21, 2026. hub.docker.com/r/universalrobots/ursim_e-series.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "universalrobots/ursim_e-series - Docker Image"
+   "title": "universalrobots/ursim_e-series - Docker Image",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "Official URSim Docker image ursim_e-series runs PolyScope 5 + controller; 5900 VNC, 6080 browser VNC; default UR5, ROBOT_MODEL selects model",
+     "evidence": "'VNC port: 5900', 'Web browser VNC port: 6080 ... /vnc.html'; 'The default is UR5'; '-e ROBOT_MODEL=UR10'",
+     "note": "All ports/model facts match. Page never says 'PolyScope 5' (only 'robots user interface', polyscope log); ref 6 says 'CB3 / PolyScope 5'. Cite [6] too for the PolyScope 5 wording.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://hub.docker.com/r/universalrobots/ursim_polyscopex": {
    "citedBy": [
-    "2-6#ref-8"
+    "2-6#ref-9"
    ],
    "refText": "Universal Robots, “universalrobots/ursim_polyscopex,” Docker Hub image page, accessed October 21, 2026. hub.docker.com/r/universalrobots/ursim_polyscopex.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "universalrobots/ursim_polyscopex - Docker Image"
+   "title": "universalrobots/ursim_polyscopex - Docker Image",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "ursim_polyscopex image opens in browser at localhost; Docker Hub frames it for URCap dev with PolyScope X SDK, SDK in beta, separate SDK license terms",
+     "evidence": "'intended to be used with the SDK when developing URCaps for PolyScope X'; 'SDK is currently in beta'; 'URL: localhost'; 'LICENSE TERMS FOR SDKS'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://ieee-cas.org/about/ieee-code-ethics": {
    "citedBy": [
@@ -5943,7 +6373,16 @@
    ],
    "refText": "United States Patent and Trademark Office, U.S. Patent 11,090,818 (inflatable soft gripper), full-text PDF, accessed October 21, 2026. image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11090818.",
    "http": 200,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Inflatable soft grippers handle varied food shapes with non-bruising forces; patent notes few industrial soft designs suit washdown/food contact",
+     "evidence": "US11090818 via Google Patents (cited PDF has no text): 'non-bruising and non-deforming forces ... none is amenable to ... deployment in food contact, hygienic and/or washdown environments'",
+     "suggestedUrl": "https://patents.google.com/patent/US11090818B2/en",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/12443187": {
    "citedBy": [
@@ -5953,14 +6392,40 @@
    "http": 200,
    "linkChecked": "2026-10-22"
   },
+  "https://industrialmonitordirect.com/blogs/knowledgebase/abb-irc5-dynamic-tool-load-data-modification-at-runtime": {
+   "citedBy": [
+    "2-5#ref-20"
+   ],
+   "refText": "Industrial Monitor Direct, “ABB IRC5 dynamic tool load data modification at runtime,” knowledge base blog, accessed October 22, 2026. industrialmonitordirect.com/blogs/knowledgebase/abb-irc5-dynamic-tool-load-data-modification-at-runtime.",
+   "http": 200,
+   "title": "ABB IRC5: Changing Tool Load Data While Robot Stopped – Industrial Monitor Direct",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "RAPID tooldata components: robhold, tframe (translation + quaternion), tload (mass, cog, aom, ix, iy, iz)",
+     "evidence": "Annotated tooldata: 'robhold - tool is held by robot', 'tframe.trans', 'tframe.rot - orientation (quaternion)', 'tload.mass', 'tload.cog', 'tload.aom', 'tload.ix, iy, iz - inertia'",
+     "checked": "2026-10-22"
+    }
+   }
+  },
   "https://industrialmonitordirect.com/blogs/knowledgebase/abb-robot-workobject-3-point-teaching-accuracy-issues": {
    "citedBy": [
     "2-6#ref-20"
    ],
-   "refText": "Industrial Monitor Direct, “ABB robot workobject 3-point teaching accuracy issues,” knowledge-base blog, third party (search summary; page not opened). industrialmonitordirect.com/blogs/knowledgebase/abb-robot-workobject-3-point-teaching-accuracy-issues.",
+   "refText": "Industrial Monitor Direct, “ABB robot workobject 3-point teaching accuracy issues,” knowledge-base blog, third party, accessed October 22, 2026. industrialmonitordirect.com/blogs/knowledgebase/abb-robot-workobject-3-point-teaching-accuracy-issues.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "ABB WorkObject Teaching: Fixing Position Accuracy Problems – Industrial Monitor Direct"
+   "title": "ABB WorkObject Teaching: Fixing Position Accuracy Problems – Industrial Monitor Direct",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "Origin disagreement; keep points >=~100 mm apart, not collinear, correct tool; most bad wobjs from wrong TCP or wrong jog frame; defaults tool0/wobj0",
+     "evidence": "'verify TCP accuracy first. An inaccurate TCP invalidates all subsequent workobject definitions'; 'Incorrect Jogging Frame'; 'Origin: Point Y1 projected perpendicular to X-axis'",
+     "note": "TCP-first and jog-frame advice verified. Page has no ~100 mm spacing, no 'not in a line', no 'most bad work objects', no tool0/wobj0 defaults. It also agrees with ref 19 on the origin, so it does not show sources disagreeing. Trim those parts.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/configuring-s7-1500-to-abb-irc5-via-profinet-in-tia-portal": {
    "citedBy": [
@@ -5981,48 +6446,91 @@
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/configuring-ur5-for-robotiq-gripper-object-detection": {
    "citedBy": [
-    "2-7#ref-25"
+    "2-7#ref-24"
    ],
    "refText": "Industrial Monitor Direct, “Configuring UR5 for Robotiq gripper object detection,” knowledge-base article (third-party). industrialmonitordirect.com/blogs/knowledgebase/configuring-ur5-for-robotiq-gripper-object-detection.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "UR5 Robotiq Object Detection Logic and Verification – Industrial Monitor Direct"
+   "title": "UR5 Robotiq Object Detection Logic and Verification – Industrial Monitor Direct",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "Missed-pick check as a branch using rq_is_object_detected() after grip; Robotiq example re-attempts then prompts operator",
+     "evidence": "\"Use rq_is_object_detected() as the decision input. Check it after the grip action has completed, route the result through an explicit IF/ELSE\"",
+     "note": "Supports the branch-at-grip advice only; the re-attempt example is Robotiq's [24], and 'not a fixed delay' is not stated. Fine if [25] sits only after the first clause.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/fanuc-pallettool-ab-plc-integration-guide-m-410": {
    "citedBy": [
-    "2-5#ref-42"
+    "2-5#ref-43"
    ],
    "refText": "Industrial Monitor Direct, “Fanuc PalletTool and Allen-Bradley PLC integration guide (M-410),” knowledge base blog, accessed October 21, 2026. industrialmonitordirect.com/blogs/knowledgebase/fanuc-pallettool-ab-plc-integration-guide-m-410.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Fanuc PalletTool Integration with Allen-Bradley PLC Setup – Industrial Monitor Direct"
+   "title": "Fanuc PalletTool Integration with Allen-Bradley PLC Setup – Industrial Monitor Direct",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Fanuc PalletTool uses signals such as cycle-ready, pallet-ready and abort",
+     "evidence": "Signal table: CYCLE_RDY, PALLET_READY, ABORT; code 'ROBOT_CYCLE_RDY := DI[1]', 'PLC_ABORT := DO[4]'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/plc-robot-state-synchronization-integration-methods": {
    "citedBy": [
-    "2-5#ref-41"
+    "2-5#ref-42"
    ],
    "refText": "Industrial Monitor Direct, “PLC-robot state synchronization: integration methods,” knowledge base blog, accessed October 21, 2026. industrialmonitordirect.com/blogs/knowledgebase/plc-robot-state-synchronization-integration-methods.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Synchronizing PLC and Robot Controller States Without Rewriting Ladder Logic – Industrial Monitor Direct"
+   "title": "Synchronizing PLC and Robot Controller States Without Rewriting Ladder Logic – Industrial Monitor Direct",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "PLC state machine: start + part present begins cycle; advance after position OK + gripper closed; failures: unlatched requests, missing acks, pulse timing",
+     "evidence": "'IF Start_PB AND Part_Present THEN'; 'IF Robot_Position_OK AND Robot_Gripper_Closed THEN'; root causes: cycle time disparity, hardcoded timing delays, missing state validation",
+     "note": "State-machine part verified. The failure list differs: page names scan/cycle-time mismatch, hardcoded delays and missing state validation, not 'unlatched requests' or 'pulse-timing'. Fix: use the page's three causes.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/resolving-fanuc-tp-ualm-timeout-loop-in-clamp-programs": {
    "citedBy": [
-    "2-7#ref-31"
+    "2-7#ref-30"
    ],
    "refText": "Industrial Monitor Direct, “Resolving FANUC TP UALM timeout loop in clamp programs,” knowledge-base article (third-party). industrialmonitordirect.com/blogs/knowledgebase/resolving-fanuc-tp-ualm-timeout-loop-in-clamp-programs.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "FANUC UALM Stops Program? Configure $UARLM_SEV Variable – Industrial Monitor Direct"
+   "title": "FANUC UALM Stops Program? Configure $UARLM_SEV Variable – Industrial Monitor Direct",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "Same FANUC TP WAIT/TIMEOUT/UALM sentence",
+     "evidence": "Shows WAIT DI[1]=OFF AND DI[2]=ON / TIMEOUT, LBL[100] / UALM[1]; but timeout set by 'WAIT TMOUT = R[1]', default $UARLM_SEV=6 pauses at UALM",
+     "note": "Supports the TIMEOUT,LBL branch and UALM; does not mention $WAITTMOUT (it sets timeout via a register). Low-quality third-party source.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/ur-robot-offset-function-pose-configuration-guide": {
    "citedBy": [
-    "2-6#ref-27"
+    "2-6#ref-28"
    ],
-   "refText": "Industrial Monitor Direct, “UR robot offset function: pose configuration guide,” knowledge-base blog, third party (search summary; page not opened). industrialmonitordirect.com/blogs/knowledgebase/ur-robot-offset-function-pose-configuration-guide.",
+   "refText": "Industrial Monitor Direct, “UR robot offset function: pose configuration guide,” knowledge-base blog, third party, accessed October 22, 2026. industrialmonitordirect.com/blogs/knowledgebase/ur-robot-offset-function-pose-configuration-guide.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "UR Robot Offset: Configuring Pose Offsets in polyscope – Industrial Monitor Direct"
+   "title": "UR Robot Offset: Configuring Pose Offsets in polyscope – Industrial Monitor Direct",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "UR pose_add adds translation in base frame; third-party guide recommends pose_trans for tilted surfaces",
+     "evidence": "'pose_add always moves relative to the robot's base frame ... For a tilted surface ... Use pose_trans(FeaturePose, LocalOffset) instead of pose_add'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://industrialmonitordirect.com/blogs/knowledgebase/urscript-xmlrpc-can-you-catch-a-server-timeout-error": {
    "citedBy": [
@@ -6031,7 +6539,15 @@
    "refText": "Industrial Monitor Direct, “URScript XMLRPC: can you catch a server timeout error?” knowledge-base article (third-party). industrialmonitordirect.com/blogs/knowledgebase/urscript-xmlrpc-can-you-catch-a-server-timeout-error.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "URScript XMLRPC Timeouts: Probe First, Then Connect – Industrial Monitor Direct"
+   "title": "URScript XMLRPC Timeouts: Probe First, Then Connect – Industrial Monitor Direct",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "Third-party: URScript has no try/catch; an unhandled runtime error stops whole program regardless of thread",
+     "evidence": "\"URScript has no try, no except, no catch\"; FAQ: \"A runtime error stops the whole program regardless of which thread...\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://ingenieria.uncuyo.edu.ar/catedras/abb-safemove2-overview-external-2017.pdf": {
    "citedBy": [
@@ -6138,13 +6654,39 @@
    "linkChecked": "2026-10-22",
    "title": "Access Denied"
   },
+  "https://johnloomis.org/ece445/topics/odometry/borenstein/paper58.pdf": {
+   "citedBy": [
+    "5-8#ref-1"
+   ],
+   "refText": "J. Borenstein and L. Feng, “Measurement and Correction of Systematic Odometry Errors in Mobile Robots,” IEEE Transactions on Robotics and Automation, vol. 12, no. 6, pp. 869–880, Dec. 1996. doi.org/10.1109/70.544770. Author preprint: johnloomis.org/.../paper58.pdf.",
+   "http": 206,
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-8": {
+     "status": "fixed",
+     "claim": "Odometry is simple, inexpensive, real-time but has unbounded error accumulation (bumps, cracks, slip); used in-between periodic absolute measurements.",
+     "evidence": "Preprint p.1: 'Odometry is simple, inexpensive, and easy to accomplish in real-time. The disadvantage of odometry is its unbounded accumulation of errors'; 'in-between periodic absolute position measurements'; bumps, cracks.",
+     "note": "Quotes and content verified, but the cited author-preprint link (cs.au.dk) is 404. Replace with the working mirror. Preprint header says Vol 12 No 5, Oct 1996; IEEE record (DOI) is the authority for no. 6, Dec 1996.",
+     "suggestedUrl": "https://johnloomis.org/ece445/topics/odometry/borenstein/paper58.pdf",
+     "checked": "2026-10-22"
+    }
+   }
+  },
   "https://kcir.pwr.edu.pl/~mk/PodstawyRobotyki/04_Uklady_wspolrzednych_ABB_Notatki_2019A": {
    "citedBy": [
     "2-6#ref-19"
    ],
-   "refText": "Wrocław University of Science and Technology, “Układy współrzędnych ABB” (ABB coordinate systems, lecture notes in Polish), 2019 (search summary; page not opened). kcir.pwr.edu.pl/~mk/PodstawyRobotyki/04_Uklady_wspolrzednych_ABB_Notatki_2019A.",
+   "refText": "Wrocław University of Science and Technology, “Układy współrzędnych ABB” (ABB coordinate systems, lecture notes in Polish), 2019, accessed October 22, 2026. kcir.pwr.edu.pl/~mk/PodstawyRobotyki/04_Uklady_wspolrzednych_ABB_Notatki_2019A.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "Z follows the right-hand rule from X toward Y",
+     "evidence": "'Kierunek osi Z wyznaczony jest według reguły prawej ręki ... od osi X w stronę osi Y ... kciuk wyznaczy kierunek osi z.' Also X1,X2 -> X axis; origin where perpendicular through Y meets X.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://keyence.com/ss/products/safetyknowledge/caution": {
    "citedBy": [
@@ -6316,7 +6858,15 @@
    ],
    "refText": "ABB Robotics, Technical reference manual: RAPID Instructions, Functions and Data types, document 3HAC16581-1, revision J (PDF). library.e.abb.com/public/688894b98123f87bc1257cc50044e809/Technical reference manual_RAPID_3HAC16581-1_revJ_en.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "RAPID manual: Offs (mm, object frame), ERROR handler/ERRNO, RAISE to caller's handler, BookErrNo example, RETRY re-executes the failing instruction",
+     "evidence": "p.906 Offs: \"MoveL Offs(p2, 0, 0, 10)... moved to a point 10 mm from p2 (in the z-direction)\", offsets \"in the object coordinate system\"; p.30 BookErrNo ERR_GLUEFLOW example; RETRY \"re-executes the…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://library.e.abb.com/public/70ed3b221a577355c1257db000533446/ROB0296ENrobotware6.pdf": {
    "citedBy": [
@@ -6328,12 +6878,27 @@
   },
   "https://library.e.abb.com/public/797ae9069bffa5efc1257b130057a6a2/RobotStudioSubscriptionModel.pdf": {
    "citedBy": [
-    "2-6#ref-9",
+    "2-6#ref-10",
     "6-1#ref-7"
    ],
-   "refText": "ABB, “RobotStudio Subscription Model,” PDF, ABB Library, c. 2011–2012 (search summary; document not opened). library.e.abb.com/public/797ae9069bffa5efc1257b130057a6a2/RobotStudioSubscriptionModel.pdf.",
+   "refText": "ABB, “RobotStudio Subscription Model,” PDF, ABB Library, dated April 7, 2011, accessed October 22, 2026. library.e.abb.com/public/797ae9069bffa5efc1257b130057a6a2/RobotStudioSubscriptionModel.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "Old (2011-12) ABB subscription doc: Premium 30 days without activation, then Basic 'Online and basic Virtual Controller features'; trial not for School…",
+     "evidence": "PDF dated 2011-04-07: 'Without Activation the Product will function in Premium mode for 30 days and then revert to Basic Functionality mode.'",
+     "note": "PDF opened: 30-day Premium->Basic verified; date is 2011. The quoted 'Online and basic Virtual Controller features', the School Edition exclusion and VM disabling are not in this PDF. Drop those or cite the source that has them; also drop 'could not be opened'.",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "verified",
+     "claim": "RobotStudio free Basic mode needs no activation; without activation Premium runs 30 days then reverts to Basic",
+     "evidence": "\"Without Activation the Product will function in Premium mode for 30 days and then revert to Basic Functionality mode\"; Basic \"does not require activation and is free of charge\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://library.e.abb.com/public/7ae06be0a83848508bbafae510dc827b/IRBP-R_PR10111EN_RevD.pdf": {
    "citedBy": [
@@ -6402,11 +6967,20 @@
   "https://library.e.abb.com/public/c9ec98da197e4a61b6265af91ec5091c/3HAC066559%20AM%20Functional%20safety%20and%20SafeMove%20for%20OmniCore-en.pdf": {
    "citedBy": [
     "4-2#ref-13",
-    "6-1#ref-18"
+    "6-1#ref-19"
    ],
    "refText": "ABB Robotics, Application manual: Functional safety and SafeMove, document 3HAC066559-001, rev. T (RobotWare 7.19). library.e.abb.com/public/c9ec98da197e4a61b6265af91ec5091c/3HAC066559%20AM%20Functional%20safety%20and%20SafeMove%20for%20OmniCore-en.pdf.",
    "http": 403,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-1": {
+     "status": "unreachable",
+     "claim": "ABB manual 3HAC066559 covers system parameters, safety user grants and how to start Visual SafeMove",
+     "evidence": "library.e.abb.com returns 403 to the sandbox",
+     "note": "Search confirms the manual exists (3HAC066559-001, rev T, RobotWare 7.19) but its contents could not be read; no corroboration of the listed sections.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://library.e.abb.com/public/d11e7784c590c24dc1257b5900503e1f/3HAC032104-en.pdf": {
    "citedBy": [
@@ -6420,9 +6994,17 @@
    "citedBy": [
     "6-1#ref-10"
    ],
-   "refText": "ABB Robotics, “RobotStudio 2026.2 Release Notes,” ABB Library PDF (search summary; not opened), accessed October 21, 2026. library.e.abb.com/public/db6ae87c1cf9468bba3faa01b094fb3b/RobotStudio 2026.2 Release Notes.pdf.",
+   "refText": "ABB Robotics, “RobotStudio 2026.2 Release Notes,” ABB Library PDF, accessed October 22, 2026. library.e.abb.com/public/db6ae87c1cf9468bba3faa01b094fb3b/RobotStudio 2026.2 Release Notes.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "From 2026.1 RobotStudio uses user-based licensing via Robotics One account, node-locked excepted",
+     "evidence": "2026.2 Release Notes: \"Starting with version 2026.1, RobotStudio uses a new user-based license system that requires a Robotics One user account (not applicable for node locked licenses).\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://library.e.abb.com/public/f03878770fef4c2c93757953373aed9b/IRB%20360_datasheet_20220829.pdf": {
    "citedBy": [
@@ -6445,10 +7027,20 @@
    "citedBy": [
     "5-8#ref-14"
    ],
-   "refText": "T. Moore and D. Stouch, “A Generalized Extended Kalman Filter Implementation for the Robot Operating System,” in Intelligent Autonomous Systems 13 (IAS-13, Padova, July 2014), Advances in Intelligent Systems and Computing, vol. 302, Springer, 2016. doi.org/10.1007/978-3-319-08338-4_25.",
+   "refText": "T. Moore and D. Stouch, “A Generalized Extended Kalman Filter Implementation for the Robot Operating System,” in Intelligent Autonomous Systems 13 (IAS-13, Padova, July 2014), Advances in Intelligent Systems and Computing, vol. 302, Springer, 2015. doi.org/10.1007/978-3-319-08338-4_25.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Client Challenge"
+   "title": "Client Challenge",
+   "checks": {
+    "5-8": {
+     "status": "fixed",
+     "claim": "robot_localization presented by Tom Moore and Daniel Stouch of Charles River Analytics (IAS-13).",
+     "evidence": "Crossref: authors Thomas Moore, Daniel Stouch; IAS 13, Adv. Intell. Syst. Comput.; package index.rst cites MooreStouch 2014; repo org cra-ros-pkg.",
+     "note": "Springer page is bot-walled. Authors, title and venue confirmed via Crossref; Charles River Analytics affiliation is shown on the Springer listing (seen only in search snippet). Crossref gives publication date 3 Sep 2015, not 2016: consider changing the year to 2015.",
+     "corroboratedBy": "https://api.crossref.org/works/10.1007/978-3-319-08338-4_25",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://lup.lub.lu.se/record/535630": {
    "citedBy": [
@@ -6570,6 +7162,25 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Access Denied"
+  },
+  "https://mitti.com/checklists/quality/factory-acceptance-test": {
+   "citedBy": [
+    "6-1#ref-22"
+   ],
+   "refText": "Mitti (by SafetyCulture), “Free Factory Acceptance Test (FAT) Checklists,” checklist article, 2026 (formerly at safetyculture.com/checklists/factory-acceptance-test), accessed October 22, 2026. mitti.com/checklists/quality/factory-acceptance-test.",
+   "http": 200,
+   "title": "Free Factory Acceptance Test (FAT) Checklists | Mitti (by SafetyCulture)",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-1": {
+     "status": "fixed",
+     "claim": "FAT checklist templates split into preparation, safety inspection ('Are all interlocks functioning?') and documents (certificates, as-built drawings…",
+     "evidence": "Redirects to mitti.com (by SafetyCulture). Sections: Documentation Review (\"calibration certificates and material certificates\"), Pre-Test Preparation (\"Test alarms, interlocks, and emergency stops\")",
+     "note": "Quoted item 'Are all interlocks functioning?' and 'as-built drawings' not on the current page; URL now redirects. Paraphrase instead of quoting, drop 'as-built drawings', update URL.",
+     "suggestedUrl": "https://mitti.com/checklists/quality/factory-acceptance-test",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://modernrobotics.northwestern.edu/?p=30": {
    "citedBy": [
@@ -6821,11 +7432,11 @@
   },
   "https://nemo.asee.org/public/conferences/365/papers/48955/download": {
    "citedBy": [
-    "6-1#ref-4",
-    "6-2#ref-6",
+    "6-1#ref-3",
+    "6-2#ref-9",
     "6-3#ref-18"
    ],
-   "refText": "American Society for Engineering Education (ASEE), capstone milestone-evaluation paper 48955, ASEE conference papers (search summary; not opened), accessed October 21, 2026. nemo.asee.org/public/conferences/365/papers/48955/download.",
+   "refText": "J. Edmondson and R. A. Gupta (North Carolina State University), “Work in Progress: Project Health as a Capstone Rubric Element,” ASEE Annual Conference, 2025, paper 48955, accessed October 22, 2026. nemo.asee.org/public/conferences/365/papers/48955/download.",
    "http": 200,
    "linkChecked": "2026-10-22",
    "checks": {
@@ -6834,6 +7445,21 @@
      "claim": "One engineering capstone used milestone evaluations to hold each team member accountable to the group",
      "evidence": "Paper 48955 is Edmondson & Gupta (NCSU, 2025) 'Project Health as a Capstone Rubric Element'; it is about rubric specificity and gate reviews, with no milestone-accountability finding.",
      "note": "Refs 11 and 16 are swapped. This claim is in PEER 49669 (Ericson & Kiefer, York College): \"milestone evaluations holding individual team members responsible to the group\". Cite [16] here and [11] for the creativity sentence.",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "fixed",
+     "claim": "Capstone researchers: rubrics must balance depth vs simplicity; very detailed rubrics can narrow creativity",
+     "evidence": "Paper 48955: rubrics need \"a good balance between depth and simplicity\"; \"providing detailed rubrics shunts student creativity\"",
+     "note": "Refs [3] and [4] are swapped. The depth/simplicity and creativity claim is in paper 48955 (now [4]); 49669 supports the milestone-accountability sentence. Swap the two citations and fix the ref titles/authors.",
+     "checked": "2026-10-22"
+    },
+    "6-2": {
+     "status": "fixed",
+     "claim": "Capstone research warns very detailed rubrics can narrow students' creativity",
+     "evidence": "peer.asee.org/49669.pdf is Ericson & Kiefer (York College), 'Capstone Design Assessment and Student Motivation': milestone evaluations, individual accountability; nothing on rubrics narrowing…",
+     "note": "Swapped with ref 6. The creativity warning is in nemo.asee.org paper 48955 (Edmondson & Gupta, NC State): 'providing detailed rubrics shunts student creativity'. Point ref 9 there with real title/authors.",
+     "suggestedUrl": "https://nemo.asee.org/public/conferences/365/papers/48955/download",
      "checked": "2026-10-22"
     }
    }
@@ -6898,7 +7524,15 @@
    "refText": "L. A. McGee and S. F. Schmidt, “Discovery of the Kalman Filter as a Practical Tool for Aerospace and Industry,” NASA Technical Memorandum NASA-TM-86847, NASA Ames Research Center, November 1985. ntrs.nasa.gov/citations/19860003843.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Discovery of the Kalman filter as a practical tool for aerospace and industry - NASA Technical Reports Server (NTRS)"
+   "title": "Discovery of the Kalman filter as a practical tool for aerospace and industry - NASA Technical Reports Server (NTRS)",
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Fall 1960 Kalman visited Schmidt at Ames (Dynamics Analysis Branch, circumlunar/Apollo); relinearization 'has come to be known as the extended Kalman filter'; Potter square-root for Apollo.",
+     "evidence": "NTRS PDF: 'In the fall of 1960, Dr. Kalman... arranged to visit Dr. Schmidt'; 'has come to be known as the \"extended Kalman filter\"'; Potter 'devised the first square-root filter implementation, which was used for the Apollo system'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://occupli.com/?p=103946": {
    "citedBy": [
@@ -6972,13 +7606,30 @@
   },
   "https://one.robotics.abb.com/en/software/p/RobotStudio": {
    "citedBy": [
-    "2-6#ref-10",
+    "2-6#ref-11",
     "6-1#ref-9"
    ],
-   "refText": "ABB Robotics, “RobotStudio,” ABB Robotics software page (search summary; page not opened), accessed October 21, 2026. one.robotics.abb.com/en/software/p/RobotStudio.",
+   "refText": "ABB Robotics, “RobotStudio,” ABB Robotics software page (license comparison table), accessed October 22, 2026. one.robotics.abb.com/en/software/p/RobotStudio.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "ABB Robotics | Robotics One"
+   "title": "ABB Robotics | Robotics One",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "ABB 'RobotStudio for Education' license, Premium functionality, up to 100 students, no cost to qualified schools",
+     "evidence": "License table (JS-rendered): 'Education ... License model for education and training ... Universities, schools, and training centers'; Number of users: 100",
+     "note": "Education license and 100 users verified. Page does not say 'no cost' or 'qualified schools', and its feature table lacks CAD Converters for Education, so not full Premium. Reword to 'an Education license for up to 100 users' and drop 'no cost'.",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "unreachable",
+     "claim": "ABB comparison lists Education license alongside Freemium, Trial, Enterprise, Node-Locked, Partner",
+     "evidence": "one.robotics.abb.com page is JavaScript-rendered; fetch returned only the title 'ABB Robotics | Robotics One'",
+     "note": "Could not read the comparison table. ABB's RobotStudio license page confirms an Education offering ('Available at no cost to qualified educational institutions'); the full type list was seen only in search snippets.",
+     "corroboratedBy": "https://www.abb.com/global/en/areas/robotics/products/software/robotstudio-suite/robotstudio-license",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://onetonline.org/link/certinfo/12866-B": {
    "citedBy": [
@@ -7004,7 +7655,15 @@
    ],
    "refText": "OnRobot, “RG2 Datasheet,” version 1.8, onrobot.com, accessed October 21, 2026. onrobot.com/storage/datasheets/rg2/datasheet_rg2_v1.8_en.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "RG2: 2 kg force-fit/5 kg form-fit; 110 mm stroke, 3-40 N ±25%, 38-127 mm/s, 0.2 mm, IP54, 0.78 kg, 24 V 70-600 mA; holds on power loss",
+     "evidence": "v1.8 table: payload force fit 2 kg, form fit 5 kg; stroke 110 mm; force 3-40 N ±25%; 38-127 mm/s; repetition accuracy 0.1 typ/0.2 max; IP54; 0.78 kg; 70-600 mA; holds on power loss: Yes",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://opcfoundation.org/developer-tools/specifications-opc-ua-information-models/opc-unified-architecture-for-robotics/": {
    "citedBy": [
@@ -7063,9 +7722,10 @@
   },
   "https://peer.asee.org/15865.pdf": {
    "citedBy": [
+    "6-2#ref-7",
     "6-3#ref-17"
    ],
-   "refText": "D. K. Jones and A. Tadros, “Successful use of rubrics to assess student performance in capstone projects,” ASEE Annual Conference, paper AC 2010-359, 2010. peer.asee.org/15865.pdf.",
+   "refText": "D. K. Jones and A. Tadros (SUNYIT), “Successful Use of Rubrics to Assess Student Performance in Capstone Projects,” ASEE Annual Conference, 2010, paper AC 2010-359 (PDF read October 2026). Available: peer.asee.org/15865.pdf.",
    "http": 200,
    "linkChecked": "2026-10-22",
    "checks": {
@@ -7074,6 +7734,15 @@
      "claim": "Capstone rubric 1 'Not Acceptable' to 4 'Exemplary'; even number of levels chosen so evaluator decides if expectations met",
      "evidence": "Cited strategy.asee.org PDF unreachable (HTTP 0). Same paper on PEER: \"(1-Not Acceptable, 2-Below Expectations, 3-Meets Expectations, 4-Exemplary) was intentionally chosen so that the instructor had…",
      "note": "Claim supported (Jones & Tadros, AC 2010-359, SUNYIT). But the next sentence 'The two middle labels are this course's own' is false: the paper uses the same 'Below Expectations'/'Meets Expectations'. Delete it; switch URL to PEER and add authors.",
+     "suggestedUrl": "https://peer.asee.org/15865.pdf",
+     "corroboratedBy": "https://peer.asee.org/15865.pdf",
+     "checked": "2026-10-22"
+    },
+    "6-2": {
+     "status": "fixed",
+     "claim": "Capstone students wrote specs, planned milestones, gave oral presentations, final report; 1-4 scale Not Acceptable..Exemplary chosen so evaluators must decide",
+     "evidence": "Jones & Tadros, ASEE 2010 AC 2010-359: 'written project specifications, planning and milestone identification ... an oral presentation, and a final written report'; '1-Not Acceptable ...…",
+     "note": "strategy.asee.org fails (tunnel error). Same paper on peer.asee.org supports both sentences fully. Switch the URL and add authors/year; drop 'PDF not opened'.",
      "suggestedUrl": "https://peer.asee.org/15865.pdf",
      "corroboratedBy": "https://peer.asee.org/15865.pdf",
      "checked": "2026-10-22"
@@ -7090,11 +7759,11 @@
   },
   "https://peer.asee.org/49669.pdf": {
    "citedBy": [
-    "6-1#ref-3",
-    "6-2#ref-9",
+    "6-1#ref-4",
+    "6-2#ref-6",
     "6-3#ref-13"
    ],
-   "refText": "American Society for Engineering Education (ASEE), capstone rubric paper 49669, ASEE PEER repository (title and authors not retrieved; search summary, not opened), accessed October 21, 2026. peer.asee.org/49669.pdf.",
+   "refText": "T. Ericson and S. Kiefer (York College of Pennsylvania), “Capstone Design Assessment and Student Motivation,” ASEE PEER paper 49669, accessed October 22, 2026. peer.asee.org/49669.pdf.",
    "http": 200,
    "linkChecked": "2026-10-22",
    "checks": {
@@ -7103,6 +7772,22 @@
      "claim": "Capstone research warns very detailed rubrics can narrow students' creativity",
      "evidence": "PEER 49669 is Ericson & Kiefer, 'Capstone Design Assessment and Student Motivation' (York College); no mention of rubrics limiting creativity.",
      "note": "Swapped with [11]. The creativity warning is in nemo 48955 (Edmondson & Gupta): \"providing detailed rubrics shunts student creativity, as students view their project only through the lens of the rubric\". Cite [11] here; update ref titles/authors.",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "fixed",
+     "claim": "Milestone evaluations are a documented way to keep each team member accountable to the group",
+     "evidence": "Paper 49669: \"milestone evaluations holding individual team members responsible to the group for their progress\"",
+     "note": "Swapped with [3]: this paper supports the rubric-length sentence, not accountability. Cite 48955 on 'kept short on purpose...' and 49669 on the contribution-statement sentence; add titles/authors.",
+     "corroboratedBy": "https://peer.asee.org/49669.pdf",
+     "checked": "2026-10-22"
+    },
+    "6-2": {
+     "status": "fixed",
+     "claim": "One engineering capstone used milestone evaluations to keep each team member accountable to the group",
+     "evidence": "Paper 48955 is Edmondson & Gupta (NC State), 'Project Health as a Capstone Rubric Element'. No milestone-evaluation accountability claim; it says detailed rubrics can 'shunt student creativity'…",
+     "note": "Refs 6 and 9 are swapped. This claim is in peer.asee.org/49669.pdf (Ericson & Kiefer, York College, 'Capstone Design Assessment and Student Motivation': 'milestone evaluations holding individual team members responsible to the group'). Point ref 6 there.",
+     "suggestedUrl": "https://peer.asee.org/49669.pdf",
      "checked": "2026-10-22"
     }
    }
@@ -7116,6 +7801,24 @@
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
    "blocked": "bot-challenge"
+  },
+  "https://people.eecs.berkeley.edu/~pabbeel/cs287-fa19/optreadings/JulierUhlmann-UKF.pdf": {
+   "citedBy": [
+    "5-8#ref-13"
+   ],
+   "refText": "S. J. Julier and J. K. Uhlmann, “A New Extension of the Kalman Filter to Nonlinear Systems,” in Proc. SPIE 3068, International Symposium on Aerospace/Defense Sensing, Simulation and Controls (AeroSense), Orlando, FL, pp. 182–193, 1997, doi:10.1117/12.280797. Copy: people.eecs.berkeley.edu/.../Julier",
+   "http": 206,
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-8": {
+     "status": "fixed",
+     "claim": "Julier & Uhlmann: linearization 'can produce highly unstable filters', Jacobians hard, covariance underestimated so filter may diverge; UT uses 2n+1 sigma points, 2nd-order accurate, no derivatives.",
+     "evidence": "Paper copy: 'Linearisation can produce highly unstable filters if the assumptions of local linearity is violated'; 'raising the possibility that the filter will diverge'; '2n + 1 weighted' points; mean/covariance 'correct to the second order'; Jacobians not needed.",
+     "note": "cs.unc.edu author-copy link is 404 (also with .pdf). Content verified against another copy of the same paper; replace the author-copy link (keep the DOI).",
+     "suggestedUrl": "https://people.eecs.berkeley.edu/~pabbeel/cs287-fa19/optreadings/JulierUhlmann-UKF.pdf",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://perso-laris.univ-angers.fr/~boimond/TP_2_Kuka_KR3_Position_outil_XYZ_4_points.pdf": {
    "citedBy": [
@@ -7179,7 +7882,16 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://pr.mono.ipros.com/en/piab/product/detail/2000951425/",
-   "title": "PIAB <Case Study> Proposal for Replacing Electric Pumps with Ejectors | ピアブ・ジャパン - Powered by ipros"
+   "title": "PIAB <Case Study> Proposal for Replacing Electric Pumps with Ejectors | ピアブ・ジャパン - Powered by ipros",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "Piab: ejectors give off no heat, start vacuum immediately, easy on/off for intermittent duty; concedes high air consumption",
+     "evidence": "'they also have many advantages, such as noise reduction, no heat generation, and no vibrations'; 'Ejectors tend to be avoided due to their enormous consumption of compressed air'",
+     "note": "No heat and high air use are on the page; 'start producing vacuum immediately' and 'easy to switch on and off for intermittent duty' are not. Fix: replace with what the page says (no heat, low noise, no vibration) or cite another source for instant on/off.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://press.aboutamazon.com/news-releases/news-release-details/amazoncom-acquire-kiva-systems-inc/": {
    "citedBy": [
@@ -7238,7 +7950,16 @@
    ],
    "refText": "Universal Robots, “ursim_docker.rst” (URSim Docker setup), Universal_Robots_Client_Library documentation, GitHub, accessed October 21, 2026. raw.githubusercontent.com/UniversalRobots/Universal_Robots_Client_Library/master/doc/setup/ursim_docker.rst.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "Loopback-bound docker run, open 127.0.0.1:6080/vnc.html, omitting bind exposes sim on all interfaces; mount -v ${HOME}/.ursim/programs to keep programs",
+     "evidence": "'Binding those ports to the loopback interface (127.0.0.1) keeps the GUI off your LAN. If you omit the bind address ... exposes the simulator to the local network'; -v…",
+     "note": "Everything matches except the '--rm deletes the container and your programs' warning, which the page does not state (it is standard Docker behaviour). Acceptable; optionally cite Docker run docs for --rm.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://raw.githubusercontent.com/UniversalRobots/Universal_Robots_Client_Library/master/resources/external_control.urscript": {
    "citedBy": [
@@ -7247,7 +7968,21 @@
    ],
    "refText": "Universal Robots, “external_control.urscript,” Universal_Robots_Client_Library, GitHub (master branch), accessed October 21, 2026. github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/resources/external_control.urscript.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "UR driver script: set_payload(mass,cog); set_target_payload on >=5.10.0 else fallback + textmsg; set_tool_voltage; sync(); get_steptime 0.008 CB3/0.002 e-Series",
+     "evidence": "set_payload(mass, cog); 'if ROBOT_SOFTWARE_VERSION >= v5.10.0' set_target_payload(...) else textmsg('PolyScope < 5.10.0. Inertia and transition_time ignored.'); set_tool_voltage; '0.008: CB3'",
+     "checked": "2026-10-22"
+    },
+    "2-7": {
+     "status": "verified",
+     "claim": "UR external_control.urscript: def/end, globals, threads (run/join/kill), enter/exit_critical, sync(), popup with counter, terminateProgram stopj+halt",
+     "evidence": "L124-125 global control_mode = MODE_UNINITIALIZED / trajectory_points_left = 0; L173 popup(str, title=\"External Control speed limit\", blocking=False, warning=True); L207-210 terminateProgram stopj…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://raw.githubusercontent.com/aron-assani/ABB_programming/HEAD/pick_and_place/PandP_robot.mod": {
    "citedBy": [
@@ -7255,15 +7990,32 @@
    ],
    "refText": "aron-assani, “PandP_robot.mod,” ABB_programming repository (pick_and_place), GitHub, accessed October 21, 2026. raw.githubusercontent.com/aron-assani/ABB_programming/HEAD/pick_and_place/PandP_robot.mod.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "Grip/place steps with waits; tooldata TCP z=114.25 mm, 0.1 kg; wobj (150,-500,8) rot -90 Z; explicit tool/wobj; RobotStudio defaults tool0/wobj0",
+     "evidence": "tCamera:=[TRUE,[[0,0,114.25],[1,0,0,0]],[0.1,...]] (tGripper line commented out); wobjTableN [[150,-500,8],[0.7071,0,0,-0.7071]]; PlacePuck MoveL ...fine, WaitTime 1, open, 0.5",
+     "note": "Values match, but 114.25/0.1 tooldata is the active tCamera (tGripper copy is commented out); pick side here uses z0 and a MoveJ, not MoveL+fine. File has no MoveL P2..toolBJC\\WObj:=whiteBoard and nothing on RobotStudio defaults; cite ref 12/ABB manual for those.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://raw.githubusercontent.com/cychitivav/industrial_robotics/HEAD/README.md": {
    "citedBy": [
-    "2-6#ref-12"
+    "2-6#ref-13"
    ],
    "refText": "cychitivav, “industrial_robotics” README (IRB 140 lab report), GitHub, accessed October 21, 2026. raw.githubusercontent.com/cychitivav/industrial_robotics/HEAD/README.md.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "tooldata structure; RobotStudio Modeling > Create Tool; IRB 140 lab: mean error 0.353 mm, calibrated TCP 7.63/4.37/211.04 vs CAD 12.25/0/214.74; MoveL…",
+     "evidence": "'Mean error = 0.353 mm'; RobotStudio x=12.254,y=-0.002,z=214.736; manual x=7.62994,y=4.36555,z=211.035; 'modeling tab ... create tool'; 'MoveL P2,v100,z0,toolBJC\\WObj:=whiteBoard;'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://raw.githubusercontent.com/ros-industrial/abb_driver/kinetic-devel/rapid/ROS_motion.mod": {
    "citedBy": [
@@ -7271,15 +8023,31 @@
    ],
    "refText": "ROS-Industrial, “ROS_motion.mod,” abb_driver repository, kinetic-devel branch, GitHub (file read in full October 21, 2026). raw.githubusercontent.com/ros-industrial/abb_driver/kinetic-devel/rapid/ROS_motion.mod.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "ROS-Industrial ABB driver: module layout, LOCAL, main's interrupt setup (IDelete/CONNECT/IPers), loops, is_near skip, ERROR handler with ErrWrite \\W",
+     "evidence": "ROS_motion.mod has LOCAL decls, PROC main with IDelete ... ! clear interrupt handler, in case restarted with ExitCycle; CONNECT; IPers; WHILE true ... WaitTime 0.05; ERROR ErrWrite \\W ...…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://raw.githubusercontent.com/ros-industrial/ur_msgs/master/srv/SetIO.srv": {
    "citedBy": [
-    "2-5#ref-25"
+    "2-5#ref-26"
    ],
    "refText": "ROS-Industrial / Universal Robots, “SetIO.srv,” ur_msgs package, GitHub (master branch), accessed October 21, 2026. github.com/ros-industrial/ur_msgs/blob/master/srv/SetIO.srv.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "ROS SetIO pin numbering: DOUT 0-7, CONF_OUT 8-15, TOOL_DOUT 16-17, AOUT 0-1, tool voltage 0/12/24 V",
+     "evidence": "SetIO.srv: PIN_DOUT0..7 = 0..7; PIN_CONF_OUT0..7 = 8..15; PIN_TOOL_DOUT0/1 = 16/17; PIN_AOUT0/1 = 0/1; STATE_TOOL_VOLTAGE_0V/12V/24V",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://raw.githubusercontent.com/rpiRobotics/abb_motion_program_exec/master/robot/HOME/motion_program_exec.mod": {
    "citedBy": [
@@ -7287,7 +8055,15 @@
    ],
    "refText": "Rensselaer Polytechnic Institute Robotics (rpiRobotics), “motion_program_exec.mod,” abb_motion_program_exec repository, master branch, GitHub (file read in full October 21, 2026). raw.githubusercontent.com/rpiRobotics/abb_motion_program_exec/master/robot/HOME/motion_program_exec.mod.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "RPI motion_program_exec.mod: CONST cmd codes, TASK PERS tool, keepgoing loop + WaitRob\\ZeroSpeed, BookErrNo, RAISE, SkipWarn/TRYNEXT, init/fini split",
+     "evidence": "L8 CONST num MOTION_PROGRAM_CMD_MOVEL:=3; L19 TASK PERS tooldata...; L31 VAR errnum ERR_INVALID_MP_VERSION:=-1; L62 BookErrNo; L131-132 ErrWrite+RAISE; L220-228; L598-600 SkipWarn TRYNEXT",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://reference.opcfoundation.org/specs/OPC-30050/6.3.8": {
    "citedBy": [
@@ -7465,12 +8241,20 @@
   },
   "https://roboticsandautomationnews.com/2026/08/03/how-certified-systems-integrators-reduce-commissioning-risk-in-robotic-production-cells/103840/": {
    "citedBy": [
-    "6-1#ref-22"
+    "6-1#ref-23"
    ],
-   "refText": "Robotics & Automation News, “How certified systems integrators reduce commissioning risk in robotic production cells,” August 3, 2026 (search summary; not opened), accessed October 21, 2026. roboticsandautomationnews.com/2026/08/03/how-certified-systems-integrators-reduce-commissioning-risk-in-robot",
+   "refText": "Robotics & Automation News, “How certified systems integrators reduce commissioning risk in robotic production cells,” August 3, 2026, accessed October 22, 2026. roboticsandautomationnews.com/2026/08/03/how-certified-systems-integrators-reduce-commissioning-risk-in-robotic-production-cells/103840.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "How certified systems integrators reduce commissioning risk in robotic production cells"
+   "title": "How certified systems integrators reduce commissioning risk in robotic production cells",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "Cells can pass shop demo yet fail on site (parameters, networks, interfaces differ); integrators treat robot, controls, safety, plant interfaces as one system…",
+     "evidence": "\"can run cleanly during a shop demonstration and still lose hours when it reaches the plant\"; \"treating the robot, controls, motion equipment, safety functions, and plant interfaces as one system…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://robotiq.com/products/hand-e-adaptive-robot-gripper": {
    "citedBy": [
@@ -7480,7 +8264,16 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://robotiq.com/products/adaptive-grippers#Hand-E",
-   "title": "Adaptive Grippers | Robotiq"
+   "title": "Adaptive Grippers | Robotiq",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "Current Hand-E product page gives different grip-force and payload figures than 2019 manual",
+     "evidence": "Product page: '7 kg payload with 0.025 mm repeatability', IP67, 50/100 mm stroke (manual: 5 kg form-fit / 3 kg friction)",
+     "note": "Payload differs (7 kg vs 5/3 kg) as claimed, but the current product page shows no grip-force figure. Fix: say the two give different payload figures (drop 'grip-force').",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://robotsguide.com/learn/what-is-a-robot": {
    "citedBy": [
@@ -7590,16 +8383,6 @@
      "checked": "2026-10-22"
     }
    }
-  },
-  "https://safetyculture.com/checklists/factory-acceptance-test": {
-   "citedBy": [
-    "6-1#ref-21"
-   ],
-   "refText": "SafetyCulture, “Factory acceptance test checklists,” checklist templates (search summary; not opened), accessed October 21, 2026. safetyculture.com/checklists/factory-acceptance-test.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "finalUrl": "https://mitti.com/checklists/quality/factory-acceptance-test",
-   "title": "Free Factory Acceptance Test (FAT) Checklists | Mitti (by SafetyCulture)"
   },
   "https://scholarcommons.sc.edu/csce_facpub/145": {
    "citedBy": [
@@ -7800,12 +8583,20 @@
   },
   "https://strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-projects.pdf": {
    "citedBy": [
-    "6-1#ref-2",
-    "6-2#ref-7"
+    "6-1#ref-2"
    ],
    "refText": "American Society for Engineering Education (ASEE), “Successful use of rubrics to assess student performance in capstone projects,” conference paper PDF (search summary; not opened), accessed October 21, 2026. strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-proje",
    "http": 0,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "6-1": {
+     "status": "unreachable",
+     "claim": "Four-level analytic rubric with no neutral middle, from 'Not Acceptable' to 'Exemplary', in an engineering-technology capstone program",
+     "evidence": "strategy.asee.org does not resolve (DNS/502); peer.asee.org copy behind Cloudflare challenge",
+     "note": "Could not open. Search snippets of the same paper (Jones & Tadros, ASEE 2010, mechanical engineering technology) quote the 4 labels and the forced-decision rationale, but no reachable copy was read. Try peer.asee.org/15865 in a browser.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://student.cs.uwaterloo.ca/~cs492/papers/trial.pdf": {
    "citedBy": [
@@ -7857,7 +8648,7 @@
     "6-2#ref-2",
     "6-3#ref-1"
    ],
-   "refText": "Virginia Tech Technology-enhanced Learning and Online Strategies (TLOS), “Assessing and reflecting on project work,” Project-Based Learning teaching resources (search summary; page not opened), accessed October 21, 2026. teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecti",
+   "refText": "Virginia Tech Center for Excellence in Teaching and Learning, “Assessing and Reflecting on Project Work,” Project-Based Learning teaching resources, accessed October 22, 2026. teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
    "title": "Assessing and Reflecting on Project Work | Center for Excellence in Teaching and Learning | Virginia Tech",
@@ -7867,6 +8658,18 @@
      "claim": "Teaching-center PBL advice: share rubric at start, milestones (plan/prototype/briefing), individual evidence, brief or substantial reflection, grade group vs…",
      "evidence": "\"Share criteria and rubrics when the project launches\"; milestones \"proposal, plan... prototype... progress briefing\"; \"contribution statements, progress notes\"; \"Reflection can be brief and…",
      "note": "Minor: page is general project-based-learning guidance, not specifically 'capstone guidance'; say 'project-based learning guidance'.",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "verified",
+     "claim": "Teaching-center guidance: publish criteria/rubric at launch, milestones, contribution statements/individual evidence, group vs individual grading, reflection…",
+     "evidence": "VT CETL: \"Share criteria and rubrics when the project launches\"; \"Break complex work into meaningful milestones\"; \"contribution statements\"; \"Distinguish group, individual...\"; \"brief and frequent…",
+     "checked": "2026-10-22"
+    },
+    "6-2": {
+     "status": "verified",
+     "claim": "Share criteria/rubric at launch; split into milestones (plan, prototype, progress briefing); individual evidence/contribution statements; grade…",
+     "evidence": "'Share criteria and rubrics when the project launches'; milestones 'proposal, plan ... prototype ... progress briefing'; 'contribution statements'; 'Distinguish group, individual, process, and…",
      "checked": "2026-10-22"
     }
    }
@@ -7895,7 +8698,16 @@
    "refText": "ABB Robotics User Forums, “Changing/adding one parameter in a robottarget,” ABB tech-community discussion thread. tech-community.robotics.abb.com/t/changing-adding-one-parameter-in-a-robottarget/4531.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "changing/adding one parameter in a robottarget - Robot Controller - ABB Robotics Community"
+   "title": "changing/adding one parameter in a robottarget - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "Only PERS/VAR data can be modified, not CONST; also cited for Offs returning displaced target in mm in work-object frame",
+     "evidence": "Marcel #6: \"jointtarget has to be: PERS or VAR and not: CONST\"; #2 shows MoveL Offs(testpoint,0,0,-40)",
+     "note": "Thread supports the CONST rule and shows Offs usage, but not mm units or the work-object frame; that part rests on [12]. Fine to keep [7] only on the CONST sentence.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/const-variables-in-multiple-tasks/6188": {
    "citedBy": [
@@ -7904,7 +8716,15 @@
    "refText": "ABB Robotics User Forums, “CONST variables in multiple tasks,” ABB tech-community discussion thread. tech-community.robotics.abb.com/t/const-variables-in-multiple-tasks/6188.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "CONST variables in multiple tasks - Robot Controller - ABB Robotics Community"
+   "title": "CONST variables in multiple tasks - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "Data in a module loaded as shared is available to all tasks",
+     "evidence": "Micky, post #4: \"If a module is loaded as shared, all data declarations are available in all tasks.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/corner-path-failure-50024/3188": {
    "citedBy": [
@@ -7917,12 +8737,21 @@
   },
   "https://tech-community.robotics.abb.com/t/create-tool/7316": {
    "citedBy": [
-    "2-6#ref-16"
+    "2-6#ref-17"
    ],
-   "refText": "ABB Robotics Tech Community, “Create Tool,” forum thread (search summary; page not opened). tech-community.robotics.abb.com/t/create-tool/7316.",
+   "refText": "ABB Robotics Tech Community, “Create Tool,” forum thread, accessed October 22, 2026. tech-community.robotics.abb.com/t/create-tool/7316.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Create Tool - Robot Controller - ABB Robotics Community"
+   "title": "Create Tool - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "ABB FlexPendant tool definition method (4 orientations, optional extra points for orientation); orientations should differ as much as possible",
+     "evidence": "2016 thread: 'create TCP ... with Z&X in Flexpendant ... Select Method and Number of Points'; reply: 'maximum difference in approach angle that you can between the points'",
+     "note": "Method, Z/X orientation option and 'differ as much as possible' verified. Thread does not state the four-point count for ABB; ref 12 does ('4 points to define TCP and 1 elongator point'). Add [12] to the four-orientation sentence.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/differences-movejoint-moveline/116": {
    "citedBy": [
@@ -7935,12 +8764,20 @@
   },
   "https://tech-community.robotics.abb.com/t/disable-max-time-expired-warning-in-event-log/9668": {
    "citedBy": [
-    "2-5#ref-34"
+    "2-5#ref-36"
    ],
    "refText": "ABB Robotics Tech Community, “Disable max time expired warning in event log,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/disable-max-time-expired-warning-in-event-log/9668.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Disable \"Max time expired\" warning in event log - RAPID Programming - ABB Robotics Community"
+   "title": "Disable \"Max time expired\" warning in event log - RAPID Programming - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "With \\TimeFlag flag set TRUE and execution continues; without it ERR_WAIT_MAXTIME raised, catchable in ERROR handler",
+     "evidence": "'40538: Max Time Expired ... Recovery: ERR_WAIT_MAXTIME'; user handles it in error handler; reply: 'WaitUntil diClosed_A=0\\MaxTime:=2\\TimeFlag:=bAdvancedFlag; IF bAdvancedFlag ...'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/does-abb-robot-support-continuous-trajectory-control/11270": {
    "citedBy": [
@@ -7958,16 +8795,33 @@
    "refText": "ABB Robotics User Forums, “Error handling,” ABB tech-community discussion thread. tech-community.robotics.abb.com/t/error-handling/1435.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Error handling - Robot Controller - ABB Robotics Community"
+   "title": "Error handling - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "RAISE in a handler continues in the calling routine's error handler",
+     "evidence": "claudio #3: \"RAISE is helpful in a Error handler because the execution continues in the error handler of the calling function.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/gripper-simulation-without-manual-digital-input/5155": {
    "citedBy": [
-    "2-5#ref-36"
+    "2-5#ref-37"
    ],
    "refText": "ABB Robotics Tech Community, “Gripper simulation without manual digital input,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/gripper-simulation-without-manual-digital-input/5155.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "gripper simulation without manual digital Input - RobotStudio - ABB Robotics Community"
+   "title": "gripper simulation without manual digital Input - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "ABB cell: diVacuum wired to vacuum sensor, goes high when vacuum forms; SetDO then wait on diVacuum; in simulation a Smart Component raises the signal",
+     "evidence": "Thread is about simulating a gripper: 'RAPID code sets digital output signals, and gets the digital input signals back from the Smart Components'; example signal is di_attach",
+     "note": "Smart Component part supported. diVacuum and the SetDO/WaitDI diVacuum code are in ref 30's thread, not here, and neither thread says it is wired to a vacuum sensor. Fix: cite [30] for the code; drop or re-source the vacuum-sensor wiring detail.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/how-do-i-check-if-a-movel-instruction-can-be-completed-without-a-singularity-or-avoid-it/7883": {
    "citedBy": [
@@ -7985,70 +8839,157 @@
    "refText": "ABB Robotics User Forums, “IRC5: maximum number of retries,” ABB tech-community discussion thread. tech-community.robotics.abb.com/t/irc5-maximum-number-of-retries/5955.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "IRC5 : maximum number of retries - Robot Controller - ABB Robotics Community"
+   "title": "IRC5 : maximum number of retries - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "On IRC5, hitting max retries stops the system; ResetRetryCount resets the count",
+     "evidence": "Thread 'IRC5: maximum number of retries': \"If I have reached the maximum number of retries... the system is stopped\"; Micky: new instruction \"ResetRetryCount\"... reset the retry counter",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/is-it-possible-to-get-safemove-to-work-in-robotstudio/6977": {
    "citedBy": [
-    "6-1#ref-16"
+    "6-1#ref-17"
    ],
-   "refText": "ABB Robotics Tech Community, “Is it possible to get safemove to work in RobotStudio?,” forum thread (search summary; not opened; community claims), accessed October 21, 2026. tech-community.robotics.abb.com/t/is-it-possible-to-get-safemove-to-work-in-robotstudio/6977.",
+   "refText": "ABB Robotics Tech Community, “Is it possible to get safemove to work in RobotStudio?,” forum thread (community claims), accessed October 22, 2026. tech-community.robotics.abb.com/t/is-it-possible-to-get-safemove-to-work-in-robotstudio/6977.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Is it possible to get safemove to work in RobotStudio? - RobotStudio - ABB Robotics Community"
+   "title": "Is it possible to get safemove to work in RobotStudio? - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "6-1": {
+     "status": "fixed",
+     "claim": "ABB RobotStudio team member: SafeMove runs on separate hardware not simulated by VC; workarounds: start VC separately for Authenticate, SafeMove-capable robot…",
+     "evidence": "Johannes_Weiman: \"I don't think it is possible. SafeMove runs on separate hardware which isn't simulated by the virtual controller.\" Later: \"Not very sure :)\"; Authenticate available if VC started…",
+     "note": "His ABB role is not shown on the thread and he hedged ('Not very sure'). No post mentions choosing a SafeMove-capable robot model. Say 'a forum participant suggested' and drop the robot-model workaround or find a source.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/more-i-os-for-irc5-compact/7073": {
    "citedBy": [
-    "2-5#ref-29"
+    "2-5#ref-30"
    ],
    "refText": "ABB Robotics Tech Community, “More I/Os for IRC5 Compact,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/more-i-os-for-irc5-compact/7073.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "More I/O's for IRC5 Compact? - Robot Controller - ABB Robotics Community"
+   "title": "More I/O's for IRC5 Compact? - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Add a second DSQC 652 at an unused DeviceNet address; DeviceNet limit 20 I/O devices per controller",
+     "evidence": "#4 'order another DSQC 652 ... change the DeviceNet address to an unused number'; #8 'maximum of 20 I/O devices can be connected to the same controller'",
+     "checked": "2026-10-22"
+    }
+   }
+  },
+  "https://tech-community.robotics.abb.com/t/offs-and-reltool/10081": {
+   "citedBy": [
+    "2-6#ref-25"
+   ],
+   "refText": "ABB Robotics Tech Community, “Offs and RelTool,” forum thread, 2021 (moved from RobotStudio Forums comment 33030), accessed October 22, 2026. tech-community.robotics.abb.com/t/offs-and-reltool/10081.",
+   "http": 200,
+   "title": "Offs and RelTool - Robot Controller - ABB Robotics Community",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "Offs shifts along work-object axes, RelTool along tool axes; approach RelTool(pPick,0,0,-100); RelTool can move world Z with zero Z; mixing signs drives into…",
+     "evidence": "URL redirects to tech-community.robotics.abb.com/t/offs-and-reltool/10081/3 (2021). Offs(pick,0,0,30) = 30 mm over pick; post 6: RelTool x,y,z 'is in the tool coordinate system which rotates with…",
+     "note": "Core Offs-vs-RelTool distinction verified. The -100 approach sign, the world-Z-with-zero-Z example and the sign-mixing failure are the lesson's own derivations, not in the thread. Fine as teaching, but don't present them as from [24]. Update URL to the redirect target.",
+     "suggestedUrl": "https://tech-community.robotics.abb.com/t/offs-and-reltool/10081",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/one-tool-with-two-grippers-two-tcp-how-to-define-the-rapid-tooldata/14942": {
    "citedBy": [
-    "2-5#ref-20"
+    "2-5#ref-21"
    ],
    "refText": "ABB Robotics Tech Community, “One tool with two grippers (two TCP): how to define the RAPID tooldata,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/one-tool-with-two-grippers-two-tcp-how-to-define-the-rapid-tooldata/14942.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "One tool with two grippers (two TCP): how to define the RAPID tooldata - RobotStudio - ABB Robotics Community"
+   "title": "One tool with two grippers (two TCP): how to define the RAPID tooldata - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "RAPID tooldata = robhold, tframe (translation+quaternion), tload (mass, cog, aom, ix, iy, iz); example dual gripper 8.5 kg, CoG [10,0,80] mm",
+     "evidence": "Post #3: 'PERS tooldata tMasterGripper := [TRUE, [[0,0,150],[1,0,0,0]], [8.5, [10,0,80], [1,0,0,0], 0, 0, 0]];' with comments naming tframe and tload",
+     "note": "8.5 kg / [10,0,80] example verified, and the record shape matches. The component names robhold, aom, ix/iy/iz are not given in the thread. Fix: cite ABB's RAPID technical reference (tooldata/loaddata) for the field names.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/pc-sdk-5-13-execute-single-rapid-command/4294": {
    "citedBy": [
-    "2-5#ref-35"
+    "2-5#ref-34"
    ],
    "refText": "ABB Robotics Tech Community, “PC SDK 5.13: execute single RAPID command,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/pc-sdk-5-13-execute-single-rapid-command/4294.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "PC SDK 5.13: Execute single RAPID command - Developer Tools - ABB Robotics Community"
+   "title": "PC SDK 5.13: Execute single RAPID command - Developer Tools - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "PulseDO for momentary signals, used as 'PulseDO do1;'",
+     "evidence": "Reply: 'WaitDI di1, 1; MoveL myrobtarget, v1000, z10, tool0; WaitRob InPos; PulseDO do1;'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/please-help-me-about-pick-and-leave-sytem/5845": {
    "citedBy": [
-    "2-6#ref-29"
+    "2-6#ref-30"
    ],
-   "refText": "ABB Robotics Tech Community, “Please help me about pick and leave sytem,” forum thread (search summary; page not opened). tech-community.robotics.abb.com/t/please-help-me-about-pick-and-leave-sytem/5845.",
+   "refText": "ABB Robotics Tech Community, “Please help me about pick and leave sytem,” forum thread, accessed October 22, 2026. tech-community.robotics.abb.com/t/please-help-me-about-pick-and-leave-sytem/5845.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Please help me about \"Pick and Leave\" sytem - RobotStudio - ABB Robotics Community"
+   "title": "Please help me about \"Pick and Leave\" sytem - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "ABB forum user had parts landing in wrong place; fix was replacing blended zone at drop point with fine",
+     "evidence": "2013 thread: user's place goes wrong using z100 at LeavePos; Henrik_Berlin: 'It is probably because you are using z100 ... You must use fine as zonedata when you go to a point to pick or drop…",
+     "note": "Diagnosis and advice verified, but the thread does not show the user confirming the fix, and it was a simulation. Reword: 'an ABB expert traced misplaced parts to a z100 zone at the drop point and advised fine.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/robotstudio-2025-5-trial-license-all-available-trial-licenses-have-already-been-installed-on-this-pc-but-no-licenses-are-installed/15038": {
    "citedBy": [
-    "2-6#ref-11"
+    "2-6#ref-12"
    ],
-   "refText": "ABB Robotics Tech Community, “RobotStudio 2025.5 trial license: all available trial licenses have already been installed on this PC, but no licenses are installed,” forum thread, 2025 (search summary; page not opened). tech-community.robotics.abb.com/t/robotstudio-2025-5-trial-license-all-available-",
+   "refText": "ABB Robotics Tech Community, “RobotStudio 2025.5 trial license: all available trial licenses have already been installed on this PC, but no licenses are installed,” forum thread, June 2026, accessed October 22, 2026. tech-community.robotics.abb.com/t/robotstudio-2025-5-trial-license-all-available-tr",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "RobotStudio 2025.5 Trial License: \"All available trial licenses have already been installed on this PC\" but no licenses are installed - Tutorials - ABB Robotics"
+   "title": "RobotStudio 2025.5 Trial License: \"All available trial licenses have already been installed on this PC\" but no licenses are installed - Tutorials - ABB Robotics",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "A 2025 user report suggests the RobotStudio trial can only be installed once per PC",
+     "evidence": "Thread posted 2026-06-30 by a user who could not activate the RS2025.5 trial; ABB reply: 'Trial licenses for RS2025.x are no longer available. Please use RS2026.x where trial licenses are available.'",
+     "note": "The thread is from 2026 and shows trials ended for RS2025.x, not a once-per-PC limit. Rewrite: 'An ABB forum reply (2026) says trial licenses are tied to the release; RS2025.x trials are no longer offered.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/robotstudio-5-11-versions/2189": {
    "citedBy": [
     "6-1#ref-8"
    ],
-   "refText": "ABB Robotics Tech Community, “RobotStudio 5.11 versions,” forum thread (search summary; not opened), accessed October 21, 2026. tech-community.robotics.abb.com/t/robotstudio-5-11-versions/2189.",
+   "refText": "ABB Robotics Tech Community, “RobotStudio 5.11 versions,” forum thread, accessed October 22, 2026. tech-community.robotics.abb.com/t/robotstudio-5-11-versions/2189.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Robotstudio 5.11 versions? - RobotStudio - ABB Robotics Community"
+   "title": "Robotstudio 5.11 versions? - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "Basic mode allows only online and basic Virtual Controller features; 30-day Premium grace period",
+     "evidence": "Henrik_Berlin quoting release notes: grace period \"up to 30 days\"; \"In Basic functionality mode, RobotStudio only allows the use of the Online and basic Virtual Controller features.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/robotstudio-for-mac/5428": {
    "citedBy": [
@@ -8070,12 +9011,20 @@
   },
   "https://tech-community.robotics.abb.com/t/simulate-safemove-stop-configurations/9568": {
    "citedBy": [
-    "6-1#ref-17"
+    "6-1#ref-18"
    ],
-   "refText": "ABB Robotics Tech Community, “Simulate Safemove Stop Configurations,” forum thread (search summary; not opened; community claims), accessed October 21, 2026. tech-community.robotics.abb.com/t/simulate-safemove-stop-configurations/9568.",
+   "refText": "ABB Robotics Tech Community, “Simulate Safemove Stop Configurations,” forum thread (community claims), accessed October 22, 2026. tech-community.robotics.abb.com/t/simulate-safemove-stop-configurations/9568.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Simulate Safemove Stop Configurations - RobotStudio - ABB Robotics Community"
+   "title": "Simulate Safemove Stop Configurations - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "Workaround: force safety I/O signals AS1/AS2 on so the simulated robot can run",
+     "evidence": "DavidLanham: in I/O System > Safety \"double click on AS1 and AS2 to make those signals be on this would allow you to run\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/singarea-help/7164": {
    "citedBy": [
@@ -8106,21 +9055,37 @@
   },
   "https://tech-community.robotics.abb.com/t/using-maxtime-and-timeflag-together-for-waitdi/6694": {
    "citedBy": [
-    "2-5#ref-33"
+    "2-5#ref-35"
    ],
    "refText": "ABB Robotics Tech Community, “Using MaxTime and TimeFlag together for WaitDI,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/using-maxtime-and-timeflag-together-for-waitdi/6694.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Using MaxTime and TimeFlag together for WaitDI - RobotStudio - ABB Robotics Community"
+   "title": "Using MaxTime and TimeFlag together for WaitDI - RobotStudio - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "WaitDI takes optional \\MaxTime and \\TimeFlag; one user saw \\TimeFlag behave differently in Auto mode, unresolved",
+     "evidence": "#1: 'using MaxTime and TimeFlag options together ... on WaitDI ... works in manual mode ... doesn't work in Auto mode'; only reply suggests WaitUntil, no resolution",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/using-of-dsqc-652/4200": {
    "citedBy": [
-    "2-5#ref-28"
+    "2-5#ref-29"
    ],
    "refText": "ABB Robotics Tech Community, “Using of DSQC 652,” forum thread, accessed October 21, 2026. tech-community.robotics.abb.com/t/using-of-dsqc-652/4200.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Using of DSQC 652 - Robot Controller - ABB Robotics Community"
+   "title": "Using of DSQC 652 - Robot Controller - ABB Robotics Community",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "DSQC 652 DeviceNet unit, 16 DI/16 DO; on IRC5 Compact via XS7 with 24 V; 500 mA per output",
+     "evidence": "#10 quoting manual: XS7 'internally connected with I/O unit (DSQC 652) ... 16 digital inputs and 16 digital outputs ... 24V power supply'; #9 'rated output current is 500 mA/channel'; #22 DeviceNet",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://tech-community.robotics.abb.com/t/using-vision-to-modify-modify-object-frame-of-work-object/9308": {
    "citedBy": [
@@ -8159,15 +9124,6 @@
     }
    }
   },
-  "https://tech-community.robotics.abb.com/t/work-object-points/1253": {
-   "citedBy": [
-    "2-6#ref-18"
-   ],
-   "refText": "ABB Robotics Tech Community, “Work Object Points,” forum thread (search summary; page not opened). tech-community.robotics.abb.com/t/work-object-points/1253.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "title": "Work Object Points - Robot Controller - ABB Robotics Community"
-  },
   "https://techcrunch.com/2022/12/15/alphabets-intrinsic-acquires-darpa-backed-firm-behind-open-source-robotics-software/": {
    "citedBy": [
     "2-4#ref-10"
@@ -8203,7 +9159,16 @@
    ],
    "refText": "G. Welch and G. Bishop, “An Introduction to the Kalman Filter,” Technical Report TR 95-041, Department of Computer Science, University of North Carolina at Chapel Hill, updated April 5, 2004. techreports.cs.unc.edu/papers/95-041.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "Kalman filter as recursive estimator; predictor/corrector; Q,R white Gaussian independent; innovation; gain limits; R measured off-line, Q harder; EKF 'akin to a Taylor series'.",
+     "evidence": "TR 95-041: 'predictor equations... corrector equations'; noise 'independent (of each other), white, and with normal probability'; 'measurement innovation, or the residual'; Q 'generally more difficult'; 'In something akin to a Taylor series'.",
+     "note": "All quoted/specific content found. The generic sentences (fusion yields lower uncertainty than either source; non-Gaussian after nonlinear transform) are consistent ('no longer normal after undergoing... nonlinear transformations'); lesson already flags the large-R paraphrase.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://techtransfer.fanucamerica.com/tech-transfer/irvision-camera-calibration": {
    "citedBy": [
@@ -8367,7 +9332,15 @@
    "http": 206,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://www.universal-robots.com/articles/ur/release-notes/release-note-software-version-108x/",
-   "title": "Release Notes 10.8.X"
+   "title": "Release Notes 10.8.X",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "10.8 release notes: a Function can be converted into a Thread in the UI",
+     "evidence": "\"Threads can now be created in the User Interface, by converting a Function to a Thread.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://universal-robots.com/articles/ur/urplus-resources/urcap-basics": {
    "citedBy": [
@@ -8395,7 +9368,15 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://vention.com/de/parts/zimmer-group-ur-small-parts-electric-gripper-package-16mm-stroke-per-jaw-3540",
-   "title": "Zimmer Group UR Small Parts Electric Gripper Package 16mm Stroke Per Jaw | Vention"
+   "title": "Zimmer Group UR Small Parts Electric Gripper Package 16mm Stroke Per Jaw | Vention",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Vention UR package for 16 mm Zimmer gripper: 125-500 N, 24 V, 2 A max, 0.02 mm repeatability, for sites without compressed air",
+     "evidence": "Min 125 N / max 500 N; 24 V; max current 2 A; repeatability 0.02 mm; 'applications where compressed air is not available'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://vention.io/parts/iso-50-robot-flange-multi-tool-adapter-3251": {
    "citedBy": [
@@ -8405,7 +9386,16 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://vention.com/parts/iso-50-robot-flange-multi-tool-adapter-3251",
-   "title": "ISO-50 Robot Flange Multi-Tool Adapter | Vention"
+   "title": "ISO-50 Robot Flange Multi-Tool Adapter | Vention",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "ISO 9409-1 defines the flange; ISO 9409-1-50-4-M6 means 50 mm pitch circle with four M6 screws",
+     "evidence": "Vention part 3251: 'ISO-50 mounting pattern'; 'Included in the Box 4 x M6 Screws for robot mounting to ISO 50 flange'",
+     "note": "Page shows an ISO 50 flange with 4 x M6 screws but never names ISO 9409-1 or explains the designation. Fix: move the citation to ref 17 (Epson: '-50-4M6 ... PCD ⌀50, M6×4' of ISO9409-1) or cite both.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://venturebeat.com/ai/deepmind-unveils-rt-2-a-new-ai-that-makes-robots-smarter": {
    "citedBy": [
@@ -8547,12 +9537,20 @@
   },
   "https://www.abb.com/gb/en/areas/robotics/products/software/application-templates/palletizing-template": {
    "citedBy": [
-    "2-7#ref-16"
+    "2-7#ref-17"
    ],
    "refText": "ABB Robotics, “Palletizing Template,” application templates product page. abb.com/gb/en/areas/robotics/products/software/application-templates/palletizing-template.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Palletizing Template | ABB UK"
+   "title": "Palletizing Template | ABB UK",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "ABB Palletizing Template is a free RobotStudio add-in, a starting point not turnkey",
+     "evidence": "\"free of charge and downloadable as an add-in from RobotStudio\"; \"a flexible software baseline, not a turnkey solution\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.abb.com/global/en/areas/robotics/products/software/machining-software-solutions/robotstudio-machining-powerpac": {
    "citedBy": [
@@ -8782,7 +9780,15 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "DaimlerChrysler study: multistage ejectors 1.1 SCFM/cycle, up to 78% less than single-stage; air-saving check valve cut consumption further",
+     "evidence": "'multi-stage design of the COAX vacuum generators uses only 1.1 SCFM ... up to 78% lower than ... single-stage'; Vacustat check valve 'shuts off the supply of compressed air' (-98% more)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.automate.org/glossary/scara-robots": {
    "citedBy": [
@@ -8921,7 +9927,15 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "GEP2000: 10/13/16 mm stroke per jaw, up to 200/360/500 N; digital I/O, 0-10 V position feedback, or IO-Link",
+     "evidence": "'10mm ... up to 200N', '13mm ... 360N', '16mm ... 500N'; 'basic input only gripper, or with a 0-10V position feedback signal, or as a full IO-Link device'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.automate.org/robotics/news/onrobot-soft-gripper-brings-highly-flexible-food-grade-certified-handling-to-challenging-pick-and-place-applications": {
    "citedBy": [
@@ -8931,7 +9945,16 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-5": {
+     "status": "fixed",
+     "claim": "OnRobot Soft Gripper: 3 silicone cups, <2.2 kg, grip 11-118 mm, no air, FDA 21 CFR / EC 1935/2004; capacity depends on shape, softness, friction",
+     "evidence": "'three interchangeable silicon-molded cups ... under 2.2kg'; 'Grip dimensions ranging from 10mm-118mm'; FDA 21 CFR non-fatty, EC 1935/2004; 'no external air supply'",
+     "note": "Source gives grip size 10-118 mm, lesson says 11-118 mm. Fix: change '11 to 118 mm' to '10 to 118 mm'. All else matches.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.automate.org/robotics/news/universal-robots-celebrates-10-year-anniversary-of-selling-the-world-s-first-commercially-viable-collaborative-robot": {
    "citedBy": [
@@ -9037,7 +10060,15 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Piab claims up to 50% lower air cost for P2010 multistage ejector running at 26 psi feed",
+     "evidence": "'generate a vacuum of 24.9 inHg at a feed pressure of only 26 psi, reducing compressed air costs by up to 50 percent'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.automation.com/en-us/products/march-2025/siemens-industrial-copilot-generative-ai": {
    "citedBy": [
@@ -9388,13 +10419,22 @@
   },
   "https://www.controleng.com/articles/robotic-palletizing-products-simplified-programming-software/": {
    "citedBy": [
-    "2-7#ref-19"
+    "2-7#ref-16"
    ],
    "refText": "Control Engineering, “Robotic palletizing products, simplified programming software.” controleng.com/articles/robotic-palletizing-products-simplified-programming-software.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "Cited on the FANUC PalletTool/PalletPRO/Turbo Lite sentence",
+     "evidence": "Article is about ABB's Palletizing PowerPac: \"We have integrated our proven PickMaster 5 palletizer programming technology into the ABB RobotStudio simulation environment.\" No FANUC text found",
+     "note": "Wrong sentence. Move [19] to the ABB PickMaster 5/PowerPac sentence (where it replaces [17]); remove it from the FANUC sentence.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.cs.columbia.edu/~allen/F15/NOTES/jacobians.pdf": {
    "citedBy": [
@@ -9420,22 +10460,22 @@
    "http": 206,
    "linkChecked": "2026-10-22"
   },
-  "https://www.cs.unc.edu/~welch/kalman/media/pdf/Julier1997_SPIE_KF": {
-   "citedBy": [
-    "5-8#ref-13"
-   ],
-   "refText": "S. J. Julier and J. K. Uhlmann, “A New Extension of the Kalman Filter to Nonlinear Systems,” in Proc. SPIE 3068, International Symposium on Aerospace/Defense Sensing, Simulation and Controls (AeroSense), Orlando, FL, pp. 182–193, 1997, doi:10.1117/12.280797. Author copy: cs.unc.edu/~welch/kalman/med",
-   "http": 404,
-   "linkChecked": "2026-10-22",
-   "title": "404 Not Found"
-  },
   "https://www.cse.cuhk.edu.hk/~byu/CENG4480/2020Fall/slides/L07-kalman.pdf": {
    "citedBy": [
     "5-8#ref-17"
    ],
    "refText": "B. Yu, “Lecture 08: Kalman Filter,” CENG4480 course slides, Department of Computer Science and Engineering, The Chinese University of Hong Kong (cse.cuhk.edu.hk), Fall 2020 (complementary filter slides). cse.cuhk.edu.hk/~byu/CENG4480/2020Fall/slides/L07-kalman.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-8": {
+     "status": "fixed",
+     "claim": "Complementary filter as lightweight alternative on 8-bit MCUs without FPU for tilt of a self-balancing robot; high freq from gyro, low from accel; alpha = 0.98 in example code.",
+     "evidence": "CENG4480 L07 slides: self-balance robot tilt; gyro 'High', accelerometer 'Low' (high-pass/low-pass); code 'Angy = 0.98*(Angy+GyroIN[0]*interval/1000)+0.02*Ayz; //complement filter'.",
+     "note": "Slides do not mention 8-bit microcontrollers, lack of floating-point hardware or EKF matrix cost. Either drop the 8-bit/FPU clause or present it as the lesson's own reasoning (uncited). Rest verified.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.cuatrecasas.com/en/spain/intellectual-property/art/digital-omnibus-ai-has-been-published": {
    "citedBy": [
@@ -9795,6 +10835,23 @@
    "linkChecked": "2026-10-22",
    "title": "FANUC Dual Check Safety (DCS) | FANUC America"
   },
+  "https://www.fanucamerica.com/products/software/robot/pallettool-3": {
+   "citedBy": [
+    "2-7#ref-18"
+   ],
+   "refText": "FANUC America, “PalletTool 3,” robot software product page. fanucamerica.com/products/software/robot/pallettool-3.",
+   "http": 206,
+   "title": "PalletTool 3 | FANUC America",
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "FANUC PalletTool: create and compare pallet patterns from product dimensions with space efficiency",
+     "evidence": "PalletTool 3 page: \"create, edit and compare pallet patterns from the Tablet TP using product dimensions and space efficiency insights.\"",
+     "checked": "2026-10-22"
+    }
+   }
+  },
   "https://www.fanucamerica.com/products/software/zero-down-time-zdt": {
    "citedBy": [
     "4-5#ref-4"
@@ -9836,7 +10893,15 @@
    "refText": "FIRGELLI Automations, “Vacuum Suction Cup Force Calculator,” Engineering calculators, accessed October 21, 2026. firgelliauto.com/blogs/engineering-calculators/vacuum-suction-cup-force-calculator.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Free Vacuum Suction Cup Force Calculator | FIRGELLI Engineering"
+   "title": "Free Vacuum Suction Cup Force Calculator | FIRGELLI Engineering",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Area of round cup A = pi(D/2)^2",
+     "evidence": "'Area Calculation: A = π × (D/2)² Where D = Cup Diameter'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.foldoc.org/Industrial+Robot+Language": {
    "citedBy": [
@@ -9884,12 +10949,20 @@
   },
   "https://www.huarong.com.tw/page/news/en/company_news/detail/180/": {
    "citedBy": [
-    "6-1#ref-19"
+    "6-1#ref-20"
    ],
-   "refText": "Huarong, “FAT and SAT guide” (injection molding machines), company news, 2026 (search summary; not opened), accessed October 21, 2026. huarong.com.tw/page/news/en/company_news/detail/180.",
+   "refText": "Huarong, “FAT and SAT guide” (injection molding machines), company news, 2026, accessed October 22, 2026. huarong.com.tw/page/news/en/company_news/detail/180.",
    "http": 200,
    "linkChecked": "2026-10-22",
-   "title": "Factory Acceptance Test and Site Acceptance Test for Injection Molding Machines: Complete 2026 Guide - HUARONG GROUP"
+   "title": "Factory Acceptance Test and Site Acceptance Test for Injection Molding Machines: Complete 2026 Guide - HUARONG GROUP",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "FAT: customer-attended check at supplier before shipment that equipment matches contract spec, operates correctly, has required safety functions",
+     "evidence": "\"performed at the machine manufacturer's facility before shipment... verify, with customer participation, that the delivered... machine matches the contract specification, operates correctly, and…",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.ibanet.org/European-Product-Liability-Directive-liability-for-software": {
    "citedBy": [
@@ -9906,7 +10979,15 @@
    ],
    "refText": "Raytheon Company, Space and Information Systems Division, “Apollo Guidance Computer” (product brochure), c. 1965. ibiblio.org/apollo/Documents/agc_brochure.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "5-8": {
+     "status": "verified",
+     "claim": "AGC: 36,864 words fixed (rope) memory, 2,048 words erasable core, 15 bits plus parity.",
+     "evidence": "Brochure spec table: Memory (Fixed) 36,864 words; Memory (Erasable) 2048 words; Word Length 15 bits plus parity; 'program... memory is of core rope'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.icrc.org/en/doc/assets/files/other/irrc_850_mcclelland.pdf": {
    "citedBy": [
@@ -9962,7 +11043,17 @@
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "2-5": {
+     "status": "unreachable",
+     "claim": "GEP2000-B variant adds lost-workpiece detection reported to the controller",
+     "evidence": "Cited German page returns a 'Wartungsarbeiten / maintenance work' page",
+     "note": "Page down for maintenance. The same publisher's English article says: 'workpiece loss monitoring function. If a workpiece is lost ... the gripper now detects this and sends the information to the controller.' Supports the claim; could swap URL.",
+     "corroboratedBy": "https://www.industrial-production.de/handling-technology/for-handling-small-parts.htm",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.infoq.com/news/2025/09/deepmind-gemini-robotics": {
    "citedBy": [
@@ -10755,13 +11846,23 @@
   },
   "https://www.prosource.org/article/roadmap-for-a-successful-factory-acceptance-test": {
    "citedBy": [
-    "6-1#ref-20"
+    "6-1#ref-21"
    ],
    "refText": "PMMI PROSOURCE, “Roadmap for a successful factory acceptance test,” article (search summary; not opened), accessed October 21, 2026. prosource.org/article/roadmap-for-a-successful-factory-acceptance-test.",
    "http": 403,
    "linkChecked": "2026-10-22",
    "title": "Just a moment...",
-   "blocked": "bot-challenge"
+   "blocked": "bot-challenge",
+   "checks": {
+    "6-1": {
+     "status": "unreachable",
+     "claim": "Industry FAT guidance: check guarding/pinch points, sharp edges, limit switches and E-stops working and placed well, built-in safety components",
+     "evidence": "prosource.org behind bot challenge; Packworld copy of the same article also 403",
+     "note": "Search snippets of the Packworld copy quote 'poorly guarded areas and pinch points', 'sharp edges and burrs', 'limit switches and emergency stops are fully functional, robust, and appropriately placed', 'built in safety components'; not opened directly.",
+     "corroboratedBy": "https://www.packworld.com/home/article/13363910/roadmap-for-a-successful-factory-acceptance-test",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.retaildive.com/news/amazon-unveils-first-fully-autonomous-mobile-robot-proteus-warehouse/626218/": {
    "citedBy": [
@@ -10812,21 +11913,40 @@
   },
   "https://www.robots.com/articles/mastering-user-alarms-in-fanuc-robotic-programming": {
    "citedBy": [
-    "2-7#ref-30"
+    "2-7#ref-29"
    ],
    "refText": "Robots.com (RobotWorx), “Mastering User Alarms in FANUC Robotic Programming.” robots.com/articles/mastering-user-alarms-in-fanuc-robotic-programming.",
    "http": 403,
    "linkChecked": "2026-10-22",
-   "title": "Attention Required! | Cloudflare"
+   "title": "Attention Required! | Cloudflare",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "FANUC TP: WAIT DI TIMEOUT,LBL; $WAITTMOUT sets limit; UALM shows user-defined message; resume continues at next line",
+     "evidence": "\"If the program is resumed, program execution will continue from the next program line. The user alarm instruction specifies the alarm message to be displayed.\"",
+     "note": "Supports UALM message and resume behavior only. No WAIT...TIMEOUT,LBL or $WAITTMOUT on page; [31] shows TIMEOUT,LBL but neither names $WAITTMOUT. Add a source for $WAITTMOUT or drop it.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.robots.com/articles/palletizing-products-perfect-robot-software-solutions": {
    "citedBy": [
-    "2-7#ref-18"
+    "2-7#ref-19"
    ],
    "refText": "Robots.com (RobotWorx), “Palletizing Products: Perfect Robot Software Solutions.” robots.com/articles/palletizing-products-perfect-robot-software-solutions.",
    "http": 403,
    "linkChecked": "2026-10-22",
-   "title": "Attention Required! | Cloudflare"
+   "title": "Attention Required! | Cloudflare",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "FANUC PalletTool proposes patterns + space efficiency from product dims; PalletPRO adds offline programming; PalletTool Turbo Lite for CRX",
+     "evidence": "\"Fanuc's PalletPRO is also offline simulation software... users develop palletizing applications in a 3D simulation environment.\"",
+     "note": "Only PalletPRO is supported. Nothing on PalletTool pattern/space-efficiency or Turbo Lite/CRX. Cite FANUC's PalletTool page for the first part; Turbo Lite still needs a FANUC source.",
+     "corroboratedBy": "https://www.fanucamerica.com/products/software/robot/pallettool-3",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.robots.com/industrial-robots/fanuc-crx-10ia": {
    "citedBy": [
@@ -10862,17 +11982,33 @@
    "refText": "J. Schmalz GmbH, “Design of the suction cup,” Vacuum knowledge, schmalz.com, accessed October 21, 2026. schmalz.com/en/support/know-how/vacuum-knowledge/the-vacuum-system-and-its-components/vacuum-suction-cups/design-of-the-suction-cup.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Design of the Suction Cup"
+   "title": "Design of the Suction Cup",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Holding force = pressure difference x effective area, before safety factor; Schmalz sizes cup diameter from mass, S, vacuum, cup count, mu if vertical",
+     "evidence": "'F = Holding force (without safety factor, purely static); Δp = ...; A = Effective suction area'; 'required diameter can be determined...For vertical pick-up: ... µ = Friction coefficient'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.schmalz.com/en/vacuum-technology-for-robotics/modular-gripper-system/modular-gripper-system-pxt/flange-sets-pxt-332098/10.01.49.00014": {
    "citedBy": [
-    "2-5#ref-16"
+    "2-5#ref-17"
    ],
    "refText": "J. Schmalz GmbH, “Flange sets PXT,” Modular gripper system PXT, item 10.01.49.00014, schmalz.com, accessed October 21, 2026. schmalz.com/en/vacuum-technology-for-robotics/modular-gripper-system/modular-gripper-system-pxt/flange-sets-pxt-332098.",
    "http": 206,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://www.schmalz.com/en/products/automation-743270/vacuum-grippers-746238/gripping-systems-and-end-of-arm-tooling-eoat-746240/modular-gripper-system-pxt-332097/flange-sets-pxt-332098/10.01.49.00014",
-   "title": "Robot flange set: SET PXT 50 9409-1 1LT | Schmalz"
+   "title": "Robot flange set: SET PXT 50 9409-1 1LT | Schmalz",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Schmalz offers a 50 mm / M6 flange set described as compatible with Universal Robots arms",
+     "evidence": "'Robot flange set: SET PXT 50 9409-1 1LT'; attributes Dmk 50 mm, Thread G1 'M6-M', 'for Universal Robots'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.scribd.com/document/495862315/PerformanceMotionControlProfiles": {
    "citedBy": [
@@ -10888,7 +12024,17 @@
    ],
    "refText": "Universal Robots, The URScript Programming Language, e-Series (script manual), third-party copy on Scribd, accessed October 21, 2026. scribd.com/document/792122175/scriptManualG5.",
    "http": 200,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-5": {
+     "status": "unreachable",
+     "claim": "e-Series script manual lists set_payload(m,cog), set_payload_mass(m), set_target_payload(m,cog,inertia=[0..],transition_time=0)",
+     "evidence": "Scribd returns a 'Client Challenge' page with no document text",
+     "note": "Scribd copy unreadable. UR's official script manual pages confirm all three signatures (set_payload_mass marked deprecated since 5.10.0). Fix: cite UR's own manual instead of a third-party Scribd copy.",
+     "corroboratedBy": "https://www.universal-robots.com/manuals/EN/HTML/SW10_14/Content/prod-scriptmanual/all_scripts/set_target_payload.htm",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.sec.gov/Archives/edgar/data/0001035267/000103526726000067/q326ex-991earningsrelease.htm": {
    "citedBy": [
@@ -11142,48 +12288,90 @@
   "https://www.universal-robots.com/articles/ur/application-installation/what-is-a-singularity/": {
    "citedBy": [
     "1-6#ref-13",
-    "2-6#ref-32"
+    "2-6#ref-33"
    ],
    "refText": "Universal Robots, “What is a singularity?” universal-robots.com/articles/ur/application-installation/what-is-a-singularity.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Universal Robots - What is a singularity?"
+   "title": "Universal Robots - What is a singularity?",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "UR wrist singularity when wrist 2 aligns with shoulder/elbow/wrist1 plane, anywhere in workspace; relayout, tilt tool, joint moves help",
+     "evidence": "'align the movement of wrist joint 2 ... with this same plane ... regardless of the area of the workspace'; avoid: layout task, 'offset the direction of the tool', 'MoveJ with Use joint angles'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/connecting-internal-inputs-and-outputs-io-on-the-robots-controller/": {
    "citedBy": [
-    "2-5#ref-24"
+    "2-5#ref-25"
    ],
    "refText": "Universal Robots, “Connecting internal inputs and outputs (I/O) on the robot's controller,” support article, universal-robots.com, accessed October 21, 2026. universal-robots.com/articles/ur/interface-communication/connecting-internal-inputs-and-outputs-io-on-the-robots-controller.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Universal Robots - Connecting Internal Inputs and Outputs (I/O) on the robot's controller"
+   "title": "Universal Robots - Connecting Internal Inputs and Outputs (I/O) on the robot's controller",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "UR digital I/O: 8 dedicated + 8 configurable, 2 more of each at tool flange; more via Modbus I/O block",
+     "evidence": "'8 dedicated digital inputs ... 8 configurable inputs, and the 2 digital inputs of the tool flange'; same for outputs; 'external Modbus I/O extender block'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/articles/ur/programming/moving-to-a-position-calculated-from-user-input/": {
    "citedBy": [
-    "2-6#ref-30"
+    "2-6#ref-31"
    ],
-   "refText": "Universal Robots, “Moving to a position calculated from user input,” support article (search summary; page not opened). universal-robots.com/articles/ur/programming/moving-to-a-position-calculated-from-user-input.",
+   "refText": "Universal Robots, “Moving to a position calculated from user input,” support article, accessed October 22, 2026. universal-robots.com/articles/ur/programming/moving-to-a-position-calculated-from-user-input.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Moving to a position calculated from user input - 16605"
+   "title": "Moving to a position calculated from user input - 16605",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "On UR blends cannot overlap, so blend radius at most half the shortest segment",
+     "evidence": "'blends cannot overlap, so the value of the blend radius cannot be higher than half of the shortest side of the rectangle.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/articles/ur/programming/urscript-move-with-respect-to-a-custom-featureframe/": {
    "citedBy": [
-    "2-6#ref-21"
+    "2-6#ref-22"
    ],
-   "refText": "Universal Robots, “URScript: Move with respect to a custom feature/frame,” support article (search summary; page not opened). universal-robots.com/articles/ur/programming/urscript-move-with-respect-to-a-custom-featureframe.",
+   "refText": "Universal Robots, “URScript: Move with respect to a custom feature/frame,” support article, accessed October 22, 2026. universal-robots.com/articles/ur/programming/urscript-move-with-respect-to-a-custom-featureframe.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Universal Robots - URScript: Move with respect to a custom feature/frame"
+   "title": "Universal Robots - URScript: Move with respect to a custom feature/frame",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "PolyScope plane feature from three points, waypoints relative to it; pose_trans: first arg (feature) transforms second into base frame",
+     "evidence": "'The first argument, p_feature, is used to transform the second argument, p_wrt_feature to the base co-ordinate system.' movel(pose_trans(feature_wrt_base, pose_wrt_feature))",
+     "note": "pose_trans explanation verified (article now opened). Article does not describe defining a plane feature by teaching three points in the Installation or setting Move waypoints relative to it; cite the PolyScope manual (Features > Plane) for that.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/articles/ur/release-notes/release-note-software-version-517xx/": {
    "citedBy": [
-    "6-1#ref-15"
+    "6-1#ref-16"
    ],
-   "refText": "Universal Robots, “Release note software version 5.17.xx,” support article (search summary; not opened), accessed October 21, 2026. universal-robots.com/articles/ur/release-notes/release-note-software-version-517xx.",
+   "refText": "Universal Robots, “Release note software version 5.17.xx,” support article, accessed October 22, 2026. universal-robots.com/articles/ur/release-notes/release-note-software-version-517xx.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Release Notes 5.17.X"
+   "title": "Release Notes 5.17.X",
+   "checks": {
+    "6-1": {
+     "status": "fixed",
+     "claim": "From 5.17, changing System settings needs the Admin password",
+     "evidence": "\"In the Settings (hamburger) menu, all screens under System now requires entering of the Admin password\"; later 5.17.x fix: \"System settings allow you to configure the screens that are to be…",
+     "note": "A later 5.17.x patch made protection configurable per screen: unlocked after upgrades, locked by default on new robots. Suggest 'From 5.17, System settings can be protected by the Admin password (locked by default on new robots).'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/articles/ur/safety/safety-faq": {
    "citedBy": [
@@ -11251,21 +12439,40 @@
   },
   "https://www.universal-robots.com/download/software-ur-series/simulator-non-linux/offline-simulator-ur-series-e-series-ur-sim-for-non-linux-5252/": {
    "citedBy": [
-    "2-6#ref-7"
+    "2-6#ref-8"
    ],
-   "refText": "Universal Robots, “Offline Simulator, UR Series / e-Series, UR Sim for non Linux 5.25.2,” software download page (search summary; page not opened), accessed October 21, 2026. universal-robots.com/download/software-ur-series/simulator-non-linux/offline-simulator-ur-series-e-series-ur-sim-for-non-linu",
+   "refText": "Universal Robots, “Offline Simulator, UR Series / e-Series, UR Sim for non Linux 5.25.2,” software download page, accessed October 22, 2026. universal-robots.com/download/software-ur-series/simulator-non-linux/offline-simulator-ur-series-e-series-ur-sim-for-non-linux-5252.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Offline Simulator - UR Sim for non Linux 5.25.2"
+   "title": "Offline Simulator - UR Sim for non Linux 5.25.2",
+   "checks": {
+    "2-6": {
+     "status": "fixed",
+     "claim": "UR lists offline simulator downloads: Linux tarball, and a Windows/macOS package that must run in a VM because URSim is built for Linux",
+     "evidence": "'URsim is made for the Linux operating system. For running the simulator in another operating system, a virtual machine is needed.' VM .rar for non-Linux 5.25.2",
+     "note": "VM/non-Linux part verified (page opened). Page does not mention the Linux tarball or macOS by name. Cite UR's 'URSim for Linux' download page for the tarball; ref text 'search summary; page not opened' can be updated.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW10_12/Content/prod-usr-man/complianceUR5e/PolyX_SW/psx_joint_limits.htm": {
    "citedBy": [
-    "6-1#ref-12"
+    "6-1#ref-13"
    ],
-   "refText": "Universal Robots, “Joint Limits,” PolyScope X user manual, UR5e, software 10.12 (search summary; not opened), accessed October 21, 2026. universal-robots.com/manuals/EN/HTML/SW10_12/Content/prod-usr-man/complianceUR5e/PolyX_SW/psx_joint_limits.htm.",
+   "refText": "Universal Robots, “Joint Limits,” PolyScope X user manual, UR5e, software 10.12, accessed October 22, 2026. universal-robots.com/manuals/EN/HTML/SW10_12/Content/prod-usr-man/complianceUR5e/PolyX_SW/psx_joint_limits.htm.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Joint Limits"
+   "title": "Joint Limits",
+   "checks": {
+    "6-1": {
+     "status": "fixed",
+     "claim": "PolyScope X handbook: joint limits (positions, speeds), safety planes, tool position restriction; wrist clamping protection on by default",
+     "evidence": "Joint Limits page (SW10.12): Joint Positions, Joint Speeds; \"Wrist Clamping Positions... Enabled by default.\"",
+     "note": "The cited page covers joint limits only; safety planes and tool position restriction are in the PolyScope X handbook (10.8.6 Tool Position Restriction). Cite the handbook or narrow the sentence.",
+     "corroboratedBy": "https://www.universal-robots.com/manuals/latest/en/pdf/polyx/sw-handbook/",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW10_12_1/Content/prod-scriptmanual/all_scripts/movel_posea12v025t.htm": {
    "citedBy": [
@@ -11286,21 +12493,37 @@
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW10_14/Content/prod-usr-man/complianceUR3e/PolyX_SW/psx_payload_set.htm": {
    "citedBy": [
-    "2-6#ref-17"
+    "2-6#ref-18"
    ],
-   "refText": "Universal Robots, “Set Payload,” PolyScope X User Manual, software 10.14 (search summary; page not opened). universal-robots.com/manuals/EN/HTML/SW10_14/Content/prod-usr-man/complianceUR3e/PolyX_SW/psx_payload_set.htm.",
+   "refText": "Universal Robots, “Set Payload,” PolyScope X User Manual, software 10.14, accessed October 22, 2026. universal-robots.com/manuals/EN/HTML/SW10_14/Content/prod-usr-man/complianceUR3e/PolyX_SW/psx_payload_set.htm.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Set Payload"
+   "title": "Set Payload",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "UR payload wizard estimates mass and CoG from several taught positions; don't touch tool while measuring",
+     "evidence": "'By having the user teach four different positions, the robot can estimate the payload mass and CoG automatically'; 'Avoid pulling on the tool and/or attached payload before and during estimation'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW10_15/Content/prod-scriptmanual/all_scripts/5ModuleInterfaces.htm": {
    "citedBy": [
-    "2-5#ref-31"
+    "2-5#ref-32"
    ],
    "refText": "Universal Robots, “Interfaces,” URScript Manual, software 10.10 to 10.15 (PolyScope X), universal-robots.com, accessed October 21, 2026. universal-robots.com/manuals/EN/HTML/SW10_15/Content/prod-scriptmanual/all_scripts/5ModuleInterfaces.htm.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Module interfaces"
+   "title": "Module interfaces",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "Current URScript Interfaces module lists get_tool_digital_in(n), set_tool_digital_out(n,b), set_tool_digital_output_mode(n,mode)",
+     "evidence": "SW10.15 'Module interfaces' index: get_tool_digital_in(n), set_tool_digital_out(n, b), set_tool_digital_output_mode (n, mode); also get_standard_digital_in(n), set_standard_digital_out(n, b)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW10_15/Content/prod-usr-man/complianceG7/PolyX_SW/Safety.htm": {
    "citedBy": [
@@ -11339,12 +12562,20 @@
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW10_7/Content/prod-usr-man/complianceUR5e/singularity_prevention.htm": {
    "citedBy": [
-    "2-6#ref-33"
+    "2-6#ref-34"
    ],
-   "refText": "Universal Robots, “Singularity prevention,” PolyScope X User Manual, software 10.7 (search summary; page not opened). universal-robots.com/manuals/EN/HTML/SW10_7/Content/prod-usr-man/complianceUR5e/singularity_prevention.htm.",
+   "refText": "Universal Robots, “Singularity prevention,” PolyScope X User Manual, software 10.7, accessed October 22, 2026. universal-robots.com/manuals/EN/HTML/SW10_7/Content/prod-usr-man/complianceUR5e/singularity_prevention.htm.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "Singularity"
+   "title": "Singularity",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "UR manual: arm can stop or make sudden fast movements near a singularity",
+     "evidence": "'The robot arm can stop moving or have very sudden and fast movements when approaching and leaving singularity.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_20/Content/prod-scriptmanual/G5/movel_posea12v025t.htm": {
    "citedBy": [
@@ -11357,12 +12588,21 @@
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_21/Content/prod-err-codes/topics/CODE_209.html": {
    "citedBy": [
-    "2-7#ref-29"
+    "2-7#ref-28"
    ],
    "refText": "Universal Robots, “C209,” error codes, software version 5.21 online manual. universal-robots.com/manuals/EN/HTML/SW5_21/Content/prod-err-codes/topics/CODE_209.html.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "C209 A protective stop was triggered (for test purposes only)"
+   "title": "C209 A protective stop was triggered (for test purposes only)",
+   "checks": {
+    "2-7": {
+     "status": "fixed",
+     "claim": "Error code C209 reads 'A protective stop was triggered (for test purposes only)'",
+     "evidence": "C209 page: \"A protective stop was triggered (for test purposes only)... exclusively used for testing purposes.\"",
+     "note": "Quote is exact, but the page does not link C209 to protective_stop(). Change 'its error code C209' to 'UR error code C209'.",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-scriptmanual/all_scripts/movec_pose_via_pose_toa1.htm": {
    "citedBy": [
@@ -11384,12 +12624,20 @@
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-scriptmanual/all_scripts/movel_posea12v025t.htm": {
    "citedBy": [
-    "2-6#ref-28"
+    "2-6#ref-29"
    ],
-   "refText": "Universal Robots, “movel(pose, a=1.2, v=0.25, t=0, r=0),” URScript Manual, software 5.24 (search summary; page not opened). universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-scriptmanual/all_scripts/movel_posea12v025t.htm.",
+   "refText": "Universal Robots, “movel(pose, a=1.2, v=0.25, t=0, r=0),” URScript Manual, software 5.24, accessed October 22, 2026. universal-robots.com/manuals/EN/HTML/SW5_24/Content/prod-scriptmanual/all_scripts/movel_posea12v025t.htm.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "title": "movel"
+   "title": "movel",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "URScript movel/movej r argument is blend radius in meters, r=0 no blend",
+     "evidence": "movel(pose, a=1.2, v=0.25, t=0, r=0); 'r: blend radius [m]'; 'r = 0 -> the blend radius is zero meters.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_26/Content/prod-usr-man/complianceUR15/safetyFunctionsAndinterfaces/safety_functions_table1a.htm": {
    "citedBy": [
@@ -11429,12 +12677,33 @@
    "citedBy": [
     "2-1#ref-10",
     "2-2#ref-11",
+    "2-6#ref-21",
     "2-7#ref-8",
-    "6-1#ref-14"
+    "6-1#ref-15"
    ],
    "refText": "Universal Robots, Software Handbook, PolyScope 5 (e-Series), original instructions (en), SW 5.24.1, Universal Robots A/S, Odense, Denmark, 2025. universal-robots.com/manuals/EN/PDF/SW5_24/Poly5_handbook_online/e-Series_Software_Handbook_en_Global.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "PolyScope Installation: plane feature taught from points; Move waypoints set relative to that feature",
+     "evidence": "Handbook 5.24 sec. 5.16: Plane taught by moving robot to define origin, +x and +y directions; 'MoveL command with four waypoints relative to a plane feature'",
+     "checked": "2026-10-22"
+    },
+    "2-7": {
+     "status": "verified",
+     "claim": "PolyScope 5 handbook lists program nodes SubProgram, Thread, Palletizing; PolyScope has a Palletizing node",
+     "evidence": "e-Series Software Handbook 5.24 contents: 4.8.2 SubProgram (p.136), 4.8.7 Thread (p.140), 4.9.3 Palletizing (p.154)",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "verified",
+     "claim": "Same: PS5 software handbook safety sections",
+     "evidence": "e-Series Software Handbook 5.24: 2 Software Safety Configuration; 2.1 Setting a Software Safety Password; 2.2 Changing the Software Safety Configuration",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/EN/PDF/SW5_26/scriptmanualG5/script_directory_Poly5.pdf": {
    "citedBy": [
@@ -11442,16 +12711,32 @@
    ],
    "refText": "Universal Robots, Script Directory, PolyScope 5, software version 5.26 (PDF). universal-robots.com/manuals/EN/PDF/SW5_26/scriptmanualG5/script_directory_Poly5.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "Same functions in PolyScope 5 script directory",
+     "evidence": "Script Directory PolyScope 5 (5.26): 16.41 popup(...), 17.20 pose_add(p_1, p_2) p.92, 17.24 pose_trans(p_from, p_from_to) p.94",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/latest/en/datasheets/comp_e-serie/": {
    "citedBy": [
-    "2-5#ref-23"
+    "2-5#ref-24"
    ],
    "refText": "Universal Robots, “e-Series comparison datasheet” (Control Box CB 5.5 / CB 5.6), universal-robots.com, May 2026. universal-robots.com/manuals/latest/en/datasheets/comp_e-serie.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://www.universal-robots.com/manuals/EN/DataSheets/comparison_e-series_pdf_online/comparison_e-Series_en.pdf"
+   "finalUrl": "https://www.universal-robots.com/manuals/EN/DataSheets/comparison_e-series_pdf_online/comparison_e-Series_en.pdf",
+   "checks": {
+    "2-5": {
+     "status": "verified",
+     "claim": "UR e-Series control box: 16 DI, 16 DO, 2 AI, 2 AO, 4 quadrature inputs, 24 V 2 A I/O supply",
+     "evidence": "Comparison datasheet (control box): Digital In 16, Digital Out 16, Analog In 2, Analog Out 2, Quadrature Digital inputs 4, I/O Power supply 24V, 2A",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/latest/en/datasheets/ur10e/": {
    "citedBy": [
@@ -11478,35 +12763,74 @@
    "refText": "Universal Robots, URScript Script Directory, PolyScope X (PDF, latest version). universal-robots.com/manuals/latest/en/pdf/polyx/script-directory.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW10_15/scriptmanual_polyx/script_directory_PolyscopeX.pdf"
+   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW10_15/scriptmanual_polyx/script_directory_PolyscopeX.pdf",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "URScript has pose_add(p_1,p_2), pose_trans(p_from,p_from_to), popup(s,title,warning,error,blocking)",
+     "evidence": "PolyScope X Script Directory: 16.41 popup(s, title='Popup', warning=False, error=False, blocking=False); 17.20 pose_add(p_1, p_2); 17.24 pose_trans(p_from, p_from_to)",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/latest/en/pdf/polyx/sw-handbook/": {
    "citedBy": [
-    "2-7#ref-10"
+    "2-7#ref-10",
+    "6-1#ref-12"
    ],
    "refText": "Universal Robots, PolyScope X Software Handbook (PDF, latest version). universal-robots.com/manuals/latest/en/pdf/polyx/sw-handbook.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW10_15/PolyX_handbook_online/PolyScope%20X_Handbook_en_Global.pdf"
+   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW10_15/PolyX_handbook_online/PolyScope%20X_Handbook_en_Global.pdf",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "In PolyScope X, Thread, Call and Function are program nodes",
+     "evidence": "PolyScope X Handbook: 8.6.5 Function (Logic Command Nodes), 8.7.1 Call and 8.7.5 Thread (Structure Command Nodes)",
+     "checked": "2026-10-22"
+    },
+    "6-1": {
+     "status": "verified",
+     "claim": "PolyScope X handbook has sections on joint limits, safety planes and tool position restriction",
+     "evidence": "PolyScope X Software Handbook: 10.8.3 Joint Limits (p.333), 10.8.6 Tool Position Restriction (p.347); safety screen tabs 'Joint Limits, Planes, Tool Position, PROFIsafe'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/latest/en/pdf/ps5/script-directory/": {
    "citedBy": [
     "2-2#ref-14",
-    "2-7#ref-28"
+    "2-7#ref-27"
    ],
    "refText": "Universal Robots, Script Directory, PolyScope 5 (e-Series), original instructions (en), version 5.26, Universal Robots A/S, Odense, Denmark. universal-robots.com/manuals/latest/en/pdf/ps5/script-directory.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW5_26/scriptmanualG5/script_directory_Poly5.pdf"
+   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW5_26/scriptmanualG5/script_directory_Poly5.pdf",
+   "checks": {
+    "2-7": {
+     "status": "verified",
+     "claim": "UR documents a protective_stop() script function",
+     "evidence": "Script Directory PS5 16.43 protective_stop(): \"Trigger a protective stop, pausing the program and stopping motion on the planned trajectory.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/latest/en/pdf/ps5/ur3e/": {
    "citedBy": [
-    "6-1#ref-13"
+    "6-1#ref-14"
    ],
-   "refText": "Universal Robots, PolyScope 5 user manual, UR3e, latest edition (search summary; not opened), accessed October 21, 2026. universal-robots.com/manuals/latest/en/pdf/ps5/ur3e.",
+   "refText": "Universal Robots, PolyScope 5 user manual, UR3e, latest edition, accessed October 22, 2026. universal-robots.com/manuals/latest/en/pdf/ps5/ur3e.",
    "http": 206,
    "linkChecked": "2026-10-22",
-   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW5_26/user-manual-UR3e-PDF_online/710-943-00_UR3e_User_Manual_en_Global.pdf"
+   "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW5_26/user-manual-UR3e-PDF_online/710-943-00_UR3e_User_Manual_en_Global.pdf",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "PS5 manuals cover software safety password, configurable safety functions, software safety configuration",
+     "evidence": "UR3e User Manual (PS5): 10.2.2 Setting a Software Safety Password; 10.2.3 Configurable Safety Functions; 10.3 Software Safety Configuration",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/manuals/latest/en/pdf/ps5/ur5e/": {
    "citedBy": [
@@ -11520,11 +12844,19 @@
   },
   "https://www.universal-robots.com/marketplace/products/01tP40000071NiTIAU/SR-141989/files/Manual%2C%20Vectro2%20for%20UR%2C%20Quick%20Start.pdf": {
    "citedBy": [
-    "2-6#ref-13"
+    "2-6#ref-14"
    ],
-   "refText": "Universal Robots Marketplace, “Vectro2 for UR, Quick Start,” PDF manual (search summary; document not opened). universal-robots.com/marketplace/products/01tP40000071NiTIAU/SR-141989/files/Manual%2C%20Vectro2%20for%20UR%2C%20Quick%20Start.pdf.",
+   "refText": "Universal Robots Marketplace, “Vectro2 for UR, Quick Start,” PDF manual, accessed October 22, 2026. universal-robots.com/marketplace/products/01tP40000071NiTIAU/SR-141989/files/Manual%2C%20Vectro2%20for%20UR%2C%20Quick%20Start.pdf.",
    "http": 206,
-   "linkChecked": "2026-10-22"
+   "linkChecked": "2026-10-22",
+   "checks": {
+    "2-6": {
+     "status": "verified",
+     "claim": "On UR the TCP is under Installation > General > TCP, payload beside it",
+     "evidence": "'The TCP menu is located: Installation -> General -> TCP.' 'The Payload menu is located: Installation -> General -> Payload.'",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.universal-robots.com/news-and-media/news-center/universal-robots-ia-physique-nvidia-inbolt-gtc-paris": {
    "citedBy": [
@@ -11571,7 +12903,15 @@
    "http": 200,
    "linkChecked": "2026-10-22",
    "finalUrl": "https://www.universal-robots.com/products/polyscope-5/",
-   "title": "PolyScope 5"
+   "title": "PolyScope 5",
+   "checks": {
+    "6-1": {
+     "status": "verified",
+     "claim": "PolyScope 5 dedicated safety menu 'from creating safety planes to limiting a joint's range of motion'; current release 5.24",
+     "evidence": "\"Safety operations are available within a dedicated safety menu, from creating safety planes to limiting a joint's range of motion.\" \"PolyScope version 5.24 is available to download.\"",
+     "checked": "2026-10-22"
+    }
+   }
   },
   "https://www.usdigital.com/blog/difference-incremental-vs-absolute-encoders/": {
    "citedBy": [
