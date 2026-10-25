@@ -37,3 +37,6 @@ Short log of agent-made changes so new sessions can skip re-exploring. Newest fi
 - Text fix: 4-3 China robot-density sentence reworded to match the IFR text.
 - Dead Nav2 links replaced with versioned Lyrical URLs in 2-4, 5-6 and 5-7 (five refs in 5-7). Still-dead links with no replacement found: 4-2 ref 22 (UNODA), 1-6 refs 9 and 11, 5-1 ref 14 and 5-2 ref 12 (Arduino Servo GitHub path), 2-4 ref 1 (Quigley ROS paper copy).
 - Docs pages on docs.ros.org are read from the ros2_documentation repo (`lyrical` branch) because the site serves a bot challenge; Arduino docs from the arduino/reference-en repo.
+
+## Agentic workflow (docs/agentic-workflow.md)
+- Added `docs/agentic-workflow.md`: plan (Claude) -> Gemini drafts via Antigravity per a brief -> script/CI gate -> Claude review (citations, numbers) -> merge. Docs only.
