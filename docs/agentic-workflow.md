@@ -41,3 +41,23 @@ plus the CI workflows `site-hygiene.yml` and `site-sync.yml`, and the lesson's c
 
 ## Token rules
 Prefer changelog, CLAUDE.md, `docs/` and `reports/` over re-reading pages. No Claude subagents. Claude citation checks use Sonnet.
+
+## Research protocol for Gemini
+Gemini's weak spot is citations: PR #8 shipped invented references (made-up ABB/FANUC documents, URL-less entries, thin Ch5 coverage) and PR #9 had to re-source it. Research tickets therefore make Gemini a collector of verifiable evidence, never a writer of references.
+
+Rules in every research ticket:
+1. **Fetch before cite.** Read each source with `python3 scripts/fetch_text.py URL --grep word` (or the allowlist book chapter). If it cannot be fetched, it goes in an "unreachable" list, not the notes as fact.
+2. **Evidence format.** Write notes to `research_notes/<topic>/<lesson>.md`. Every claim is one line: claim | source URL (or `book:Author Year, ch./section`) | verbatim quote of at most 25 words | `fetched` / `unreachable` / `from-memory`. `from-memory` claims may not go on a page until Claude checks them.
+3. **No guessing.** No invented URLs, DOIs, page numbers, statistics or quotes. Unknown means a `TODO-VERIFY` line. Prefer primary and official sources (standards bodies, vendor manuals, IFR, ROS/MoveIt docs, the allowlist books); no blogs or AI summaries.
+4. **Two sources for numbers.** Any statistic, date or specification needs two independent sources or an explicit "single-source" flag.
+5. **Gaps are findings.** The notes end with "Could not verify" and "Conflicts between sources".
+6. **Reference candidates only.** Gemini proposes refs in the lesson's References list with URLs it actually fetched; it does not touch `docs/sources.json` verification status.
+
+Claude's review of research output (cheap, targeted):
+- Run `python3 scripts/sources.py links` for dead URLs, then `sources.py report <lesson>`.
+- Spot-check about 3 `fetched` quotes per file with `fetch_text.py --grep`; any miss means distrust the file and send it back (max 2 rounds).
+- Resolve every `from-memory` and `TODO-VERIFY` line, then record checks with `sources.py import`.
+- Claude uses Sonnet for bulk checking, per the token rules.
+
+Prompt block to paste into research tickets:
+> You are collecting evidence, not writing prose. Fetch every source with `python3 scripts/fetch_text.py URL --grep word` before citing it. Output one line per claim: claim | URL or book:chapter | verbatim quote (25 words max) | fetched/unreachable/from-memory. Never invent URLs, quotes, numbers or document titles. Numbers need two sources. End with "Could not verify" and "Conflicts". Finish with a summary of at most 10 lines.
