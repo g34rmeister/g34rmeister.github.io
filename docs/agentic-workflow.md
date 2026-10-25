@@ -2,6 +2,15 @@
 
 Same loop as the hackathon `/gd` skill: Claude plans and judges, Gemini (via Antigravity) does the bulk writing, scripts and CI verify, Claude reviews before merge. Goal: spend few Claude tokens on volume work.
 
+Reference: the hackathon repo (CrawfishChowder/GDSCHackathon) ran this with `AGENTS.md` (pointer to CLAUDE.md), `docs/handoff/step-N.md` tickets, and `agy -p ... --mode accept-edits`. Its conventions are folded in below.
+
+## 0. Hackathon conventions carried over
+- Tickets live in `docs/handoff/step-N.md`: branch name, "read CLAUDE.md first", a shared rules block, then tasks T-Na, T-Nb with an explicit file list each. Parallel Gemini agents touch ONLY their listed files, so tasks never collide.
+- Gemini cannot run shell commands headless. It does not run checks, commit, or create generated files (`site_sync.py` output, `docs/lessons-index.md`). Claude runs the gate and commits.
+- Every ticket ends: "Finish with a summary of at most 10 lines: files changed, anything unresolved, any deviation. Do not paste file contents."
+- Existing code and content win: Gemini makes small guarded additions, never restructures finished lessons.
+- `AGENTS.md` at repo root: one line pointing to CLAUDE.md and `docs/agentic-workflow.md`.
+
 ## 1. Plan (Claude)
 - Restate the goal in one line. Pick lessons/files from `docs/lessons-index.md`, not by reading pages.
 - Write one self-contained task per lesson or small group: files touched, what to produce, constraints, checkable acceptance criteria.
