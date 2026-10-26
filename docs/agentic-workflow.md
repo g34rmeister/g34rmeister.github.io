@@ -100,3 +100,7 @@ Prompts alone do not stop hallucination, so the loop enforces it mechanically.
 - **Kill switch.** If a file fails the quote check twice, stop using Gemini for that lesson's research and have Claude (Sonnet) collect the evidence directly.
 
 Order for a research ticket: coverage plan, search passes, `verify_notes.py` pass, Opus quality gate, only then drafting from the notes.
+
+## Running agy here (no MCP)
+- There is no Antigravity MCP server on this machine; call the CLI directly: `agy -p "<do docs/handoff/step-N.md>" --mode accept-edits --model gemini-3.8-flash-high --effort high --add-dir <repo> --print-timeout 30m`, in the background.
+- Headless agy cannot run shell commands (every permission route was tested and denied), so Gemini cannot run `fetch_text.py` or `verify_notes.py`. Research tickets ask only for candidate URLs plus grep words (see `docs/handoff/step-1.md`); Claude fetches and checks them. Never accept a Gemini "fetched" label.

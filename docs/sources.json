@@ -1696,7 +1696,7 @@
   },
   "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai": {
    "citedBy": [
-    "4-2#ref-29",
+    "4-2#ref-30",
     "4-3#ref-16"
    ],
    "refText": "European Commission, “AI Act: regulatory framework for AI,” Shaping Europe's digital future. digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai.",
@@ -1747,13 +1747,9 @@
    "checks": {
     "4-2": {
      "status": "dead",
-     "claim": "UNODA LAWS background; SG called for treaty by 2026",
-     "evidence": "HTTP 404 on the cited URL and its parents",
-     "note": "Needs a new URL; claim about 2026 treaty call corroborated by search summaries of UNODA/Netherlands pages",
-     "corroboratedBy": [
-      "https://www.netherlandsandyou.nl/web/pr-geneva-disarmament/w/lawsbriefing-ungares79_62"
-     ],
-     "checked": "2026-10-22"
+     "claim": "States discuss LAWS in the CCW; no commonly agreed definition",
+     "note": "UNODA page and Wayback copies (2022-2024) return no content; no replacement found for the no-agreed-definition claim. The 2026 sentence now cites ref 23.",
+     "checked": "2026-10-26"
     }
    }
   },
@@ -4722,7 +4718,7 @@
   },
   "https://eur-lex.europa.eu/eli/reg/2024/1689/oj": {
    "citedBy": [
-    "4-2#ref-27",
+    "4-2#ref-28",
     "4-3#ref-15"
    ],
    "refText": "Regulation (EU) 2024/1689 of the European Parliament and of the Council of 13 June 2024 laying down harmonised rules on artificial intelligence (Artificial Intelligence Act), Official Journal of the European Union, 2024. eur-lex.europa.eu/eli/reg/2024/1689/oj.",
@@ -6413,33 +6409,85 @@
     }
    }
   },
-  "https://github.com/arduino-libraries/Servo": {
+  "https://github.com/arduino-libraries/Servo/blob/master/docs/readme.md": {
    "citedBy": [
     "5-1#ref-14",
     "5-2#ref-12"
    ],
-   "refText": "Arduino, Servo library (documentation and source code), GitHub. github.com/arduino-libraries/Servo.",
-   "http": 403,
-   "linkChecked": "2026-10-22",
-   "blocked": "sandbox-proxy",
-   "rawUrl": "https://raw.githubusercontent.com/arduino-libraries/Servo/HEAD/README.md",
-   "rawHttp": 404,
+   "refText": "Arduino, Servo library documentation (docs/readme.md), GitHub. github.com/arduino-libraries/Servo/blob/master/docs/readme.md.",
    "checks": {
     "5-1": {
-     "status": "dead",
-     "claim": "Arduino Servo library GitHub path",
-     "evidence": "HTTP 404 via raw mapper",
-     "note": "Motor power/ground advice not tied to this source",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "Power servos from a separate supply and connect the grounds",
+     "evidence": "docs/readme.md: 'power them from a separate supply (i.e. not the 5V pin on your Arduino). Be sure to connect the grounds of the Arduino and external power supply together.'",
+     "note": "Link moved from repo root to docs/readme.md",
+     "checked": "2026-10-26"
     },
     "5-2": {
-     "status": "dead",
-     "claim": "Arduino Servo library GitHub path",
-     "evidence": "HTTP 404 via raw mapper",
-     "note": "544/2400/1500 us defaults not verified here",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "544-2400 us default range, 1500 us start, 20 ms refresh; pins 9/10 PWM disabled on non-Mega; Timer1 normal mode, prescaler 8, compare interrupt",
+     "evidence": "Servo.h: MIN_PULSE_WIDTH 544, MAX_PULSE_WIDTH 2400, DEFAULT_PULSE_WIDTH 1500, REFRESH_INTERVAL 20000; docs/readme.md: 'disables analogWrite() (PWM) functionality on pins 9 and 10'; avr/Servo.cpp: 'TCCR1A = 0; // normal counting mode', 'set prescaler of 8', OCIE1A; ServoTimers.h: _useTimer1",
+     "note": "Links moved to file-level URLs",
+     "checked": "2026-10-26"
     }
-   }
+   },
+   "http": 206,
+   "title": "Servo/docs/readme.md at master · arduino-libraries/Servo · GitHub",
+   "linkChecked": "2026-10-26"
+  },
+  "https://github.com/arduino-libraries/Servo/blob/master/src/Servo.h": {
+   "citedBy": [
+    "5-2#ref-12"
+   ],
+   "refText": "Arduino, Servo library (documentation and source code), GitHub: docs/readme.md, src/Servo.h, src/avr/ServoTimers.h and src/avr/Servo.cpp.",
+   "checks": {
+    "5-2": {
+     "status": "verified",
+     "claim": "544-2400 us default range, 1500 us start, 20 ms refresh; pins 9/10 PWM disabled on non-Mega; Timer1 normal mode, prescaler 8, compare interrupt",
+     "evidence": "Servo.h: MIN_PULSE_WIDTH 544, MAX_PULSE_WIDTH 2400, DEFAULT_PULSE_WIDTH 1500, REFRESH_INTERVAL 20000; docs/readme.md: 'disables analogWrite() (PWM) functionality on pins 9 and 10'; avr/Servo.cpp: 'TCCR1A = 0; // normal counting mode', 'set prescaler of 8', OCIE1A; ServoTimers.h: _useTimer1",
+     "note": "Links moved to file-level URLs",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 206,
+   "title": "Servo/src/Servo.h at master · arduino-libraries/Servo · GitHub",
+   "linkChecked": "2026-10-26"
+  },
+  "https://github.com/arduino-libraries/Servo/blob/master/src/avr/Servo.cpp": {
+   "citedBy": [
+    "5-2#ref-12"
+   ],
+   "refText": "Arduino, Servo library (documentation and source code), GitHub: docs/readme.md, src/Servo.h, src/avr/ServoTimers.h and src/avr/Servo.cpp.",
+   "checks": {
+    "5-2": {
+     "status": "verified",
+     "claim": "544-2400 us default range, 1500 us start, 20 ms refresh; pins 9/10 PWM disabled on non-Mega; Timer1 normal mode, prescaler 8, compare interrupt",
+     "evidence": "Servo.h: MIN_PULSE_WIDTH 544, MAX_PULSE_WIDTH 2400, DEFAULT_PULSE_WIDTH 1500, REFRESH_INTERVAL 20000; docs/readme.md: 'disables analogWrite() (PWM) functionality on pins 9 and 10'; avr/Servo.cpp: 'TCCR1A = 0; // normal counting mode', 'set prescaler of 8', OCIE1A; ServoTimers.h: _useTimer1",
+     "note": "Links moved to file-level URLs",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 206,
+   "title": "Servo/src/avr/Servo.cpp at master · arduino-libraries/Servo · GitHub",
+   "linkChecked": "2026-10-26"
+  },
+  "https://github.com/arduino-libraries/Servo/blob/master/src/avr/ServoTimers.h": {
+   "citedBy": [
+    "5-2#ref-12"
+   ],
+   "refText": "Arduino, Servo library (documentation and source code), GitHub: docs/readme.md, src/Servo.h, src/avr/ServoTimers.h and src/avr/Servo.cpp.",
+   "checks": {
+    "5-2": {
+     "status": "verified",
+     "claim": "544-2400 us default range, 1500 us start, 20 ms refresh; pins 9/10 PWM disabled on non-Mega; Timer1 normal mode, prescaler 8, compare interrupt",
+     "evidence": "Servo.h: MIN_PULSE_WIDTH 544, MAX_PULSE_WIDTH 2400, DEFAULT_PULSE_WIDTH 1500, REFRESH_INTERVAL 20000; docs/readme.md: 'disables analogWrite() (PWM) functionality on pins 9 and 10'; avr/Servo.cpp: 'TCCR1A = 0; // normal counting mode', 'set prescaler of 8', OCIE1A; ServoTimers.h: _useTimer1",
+     "note": "Links moved to file-level URLs",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-10-26"
   },
   "https://github.com/arduino/ArduinoCore-avr/blob/master/cores/arduino/wiring.c": {
    "citedBy": [
@@ -10767,24 +10815,6 @@
     }
    }
   },
-  "https://project.dke.maastrichtuniversity.nl/swarmlab_old/wp-content/uploads/2012/07/quigley-icra2009-ros-1.pdf": {
-   "citedBy": [
-    "2-4#ref-1"
-   ],
-   "refText": "M. Quigley, K. Conley, B. Gerkey, J. Faust, T. Foote, J. Leibs, E. Berger, R. Wheeler and A. Y. Ng, “ROS: an open-source Robot Operating System,” in ICRA Workshop on Open Source Software, Kobe, Japan, 2009. Available: Maastricht University copy (PDF).",
-   "http": 503,
-   "linkChecked": "2026-10-22",
-   "title": "503 Service Temporarily Unavailable",
-   "checks": {
-    "2-4": {
-     "status": "unreachable",
-     "claim": "Quigley et al ROS paper (ICRA-OSS 2009, Kobe)",
-     "evidence": "Maastricht copy returns 404; Stanford/Willow Garage copies unreachable",
-     "note": "Needs a new URL; paper details (title, Kobe 2009) match the A3-independent citation in 3-1",
-     "checked": "2026-10-22"
-    }
-   }
-  },
   "https://r6.ieee.org/scv-pses/wp-content/uploads/sites/17/2023/11/Safety-of-Machinery-Does-ISO-13849-1-2023-work-for-you-DNix-2023-rev2.pdf": {
    "citedBy": [
     "4-2#ref-15"
@@ -11670,7 +11700,7 @@
   },
   "https://standards.ieee.org/ieee/7000/6781/": {
    "citedBy": [
-    "4-2#ref-26",
+    "4-2#ref-27",
     "4-3#ref-14"
    ],
    "refText": "IEEE, IEEE Standard Model Process for Addressing Ethical Concerns during System Design, IEEE Std 7000-2021, published September 15, 2021. Catalogue page: standards.ieee.org/ieee/7000/6781.",
@@ -11694,7 +11724,7 @@
   },
   "https://standards.ieee.org/news/ieee-7000": {
    "citedBy": [
-    "4-2#ref-28"
+    "4-2#ref-29"
    ],
    "refText": "IEEE Standards Association, “IEEE Launches New Standard to Address Ethical Concerns During Systems Design,” September 15, 2021. standards.ieee.org/news/ieee-7000.",
    "http": 200,
@@ -12779,6 +12809,24 @@
      "checked": "2026-10-22"
     }
    }
+  },
+  "https://web.archive.org/web/2020/http://ai.stanford.edu/~mquigley/papers/icra2009-ros.pdf": {
+   "citedBy": [
+    "2-4#ref-1"
+   ],
+   "refText": "M. Quigley, K. Conley, B. Gerkey, J. Faust, T. Foote, J. Leibs, E. Berger, R. Wheeler and A. Y. Ng, “ROS: an open-source Robot Operating System,” in ICRA Workshop on Open Source Software, Kobe, Japan, 2009. Available: Stanford copy via the Internet Archive (PDF).",
+   "checks": {
+    "2-4": {
+     "status": "verified",
+     "claim": "ROS is not an OS in the traditional sense; ROS 1 master and XML-RPC connection set-up; rviz among original tools",
+     "evidence": "Archived Stanford PDF: 'in the traditional sense of process management and scheduling'; 'occurs in XML-RPC'; 'this is done in the rviz program'",
+     "note": "Old Maastricht copy dead; replaced with Internet Archive copy of ai.stanford.edu PDF",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 206,
+   "finalUrl": "https://web.archive.org/web/20210921043048/http://ai.stanford.edu/~mquigley/papers/icra2009-ros.pdf",
+   "linkChecked": "2026-10-26"
   },
   "https://web.iitd.ac.in/~ddz198403/assignment%205/datasheet.pdf": {
    "citedBy": [
@@ -14267,7 +14315,7 @@
   "https://www.cuatrecasas.com/en/spain/intellectual-property/art/digital-omnibus-ai-has-been-published": {
    "citedBy": [
     "4-1#ref-17",
-    "4-2#ref-30",
+    "4-2#ref-31",
     "4-3#ref-17"
    ],
    "refText": "A. Agustinoy and M. Sala, “Digital Omnibus on AI has been published,” Cuatrecasas, July 24, 2026 (summary of Regulation (EU) 2026/1744). cuatrecasas.com/en/spain/intellectual-property/art/digital-omnibus-ai-has-been-published.",
@@ -14846,7 +14894,7 @@
   },
   "https://www.hrw.org/news/2015/04/08/killer-robots-accountability-gap": {
    "citedBy": [
-    "4-2#ref-24"
+    "4-2#ref-25"
    ],
    "refText": "Human Rights Watch and Harvard Law School International Human Rights Clinic, “Killer Robots: Accountability Gap” (press release for the report Mind the Gap: The Lack of Accountability for Killer Robots), April 8, 2015. hrw.org/news/2015/04/08/killer-robots-accountability-gap.",
    "http": 206,
@@ -14913,7 +14961,7 @@
   },
   "https://www.icrc.org/en/doc/assets/files/other/irrc_850_mcclelland.pdf": {
    "citedBy": [
-    "4-2#ref-25"
+    "4-2#ref-26"
    ],
    "refText": "J. McClelland, “The review of weapons in accordance with Article 36 of Additional Protocol I,” International Review of the Red Cross, vol. 85, no. 850, pp. 397–415, June 2003. icrc.org/en/doc/assets/files/other/irrc_850_mcclelland.pdf.",
    "http": 206,
@@ -14930,7 +14978,7 @@
   },
   "https://www.icrc.org/en/document/icrc-position-autonomous-weapon-systems": {
    "citedBy": [
-    "4-2#ref-23"
+    "4-2#ref-24"
    ],
    "refText": "International Committee of the Red Cross (ICRC), “ICRC position on autonomous weapon systems,” Geneva, May 12, 2021. icrc.org/en/document/icrc-position-autonomous-weapon-systems.",
    "http": 403,
@@ -16943,6 +16991,22 @@
      "checked": "2026-10-22"
     }
    }
+  },
+  "https://www.un.org/sites/un2.un.org/files/our-common-agenda-policy-brief-new-agenda-for-peace-en.pdf": {
+   "citedBy": [
+    "4-2#ref-23"
+   ],
+   "refText": "United Nations, Our Common Agenda Policy Brief 9: A New Agenda for Peace, July 2023. un.org (PDF).",
+   "checks": {
+    "4-2": {
+     "status": "verified",
+     "claim": "2023 SG recommendation: conclude by 2026 a legally binding instrument prohibiting LAWS that function without human control or oversight",
+     "evidence": "New Agenda for Peace PDF: 'Prohibiting lethal autonomous weapons systems ... 2026, a legally binding instrument to ... prohibit lethal autonomous weapon systems that function without human control or oversight' (two-column text)",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 206,
+   "linkChecked": "2026-10-26"
   },
   "https://www.universal-robots.com/articles/ur/application-installation/what-is-a-singularity/": {
    "citedBy": [

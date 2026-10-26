@@ -41,3 +41,10 @@ Short log of agent-made changes so new sessions can skip re-exploring. Newest fi
 ## Agentic workflow (docs/agentic-workflow.md)
 - Added `docs/agentic-workflow.md`: plan (Claude) -> Gemini drafts via Antigravity per a brief -> script/CI gate -> Claude review (citations, numbers) -> merge. Docs only.
 - Added `scripts/verify_notes.py` (checks Gemini research-note quotes against fetched sources) and the search-hard, Opus quality gate and anti-hallucination harness sections in `docs/agentic-workflow.md`.
+
+## Step 1 (Gemini handoff): dead reference links
+- First run of the hackathon-style loop: ticket `docs/handoff/step-1.md`, Gemini via `agy -p` proposed candidate URLs (`research_notes/dead-links/step-1.md`), Claude fetched and checked each one.
+- Fixed: 2-4 ref 1 (Quigley ROS paper, Internet Archive copy of the Stanford PDF); 5-1 ref 14 and 5-2 ref 12 (Arduino Servo links moved to `docs/readme.md` and source files; 544/2400/1500/20000, pins 9/10 and Timer1 setup confirmed in source).
+- 4-2: the 2026 LAWS recommendation now cites the UN *New Agenda for Peace* brief (new ref 23, later refs renumbered). Ref 22 (UNODA) is still dead and still the only source for "no commonly agreed definition of LAWS".
+- Still dead, no replacement found: 1-6 ref 9 (Nabtesco RS catalog), 1-6 ref 11 (Hexagon ISO 9283 PDF).
+- Lesson learned: Gemini's first run invented "fetched" quotes (16 of 20 failed `verify_notes.py`). Headless agy cannot run shell commands at all (allow-rules, `--sandbox`, auto mode and the AUTO preset were all denied), so Gemini only proposes URLs and Claude verifies.
