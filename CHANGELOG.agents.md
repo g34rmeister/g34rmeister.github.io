@@ -40,3 +40,4 @@ Short log of agent-made changes so new sessions can skip re-exploring. Newest fi
 
 ## Agentic workflow (docs/agentic-workflow.md)
 - Added `docs/agentic-workflow.md`: plan (Claude) -> Gemini drafts via Antigravity per a brief -> script/CI gate -> Claude review (citations, numbers) -> merge. Docs only.
+- Added `scripts/verify_notes.py` (checks Gemini research-note quotes against fetched sources) and the search-hard, Opus quality gate and anti-hallucination harness sections in `docs/agentic-workflow.md`.

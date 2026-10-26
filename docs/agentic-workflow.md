@@ -87,3 +87,16 @@ Run on every Gemini output before it is merged, after the mechanical gate passes
    - Theming and structure: Wikipedia theme, one h1, template sections present.
 4. **Verdicts.** Pass: merge. Fix: Opus edits small issues itself. Reject: one targeted `antigravity_continue` naming the failures; after 2 rounds Opus rewrites the section or reports the blocker.
 5. **Record.** Verified refs go through `sources.py import`; the review result and rejected claims are added to the changelog entry so the same mistakes are not repeated in the next ticket.
+
+## Harness: keeping agy honest
+Prompts alone do not stop hallucination, so the loop enforces it mechanically.
+- **Automatic quote check.** After every research ticket run `python3 scripts/verify_notes.py research_notes/<topic>/<lesson>.md`. It re-fetches each `fetched` source and fails if the quote is not on the page (case, spacing and punctuation ignored), if a quote is over 25 words, or if a line is `from-memory`. Any failure sends the file back; do not read it further until it passes. It costs Claude no tokens until it passes.
+- **Closed-world drafting.** A drafting ticket gives Gemini only the verified notes file and the lesson template. It may state facts and numbers that appear in the notes, nothing else. Anything missing becomes `TODO-VERIFY` in an HTML comment, never a guess. After drafting, `grep -rn TODO-VERIFY` on the changed pages must be resolved by Claude before merge.
+- **Refs come from notes only.** Every `<li id="ref-N">` must trace to a `fetched` line. After drafting, run `python3 scripts/ref_claims.py <lesson>` and `python3 scripts/sources.py report <lesson>`: any ref not in the notes, any URL-less non-book ref, or any dead link is an automatic reject.
+- **Numbers have code.** Each worked example's `scripts/checks/<lesson>.py` is run by Claude (Gemini cannot run shell), and its output must match the page text.
+- **Scope lock.** Tickets list the files Gemini may touch (as in the hackathon). Claude checks `git diff --stat` against that list and reverts anything else.
+- **Calibration.** Gemini states its confidence per claim (`high` only when a quote exists). Low-confidence claims are deleted or sourced, not softened.
+- **Known failure log.** CHANGELOG.agents.md records each Gemini mistake type found in review (invented vendor docs, URL-less refs, wrong dates). The next ticket copies the list into its rules so the same mistake is named up front.
+- **Kill switch.** If a file fails the quote check twice, stop using Gemini for that lesson's research and have Claude (Sonnet) collect the evidence directly.
+
+Order for a research ticket: coverage plan, search passes, `verify_notes.py` pass, Opus quality gate, only then drafting from the notes.
