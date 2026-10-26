@@ -28,5 +28,8 @@ Two workflows run on PRs and pushes to main. `site-hygiene.yml`: internal links,
 `python3 scripts/site_sync.py --check && python3 scripts/check_site.py && python3 scripts/sources.py check && python3 scripts/build_index.py --check`
 After changing a lesson or `sources.json`, run `python3 scripts/sources.py sync && python3 scripts/build_index.py`.
 
+## Agentic workflow
+Bulk lesson drafting is delegated to Gemini via Antigravity and reviewed by Claude; see `docs/agentic-workflow.md` before starting multi-lesson work.
+
 ## Token budget
 Gerald's budget is tight. Prefer the changelog, this file and the project's `reports/` and `research_notes/` over re-auditing pages; read only the files you change.
