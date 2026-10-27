@@ -2,6 +2,12 @@
 
 Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot Instructor**: an industrial robotics course. Read `CHANGELOG.agents.md` first instead of re-exploring the repo, and append an entry to it in every PR.
 
+## Direction (2026-10-27)
+The site is becoming an open-source platform for robotics newcomers (renamed robOSStics in PR #20), slightly less academic. Plan and open decisions: `docs/handoff/robosstics-plan.md`.
+- Point learners to real OSS robotics projects and how to contribute; contribution is a first-class path.
+- Lighter academics: short plain objectives, quizzes as optional self-checks, shorter lessons are fine, project docs/READMEs count as primary sources, no syllabus or Bloom-verb work unless asked.
+- Still strict: every claim traces to a checked source (`sources.py check` stays), safety content stays exact, lab code is run before publishing.
+
 ## Layout
 - Course pages are root-level HTML: `robotics.html` (hub), chapter pages `robotics-intro|programming|ros|ethics|control|capstone|vision|networks|maintenance.html`, lessons `robotics-<chapter>-<n>.html`.
 - Current lessons: Ch1 1-1..1-7, Ch2 2-1..2-8, Ch3 3-1..3-9, Ch4 4-1..4-5, Ch5 (optional, control) 5-1..5-10, Ch6 (capstones) 6-1..6-3, Ch7 (machine vision) 7-1..7-6, Ch8 (industrial networks) 8-1..8-6, Ch9 (maintenance and troubleshooting) 9-1..9-6.
