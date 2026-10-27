@@ -230,7 +230,7 @@
   },
   "https://ams-osram.com/products/sensor-solutions/ambient-light-color-spectral-proximity-sensors/ams-tcs34725-color-sensor": {
    "citedBy": [
-    "5-5#ref-15"
+    "5-5#ref-16"
    ],
    "refText": "ams-OSRAM AG, TCS3472 Color Light-to-Digital Converter with IR Filter (datasheet covering the TCS34725), DS000390, v1-04, Apr. 2020. ams-osram.com/.../ams-tcs34725-color-sensor.",
    "http": 200,
@@ -4847,9 +4847,9 @@
    "checks": {
     "5-2": {
      "status": "partial",
-     "claim": "Pololu forum: PWM whine at 490/980 Hz; ultrasonic fix",
-     "evidence": "Forum thread title fetched; body not extracted",
-     "checked": "2026-10-22"
+     "claim": "Ultrasonic PWM (about 20 kHz) reduces motor whine",
+     "note": "Forum reply by Pololu staff; official Pololu docs added as ref 15 for the ultrasonic/whine claim",
+     "checked": "2026-10-26"
     }
    }
   },
@@ -5654,11 +5654,10 @@
    "rawHttp": 206,
    "checks": {
     "5-6": {
-     "status": "partial",
-     "claim": "TurtleBot3 odometry.cpp midpoint form; use_imu",
-     "evidence": "Source has use_imu parameter and imu_angle_",
-     "note": "Midpoint trig form not located in grep",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "TurtleBot3 driver uses midpoint integration; use_imu option takes heading from IMU",
+     "evidence": "odometry.cpp: 'robot_pose_[0] += delta_s * cos(robot_pose_[2] + (delta_theta / 2.0));' and parameter 'odometry.use_imu', 'if (use_imu_)'",
+     "checked": "2026-10-26"
     }
    }
   },
@@ -6658,7 +6657,7 @@
   },
   "https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model": {
    "citedBy": [
-    "5-5#ref-13"
+    "5-5#ref-14"
    ],
    "refText": "ETH Zurich Autonomous Systems Lab, “IMU Noise Model,” Kalibr Wiki, GitHub, accessed 21 Oct. 2026. github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model.",
    "http": 403,
@@ -7860,7 +7859,7 @@
   },
   "https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/Imu.msg": {
    "citedBy": [
-    "5-5#ref-18"
+    "5-5#ref-19"
    ],
    "refText": "ROS 2, “sensor_msgs/msg/Imu.msg,” ros2/common_interfaces, GitHub, accessed 21 Oct. 2026. github.com/ros2/common_interfaces/.../Imu.msg.",
    "http": 403,
@@ -11479,7 +11478,7 @@
   },
   "https://simplecore.intel.com/realsensehub/wp-content/uploads/sites/63/D435_Series_ProductBrief_111207.pdf": {
    "citedBy": [
-    "5-5#ref-17"
+    "5-5#ref-18"
    ],
    "refText": "Intel Corporation, Intel RealSense Depth Camera D435 Series Product Brief. simplecore.intel.com/.../D435_Series_ProductBrief_111207.pdf; specifications: intel.com/.../intel-realsense-depth-camera-d435/specifications.html.",
    "http": 206,
@@ -14147,6 +14146,22 @@
     }
    }
   },
+  "https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-696.pdf": {
+   "citedBy": [
+    "5-5#ref-13"
+   ],
+   "refText": "O. J. Woodman, An introduction to inertial navigation, Technical Report UCAM-CL-TR-696, University of Cambridge Computer Laboratory, August 2007. cl.cam.ac.uk (PDF).",
+   "checks": {
+    "5-5": {
+     "status": "verified",
+     "claim": "MEMS gyroscopes have a constant bias that depends on conditions such as temperature",
+     "evidence": "Woodman 2007: '3.2.1 Constant Bias'; bias measured 'in fixed conditions (usually including constant temperature)'; MEMS 'far less accurate, as indicated by the bias stability'",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 206,
+   "linkChecked": "2026-10-26"
+  },
   "https://www.computer-automation.de/safety---security/the-risk-graph-in-iso-13849-1-2015.htm": {
    "citedBy": [
     "4-4#ref-29"
@@ -15122,7 +15137,7 @@
   },
   "https://www.intel.com/content/www/us/en/products/sku/128255/intel-realsense-depth-camera-d435/specifications.html": {
    "citedBy": [
-    "5-5#ref-17"
+    "5-5#ref-18"
    ],
    "refText": "Intel Corporation, Intel RealSense Depth Camera D435 Series Product Brief. simplecore.intel.com/.../D435_Series_ProductBrief_111207.pdf; specifications: intel.com/.../intel-realsense-depth-camera-d435/specifications.html.",
    "http": 403,
@@ -16279,6 +16294,23 @@
     }
    }
   },
+  "https://www.pololu.com/docs/0J44/5.2": {
+   "citedBy": [
+    "5-2#ref-15"
+   ],
+   "refText": "Pololu, “5.2. Motor Settings,” Pololu Simple Motor Controller User’s Guide. pololu.com/docs/0J44/5.2.",
+   "checks": {
+    "5-2": {
+     "status": "verified",
+     "claim": "Ultrasonic PWM frequency avoids audible motor whine",
+     "evidence": "'The default PWM frequency is 21.77 kHz. This is an ultrasonic frequency; it is too high for humans to hear, so you won't hear the high-pitched whine from the motor'",
+     "checked": "2026-10-26"
+    }
+   },
+   "http": 200,
+   "title": "Pololu - 5.2. Motor Settings",
+   "linkChecked": "2026-10-26"
+  },
   "https://www.pololu.com/file/0J85/gp2y0a21yk0f.pdf": {
    "citedBy": [
     "5-5#ref-5"
@@ -16350,7 +16382,7 @@
   },
   "https://www.pololu.com/product/961": {
    "citedBy": [
-    "5-5#ref-14"
+    "5-5#ref-15"
    ],
    "refText": "Pololu Corporation, QTR-8RC Reflectance Sensor Array (product page, item #961). pololu.com/product/961.",
    "http": 200,
@@ -16733,7 +16765,7 @@
   },
   "https://www.slamtec.com/en/lidar/a3spec": {
    "citedBy": [
-    "5-5#ref-16"
+    "5-5#ref-17"
    ],
    "refText": "Slamtec, RPLIDAR A3 Laser Range Scanner: Parameters. slamtec.com/en/lidar/a3spec.",
    "http": 200,
@@ -16986,23 +17018,22 @@
     }
    }
   },
-  "https://www.ti.com/product/DRV8833": {
+  "https://www.ti.com/lit/ds/symlink/drv8833.pdf": {
    "citedBy": [
-    "5-2#ref-15"
+    "5-2#ref-16"
    ],
-   "refText": "Texas Instruments, DRV8833 Dual H-Bridge Motor Driver, datasheet SLVSAR1E, revised July 2015. ti.com/product/DRV8833.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "title": "DRV8833 data sheet, product information and support | TI.com",
+   "refText": "Texas Instruments, DRV8833 Dual H-Bridge Motor Driver, datasheet SLVSAR1E, revised July 2015. ti.com/lit/ds/symlink/drv8833.pdf.",
    "checks": {
     "5-2": {
-     "status": "partial",
-     "claim": "DRV8833 decay modes; switching vs conduction loss 10-30%",
-     "evidence": "TI datasheet fetched: 'Decay mode' sections present",
-     "note": "The 10-30% loss figure not found in extracted text",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "DRV8833 switching losses typically 10% to 30% of conduction loss",
+     "evidence": "Datasheet: 'additional power dissipated due to PWM switching losses ... typically on the order of 10% to 30% of the DC power dissipation'",
+     "note": "Link moved from product page to the datasheet PDF",
+     "checked": "2026-10-26"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-10-26"
   },
   "https://www.troax.com/app/uploads/Brochure-Safety-Guide_EN.pdf": {
    "citedBy": [
