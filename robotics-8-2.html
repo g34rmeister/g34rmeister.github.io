@@ -1,0 +1,330 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 8.2 Industrial Ethernet Protocols
+-->
+<html lang="en">
+    <head>
+        <title>8.2 Industrial Ethernet Protocols — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Explore industrial Ethernet protocols: EtherNet/IP and CIP, PROFINET RT and IRT, EtherCAT processing on the fly, Modbus TCP, and device description files (GSDML, ESI)." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-8-2.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="8.2 Industrial Ethernet Protocols — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Explore industrial Ethernet protocols: EtherNet/IP and CIP, PROFINET RT and IRT, EtherCAT processing on the fly, Modbus TCP, and device description files (GSDML, ESI)." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-8-2.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="8.2 Industrial Ethernet Protocols, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="8.2 Industrial Ethernet Protocols — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Explore industrial Ethernet protocols: EtherNet/IP and CIP, PROFINET RT and IRT, EtherCAT processing on the fly, Modbus TCP, and device description files (GSDML, ESI)." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-networks.html">Chapter 8 &middot; Networks</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">8.2 Industrial Ethernet Protocols</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. The industrial Ethernet landscape</h2>
+                        <p>
+                            In an industrial robotic workcell, machines must constantly exchange information to coordinate actions. In <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a>, we examined how a central programmable logic controller (PLC) coordinates cell operations using discrete handshake signals, while keeping personnel safety circuits on separate dedicated pathways. In <a href="robotics-2-5.html">Lesson 2.5 End-of-Arm Tooling and I/O</a>, we connected grippers, vacuum switches, and part-detection sensors to robot controller and tool-flange terminals.
+                        </p>
+                        <p>
+                            In <a href="robotics-8-1.html">Lesson 8.1 From Wires to Networks</a>, we saw why manufacturing plants shifted away from point-to-point wiring. Digital fieldbuses solved this challenge by grouping signals onto a shared digital bus. Over time, Ethernet replaced serial fieldbuses as standard office networking technologies entered the plant floor.
+                        </p>
+                        <p>
+                            However, standard commercial Ethernet was not designed for industrial machinery. A late message on a machine network can make moving equipment act on old data. Factory automation requires determinism, meaning that data packets must arrive within a defined, predictable time interval.
+                        </p>
+                        <p>
+                            To achieve deterministic performance across Ethernet media, automation manufacturers developed specialized industrial Ethernet protocols. This lesson covers four of them: EtherNet/IP, PROFINET, EtherCAT and Modbus TCP. They differ in how they structure process data, bypass protocol overhead, and achieve real-time response.
+                        </p>
+
+                        <h2 class="article-section-title">02. EtherNet/IP and the Common Industrial Protocol</h2>
+                        <p>
+                            EtherNet/IP is an open industrial Ethernet network standard managed by ODVA, a global trade and standards development organization. EtherNet/IP combines standard Ethernet and TCP/IP technologies with the Common Industrial Protocol (CIP) for industrial automation communication.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The Common Industrial Protocol follows the Open Systems Interconnection seven-layer reference model across physical and application layers.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            CIP uses a Producer/Consumer networking model instead of a source/destination model to reduce traffic and increase transmission speed.<sup><a href="#ref-2">[2]</a></sup> Under this model, a transmitting device produces a message onto the network with an identifier. Any number of interested consumer devices on the network can listen for that identifier and process the data simultaneously from a single transmission.
+                        </p>
+                        <p>
+                            Data production in a CIP network is managed to optimize network bandwidth. Digital input modules on CIP networks produce data either upon a change of state or at a requested packet interval.<sup><a href="#ref-2">[2]</a></sup> Change-of-state (COS) transmission allows a sensor module to transmit immediately when an input transitions from off to on, eliminating the latency of waiting for a polling cycle. The requested packet interval (RPI) defines the cyclic rate at which data is regularly produced regardless of state changes.
+                        </p>
+                        <p>
+                            EtherNet/IP separates communications into two primary message categories: implicit messaging and explicit messaging. Each category uses a different transport-layer protocol to match its functional requirements.
+                        </p>
+                        <p>
+                            Implicit messages in EtherNet/IP are time-critical connected communications that transport I/O data using UDP without embedded protocol headers.<sup><a href="#ref-2">[2]</a></sup> In implicit communications, an association called a connection is established between the scanner (the controlling PLC) and the adapter (such as a robot controller) during startup. Both endpoints already know the meaning, length, and internal offset of every byte in the data exchange. Because the data structure is understood beforehand, the message carries no protocol decoding headers. By transmitting pure I/O payload over lightweight User Datagram Protocol (UDP), implicit messaging delivers the speed required for cyclic real-time control.
+                        </p>
+                        <p>
+                            Explicit messages in EtherNet/IP use TCP for request-reply client-server transactions addressed to the Message Router object.<sup><a href="#ref-2">[2]</a></sup> Unlike cyclic I/O, explicit messages are acyclic, meaning they occur on an as-needed basis. Explicit messages contain explicit descriptions of the requested service, the object class, the instance number, and the attribute identifier. By transmitting over Transmission Control Protocol (TCP), explicit messaging ensures reliable delivery through point-to-point connections with error checking and retries. Integrators use explicit messaging for tasks that do not require cycle-by-cycle deterministic delivery, such as reading fault logs, reconfiguring drive parameters, or querying firmware versions.
+                        </p>
+
+                        <h2 class="article-section-title">03. PROFINET: real-time deterministic Ethernet</h2>
+                        <p>
+                            PROFINET (Process Field Network) is an open industrial Ethernet standard maintained by PROFIBUS &amp; PROFINET International (PI).
+                        </p>
+                        <p>
+                            In a PROFINET installation, the PLC acts as the IO Controller. Field devices, such as industrial robot controllers, pneumatic valve manifolds, and vision sensors, operate as IO Devices. During operation, the IO Controller and its IO Devices continuously exchange cyclic input and output data.
+                        </p>
+                        <p>
+                            To satisfy diverse performance demands across manufacturing plants, PROFINET specifies distinct communication channels over the same physical infrastructure. For standard factory automation, PROFINET RT bypasses TCP/IP layers to achieve deterministic communication in the 1 to 10 millisecond range.<sup><a href="#ref-3">[3]</a></sup> Skipping the TCP/IP layers removes the processing time and delay those layers add.
+                        </p>
+                        <p>
+                            For demanding motion control tasks, such as coordinating multiple robot axes or synchronizing printing rolls, even a few milliseconds of jitter is unacceptable. To address these applications, PROFINET IRT uses scheduled switching and hardware ASICs to achieve sub-millisecond cycle times with microsecond-level jitter.<sup><a href="#ref-3">[3]</a></sup> IRT stands for Isochronous Real-Time and is aimed at motion control.
+                        </p>
+                        <p>
+                            Field equipment configuration in PROFINET follows a structured hierarchy. PROFINET organizes field equipment using a hierarchical device model comprising Device, Module, and Channel.<sup><a href="#ref-3">[3]</a></sup> Under this model:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Device:</span> The physical node on the network, such as a robot controller.</li>
+                            <li class="article-spec-item"><span class="spec-label">Module:</span> A physical or logical sub-unit residing inside the device (such as a digital input block).</li>
+                            <li class="article-spec-item"><span class="spec-label">Channel:</span> The individual signal point within a module (such as one digital input wired to one sensor).</li>
+                        </ul>
+                        <p>
+                            Modern manufacturing facilities require supervisory IT systems, diagnostic web pages, and engineering tools to connect to production machinery without disrupting production. PROFINET bandwidth reservation ensures that at least 50 percent of each I/O cycle remains available for standard TCP/IP communications.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. EtherCAT: processing on the fly</h2>
+                        <p>
+                            EtherCAT works differently from the protocols above.
+                        </p>
+                        <p>
+                            In an EtherCAT network, the master controller transmits a single Ethernet frame that passes sequentially through every node in the network segment. In an EtherCAT network, slave devices read incoming data and insert outgoing data on the fly as the frame passes downstream.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            This operational architecture creates a deliberate division of complexity between the network controller and the connected nodes. An EtherCAT master runs using a standard Ethernet controller, whereas slave devices require a dedicated hardware EtherCAT Slave Controller.<sup><a href="#ref-4">[4]</a></sup> So a PC with an ordinary Ethernet port can be the master, while each slave carries a special chip.
+                        </p>
+                        <p>
+                            Coordinated multi-axis motion, such as synchronizing multiple robotic joints or interpolating a cartesian gantry, requires simultaneous sampling and actuation across distributed drives. EtherCAT distributed clocks synchronize device clocks in hardware to achieve system synchronization jitter significantly below 1 µs.<sup><a href="#ref-4">[4]</a></sup> One device acts as the reference clock; because its time messages reach the other devices slightly late, that propagation delay is measured and compensated.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            EtherCAT maintains high transmission efficiency by stripping unnecessary network layer overhead from cyclic data. EtherCAT frames are identified by EtherType <code>0x88A4</code> in standard Ethernet frames, eliminating the overhead of TCP/IP or UDP/IP stacks.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">05. Modbus TCP: industrial messaging on port 502</h2>
+                        <p>
+                            The Modbus Organization describes Modbus as the industry's serial de facto standard since 1979.<sup><a href="#ref-6">[6]</a></sup> Modbus TCP carries the same messages over Ethernet.
+                        </p>
+                        <p>
+                            The Modbus protocol defines a straightforward client/server architecture. A client (such as a supervisory PLC, an HMI terminal, or a Python script) initiates requests to read or write data. A server (such as an industrial robot controller) listens for incoming requests, executes the requested action, and returns a response.
+                        </p>
+                        <p>
+                            To represent automation variables, the Modbus data model provides four primary tables comprising discrete inputs, coils, input registers, and holding registers.<sup><a href="#ref-6">[6]</a></sup> These tables organize boolean and numerical information into distinct access categories:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Discrete Inputs:</span> Single-bit binary data that is read-only. Discrete inputs represent physical digital sensor signals, such as optical proximity switches or emergency stop contact monitors.</li>
+                            <li class="article-spec-item"><span class="spec-label">Coils:</span> Single-bit binary data that can be both read and written. Coils represent controllable on/off outputs, such as energizing a pneumatic solenoid valve or triggering a conveyor motor starter.</li>
+                            <li class="article-spec-item"><span class="spec-label">Input Registers:</span> 16-bit word data (two bytes) that is read-only. Input registers carry analog measurements and numerical status flags provided by field hardware, such as motor temperature readings or joint encoder values.</li>
+                            <li class="article-spec-item"><span class="spec-label">Holding Registers:</span> 16-bit word data (two bytes) that can be both read and written. Holding registers serve as general-purpose read/write storage, used for passing target coordinate setpoints, speed overrides, recipe numbers, and operational handshake words.</li>
+                        </ul>
+                        <p>
+                            Because industrial controllers employ different internal microprocessor architectures, network protocols must specify consistent byte serialization rules. Modbus transmits numerical values and addresses in big-endian representation with the most significant byte transmitted first.<sup><a href="#ref-6">[6]</a></sup> For example, the 16-bit value <code>0x1234</code> is sent as byte <code>0x12</code> and then byte <code>0x34</code>.
+                        </p>
+                        <p>
+                            Modbus TCP messages include a 7-byte MBAP header and transmit over TCP on registered port <code>502</code>.<sup><a href="#ref-7">[7]</a></sup>
+                        </p>
+                        <p>
+                            The Modbus Application Protocol (MBAP) header prefixes the Modbus function code and data payload. The 7-byte header consists of four fields:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Transaction Identifier (2 bytes):</span> An identification number assigned by the client to pair request messages with their corresponding server responses.</li>
+                            <li class="article-spec-item"><span class="spec-label">Protocol Identifier (2 bytes):</span> Set to 0 to indicate the Modbus protocol.</li>
+                            <li class="article-spec-item"><span class="spec-label">Length (2 bytes):</span> A byte count specifying the remaining bytes in the message, including the unit identifier and data payload.</li>
+                            <li class="article-spec-item"><span class="spec-label">Unit Identifier (1 byte):</span> Used for routing to identify a sub-device when communicating through a gateway to a serial Modbus network.</li>
+                        </ul>
+                        <p>
+                            In <a href="robotics-8-3.html">Lesson 8.3 Lab: Connecting a Robot to a PLC</a>, you will put these principles into practice by writing and reading holding registers from a Python client, using a stand-in for a robot's Modbus TCP server.
+                        </p>
+
+                        <h2 class="article-section-title">06. Device description files in engineering software</h2>
+                        <p>
+                            When an engineer integrates a robot arm, a vision system, or an intelligent drive into a modern automation project, the engineering software must understand the communication capabilities of that device. Without a standardized description, the engineer would need to manually look up register addresses, configure byte lengths, and define diagnostic structures by hand in software. To automate and standardize this process, industrial communication bodies established standardized device description files.
+                        </p>
+                        <p>
+                            In the PROFINET ecosystem, field devices are characterized using standardized station description files. GSDML files use an XML-based markup language compliant with ISO 15745 to define the properties of PROFINET field devices.<sup><a href="#ref-8">[8]</a></sup> The GSDML (General Station Description Markup Language) specification is structured under the ISO 15745 application integration framework. A GSDML file contains human-readable XML tags defining the device manufacturer, device identification codes, supported communication interfaces, timing parameters, and available physical or virtual I/O modules.
+                        </p>
+                        <p>
+                            Before a third-party device can be programmed in a PLC project, its station file must be imported into the programming environment. Engineering software requires installing a manufacturer GSD file to integrate third-party field devices into the hardware configuration catalog.<sup><a href="#ref-8">[8]</a></sup> Once installed, the device appears in the hardware catalog and can be placed in the network layout.
+                        </p>
+                        <p>
+                            EtherCAT follows a similar standardization model for its connected devices. An EtherCAT SubDevice Information (ESI) file is an XML document containing the complete description of a device's process data mapping and supported communication features.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">In EtherNet/IP, how do implicit messages and explicit messages differ in their underlying transport protocol, header structure, and operational purpose?</li>
+                            <li class="article-spec-item">What architectural mechanism enables PROFINET IRT to achieve sub-millisecond cycle times with microsecond-level jitter compared to the 1 to 10 millisecond range of PROFINET RT?</li>
+                            <li class="article-spec-item">How does the "processing on the fly" mechanism of an EtherCAT slave device differ from standard Ethernet packet reception, and what hardware is required on the master and slave devices?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 8 of 8 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">ODVA, &ldquo;EtherNet/IP Industrial Ethernet Network.&rdquo; <a href="https://www.odva.org/technology-standards/key-technologies/ethernet-ip/" target="_blank" rel="noopener noreferrer">odva.org/technology-standards/key-technologies/ethernet-ip/</a>.</li>
+                            <li id="ref-2">Rockwell Automation, &ldquo;EtherNet/IP Network Devices User Manual.&rdquo; <a href="https://literature.rockwellautomation.com/idc/groups/literature/documents/um/enet-um006_-en-p.pdf" target="_blank" rel="noopener noreferrer">literature.rockwellautomation.com/idc/groups/literature/documents/um/enet-um006_-en-p.pdf</a>.</li>
+                            <li id="ref-3">PROFIBUS &amp; PROFINET International, &ldquo;PROFINET Technology Description: PROFINET.&rdquo; <a href="https://www.profinet.com/technology/" target="_blank" rel="noopener noreferrer">profinet.com/technology/</a>.</li>
+                            <li id="ref-4">Beckhoff Automation, &ldquo;EtherCAT &ndash; the Ethernet Fieldbus.&rdquo; <a href="https://www.beckhoff.com/en-en/products/i-o/ethercat/" target="_blank" rel="noopener noreferrer">beckhoff.com/en-en/products/i-o/ethercat/</a>.</li>
+                            <li id="ref-5">EtherCAT Technology Group, &ldquo;EtherCAT Technology Overview.&rdquo; <a href="https://www.ethercat.org/en/technology.html" target="_blank" rel="noopener noreferrer">ethercat.org/en/technology.html</a>.</li>
+                            <li id="ref-6">Modbus Organization, &ldquo;MODBUS Application Protocol Specification.&rdquo; <a href="https://www.modbus.org/file/secure/modbusprotocolspecification.pdf" target="_blank" rel="noopener noreferrer">modbus.org/file/secure/modbusprotocolspecification.pdf</a>.</li>
+                            <li id="ref-7">Modbus Organization, &ldquo;MODBUS Messaging on TCP/IP Implementation Guide V1.0b.&rdquo; <a href="https://www.modbus.org/file/secure/messagingimplementationguide.pdf" target="_blank" rel="noopener noreferrer">modbus.org/file/secure/messagingimplementationguide.pdf</a>.</li>
+                            <li id="ref-8">Siemens, &ldquo;How do you install a GSD file and which GSD file version is released for which version of TIA Portal?&rdquo; <a href="https://support.industry.siemens.com/cs/document/109738401" target="_blank" rel="noopener noreferrer">support.industry.siemens.com/cs/document/109738401</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-8-1.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">8.1 From Wires to Networks</span>
+                                </a>
+                                <a href="robotics-8-3.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">8.3 Lab: Connecting a Robot to a PLC</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

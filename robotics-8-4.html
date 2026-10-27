@@ -1,0 +1,320 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 8.4 Safety over the Network
+-->
+<html lang="en">
+    <head>
+        <title>8.4 Safety over the Network — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Understand functional safety communication across industrial networks: the black-channel principle, PROFIsafe, CIP Safety, Safety over EtherCAT (FSoE), and robot safety stop categories." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-8-4.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="8.4 Safety over the Network — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Understand functional safety communication across industrial networks: the black-channel principle, PROFIsafe, CIP Safety, Safety over EtherCAT (FSoE), and robot safety stop categories." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-8-4.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="8.4 Safety over the Network, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="8.4 Safety over the Network — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Understand functional safety communication across industrial networks: the black-channel principle, PROFIsafe, CIP Safety, Safety over EtherCAT (FSoE), and robot safety stop categories." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-networks.html">Chapter 8 &middot; Networks</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">8.4 Safety over the Network</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Standard networks versus safety requirements</h2>
+                        <p>
+                            <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a> kept safety signals on their own safety-rated wiring, separate from the handshake signals between PLC and robot.
+                        </p>
+                        <p>
+                            In a large cell with many doors, light curtains and robots, wiring every safety device back to a safety controller takes a lot of cable. <a href="robotics-4-4.html">Lesson 4.4 Making a Robot Cell Safe</a> covers how those safety functions are chosen; this lesson covers how their signals can share a network.
+                        </p>
+                        <p>
+                            A standard network on its own is not enough for safety signals.
+                        </p>
+                        <p>
+                            Messages on any network can be lost, repeated, corrupted or delayed.
+                        </p>
+                        <p>
+                            For a safety signal, a lost or late message must never leave a machine running. The safety network design ensures that communication failures cause safety devices to go to a known safe state.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The black channel principle assumes the network is completely unreliable, meaning diagnostics must exist outside the network infrastructure.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. The black-channel principle</h2>
+                        <p>
+                            The black channel principle integrates safety and standard communication on one cable from the sensor over the controller to the actuator.<sup><a href="#ref-2">[2]</a></sup> Safety messages and ordinary messages travel on the same cable and through the same switches.
+                        </p>
+                        <p>
+                            The checks happen in the sending and receiving safety devices, so the switches and cables in between are not part of the safety function. If the network damages, repeats or delays a message, the receiving device notices and goes to its safe state.
+                        </p>
+                        <p>
+                            This independence gives automation designers flexibility when laying out manufacturing systems. PROFIsafe operates independently of base transmission channels whether copper wires, fiber optics, wireless, or backplanes.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            While the black channel concept allows safety data to ride on standard cables, it places strict requirements on physical device design. Implementing the PROFIsafe protocol cannot turn a standard device into a safety device without safety hardware architecture.<sup><a href="#ref-2">[2]</a></sup> The final safety level of a device is set by the architecture of its safety hardware.<sup><a href="#ref-2">[2]</a></sup> The device also does not have to reach the protocol's maximum level: PROFIsafe is suitable up to SIL 3, but an F-device only needs the level its safety function requires.<sup><a href="#ref-2">[2]</a></sup> For drives, IEC 61800-5-2 defines safety stopping and monitoring functions for drives with integrated safety, called F-drives.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">03. PROFIsafe protocol and functional safety standards</h2>
+                        <p>
+                            To establish an open, vendor-neutral standard for industrial safety communication, the PROFIBUS and PROFINET International (PI) organization introduced PROFIsafe. PROFIsafe is standardized as an international standard under IEC 61784-3-3 for functional safety communication.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            PROFIsafe complies with safety requirements up to SIL 3 under IEC 61508 and PL e category 4 under ISO 13849.<sup><a href="#ref-2">[2]</a></sup> <a href="robotics-4-4.html">Lesson 4.4</a> explains Performance Levels.
+                        </p>
+                        <p>
+                            Universal Robots' PROFIsafe guide shows what the integrator configures for each connection: each telegram carries a 3- or 4-byte CRC depending on the PLC, the robot has a safety address (F-Address), and an F-Watchdog time in milliseconds sets how long a device may wait for the next message.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. CIP Safety and message integrity validation</h2>
+                        <p>
+                            In systems built on the Common Industrial Protocol (CIP) family—including EtherNet/IP and DeviceNet—safety networking is handled by CIP Safety. CIP Safety is a functional safety protocol enabling standard and safety devices to operate together on the same industrial network.<sup><a href="#ref-4">[4]</a></sup> It meets functional safety requirements for applications up to SIL 3 under IEC 61508.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            All CIP Safety transfers use safety CRCs to check that the data arrived intact.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            To ensure temporal validity, CIP Safety data is time-stamped to determine the age of the produced data.<sup><a href="#ref-4">[4]</a></sup> ODVA contrasts this with ordinary reception timers: a reception timer tells how much time has passed since a message last arrived, but not how old the data inside it is. A time stamp also reveals delays from queuing, retries and routing.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            To prevent packets from being routed to the wrong machine in large manufacturing plants, address validation is required. A production identifier is encoded in each safety transmission to ensure messages arrive at the correct consumer.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            A Safety Network Number identifies each network path individually to allow each device to be uniquely identified.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            The Safety Validator object in the CIP Safety application layer confirms the integrity of safety data transfers.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Time stamps only work if both sides agree on the time. Time is coordinated between safety producers and consumers using ping requests and ping responses.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <p>
+                            Because the safety checks sit in the end devices, standard routers can pass safety data between networks, as long as the safety data itself is not changed. If something goes wrong in the transmission or in a router, the end device detects it and reacts.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The same idea removes the need to certify the network equipment. Routers and switches do not examine the Safety CRCs, so their own link-level checks are not part of the safety function. That is why the intermediate devices need no safety certification, and it is the core of the black channel principle.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            A safety connection is opened with a Safety_Open request. A Type 1 request configures the device and opens the connection in one step, which suits small configurations. A Type 2 request opens the connection to a device that has already been configured, which suits large, complex configurations.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <h2 class="article-section-title">05. Safety over EtherCAT (FSoE)</h2>
+                        <p>
+                            EtherCAT utilizes Safety over EtherCAT, termed FSoE for FailSafe over EtherCAT, as a single communication system for both control and safety data.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Safety over EtherCAT technology was developed according to IEC 61508 and is standardized in IEC 61784-3.<sup><a href="#ref-5">[5]</a></sup> It is suitable for safety applications up to SIL 3.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Safety over EtherCAT frames are called safety containers and contain safety-critical process data along with securing information.<sup><a href="#ref-5">[5]</a></sup> The EtherCAT frame around the container is just the black channel.
+                        </p>
+                        <p>
+                            The safety container in FSoE is embedded directly within cyclical communication process data.<sup><a href="#ref-5">[5]</a></sup> So safety data moves in the same cycle as the ordinary process data (see <a href="robotics-8-2.html">8.2</a> for how EtherCAT frames are processed).
+                        </p>
+                        <p>
+                            In robotics applications, FSoE is used for safe motion control in an 8-kHz closed loop.<sup><a href="#ref-5">[5]</a></sup> An 8-kHz closed loop executes a complete safety cycle every 125 microseconds.
+                        </p>
+
+                        <h2 class="article-section-title">06. What a robot and a safety PLC exchange</h2>
+                        <p>
+                            With a safety network, the safety PLC sends the robot its safety inputs (light curtain, door switch, emergency stop) over PROFIsafe, CIP Safety or FSoE instead of separate wires. Universal Robots' PROFIsafe guide is a concrete example of what travels in each direction. The robot is added to the PLC project with a PROFIsafe GSDML file, the same kind of device description file as in <a href="robotics-8-2.html">8.2</a>.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            The control message from the safety PLC to the robot includes these signals:<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li><span class="spec-label">E-Stop by system:</span> 0 asserts the system emergency stop; 1 clears it.</li>
+                            <li><span class="spec-label">Safeguard stop:</span> 0 asserts a safeguard stop; 1 does nothing. A separate reset signal clears the stop on a 0-to-1 transition.</li>
+                            <li><span class="spec-label">Reduced:</span> 0 activates the reduced safety limits; 1 activates the normal limits. The robot is within the reduced limits less than 0.5s after the input is activated.</li>
+                            <li><span class="spec-label">Operational mode:</span> selects manual or automatic mode, if that option is enabled in the safety configuration.</li>
+                        </ul>
+                        <p>
+                            Notice that 0 means "stop" or "reduce". A message of all zeros, which is what a device falls back to when communication fails, therefore asks for the safe state.
+                        </p>
+                        <p>
+                            The status message from the robot back to the PLC reports which stop the robot is in (category 0, 1 or 2), whether it stopped because of a safety limit violation or an internal safety fault, and whether an emergency stop came from the PLC or from the robot's own teach pendant button.<sup><a href="#ref-3">[3]</a></sup> The PLC program can use these bits to show the operator why the cell stopped.
+                        </p>
+                        <p>
+                            Each signal leads to one of the three stop categories explained in <a href="robotics-4-4.html">4.4</a>:<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li><span class="spec-label">Emergency stop:</span> Stop Category 1, a controlled stop that commands motion to stop and then removes power.</li>
+                            <li><span class="spec-label">Safeguard stop:</span> Stop Category 2, a controlled stop with power left on.</li>
+                            <li><span class="spec-label">Limit violation or fault detection:</span> Stop Category 0, immediate removal of power.</li>
+                        </ul>
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why does the black channel principle treat the network as unreliable, and where are the safety checks done instead?</li>
+                            <li class="article-spec-item">What is a Safety over EtherCAT safety container, and at what closed-loop rate is FSoE used for safe motion control in robotics?</li>
+                            <li class="article-spec-item">In Universal Robots' PROFIsafe interface, which signals cause a Stop Category 0, 1 and 2 stop?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 5 of 5 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">ODVA, &ldquo;CIP Safety: Safety Networking for Today and Beyond.&rdquo; <a href="https://www.odva.org/wp-content/uploads/2020/11/PUB00110R4_CIP_Safety.pdf" target="_blank" rel="noopener noreferrer">odva.org/wp-content/uploads/2020/11/PUB00110R4_CIP_Safety.pdf</a>.</li>
+                            <li id="ref-2">PI, &ldquo;PROFIsafe.&rdquo; <a href="https://profibus.com/technology/profisafe/overview" target="_blank" rel="noopener noreferrer">profibus.com/technology/profisafe/overview</a>.</li>
+                            <li id="ref-3">Universal Robots, &ldquo;ProfiSafe Technical Guide for e-Series.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/profisafe-technical-guide-for-e-series/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/profisafe-technical-guide-for-e-series/</a>.</li>
+                            <li id="ref-4">ODVA, &ldquo;CIP Safety™: Functional Safety Communication for Industrial Automation.&rdquo; <a href="https://www.odva.org/technology-standards/distinct-cip-services/cip-safety/" target="_blank" rel="noopener noreferrer">odva.org/technology-standards/distinct-cip-services/cip-safety/</a>.</li>
+                            <li id="ref-5">EtherCAT Technology Group, &ldquo;Safety over EtherCAT (FSoE).&rdquo; <a href="https://www.ethercat.org/en/safety.html" target="_blank" rel="noopener noreferrer">ethercat.org/en/safety.html</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-8-3.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">8.3 Lab: Connecting a Robot to a PLC</span>
+                                </a>
+                                <a href="robotics-8-5.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">8.5 From the Plant Floor to IT</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

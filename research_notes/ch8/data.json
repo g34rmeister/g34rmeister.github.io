@@ -1,0 +1,322 @@
+{
+ "chapter": {
+  "id": 8,
+  "title": "Industrial Networks",
+  "url": "robotics-networks.html",
+  "prerequisites": "Chapter 1, especially 1.7 The Industrial Robot Cell; 2.5 End-of-Arm Tooling and I/O; 4.4 Making a Robot Cell Safe. Python for the labs in 8.3 and 8.6.",
+  "handsOn": "write and read Modbus TCP registers on a stand-in robot server with Python and pymodbus, and capture and decode that traffic in Wireshark; no hardware needed.",
+  "summary": "Sinking and sourcing I/O and the move from wiring to fieldbuses and Ethernet, industrial Ethernet protocols (EtherNet/IP, PROFINET, EtherCAT, Modbus TCP), a robot-to-PLC Modbus lab, safety protocols and the black channel principle, IO-Link, OPC UA, MQTT and ros2_control, and network security, TSN and Wireshark diagnostics.",
+  "lessons": [
+   {
+    "id": "8-1",
+    "minutes": 14,
+    "title": "From Wires to Networks",
+    "objectives": [
+     "Compare sinking and sourcing DC circuits, evaluating how NPN and PNP 3-wire field devices interface with PLC I/O modules.",
+     "Explain how fieldbuses replaced point-to-point wiring and analyze how industrial Ethernet supports multiple protocols on shared media.",
+     "Differentiate cyclic I/O data exchange from acyclic diagnostic messaging between controllers and field devices.",
+     "Evaluate line, star, and ring physical topologies, examining recovery times and node limits in Device Level Ring networks."
+    ],
+    "keyTerms": [
+     "sinking",
+     "sourcing",
+     "fieldbus",
+     "cyclic communication",
+     "acyclic communication",
+     "Device Level Ring"
+    ]
+   },
+   {
+    "id": "8-2",
+    "minutes": 15,
+    "title": "Industrial Ethernet Protocols",
+    "objectives": [
+     "Explain how EtherNet/IP combines standard Ethernet with CIP, contrasting implicit UDP messaging with explicit TCP messaging.",
+     "Analyze PROFINET RT and IRT communication mechanisms, device hierarchy models, and the 50 percent bandwidth reservation rule.",
+     "Describe how EtherCAT processes frames on the fly using EtherType 0x88A4, dedicated slave controllers, and distributed clocks.",
+     "Interpret XML-based device description files (GSDML, ESI) and examine the Modbus TCP register model and MBAP header."
+    ],
+    "keyTerms": [
+     "EtherNet/IP",
+     "implicit messaging",
+     "explicit messaging",
+     "PROFINET RT",
+     "GSDML",
+     "EtherCAT"
+    ]
+   },
+   {
+    "id": "8-3",
+    "minutes": 15,
+    "title": "Lab: Connecting a Robot to a PLC",
+    "objectives": [
+     "Describe how a Universal Robots controller connects to a PLC over EtherNet/IP, PROFINET and Modbus TCP.",
+     "Locate the general-purpose registers (128 to 255) of the UR Modbus TCP server and pack up to 16 handshake bits into one register with URScript.",
+     "Write and read holding registers from Python with the pymodbus ModbusTcpClient against a stand-in server.",
+     "Read a Modbus exception response: the function code plus 0x80 and exception code 02 (ILLEGAL DATA ADDRESS)."
+    ],
+    "keyTerms": [
+     "ModbusTcpClient",
+     "holding register",
+     "read_port_register",
+     "integer_to_binary_list",
+     "exception response",
+     "ILLEGAL DATA ADDRESS"
+    ]
+   },
+   {
+    "id": "8-4",
+    "minutes": 14,
+    "title": "Safety over the Network",
+    "objectives": [
+     "Explain the black channel principle and how safety communication operates over unverified transmission media.",
+     "Compare functional safety standards across PROFIsafe (IEC 61784-3-3), FailSafe over EtherCAT (IEC 61784-3), and CIP Safety.",
+     "Describe how CIP Safety verifies data transfer integrity using timestamps, production identifiers, and Safety Network Numbers.",
+     "Describe the safety signals a robot and a safety PLC exchange over PROFIsafe and which stop category each one triggers."
+    ],
+    "keyTerms": [
+     "black channel principle",
+     "PROFIsafe",
+     "FailSafe over EtherCAT",
+     "CIP Safety",
+     "Safety Network Number",
+     "F-device"
+    ]
+   },
+   {
+    "id": "8-5",
+    "minutes": 14,
+    "title": "From the Plant Floor to IT",
+    "objectives": [
+     "Characterize point-to-point IO-Link sensor communication under IEC 61131-9, baud rates, and IODD device descriptions.",
+     "Explain the OPC UA architecture under IEC 62541, binary TCP transport over port 4840, and X.509v3 PKI security.",
+     "Explain what the VDMA 40010 OPC UA Robotics companion specification standardizes.",
+     "Explain MQTT publish/subscribe and its three Quality of Service levels, and how ros2_control's Controller Manager runs the control loop."
+    ],
+    "keyTerms": [
+     "IO-Link",
+     "OPC UA",
+     "VDMA 40010",
+     "MQTT",
+     "Quality of Service",
+     "Controller Manager"
+    ]
+   },
+   {
+    "id": "8-6",
+    "minutes": 15,
+    "title": "Network Design, Security and Diagnostics",
+    "objectives": [
+     "Apply the ISA/IEC 62443 standard framework, shared stakeholder responsibility, and security zones and conduits.",
+     "Structure industrial demilitarized zones (DMZs) with push and pull data boundaries and multifactor authentication jump boxes.",
+     "Explain how VLANs, static access ports and a dedicated management VLAN protect a managed switch.",
+     "Capture Modbus traffic in Wireshark using the loopback interface, Decode As and the mbtcp and modbus display filters, and name the main TSN standards."
+    ],
+    "keyTerms": [
+     "ISA/IEC 62443",
+     "demilitarized zone",
+     "VLAN",
+     "Time-Sensitive Networking",
+     "IEEE 802.1AS",
+     "mbtcp"
+    ]
+   }
+  ]
+ },
+ "manifest": {
+  "nav": "Networks",
+  "icon": "fa-network-wired",
+  "blurbs": {
+   "8-1": "From discrete wiring to industrial networks: sinking and sourcing (NPN/PNP), fieldbus history, line, star and ring topologies, cyclic versus acyclic data, and Device Level Ring recovery.",
+   "8-2": "Industrial Ethernet protocols: EtherNet/IP CIP implicit and explicit messaging, PROFINET RT and IRT with GSDML, EtherCAT on-the-fly frame processing with ESI, and Modbus TCP.",
+   "8-3": "Lab: the UR Modbus TCP server and its general-purpose registers, packing handshake bits in URScript, and writing and reading registers from Python with pymodbus (stand-in server, no hardware).",
+   "8-4": "Functional safety over industrial networks: the black channel principle, PROFIsafe, FailSafe over EtherCAT (FSoE), CIP Safety, and stop category classifications.",
+   "8-5": "Integrating plant-floor devices with enterprise IT: IO-Link sensor architecture, OPC UA information modeling and the VDMA 40010 robotics specification, MQTT telemetry, and ros2_control.",
+   "8-6": "Network design, security and diagnostics: ISA/IEC 62443, zones and the DMZ, VLANs, Time-Sensitive Networking, and a Wireshark lab that decodes the 8.3 Modbus traffic."
+  }
+ },
+ "glossary": {
+  "acyclic communication": "Communication that transmits diagnostic data on an as-needed basis rather than adhering to a fixed cyclic update schedule.",
+  "black channel principle": "A functional safety networking design where safety and standard communication integrate on one transmission medium by treating the underlying network as unreliable and placing diagnostics entirely in end devices.",
+  "CIP Safety": "A functional safety protocol enabling standard and safety devices to operate together on the same network using time-stamped data and production identifiers.",
+  "Controller Manager": "A component in the ros2_control framework that connects controllers with the hardware abstraction interface.",
+  "cyclic communication": "Regular data transmission where inputs and outputs are transferred between a controller and I/O devices at a defined update cycle time.",
+  "demilitarized zone": "A physical and logical subnet acting as an intermediary between corporate and control networks so connected devices avoid direct exposure to untrusted networks.",
+  "Device Level Ring": "An industrial Ethernet ring topology featuring an active ring supervisor transmitting beacon frames, achieving a worst-case recovery time of 2890 µs on copper with default beacon settings.",
+  "EtherCAT": "An industrial Ethernet technology where slave devices with dedicated EtherCAT Slave Controllers read and insert data on the fly as standard frames with EtherType 0x88A4 pass downstream.",
+  "EtherNet/IP": "An industrial automation communication network combining standard Ethernet and TCP/IP technologies with the Common Industrial Protocol (CIP).",
+  "exception response": "A Modbus error message returned by a server using the request function code plus 0x80 when a request cannot be executed.",
+  "explicit messaging": "Request-reply client-server transactions in EtherNet/IP that use TCP and are addressed to the Message Router object.",
+  "FailSafe over EtherCAT": "An EtherCAT functional safety protocol (FSoE) standardized in IEC 61784-3 that embeds safety containers within cyclical process data.",
+  "fieldbus": "A digital communication technology that served as a replacement for point-to-point wiring when connecting sensors and field devices to PLCs.",
+  "GSDML": "An XML-based device description language compliant with ISO 15745 used to define the properties of PROFINET field devices.",
+  "holding register": "A 16-bit Modbus data storage register accessed using function code 0x03 to read or function codes 0x06 and 0x10 to write.",
+  "IEEE 802.1AS": "A Layer 2 timing and synchronization standard for time-sensitive applications specified as a profile of IEEE 1588.",
+  "ILLEGAL DATA ADDRESS": "Modbus exception code 02 indicating that the register address received in the request is not allowed for the server.",
+  "implicit messaging": "Time-critical connected communications in EtherNet/IP that transport I/O data using UDP without embedded protocol headers.",
+  "integer_to_binary_list": "A URScript command that converts an integer into a little-endian list of boolean values where the first element is the least significant bit.",
+  "IO-Link": "A globally standardized point-to-point IO technology under IEC 61131-9 for communicating with sensors and actuators using standard three-wire cables and M12, M8, or M5 connectors.",
+  "ISA/IEC 62443": "A horizontal international standard series defining requirements and processes for implementing and maintaining secure industrial automation and control systems.",
+  "mbtcp": "The Wireshark display filter protocol name for Modbus/TCP, defining fields including Transaction Identifier, Protocol Identifier, and Length.",
+  "ModbusTcpClient": "A pymodbus client class that connects to a target Modbus TCP device over socket framing on default port 502.",
+  "MQTT": "A lightweight client-server publish/subscribe messaging transport protocol requiring an ordered, lossless stream of bytes over TCP ports 1883 or 8883.",
+  "OPC UA": "An open platform-independent communication architecture standardized in IEC 62541 using TCP port 4840, PKI with X.509v3 certificates, and hierarchical address spaces.",
+  "PROFINET RT": "A PROFINET communication class that bypasses TCP/IP layers to achieve deterministic communication in the 1 to 10 millisecond range.",
+  "PROFIsafe": "A functional safety communication standard under IEC 61784-3-3 complying with SIL 3 under IEC 61508 and PL e category 4 under ISO 13849.",
+  "Quality of Service": "Message delivery guarantees defined in MQTT consisting of three levels: At most once, At least once, and Exactly once.",
+  "read_port_register": "A URScript command that reads a controller register and returns an integer value between 0 and 65535.",
+  "Safety Network Number": "A unique identifier in CIP Safety that identifies each network path individually to allow each device to be uniquely identified.",
+  "sinking": "A DC circuit configuration providing a path to supply common (-).",
+  "sourcing": "A DC circuit configuration providing a path to supply source (+).",
+  "Time-Sensitive Networking": "An IEEE 802 standards family designed to provide deterministic connectivity with bounded latency, low packet delay variation, and low packet loss.",
+  "VDMA 40010": "The OPC UA Companion Specification for Robotics defining a standardized information model for asset management, condition monitoring, and preventive maintenance across robot brands.",
+  "VLAN": "A virtual local area network that divides physical switches into smaller logical broadcast domains to isolate network traffic.",
+  "F-device": "A fail-safe device in PROFIsafe; implementing the PROFIsafe protocol alone cannot turn a standard device into one, because its safety level depends on its safety hardware architecture."
+ },
+ "quiz": [
+  {
+   "lesson": "8-1",
+   "question": "Which type of PLC input module is required when connecting an NPN sinking field device?",
+   "choices": [
+    "A sinking input module",
+    "A sourcing input module",
+    "An AC-only input module",
+    "A push-pull input module"
+   ],
+   "answer": 1,
+   "explanation": "An NPN sinking field device requires a PLC I/O module with a sourcing input."
+  },
+  {
+   "lesson": "8-1",
+   "question": "What maximum node count does Rockwell Automation recommend for a Device Level Ring network to avoid degraded recovery time and network performance?",
+   "choices": [
+    "50 or fewer nodes",
+    "128 or fewer nodes",
+    "256 or fewer nodes",
+    "16 or fewer nodes"
+   ],
+   "answer": 0,
+   "explanation": "Rockwell Automation recommends limiting a Device Level Ring network to 50 or fewer nodes to avoid degraded recovery time and network performance."
+  },
+  {
+   "lesson": "8-2",
+   "question": "How are time-critical I/O data transported in EtherNet/IP implicit messaging?",
+   "choices": [
+    "Using TCP addressed to the Message Router object",
+    "Using HTTP requests over port 80",
+    "Using UDP without embedded protocol headers",
+    "Using token-ring frames over RS-485"
+   ],
+   "answer": 2,
+   "explanation": "Implicit messages in EtherNet/IP are time-critical connected communications that transport I/O data using UDP without embedded protocol headers."
+  },
+  {
+   "lesson": "8-2",
+   "question": "Which EtherType value identifies EtherCAT frames within standard Ethernet frames?",
+   "choices": [
+    "0x0800",
+    "0x8892",
+    "0x86DD",
+    "0x88A4"
+   ],
+   "answer": 3,
+   "explanation": "EtherCAT frames are identified by EtherType 0x88A4 in standard Ethernet frames, eliminating the overhead of TCP/IP or UDP/IP stacks."
+  },
+  {
+   "lesson": "8-3",
+   "question": "Which address range provides 128 general-purpose 16-bit registers on the Universal Robots Modbus TCP server?",
+   "choices": [
+    "Addresses 0 to 127",
+    "Addresses 128 to 255",
+    "Addresses 500 to 627",
+    "Addresses 1 to 16"
+   ],
+   "answer": 1,
+   "explanation": "The Universal Robots Modbus TCP server provides 128 general-purpose 16-bit registers at addresses 128 to 255."
+  },
+  {
+   "lesson": "8-3",
+   "question": "When a Modbus server returns an exception response because it cannot carry out a request, how is the exception function code calculated?",
+   "choices": [
+    "Request function code plus 0x80",
+    "Request function code multiplied by 2",
+    "Request function code plus 0xFF",
+    "Request function code bitwise inverted"
+   ],
+   "answer": 0,
+   "explanation": "When a Modbus server cannot carry out a request, its exception response uses the request function code plus 0x80."
+  },
+  {
+   "lesson": "8-4",
+   "question": "What premise defines the black channel principle in functional safety communication?",
+   "choices": [
+    "All network switches must perform hardware-level encryption on safety packets",
+    "Safety signals must be transmitted exclusively over dedicated fiber optic cables",
+    "The transmission network is unreliable, meaning safety diagnostics must exist outside the network infrastructure",
+    "The network layer must guarantee zero packet loss under all operating conditions"
+   ],
+   "answer": 2,
+   "explanation": "The black channel principle assumes the network is unreliable, meaning diagnostics must exist outside the network infrastructure."
+  },
+  {
+   "lesson": "8-4",
+   "question": "What action occurs when an emergency stop triggers a Stop Category 1 over PROFIsafe?",
+   "choices": [
+    "Drive power is removed immediately without controlled deceleration",
+    "The robot stops motion while drive power remains continuously on",
+    "The robot executes a reverse trajectory along the programmed path",
+    "A controlled stop commands motion to stop before removing power"
+   ],
+   "answer": 3,
+   "explanation": "An emergency stop over PROFIsafe triggers a Stop Category 1 controlled stop that commands motion to stop before removing power."
+  },
+  {
+   "lesson": "8-5",
+   "question": "Which IANA registered port is used for optimized binary OPC UA Client-Server communications over TCP?",
+   "choices": [
+    "502",
+    "4840",
+    "1883",
+    "8883"
+   ],
+   "answer": 1,
+   "explanation": "OPC UA Client-Server communications use an optimized TCP-based binary protocol for data exchange over IANA registered port 4840."
+  },
+  {
+   "lesson": "8-5",
+   "question": "Which VDMA specification number designates the OPC UA Companion Specification for Robotics?",
+   "choices": [
+    "VDMA 40100",
+    "VDMA 61131",
+    "VDMA 40010",
+    "VDMA 62541"
+   ],
+   "answer": 2,
+   "explanation": "The OPC UA Robotics companion specification was released as VDMA Specification number 40010."
+  },
+  {
+   "lesson": "8-6",
+   "question": "How do secure industrial DMZ communication architectures handle data movement between control zones and enterprise users?",
+   "choices": [
+    "Control zones push data to the DMZ and enterprise users pull data from DMZ application servers",
+    "Enterprise users pull data directly from Level 1 controller LANs",
+    "Control zones pull configuration files directly from public enterprise cloud services",
+    "Enterprise users push commands straight through the DMZ to Level 0 field devices"
+   ],
+   "answer": 0,
+   "explanation": "Secure DMZ communication models require control zones to push data to the DMZ and enterprise users to pull data from DMZ application servers."
+  },
+  {
+   "lesson": "8-6",
+   "question": "In Wireshark, which display filter protocol name provides fields such as Transaction Identifier, Protocol Identifier, and Length?",
+   "choices": [
+    "modbus",
+    "cip",
+    "profinet",
+    "mbtcp"
+   ],
+   "answer": 3,
+   "explanation": "In Wireshark, the Modbus/TCP display filter protocol name is mbtcp, which defines fields including Transaction Identifier, Protocol Identifier, and Length."
+  }
+ ]
+}

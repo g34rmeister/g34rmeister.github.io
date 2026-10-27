@@ -1,0 +1,332 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 8.6 Network Design, Security and Diagnostics
+-->
+<html lang="en">
+    <head>
+        <title>8.6 Network Design, Security and Diagnostics — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Design and secure industrial robot networks: ISA/IEC 62443 defense-in-depth, zones and conduits, DMZ architecture, VLAN configuration, Time-Sensitive Networking, and packet analysis with Wireshark." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-8-6.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="8.6 Network Design, Security and Diagnostics — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Design and secure industrial robot networks: ISA/IEC 62443 defense-in-depth, zones and conduits, DMZ architecture, VLAN configuration, Time-Sensitive Networking, and packet analysis with Wireshark." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-8-6.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="8.6 Network Design, Security and Diagnostics, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="8.6 Network Design, Security and Diagnostics — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Design and secure industrial robot networks: ISA/IEC 62443 defense-in-depth, zones and conduits, DMZ architecture, VLAN configuration, Time-Sensitive Networking, and packet analysis with Wireshark." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-networks.html">Chapter 8 &middot; Networks</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">8.6 Network Design, Security and Diagnostics</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Industrial network security and ISA/IEC 62443</h2>
+                        <p>
+                            In <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a>, we introduced the cell PLC and emphasized keeping safety signals separate from regular control wiring. In <a href="robotics-4-4.html">Lesson 4.4 Making a Robot Cell Safe</a>, we explored interlocks and emergency stop buttons. Once the robot, PLC and other devices share a network, that network also has to be protected against attacks.
+                        </p>
+                        <p>
+                            The ISA/IEC 62443 series of standards defines requirements and processes for implementing and maintaining electronically secure industrial automation and control systems.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            A founding principle of ISA/IEC 62443 is shared responsibility among stakeholder groups including asset owners, product suppliers, integrators, and service suppliers.<sup><a href="#ref-1">[1]</a></sup> In a robot cell, the robot maker is a product supplier, the company that builds the cell is the integrator, and the plant that runs it is the asset owner.
+                        </p>
+                        <p>
+                            In the ISA/IEC 62443 series, Part 3-2 specifies security risk assessment for system design while Part 3-3 specifies system security requirements and security levels.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The IEC recognized the ISA/IEC 62443 series as a horizontal standard in 2021 that applies to a broad range of different industries.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Network segmentation: zones, conduits, and the DMZ</h2>
+                        <p>
+                            If every computer and controller in a plant sits on one flat network, an attacker who gets into one office PC can reach every machine. Defense in depth means using several layers of protection instead of relying on one.
+                        </p>
+                        <p>
+                            Industrial defense-in-depth strategies implement zones and conduits to secure communication pathways between trusted environments.<sup><a href="#ref-2">[2]</a></sup> In simple terms, a zone is a group of devices with the same security needs, and a conduit is the controlled path that connects two zones.
+                        </p>
+                        <p>
+                            Plant layouts group devices into hierarchical tiers based on their function. The Cell Security Zone contains Level 2 area control, Level 1 controller LANs, and Level 0 field basic input/output devices such as sensors and actuators.<sup><a href="#ref-2">[2]</a></sup> A robot cell, with its PLC, robot controller and I/O, is one such zone.
+                        </p>
+                        <p>
+                            A demilitarized zone is a physical and logical subnet that acts as an intermediary so connected devices avoid direct exposure to untrusted networks.<sup><a href="#ref-2">[2]</a></sup> Often abbreviated as DMZ, this buffer subnet sits between the industrial control network and the enterprise corporate network.
+                        </p>
+                        <p>
+                            Placing corporate-accessible components in a DMZ ensures that no direct communication paths are required from the corporate network to the control network.<sup><a href="#ref-2">[2]</a></sup> If an enterprise accounting application requires production data, it connects only to a database or reporting server located inside the DMZ. The corporate application never touches a robot controller or safety PLC directly.
+                        </p>
+                        <p>
+                            Secure DMZ communication models require control zones to push data to the DMZ and enterprise users to pull data from DMZ application servers.<sup><a href="#ref-2">[2]</a></sup> For example, the cell sends its production records to a server in the DMZ, and an office application reads them from that server, so nothing in the office ever connects to the robot.
+                        </p>
+                        <p>
+                            Remote access into industrial control systems should be routed through hardened intermediary authentication jump boxes in the DMZ using multifactor authentication.<sup><a href="#ref-2">[2]</a></sup> A jump box is a computer in the DMZ that a remote user must log in to before reaching the cell.
+                        </p>
+
+                        <h2 class="article-section-title">03. Managed switches and VLAN configuration</h2>
+                        <p>
+                            A managed switch can be configured, for example to split one physical network into several logical ones. An unmanaged switch cannot.
+                        </p>
+                        <p>
+                            A virtual LAN divides physical networks into smaller logical broadcast domains that isolate traffic from other VLANs.<sup><a href="#ref-2">[2]</a></sup> For example, assigning robot motion traffic to VLAN 20 and human-machine interface (HMI) traffic to VLAN 30 keeps high-volume display graphics from interfering with motion control packets on the same physical switch hardware.
+                        </p>
+                        <p>
+                            Managed switches in industrial networks should disable Dynamic Trunking Protocol and configure switch ports as static access ports to prevent switch spoofing.<sup><a href="#ref-2">[2]</a></sup> A trunk port carries several VLANs; if a device can talk a port into becoming a trunk, it can reach VLANs it should not see.
+                        </p>
+                        <p>
+                            Network administrators should prune VLAN 1 from trunks and use a dedicated VLAN to keep management traffic separate from user data and protocol traffic.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. Deterministic communication and Time-Sensitive Networking</h2>
+                        <p>
+                            <a href="robotics-8-2.html">8.2</a> showed how PROFINET IRT and EtherCAT get precise timing with their own mechanisms. Time-Sensitive Networking aims to give standard Ethernet that kind of timing. Variation in delay is called jitter.
+                        </p>
+                        <p>
+                            Time-Sensitive Networking is an IEEE 802 standards family designed to provide deterministic connectivity with bounded latency, low packet delay variation, and low packet loss.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            IEEE Std 802.1AS (IEEE 802.1AS) provides Layer 2 timing and synchronization for time-sensitive applications as a profile of IEEE 1588.<sup><a href="#ref-3">[3]</a></sup> It gives the devices on the network a shared sense of time.
+                        </p>
+                        <p>
+                            TSN includes IEEE 802.1Qbv for enhancements for scheduled traffic and IEEE 802.1Qbu for frame preemption in bridged networks.<sup><a href="#ref-3">[3]</a></sup> Scheduled traffic means time-critical frames get reserved slots; frame preemption means an urgent frame can interrupt a long, less urgent one.
+                        </p>
+                        <p>
+                            IEEE Std 802.1CB specifies frame replication and elimination for reliability across bridged networks.<sup><a href="#ref-3">[3]</a></sup> Frames are sent over two paths and the duplicate is removed, so losing one path does not lose the frame.
+                        </p>
+                        <p>
+                            IEC/IEEE 60802 defines a joint international Time-Sensitive Networking profile specifically for industrial automation.<sup><a href="#ref-3">[3]</a></sup> A profile picks which of the TSN options a device must support, so equipment from different makers works together.
+                        </p>
+
+                        <h2 class="article-section-title">05. Network diagnostics and Wireshark packet analysis</h2>
+                        <p>
+                            When an industrial network experiences communication failures, dropped packets, or unexpected register values, technicians need diagnostic tools to inspect traffic directly on the wire. Wireshark is a packet analyzer: it records network traffic and decodes each protocol layer.
+                        </p>
+                        <p>
+                            Loopback traffic can be captured on Linux and macOS, but on Windows only with Npcap, which adds an adapter for loopback traffic capture.<sup><a href="#ref-4">[4]</a></sup> The 8.3 lab sends its traffic to <code>127.0.0.1</code>, the computer itself, so it never reaches a real network card and must be captured on the loopback interface.
+                        </p>
+                        <p>
+                            Wireshark picks a decoder (a dissector) mostly from the port number. Modbus TCP normally uses port 502, but the 8.3 lab server uses port 5020, so Wireshark shows its packets as plain TCP. Wireshark's Decode As, opened from the Analyze menu, overrides Wireshark's choice of dissector, for example for traffic on a non-standard port.<sup><a href="#ref-5">[5]</a></sup> This feature lets the user instruct Wireshark to interpret raw TCP data on port 5020 as Modbus TCP frames.
+                        </p>
+                        <p>
+                            Capturing traffic on an active network can produce thousands of packets in a few seconds. To locate specific transactions, technicians apply display filters in Wireshark. Wireshark display filters check for protocol presence or field values and can be combined with logical operators into complex expressions.<sup><a href="#ref-6">[6]</a></sup>
+                        </p>
+                        <p>
+                            In Wireshark, the Modbus/TCP display filter protocol name is mbtcp, which defines fields including Transaction Identifier, Protocol Identifier, and Length.<sup><a href="#ref-7">[7]</a></sup> Typing <code>mbtcp</code> into the filter bar restricts the packet list to Modbus TCP frames. Technicians can also filter by header values, such as matching a specific transaction identifier.
+                        </p>
+                        <p>
+                            In Wireshark, the Modbus dissector uses the protocol field name modbus, providing fields such as Function Code, Exception Code, and response time.<sup><a href="#ref-8">[8]</a></sup> These protocol fields allow targeted troubleshooting. For example, entering <code>modbus.func_code == 16</code> filters for write-multiple-registers requests and responses, while <code>modbus.exception_code</code> isolates error responses returned by a controller.
+                        </p>
+
+                        <h2 class="article-section-title">06. Lab: Watching Modbus traffic on the wire</h2>
+                        <p>
+                            In <a href="robotics-8-3.html">Lesson 8.3 Lab: Connecting a Robot to a PLC</a>, you wrote and read registers on a stand-in Modbus server with <code>pymodbus</code>. In this hands-on lab, you will run the stand-in robot server and client scripts while capturing the interaction in Wireshark to inspect the underlying protocol frames.
+                        </p>
+                        <p>
+                            Modbus TCP messages include a 7-byte MBAP header and transmit over TCP on registered port 502.<sup><a href="#ref-9">[9]</a></sup> The MBAP header contains four fields: the Transaction Identifier (2 bytes), the Protocol Identifier (2 bytes, set to 0 for Modbus), the Length field (2 bytes indicating remaining bytes), and the Unit Identifier (1 byte). Because our developmental test server runs on port 5020 rather than the registered port 502, you will configure Wireshark to decode the custom port.
+                        </p>
+                        <p>
+                            Follow these six steps to capture and analyze the transaction:
+                        </p>
+                        <ol class="article-spec-list">
+                            <li><span class="spec-label">Launch Wireshark and choose the capture interface:</span> Open Wireshark. On Linux or macOS systems, double-click the loopback interface (such as <code>lo</code> or <code>lo0</code>). On Windows systems, select the &ldquo;Adapter for loopback traffic capture&rdquo; provided by Npcap. Click the blue shark fin icon in the upper left toolbar to start capturing packets.</li>
+                            <li><span class="spec-label">Start the stand-in Modbus server:</span> Open a terminal window, navigate to your lab directory, and launch the stand-in server from <a href="robotics-8-3.html">Lesson 8.3</a>:
+                                <pre class="article-code"><code>python fake_ur_server.py</code></pre>
+                                The server starts listening on local address <code>127.0.0.1</code> at port 5020.
+                            </li>
+                            <li><span class="spec-label">Execute the Python client script:</span> In a second terminal window, run the client script:
+                                <pre class="article-code"><code>python client.py</code></pre>
+                                The script connects to <code>127.0.0.1:5020</code>, writes register 128, writes registers 129 and 130, reads back registers 128 through 130, and prints <code>Registers 128-130: [1, 250, 7]</code> before closing the socket.
+                            </li>
+                            <li><span class="spec-label">Stop capture and configure protocol decoding:</span> In Wireshark, click the red square icon on the toolbar to stop capturing packets. Locate a packet sent to or from port 5020. Because port 5020 is not the registered Modbus port, Wireshark initially displays these frames as generic TCP packets. Select a packet on port 5020, click the <strong>Analyze</strong> menu at the top of the window, and choose <strong>Decode As...</strong>. In the dialog that appears, click the <strong>+</strong> button to add a rule, ensure the field is set to <code>TCP port</code> with value <code>5020</code>, change the current protocol column to <strong>Modbus/TCP</strong>, and click <strong>OK</strong>. Wireshark immediately re-dissects all packets on port 5020 as Modbus frames.</li>
+                            <li><span class="spec-label">Filter for write-multiple transactions:</span> The Modbus server responds to function code 0x06 to write a single register and 0x10 to write multiple registers.<sup><a href="#ref-10">[10]</a></sup> Function code 0x10 in hexadecimal equals 16 in decimal. In the Wireshark display filter bar, enter the filter expression:
+                                <pre class="article-code"><code>mbtcp && modbus.func_code == 16</code></pre>
+                                Press Enter to apply the filter. The packet list now isolates the write-multiple request sent by the client and the acknowledgment response returned by the server.
+                            </li>
+                            <li><span class="spec-label">Inspect the MBAP header and Modbus payload:</span> Select the write-multiple request packet in the top pane, then inspect the lower details panes:
+                                <ul>
+                                    <li>In the <strong>Modbus/TCP</strong> protocol layer, examine the 7-byte MBAP header. Note the value of the <code>Transaction Identifier</code> field.</li>
+                                    <li>Select the matching response packet immediately following the request. Observe that its <code>Transaction Identifier</code> matches the request's identifier exactly. The client uses this matching identifier to pair asynchronous responses with pending requests over the single TCP socket.</li>
+                                    <li>In the <strong>Modbus</strong> application layer, verify that the <code>Function Code</code> displays <code>16</code> (Write Multiple Registers). In the request packet details, note the starting address (129), the register count (2), and the register values written (250 and 7).</li>
+                                </ul>
+                            </li>
+                        </ol>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What stakeholder groups share responsibility for cybersecurity under the ISA/IEC 62443 standard, and what do Part 3-2 and Part 3-3 specify?</li>
+                            <li class="article-spec-item">Why does a secure Demilitarized Zone (DMZ) architecture require control zones to push data rather than permitting direct inbound connections from corporate networks?</li>
+                            <li class="article-spec-item">In Wireshark, how do you capture traffic on a Windows loopback interface and instruct the analyzer to decode packets on port 5020 as Modbus/TCP?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 10 of 10 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">International Society of Automation, &ldquo;ISA/IEC 62443 Series of Standards.&rdquo; <a href="https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards" target="_blank" rel="noopener noreferrer">isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards</a>.</li>
+                            <li id="ref-2">CISA, &ldquo;Recommended Practice: Improving Industrial Control System Cybersecurity with Defense-in-Depth Strategies.&rdquo; <a href="https://www.cisa.gov/sites/default/files/recommended_practices/NCCIC_ICS-CERT_Defense_in_Depth_2016_S508C.pdf" target="_blank" rel="noopener noreferrer">cisa.gov/sites/default/files/recommended_practices/NCCIC_ICS-CERT_Defense_in_Depth_2016_S508C.pdf</a>.</li>
+                            <li id="ref-3">IEEE 802.1, &ldquo;Time-Sensitive Networking (TSN) Task Group.&rdquo; <a href="https://1.ieee802.org/tsn/" target="_blank" rel="noopener noreferrer">1.ieee802.org/tsn/</a>.</li>
+                            <li id="ref-4">Wireshark, &ldquo;CaptureSetup/Loopback.&rdquo; <a href="https://wiki.wireshark.org/CaptureSetup/Loopback" target="_blank" rel="noopener noreferrer">wiki.wireshark.org/CaptureSetup/Loopback</a>.</li>
+                            <li id="ref-5">Wireshark, &ldquo;Control Protocol Dissection.&rdquo; <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChCustProtocolDissectionSection.html" target="_blank" rel="noopener noreferrer">wireshark.org/docs/wsug_html_chunked/ChCustProtocolDissectionSection.html</a>.</li>
+                            <li id="ref-6">Wireshark Foundation, &ldquo;Building Display Filter Expressions.&rdquo; <a href="https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html" target="_blank" rel="noopener noreferrer">wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html</a>.</li>
+                            <li id="ref-7">Wireshark Foundation, &ldquo;Display Filter Reference: Modbus/TCP.&rdquo; <a href="https://www.wireshark.org/docs/dfref/m/mbtcp.html" target="_blank" rel="noopener noreferrer">wireshark.org/docs/dfref/m/mbtcp.html</a>.</li>
+                            <li id="ref-8">Wireshark Foundation, &ldquo;Display Filter Reference: Modbus.&rdquo; <a href="https://www.wireshark.org/docs/dfref/m/modbus.html" target="_blank" rel="noopener noreferrer">wireshark.org/docs/dfref/m/modbus.html</a>.</li>
+                            <li id="ref-9">Modbus Organization, &ldquo;MODBUS Messaging on TCP/IP Implementation Guide.&rdquo; <a href="https://www.modbus.org/file/secure/messagingimplementationguide.pdf" target="_blank" rel="noopener noreferrer">modbus.org/file/secure/messagingimplementationguide.pdf</a>.</li>
+                            <li id="ref-10">Universal Robots, &ldquo;Modbus Server.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/modbus-server/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/modbus-server/</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-8-5.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">8.5 From the Plant Floor to IT</span>
+                                </a>
+                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Finished -&gt;</span>
+                                    <span class="article-nav-target">Course home</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

@@ -3,8 +3,8 @@
 Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot Instructor**: an industrial robotics course. Read `CHANGELOG.agents.md` first instead of re-exploring the repo, and append an entry to it in every PR.
 
 ## Layout
-- Course pages are root-level HTML: `robotics.html` (hub), chapter pages `robotics-intro|programming|ros|ethics|control|capstone.html`, lessons `robotics-<chapter>-<n>.html`.
-- Current lessons: Ch1 1-1..1-7, Ch2 2-1..2-8, Ch3 3-1..3-9, Ch4 4-1..4-5, Ch5 (optional, control) 5-1..5-10, Ch6 (capstones) 6-1..6-3.
+- Course pages are root-level HTML: `robotics.html` (hub), chapter pages `robotics-intro|programming|ros|ethics|control|capstone|vision|networks.html`, lessons `robotics-<chapter>-<n>.html`.
+- Current lessons: Ch1 1-1..1-7, Ch2 2-1..2-8, Ch3 3-1..3-9, Ch4 4-1..4-5, Ch5 (optional, control) 5-1..5-10, Ch6 (capstones) 6-1..6-3, Ch7 (machine vision) 7-1..7-6, Ch8 (industrial networks) 8-1..8-6.
 - Extras: `robotics-quiz.html`, `robotics-glossary.html`, `robotics-method.html` (how the course was made; update its sources/AI table if the process changes).
 - Data and scripts: `assets/js/course-data.js` (objectives, keyTerms, minutes, quiz; bump `version` when quiz data changes), `assets/js/glossary-data.js`, `assets/js/learning.js`, `assets/js/widgets.js`, `assets/css/robotics.css`.
 - Non-course pages (index, about, resume, portfolio, etc.) are the original HTML5 UP site.

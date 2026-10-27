@@ -1,0 +1,218 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: Chapter 8: Industrial Networks
+-->
+<html lang="en">
+    <head>
+        <title>Chapter 8: Industrial Networks — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Chapter 8 of RISE Bot Instructor: discrete I/O and fieldbuses, Industrial Ethernet protocols, robot-to-PLC communication, functional safety networks, plant-floor to IT integration, and network security." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-networks.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="Chapter 8: Industrial Networks — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Chapter 8 of RISE Bot Instructor: discrete I/O and fieldbuses, Industrial Ethernet protocols, robot-to-PLC communication, functional safety networks, plant-floor to IT integration, and network security." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-networks.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="Chapter 8: Industrial Networks, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Chapter 8: Industrial Networks — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Chapter 8 of RISE Bot Instructor: discrete I/O and fieldbuses, Industrial Ethernet protocols, robot-to-PLC communication, functional safety networks, plant-floor to IT integration, and network security." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <span>Chapter 8</span>
+                        </div>
+
+                        <h1 class="robotics-article-headline">Chapter 8: Industrial Networks</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Overview</h2>
+                        <p>
+                            <a href="robotics-1-7.html">1.7 The Industrial Robot Cell</a> introduced the handshake signals between a robot and the cell PLC, and <a href="robotics-2-5.html">2.5 End-of-Arm Tooling and I/O</a> the digital I/O on the controller and tool flange. Chapter 8 moves those signals from separate wires onto networks.
+                        </p>
+                        <p>
+                            The chapter begins with electrical wiring rules and network architecture. Sinking (NPN) and sourcing (PNP) DC circuits govern how field devices share power and common return paths. As machine complexity grew, serial fieldbuses replaced bundles of point-to-point wires, and industrial Ethernet expanded this capability by running multiple communication protocols across shared physical media in line, star, and ring configurations. It then covers four industrial Ethernet protocols: EtherNet/IP with CIP implicit UDP and explicit TCP messaging, PROFINET with real-time (RT) channels and GSDML device description files, EtherCAT processing frames on the fly, and Modbus TCP with its four register tables and 7-byte MBAP header.
+                        </p>
+                        <p>
+                            From protocol foundations, the chapter moves into hands-on cell integration and plant-level connectivity. We map controller handshakes into Modbus TCP registers, packing multi-bit signals with URScript and communicating from Python using <code>pymodbus</code>. We then examine functional safety networks&mdash;including PROFIsafe, FailSafe over EtherCAT (FSoE), and CIP Safety&mdash;exploring how the black channel principle transports safety commands over standard networks. Finally, we examine plant-floor integration via IO-Link, OPC UA with the VDMA 40010 Robotics companion specification, MQTT telemetry, and industrial security under ISA/IEC 62443, ending with a hands-on Wireshark diagnostic capture.
+                        </p>
+
+                        <h2 class="article-section-title">02. Place in the course</h2>
+                        <p>
+                            Chapter 8 follows Chapter 7 and builds on 1.7 (the cell PLC and handshakes), 2.5 (controller and tool I/O) and 4.4 (cell safety). The two labs, 8.3 and 8.6, need only Python and Wireshark on your own computer.
+                        </p>
+
+                        <h2 class="article-section-title">03. Articles in this chapter</h2>
+                        <ol class="article-spec-list">
+                                <li><a href="robotics-8-1.html">8.1 From Wires to Networks</a>: From discrete wiring to industrial networks: sinking and sourcing (NPN/PNP), fieldbus history, line, star and ring topologies, cyclic versus acyclic data, and Device Level Ring recovery.</li>
+                                <li><a href="robotics-8-2.html">8.2 Industrial Ethernet Protocols</a>: Industrial Ethernet protocols: EtherNet/IP CIP implicit and explicit messaging, PROFINET RT and IRT with GSDML, EtherCAT on-the-fly frame processing with ESI, and Modbus TCP.</li>
+                                <li><a href="robotics-8-3.html">8.3 Lab: Connecting a Robot to a PLC</a>: Lab: the UR Modbus TCP server and its general-purpose registers, packing handshake bits in URScript, and writing and reading registers from Python with pymodbus (stand-in server, no hardware).</li>
+                                <li><a href="robotics-8-4.html">8.4 Safety over the Network</a>: Functional safety over industrial networks: the black channel principle, PROFIsafe, FailSafe over EtherCAT (FSoE), CIP Safety, and stop category classifications.</li>
+                                <li><a href="robotics-8-5.html">8.5 From the Plant Floor to IT</a>: Integrating plant-floor devices with enterprise IT: IO-Link sensor architecture, OPC UA information modeling and the VDMA 40010 robotics specification, MQTT telemetry, and ros2_control.</li>
+                                <li><a href="robotics-8-6.html">8.6 Network Design, Security and Diagnostics</a>: Network design, security and diagnostics: ISA/IEC 62443, zones and the DMZ, VLANs, Time-Sensitive Networking, and a Wireshark lab that decodes the 8.3 Modbus traffic.</li>
+                            </ol>
+
+                        <h2 class="article-section-title">04. Chapter quiz</h2>
+                        <p>
+                            After completing the lessons, <a href="robotics-quiz.html?chapter=8">take the Chapter 8 quiz</a> to test your understanding of sinking and sourcing wiring, industrial Ethernet protocols, Modbus TCP register maps, network safety, OPC UA and MQTT integration, and network security diagnostics.
+                        </p>
+
+                        <h2 class="article-section-title">05. Feedback</h2>
+                        <p>
+                            RISE Bot Instructor is being tested with students. If you have questions, spot an error, or have suggestions for Chapter 8, please <a href="contact.html">get in touch</a>.
+                        </p>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-vision.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous chapter</span>
+                                    <span class="article-nav-target">Chapter 7: Machine Vision</span>
+                                </a>
+                                <a href="robotics-8-1.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Start reading -&gt;</span>
+                                    <span class="article-nav-target">8.1 From Wires to Networks</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>
