@@ -1,0 +1,390 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 7.3 Image Processing Basics
+-->
+<html lang="en">
+    <head>
+        <title>7.3 Image Processing Basics — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Core image processing techniques for industrial machine vision: color spaces, histograms, thresholding, connected components, blob analysis, Canny edge detection, and template matching." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-7-3.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="7.3 Image Processing Basics — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Core image processing techniques for industrial machine vision: color spaces, histograms, thresholding, connected components, blob analysis, Canny edge detection, and template matching." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-7-3.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="7.3 Image Processing Basics, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="7.3 Image Processing Basics — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Core image processing techniques for industrial machine vision: color spaces, histograms, thresholding, connected components, blob analysis, Canny edge detection, and template matching." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-vision.html">Chapter 7 &middot; Vision</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">7.3 Image Processing Basics</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Color spaces and grayscale conversion</h2>
+                            <p>
+                                In industrial robotics, vision systems capture camera frames to recognize workpieces, verify assembly, and guide end-effector motion. In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use camera images to calculate coordinate offsets for picking unfixed parts. Before any coordinate shift or pose calculation can occur, the raw image stream must be processed to reveal recognizable geometric features.
+                            </p>
+                            <p>
+                                Image processing pipelines begin by converting raw frames into suitable color representations. OpenCV converts color images using <code>cv.cvtColor</code> with flags such as <code>cv.COLOR_BGR2GRAY</code> for grayscale and <code>cv.COLOR_BGR2HSV</code> for hue-saturation-value representation.<sup><a href="#ref-1">[1]</a></sup> For example, converting to grayscale represents each pixel by its light intensity across a single channel to simplify boundary localization.
+                            </p>
+                            <p>
+                                When parts must be differentiated by color rather than intensity alone, the HSV representation becomes valuable. In OpenCV HSV color space, the hue channel spans from 0 to 179 while saturation and value span from 0 to 255.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                Color segmentation isolates targets based on specific chromatic ranges. The function <code>cv.inRange</code> performs color segmentation by checking whether image array elements fall between lower and upper boundary arrays.<sup><a href="#ref-1">[1]</a></sup> For example, evaluating elements against lower and upper arrays produces a binary mask isolating the target from the background.
+                            </p>
+                            <pre class="article-code"><code>import cv2 as cv
+import numpy as np
+
+# Load raw camera image and convert to grayscale and HSV
+img_bgr = cv.imread('workpiece.jpg')
+gray = cv.cvtColor(img_bgr, cv.COLOR_BGR2GRAY)
+hsv = cv.cvtColor(img_bgr, cv.COLOR_BGR2HSV)
+
+# Segment colored parts within defined HSV bounds
+lower_bound = np.array([100, 150, 50])
+upper_bound = np.array([140, 255, 255])
+color_mask = cv.inRange(hsv, lower_bound, upper_bound)</code></pre>
+
+                            <h2 class="article-section-title">02. Grayscale histograms, contrast, and equalization</h2>
+                            <p>
+                                Once an image is converted to a single-channel grayscale array, engineers analyze its intensity distribution. An image histogram collects data counts of image features organized into a set of predefined bins.<sup><a href="#ref-2">[2]</a></sup> For example, an 8-bit single-channel image can be analyzed using 256 predefined bins to count how many pixels exhibit each brightness level.
+                            </p>
+                            <p>
+                                The quality of feature extraction depends directly on image contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-3">[3]</a></sup> For example, imagine a scene where the difference between maximum and minimum intensities is small: workpiece boundaries blend into the background.
+                            </p>
+                            <p>
+                                To improve poor contrast caused by uneven camera exposure, engineers apply histogram equalization. OpenCV provides the <code>equalizeHist</code> function to normalize brightness and enhance contrast on 8-bit single-channel grayscale images.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                Illumination directly dictates the quality of the raw histogram before software equalization is even applied. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-5">[5]</a></sup> For example, suppose illumination is non-uniform across the robot cell: shadows and hot spots make intensity thresholding unreliable. Desired image quality can typically be achieved by improving system illumination rather than investing in higher resolution detectors or lenses.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">03. Image thresholding: binary, adaptive, and Otsu</h2>
+                            <p>
+                                Binarization is the foundation of many industrial vision tasks. Converting an 8-bit grayscale image into a 1-bit binary image separates foreground workpieces from the background fixture or conveyor. In simple thresholding with <code>cv.threshold</code> and <code>cv.THRESH_BINARY</code>, pixels smaller than or equal to the threshold are set to 0 while all others are set to a maximum value.<sup><a href="#ref-6">[6]</a></sup> In simple binary thresholding, pixels exceeding a defined threshold value are set to a maximum value while all other pixels are set to zero.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                Simple thresholding works in controlled lighting, but factory workstations may experience lighting gradients from ambient fixtures or moving equipment.
+                            </p>
+                            <p>
+                                To handle varying scene conditions, vision engineers rely on localized thresholding techniques. Adaptive thresholding calculates distinct local threshold values for small regions across an image to handle scenes with non-uniform illumination.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                When the lighting is uniform but the exact threshold value is unknown or shifts between production batches, automatic threshold selection is required. Otsu binarization determines an optimal global threshold automatically from a bimodal image histogram using the <code>cv.THRESH_OTSU</code> flag.<sup><a href="#ref-6">[6]</a></sup> For example, imagine a bimodal histogram with two distinct peaks corresponding to dark parts on a bright background.
+                            </p>
+                            <pre class="article-code"><code># Simple binary thresholding with fixed cutoff 127
+ret1, thresh_simple = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
+
+# Otsu automatic thresholding on bimodal grayscale input
+ret2, thresh_otsu = cv.threshold(gray, 0, 255, cv.THRESH_BINARY + cv.THRESH_OTSU)
+
+# Adaptive thresholding using local neighborhood mean
+thresh_adapt = cv.adaptiveThreshold(
+    gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 11, 2
+)</code></pre>
+
+                            <h2 class="article-section-title">04. Connected components and contour geometry</h2>
+                            <p>
+                                After binarization, an image consists of white and black pixels. The vision processor must now organize these grouped pixels into discrete geometric entities representing individual parts. The <code>cv::connectedComponentsWithStats</code> function segments a binary image into labeled connected foreground components and computes bounding box geometry and pixel area for each label.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                The statistics matrix returned by connected component labeling gives physical parameters for every contiguous island of pixels in the image. The <code>CC_STAT_AREA</code> statistic output in OpenCV connected components represents the total area in pixels of the labeled component.<sup><a href="#ref-7">[7]</a></sup> For example, vision software can filter out dust flecks or small reflection specks by rejecting components whose <code>CC_STAT_AREA</code> falls below a minimum pixel threshold.
+                            </p>
+                            <p>
+                                Along with connected components, contour extraction traces object boundaries. In OpenCV contour detection, the object of interest must be represented as white foreground against a black background.<sup><a href="#ref-8">[8]</a></sup> For example, if an inspection image contains dark parts against a white background, the image is inverted before finding contours.
+                            </p>
+                            <p>
+                                Boundary storage efficiency is critical when processing high-resolution video streams in real-time robot cells. The contour approximation method <code>cv.CHAIN_APPROX_SIMPLE</code> compresses straight segments by removing redundant points along contour boundaries to save memory.<sup><a href="#ref-8">[8]</a></sup> For example, along a straight edge, storing only the start and end coordinates of the line segment removes redundant points to save memory.
+                            </p>
+                            <p>
+                                From the extracted contour boundary, geometric moments provide center-of-mass coordinates. Contour centroid spatial coordinates are calculated from image moments using the relations <code>Cx = M10 / M00</code> and <code>Cy = M01 / M00</code>.<sup><a href="#ref-9">[9]</a></sup> For example, the resulting centroid coordinates <code>(Cx, Cy)</code> provide the reference position needed for robot pick calculations (see <a href="robotics-2-8.html">2.8</a>).
+                            </p>
+
+                            <h2 class="article-section-title">05. Blob analysis with SimpleBlobDetector</h2>
+                            <p>
+                                In many manufacturing applications, workpieces appear as distinct spots or "blobs" of connected pixels that differ in brightness or color from surrounding areas. OpenCV provides a dedicated high-level class, <code>SimpleBlobDetector</code>, to identify and classify blobs according to geometric properties.
+                            </p>
+                            <p>
+                                Rather than relying on a single binarization step, <code>SimpleBlobDetector</code> sweeps across multiple thresholds to detect features under varying contrast conditions. <code>SimpleBlobDetector</code> extracts candidate blobs by binarizing the source image across a range of thresholds from <code>minThreshold</code> to <code>maxThreshold</code> with increment <code>thresholdStep</code>.<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                After generating multiple binary images, candidate centroids from neighboring slices must be merged into single detections. <code>SimpleBlobDetector</code> groups component centers from multiple binarized images that fall within <code>minDistBetweenBlobs</code> to establish final blob coordinates.<sup><a href="#ref-10">[10]</a></sup> For example, this clustering step consolidates overlapping detections across threshold passes into a single coordinate for each workpiece.
+                            </p>
+                            <p>
+                                To distinguish circular parts such as washers, bearings, or bolt heads from scrap metal cuttings, the detector provides shape filters. OpenCV <code>SimpleBlobDetector</code> computes circularity using the formula four times pi times area divided by the square of the perimeter, where a value of 1.0 indicates a perfect circle.<sup><a href="#ref-11">[11]</a></sup> For example, setting minimum and maximum circularity bounds allows vision systems to separate round components from irregular debris on a conveyor.
+                            </p>
+                            <pre class="article-code"><code># Configure SimpleBlobDetector parameters
+params = cv.SimpleBlobDetector_Params()
+params.minThreshold = 10
+params.maxThreshold = 200
+params.thresholdStep = 10
+params.minDistBetweenBlobs = 20
+
+# Filter candidate blobs by circularity
+params.filterByCircularity = True
+params.minCircularity = 0.8
+params.maxCircularity = 1.0
+
+detector = cv.SimpleBlobDetector_create(params)
+keypoints = detector.detect(gray)</code></pre>
+
+                            <h2 class="article-section-title">06. Edge detection: the Canny algorithm</h2>
+                            <p>
+                                When parts must be gauged or aligned with high dimensional precision, boundary edge detection is preferred over regional thresholding. Edges correspond to sharp discontinuities in surface reflectance, material boundaries, or surface geometry. The most widely used edge detection pipeline in industrial computer vision is the multi-stage Canny edge detector.
+                            </p>
+                            <p>
+                                Factory images invariably contain high-frequency sensor noise that can create false edge readings. The initial step of the Canny edge detector removes image noise using a 5x5 Gaussian smoothing filter.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                After smoothing, the algorithm calculates image intensity gradients across horizontal and vertical directions. In <code>cv.Canny</code>, the <code>aperture_size</code> parameter configures the Sobel kernel size for computing image gradients and defaults to 3.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                Raw gradient maps produce thick boundaries spanning several pixels. To achieve precise geometric measurements, the edge must be thinned to a single pixel. Non-maximum suppression suppresses pixels that are not local intensity maxima along the gradient direction to produce thin single-pixel edges.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                The final stage resolves ambiguous edges using two separate thresholds. The Canny edge detector uses hysteresis thresholding with <code>minVal</code> and <code>maxVal</code> to distinguish true edges from noise.<sup><a href="#ref-12">[12]</a></sup> Canny hysteresis thresholding accepts gradient pixels between the upper and lower thresholds only if they are connected to a pixel above the upper threshold.<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">07. Template matching and pattern localization</h2>
+                            <p>
+                                When a part features complex surface geometry, logos, or printed artwork that cannot be isolated with simple thresholding or edge filters, template matching provides direct pattern localization. Template matching slides a smaller reference patch (the template) across a larger search image to find the region of highest visual correlation.
+                            </p>
+                            <p>
+                                Understanding output dimensions is essential for memory allocation and coordinate mapping. In template matching, comparing an image of size WxH with a template of size wxh produces an output match matrix of size (W-w+1, H-h+1).<sup><a href="#ref-14">[14]</a></sup> Each entry in the resulting matrix contains a metric score indicating the degree of visual match between the template patch and that specific sub-window of the primary image.
+                            </p>
+                            <p>
+                                After computing the correlation matrix with <code>cv.matchTemplate</code>, the software identifies the best matching location. For example, the function <code>cv.minMaxLoc</code> scans the output matrix to find the global minimum and maximum intensity values along with their spatial coordinates.
+                            </p>
+                            <p>
+                                The detected pixel coordinates directly feed robot motion commands. As established in <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, vision software converts pixel coordinates into physical millimetres in the robot user frame via hand-eye calibration. The detected template match position defines the current part pose <code>T_found</code>, allowing the robot controller to shift its taught grasp points and pick the incoming part without stopping the production line.
+                            </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 220" role="img" aria-label="Sequential 2D image processing pipeline in industrial machine vision. Step 1: Camera acquisition and color space conversion using cvtColor. Step 2: Grayscale conditioning, histogram equalization, and thresholding. Step 3: Feature extraction via connected components, Canny edge detection, or SimpleBlobDetector. Step 4: Centroid calculation and template matching to produce part coordinates for robot picking." xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <marker id="arrow-ip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                                            <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                        </marker>
+                                    </defs>
+                                    <rect class="d-box" x="10" y="40" width="145" height="130"/>
+                                    <text class="d-text" x="20" y="68">1. Color Space</text>
+                                    <text class="d-muted" x="20" y="92">cv.cvtColor()</text>
+                                    <text class="d-muted" x="20" y="112">COLOR_BGR2GRAY</text>
+                                    <text class="d-muted" x="20" y="132">COLOR_BGR2HSV</text>
+                                    <text class="d-muted" x="20" y="152">cv.inRange() mask</text>
+
+                                    <line class="d-strong" x1="155" y1="105" x2="175" y2="105" marker-end="url(#arrow-ip)"/>
+
+                                    <rect class="d-box" x="180" y="40" width="145" height="130"/>
+                                    <text class="d-text" x="190" y="68">2. Conditioning</text>
+                                    <text class="d-muted" x="190" y="92">Histogram analysis</text>
+                                    <text class="d-muted" x="190" y="112">cv.equalizeHist()</text>
+                                    <text class="d-muted" x="190" y="132">cv.threshold()</text>
+                                    <text class="d-muted" x="190" y="152">Otsu &amp; Adaptive</text>
+
+                                    <line class="d-strong" x1="325" y1="105" x2="345" y2="105" marker-end="url(#arrow-ip)"/>
+
+                                    <rect class="d-box" x="350" y="40" width="145" height="130"/>
+                                    <text class="d-text" x="360" y="68">3. Feature Detect</text>
+                                    <text class="d-muted" x="360" y="92">cv.connectedComp.</text>
+                                    <text class="d-muted" x="360" y="112">SimpleBlobDetector</text>
+                                    <text class="d-muted" x="360" y="132">cv.Canny() edges</text>
+                                    <text class="d-muted" x="360" y="152">cv.matchTemplate()</text>
+
+                                    <line class="d-strong" x1="495" y1="105" x2="515" y2="105" marker-end="url(#arrow-ip)"/>
+
+                                    <rect class="d-box-gold" x="520" y="40" width="150" height="130"/>
+                                    <text class="d-text" x="530" y="68">4. Robot Guidance</text>
+                                    <text class="d-muted" x="530" y="92">Centroid: M10/M00</text>
+                                    <text class="d-muted" x="530" y="112">Template (x, y)</text>
+                                    <text class="d-muted" x="530" y="132">Convert px to mm</text>
+                                    <text class="d-muted" x="530" y="152">Shift frame (2.8)</text>
+                                </svg>
+                                <figcaption>Industrial 2D vision pipeline: camera images progress from color conversion and contrast conditioning to thresholding, shape feature extraction, and robot coordinate conversion.</figcaption>
+                            </figure>
+
+                            <h2 class="article-section-title">08. Check your understanding</h2>
+                            <ol class="article-spec-list">
+                                <li class="article-spec-item">In OpenCV HSV color space representation, what numerical spans are defined for the hue, saturation, and value channels?</li>
+                                <li class="article-spec-item">How does OpenCV SimpleBlobDetector calculate candidate circularity, and what numerical value represents a perfect circle?</li>
+                                <li class="article-spec-item">What are the resulting output matrix dimensions when matching a template of size wxh across an input image of size WxH?</li>
+                            </ol>
+
+                            <h2 class="article-section-title">09. References</h2>
+                            <p class="references-note">Source check (October 2026): 14 of 14 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">OpenCV, &ldquo;OpenCV: Changing Colorspaces.&rdquo; <a href="https://docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html</a>.</li>
+                                <li id="ref-2">OpenCV, &ldquo;OpenCV: Histogram Calculation.&rdquo; <a href="https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html</a>.</li>
+                                <li id="ref-3">Edmund Optics, &ldquo;Contrast.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/contrast/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/contrast</a>.</li>
+                                <li id="ref-4">OpenCV, &ldquo;OpenCV: Histogram Equalization.&rdquo; <a href="https://docs.opencv.org/4.x/d4/d1b/tutorial_histogram_equalization.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d4/d1b/tutorial_histogram_equalization.html</a>.</li>
+                                <li id="ref-5">Edmund Optics, &ldquo;Common Illumination Types.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination</a>.</li>
+                                <li id="ref-6">OpenCV, &ldquo;OpenCV: Image Thresholding.&rdquo; <a href="https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html</a>.</li>
+                                <li id="ref-7">OpenCV, &ldquo;OpenCV: Structural Analysis and Shape Descriptors.&rdquo; <a href="https://docs.opencv.org/4.x/d3/dc0/group__imgproc__shape.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d3/dc0/group__imgproc__shape.html</a>.</li>
+                                <li id="ref-8">OpenCV, &ldquo;OpenCV: Contours : Getting Started.&rdquo; <a href="https://docs.opencv.org/4.x/d4/d73/tutorial_py_contours_begin.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d4/d73/tutorial_py_contours_begin.html</a>.</li>
+                                <li id="ref-9">OpenCV, &ldquo;OpenCV: Contour Features.&rdquo; <a href="https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html</a>.</li>
+                                <li id="ref-10">OpenCV, &ldquo;OpenCV: cv::SimpleBlobDetector Class Reference.&rdquo; <a href="https://docs.opencv.org/4.x/d0/d7a/classcv_1_1SimpleBlobDetector.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d0/d7a/classcv_1_1SimpleBlobDetector.html</a>.</li>
+                                <li id="ref-11">OpenCV, &ldquo;OpenCV: cv::SimpleBlobDetector::Params Struct Reference.&rdquo; <a href="https://docs.opencv.org/4.x/d8/da7/structcv_1_1SimpleBlobDetector_1_1Params.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d8/da7/structcv_1_1SimpleBlobDetector_1_1Params.html</a>.</li>
+                                <li id="ref-12">OpenCV, &ldquo;OpenCV: Canny Edge Detection.&rdquo; <a href="https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/da/d22/tutorial_py_canny.html</a>.</li>
+                                <li id="ref-13">OpenCV, &ldquo;OpenCV: Canny Edge Detector.&rdquo; <a href="https://docs.opencv.org/4.x/da/d5c/tutorial_canny_detector.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/da/d5c/tutorial_canny_detector.html</a>.</li>
+                                <li id="ref-14">OpenCV, &ldquo;OpenCV: Template Matching.&rdquo; <a href="https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-7-2.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">7.2 Lighting for Machine Vision</span>
+                                </a>
+                                <a href="robotics-7-4.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">7.4 3D Sensing</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

@@ -1,0 +1,326 @@
+{
+  "chapter": {
+    "id": 7,
+    "title": "Machine Vision",
+    "url": "robotics-vision.html",
+    "prerequisites": "Chapter 2, especially 2.8 Vision-Guided Picking, and Chapter 3 for Lesson 7.6.",
+    "handsOn": "process camera images with OpenCV, configure point cloud filters, and build a ROS 2 camera pipeline in Python.",
+    "summary": "Industrial camera sensors and optics, machine vision lighting techniques, 2D image processing, 3D point cloud perception, automated inspection, and a ROS 2 camera pipeline.",
+    "lessons": [
+      {
+        "id": "7-1",
+        "minutes": 15,
+        "title": "Industrial Cameras and Optics",
+        "objectives": [
+          "Compare CMOS and CCD image sensor architectures, evaluating readout speed, blooming resistance, and pixel saturation capacity.",
+          "Distinguish global shutter from rolling shutter mechanisms, explaining how exposure timing affects moving parts and how strobe lighting prevents rolling shutter distortion.",
+          "Calculate lens aperture stops and optical throughput using f-numbers, and analyze the trade-off between depth of field and light throughput.",
+          "Explain how telecentric lenses eliminate parallax error in precision dimensional gauging and describe how the GenICam standard provides hardware-independent camera control."
+        ],
+        "keyTerms": [
+          "CMOS sensor",
+          "global shutter",
+          "rolling shutter",
+          "f-number",
+          "telecentric lens",
+          "GenICam"
+        ]
+      },
+      {
+        "id": "7-2",
+        "minutes": 14,
+        "title": "Lighting for Machine Vision",
+        "objectives": [
+          "Select appropriate illumination geometries—including backlighting, ring lighting, glancing, and darkfield—based on part geometry, surface finish, and inspection goals.",
+          "Explain how diffuse dome lights and coaxial beamsplitters eliminate glare and hot spots on curved or flat specular reflective surfaces.",
+          "Apply optical filtering techniques, including bandpass wavelength selection, infrared cut-off filters, and cross-polarization, to isolate target features and reject ambient factory light.",
+          "Evaluate the benefits of pulsed strobe illumination and LED overdriving for freezing rapid part motion and extending emitter life expectancy."
+        ],
+        "keyTerms": [
+          "backlighting",
+          "darkfield illumination",
+          "coaxial illumination",
+          "diffuse dome light",
+          "cross-polarization",
+          "strobe mode"
+        ]
+      },
+      {
+        "id": "7-3",
+        "minutes": 14,
+        "title": "Image Processing Basics",
+        "objectives": [
+          "Convert raw camera frames across color spaces (BGR, Grayscale, HSV) and isolate chromatic targets using color segmentation masks.",
+          "Analyze intensity distributions with grayscale histograms and apply global, Otsu, and adaptive thresholding to segment foreground objects.",
+          "Extract object contours, calculate centroid coordinates from spatial image moments, and filter connected components by area.",
+          "Detect and characterize circular objects using SimpleBlobDetector, trace boundaries with Canny edge detection, and locate parts with template matching."
+        ],
+        "keyTerms": [
+          "HSV color space",
+          "histogram equalization",
+          "adaptive thresholding",
+          "Otsu binarization",
+          "image moments",
+          "Canny edge detector",
+          "template matching"
+        ]
+      },
+      {
+        "id": "7-4",
+        "minutes": 14,
+        "title": "3D Sensing",
+        "objectives": [
+          "Differentiate direct physical 3D sensing (LiDAR, structured light, stereo) from neural network 2D depth inference.",
+          "Calculate physical depth from stereo camera disparity, baseline distance, and focal length using triangulation geometry.",
+          "Filter and downsample raw point clouds using PCL PassThrough, VoxelGrid, and StatisticalOutlierRemoval algorithms.",
+          "Segment planar supporting surfaces with RANSAC and extract individual workpiece clusters using Euclidean cluster extraction."
+        ],
+        "keyTerms": [
+          "point cloud",
+          "disparity",
+          "PassThrough filter",
+          "VoxelGrid filter",
+          "StatisticalOutlierRemoval",
+          "RANSAC",
+          "Euclidean cluster extraction"
+        ]
+      },
+      {
+        "id": "7-5",
+        "minutes": 14,
+        "title": "Inspection and Measurement",
+        "objectives": [
+          "Analyze the economic impact of automated visual inspection in reducing missed defects and costly false alarms.",
+          "Apply spatial resolution metrics and the Nyquist sampling limit to determine the optical tolerance limits of a camera sensor.",
+          "Explain how optical distortion is classified into barrel and pincushion modes and corrected using polynomial calibration models.",
+          "Verify 1D and 2D barcode symbols under ISO/IEC 15416 and 15415 standards, and utilize Reed-Solomon error correction in Data Matrix ECC 200."
+        ],
+        "keyTerms": [
+          "Nyquist limit",
+          "dimensional gauging",
+          "barrel distortion",
+          "pincushion distortion",
+          "presence verification",
+          "Data Matrix ECC 200"
+        ]
+      },
+      {
+        "id": "7-6",
+        "minutes": 15,
+        "title": "Lab: A ROS 2 Camera Pipeline",
+        "objectives": [
+          "Describe the ROS 2 camera pipeline architecture and message definitions (sensor_msgs/Image and sensor_msgs/CameraInfo).",
+          "Interpret optical camera coordinate frame conventions (+x right, +y down, +z forward) and map them to robot base frames.",
+          "Manage network bandwidth using image_transport plugins and synchronize image and calibration streams with message_filters TimeSynchronizer.",
+          "Implement a complete ROS 2 Python node using cv_bridge to convert images between ROS messages and OpenCV NumPy arrays for real-time edge processing."
+        ],
+        "keyTerms": [
+          "sensor_msgs/Image",
+          "sensor_msgs/CameraInfo",
+          "plumb_bob",
+          "image_transport",
+          "TimeSynchronizer",
+          "cv_bridge"
+        ]
+      }
+    ]
+  },
+  "manifest": {
+    "nav": "Vision",
+    "icon": "fa-eye",
+    "blurbs": {
+      "7-1": "Industrial camera sensors and optics: CMOS versus CCD, global and rolling shutters, pixel size and Nyquist resolution, focal length and f-number, telecentric lenses, and GenICam.",
+      "7-2": "Illumination for machine vision: backlighting, ring, glancing, darkfield, diffuse dome, coaxial and in-line lighting, optical filters, cross-polarization, and LED strobing.",
+      "7-3": "Core 2D image processing: color space conversion, histograms and contrast equalization, global, Otsu and adaptive thresholding, contours, moments, blobs, Canny edge detection, and template matching.",
+      "7-4": "3D perception for robotics: direct sensing versus 2D inference, stereo disparity geometry, point cloud filtering with PCL (PassThrough, VoxelGrid, outliers), RANSAC planes, Euclidean clustering, and bin picking.",
+      "7-5": "Automated inspection and measurement: optical resolution and the Nyquist limit, telecentric gauging, lens distortion calibration, presence verification, and 1D/2D barcode quality.",
+      "7-6": "Build a ROS 2 camera pipeline in Python: sensor_msgs/Image and CameraInfo, optical frames, image_transport, cv_bridge conversion, and real-time OpenCV edge processing."
+    }
+  },
+  "glossary": {
+    "adaptive thresholding": "A binarization technique that calculates distinct local thresholds for small image regions to handle uneven lighting gradients across a scene.",
+    "backlighting": "An illumination technique placing the light source behind the object to create a high-contrast opaque silhouette for boundary and dimensional inspection.",
+    "barrel distortion": "An optical lens aberration where magnification decreases toward the periphery, causing straight rectangular lines to bow outward like a barrel.",
+    "Canny edge detector": "A multi-stage edge detection algorithm that uses Gaussian smoothing, intensity gradients, non-maximum suppression, and hysteresis thresholding to find thin, robust boundaries.",
+    "CMOS sensor": "A solid-state image sensor where each pixel has its own amplifier and readout circuitry, enabling fast frame rates and low power consumption.",
+    "coaxial illumination": "A lighting geometry using a beamsplitter to project diffuse light along the camera's optical axis, reducing shadows and glare on flat specular surfaces.",
+    "cross-polarization": "A technique using a polarizer on the light source and an analyzer on the camera lens oriented at 90 degrees to eliminate direct specular glare from reflective surfaces.",
+    "cv_bridge": "A ROS package providing bidirectional conversion functions between ROS Image messages and OpenCV NumPy array buffers.",
+    "darkfield illumination": "A shallow-angle lighting technique where direct rays reflect away from the lens and surface flaws or scratches scatter light into the camera as bright features.",
+    "Data Matrix ECC 200": "A two-dimensional matrix barcode symbology that uses an L-shaped finder pattern and Reed-Solomon error correction to reconstruct damaged codes.",
+    "diffuse dome light": "A hemispherical light fixture that reflects omnidirectional scattered light downward to evenly illuminate curved reflective objects without hot spots or harsh shadows.",
+    "dimensional gauging": "The precise physical measurement of part dimensions—such as lengths, diameters, and clearances—from calibrated camera image coordinates.",
+    "disparity": "The horizontal pixel displacement between corresponding object points in the left and right images of a calibrated stereo camera pair, inversely proportional to depth.",
+    "Euclidean cluster extraction": "A 3D point cloud segmentation algorithm that groups neighboring points into distinct object clusters based on spatial proximity thresholds.",
+    "f-number": "The ratio of a lens's focal length to its effective aperture diameter, governing light throughput and depth of field.",
+    "GenICam": "A vendor-neutral software standard from EMVA that provides a universal programming interface and feature naming convention for industrial machine vision cameras.",
+    "global shutter": "An electronic shutter mechanism that starts and stops exposure simultaneously across all sensor pixels, preventing motion distortion.",
+    "histogram equalization": "An image processing method that redistributes pixel intensity levels across the entire dynamic range to improve image contrast.",
+    "HSV color space": "A color representation separating image data into hue (color type), saturation (color purity), and value (brightness) channels.",
+    "image moments": "Weighted average calculations of image pixel intensities used to determine geometric properties such as area, orientation, and centroid coordinates.",
+    "image_transport": "A ROS 2 package suite providing transparent runtime plugin support for publishing and subscribing to compressed image streams.",
+    "Nyquist limit": "The theoretical maximum spatial frequency an image sensor can resolve without aliasing, requiring at least two detector pixels per line pair.",
+    "Otsu binarization": "An automatic thresholding method that determines an optimal global cutoff by minimizing intra-class intensity variance on bimodal histograms.",
+    "PassThrough filter": "A PCL filtering method that removes 3D point cloud data falling outside user-specified minimum and maximum coordinate bounds along a selected axis.",
+    "pincushion distortion": "An optical lens aberration where magnification increases toward the periphery, pulling straight lines outward from the center.",
+    "plumb_bob": "The standard radial and tangential camera lens distortion model in ROS 2, parameterized by five polynomial coefficients (k1, k2, t1, t2, k3).",
+    "point cloud": "A set of data points in 3D Cartesian coordinates representing physical external surfaces sampled by depth sensors.",
+    "presence verification": "An automated inspection check that confirms whether required components, fasteners, or features are present before a part advances.",
+    "RANSAC": "Random Sample Consensus; an iterative mathematical algorithm that estimates model parameters from data containing a high proportion of outliers, commonly used to detect geometric planes.",
+    "rolling shutter": "An electronic shutter mechanism that exposes pixel rows sequentially with a temporal offset, which can distort fast-moving objects.",
+    "sensor_msgs/CameraInfo": "The standard ROS 2 message structure carrying intrinsic camera parameters, distortion coefficients, and rectification matrices.",
+    "sensor_msgs/Image": "The standard ROS 2 message structure for transmitting uncompressed raster image pixel matrices with row step and encoding metadata.",
+    "StatisticalOutlierRemoval": "A PCL denoising filter that computes mean neighbor distances and discards isolated points whose distance exceeds a statistical standard deviation threshold.",
+    "strobe mode": "Pulsing an LED light source with brief microsecond bursts synchronized to camera exposure, reducing heat and allowing high-current overdriving to freeze fast motion.",
+    "telecentric lens": "A specialized optical lens with chief rays parallel to the optical axis, eliminating parallax error and maintaining constant magnification across varying object distances.",
+    "template matching": "A computer vision technique that slides a small reference template image across a larger search image to find the position of highest visual correlation.",
+    "TimeSynchronizer": "A message_filters synchronization utility that aligns multiple incoming ROS 2 topic streams by matching their header timestamps.",
+    "VoxelGrid filter": "A PCL downsampling algorithm that partitions 3D space into regular cubic voxels and replaces all points within each voxel with their centroid."
+  },
+  "quiz": [
+    {
+      "lesson": "7-1",
+      "question": "Why are global shutter cameras preferred over rolling shutter cameras when imaging moving parts on a conveyor?",
+      "choices": [
+        "Global shutters have significantly lower ambient noise in dark scenes",
+        "All sensor pixels start and stop exposing simultaneously, preventing geometric rolling shutter distortion",
+        "Global shutters do not require an imaging lens",
+        "Global shutters double the depth of field of the lens"
+      ],
+      "answer": 1,
+      "explanation": "During image acquisition with a global shutter, all sensor pixels start and stop exposing at the same time, preventing the geometric image distortion caused by relative motion during rolling shutter acquisition."
+    },
+    {
+      "lesson": "7-1",
+      "question": "What happens to a lens aperture and its light throughput when its f-number is increased by a factor of the square root of two?",
+      "choices": [
+        "The aperture area is halved and light throughput decreases by a factor of two",
+        "The aperture area doubles and throughput increases by two",
+        "The focal length increases by 50% while throughput stays constant",
+        "The depth of field drops to zero"
+      ],
+      "answer": 0,
+      "explanation": "Increasing the f-number by a factor of the square root of two halves the aperture area and reduces lens light throughput by a factor of two."
+    },
+    {
+      "lesson": "7-2",
+      "question": "Which illumination technique is best suited for inspecting scratches, cracks, and bubbles in clear or translucent materials?",
+      "choices": [
+        "Coaxial brightfield illumination",
+        "Diffuse dome lighting",
+        "Darkfield illumination",
+        "Overdriven backlight silhouetting"
+      ],
+      "answer": 2,
+      "explanation": "Darkfield illumination introduces light at shallow angles so light scatters off surface flaws, producing high contrast by highlighting scratches, cracks, and bubbles in clear materials."
+    },
+    {
+      "lesson": "7-2",
+      "question": "How does cross-polarization reject unwanted glare from shiny reflective surfaces?",
+      "choices": [
+        "By flashing an LED strobe at five times its continuous current",
+        "By shifting the optical wavelength into the near-infrared spectrum",
+        "By using an object-space telecentric lens with an internal beamsplitter",
+        "By placing a polarizer on the light source and an analyzer on the lens oriented at 90 degrees"
+      ],
+      "answer": 3,
+      "explanation": "Cross-polarization uses a polarizer on the illumination source and an analyzer on the camera lens oriented at 90 degrees to achieve maximum rejection of unwanted glare."
+    },
+    {
+      "lesson": "7-3",
+      "question": "In OpenCV HSV color space representation, what numerical ranges are assigned to the hue, saturation, and value channels?",
+      "choices": [
+        "Hue 0 to 255, Saturation 0 to 255, Value 0 to 255",
+        "Hue 0 to 179, Saturation 0 to 255, Value 0 to 255",
+        "Hue 0 to 360, Saturation 0 to 100, Value 0 to 100",
+        "Hue 0 to 180, Saturation 0 to 180, Value 0 to 180"
+      ],
+      "answer": 1,
+      "explanation": "In OpenCV HSV color space, the hue channel spans from 0 to 179 while saturation and value span from 0 to 255."
+    },
+    {
+      "lesson": "7-3",
+      "question": "What dimensions are produced for the output correlation matrix when matching a template of size w × h across an image of size W × H?",
+      "choices": [
+        "(W - w + 1, H - h + 1)",
+        "(W, H)",
+        "(W / w, H / h)",
+        "(w, h)"
+      ],
+      "answer": 0,
+      "explanation": "In template matching, comparing an image of size W × H with a template of size w × h produces an output match matrix of size (W - w + 1, H - h + 1)."
+    },
+    {
+      "lesson": "7-4",
+      "question": "In stereo vision triangulation, what is the mathematical relationship between depth Z, physical baseline B, lens focal length f, and disparity?",
+      "choices": [
+        "depth = (baseline * f) / disparity",
+        "depth = (baseline * disparity) / f",
+        "depth = disparity / (baseline * f)",
+        "depth = baseline + f - disparity"
+      ],
+      "answer": 0,
+      "explanation": "In stereo vision triangulation, depth Z is inversely proportional to disparity according to the relationship disparity = (baseline * f) / depth, which yields depth = (baseline * f) / disparity."
+    },
+    {
+      "lesson": "7-4",
+      "question": "How does the PCL VoxelGrid filter downsample dense point clouds?",
+      "choices": [
+        "By deleting every alternating point along the sensor scan lines",
+        "By fitting a RANSAC plane to the scene and discarding all inliers",
+        "By measuring neighbor distances and removing points exceeding two standard deviations",
+        "By partitioning 3D space into voxel boxes and replacing all points inside each box with their centroid"
+      ],
+      "answer": 3,
+      "explanation": "The PCL VoxelGrid filter downsamples point clouds by partitioning 3D space into voxel boxes and replacing all points inside each box with their centroid."
+    },
+    {
+      "lesson": "7-5",
+      "question": "Under the Nyquist limit, what is the minimum sensor sampling requirement to resolve an optical line pair?",
+      "choices": [
+        "One pixel per line pair",
+        "At least two pixels per line pair",
+        "Four pixels per millimeter",
+        "Ten pixels per line pair"
+      ],
+      "answer": 1,
+      "explanation": "The Nyquist limit represents the highest spatial frequency a sensor can sample and requires at least two pixels per line pair (one pixel on the bright bar and one on the dark bar)."
+    },
+    {
+      "lesson": "7-5",
+      "question": "Which version of Data Matrix barcode uses Reed-Solomon error correction to detect damage and reconstruct corrupted codewords?",
+      "choices": [
+        "Data Matrix ECC 000",
+        "Data Matrix ECC 050",
+        "Data Matrix ECC 200",
+        "Data Matrix Linear 15416"
+      ],
+      "answer": 2,
+      "explanation": "Data Matrix ECC 200 is the only Data Matrix version that utilizes Reed-Solomon error correction to detect damage locations and reconstruct corrupted codewords."
+    },
+    {
+      "lesson": "7-6",
+      "question": "In the standard ROS optical camera coordinate frame convention, in which directions do the coordinate axes point?",
+      "choices": [
+        "+x forward, +y left, +z up",
+        "+x right, +y down, +z into the image plane",
+        "+x left, +y up, +z into the image plane",
+        "+x right, +y forward, +z down"
+      ],
+      "answer": 1,
+      "explanation": "In the ROS optical camera coordinate frame, +x points right, +y points down, and +z points into the image plane along the optical axis."
+    },
+    {
+      "lesson": "7-6",
+      "question": "In cv_bridge, which function converts an incoming ROS sensor_msgs/Image message into an OpenCV NumPy array?",
+      "choices": [
+        "cv2_to_imgmsg",
+        "cv.cvtColor",
+        "TimeSynchronizer",
+        "imgmsg_to_cv2"
+      ],
+      "answer": 3,
+      "explanation": "In cv_bridge, imgmsg_to_cv2 converts a ROS Image message into an OpenCV NumPy image with an optional desired_encoding format."
+    }
+  ]
+}

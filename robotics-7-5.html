@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 7.5 Inspection and Measurement
+-->
+<html lang="en">
+    <head>
+        <title>7.5 Inspection and Measurement — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Automated machine vision inspection and dimensional gauging for robotics: spatial resolution, Nyquist limits, telecentric optics, distortion correction, presence detection, and barcode verification." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-7-5.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="7.5 Inspection and Measurement — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Automated machine vision inspection and dimensional gauging for robotics: spatial resolution, Nyquist limits, telecentric optics, distortion correction, presence detection, and barcode verification." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-7-5.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="7.5 Inspection and Measurement, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="7.5 Inspection and Measurement — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Automated machine vision inspection and dimensional gauging for robotics: spatial resolution, Nyquist limits, telecentric optics, distortion correction, presence detection, and barcode verification." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-vision.html">Chapter 7 &middot; Vision</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">7.5 Inspection and Measurement</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Quality assurance and automated inspection</h2>
+                        <p>
+                            In industrial automation, manufacturing lines rely heavily on machine vision to verify product quality at production speed. Before an automated system is introduced, manual visual inspection by human operators is often the standard method. However, human visual fatigue and shifting attention create inconsistent quality checks over long shifts. Automated inspection reduces manufacturing visual inspection errors, which comprise missing existing defects and false alarms that trigger unnecessary scrap and production waste.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Both types of inspection errors carry substantial industrial costs. A missed defect allows an incomplete, misaligned, or fractured component to move downstream into final assembly or ship to a customer. When that happens, the failure can cause costly recalls or halt an assembly line. Conversely, a false alarm incorrectly flags an acceptable part as defective. Rejecting good parts wastes raw materials, discards already completed machining labor, and lowers cell throughput.
+                        </p>
+                        <p>
+                            Robotic cells frequently combine part handling with automated visual inspection. In <a href="robotics-2-8.html">Lesson 2.8 Vision-Guided Picking</a>, we explored how cameras guide robot end-effectors by locating parts on tables or conveyors. Inspection builds upon those same physical setups. A camera mounted above a fixture (eye-to-hand) or on the robot wrist (eye-in-hand) captures an image of the part before or after manipulation. The robot program then checks dimensions or presence. Based on the vision verdict, the arm sorts the part into an accept bin, places it on an outbound conveyor, or routes it into a quarantine station for human review.
+                        </p>
+                        <p>
+                            Industrial inspection tasks broadly fall into four categories: dimensional gauging, presence verification, surface flaw detection, and code reading. Classical machine vision solves these tasks with deterministic geometric algorithms, edge detectors, and thresholding. Where parts have complex, organic, or unpredictable cosmetic surface textures, learned vision algorithms may be applied instead, as discussed in <a href="robotics-4-5.html">Lesson 4.5 AI in Robotics: Uses and Limits</a>.
+                        </p>
+
+                        <h2 class="article-section-title">02. Spatial resolution and the Nyquist limit</h2>
+                        <p>
+                            Every visual measurement begins with optical sampling. When an engineer selects a camera and lens for a gauging station, they must determine whether the system can physically resolve the smallest required tolerance. A simple fundamental measure of sensor resolution is the number of pixels per millimeter.<sup><a href="#ref-2">[2]</a></sup> For example, if a camera sensor has 2,400 pixels along its horizontal axis and images an inspection field of view that is 120 mm wide, the optical system delivers exactly 20 pixels per millimeter in object space.
+                        </p>
+                        <p>
+                            However, sensor pixel count alone does not guarantee that fine edges or small defects can be resolved clearly. Optical resolution is fundamentally defined as a spatial frequency measured in line pairs per millimeter, where one line pair represents alternating black and white bars in object space.<sup><a href="#ref-3">[3]</a></sup> Optical resolution is formally specified as a spatial frequency measured in line pairs per millimeter.<sup><a href="#ref-3">[3]</a></sup> A line pair consists of one alternating black bar and one white bar of equal width in object space.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            As the alternating bars become narrower and closer together, the spatial frequency increases. Optical lenses cannot transfer high spatial frequencies with perfect fidelity. The ability of the optical train to preserve edge separation is expressed as contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-4">[4]</a></sup> When contrast drops to zero, adjacent bars blend into an indistinguishable solid gray field.
+                        </p>
+                        <p>
+                            Even if a lens can transmit high spatial frequencies, the electronic image sensor must sample that pattern without aliasing. The Nyquist limit represents the highest spatial frequency a sensor can sample and equals two pixels per line pair.<sup><a href="#ref-3">[3]</a></sup> The highest spatial frequency resolvable by an electronic camera sensor is the Nyquist limit, which requires at least two pixels per line pair.<sup><a href="#ref-3">[3]</a></sup> Sampling requires at least one pixel on the bright bar and one pixel on the dark bar. If the physical detail in object space is smaller than two sensor pixels, the vision system cannot reliably detect it or establish its boundary location.
+                        </p>
+
+                        <h2 class="article-section-title">03. Dimensional gauging and telecentric optics</h2>
+                        <p>
+                            Dimensional gauging is the process of measuring physical geometric features of a part, such as hole diameters, shaft lengths, slot widths, or thread pitches. In an automated gauging station, software locates feature boundaries and converts pixel coordinates into calibrated real-world millimeters. For precision gauging, standard lenses introduce a severe physical limitation known as perspective error.
+                        </p>
+                        <p>
+                            Conventional lenses possess an angular field of view that introduces parallax error where perceived magnification changes with object distance.<sup><a href="#ref-5">[5]</a></sup> In a factory environment, parts moving along a conveyor or resting inside a fixture exhibit small height variations due to mechanical tolerances or vibrations. Under a conventional lens, a part positioned slightly closer to the camera appears larger, while a part farther away appears smaller.
+                        </p>
+                        <p>
+                            To eliminate perspective error, precision gauging systems employ telecentric lenses. Telecentric lenses eliminate parallax error in precision dimensional gauging because their non-angular field of view keeps magnification constant across changes in object distance.<sup><a href="#ref-5">[5]</a></sup> Telecentric lenses eliminate parallax and perspective error by keeping magnification constant across working distance variations.<sup><a href="#ref-5">[5]</a></sup> As a result, moving an object toward or away from the lens within its depth of field changes neither its apparent size nor its measured dimensions on the image sensor.
+                        </p>
+                        <p>
+                            Telecentric optics offer an additional mathematical advantage when parts move slightly out of perfect focus. Telecentric lenses blur symmetrically across focus variations because they have no angular field of view component, allowing edges to retain their centroid location.<sup><a href="#ref-5">[5]</a></sup> In telecentric optics, the blur expands symmetrically, meaning sub-pixel edge detection algorithms still locate the true geometric center of the feature.
+                        </p>
+                        <p>
+                            Illumination plays an equally vital role in measurement repeatability. In telecentric lenses, in-line illumination is the only method to achieve reflected brightfield illumination across the entire field of view.<sup><a href="#ref-6">[6]</a></sup> In-line illumination is ideal for inspecting specular and semi-specular objects such as semiconductor wafers and CCDs.<sup><a href="#ref-6">[6]</a></sup> Shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href="#ref-7">[7]</a></sup> Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-7">[7]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. Optical distortion and software calibration</h2>
+                        <p>
+                            Even when high-grade optics are selected, real-world lenses deviate from ideal mathematical pinhole models. These deviations are known as optical aberrations. One specific aberration that directly affects dimensional measurement is geometric distortion.
+                        </p>
+                        <p>
+                            Distortion is an optical aberration that misplaces image information geometrically without blurring or discarding information, allowing it to be calibrated and corrected in software.<sup><a href="#ref-8">[8]</a></sup> Every physical point in object space maps to a crisp point on the sensor matrix, but its spatial coordinate is displaced from its expected collinear projection.
+                        </p>
+                        <p>
+                            Optical distortion is classified into negative barrel distortion where points appear displaced toward the optical center, and positive pincushion distortion where points appear displaced away from the center.<sup><a href="#ref-8">[8]</a></sup> In barrel distortion, points appear displaced toward the center, causing straight rectangular outlines to bow outward. In pincushion distortion, points appear displaced away from the center, pulling straight edges inward.
+                        </p>
+                        <p>
+                            To measure and correct this aberration, vision engineers use precision calibration targets. Geometric distortion percentage is calculated using a dot target by comparing the actual distance AD of an imaged point from center to its predicted distance PD.<sup><a href="#ref-8">[8]</a></sup> As introduced in <a href="robotics-2-8.html">Lesson 2.8</a>, intrinsic camera calibration models this distortion using calibration targets. Software maps each distorted image pixel back to its true rectilinear position. Once the distortion coefficients are computed, vision algorithms undistort the image stream before calculating distances, ensuring that straight mechanical edges remain straight in pixel coordinates.
+                        </p>
+
+                        <h2 class="article-section-title">05. Presence verification and flaw detection</h2>
+                        <p>
+                            Presence verification confirms that all required components are present before a sub-assembly leaves an automated cell. Common presence checks include verifying that an O-ring is seated in its groove, checking that a retaining clip is installed, or confirming that adhesive beads have been dispensed continuously. Flaw detection inspects surfaces for voids, burrs, scratches, or flash.
+                        </p>
+                        <p>
+                            Both tasks rely on segmenting the acquired image into foreground features and background regions using thresholding. Once a binary image is formed, individual disconnected regions must be quantified. The cv::connectedComponentsWithStats function segments a binary image into labeled connected foreground components and computes bounding box geometry and pixel area for each label.<sup><a href="#ref-9">[9]</a></sup>
+                        </p>
+                        <p>
+                            The CC_STAT_AREA statistic output in OpenCV connected components represents the total area in pixels of the labeled component.<sup><a href="#ref-9">[9]</a></sup> In a presence inspection application, software evaluates <code>CC_STAT_AREA</code> against upper and lower threshold limits established during process qualification. If a required gasket has an expected area of 4,500 pixels, an observed component with an area under 3,000 pixels indicates a torn or missing gasket, triggering an immediate robot reject routine.
+                        </p>
+                        <pre class="article-code"><code>import cv2 as cv
+import numpy as np
+
+# Load preprocessed binary inspection image (foreground = 255, background = 0)
+binary_mask = cv.imread('inspected_part_bin.png', cv.IMREAD_GRAYSCALE)
+
+# Segment connected components and extract statistics
+num_labels, labels, stats, centroids = cv.connectedComponentsWithStats(binary_mask)
+
+# Component statistics columns: [LEFT, TOP, WIDTH, HEIGHT, AREA]
+min_expected_area = 4000
+max_expected_area = 5000
+inspection_passed = False
+
+for label_idx in range(1, num_labels):  # Skip label 0 (background)
+    area = stats[label_idx, cv.CC_STAT_AREA]
+    cx, cy = centroids[label_idx]
+    
+    if min_expected_area &lt;= area &lt;= max_expected_area:
+        inspection_passed = True
+        print(f"Component found: Area={area} px at ({cx:.1f}, {cy:.1f})")
+        break
+
+if not inspection_passed:
+    print("REJECT: Part missing, damaged, or out of tolerance.")</code></pre>
+
+                        <h2 class="article-section-title">06. Barcode verification and 2D symbol reading</h2>
+                        <p>
+                            Traceability is an essential requirement in modern manufacturing. Robots must scan identification marks to verify part variants, confirm serial numbers, and log quality records into manufacturing execution systems. Marking methods range from printed paper labels to direct part marking (DPM) etched onto metal or plastic surfaces.
+                        </p>
+                        <p>
+                            A critical distinction exists between barcode reading and barcode verification. A standard barcode scanner simply attempts to decode the data string. If the code is degraded, a standard scanner may fail intermittently without indicating why. Barcode print quality is standardized by ISO/IEC 15416 for linear barcodes and ISO/IEC 15415 for two-dimensional symbols, which optical verifiers use to grade readability.<sup><a href="#ref-10">[10]</a></sup> ISO/IEC 15416 specifies print quality testing for linear barcodes, while ISO/IEC 15415 specifies testing for two-dimensional symbols.<sup><a href="#ref-10">[10]</a></sup>
+                        </p>
+                        <p>
+                            For compact industrial components, two-dimensional matrix symbols provide higher data density than linear barcodes. Data Matrix barcodes can be formatted in square form to encode maximum data capacity or in rectangular form with limited height for high-speed printing and narrow spaces.<sup><a href="#ref-11">[11]</a></sup> When parts are subjected to harsh machining, thermal cycling, or chemical baths, printed markings can become scratched or partially obscured. Data Matrix ECC 200 is the only Data Matrix version that utilizes Reed-Solomon error correction to detect damage locations and reconstruct corrupted codewords.<sup><a href="#ref-11">[11]</a></sup> Data Matrix ECC 200 uses Reed-Solomon error correction and an L-shaped solid finder pattern to locate and decode damaged symbols.<sup><a href="#ref-11">[11]</a></sup> The solid L-shaped pattern allows vision systems to locate the matrix, while Reed-Solomon error correction reconstructs corrupted data even if a portion of the code is damaged.
+                        </p>
+                        <p>
+                            In OpenCV, vision applications decode barcodes and matrix symbols using built-in detection classes. In OpenCV, cv::barcode::BarcodeDetector provides detectAndDecodeWithType to simultaneously localize bounding quadrangles and extract decoded text and symbology type.<sup><a href="#ref-12">[12]</a></sup> The BarcodeDetector detect method returns bounding vertices for each detected barcode ordered as bottomLeft, topLeft, topRight, and bottomRight.<sup><a href="#ref-12">[12]</a></sup> By extracting these four bounding corners, a robot can calculate the planar orientation of the code and align its suction gripper or dispensing tool with the part.
+                        </p>
+                        <p>
+                            For cylindrical parts, cans, or flexible packages, symbols are frequently printed on non-planar surfaces. Standard planar decoders fail when perspective curvature distorts grid spacing. OpenCV cv::QRCodeDetector includes detectAndDecodeCurved to detect and decode QR codes applied to curved packaging or cylindrical surfaces.<sup><a href="#ref-13">[13]</a></sup> This algorithm allows vision pipelines to decode QR codes directly from cylindrical or curved surfaces.
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why do telecentric lenses eliminate parallax and perspective errors in dimensional gauging, and how do they behave when an object moves out of focus?</li>
+                            <li class="article-spec-item">How is optical resolution formally defined in machine vision, and what is the minimum sampling requirement imposed by the Nyquist limit?</li>
+                            <li class="article-spec-item">Which standards govern print quality verification for linear and two-dimensional barcodes, and what error correction algorithm enables Data Matrix ECC 200 symbols to be decoded when damaged?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 13 of 13 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Association for Advancing Automation (A3), &ldquo;Machine Vision &amp; AI: Improving Automated Inspection in Manufacturing.&rdquo; <a href="https://www.automate.org/blogs/machine-vision-and-ai-improving-automated-inspection-in-manufacturing" target="_blank" rel="noopener noreferrer">automate.org/blogs/machine-vision-and-ai-improving-automated-inspection-in-manufacturing</a>.</li>
+                            <li id="ref-2">Edmund Optics, &ldquo;Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications/</a>.</li>
+                            <li id="ref-3">Edmund Optics, &ldquo;Resolution.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/resolution/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/resolution/</a>.</li>
+                            <li id="ref-4">Edmund Optics, &ldquo;Contrast.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/contrast/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/contrast/</a>.</li>
+                            <li id="ref-5">Edmund Optics, &ldquo;The Advantages of Telecentricity.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/advantages-of-telecentricity/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/advantages-of-telecentricity/</a>.</li>
+                            <li id="ref-6">Edmund Optics, &ldquo;In-line Illumination.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/in-line-illumination-considerations/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/in-line-illumination-considerations/</a>.</li>
+                            <li id="ref-7">Edmund Optics, &ldquo;Common Illumination Types.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination/</a>.</li>
+                            <li id="ref-8">Edmund Optics, &ldquo;Distortion.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/distortion/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/distortion/</a>.</li>
+                            <li id="ref-9">OpenCV, &ldquo;Structural Analysis and Shape Descriptors.&rdquo; <a href="https://docs.opencv.org/4.x/d3/dc0/group__imgproc__shape.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d3/dc0/group__imgproc__shape.html</a>.</li>
+                            <li id="ref-10">GS1, &ldquo;10 steps to barcode your product - English.&rdquo; <a href="https://www.gs1.org/standards/barcodes/10-steps-to-barcode-your-product/english" target="_blank" rel="noopener noreferrer">gs1.org/standards/barcodes/10-steps-to-barcode-your-product/english</a>.</li>
+                            <li id="ref-11">GS1, &ldquo;GS1 DataMatrix Guideline.&rdquo; <a href="https://ref.gs1.org/guidelines/datamatrix/" target="_blank" rel="noopener noreferrer">ref.gs1.org/guidelines/datamatrix/</a>.</li>
+                            <li id="ref-12">OpenCV, &ldquo;cv::barcode::BarcodeDetector Class Reference.&rdquo; <a href="https://docs.opencv.org/4.x/dc/df7/classcv_1_1barcode_1_1BarcodeDetector.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/dc/df7/classcv_1_1barcode_1_1BarcodeDetector.html</a>.</li>
+                            <li id="ref-13">OpenCV, &ldquo;cv::QRCodeDetector Class Reference.&rdquo; <a href="https://docs.opencv.org/4.x/de/dc3/classcv_1_1QRCodeDetector.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/de/dc3/classcv_1_1QRCodeDetector.html</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-7-4.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">7.4 3D Sensing</span>
+                                </a>
+                                <a href="robotics-7-6.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">7.6 Lab: A ROS 2 Camera Pipeline</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

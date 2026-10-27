@@ -1,0 +1,359 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 7.4 3D Sensing
+-->
+<html lang="en">
+    <head>
+        <title>7.4 3D Sensing — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Principles of 3D machine vision for robotics: direct sensing versus inference, stereo triangulation, point cloud processing with PCL, planar segmentation, Euclidean clustering, and industrial picking requirements." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-7-4.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="7.4 3D Sensing — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Principles of 3D machine vision for robotics: direct sensing versus inference, stereo triangulation, point cloud processing with PCL, planar segmentation, Euclidean clustering, and industrial picking requirements." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-7-4.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="7.4 3D Sensing, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="7.4 3D Sensing — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Principles of 3D machine vision for robotics: direct sensing versus inference, stereo triangulation, point cloud processing with PCL, planar segmentation, Euclidean clustering, and industrial picking requirements." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-vision.html">Chapter 7 &middot; Vision</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">7.4 3D Sensing</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Direct 3D sensing versus 2D inference</h2>
+                            <p>
+                                In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we examined the fundamental trade-off between 2D and 3D guidance systems. Planar 2D vision works effectively when workpieces lie flat on a known, flat surface at a constant height. However, modern factory automation increasingly demands handling parts jumbled inside deep storage totes, overlapping boxes on pallets, or unoriented castings in shipping containers. In these unstructured environments, cameras must measure not only horizontal and vertical position, but also true physical depth and three-dimensional spatial orientation.
+                            </p>
+                            <p>
+                                Industrial automation divides three-dimensional perception into two distinct technological approaches: direct physical sensing and learned visual inference. Direct 3D sensing resolves range in hardware, using LiDAR pulses for optical precision or radar waves to penetrate dust, rain, and fog.<sup><a href="#ref-1">[1]</a></sup> These hardware sensors measure distance directly by timing the travel of emitted signals or calculating precise trigonometric triangles, ensuring that range data is physically grounded.
+                            </p>
+                            <p>
+                                The engineering distinction between sensing and statistical prediction defines system reliability. Structured light and stereo vision qualify as 3D sensing because they calculate depth through deterministic geometry from a calibrated physical baseline, whereas neural network inference predicts 3D structure from 2D images without geometric anchors.<sup><a href="#ref-1">[1]</a></sup> When an algorithm infers depth from a single 2D image, it guesses distance based on learned patterns like shading and perspective cues. If an unexpected object or lighting variation appears, neural network inference can produce unpredictable scaling errors. Direct 3D sensing, by contrast, relies on fixed optical geometry where distance measurements are constrained by rigid physical mathematics.
+                            </p>
+
+                            <h2 class="article-section-title">02. Stereo vision principles and disparity calculation</h2>
+                            <p>
+                                Stereo vision mimics biological depth perception by mounting two calibrated cameras separated by a fixed horizontal distance, known as the physical baseline. When both cameras capture an identical object, the object appears at slightly different horizontal pixel positions in the left and right sensor frames. This horizontal displacement between corresponding image points is termed <strong>disparity</strong>.
+                            </p>
+                            <p>
+                                The relationship between image disparity and physical depth is strictly geometric. In stereo vision triangulation, depth Z is inversely proportional to disparity according to the relationship disparity equals baseline B times focal length f divided by depth Z.<sup><a href="#ref-2">[2]</a></sup> Expressed algebraically:
+                            </p>
+                            <pre class="article-code"><code>disparity = (baseline * f) / depth
+depth = (baseline * f) / disparity</code></pre>
+                            <p>
+                                When a part is situated very close to the stereo camera, the horizontal shift between the two camera views is large, resulting in a large disparity value. As the part moves farther away toward infinity, the light rays entering the lenses become nearly parallel, and disparity approaches zero.
+                            </p>
+                            <p>
+                                To generate a complete depth map, stereo matching algorithms compare rectangular pixel blocks across scanlines in the left and right images. However, matching fails if a surface is completely smooth and featureless, such as unpainted polished sheet metal. In OpenCV stereo block matching, <code>texture_threshold</code> discards regions that lack sufficient texture to support reliable correspondence calculation.<sup><a href="#ref-2">[2]</a></sup> By filtering out low-texture patches, the algorithm avoids making random, erroneous depth estimates in flat regions.
+                            </p>
+                            <p>
+                                System designers must balance measurement depth range against computational execution time. Increasing the number of disparities in stereo matching expands the range of visible scene depths at the expense of requiring more computation.<sup><a href="#ref-2">[2]</a></sup> Searching across more disparity steps enables the vision system to reconstruct objects that sit both very close to and far from the sensor. However, every additional disparity level requires more pixel matching calculations, increasing latency on the robot controller.
+                            </p>
+
+                            <h2 class="article-section-title">03. Point cloud filtering: pass-through, voxel grids, and outlier removal</h2>
+                            <p>
+                                The primary output of direct 3D sensing devices—whether stereo cameras, structured light projectors, or laser line scanners—is a <strong>point cloud</strong>. A point cloud is an unorganized collection of data points in 3D space, where each point represents a Cartesian coordinate <code>(x, y, z)</code> reflected from an object surface. Before these spatial points can guide a robot manipulator, the raw point cloud must be conditioned using specialized software libraries such as the Point Cloud Library (PCL).
+                            </p>
+                            <p>
+                                The first conditioning stage removes points outside the robot work volume. In factory cells, cameras inevitably capture cell safety fences, the concrete floor, or overhead lights. The PCL <code>PassThrough</code> filter discards point cloud data whose coordinates along a specified axis fall outside user-defined minimum and maximum limits.<sup><a href="#ref-3">[3]</a></sup> By specifying strict spatial bounds along the X, Y, and Z axes, the vision software trims away irrelevant background structures and isolates only the bin or conveyor zone where parts arrive.
+                            </p>
+                            <p>
+                                Industrial 3D sensors generate massive datasets containing hundreds of thousands or even millions of points per frame. Processing this volume of raw spatial data overwhelms path-planning algorithms. The PCL <code>VoxelGrid</code> filter downsamples point clouds by partitioning 3D space into voxel boxes and replacing all points inside each box with their centroid.<sup><a href="#ref-4">[4]</a></sup> A voxel represents a volumetric cube in 3D space. By calculating the center of mass of all points inside each voxel cube, the filter preserves the underlying physical shape of the object while reducing data density by an order of magnitude.
+                            </p>
+                            <p>
+                                The scale of spatial reduction is controlled by configuring the physical size of each voxel element. In the PCL <code>VoxelGrid</code> filter, the <code>setLeafSize</code> method configures the physical length, width, and height of the 3D voxel boxes used for spatial downsampling.<sup><a href="#ref-4">[4]</a></sup> Setting a leaf size of 0.01 meters, for example, creates 1 cm cubic bins, producing an evenly spaced, lightweight point cloud suitable for fast spatial calculations.
+                            </p>
+                            <p>
+                                Ambient optical reflections, dust, and sensor electrical noise inevitably introduce stray points that float above or below actual workpiece surfaces. PCL <code>StatisticalOutlierRemoval</code> computes the mean distance from each point to its neighbors and trims points falling outside an interval defined by the global mean and standard deviation.<sup><a href="#ref-5">[5]</a></sup> The algorithm models point neighbor distances as a Gaussian distribution. Any point whose average neighbor distance exceeds the normal threshold is identified as an isolated noise artifact and discarded.
+                            </p>
+                            <p>
+                                Denoising behavior is configured through two core parameters. In PCL <code>StatisticalOutlierRemoval</code>, <code>setMeanK</code> sets the neighborhood sample size and <code>setStddevMulThresh</code> sets the standard deviation threshold for removing noise.<sup><a href="#ref-5">[5]</a></sup> Increasing <code>setMeanK</code> evaluates a wider local neighborhood, while adjusting the standard deviation multiplier controls how aggressively isolated points are pruned from the dataset.
+                            </p>
+
+                            <h2 class="article-section-title">04. Planar segmentation and table surface extraction</h2>
+                            <p>
+                                In many industrial pick-and-place tasks, workpieces rest on top of a flat table, conveyor belt, or bin bottom. Before an algorithm can isolate individual parts, it must separate the supporting planar surface from the objects lying on top of it.
+                            </p>
+                            <p>
+                                PCL implements surface extraction using the Random Sample Consensus (RANSAC) mathematical algorithm. In PCL <code>SACSegmentation</code>, <code>setModelType</code> specifies geometric shapes like <code>SACMODEL_PLANE</code> while <code>setDistanceThreshold</code> defines how close points must be to the model to qualify as inliers.<sup><a href="#ref-6">[6]</a></sup> RANSAC iteratively selects random points, estimates mathematical plane coefficients, and counts how many points fall within the defined distance threshold.
+                            </p>
+                            <p>
+                                Once the dominant table plane is determined, its inlier points are extracted and subtracted from the scene. Removing the supporting plane leaves an isolated cloud containing only the elevated workpieces. This eliminates false surface connections and ensures that subsequent clustering routines evaluate only the actual objects to be grasped.
+                            </p>
+                            <pre class="article-code"><code>// C++ snippet demonstrating planar RANSAC segmentation in PCL
+pcl::SACSegmentation&lt;pcl::PointXYZ&gt; seg;
+pcl::PointIndices::Ptr inliers(new pcl::PointIndices);
+pcl::ModelCoefficients::Ptr coefficients(new pcl::ModelCoefficients);
+
+seg.setOptimizeCoefficients(true);
+seg.setModelType(pcl::SACMODEL_PLANE);
+seg.setMethodType(pcl::SAC_RANSAC);
+seg.setDistanceThreshold(0.01); // 1 cm distance threshold
+
+seg.setInputCloud(filtered_cloud);
+seg.segment(*inliers, *coefficients);</code></pre>
+
+                            <h2 class="article-section-title">05. Euclidean cluster extraction for object segmentation</h2>
+                            <p>
+                                After removing supporting table planes and noise artifacts, the remaining point cloud contains points belonging to multiple separate parts. The vision pipeline must segment these unorganized points into distinct clusters, where each cluster corresponds to one physical object.
+                            </p>
+                            <p>
+                                To partition 3D space, PCL provides spatial clustering algorithms. Euclidean cluster extraction segments unorganized point clouds into distinct object clusters using nearest-neighbor searches structured similar to a flood fill algorithm.<sup><a href="#ref-7">[7]</a></sup> It continuously expands the cluster until no further neighbors are found within the defined radius, successfully isolating individual items.
+                            </p>
+                            <p>
+                                Cluster extraction behavior is controlled by distance and volume bounds. In PCL <code>EuclideanClusterExtraction</code>, <code>setClusterTolerance</code> defines spatial proximity for grouping points while <code>setMinClusterSize</code> and <code>setMaxClusterSize</code> discard clusters outside valid point count bounds.<sup><a href="#ref-7">[7]</a></sup> If two parts are separated by a physical gap larger than the cluster tolerance, they are recognized as distinct items. Furthermore, rejecting clusters that have fewer points than <code>setMinClusterSize</code> eliminates remaining sensor noise, while capping <code>setMaxClusterSize</code> prevents massive background structures from being processed as single parts.
+                            </p>
+
+                            <h2 class="article-section-title">06. Industrial bin picking and piece picking requirements</h2>
+                            <p>
+                                The ultimate goal of 3D vision in manufacturing and logistics is computing collision-free robot pick poses. Vision guidance systems use 3D point clouds for object segmentation and robot picking pose estimation via CAD model matching or geometry matching.<sup><a href="#ref-8">[8]</a></sup> By aligning a pre-loaded CAD model against an extracted cluster or analyzing local surface geometry, the vision software identifies the optimal grasp point and reports the target's 6-DoF pose <code>(X, Y, Z, Roll, Pitch, Yaw)</code> to the robot controller.
+                            </p>
+                            <p>
+                                Production demands impose strict timing constraints on 3D perception pipelines. In industrial random bin picking, robot cycles generally range from 10 to 15 seconds, allowing camera time budgets between 700 ms and 1500 ms.<sup><a href="#ref-8">[8]</a></sup> Because heavy industrial arms must travel into deep metal bins, manipulate heavy castings, and clear bin rims safely, their overall cycle times are relatively long. This gives the 3D vision system up to 1.5 seconds to capture high-density scans and compute collision-free grasp trajectories.
+                            </p>
+                            <p>
+                                Logistics fulfillment and e-commerce applications operate under vastly faster cycle requirements. In robotic piece picking applications, robot cycles typically range between 3 and 4 seconds, achieving throughput rates exceeding 1,000 items per hour per robot.<sup><a href="#ref-9">[9]</a></sup> To sustain this rapid picking pace, the camera and vision computer must acquire and process point cloud data while the robot arm is returning from its previous drop-off location.
+                            </p>
+                            <p>
+                                This extreme throughput compresses the time allocated for image acquisition and point cloud processing. The allocated camera vision acquisition and processing time budget in automated piece picking typically ranges from 350 ms to 700 ms.<sup><a href="#ref-9">[9]</a></sup> If 3D scanning or point cloud filtering exceeds 700 ms, the robot must pause at its approach pose, reducing overall hourly throughput.
+                            </p>
+                            <p>
+                                In addition to speed constraints, piece picking presents severe object variety, spanning flexible plastic polybags, shiny packaging, and deformable cardboard cartons. Suction cup grippers are commonly chosen in piece picking because their mechanical compliance tolerates point cloud inaccuracies and prevents collision damage.<sup><a href="#ref-9">[9]</a></sup> When a point cloud exhibits minor surface depth errors or holes, a rigid mechanical finger gripper might collide or fail to seat properly. A flexible suction cup deforms against uneven surfaces, creating an airtight seal that compensates for small perception discrepancies.
+                            </p>
+
+                            <h2 class="article-section-title">07. The complete 3D vision guidance workflow</h2>
+                            <p>
+                                Deploying 3D sensing in a robotic workstation requires integrating hardware acquisition, point cloud filtering, and robot kinematics into an automated pipeline. The diagram below illustrates the end-to-end processing sequence from raw physical sensing to robot trajectory execution.
+                            </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 230" role="img" aria-label="3D vision pipeline for robotic picking. Stage 1: 3D acquisition via direct sensing (LiDAR, structured light, or stereo). Stage 2: Spatial preprocessing via PassThrough filtering and VoxelGrid downsampling. Stage 3: Denoising and segmentation via StatisticalOutlierRemoval, SACSegmentation plane removal, and EuclideanClusterExtraction. Stage 4: CAD model matching and picking pose computation within camera time budget." xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <marker id="arrow-3d" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                                            <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                        </marker>
+                                    </defs>
+                                    <rect class="d-box" x="10" y="40" width="145" height="140"/>
+                                    <text class="d-text" x="20" y="66">1. 3D Sensing</text>
+                                    <text class="d-muted" x="20" y="88">Direct hardware:</text>
+                                    <text class="d-muted" x="20" y="106">LiDAR, Radar</text>
+                                    <text class="d-muted" x="20" y="124">Structured Light</text>
+                                    <text class="d-muted" x="20" y="142">Stereo disparity</text>
+                                    <text class="d-muted" x="20" y="160">disparity = B·f / Z</text>
+
+                                    <line class="d-strong" x1="155" y1="110" x2="175" y2="110" marker-end="url(#arrow-3d)"/>
+
+                                    <rect class="d-box" x="180" y="40" width="145" height="140"/>
+                                    <text class="d-text" x="190" y="66">2. Preprocess</text>
+                                    <text class="d-muted" x="190" y="88">PassThrough filter</text>
+                                    <text class="d-muted" x="190" y="106">(spatial bounds)</text>
+                                    <text class="d-muted" x="190" y="124">VoxelGrid filter</text>
+                                    <text class="d-muted" x="190" y="142">(setLeafSize)</text>
+                                    <text class="d-muted" x="190" y="160">StatOutlierRemoval</text>
+
+                                    <line class="d-strong" x1="325" y1="110" x2="345" y2="110" marker-end="url(#arrow-3d)"/>
+
+                                    <rect class="d-box" x="350" y="40" width="145" height="140"/>
+                                    <text class="d-text" x="360" y="66">3. Segment</text>
+                                    <text class="d-muted" x="360" y="88">SACSegmentation</text>
+                                    <text class="d-muted" x="360" y="106">SACMODEL_PLANE</text>
+                                    <text class="d-muted" x="360" y="124">Extract table plane</text>
+                                    <text class="d-muted" x="360" y="142">Euclidean cluster</text>
+                                    <text class="d-muted" x="360" y="160">Separate parts</text>
+
+                                    <line class="d-strong" x1="495" y1="110" x2="515" y2="110" marker-end="url(#arrow-3d)"/>
+
+                                    <rect class="d-box-gold" x="520" y="40" width="150" height="140"/>
+                                    <text class="d-text" x="530" y="66">4. Pick Pose</text>
+                                    <text class="d-muted" x="530" y="88">CAD model match</text>
+                                    <text class="d-muted" x="530" y="106">Geometry match</text>
+                                    <text class="d-muted" x="530" y="124">Time: 350-700 ms</text>
+                                    <text class="d-muted" x="530" y="142">Suction compliance</text>
+                                    <text class="d-muted" x="530" y="160">Execute pick (2.8)</text>
+                                </svg>
+                                <figcaption>End-to-end 3D perception architecture: from raw spatial sensor acquisition and voxel grid decimation to RANSAC plane extraction, cluster segmentation, and CAD-matched pick pose estimation.</figcaption>
+                            </figure>
+
+                            <p>
+                                The final stage links directly to the kinematic concepts introduced in <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>. Once CAD model matching or surface geometry fitting determines the target workpiece pose in camera coordinates, the transform is mapped into the robot base coordinate frame via hand-eye calibration. The robot controller plans a collision-free approach vector, drives the end-effector to the target pose, activates suction, and transfers the item, repeating the cycle thousands of times per shift.
+                            </p>
+
+                            <h2 class="article-section-title">08. Check your understanding</h2>
+                            <ol class="article-spec-list">
+                                <li class="article-spec-item">Why do structured light and stereo vision qualify as direct 3D sensing rather than neural network inference?</li>
+                                <li class="article-spec-item">In stereo vision triangulation, what is the mathematical formula relating depth Z to baseline B, focal length f, and disparity?</li>
+                                <li class="article-spec-item">In automated piece picking applications, what are typical robot cycle times, hourly pick rates, and allocated camera time budgets?</li>
+                            </ol>
+
+                            <h2 class="article-section-title">09. References</h2>
+                            <p class="references-note">Source check (October 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">Association for Advancing Automation (A3), &ldquo;Sense It or Infer It? Two Approaches to 3D Machine Vision.&rdquo; <a href="https://www.automate.org/blogs/sense-it-or-infer-it-two-approaches-to-3d-machine-vision" target="_blank" rel="noopener noreferrer">automate.org/blogs/sense-it-or-infer-it-two-approaches-to-3d-machine-vision</a>.</li>
+                                <li id="ref-2">OpenCV, &ldquo;OpenCV: Depth Map from Stereo Images.&rdquo; <a href="https://docs.opencv.org/4.x/dd/d53/tutorial_py_depthmap.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/dd/d53/tutorial_py_depthmap.html</a>.</li>
+                                <li id="ref-3">Point Cloud Library (PCL), &ldquo;Filtering a PointCloud using a PassThrough filter &mdash; Point Cloud Library 1.15.1-dev documentation.&rdquo; <a href="https://pointclouds.org/documentation/tutorials/passthrough.html" target="_blank" rel="noopener noreferrer">pointclouds.org/documentation/tutorials/passthrough.html</a>.</li>
+                                <li id="ref-4">Point Cloud Library (PCL), &ldquo;Downsampling a PointCloud using a VoxelGrid filter &mdash; Point Cloud Library 1.15.1-dev documentation.&rdquo; <a href="https://pointclouds.org/documentation/tutorials/voxel_grid.html" target="_blank" rel="noopener noreferrer">pointclouds.org/documentation/tutorials/voxel_grid.html</a>.</li>
+                                <li id="ref-5">Point Cloud Library (PCL), &ldquo;Removing outliers using a StatisticalOutlierRemoval filter &mdash; Point Cloud Library 1.15.1-dev documentation.&rdquo; <a href="https://pointclouds.org/documentation/tutorials/statistical_outlier.html" target="_blank" rel="noopener noreferrer">pointclouds.org/documentation/tutorials/statistical_outlier.html</a>.</li>
+                                <li id="ref-6">Point Cloud Library (PCL), &ldquo;Plane model segmentation &mdash; Point Cloud Library 1.15.1-dev documentation.&rdquo; <a href="https://pointclouds.org/documentation/tutorials/planar_segmentation.html" target="_blank" rel="noopener noreferrer">pointclouds.org/documentation/tutorials/planar_segmentation.html</a>.</li>
+                                <li id="ref-7">Point Cloud Library (PCL), &ldquo;Euclidean Cluster Extraction &mdash; Point Cloud Library 1.15.1-dev documentation.&rdquo; <a href="https://pointclouds.org/documentation/tutorials/cluster_extraction.html" target="_blank" rel="noopener noreferrer">pointclouds.org/documentation/tutorials/cluster_extraction.html</a>.</li>
+                                <li id="ref-8">Zivid, &ldquo;Application Requirements &mdash; ZIVID KNOWLEDGE BASE documentation.&rdquo; <a href="https://support.zivid.com/en/latest/academy/applications/bin-picking/application-requirements.html" target="_blank" rel="noopener noreferrer">support.zivid.com/en/latest/academy/applications/bin-picking/application-requirements.html</a>.</li>
+                                <li id="ref-9">Zivid, &ldquo;Application Requirements &mdash; ZIVID KNOWLEDGE BASE documentation.&rdquo; <a href="https://support.zivid.com/en/latest/academy/applications/piece-picking/application-requirements.html" target="_blank" rel="noopener noreferrer">support.zivid.com/en/latest/academy/applications/piece-picking/application-requirements.html</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-7-3.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">7.3 Image Processing Basics</span>
+                                </a>
+                                <a href="robotics-7-5.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">7.5 Inspection and Measurement</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

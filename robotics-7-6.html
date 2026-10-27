@@ -1,0 +1,408 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 7.6 Lab: A ROS 2 Camera Pipeline
+-->
+<html lang="en">
+    <head>
+        <title>7.6 Lab: A ROS 2 Camera Pipeline — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Build an end-to-end ROS 2 camera pipeline: camera driver concepts, sensor_msgs/Image, sensor_msgs/CameraInfo, image_transport, message synchronization, cv_bridge, and OpenCV processing nodes." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-7-6.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="7.6 Lab: A ROS 2 Camera Pipeline — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Build an end-to-end ROS 2 camera pipeline: camera driver concepts, sensor_msgs/Image, sensor_msgs/CameraInfo, image_transport, message synchronization, cv_bridge, and OpenCV processing nodes." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-7-6.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="7.6 Lab: A ROS 2 Camera Pipeline, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="7.6 Lab: A ROS 2 Camera Pipeline — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Build an end-to-end ROS 2 camera pipeline: camera driver concepts, sensor_msgs/Image, sensor_msgs/CameraInfo, image_transport, message synchronization, cv_bridge, and OpenCV processing nodes." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-vision.html">Chapter 7 &middot; Vision</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">7.6 Lab: A ROS 2 Camera Pipeline</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Cameras in the ROS 2 architecture</h2>
+                        <p>
+                            In modern robotic work cells, camera sensors provide the primary visual link between dynamic physical environments and autonomous robot decision making. In earlier chapters, we examined how ROS 2 nodes communicate over topics to coordinate robot trajectories and handle sensor streams. In <a href="robotics-3-4.html">Lesson 3.4 Running Your First Example</a>, you constructed basic publishers and subscribers in Python using the <code>rclpy</code> client library. In <a href="robotics-2-8.html">Lesson 2.8 Vision-Guided Picking</a>, you explored how physical cameras are mounted in eye-in-hand or eye-to-hand configurations and calibrated relative to robot work coordinates.
+                        </p>
+                        <p>
+                            A robust ROS 2 vision architecture separates hardware device drivers from high-level computer vision processing. At the hardware interface boundary, a dedicated camera driver node communicates directly with the physical camera sensor across an industrial bus. Industrial machine vision cameras comply with standardized device architectures to maintain software compatibility across hardware vendors. The GenICam standard provides a generic programming interface for all camera types regardless of interface hardware.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            For example, a ROS 2 driver node can interact with camera features such as exposure time and gain through standardized interfaces without custom code for every vendor. The driver node converts incoming hardware image frames into standard ROS 2 messages and publishes them across the middleware graph. Downstream perception nodes subscribe to these published topics, execute image filtering or geometric feature extraction, and send target grasp poses or quality inspection flags to robot motion controllers.
+                        </p>
+                        <p>
+                            To understand the modular structure of this pipeline, consider how responsibilities are cleanly divided across distinct ROS 2 nodes:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Camera driver node:</span> Interfaces directly with the camera hardware or simulator. It queries raw pixel buffers from the sensor, attaches precise timestamp and optical coordinate frame metadata, and publishes synchronized message streams.</li>
+                            <li class="article-spec-item"><span class="spec-label">Image processing node:</span> Subscribes to the raw image topic, converts serialized message buffers into multidimensional arrays, applies OpenCV filtering algorithms, and publishes annotated diagnostic images.</li>
+                            <li class="article-spec-item"><span class="spec-label">Perception and motion control nodes:</span> Ingest extracted workpiece bounding boxes, part centroid coordinates, or edge contours to calculate robot grasping trajectories or trigger sorting mechanisms.</li>
+                        </ul>
+
+                        <h2 class="article-section-title">02. Image data representation: sensor_msgs/Image</h2>
+                        <p>
+                            To enable seamless interoperability across nodes written in Python, C++, or Rust, ROS 2 standardizes the representation of digital raster frames. The sensor_msgs/Image message defines uncompressed raster image data using height, width, and encoding fields.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Every image message begins with a standard ROS header structure containing critical temporal and spatial metadata. In sensor_msgs/Image the header timestamp represents image acquisition time and frame_id specifies the optical frame of the camera.<sup><a href="#ref-2">[2]</a></sup> The acquisition timestamp records the exact moment the camera shutter opened, which is essential for synchronizing vision data with joint encoder states when a robot arm moves during eye-in-hand image acquisition or when tracking moving conveyor belts.
+                        </p>
+                        <p>
+                            The <code>frame_id</code> field ties the camera data to the robot kinematic coordinate tree maintained by the TF2 transform library. In the ROS optical camera coordinate frame, +x points right, +y points down, and +z points into the image plane.<sup><a href="#ref-2">[2]</a></sup> This optical convention places the coordinate origin directly at the camera's optical center. Notice that this optical convention differs from standard robot body coordinate frames (where +x points forward, +y points left, and +z points upward), making geometric transform trees essential when mapping 2D pixel coordinates into 3D robot grasping poses.
+                        </p>
+                        <p>
+                            The message payload describes the binary layout of pixel data in system memory. The <code>height</code> field specifies the number of image rows, while <code>width</code> specifies the number of image columns. The <code>encoding</code> string defines channel organization and color bit depth, such as <code>"bgr8"</code>, <code>"rgb8"</code>, or <code>"mono8"</code>. In sensor_msgs/Image the step field indicates full row length in bytes, making total matrix data size equal to step times rows.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            For example, consider an uncompressed color camera streaming at a resolution of 1,920 columns by 1,080 rows with an encoding of &ldquo;bgr8&rdquo;. Each color pixel requires 3 bytes (one byte each for blue, green, and red), yielding a full row step of 1,920 &times; 3 = 5,760 bytes. The complete image data payload in the <code>data</code> byte array evaluates to 5,760 &times; 1,080 = 6,220,800 bytes per frame. Suppose the camera instead streams a single-channel 8-bit monochrome stream (&ldquo;mono8&rdquo;) at a resolution of 640 columns by 480 rows; here each row requires exactly 640 bytes, producing a message data array of 640 &times; 480 = 307,200 bytes.
+                        </p>
+                        <p>
+                            Understanding the distinction between <code>width &times; bytes_per_pixel</code> and the <code>step</code> field is vital for robust memory handling. In some hardware drivers and image processing pipelines, memory buffers are padded to 32-byte or 64-byte boundaries to optimize memory alignment on host processors. For example, imagine a monochrome image with a width of 642 pixels; a hardware driver might pad each row to 672 bytes to satisfy memory alignment requirements. In that scenario, reading only <code>width</code> bytes per row would cause subsequent scanlines to drift diagonally across the raster buffer. Relying on the <code>step</code> field guarantees that subscriber nodes calculate row offsets accurately regardless of internal memory padding.
+                        </p>
+
+                        <h2 class="article-section-title">03. Calibration metadata: sensor_msgs/CameraInfo</h2>
+                        <p>
+                            Transmitting raw pixel buffers alone is insufficient for robotic manipulation. To determine where an imaged object is located in three-dimensional physical space, downstream nodes require precise optical and geometric calibration parameters. A camera driver node therefore publishes a synchronized companion <code>sensor_msgs/msg/CameraInfo</code> message alongside every <code>sensor_msgs/msg/Image</code> message.
+                        </p>
+                        <p>
+                            The <code>CameraInfo</code> message specifies mathematical models of lens distortion and projective geometry. The plumb_bob distortion model in sensor_msgs/CameraInfo represents standard radial and tangential lens distortion.<sup><a href="#ref-3">[3]</a></sup> The distortion parameters array D for the plumb_bob model consists of five coefficients: k1, k2, t1, t2, and k3.<sup><a href="#ref-3">[3]</a></sup> Coefficients <code>k1, k2, k3</code> model radial lens distortion (such as barrel or pincushion distortion), while coefficients <code>t1, t2</code> model tangential distortion caused by slight physical misalignments between optical glass elements and the sensor plane.
+                        </p>
+                        <p>
+                            The geometric mapping between 3D camera coordinates and 2D pixel coordinates is parameterized by three distinct matrix structures:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Intrinsic camera matrix K:</span> The 3x3 intrinsic camera matrix K projects 3D camera frame coordinates to 2D pixel coordinates using focal lengths and principal point offsets.<sup><a href="#ref-3">[3]</a></sup> Stored as a 9-element row-major array <code>[fx, 0, cx, 0, fy, cy, 0, 0, 1]</code>, it defines horizontal and vertical focal lengths <code>fx, fy</code> in pixel units and optical principal point coordinates <code>cx, cy</code>.</li>
+                            <li class="article-spec-item"><span class="spec-label">Rectification matrix R:</span> The sensor_msgs/CameraInfo rectification matrix R is a 3x3 row-major rotation matrix that aligns coordinates to the rectified camera frame.<sup><a href="#ref-3">[3]</a></sup> In monocular setups, <code>R</code> is typically an identity matrix, whereas in stereo vision systems, <code>R</code> aligns left and right optical sensors into a shared parallel image plane.</li>
+                            <li class="article-spec-item"><span class="spec-label">Projection matrix P:</span> The projection matrix P in sensor_msgs/CameraInfo is a 3x4 row-major matrix specifying the intrinsic matrix of the rectified image.<sup><a href="#ref-3">[3]</a></sup> It projects 3D points directly into rectified 2D pixel coordinates, allowing downstream algorithms to process images without repeating non-linear distortion unwarping calculations.</li>
+                        </ul>
+                        <p>
+                            For example, imagine a calibrated monocular camera whose intrinsic matrix <code>K</code> has focal lengths <code>fx = 800.0</code>, <code>fy = 800.0</code> pixels and principal point offsets <code>cx = 320.0</code>, <code>cy = 240.0</code> pixels. Suppose a workpiece corner is located at physical 3D camera coordinates <code>[X, Y, Z] = [0.10 m, 0.05 m, 1.00 m]</code>. Under ideal pinhole projection, the normalized coordinates evaluate to <code>x' = X / Z = 0.10</code> and <code>y' = Y / Z = 0.05</code>. Multiplying by the focal lengths and adding the principal point offsets yields horizontal pixel coordinate <code>u = 800.0 &times; 0.10 + 320.0 = 400.0</code> pixels and vertical pixel coordinate <code>v = 800.0 &times; 0.05 + 240.0 = 280.0</code> pixels. When lens distortion is present, downstream rectification nodes use the coefficients in <code>D</code> alongside matrix <code>K</code> to remap raw distorted pixels into ideal rectilinear coordinates described by matrix <code>P</code>.
+                        </p>
+
+                        <h2 class="article-section-title">04. Streaming transport and message synchronization</h2>
+                        <p>
+                            Distributing high-resolution image streams across a ROS 2 network introduces significant bandwidth and latency challenges. For example, a single 1080p uncompressed color stream at 30 frames per second generates over 180 megabytes per second of raw data. If multiple perception nodes subscribe to an uncompressed camera topic across an industrial Ethernet switch or wireless network, the physical bus can become saturated, resulting in dropped packets and processing jitter.
+                        </p>
+                        <p>
+                            To manage network load efficiently, ROS 2 provides the specialized <code>image_transport</code> package. The image_transport tutorials demonstrate how to publish and subscribe to camera streams across discoverable transport plugins.<sup><a href="#ref-4">[4]</a></sup> Rather than forcing developers to embed compression code directly inside driver logic, <code>image_transport</code> allows an application to publish a single base topic (such as <code>/camera/image_raw</code>). Dynamically loaded transport plugins automatically advertise complementary compressed topic variants, such as JPEG or PNG compressed streams (<code>/camera/image_raw/compressed</code>) and video compression streams (<code>/camera/image_raw/theora</code>). Downstream subscriber nodes can select their preferred transport plugin at runtime depending on available network bandwidth and CPU resources.
+                        </p>
+                        <p>
+                            In automated vision pipelines where an algorithm requires both an image frame and its matching calibration parameters, independent topic subscriptions can cause race conditions. The message_filters TimeSynchronizer synchronizes incoming message streams based on matching timestamps in their message headers.<sup><a href="#ref-5">[5]</a></sup> When incoming messages arrive on <code>/camera/image_raw</code> and <code>/camera/camera_info</code>, <code>TimeSynchronizer</code> pairs messages that carry identical header timestamps before invoking the user callback. This synchronization guarantees that image frames are never processed with stale or misaligned calibration metadata.
+                        </p>
+                        <p>
+                            For example, suppose a vision node requires synchronized access to both image data and calibration parameters. In Python, the node constructs two <code>message_filters.Subscriber</code> objects, passing the node handle, topic names, and message types. It then instantiates a <code>TimeSynchronizer</code> filter taking both filter sources and a queue size (such as 10 frames). The node registers a dual-argument callback <code>sync_callback(image_msg, info_msg)</code> using <code>registerCallback</code>. Whenever an image message and a calibration message share identical header timestamps, the synchronizer invokes the callback with both messages matched together. If network latency delays an info message, the synchronizer queues candidate messages until matching pairs are formed or buffer limits are reached, completely eliminating race conditions.
+                        </p>
+
+                        <h2 class="article-section-title">05. Bridging ROS 2 and OpenCV with cv_bridge</h2>
+                        <p>
+                            ROS 2 communication packages transmit serialized byte buffers wrapped in standard message envelopes. However, practical computer vision applications in Python and C++ rely on optimized vision libraries such as OpenCV. In Python, OpenCV represents images as multidimensional NumPy arrays (<code>numpy.ndarray</code>). Bridging the gap between ROS 2 message buffers and OpenCV image matrices is the primary role of the <code>cv_bridge</code> library.
+                        </p>
+                        <p>
+                            The <code>cv_bridge</code> package provides bidirectional conversion functions that manage memory buffers, channel arrangements, and color conversions. In cv_bridge, imgmsg_to_cv2 converts a ROS Image message into an OpenCV NumPy image with an optional desired_encoding format.<sup><a href="#ref-6">[6]</a></sup> Specifying the <code>desired_encoding</code> parameter (such as <code>"bgr8"</code> or <code>"mono8"</code>) ensures that regardless of whether the camera hardware transmits data in RGB, BGR, or Bayer formats, the output NumPy array is converted into the exact memory layout expected by your OpenCV algorithms.
+                        </p>
+                        <p>
+                            After an OpenCV pipeline analyzes or annotates an image matrix, the resulting NumPy array often needs to be re-published onto the ROS 2 network for visualization in RViz2 or logging with ros2 bag. In cv_bridge, cv2_to_imgmsg converts an OpenCV image array into a ROS Image message with a specified pixel encoding string.<sup><a href="#ref-6">[6]</a></sup> This function formats the NumPy array into a compliant <code>sensor_msgs/msg/Image</code> message with calculated row step bytes and matching encoding metadata ready for immediate publication.
+                        </p>
+                        <p>
+                            For example, imagine a driver publishes a raw monochrome image formatted with <code>"mono8"</code> encoding. If downstream algorithms expect color representation, calling <code>bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')</code> converts the single-channel buffer into a three-channel BGR NumPy array where blue, green, and red channels replicate the grayscale intensity. Conversely, passing <code>desired_encoding='passthrough'</code> retains the source encoding without copying or transforming pixel channels. Furthermore, robust industrial nodes wrap conversion calls inside <code>try...except CvBridgeError</code> blocks. If an uncalibrated driver sends an unsupported encoding string, the node catches the error gracefully, logs a diagnostic warning, and avoids crashing the robot control process.
+                        </p>
+
+                        <h2 class="article-section-title">06. Lab: Implementing an OpenCV vision node</h2>
+                        <p>
+                            In this hands-on lab exercise, you will implement an end-to-end Python ROS 2 node that subscribes to an incoming camera stream, converts image messages with <code>cv_bridge</code>, applies OpenCV color conversion, binary thresholding, and Canny edge detection, and publishes the processed results.
+                        </p>
+                        <p>
+                            Computer vision pipelines routinely convert multi-channel color images into single-channel representations to reduce computation. The cv.cvtColor function converts an image from one color space to another using conversion codes such as cv.COLOR_BGR2GRAY.<sup><a href="#ref-7">[7]</a></sup> For example, converting a 3-channel BGR image into a 1-channel grayscale image reduces array memory volume by two-thirds, allowing downstream spatial filters to execute efficiently.
+                        </p>
+                        <p>
+                            Once an image is converted to single-channel intensity, binarization isolates candidate foreground workpieces from the background fixture or conveyor. Simple binary thresholding with cv.threshold assigns pixels above a threshold value to maxval and all other pixels to zero.<sup><a href="#ref-8">[8]</a></sup> For example, setting a threshold parameter of 128 with a maximum value of 255 assigns all bright workpiece pixels exceeding 128 to 255 (pure white), while darker background pixels are assigned to 0 (pure black).
+                        </p>
+                        <p>
+                            To detect part boundaries and dimensional contours for robot inspection, edge detection locates spatial intensity transitions. The Canny edge detector uses hysteresis thresholding with minVal and maxVal to distinguish true edges from noise.<sup><a href="#ref-9">[9]</a></sup> For example, gradient values exceeding <code>maxVal</code> are immediately classified as confirmed edges, while gradients falling below <code>minVal</code> are discarded. Pixels with gradient values between <code>minVal</code> and <code>maxVal</code> are retained only if they connect directly to confirmed edge pixels, preserving continuous object boundaries while eliminating spurious noise.
+                        </p>
+                        <p>
+                            The complete Python node implementation is structured into six logical steps:
+                        </p>
+                        <ol class="article-spec-list">
+                            <li><span class="spec-label">Parameter declaration:</span> In the node constructor, declare ROS 2 parameters for <code>binary_threshold</code>, <code>canny_min_val</code>, and <code>canny_max_val</code> so that threshold parameters can be adjusted dynamically at runtime without recompiling code.</li>
+                            <li><span class="spec-label">Subscription and publishers:</span> Subscribe to the raw camera stream on topic <code>/camera/image_raw</code>, and create two image publishers on <code>/vision/thresh_image</code> and <code>/vision/edge_image</code>.</li>
+                            <li><span class="spec-label">Image conversion:</span> In the subscription callback, invoke <code>bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')</code> to extract an OpenCV-compatible BGR NumPy array.</li>
+                            <li><span class="spec-label">Image filtering:</span> Convert the BGR array to grayscale using <code>cv.cvtColor(cv_bgr, cv.COLOR_BGR2GRAY)</code>, apply binary thresholding using <code>cv.threshold</code>, and execute Canny edge detection using <code>cv.Canny</code>.</li>
+                            <li><span class="spec-label">Header preservation and message conversion:</span> Convert the resulting binary and edge NumPy arrays back into ROS 2 image messages using <code>bridge.cv2_to_imgmsg(..., encoding='mono8')</code>. Copy the original incoming message header (<code>msg.header</code>) to both output messages so that downstream nodes retain image acquisition timestamps and camera <code>frame_id</code> metadata.</li>
+                            <li><span class="spec-label">Publication:</span> Publish both processed image messages onto their respective ROS 2 topics.</li>
+                        </ol>
+                        <p>
+                            The following Python script implements this complete vision processing pipeline inside an <code>rclpy</code> Node class:
+                        </p>
+                        <pre class="article-code"><code>import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import Image
+from cv_bridge import CvBridge, CvBridgeError
+import cv2 as cv
+
+class VisionPipelineNode(Node):
+    def __init__(self):
+        super().__init__('vision_pipeline_node')
+        
+        # Initialize cv_bridge instance
+        self.bridge = CvBridge()
+        
+        # Declare configurable threshold parameters
+        self.declare_parameter('binary_threshold', 128.0)
+        self.declare_parameter('canny_min_val', 50.0)
+        self.declare_parameter('canny_max_val', 150.0)
+        
+        # Subscribe to camera image stream
+        self.sub_image = self.create_subscription(
+            Image,
+            '/camera/image_raw',
+            self.image_callback,
+            10
+        )
+        
+        # Publish processed edge and threshold images
+        self.pub_edges = self.create_publisher(Image, '/vision/edge_image', 10)
+        self.pub_thresh = self.create_publisher(Image, '/vision/thresh_image', 10)
+        
+        self.get_logger().info('Vision pipeline node initialized and waiting for camera images.')
+
+    def image_callback(self, msg: Image):
+        try:
+            # Convert ROS Image message to OpenCV BGR array
+            cv_bgr = self.bridge.imgmsg_to_cv2(msg, desired_encoding='bgr8')
+        except CvBridgeError as err:
+            self.get_logger().error(f'Failed to convert ROS image: {err}')
+            return
+
+        # 1. Convert BGR color image to single-channel grayscale
+        cv_gray = cv.cvtColor(cv_bgr, cv.COLOR_BGR2GRAY)
+        
+        # 2. Apply simple binary thresholding
+        thresh_val = self.get_parameter('binary_threshold').value
+        _, cv_thresh = cv.threshold(cv_gray, thresh_val, 255, cv.THRESH_BINARY)
+        
+        # 3. Apply Canny edge detection with hysteresis thresholding
+        canny_min = self.get_parameter('canny_min_val').value
+        canny_max = self.get_parameter('canny_max_val').value
+        cv_edges = cv.Canny(cv_gray, canny_min, canny_max, apertureSize=3)
+        
+        try:
+            # Convert OpenCV arrays back to ROS Image messages
+            msg_thresh = self.bridge.cv2_to_imgmsg(cv_thresh, encoding='mono8')
+            msg_thresh.header = msg.header  # Preserve timestamp and optical frame_id
+            
+            msg_edges = self.bridge.cv2_to_imgmsg(cv_edges, encoding='mono8')
+            msg_edges.header = msg.header   # Preserve timestamp and optical frame_id
+            
+            # Publish processed streams
+            self.pub_thresh.publish(msg_thresh)
+            self.pub_edges.publish(msg_edges)
+        except CvBridgeError as err:
+            self.get_logger().error(f'Failed to publish processed image: {err}')
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = VisionPipelineNode()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        node.get_logger().info('Shutting down vision pipeline node.')
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()</code></pre>
+
+                        <h2 class="article-section-title">07. Testing and verification with ROS 2 CLI tools</h2>
+                        <p>
+                            Once your vision processing node is deployed, verify its execution and performance using standard ROS 2 command-line diagnostic utilities:
+                        </p>
+                        <ol class="article-spec-list">
+                            <li><span class="spec-label">Inspect active topics:</span> Verify that the camera driver and vision node are actively publishing by running <code>ros2 topic list</code> in a terminal. You should see <code>/camera/image_raw</code>, <code>/camera/camera_info</code>, <code>/vision/thresh_image</code>, and <code>/vision/edge_image</code>.</li>
+                            <li><span class="spec-label">Inspect topic metadata:</span> Run <code>ros2 topic info /camera/image_raw</code> to verify that the message type is <code>sensor_msgs/msg/Image</code> and to confirm publisher and subscriber counts.</li>
+                            <li><span class="spec-label">Verify calibration metadata:</span> Execute <code>ros2 topic echo /camera/camera_info --once</code> to confirm that the camera driver publishes valid calibration parameters. Check that the distortion model specifies <code>plumb_bob</code>, that the distortion parameters array <code>d</code> contains the five coefficients <code>[k1, k2, t1, t2, k3]</code>, and that intrinsic matrix <code>k</code> and projection matrix <code>p</code> contain non-zero focal lengths and principal point values.</li>
+                            <li><span class="spec-label">Measure streaming frequency:</span> Check that edge processing meets real-time cycle deadlines by executing <code>ros2 topic hz /vision/edge_image</code>. For conveyor-guided picking, streaming rates typically target 30 Hz without dropped frames.</li>
+                            <li><span class="spec-label">Examine available transport plugins:</span> Execute <code>ros2 run image_transport list_transports</code> to list discoverable transport plugins available on your system, such as compressed and raw transport endpoints.</li>
+                            <li><span class="spec-label">Visualize streams in RViz2:</span> Open the visualizer with <code>rviz2</code>, add an Image display plugin, and configure the topic to <code>/vision/edge_image</code>. Verify that thin, continuous part contours appear clearly and that the optical <code>frame_id</code> aligns with the robot TF coordinate tree.</li>
+                        </ol>
+
+                        <h2 class="article-section-title">08. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">In the standard ROS optical camera coordinate frame convention, what directions do the +x, +y, and +z axes point?</li>
+                            <li class="article-spec-item">What functions in <code>cv_bridge</code> perform bidirectional data conversion between ROS 2 <code>Image</code> messages and OpenCV NumPy arrays?</li>
+                            <li class="article-spec-item">Which distortion model in <code>sensor_msgs/CameraInfo</code> represents radial and tangential distortion, and what five coefficients are contained in its distortion parameters array <code>D</code>?</li>
+                            <li class="article-spec-item">How does the <code>message_filters TimeSynchronizer</code> prevent race conditions when pairing image frames with camera calibration metadata?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">09. References</h2>
+                        <p class="references-note">Source check (October 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">European Machine Vision Association (EMVA), &ldquo;GenICam.&rdquo; <a href="https://www.emva.org/standards-technology/genicam/" target="_blank" rel="noopener noreferrer">emva.org/standards-technology/genicam/</a>.</li>
+                            <li id="ref-2">Open Robotics, &ldquo;sensor_msgs/msg/Image.msg.&rdquo; <a href="https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/Image.msg" target="_blank" rel="noopener noreferrer">github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/Image.msg</a>.</li>
+                            <li id="ref-3">Open Robotics, &ldquo;sensor_msgs/msg/CameraInfo.msg.&rdquo; <a href="https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/CameraInfo.msg" target="_blank" rel="noopener noreferrer">github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/CameraInfo.msg</a>.</li>
+                            <li id="ref-4">ROS Perception, &ldquo;image_transport_tutorials.&rdquo; <a href="https://github.com/ros-perception/image_transport_tutorials/blob/rolling/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-perception/image_transport_tutorials/blob/rolling/README.md</a>.</li>
+                            <li id="ref-5">Open Robotics, &ldquo;Message Filters.&rdquo; <a href="https://github.com/ros2/message_filters/blob/rolling/doc/index.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/message_filters/blob/rolling/doc/index.rst</a>.</li>
+                            <li id="ref-6">ROS Perception, &ldquo;cv_bridge/core.py.&rdquo; <a href="https://github.com/ros-perception/vision_opencv/blob/rolling/cv_bridge/python/cv_bridge/core.py" target="_blank" rel="noopener noreferrer">github.com/ros-perception/vision_opencv/blob/rolling/cv_bridge/python/cv_bridge/core.py</a>.</li>
+                            <li id="ref-7">OpenCV, &ldquo;Changing Colorspaces.&rdquo; <a href="https://docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html</a>.</li>
+                            <li id="ref-8">OpenCV, &ldquo;Image Thresholding.&rdquo; <a href="https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html</a>.</li>
+                            <li id="ref-9">OpenCV, &ldquo;Canny Edge Detection.&rdquo; <a href="https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html" target="_blank" rel="noopener noreferrer">docs.opencv.org/4.x/da/d22/tutorial_py_canny.html</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-7-5.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">7.5 Inspection and Measurement</span>
+                                </a>
+                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Finished -&gt;</span>
+                                    <span class="article-nav-target">Course home</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

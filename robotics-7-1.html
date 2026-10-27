@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 7.1 Industrial Cameras and Optics
+-->
+<html lang="en">
+    <head>
+        <title>7.1 Industrial Cameras and Optics — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Industrial camera hardware and imaging optics for machine vision: CMOS sensors, global versus rolling shutters, pixel size and resolution, lens parameters, f-number, telecentric metrology, and GenICam interfaces." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-7-1.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="7.1 Industrial Cameras and Optics — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Industrial camera hardware and imaging optics for machine vision: CMOS sensors, global versus rolling shutters, pixel size and resolution, lens parameters, f-number, telecentric metrology, and GenICam interfaces." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-7-1.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="7.1 Industrial Cameras and Optics, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="7.1 Industrial Cameras and Optics — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Industrial camera hardware and imaging optics for machine vision: CMOS sensors, global versus rolling shutters, pixel size and resolution, lens parameters, f-number, telecentric metrology, and GenICam interfaces." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-vision.html">Chapter 7 &middot; Vision</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">7.1 Industrial Cameras and Optics</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. The machine vision camera: from photons to pixels</h2>
+                        <p>
+                            In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use vision systems to locate parts that do not arrive in fixed fixtures. That lesson examined the robotic side of the work cell: mounting options such as eye-in-hand versus eye-to-hand, intrinsic and hand-eye calibration, and shifting taught points using vision results. In Chapter 7, we step back to examine the vision pipeline itself. Before any software algorithm can compute a part centroid or extract an edge, an industrial camera must capture incoming optical photons and turn them into discrete digital data.
+                        </p>
+                        <p>
+                            At the core of every industrial camera sits an electronic image sensor. CMOS sensors enable higher frame rates because pixel readout occurs more quickly than charge transfer in a CCD shift register.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Pixel size, resolution, and sensor performance</h2>
+                        <p>
+                            When selecting a camera for a robotic application, sensor resolution is typically the first specification considered. A simple fundamental measure of sensor resolution is the number of pixels per millimeter.<sup><a href="#ref-1">[1]</a></sup> For example, dividing the total pixel count along a sensor axis by the physical length of the active sensor area gives the spatial sampling density of the detector array.
+                        </p>
+                        <p>
+                            Sensor resolution is intimately tied to the physical dimension of individual pixels. Pixel size dictates fundamental performance trade-offs in noise and dynamic range. Larger sensor pixels generally feature higher charge saturation capacities and superior signal-to-noise ratios.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            In contrast, small pixels allow camera manufacturers to pack millions of pixels into compact sensor formats. However, reducing pixel size introduces severe physical challenges. Small pixels make it easier to achieve high resolution for a given sensor size, but pixel crosstalk can lower contrast at high spatial frequencies.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            To understand how pixel resolution interacts with optical lenses, engineers rely on spatial frequency metrics. Optical resolution is fundamentally defined as a spatial frequency measured in line pairs per millimeter, where one line pair represents alternating black and white bars in object space.<sup><a href="#ref-2">[2]</a></sup> A line pair consists of one alternating black bar and one white bar of equal width in object space.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            When an image sensor samples these alternating optical bars, it is subject to the fundamental limits of discrete digital sampling. The highest spatial frequency resolvable by an electronic camera sensor is the Nyquist limit, which requires at least two pixels per line pair.<sup><a href="#ref-2">[2]</a></sup> To distinguish an alternating bar pattern, the sensor must place at least one pixel on the bright bar and at least one pixel on the dark bar.
+                        </p>
+                        <p>
+                            Sampling frequency alone does not guarantee a usable image; the system must also preserve contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-3">[3]</a></sup> If contrast drops below the threshold needed by vision algorithms, edge detection and part inspection fail even when theoretical pixel counts appear sufficient.
+                        </p>
+
+                        <h2 class="article-section-title">03. Shutter mechanisms: global shutter versus rolling shutter</h2>
+                        <p>
+                            An electronic shutter regulates the duration and sequence in which pixel rows accumulate light. In machine vision, the choice between global shutter and rolling shutter sensor architectures is one of the most critical decisions an automation engineer makes.
+                        </p>
+                        <p>
+                            In a global shutter architecture, exposure occurs simultaneously across the entire detector array. During image acquisition with a global shutter, all sensor pixels start and stop exposing at the same time.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Because every pixel captures the scene during the exact same temporal window, global shutters are essential for dynamic industrial scenes. Global shutter cameras are particularly useful for capturing fast-moving objects or when the camera is moving rapidly during capture.<sup><a href="#ref-4">[4]</a></sup> For example, when an eye-in-hand camera mounted on a robot wrist takes a snapshot while the arm is moving (see <a href="robotics-2-8.html">2.8</a>), a global shutter captures the moving part without spatial distortion.
+                        </p>
+                        <p>
+                            In a rolling shutter sensor, exposure does not occur at a single instant across the array. A rolling shutter exposes the sensor's pixel rows one after another with a temporal offset from one row to the next.<sup><a href="#ref-4">[4]</a></sup> The camera begins exposing the top row of the sensor; after a brief time offset, it resets and begins exposing the second row, progressing row by row down the sensor grid. Readout follows each row's exposure with the identical temporal shift.
+                        </p>
+                        <p>
+                            Ambient noise in an image captured with a rolling shutter is typically significantly lower than with the global shutter method.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            However, when relative motion exists during acquisition, the temporal offset between rows creates severe spatial errors. Fast relative motion between the camera and object during rolling shutter acquisition causes geometric image distortion known as the rolling shutter effect.<sup><a href="#ref-4">[4]</a></sup> For example, if an object moves horizontally across the field of view while rows are exposed from top to bottom, lower rows capture the object further along its path than upper rows. In robotic vision guidance, this artificial geometric shear causes coordinate transformations to report false positions and orientations.
+                        </p>
+                        <p>
+                            When a rolling shutter camera must be deployed in an environment with moving components, lighting techniques can overcome this distortion. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href="#ref-4">[4]</a></sup> The effective exposure is defined by the brief flash duration rather than the row-by-row sensor scan, preventing rolling shutter geometric distortion.
+                        </p>
+
+                        <h2 class="article-section-title">04. Lens optics: focal length and field of view</h2>
+                        <p>
+                            An imaging lens collects diverging light rays originating from each object point and focuses them onto a corresponding conjugate point on the sensor plane. The most fundamental property of any imaging lens is its focal length. The focal length of an optical lens is a fundamental parameter that describes how strongly it focuses or diverges light.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Focal length directly governs how sharply optical rays are bent by the glass elements. A lens with a large focal length bends light gradually, while a short focal length bends light at sharp angles.<sup><a href="#ref-5">[5]</a></sup> Because a short focal length lens bends rays steeply, it produces a wide angular field of view (AFOV). A long focal length lens bends rays gently over a longer distance, resulting in a narrow viewing angle and higher optical magnification.
+                        </p>
+                        <p>
+                            In robotic work cell integration, two physical dimensions determine the required lens focal length: field of view (FOV) and working distance (WD). The field of view is the physical inspection area that must fill the camera sensor, while working distance is the physical clearance between the front of the lens and the inspected object. For example, for a given sensor format, increasing the working distance enlarges the field of view, whereas shortening the focal length captures a broad field of view within a compact space.
+                        </p>
+                        <p>
+                            However, real optical lenses do not project perfectly linear geometry. In <a href="robotics-2-8.html">2.8</a>, we observed that lenses introduce geometric distortions that must be modeled during intrinsic calibration. Distortion is an optical aberration that misplaces image information geometrically without blurring or discarding information, allowing it to be calibrated and corrected in software.<sup><a href="#ref-6">[6]</a></sup> Unlike chromatic or spherical aberrations that degrade optical resolution and blur sharp transitions, distortion alters only the spatial coordinates of imaged points.
+                        </p>
+                        <p>
+                            Lens distortion follows predictable geometric patterns across the field of view. Optical distortion is classified into negative barrel distortion where points appear displaced toward the optical center, and positive pincushion distortion where points appear displaced away from the center.<sup><a href="#ref-6">[6]</a></sup> For example, short focal length, wide-angle lenses frequently exhibit barrel distortion, where straight rectangular outlines bow outward. Similarly, long focal length lenses tend toward pincushion distortion, pulling corners outward. Because distortion misplaces points without destroying image information, imaging algorithms can map calibration grids and unwarp distorted frames into geometrically rectified images.
+                        </p>
+
+                        <h2 class="article-section-title">05. Aperture and f-number: light throughput and depth of field</h2>
+                        <p>
+                            Inside an imaging lens, an adjustable mechanical diaphragm—the iris aperture—regulates the cone of light rays permitted to pass through the optical elements to the sensor. Controlling this aperture is essential for balancing optical signal intensity against image sharpness.
+                        </p>
+                        <p>
+                            The optical setting of the iris is quantified by its f-number. The f-number of a lens is fundamentally defined as the ratio of its focal length to the effective aperture diameter.<sup><a href="#ref-7">[7]</a></sup> Designated as f/# or N, the f-number provides a standardized measure of optical throughput that remains comparable across lenses of completely different focal lengths.
+                        </p>
+                        <p>
+                            The mathematical relationship between aperture diameter, area, and throughput governs standard lens iris markings. Increasing the f-number by a factor of the square root of two halves the aperture area and reduces lens light throughput by a factor of two.<sup><a href="#ref-7">[7]</a></sup> For example, each full stop increases the f-number by approximately 1.414 (the square root of two), cutting the circular aperture area in half.
+                        </p>
+                        <p>
+                            The f-number setting places light throughput in direct competition with depth of field (DOF). Depth of field is the axial range of object distances over which features remain acceptably in focus without refocusing the lens. For example, when stopping down a lens to a higher f-number (such as moving from f/2.8 to f/8), the optical cone narrows. This narrow light cone drastically reduces the diameter of blur circles for objects positioned slightly in front of or behind the nominal focal plane, substantially expanding depth of field. In robotic bin picking or packaging where parts arrive at varying heights, large depth of field is critical.
+                        </p>
+                        <p>
+                            However, increasing the f-number reduces light throughput by factors of two at each step. For example, to maintain proper pixel exposure at f/8, the vision system must either lengthen its exposure time or install auxiliary illumination. The engineer must carefully select an f-number that provides sufficient depth of field while allowing short exposure times under available factory lighting.
+                        </p>
+
+                        <h2 class="article-section-title">06. Telecentric lenses for precision gauging</h2>
+                        <p>
+                            In automated inspection, conventional optics suffer from perspective magnification shifts. Conventional lenses possess an angular field of view that introduces parallax error where perceived magnification changes with object distance.<sup><a href="#ref-8">[8]</a></sup> Because the angular field of view expands with distance, an object placed closer to the lens appears larger on the sensor, while an identical object placed farther away appears smaller. For example, if a robotic gripper picks parts from a stack where height varies, an entocentric camera will perceive parts at the top of the stack as larger than parts at the bottom.
+                        </p>
+                        <p>
+                            Furthermore, angular perspective distorts three-dimensional features located away from the optical axis. For example, when an entocentric lens views cylindrical holes or vertical pins near the edge of its field of view, it views them at an oblique angle.
+                        </p>
+                        <p>
+                            To eliminate perspective error, precision inspection systems employ telecentric optics. Telecentric lenses eliminate parallax and perspective error by keeping magnification constant across working distance variations.<sup><a href="#ref-8">[8]</a></sup>
+                        </p>
+                        <p>
+                            Because ray cones entering a telecentric lens are strictly parallel to the optical axis, an object's imaged dimensions remain constant even if the object moves closer to or farther from the lens within its telecentric depth of field. For example, a 20 mm shaft keeps the same image size whether it sits at the nominal working distance or shifts several millimeters along the optical axis.
+                        </p>
+                        <p>
+                            Telecentric lenses also offer a profound mathematical advantage when features shift slightly out of focus. Telecentric lenses blur symmetrically across focus variations because they have no angular field of view component, allowing edges to retain their centroid location.<sup><a href="#ref-8">[8]</a></sup> In a telecentric lens, blur spreads completely symmetrically on both sides of the boundary, allowing sub-pixel edge detection algorithms to pinpoint the exact physical edge centroid without positional drift.
+                        </p>
+
+                        <h2 class="article-section-title">07. Industrial camera interfaces and GenICam</h2>
+                        <p>
+                            Once an image sensor captures photons and converts them to digital pixels, that raster data must be transmitted across a physical interface to a host computing platform, such as an industrial PC, a vision controller, or a robot controller.
+                        </p>
+                        <p>
+                            Historically, each camera manufacturer developed proprietary communication protocols and device drivers. A vision application written for one brand could not talk to a camera from another manufacturer without a complete rewrite of low-level software. To eliminate vendor lock-in and foster hardware interoperability, the machine vision industry established the GenICam standard.
+                        </p>
+                        <p>
+                            The GenICam standard provides a generic programming interface for all camera types regardless of interface hardware.<sup><a href="#ref-9">[9]</a></sup> Hosted by the European Machine Vision Association (EMVA), GenICam creates an abstraction layer that completely decouples vision application software from underlying hardware transport mechanisms.
+                        </p>
+                        <p>
+                            This standardized architecture enables automation engineers to swap camera models, sensor resolutions, or interface standards without altering high-level robot vision and guidance software.
+                        </p>
+
+                        <h2 class="article-section-title">08. Check your understanding</h2>
+                        <ol class="article-spec-list">
+                            <li>Why does a global shutter prevent motion distortion on moving assembly lines and robot arms, whereas a rolling shutter can cause the rolling shutter effect?</li>
+                            <li>What happens to the effective aperture area and optical light throughput of an imaging lens when its f-number is increased by a factor of the square root of two?</li>
+                            <li>How do telecentric lenses eliminate parallax error, and why does their symmetrical defocus behavior benefit sub-pixel edge detection?</li>
+                        </ol>
+
+                        <h2 class="article-section-title">09. References</h2>
+                        <p class="references-note">Source check (October 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Edmund Optics, &ldquo;Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications</a>.</li>
+                            <li id="ref-2">Edmund Optics, &ldquo;Resolution | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/resolution/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/resolution</a>.</li>
+                            <li id="ref-3">Edmund Optics, &ldquo;Contrast | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/contrast/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/contrast</a>.</li>
+                            <li id="ref-4">Basler, &ldquo;Electronic Shutter Types.&rdquo; <a href="https://docs.baslerweb.com/electronic-shutter-types" target="_blank" rel="noopener noreferrer">docs.baslerweb.com/electronic-shutter-types</a>.</li>
+                            <li id="ref-5">Edmund Optics, &ldquo;Understanding Focal Length and Field of View | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-focal-length-and-field-of-view/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/understanding-focal-length-and-field-of-view</a>.</li>
+                            <li id="ref-6">Edmund Optics, &ldquo;Distortion | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/distortion/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/distortion</a>.</li>
+                            <li id="ref-7">Edmund Optics, &ldquo;System Throughput, f/#, and Numerical Aperture | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/lens-iris-aperture-setting/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/lens-iris-aperture-setting</a>.</li>
+                            <li id="ref-8">Edmund Optics, &ldquo;The Advantages of Telecentricity | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/advantages-of-telecentricity/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/advantages-of-telecentricity</a>.</li>
+                            <li id="ref-9">European Machine Vision Association (EMVA), &ldquo;GenICam.&rdquo; <a href="https://www.emva.org/standards-technology/genicam/" target="_blank" rel="noopener noreferrer">emva.org/standards-technology/genicam</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-vision.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">Chapter 7 overview</span>
+                                </a>
+                                <a href="robotics-7-2.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">7.2 Lighting for Machine Vision</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

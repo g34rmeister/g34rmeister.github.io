@@ -1,0 +1,328 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 7.2 Lighting for Machine Vision
+-->
+<html lang="en">
+    <head>
+        <title>7.2 Lighting for Machine Vision — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Industrial illumination techniques for machine vision: backlighting, ring and glancing lights, darkfield, diffuse dome lights, coaxial and in-line illumination, optical filters, and LED strobing." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-7-2.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="7.2 Lighting for Machine Vision — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Industrial illumination techniques for machine vision: backlighting, ring and glancing lights, darkfield, diffuse dome lights, coaxial and in-line illumination, optical filters, and LED strobing." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-7-2.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="7.2 Lighting for Machine Vision, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="7.2 Lighting for Machine Vision — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Industrial illumination techniques for machine vision: backlighting, ring and glancing lights, darkfield, diffuse dome lights, coaxial and in-line illumination, optical filters, and LED strobing." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-vision.html">Chapter 7 &middot; Vision</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">7.2 Lighting for Machine Vision</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Why illumination comes first in machine vision</h2>
+                        <p>
+                            In <a href="robotics-7-1.html">7.1 Industrial Cameras and Optics</a>, we studied camera sensors, pixel pitch, shutter mechanisms, and lenses. In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we examined how robots use vision data to compute physical grasping offsets. When engineers encounter contrast or measurement errors in a robot cell, a frequent beginner mistake is to assume that the camera resolution is too low or that the image processing algorithms must be made more complex. In the factory, machine vision begins with illumination.
+                        </p>
+                        <p>
+                            A machine vision camera cannot inspect features it cannot see. Desired image quality can typically be achieved by improving system illumination rather than investing in higher resolution detectors or lenses.<sup><a href="#ref-1">[1]</a></sup> For example, an expensive high-resolution camera paired with a precision lens will still produce unusable results if improper lighting creates harsh glare or deep shadows. In contrast, an inexpensive sensor placed under an optimized lighting geometry yields clean, consistent images that simple, fast algorithms can process with high reliability.
+                        </p>
+                        <p>
+                            Poor lighting introduces severe degradation into image processing pipelines. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-1">[1]</a></sup> For example, when light intensity varies across a conveyor belt, an intensity threshold that isolates a dark component on one side may fail on the other.
+                        </p>
+                        <p>
+                            Improper lighting geometry also corrupts physical measurements. Shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href="#ref-1">[1]</a></sup> For example, if an overhead light source casts an asymmetric shadow along the edge of a machined part, an edge filter can register the shadow boundary instead of the physical edge. In robotic pick-and-place, for example, this false edge calculation can shift grasping coordinates and cause gripper collisions.
+                        </p>
+                        <p>
+                            To design robust lighting systems, engineers specify illumination using photometric units. Optical illuminance in machine vision is specified in footcandles or lux, where one lux equals 0.0929 footcandles.<sup><a href="#ref-1">[1]</a></sup> Specifying illuminance ensures that illumination levels remain repeatable across multiple production lines and shifts.
+                        </p>
+                        <p>
+                            Industrial LED illumination typically achieves an operating lifespan near 50,000 hours compared to approximately 1,000 hours for incandescent bulbs.<sup><a href="#ref-2">[2]</a></sup> Operating continuously for 50,000 hours translates to over five years of uninterrupted multi-shift operation.
+                        </p>
+
+                        <h2 class="article-section-title">02. Backlighting: silhouetting and edge contrast</h2>
+                        <p>
+                            When an inspection task requires checking external boundaries, measuring dimensions, or locating parts for 2D robotic picking, the most reliable technique is backlighting. In a backlight setup, the light source is positioned behind the object, directing light directly toward the camera lens.
+                        </p>
+                        <p>
+                            Placing an object of interest over a backlight allows the vision system to observe it in high contrast as an opaque silhouette.<sup><a href="#ref-3">[3]</a></sup> Because light from the illumination panel passes straight around the object into the camera aperture, the background appears near saturation (pure white) while the opaque object blocks all transmission, appearing as a deep black profile. This geometry maximizes optical contrast between the object boundary and its surroundings.
+                        </p>
+                        <p>
+                            However, backlighting imposes a distinct operational trade-off. While backlighting maximizes edge detection contrast, it intentionally eliminates internal surface details.<sup><a href="#ref-1">[1]</a></sup> Because the front face of an opaque part receives no direct light, features such as surface engraving, stamped serial numbers, barcode labels, and surface scratches are cast into uniform shadow.
+                        </p>
+                        <p>
+                            For example, backlighting is commonly chosen for dimensional gauging of stamped sheet metal parts, measuring hole diameters, and detecting parts scattered on backlight tables for 2D robotic sorting (see <a href="robotics-2-8.html">2.8</a>). For example, when inspecting clear glass vials or plastic bottles, backlighting is also used to inspect fill levels and fluid presence.
+                        </p>
+
+                        <h2 class="article-section-title">03. Directional, glancing, and darkfield illumination</h2>
+                        <p>
+                            When a robot must inspect features located on the front face of an opaque object—such as reading character codes, verifying component placement, or inspecting surface finish—light must be directed from the front. The angle at which light strikes the surface determines how textures, edges, and flaws appear.
+                        </p>
+                        <p>
+                            One of the most common front lighting devices is the ring light. A ring light mounts directly to the camera lens to provide uniform, shadow-reducing illumination over short working distances.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            However, ring lights exhibit severe limitations when used on shiny surfaces. Ring lights can cause circular glare patterns on reflective parts and only perform effectively across relatively short working distances.<sup><a href="#ref-1">[1]</a></sup> On polished metals, glossy plastics, or solder pads, the LEDs produce a bright ring of specular reflections that saturates sensor pixels and obscures underlying features.
+                        </p>
+                        <p>
+                            To inspect surface texture or shallow engravings, engineers use directional glancing illumination. Glancing illumination applies point-source light at a sharp angle of incidence to reveal surface topography and texture.<sup><a href="#ref-1">[1]</a></sup> By angling light at a low, grazing angle nearly parallel to the part surface, minute raised ridges, stamped alphanumeric characters, laser etchings, or surface cracks cast distinct, elongated shadows. These shadows turn microscopic physical height variations into high-contrast image transitions.
+                        </p>
+                        <p>
+                            A specialized geometry for surface flaw detection is darkfield illumination. Darkfield illumination introduces light at shallow angles so that light enters translucent objects perpendicular to the lens axis or scatters off surface flaws.<sup><a href="#ref-1">[1]</a></sup> In a darkfield configuration, light strikes a flat specular surface at such a steep angle that direct reflections reflect away from the lens. As a result, a smooth, defect-free surface reflects no light into the camera and appears completely black.
+                        </p>
+                        <p>
+                            When a defect interrupts the surface, darkfield lighting produces exceptional contrast. Darkfield lighting produces high contrast for surface flaws by highlighting scratches, cracks, and bubbles in clear materials.<sup><a href="#ref-1">[1]</a></sup> Any scratch, dust particle, fracture, or internal bubble refracts or scatters the shallow incident light rays upward into the camera aperture. The flaw appears as a brilliant white line or spot against a pitch-black background, allowing edge detection and blob analysis algorithms to isolate microscopic defects easily.
+                        </p>
+
+                        <h2 class="article-section-title">04. Diffuse dome lights for curved specular objects</h2>
+                        <p>
+                            Inspecting curved, highly reflective objects presents one of the most difficult challenges in machine vision. For example, machined metal cylinders, chrome ball bearings, and solder joints on circuit boards all possess specular, multi-angled surfaces.
+                        </p>
+                        <p>
+                            When directional or ring lights strike curved reflective surfaces, the specular reflection behaves like a mirror.
+                        </p>
+                        <p>
+                            To solve this problem, vision engineers use diffuse dome lights. Diffuse dome lights project omnidirectional scattered light to evenly illuminate curved specular objects like circuit boards and polished components.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            The resulting optical environment acts like an overcast sky. Uniform diffuse illumination from a dome light eliminates harsh shadows and specular highlights on complex reflective surfaces.<sup><a href="#ref-4">[4]</a></sup> Because light rays strike the object from every possible angle, every point on a curved specular surface reflects light into the camera aperture with uniform intensity. Specular highlights and deep shadows disappear, allowing vision systems to read printed labels, inspect solder fillets, and detect subtle dimensional flaws across complex, curved metal assemblies.
+                        </p>
+
+                        <h2 class="article-section-title">05. Coaxial and in-line illumination</h2>
+                        <p>
+                            Flat specular surfaces—such as silicon wafers, polished glass plates, mirrored metal dies, and semiconductor chips—cannot be illuminated effectively with angled front lighting.
+                        </p>
+                        <p>
+                            To illuminate flat reflective surfaces, light must travel perpendicular to the surface along the camera's viewing axis. Coaxial illumination uses a beamsplitter to project diffuse light along the same optical axis as the camera lens.<sup><a href="#ref-1">[1]</a></sup> A beamsplitter is a semi-transparent mirror placed in front of the lens. An external light source projects light horizontally into the beamsplitter, which reflects a portion of the light downward along the optical axis to illuminate the object perpendicularly. Light reflecting from the object passes back upward through the beamsplitter and into the camera sensor.
+                        </p>
+                        <p>
+                            This on-axis geometry creates brightfield illumination across flat reflective objects. Coaxial illumination provides diffuse on-axis lighting that greatly reduces shadowing and glare on flat reflective objects.<sup><a href="#ref-1">[1]</a></sup> Specular flat surfaces reflect light directly back through the beamsplitter into the sensor, appearing bright and uniform. Conversely, engraved markings, stamped pits, edge bevels, or surface scratches scatter light away from the optical axis, appearing as dark, high-contrast features against the bright background.
+                        </p>
+                        <p>
+                            In high-precision applications, lighting is integrated directly into the lens itself. In-line illumination incorporates lighting into the lens optical train using a beamsplitter to fold the illumination path onto the imaging path.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            In-line illumination is particularly vital when using telecentric optics. In telecentric lenses, in-line illumination is the only method to achieve reflected brightfield illumination across the entire field of view.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Consequently, in-line illumination is ideal for inspecting specular and semi-specular objects such as semiconductor wafers and CCDs.<sup><a href="#ref-5">[5]</a></sup> For example, microscopic wire bonds, metallic interconnect traces, and silicon wafer defects stand out with sharp, uniform contrast.
+                        </p>
+                        <p>
+                            However, incorporating a beamsplitter into the optical train introduces an unavoidable optical penalty. Placing a beamsplitter in the optical path introduces stray light that creates an image haze and prevents black object regions from appearing truly black.<sup><a href="#ref-5">[5]</a></sup> Internal reflections from the beamsplitter reach the sensor without having interacted with the object, reducing overall dynamic range and washing out faint details in low-signal or diffuse applications.
+                        </p>
+
+                        <h2 class="article-section-title">06. Optical filters, wavelength selection, and cross-polarization</h2>
+                        <p>
+                            In industrial factories, ambient lighting is rarely static. For example, overhead factory lighting and sunlight from skylights can create fluctuating illumination and color shifts. Optical filters allow machine vision systems to reject ambient interference and isolate target features.
+                        </p>
+                        <p>
+                            One fundamental category of optical filters is colored glass. Colored glass filters are manufactured by doping glass materials with elements that selectively modify absorption and transmission spectra.<sup><a href="#ref-6">[6]</a></sup>
+                        </p>
+                        <p>
+                            Colored filters are used in conjunction with monochromatic lighting to maximize contrast using color theory. For example, to make a feature appear bright in a monochrome image, engineers illuminate it with light of its own color and use a matching filter. To make a feature appear dark, for example, engineers illuminate it with light from the opposite side of the color wheel. For example, illuminating green pills and red pills with green light makes the green pills reflect strongly while the red pills absorb the light, creating dramatic contrast on a monochrome camera.
+                        </p>
+                        <p>
+                            Filtering is also essential to manage the broad spectral sensitivity of solid-state sensors. Machine vision silicon camera sensors respond to wavelengths up to approximately one micrometer, making infrared cut-off filters necessary to block unwanted ambient infrared.<sup><a href="#ref-6">[6]</a></sup> Human eyes cannot see near-infrared light, but the silicon sensors in machine vision cameras still respond to it.
+                        </p>
+                        <p>
+                            However, their physical operating mechanism introduces an angle-dependent artifact. Increasing the angle of incidence on an optical interference filter increases optical path length through the dielectric layers and shifts transmission toward shorter wavelengths in an effect known as blue shift.<sup><a href="#ref-6">[6]</a></sup> For example, if an interference filter is attached to a wide-angle lens, light entering at the edges enters at steep angles, which can shift the filter passband and create uneven illumination across the field.
+                        </p>
+                        <p>
+                            To remove intense glare from semi-specular parts without changing lighting geometry, engineers employ polarization. Cross-polarization uses a polarizer on the illumination source and an analyzer on the camera lens oriented at 90 degrees to achieve maximum rejection of unwanted glare.<sup><a href="#ref-6">[6]</a></sup> The polarizer on the light source transmits light linearly polarized in one orientation. When this polarized light strikes a shiny surface, direct specular reflections maintain their polarization orientation and are absorbed by the analyzer filter on the lens, which is rotated 90 degrees. In contrast, light that penetrates the part surface and scatters diffusely is depolarized, allowing a portion of it to pass through the analyzer to form a clear, glare-free image.
+                        </p>
+
+                        <h2 class="article-section-title">07. Strobing, overdriving, and timing control</h2>
+                        <p>
+                            In automated robotics cells, operating illumination continuously can cause significant practical issues.
+                        </p>
+                        <p>
+                            To overcome these limitations, industrial lighting is operated in pulsed strobe mode. Operating machine vision lights in strobe mode generates less heat in the LEDs and slows down the aging process to increase operating life expectancy.<sup><a href="#ref-7">[7]</a></sup> Instead of remaining on 100 percent of the time, the light pulses on only for a few hundred microseconds during camera exposure. Because the light is off during the remainder of the cycle, the average electrical duty cycle drops dramatically, allowing internal diode junctions to remain cool.
+                        </p>
+                        <p>
+                            Strobe operation also allows lighting controllers to exceed continuous electrical ratings. Operating illumination in strobe mode allows overdriving LED lights up to 500 percent of nominal current rating to dramatically increase flash brightness.<sup><a href="#ref-7">[7]</a></sup> Because current flows for only a fraction of a millisecond, the LED can handle up to five times its continuous rated current without overheating, producing an intense burst of illumination.
+                        </p>
+                        <p>
+                            This intense flash brightness allows camera exposure times to be shortened to tens of microseconds. For example, short exposure times freeze rapid part motion on moving conveyors, eliminating motion blur without requiring the conveyor to stop.
+                        </p>
+                        <p>
+                            Finally, strobe illumination provides a crucial solution for cameras equipped with rolling shutters. As discussed in <a href="robotics-7-1.html">7.1</a>, rolling shutters expose sensor rows sequentially, creating geometric distortion when imaging moving objects. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href="#ref-8">[8]</a></sup> By synchronizing an overdriven LED strobe pulse so that it flashes only during the brief overlapping window when all sensor rows are actively exposing in a darkened environment, the effective image exposure is defined entirely by the brief microsecond flash. The camera captures an instantaneous, undistorted snapshot of the moving object, enabling accurate robot picking and dimensional measurement.
+                        </p>
+
+                        <h2 class="article-section-title">08. Check your understanding</h2>
+                        <ol class="article-spec-list">
+                            <li>Why is optimizing illumination usually more effective and economical than upgrading camera sensors or lenses when resolving machine vision problems?</li>
+                            <li>What is the fundamental difference between darkfield illumination and brightfield backlighting in terms of what features they highlight?</li>
+                            <li>How does cross-polarization eliminate specular glare from shiny surfaces, and how must the polarizer and analyzer be oriented?</li>
+                        </ol>
+
+                        <h2 class="article-section-title">09. References</h2>
+                        <p class="references-note">Source check (October 2026): 8 of 8 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Edmund Optics, &ldquo;Common Illumination Types | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination</a>.</li>
+                            <li id="ref-2">Association for Advancing Automation (A3), &ldquo;The Future of LED Illumination in Machine Vision | A3.&rdquo; <a href="https://www.automate.org/blogs/the-future-of-led-illumination-in-machine-vision" target="_blank" rel="noopener noreferrer">automate.org/blogs/the-future-of-led-illumination-in-machine-vision</a>.</li>
+                            <li id="ref-3">Edmund Optics, &ldquo;Backlight Illumination for Machine Vision | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/backlight-illumination-for-machine-vision/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/backlight-illumination-for-machine-vision</a>.</li>
+                            <li id="ref-4">Edmund Optics, &ldquo;Brightfield Illumination with Dome Lights for Machine Vision.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/brightfield-illumination-with-dome-lights-for-machine-vision/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/brightfield-illumination-with-dome-lights-for-machine-vision</a>.</li>
+                            <li id="ref-5">Edmund Optics, &ldquo;In-line Illumination | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/illumination/in-line-illumination-considerations/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/illumination/in-line-illumination-considerations</a>.</li>
+                            <li id="ref-6">Edmund Optics, &ldquo;Machine Vision Filter Technology | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/machine-vision-filter-technology/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/machine-vision-filter-technology</a>.</li>
+                            <li id="ref-7">Basler, &ldquo;Light Control.&rdquo; <a href="https://docs.baslerweb.com/light-control" target="_blank" rel="noopener noreferrer">docs.baslerweb.com/light-control</a>.</li>
+                            <li id="ref-8">Basler, &ldquo;Electronic Shutter Types.&rdquo; <a href="https://docs.baslerweb.com/electronic-shutter-types" target="_blank" rel="noopener noreferrer">docs.baslerweb.com/electronic-shutter-types</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-7-1.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">7.1 Industrial Cameras and Optics</span>
+                                </a>
+                                <a href="robotics-7-3.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">7.3 Image Processing Basics</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>
