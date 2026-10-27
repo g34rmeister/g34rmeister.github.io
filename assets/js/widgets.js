@@ -1,5 +1,5 @@
 /*
-	RISE Bot Instructor: interactive widgets
+	robOSStics: interactive widgets
 	Any element with data-widget="pwm" | "encoder" | "pid" | "arm" | "blocks" |
 	"odometry" | "fsm" | "kalman" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.

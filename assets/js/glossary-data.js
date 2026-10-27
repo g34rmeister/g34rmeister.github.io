@@ -1,5 +1,5 @@
 /*
-	RISE Bot Instructor: glossary
+	robOSStics: glossary
 	One-sentence, beginner-friendly definitions of every key term listed in
 	assets/js/course-data.js (the keyTerms arrays), keyed by the exact spelling
 	used there and sorted alphabetically. Pages and a phase 2 AI tutor can read

@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot Instructor**: an industrial robotics course. Read `CHANGELOG.agents.md` first instead of re-exploring the repo, and append an entry to it in every PR.
+Static GitHub Pages site (no build step) for Gerald's honors thesis, **robOSStics**: an industrial robotics course. Read `CHANGELOG.agents.md` first instead of re-exploring the repo, and append an entry to it in every PR.
 
 ## Direction (2026-10-27)
 The site is becoming an open-source platform for robotics newcomers (renamed robOSStics in PR #20), slightly less academic. Plan and open decisions: `docs/handoff/robosstics-plan.md`.

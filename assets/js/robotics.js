@@ -134,14 +134,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const rawBibtex = `@misc{le2026risebot,
   author       = {Gerald Lê},
-  title        = {RISE Bot Instructor},
+  title        = {robOSStics},
   howpublished = {Honors independent research (CSC 3991), Louisiana State University},
   year         = {2026},
   note         = {Advisor: Felipe Fronchetti},
   url          = {https://g34rmeister.github.io/robotics.html}
 }`;
 
-        const rawIeee = `G. Lê, "RISE Bot Instructor," Honors independent research (CSC 3991), Louisiana State University, Baton Rouge, LA, 2026. [Online]. Available: https://g34rmeister.github.io/robotics.html`;
+        const rawIeee = `G. Lê, "robOSStics," Honors independent research (CSC 3991), Louisiana State University, Baton Rouge, LA, 2026. [Online]. Available: https://g34rmeister.github.io/robotics.html`;
 
         // Format Tab Toggling
         formatTabs.forEach(tab => {

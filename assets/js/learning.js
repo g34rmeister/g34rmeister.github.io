@@ -1,5 +1,5 @@
 /*
-	RISE Bot Instructor: learning features
+	robOSStics: learning features
 	Reads window.RISE_COURSE (assets/js/course-data.js) and adds:
 	  - "In this lesson" objectives at the top of each lesson
 	  - "Mark as complete" progress, shown again on the hub and chapter pages
@@ -381,7 +381,7 @@
 
 		var headline = document.querySelector('.robotics-article-headline');
 		if (headline) headline.textContent = 'Chapter ' + ch.id + ' Quiz: ' + ch.title.replace(/^Extra: /, '');
-		document.title = 'Chapter ' + ch.id + ' Quiz — RISE Bot Instructor';
+		document.title = 'Chapter ' + ch.id + ' Quiz — robOSStics';
 
 		root.innerHTML = '';
 		var form = el('form', { 'class': 'quiz-form', novalidate: '' });
