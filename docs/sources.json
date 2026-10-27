@@ -2455,9 +2455,9 @@
    "checks": {
     "7-3": {
      "status": "verified",
-     "claim": "In OpenCV contour detection, the object of interest must be represented as white foreground against a black background.; The contour approximation method cv.CHAIN_APPROX_SIMPLE compresses straight segments by removing redundant points along contour boundaries to save memory.",
-     "evidence": "Matches research_notes/ch7/facts.md, whose lines were checked word-for-word against the cached page in step 13.",
-     "note": "Ch7 draft, step 16",
+     "claim": "White object on black background for findContours; CHAIN_APPROX_SIMPLE removes redundant points; rectangle 734 points vs 4",
+     "evidence": "OpenCV contours tutorial (cached): 'CHAIN_APPROX_NONE (734 points) and second image shows the one with cv.CHAIN_APPROX_SIMPLE (only 4 points)'",
+     "note": "Claude review pass",
      "checked": "2026-10-27"
     }
    }
@@ -2470,9 +2470,9 @@
    "checks": {
     "7-3": {
      "status": "verified",
-     "claim": "In template matching, comparing an image of size WxH with a template of size wxh produces an output match matrix of size (W-w+1, H-h+1).",
-     "evidence": "Matches research_notes/ch7/facts.md, whose lines were checked word-for-word against the cached page in step 13.",
-     "note": "Ch7 draft, step 16",
+     "claim": "Template match output size (W-w+1, H-h+1); minMaxLoc finds max/min; with TM_SQDIFF the minimum is best",
+     "evidence": "OpenCV template matching tutorial (cached): 'minMaxLoc() function to find where is the maximum/minimum value'; 'TM_SQDIFF as comparison method, minimum value gives the best match'",
+     "note": "Claude review pass",
      "checked": "2026-10-27"
     }
    }
@@ -2561,9 +2561,9 @@
    "checks": {
     "7-3": {
      "status": "verified",
-     "claim": "Canny hysteresis thresholding accepts gradient pixels between the upper and lower thresholds only if they are connected to a pixel above the upper threshold.",
-     "evidence": "Matches research_notes/ch7/facts.md, whose lines were checked word-for-word against the cached page in step 13.",
-     "note": "Ch7 draft, step 16",
+     "claim": "Canny hysteresis: below lower threshold rejected; between thresholds kept only if connected to pixel above upper",
+     "evidence": "OpenCV Canny tutorial (cached): 'If a pixel gradient value is below the lower threshold, then it is rejected.' 'If the pixel gradient is between the two thresholds, then it will be accepted only if it is connected to a pixel that is above the upper threshold.'",
+     "note": "Claude review pass",
      "checked": "2026-10-27"
     }
    }
@@ -7737,9 +7737,9 @@
    "checks": {
     "7-6": {
      "status": "verified",
-     "claim": "The image_transport tutorials demonstrate how to publish and subscribe to camera streams across discoverable transport plugins.",
-     "evidence": "Matches research_notes/ch7/facts.md, whose lines were checked word-for-word against the cached page in step 13.",
-     "note": "Ch7 draft, step 16",
+     "claim": "image_transport tutorials; plugins found at runtime, each advertises a derived topic; compressed_image_transport gives JPEG/PNG compressed transport",
+     "evidence": "image_transport_tutorials README: 'searches your ROS installation for transport plugins at runtime and dynamically loads all that are built'; 'additional (per-plugin) topics derived from the base topic may also be advertised'; 'compressed_image_transport package provides plugins for the \"compressed\" transport, which sends images over the wire in either JPEG- or PNG-compressed form'",
+     "note": "Claude review pass",
      "checked": "2026-10-27"
     }
    }
@@ -8025,6 +8025,21 @@
     }
    },
    "title": "Rate limit · GitHub"
+  },
+  "https://github.com/ros2/demos/blob/rolling/image_tools/README.md": {
+   "citedBy": [
+    "7-6#ref-10"
+   ],
+   "refText": "ROS 2 demos, “image_tools README.” github.com/ros2/demos/blob/rolling/image_tools/README.md.",
+   "checks": {
+    "7-6": {
+     "status": "verified",
+     "claim": "cam2image publishes the default camera's images on /image; burger_mode:=true when no camera is available",
+     "evidence": "image_tools README: 'connects to your workstation's default camera device's video stream and publishes the images on /image and /flipimage topics'; 'If a camera device is not available, run ros2 run image_tools cam2image --ros-args -p burger_mode:=true'",
+     "note": "Claude review pass",
+     "checked": "2026-10-27"
+    }
+   }
   },
   "https://github.com/ros2/message_filters/blob/rolling/doc/index.rst": {
    "citedBy": [
@@ -14986,9 +15001,9 @@
    "checks": {
     "7-1": {
      "status": "verified",
-     "claim": "CMOS sensors enable higher frame rates because pixel readout occurs more quickly than charge transfer in a CCD shift register.; A simple fundamental measure of sensor resolution is the number of pixels per millimeter.; Larger sensor pixels generally feature higher charge saturation capacities and superior signal-to-noise ratios.; Small pixels make it easier to achieve high resolution for a given s",
-     "evidence": "Matches research_notes/ch7/facts.md, whose lines were checked word-for-word against the cached page in step 13.",
-     "note": "Ch7 draft, step 16",
+     "claim": "CCD vs CMOS: two sensor types; CCD charge transfer limits speed, uniform; blooming in CCD; CMOS handles high light without blooming, lower power, lower fill factor and SNR; blooming reduced by less light or faster shutter; larger pixels higher saturation; pixels/mm; CMOS faster readout",
+     "evidence": "Edmund page (cached): 'almost all sensors in machine vision fall into one of two categories'; 'charge transfer is responsible for the main CCD drawback of speed, but also leads to the high sensitivity and pixel-to-pixel consistency'; 'phenomenon of blooming ... smearing out of bright spots'; 'ability to handle high light levels without blooming'; 'low power consumption'; 'lower signal-to-noise ratio'; 'Camera blooming ... can be controlled by decreasing illumination, or by increasing the shutter speed'",
+     "note": "Claude review pass",
      "checked": "2026-10-27"
     },
     "7-5": {

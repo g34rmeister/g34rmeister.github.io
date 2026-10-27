@@ -147,10 +147,10 @@
                             A machine vision camera cannot inspect features it cannot see. Desired image quality can typically be achieved by improving system illumination rather than investing in higher resolution detectors or lenses.<sup><a href="#ref-1">[1]</a></sup> For example, an expensive high-resolution camera paired with a precision lens will still produce unusable results if improper lighting creates harsh glare or deep shadows. In contrast, an inexpensive sensor placed under an optimized lighting geometry yields clean, consistent images that simple, fast algorithms can process with high reliability.
                         </p>
                         <p>
-                            Poor lighting introduces severe degradation into image processing pipelines. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-1">[1]</a></sup> For example, when light intensity varies across a conveyor belt, an intensity threshold that isolates a dark component on one side may fail on the other.
+                            Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-1">[1]</a></sup> For example, when light intensity varies across a conveyor belt, an intensity threshold that isolates a dark component on one side may fail on the other.
                         </p>
                         <p>
-                            Improper lighting geometry also corrupts physical measurements. Shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href="#ref-1">[1]</a></sup> For example, if an overhead light source casts an asymmetric shadow along the edge of a machined part, an edge filter can register the shadow boundary instead of the physical edge. In robotic pick-and-place, for example, this false edge calculation can shift grasping coordinates and cause gripper collisions.
+                            Improper lighting geometry also corrupts physical measurements. Shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href="#ref-1">[1]</a></sup> For example, if an overhead light source casts an asymmetric shadow along the edge of a machined part, an edge filter can register the shadow boundary instead of the physical edge. In pick-and-place, this false edge can shift grasping coordinates and cause gripper collisions.
                         </p>
                         <p>
                             To design robust lighting systems, engineers specify illumination using photometric units. Optical illuminance in machine vision is specified in footcandles or lux, where one lux equals 0.0929 footcandles.<sup><a href="#ref-1">[1]</a></sup> Specifying illuminance ensures that illumination levels remain repeatable across multiple production lines and shifts.
@@ -170,7 +170,7 @@
                             However, backlighting imposes a distinct operational trade-off. While backlighting maximizes edge detection contrast, it intentionally eliminates internal surface details.<sup><a href="#ref-1">[1]</a></sup> Because the front face of an opaque part receives no direct light, features such as surface engraving, stamped serial numbers, barcode labels, and surface scratches are cast into uniform shadow.
                         </p>
                         <p>
-                            For example, backlighting is commonly chosen for dimensional gauging of stamped sheet metal parts, measuring hole diameters, and detecting parts scattered on backlight tables for 2D robotic sorting (see <a href="robotics-2-8.html">2.8</a>). For example, when inspecting clear glass vials or plastic bottles, backlighting is also used to inspect fill levels and fluid presence.
+                            Typical backlight jobs include dimensional gauging of stamped sheet metal parts, measuring hole diameters, and detecting parts scattered on backlight tables for 2D robotic sorting (see <a href="robotics-2-8.html">2.8</a>). With clear glass vials or plastic bottles, backlighting is also used to inspect fill levels and fluid presence.
                         </p>
 
                         <h2 class="article-section-title">03. Directional, glancing, and darkfield illumination</h2>
@@ -181,16 +181,16 @@
                             One of the most common front lighting devices is the ring light. A ring light mounts directly to the camera lens to provide uniform, shadow-reducing illumination over short working distances.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
-                            However, ring lights exhibit severe limitations when used on shiny surfaces. Ring lights can cause circular glare patterns on reflective parts and only perform effectively across relatively short working distances.<sup><a href="#ref-1">[1]</a></sup> On polished metals, glossy plastics, or solder pads, the LEDs produce a bright ring of specular reflections that saturates sensor pixels and obscures underlying features.
+                            Ring lights struggle with shiny surfaces. Ring lights can cause circular glare patterns on reflective parts and only perform effectively across relatively short working distances.<sup><a href="#ref-1">[1]</a></sup> On polished metals, glossy plastics, or solder pads, the LEDs produce a bright ring of specular reflections that saturates sensor pixels and obscures underlying features.
                         </p>
                         <p>
-                            To inspect surface texture or shallow engravings, engineers use directional glancing illumination. Glancing illumination applies point-source light at a sharp angle of incidence to reveal surface topography and texture.<sup><a href="#ref-1">[1]</a></sup> By angling light at a low, grazing angle nearly parallel to the part surface, minute raised ridges, stamped alphanumeric characters, laser etchings, or surface cracks cast distinct, elongated shadows. These shadows turn microscopic physical height variations into high-contrast image transitions.
+                            To inspect surface texture or shallow engravings, engineers use directional glancing illumination. Glancing illumination applies point-source light at a sharp angle of incidence to reveal surface topography and texture.<sup><a href="#ref-1">[1]</a></sup> By angling light at a low, grazing angle nearly parallel to the part surface, small raised ridges, stamped alphanumeric characters, laser etchings, or surface cracks cast distinct, elongated shadows. These shadows turn small height differences into high-contrast edges in the image.
                         </p>
                         <p>
-                            A specialized geometry for surface flaw detection is darkfield illumination. Darkfield illumination introduces light at shallow angles so that light enters translucent objects perpendicular to the lens axis or scatters off surface flaws.<sup><a href="#ref-1">[1]</a></sup> In a darkfield configuration, light strikes a flat specular surface at such a steep angle that direct reflections reflect away from the lens. As a result, a smooth, defect-free surface reflects no light into the camera and appears completely black.
+                            A specialized geometry for surface flaw detection is darkfield illumination. Darkfield illumination introduces light at shallow angles so that light enters translucent objects perpendicular to the lens axis or scatters off surface flaws.<sup><a href="#ref-1">[1]</a></sup> In a darkfield configuration, light strikes a flat, shiny surface at such a low angle that its mirror-like reflection bounces away from the lens. As a result, a smooth, defect-free surface reflects no light into the camera and appears completely black.
                         </p>
                         <p>
-                            When a defect interrupts the surface, darkfield lighting produces exceptional contrast. Darkfield lighting produces high contrast for surface flaws by highlighting scratches, cracks, and bubbles in clear materials.<sup><a href="#ref-1">[1]</a></sup> Any scratch, dust particle, fracture, or internal bubble refracts or scatters the shallow incident light rays upward into the camera aperture. The flaw appears as a brilliant white line or spot against a pitch-black background, allowing edge detection and blob analysis algorithms to isolate microscopic defects easily.
+                            When a defect breaks the surface, the contrast is strong. Darkfield lighting produces high contrast for surface flaws by highlighting scratches, cracks, and bubbles in clear materials.<sup><a href="#ref-1">[1]</a></sup> Any scratch, dust particle, fracture, or internal bubble refracts or scatters the shallow incident light rays upward into the camera aperture. The flaw appears as a bright line or spot on a black background, which edge detection and blob analysis can pick out easily.
                         </p>
 
                         <h2 class="article-section-title">04. Diffuse dome lights for curved specular objects</h2>
@@ -198,7 +198,7 @@
                             Inspecting curved, highly reflective objects presents one of the most difficult challenges in machine vision. For example, machined metal cylinders, chrome ball bearings, and solder joints on circuit boards all possess specular, multi-angled surfaces.
                         </p>
                         <p>
-                            When directional or ring lights strike curved reflective surfaces, the specular reflection behaves like a mirror.
+                            When directional or ring lights strike curved reflective surfaces, the surface acts like a curved mirror: it reflects the light source as small, saturated hot spots and leaves the rest of the part dark.
                         </p>
                         <p>
                             To solve this problem, vision engineers use diffuse dome lights. Diffuse dome lights project omnidirectional scattered light to evenly illuminate curved specular objects like circuit boards and polished components.<sup><a href="#ref-4">[4]</a></sup>
@@ -227,7 +227,7 @@
                             Consequently, in-line illumination is ideal for inspecting specular and semi-specular objects such as semiconductor wafers and CCDs.<sup><a href="#ref-5">[5]</a></sup> For example, microscopic wire bonds, metallic interconnect traces, and silicon wafer defects stand out with sharp, uniform contrast.
                         </p>
                         <p>
-                            However, incorporating a beamsplitter into the optical train introduces an unavoidable optical penalty. Placing a beamsplitter in the optical path introduces stray light that creates an image haze and prevents black object regions from appearing truly black.<sup><a href="#ref-5">[5]</a></sup> Internal reflections from the beamsplitter reach the sensor without having interacted with the object, reducing overall dynamic range and washing out faint details in low-signal or diffuse applications.
+                            The beamsplitter has a cost. Placing a beamsplitter in the optical path introduces stray light that creates an image haze and prevents black object regions from appearing truly black.<sup><a href="#ref-5">[5]</a></sup> Internal reflections from the beamsplitter reach the sensor without having interacted with the object, reducing overall dynamic range and washing out faint details in low-signal or diffuse applications.
                         </p>
 
                         <h2 class="article-section-title">06. Optical filters, wavelength selection, and cross-polarization</h2>
@@ -235,16 +235,16 @@
                             In industrial factories, ambient lighting is rarely static. For example, overhead factory lighting and sunlight from skylights can create fluctuating illumination and color shifts. Optical filters allow machine vision systems to reject ambient interference and isolate target features.
                         </p>
                         <p>
-                            One fundamental category of optical filters is colored glass. Colored glass filters are manufactured by doping glass materials with elements that selectively modify absorption and transmission spectra.<sup><a href="#ref-6">[6]</a></sup>
+                            One common type of optical filter is colored glass. Colored glass filters are manufactured by doping glass materials with elements that selectively modify absorption and transmission spectra.<sup><a href="#ref-6">[6]</a></sup>
                         </p>
                         <p>
-                            Colored filters are used in conjunction with monochromatic lighting to maximize contrast using color theory. For example, to make a feature appear bright in a monochrome image, engineers illuminate it with light of its own color and use a matching filter. To make a feature appear dark, for example, engineers illuminate it with light from the opposite side of the color wheel. For example, illuminating green pills and red pills with green light makes the green pills reflect strongly while the red pills absorb the light, creating dramatic contrast on a monochrome camera.
+                            Colored filters are used in conjunction with monochromatic lighting to maximize contrast using color theory. For example, to make a feature appear bright in a monochrome image, engineers illuminate it with light of its own color and use a matching filter. To make a feature appear dark, engineers light it with the color on the opposite side of the color wheel. Illuminating green pills and red pills with green light makes the green pills reflect strongly while the red pills absorb the light, creating strong contrast on a monochrome camera.
                         </p>
                         <p>
                             Filtering is also essential to manage the broad spectral sensitivity of solid-state sensors. Machine vision silicon camera sensors respond to wavelengths up to approximately one micrometer, making infrared cut-off filters necessary to block unwanted ambient infrared.<sup><a href="#ref-6">[6]</a></sup> Human eyes cannot see near-infrared light, but the silicon sensors in machine vision cameras still respond to it.
                         </p>
                         <p>
-                            However, their physical operating mechanism introduces an angle-dependent artifact. Increasing the angle of incidence on an optical interference filter increases optical path length through the dielectric layers and shifts transmission toward shorter wavelengths in an effect known as blue shift.<sup><a href="#ref-6">[6]</a></sup> For example, if an interference filter is attached to a wide-angle lens, light entering at the edges enters at steep angles, which can shift the filter passband and create uneven illumination across the field.
+                            Interference filters, which pass a narrow band of wavelengths using thin dielectric layers, have an angle-dependent artifact. Increasing the angle of incidence on an optical interference filter increases optical path length through the dielectric layers and shifts transmission toward shorter wavelengths in an effect known as blue shift.<sup><a href="#ref-6">[6]</a></sup> For example, if an interference filter is attached to a wide-angle lens, light entering at the edges enters at steep angles, which can shift the filter passband and create uneven illumination across the field.
                         </p>
                         <p>
                             To remove intense glare from semi-specular parts without changing lighting geometry, engineers employ polarization. Cross-polarization uses a polarizer on the illumination source and an analyzer on the camera lens oriented at 90 degrees to achieve maximum rejection of unwanted glare.<sup><a href="#ref-6">[6]</a></sup> The polarizer on the light source transmits light linearly polarized in one orientation. When this polarized light strikes a shiny surface, direct specular reflections maintain their polarization orientation and are absorbed by the analyzer filter on the lens, which is rotated 90 degrees. In contrast, light that penetrates the part surface and scatters diffusely is depolarized, allowing a portion of it to pass through the analyzer to form a clear, glare-free image.
@@ -252,25 +252,25 @@
 
                         <h2 class="article-section-title">07. Strobing, overdriving, and timing control</h2>
                         <p>
-                            In automated robotics cells, operating illumination continuously can cause significant practical issues.
+                            LEDs that stay on continuously run hot, and heat speeds up their aging and dimming.
                         </p>
                         <p>
-                            To overcome these limitations, industrial lighting is operated in pulsed strobe mode. Operating machine vision lights in strobe mode generates less heat in the LEDs and slows down the aging process to increase operating life expectancy.<sup><a href="#ref-7">[7]</a></sup> Instead of remaining on 100 percent of the time, the light pulses on only for a few hundred microseconds during camera exposure. Because the light is off during the remainder of the cycle, the average electrical duty cycle drops dramatically, allowing internal diode junctions to remain cool.
+                            To overcome these limitations, industrial lighting is operated in pulsed strobe mode. Operating machine vision lights in strobe mode generates less heat in the LEDs and slows down the aging process to increase operating life expectancy.<sup><a href="#ref-7">[7]</a></sup> Instead of staying on all the time, the light pulses on only while the camera is exposing. Because it is off for the rest of the cycle, the average power is much lower and the LEDs stay cooler.
                         </p>
                         <p>
-                            Strobe operation also allows lighting controllers to exceed continuous electrical ratings. Operating illumination in strobe mode allows overdriving LED lights up to 500 percent of nominal current rating to dramatically increase flash brightness.<sup><a href="#ref-7">[7]</a></sup> Because current flows for only a fraction of a millisecond, the LED can handle up to five times its continuous rated current without overheating, producing an intense burst of illumination.
+                            Strobe operation also allows lighting controllers to exceed continuous electrical ratings. Operating illumination in strobe mode allows overdriving LED lights up to 500 percent of nominal current rating to increase flash brightness.<sup><a href="#ref-7">[7]</a></sup> Because the current flows only for the short pulse, the LED can take up to five times its continuous rated current without overheating.
                         </p>
                         <p>
-                            This intense flash brightness allows camera exposure times to be shortened to tens of microseconds. For example, short exposure times freeze rapid part motion on moving conveyors, eliminating motion blur without requiring the conveyor to stop.
+                            The brighter flash lets the camera use a shorter exposure, and a short exposure freezes parts moving on a conveyor without stopping the belt.
                         </p>
                         <p>
-                            Finally, strobe illumination provides a crucial solution for cameras equipped with rolling shutters. As discussed in <a href="robotics-7-1.html">7.1</a>, rolling shutters expose sensor rows sequentially, creating geometric distortion when imaging moving objects. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href="#ref-8">[8]</a></sup> By synchronizing an overdriven LED strobe pulse so that it flashes only during the brief overlapping window when all sensor rows are actively exposing in a darkened environment, the effective image exposure is defined entirely by the brief microsecond flash. The camera captures an instantaneous, undistorted snapshot of the moving object, enabling accurate robot picking and dimensional measurement.
+                            Strobing also helps cameras with rolling shutters. As discussed in <a href="robotics-7-1.html">7.1</a>, rolling shutters expose sensor rows sequentially, creating geometric distortion when imaging moving objects. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href="#ref-8">[8]</a></sup> By synchronizing an overdriven LED strobe pulse so that it flashes only during the brief overlapping window when all sensor rows are actively exposing in a darkened environment, the exposure is set by the brief flash. The camera captures an instantaneous, undistorted snapshot of the moving object, enabling accurate robot picking and dimensional measurement.
                         </p>
 
                         <h2 class="article-section-title">08. Check your understanding</h2>
                         <ol class="article-spec-list">
                             <li>Why is optimizing illumination usually more effective and economical than upgrading camera sensors or lenses when resolving machine vision problems?</li>
-                            <li>What is the fundamental difference between darkfield illumination and brightfield backlighting in terms of what features they highlight?</li>
+                            <li>What is the difference between darkfield illumination and backlighting in terms of what features they highlight?</li>
                             <li>How does cross-polarization eliminate specular glare from shiny surfaces, and how must the polarizer and analyzer be oriented?</li>
                         </ol>
 

@@ -144,13 +144,13 @@
                                 In industrial robotics, vision systems capture camera frames to recognize workpieces, verify assembly, and guide end-effector motion. In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use camera images to calculate coordinate offsets for picking unfixed parts. Before any coordinate shift or pose calculation can occur, the raw image stream must be processed to reveal recognizable geometric features.
                             </p>
                             <p>
-                                Image processing pipelines begin by converting raw frames into suitable color representations. OpenCV converts color images using <code>cv.cvtColor</code> with flags such as <code>cv.COLOR_BGR2GRAY</code> for grayscale and <code>cv.COLOR_BGR2HSV</code> for hue-saturation-value representation.<sup><a href="#ref-1">[1]</a></sup> For example, converting to grayscale represents each pixel by its light intensity across a single channel to simplify boundary localization.
+                                Image processing pipelines begin by converting raw frames into suitable color representations. OpenCV converts color images using <code>cv.cvtColor</code> with flags such as <code>cv.COLOR_BGR2GRAY</code> for grayscale and <code>cv.COLOR_BGR2HSV</code> for hue-saturation-value representation.<sup><a href="#ref-1">[1]</a></sup> Grayscale keeps one brightness value per pixel, which is all most edge and threshold steps need.
                             </p>
                             <p>
                                 When parts must be differentiated by color rather than intensity alone, the HSV representation becomes valuable. In OpenCV HSV color space, the hue channel spans from 0 to 179 while saturation and value span from 0 to 255.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                Color segmentation isolates targets based on specific chromatic ranges. The function <code>cv.inRange</code> performs color segmentation by checking whether image array elements fall between lower and upper boundary arrays.<sup><a href="#ref-1">[1]</a></sup> For example, evaluating elements against lower and upper arrays produces a binary mask isolating the target from the background.
+                                Color segmentation isolates targets based on specific chromatic ranges. The function <code>cv.inRange</code> performs color segmentation by checking whether image array elements fall between lower and upper boundary arrays.<sup><a href="#ref-1">[1]</a></sup> The result is a binary mask: white where the pixel is in range, black elsewhere. In the code below, a hue range of 100 to 140 on OpenCV's 0 to 179 scale picks out blue parts.
                             </p>
                             <pre class="article-code"><code>import cv2 as cv
 import numpy as np
@@ -170,18 +170,18 @@ color_mask = cv.inRange(hsv, lower_bound, upper_bound)</code></pre>
                                 Once an image is converted to a single-channel grayscale array, engineers analyze its intensity distribution. An image histogram collects data counts of image features organized into a set of predefined bins.<sup><a href="#ref-2">[2]</a></sup> For example, an 8-bit single-channel image can be analyzed using 256 predefined bins to count how many pixels exhibit each brightness level.
                             </p>
                             <p>
-                                The quality of feature extraction depends directly on image contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-3">[3]</a></sup> For example, imagine a scene where the difference between maximum and minimum intensities is small: workpiece boundaries blend into the background.
+                                The quality of feature extraction depends directly on image contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-3">[3]</a></sup> When the brightest and darkest values are close together, part edges blend into the background.
                             </p>
                             <p>
-                                To improve poor contrast caused by uneven camera exposure, engineers apply histogram equalization. OpenCV provides the <code>equalizeHist</code> function to normalize brightness and enhance contrast on 8-bit single-channel grayscale images.<sup><a href="#ref-4">[4]</a></sup>
+                                When an image's brightness values are bunched into a narrow range, histogram equalization spreads them out. OpenCV provides the <code>equalizeHist</code> function to normalize brightness and enhance contrast on 8-bit single-channel grayscale images.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                Illumination directly dictates the quality of the raw histogram before software equalization is even applied. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-5">[5]</a></sup> For example, suppose illumination is non-uniform across the robot cell: shadows and hot spots make intensity thresholding unreliable. Desired image quality can typically be achieved by improving system illumination rather than investing in higher resolution detectors or lenses.<sup><a href="#ref-5">[5]</a></sup>
+                                Illumination directly dictates the quality of the raw histogram before software equalization is even applied. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-5">[5]</a></sup> Software cannot fully undo shadows and hot spots, which is why 7.2 treats lighting as the first fix.
                             </p>
 
                             <h2 class="article-section-title">03. Image thresholding: binary, adaptive, and Otsu</h2>
                             <p>
-                                Binarization is the foundation of many industrial vision tasks. Converting an 8-bit grayscale image into a 1-bit binary image separates foreground workpieces from the background fixture or conveyor. In simple thresholding with <code>cv.threshold</code> and <code>cv.THRESH_BINARY</code>, pixels smaller than or equal to the threshold are set to 0 while all others are set to a maximum value.<sup><a href="#ref-6">[6]</a></sup> In simple binary thresholding, pixels exceeding a defined threshold value are set to a maximum value while all other pixels are set to zero.<sup><a href="#ref-6">[6]</a></sup>
+                                Binarization is the foundation of many industrial vision tasks. Converting an 8-bit grayscale image into a 1-bit binary image separates foreground workpieces from the background fixture or conveyor. In simple thresholding with <code>cv.threshold</code> and <code>cv.THRESH_BINARY</code>, pixels smaller than or equal to the threshold are set to 0 while all others are set to a maximum value.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <p>
                                 Simple thresholding works in controlled lighting, but factory workstations may experience lighting gradients from ambient fixtures or moving equipment.
@@ -190,7 +190,7 @@ color_mask = cv.inRange(hsv, lower_bound, upper_bound)</code></pre>
                                 To handle varying scene conditions, vision engineers rely on localized thresholding techniques. Adaptive thresholding calculates distinct local threshold values for small regions across an image to handle scenes with non-uniform illumination.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <p>
-                                When the lighting is uniform but the exact threshold value is unknown or shifts between production batches, automatic threshold selection is required. Otsu binarization determines an optimal global threshold automatically from a bimodal image histogram using the <code>cv.THRESH_OTSU</code> flag.<sup><a href="#ref-6">[6]</a></sup> For example, imagine a bimodal histogram with two distinct peaks corresponding to dark parts on a bright background.
+                                When the lighting is uniform but the exact threshold value is unknown or shifts between production batches, automatic threshold selection is required. Otsu binarization determines an optimal global threshold automatically from a bimodal image histogram using the <code>cv.THRESH_OTSU</code> flag.<sup><a href="#ref-6">[6]</a></sup> A bimodal histogram has two peaks, for example one for dark parts and one for a bright background; Otsu picks the threshold that best separates them.
                             </p>
                             <pre class="article-code"><code># Simple binary thresholding with fixed cutoff 127
 ret1, thresh_simple = cv.threshold(gray, 127, 255, cv.THRESH_BINARY)
@@ -214,10 +214,10 @@ thresh_adapt = cv.adaptiveThreshold(
                                 Along with connected components, contour extraction traces object boundaries. In OpenCV contour detection, the object of interest must be represented as white foreground against a black background.<sup><a href="#ref-8">[8]</a></sup> For example, if an inspection image contains dark parts against a white background, the image is inverted before finding contours.
                             </p>
                             <p>
-                                Boundary storage efficiency is critical when processing high-resolution video streams in real-time robot cells. The contour approximation method <code>cv.CHAIN_APPROX_SIMPLE</code> compresses straight segments by removing redundant points along contour boundaries to save memory.<sup><a href="#ref-8">[8]</a></sup> For example, along a straight edge, storing only the start and end coordinates of the line segment removes redundant points to save memory.
+                                Contours can hold many points, which costs memory and time. The contour approximation method <code>cv.CHAIN_APPROX_SIMPLE</code> compresses straight segments by removing redundant points along contour boundaries to save memory.<sup><a href="#ref-8">[8]</a></sup> In OpenCV's own example, a rectangle's contour drops from 734 points to 4 corner points.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                From the extracted contour boundary, geometric moments provide center-of-mass coordinates. Contour centroid spatial coordinates are calculated from image moments using the relations <code>Cx = M10 / M00</code> and <code>Cy = M01 / M00</code>.<sup><a href="#ref-9">[9]</a></sup> For example, the resulting centroid coordinates <code>(Cx, Cy)</code> provide the reference position needed for robot pick calculations (see <a href="robotics-2-8.html">2.8</a>).
+                                From the extracted contour boundary, geometric moments provide center-of-mass coordinates. Contour centroid spatial coordinates are calculated from image moments using the relations <code>Cx = M10 / M00</code> and <code>Cy = M01 / M00</code>.<sup><a href="#ref-9">[9]</a></sup> The centroid <code>(Cx, Cy)</code> is the part position used for the pick calculations in <a href="robotics-2-8.html">2.8</a>.
                             </p>
 
                             <h2 class="article-section-title">05. Blob analysis with SimpleBlobDetector</h2>
@@ -228,7 +228,7 @@ thresh_adapt = cv.adaptiveThreshold(
                                 Rather than relying on a single binarization step, <code>SimpleBlobDetector</code> sweeps across multiple thresholds to detect features under varying contrast conditions. <code>SimpleBlobDetector</code> extracts candidate blobs by binarizing the source image across a range of thresholds from <code>minThreshold</code> to <code>maxThreshold</code> with increment <code>thresholdStep</code>.<sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <p>
-                                After generating multiple binary images, candidate centroids from neighboring slices must be merged into single detections. <code>SimpleBlobDetector</code> groups component centers from multiple binarized images that fall within <code>minDistBetweenBlobs</code> to establish final blob coordinates.<sup><a href="#ref-10">[10]</a></sup> For example, this clustering step consolidates overlapping detections across threshold passes into a single coordinate for each workpiece.
+                                After generating multiple binary images, candidate centroids from neighboring slices must be merged into single detections. <code>SimpleBlobDetector</code> groups component centers from multiple binarized images that fall within <code>minDistBetweenBlobs</code> to establish final blob coordinates.<sup><a href="#ref-10">[10]</a></sup> This step turns overlapping detections from the different thresholds into one point per part.
                             </p>
                             <p>
                                 To distinguish circular parts such as washers, bearings, or bolt heads from scrap metal cuttings, the detector provides shape filters. OpenCV <code>SimpleBlobDetector</code> computes circularity using the formula four times pi times area divided by the square of the perimeter, where a value of 1.0 indicates a perfect circle.<sup><a href="#ref-11">[11]</a></sup> For example, setting minimum and maximum circularity bounds allows vision systems to separate round components from irregular debris on a conveyor.
@@ -253,7 +253,7 @@ keypoints = detector.detect(gray)</code></pre>
                                 When parts must be gauged or aligned with high dimensional precision, boundary edge detection is preferred over regional thresholding. Edges correspond to sharp discontinuities in surface reflectance, material boundaries, or surface geometry. The most widely used edge detection pipeline in industrial computer vision is the multi-stage Canny edge detector.
                             </p>
                             <p>
-                                Factory images invariably contain high-frequency sensor noise that can create false edge readings. The initial step of the Canny edge detector removes image noise using a 5x5 Gaussian smoothing filter.<sup><a href="#ref-12">[12]</a></sup>
+                                Every camera image contains some noise, and noise can create false edges. The initial step of the Canny edge detector removes image noise using a 5x5 Gaussian smoothing filter.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
                             <p>
                                 After smoothing, the algorithm calculates image intensity gradients across horizontal and vertical directions. In <code>cv.Canny</code>, the <code>aperture_size</code> parameter configures the Sobel kernel size for computing image gradients and defaults to 3.<sup><a href="#ref-12">[12]</a></sup>
@@ -262,7 +262,7 @@ keypoints = detector.detect(gray)</code></pre>
                                 Raw gradient maps produce thick boundaries spanning several pixels. To achieve precise geometric measurements, the edge must be thinned to a single pixel. Non-maximum suppression suppresses pixels that are not local intensity maxima along the gradient direction to produce thin single-pixel edges.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
                             <p>
-                                The final stage resolves ambiguous edges using two separate thresholds. The Canny edge detector uses hysteresis thresholding with <code>minVal</code> and <code>maxVal</code> to distinguish true edges from noise.<sup><a href="#ref-12">[12]</a></sup> Canny hysteresis thresholding accepts gradient pixels between the upper and lower thresholds only if they are connected to a pixel above the upper threshold.<sup><a href="#ref-13">[13]</a></sup>
+                                The final stage resolves ambiguous edges using two separate thresholds. The Canny edge detector uses hysteresis thresholding with <code>minVal</code> and <code>maxVal</code> to distinguish true edges from noise.<sup><a href="#ref-12">[12]</a></sup> A pixel below the lower threshold is rejected, and a pixel between the two thresholds is kept only if it is connected to a pixel above the upper threshold.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">07. Template matching and pattern localization</h2>
@@ -273,7 +273,7 @@ keypoints = detector.detect(gray)</code></pre>
                                 Understanding output dimensions is essential for memory allocation and coordinate mapping. In template matching, comparing an image of size WxH with a template of size wxh produces an output match matrix of size (W-w+1, H-h+1).<sup><a href="#ref-14">[14]</a></sup> Each entry in the resulting matrix contains a metric score indicating the degree of visual match between the template patch and that specific sub-window of the primary image.
                             </p>
                             <p>
-                                After computing the correlation matrix with <code>cv.matchTemplate</code>, the software identifies the best matching location. For example, the function <code>cv.minMaxLoc</code> scans the output matrix to find the global minimum and maximum intensity values along with their spatial coordinates.
+                                After computing the correlation matrix with <code>cv.matchTemplate</code>, the software identifies the best matching location. The function <code>cv.minMaxLoc</code> finds the smallest and largest scores in the result and where they are. Which one marks the best match depends on the comparison method: with <code>TM_SQDIFF</code>, the minimum is the best match.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
                                 The detected pixel coordinates directly feed robot motion commands. As established in <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, vision software converts pixel coordinates into physical millimetres in the robot user frame via hand-eye calibration. The detected template match position defines the current part pose <code>T_found</code>, allowing the robot controller to shift its taught grasp points and pick the incoming part without stopping the production line.
