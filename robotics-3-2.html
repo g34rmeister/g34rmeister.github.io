@@ -166,7 +166,7 @@
                                 How do ROS 2 nodes find each other? They discover each other automatically through DDS, with no master.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-2">[2]</a></sup> ROS 2 has no <code>roscore</code>.<sup><a href="#ref-3">[3]</a></sup> Instead, it is built on the <strong>Data Distribution Service (DDS)</strong>, an industry standard created by the Object Management Group (OMG) and implemented by several vendors.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
-                                DDS implementations talk to each other with the RTPS wire protocol.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> When a node starts, it advertises its presence to other nodes in the same ROS domain, and they reply with information about themselves so connections can be made. Nodes keep advertising periodically, so late arrivals are found, and they announce when they go offline.<sup><a href="#ref-4">[4]</a></sup> This discovery traffic uses multicast,<sup><a href="#ref-7">[7]</a></sup> and there is no central server to crash and no master that must be started first.<sup><a href="#ref-2">[2]</a></sup>
+                                DDS implementations talk to each other with the RTPS (Real-Time Publish-Subscribe) wire protocol, which specifies the format of messages sent across the network.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> When a node starts, it advertises its presence to other nodes in the same ROS domain, and they reply with information about themselves so connections can be made. Nodes keep advertising periodically, so late arrivals are found, and they announce when they go offline.<sup><a href="#ref-4">[4]</a></sup> This discovery traffic uses multicast,<sup><a href="#ref-7">[7]</a></sup> and there is no central server to crash and no master that must be started first.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">03. The ROS Middleware (RMW) abstraction layer</h2>
@@ -345,7 +345,7 @@ def generate_launch_description():
         )
     ])</code></pre>
                             <p>
-                                Launch files also support event handlers, which react to process events while the system runs (for example, shutting everything down when one important node exits), as well as launch arguments, substitutions and starting composable nodes in a container.<sup><a href="#ref-20">[20]</a></sup><sup><a href="#ref-18">[18]</a></sup>
+                                Launch files also support event handlers, which react to process events while the system runs (for example, shutting everything down when one important node exits), as well as launch arguments, substitutions and starting composable nodes in a container (a shared OS process hosting multiple composable nodes, distinct from a Docker container).<sup><a href="#ref-20">[20]</a></sup><sup><a href="#ref-18">[18]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">08. Multi-platform and security enhancements</h2>

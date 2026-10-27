@@ -226,7 +226,7 @@ x = L1 * cos(t1) + L2 * cos(t1 + t2)
 y = L1 * sin(t1) + L2 * sin(t1 + t2)
 print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                             <p>
-                                This one example uses every topic above. Trigonometry gives the formula. With matrices, you get the same answer by multiplying a rotation and a translation for each link. Differentiating x and y with respect to time gives the arm&rsquo;s velocity, which leads to a matrix called the Jacobian. Lesson <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a> builds on this with joints, frames and kinematics.
+                                This one example uses every topic above. Trigonometry gives the formula. With matrices, you get the same answer by multiplying a rotation and a translation for each link. Differentiating x and y with respect to time gives the arm&rsquo;s velocity, which leads to a matrix called the Jacobian (a matrix mapping joint velocities to tool velocities). Lesson <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a> builds on this with joints, frames and kinematics.
                             </p>
                             <p>
                                 Free resources:
@@ -283,7 +283,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">IP addresses and subnets:</span> how devices on a network find each other; a robot controller and a PC usually need addresses on the same subnet to communicate.</li>
-                                <li class="article-spec-item"><span class="spec-label">TCP vs. UDP:</span> TCP provides &ldquo;a reliable, in-order, byte-stream service&rdquo;;<sup><a href="#ref-16">[16]</a></sup> UDP is lighter and faster but does not guarantee delivery, so packets can be lost.<sup><a href="#ref-17">[17]</a></sup> ROS 2&rsquo;s default middleware, DDS, runs over UDP.<sup><a href="#ref-18">[18]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">TCP vs. UDP:</span> TCP provides &ldquo;a reliable, in-order, byte-stream service&rdquo;;<sup><a href="#ref-16">[16]</a></sup> UDP is lighter and faster but does not guarantee delivery, so packets can be lost.<sup><a href="#ref-17">[17]</a></sup> ROS 2&rsquo;s default middleware (connectivity software that lets distributed nodes communicate), DDS (Data Distribution Service), runs over UDP.<sup><a href="#ref-18">[18]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Ports:</span> a single device runs many services, each listening on its own port number. Modbus TCP, for example, uses port 502.<sup><a href="#ref-19">[19]</a></sup></li>
                             </ul>
                             <p>
@@ -291,7 +291,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Modbus TCP:</span> Modbus was developed by Modicon in 1979 and became a de facto standard in manufacturing. The TCP/IP version dates from 1999, and the specification is free with no licensing fees.<sup><a href="#ref-19">[19]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">EtherNet/IP:</span> an industrial protocol built on standard Ethernet and TCP/IP. It also uses UDP for real-time cyclic data, and its underlying protocol, CIP, is supported by hundreds of vendors.<sup><a href="#ref-20">[20]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">EtherNet/IP:</span> an industrial protocol built on standard Ethernet and TCP/IP. It also uses UDP for real-time cyclic data, and its underlying protocol, CIP (Common Industrial Protocol), is supported by hundreds of vendors.<sup><a href="#ref-20">[20]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">PROFINET:</span> another industrial Ethernet standard, maintained by PROFIBUS &amp; PROFINET International.<sup><a href="#ref-21">[21]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">OPC UA:</span> the OPC UA Robotics specification (OPC 40010-1) defines a shared information model for industrial and mobile robots, covering asset management and condition monitoring of arms, axes, motors, controllers and software. Version 1.02 was released in September 2025.<sup><a href="#ref-22">[22]</a></sup></li>
                             </ul>
