@@ -19,7 +19,7 @@ Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot 
 
 ## Agent tools (read these instead of the pages)
 - `docs/lessons-index.md`: every lesson's objectives, key terms, sections, ref count and source-check status. Start here to find where a topic lives.
-- `docs/sources.json`: every cited source with link status and per-lesson claim checks. `python3 scripts/sources.py report 4-4` lists one lesson's unverified or wrong refs. After checking claims, record them (`sources.py import FILE LESSON`) so nobody re-checks.
+- `docs/sources.json`: every cited source with link status and per-lesson claim checks. `python3 scripts/sources.py report 4-4` lists one lesson's unverified or wrong refs. After checking claims, record them (`sources.py import FILE LESSON`) so nobody re-checks. CI (`sources.py check`) fails if any cited ref has no recorded check, so every new citation must be checked before it is pushed.
 - `python3 scripts/ref_claims.py 4-4 [N ...]`: each ref with the exact text that cites it.
 - `python3 scripts/fetch_text.py URL --grep word`: a source as plain text (handles PDFs, github.com via raw, bot walls via Chromium).
 
