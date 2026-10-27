@@ -1,0 +1,314 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 9.1 Preventive Maintenance
+-->
+<html lang="en">
+    <head>
+        <title>9.1 Preventive Maintenance — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Industrial robot preventive maintenance: maintenance strategies, inspection intervals, lubrication checks, battery replacement, control box cleaning, and torque verification." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-9-1.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="9.1 Preventive Maintenance — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Industrial robot preventive maintenance: maintenance strategies, inspection intervals, lubrication checks, battery replacement, control box cleaning, and torque verification." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-9-1.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="9.1 Preventive Maintenance, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="9.1 Preventive Maintenance — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Industrial robot preventive maintenance: maintenance strategies, inspection intervals, lubrication checks, battery replacement, control box cleaning, and torque verification." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-maintenance.html">Chapter 9 &middot; Maintenance</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">9.1 Preventive Maintenance</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Maintenance strategies in automated manufacturing</h2>
+                        <p>
+                            In <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a>, we examined how robots coordinate within production cells alongside conveyors, fixtures, and supervisory controllers. When the robot stops, the whole cell stops, so plants plan how they look after their machines.
+                        </p>
+                        <p>
+                            The simplest approach to equipment upkeep is run-to-failure servicing. Reactive maintenance is maintenance done after equipment has failed or stopped.<sup><a href="#ref-1">[1]</a></sup> Nothing is done until something breaks.
+                        </p>
+                        <p>
+                            It is still common. On average, 45.7 percent of manufacturing machinery maintenance is reactive maintenance.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Manufacturing establishments relying most heavily on reactive maintenance experience 3.3 times more downtime than those relying on it least.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Preventive maintenance is maintenance that is scheduled, timed, or based on an operating cycle.<sup><a href="#ref-1">[1]</a></sup> The work is done on schedule whether or not the machine shows a problem.
+                        </p>
+                        <p>
+                            Predictive maintenance is initiated based on predictions of failure made using observed data such as temperature, noise, and vibration.<sup><a href="#ref-1">[1]</a></sup> Instead of a calendar, the trigger is a measurement that suggests a part is wearing out.
+                        </p>
+                        <p>
+                            Among plants relying primarily on planned maintenance, leading adopters of predictive maintenance achieved fifteen percent less downtime and an eighty-seven percent lower defect rate.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Balancing schedules, sensor data, and maintenance records</h2>
+                        <p>
+                            Choosing the interval is a trade-off. Preventive maintenance can cause unnecessary cost and downtime if performed too frequently, or failures if not performed frequently enough.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Manufacturers generate maintenance records documenting equipment faults, failures, root causes, and repairs to speed up troubleshooting and improve failure prediction.<sup><a href="#ref-2">[2]</a></sup> A maintenance log for each robot (what was seen, what was done, what the cause turned out to be) lets the next technician check whether the same symptom has happened before.
+                        </p>
+                        <p>
+                            Adding sensors is not enough on its own. Installing sensors yields limited predictive intelligence if the sensors fail to capture data relevant to the specific failure mode.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Failure prediction success remains low unless failure data is systematically collected and labeled alongside sensor data.<sup><a href="#ref-2">[2]</a></sup> In other words, the maintenance log and the sensor data have to be kept together, so that someone can see which readings came before which failures.
+                        </p>
+
+                        <h2 class="article-section-title">03. Routine service intervals and safety system testing</h2>
+                        <p>
+                            Universal Robots recommends sending a cobot for a service check at a regional service center at least bi-annually.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Spare robots in storage need attention too. A robot must not be kept in storage for more than 6 months without performing a visual inspection.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Universal Robots recommends testing robot safety functions monthly to verify correct operation.<sup><a href="#ref-3">[3]</a></sup> <a href="robotics-4-4.html">Lesson 4.4 Making a Robot Cell Safe</a> covers what those safety functions are.
+                        </p>
+
+                        <h2 class="article-section-title">04. Robot arm inspection, cleaning, and joint lubrication</h2>
+                        <p>
+                            Cleaning must follow the manufacturer's instructions. Compressed air must never be used to clean the robot arm because it can damage internal components.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Instead, dust, dirt and oil can be wiped off with a cloth and water, isopropyl alcohol, 10% ethanol alcohol or 10% naphtha. Bleach must not be used, even diluted.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            While cleaning, look at the joints. The gearboxes inside them (see <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a>) are greased. Small amounts of grease occasionally visible at a robot joint do not affect the function or durability of the joint.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">05. Control cabinet maintenance and electrostatic discharge protection</h2>
+                        <p>
+                            The control box needs cleaning too. Accumulated dirt or dust inside the control box must be cleaned using an electrostatic discharge vacuum cleaner.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            An ESD vacuum is built not to cause electrostatic discharge (ESD), a static spark that can damage electronics.
+                        </p>
+                        <p>
+                            The controller log can also point to maintenance needs. An incorrect date and clock in the controller log indicates that the CMOS battery is low.<sup><a href="#ref-3">[3]</a></sup> A wrong clock also makes the log harder to use, because the time stamps no longer match what happened in the plant.
+                        </p>
+                        <p>
+                            Technicians must wear an intact ESD wristband and prepare an ESD bag before replacing electrostatic-sensitive parts.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">06. A worked checklist: UR's inspection plan</h2>
+                        <p>
+                            Universal Robots publishes an inspection plan for its cobots. It is a good example of what a robot maker's maintenance checklist looks like. If a part is not in an acceptable state, UR says to fix it immediately.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>Visual inspection of the arm:<sup><a href="#ref-3">[3]</a></sup></p>
+                        <ol class="article-spec-list">
+                            <li>Move the arm to its ZERO position if possible, turn it off and disconnect the power cable from the control box.</li>
+                            <li>Inspect the cable between the control box and the arm for damage.</li>
+                            <li>Check that the base mounting bolts and the tool flange bolts are properly tightened.</li>
+                            <li>Inspect the flat rings (the seals between joints) for wear and damage. Because they all see the same environment, UR recommends replacing all of them if one is worn.</li>
+                            <li>Inspect the blue joint lids for cracks and their screws for tightness. The lid screws are set to 0.4 Nm (&plusmn;0.05 Nm) with a calibrated tool.</li>
+                        </ol>
+                        <p>Functional and safety checks, which UR recommends monthly:<sup><a href="#ref-3">[3]</a></sup></p>
+                        <ol class="article-spec-list">
+                            <li>Press the teach pendant's emergency stop and check that the robot stops and cuts power to the joints.</li>
+                            <li>Freedrive: set the correct TCP, payload and center of gravity, move the arm to a stretched-out horizontal position, and check that it holds its position.</li>
+                            <li>Backdrive: test it on all joints. It lets you move the arm to a safe position, for example when it is close to colliding with something.</li>
+                            <li>Check that the safety settings still match the cell's risk assessment and that the extra safety inputs and outputs still work.</li>
+                            <li>Check the date and clock in the log. The CMOS battery that keeps the clock has a long shelf life of up to 10 years.</li>
+                            <li>Back up the robot's data (see 9.5).</li>
+                        </ol>
+                        <p>Control box:<sup><a href="#ref-3">[3]</a></sup></p>
+                        <ol class="article-spec-list">
+                            <li>With the power cable disconnected, check that the control board terminals are properly inserted and no wires are loose.</li>
+                            <li>Clean dust with an ESD vacuum. The box has two filters, one on each side; clean them with low-pressure air or replace them if they are very dirty or damaged.</li>
+                            <li>Listen to the fan while it runs. If it sounds abnormal, contact the service provider or replace it.</li>
+                        </ol>
+                        <p>
+                            Each check, its date and anything found or fixed goes into the robot's maintenance log, so the next inspection can compare.
+                        </p>
+                        <h2 class="article-section-title">07. Structural fasteners, collisions, and torque verification</h2>
+                        <p>
+                            Robot arm mounting bolts and tool mounting bolts must be functionally inspected after any heavy collision.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            A collision sends a shock through the arm, the tool and their bolts (<a href="robotics-2-5.html">2.5 End-of-Arm Tooling and I/O</a> covers how the tool is mounted).
+                        </p>
+                        <p>
+                            Looking at a bolt does not tell you whether it is tight enough. Functional inspections require using a calibrated torque wrench to confirm that robot arm bolts and tooling fasteners are properly torqued.<sup><a href="#ref-4">[4]</a></sup> The torque values come from the service manual.
+                        </p>
+
+                        <h2 class="article-section-title">08. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">How do reactive, preventive and predictive maintenance differ, and what did NIST find about downtime in plants that rely most on reactive maintenance?</li>
+                            <li class="article-spec-item">Why is compressed air prohibited when cleaning a robot arm, and what type of vacuum cleaner must be used to clean dirt and dust inside the control box?</li>
+                            <li class="article-spec-item">When must robot arm mounting bolts and tool mounting bolts undergo functional inspection, and what instrument must technicians use to verify that they are properly tightened?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">09. References</h2>
+                        <p class="references-note">Source check (October 2026): 4 of 4 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">NIST, &ldquo;Manufacturing Machinery Maintenance.&rdquo; <a href="https://www.nist.gov/el/applied-economics-office/manufacturing/topics-manufacturing/manufacturing-machinery-maintenance" target="_blank" rel="noopener noreferrer">nist.gov/el/applied-economics-office/manufacturing/topics-manufacturing/manufacturing-machinery-maintenance</a>.</li>
+                            <li id="ref-2">NIST, &ldquo;Summary Report: Meeting of the ASME Standards Subcommittee on Advanced Monitoring, Diagnostics, and Prognostics for Manufacturing Operations Hosted at NIST.&rdquo; <a href="https://nvlpubs.nist.gov/nistpubs/ams/NIST.AMS.100-31.pdf" target="_blank" rel="noopener noreferrer">nvlpubs.nist.gov/nistpubs/ams/NIST.AMS.100-31.pdf</a>.</li>
+                            <li id="ref-3">Universal Robots, &ldquo;Inspection And Maintenance Plan.&rdquo; <a href="https://www.universal-robots.com/articles/ur/robot-care-maintenance/inspection-and-maintenance-plan/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/robot-care-maintenance/inspection-and-maintenance-plan/</a>.</li>
+                            <li id="ref-4">Universal Robots, &ldquo;Service Handbook.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-maintenance.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">Chapter 9 overview</span>
+                                </a>
+                                <a href="robotics-9-2.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">9.2 A Troubleshooting Method</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

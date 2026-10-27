@@ -1,0 +1,326 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 9.2 A Troubleshooting Method
+-->
+<html lang="en">
+    <head>
+        <title>9.2 A Troubleshooting Method — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A systematic troubleshooting methodology for industrial robot cells: lockout/tagout under OSHA 29 CFR 1910.147, symptom gathering, controller error logs, flight reports, and root-cause verification." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-9-2.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="9.2 A Troubleshooting Method — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="A systematic troubleshooting methodology for industrial robot cells: lockout/tagout under OSHA 29 CFR 1910.147, symptom gathering, controller error logs, flight reports, and root-cause verification." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-9-2.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="9.2 A Troubleshooting Method, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="9.2 A Troubleshooting Method — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="A systematic troubleshooting methodology for industrial robot cells: lockout/tagout under OSHA 29 CFR 1910.147, symptom gathering, controller error logs, flight reports, and root-cause verification." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-maintenance.html">Chapter 9 &middot; Maintenance</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">9.2 A Troubleshooting Method</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Safety first: controlling hazardous energy</h2>
+                        <p>
+                            Industrial robot troubleshooting begins with safety. When a cell stops, the first temptation is to walk in and clear the problem. That is exactly when people get hurt.
+                        </p>
+                        <p>
+                            <a href="robotics-4-4.html">Lesson 4.4 Making a Robot Cell Safe</a> covered the safeguards that stop a robot during normal work. Maintenance and repair need more: the machine has to be cut off from every energy source so it cannot move or release energy while someone works on it.
+                        </p>
+                        <p>
+                            In the United States, this is required by OSHA. OSHA standard 29 CFR 1910.147 establishes procedures to disable machinery and prevent the release of hazardous electrical, mechanical, hydraulic, pneumatic, chemical, and thermal energy during servicing.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Compliance with OSHA lockout/tagout regulations prevents an estimated 120 fatalities and 50,000 injuries annually.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Lockout and tagout procedures</h2>
+                        <p>
+                            Pressing an emergency stop or switching the robot to manual mode does not isolate it. Push buttons, selector switches, and control circuit devices are not considered energy isolating devices under OSHA standards.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            They only send a signal to a control system. An energy isolating device, such as a main disconnect switch or a shutoff valve, physically blocks the energy instead.
+                        </p>
+                        <p>
+                            For an isolating device to be locked out, it must provide a physical structure that accepts a padlock. An energy isolating device is capable of being locked out if it has a hasp, attachment point, or built-in locking mechanism to accept a lock.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            When older machinery possesses an isolating device that lacks a built-in locking mechanism, tagout may be used as an alternative warning measure. Tagout devices may only be used in place of lockout devices if the tagout program provides employee protection equivalent to a lockout program.<sup><a href="#ref-1">[1]</a></sup> A tag only warns; it does not physically stop anyone.
+                        </p>
+                        <p>
+                            Tagout device attachments must be non-reusable, self-locking, and non-releasable with a minimum unlocking strength of at least 50 pounds.<sup><a href="#ref-2">[2]</a></sup> OSHA compares this to a one-piece, all-environment-tolerant nylon cable tie.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Lockout and tagout hardware must be authorized for the specific machinery and be durable, standardized, and substantial.<sup><a href="#ref-1">[1]</a></sup> They may be used only for controlling energy and not for other purposes.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            The required sequence for applying energy control begins with preparation and shutdown, followed by machine isolation, lockout application, stored energy relief, and verification of isolation.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">1. Preparation and shutdown:</span> Know which energy sources the machine has and shut it down normally.</li>
+                            <li class="article-spec-item"><span class="spec-label">2. Machine isolation:</span> Operate every energy isolating device so the machine is cut off.</li>
+                            <li class="article-spec-item"><span class="spec-label">3. Lockout application:</span> Put a lock (or tag) on each isolating device.</li>
+                            <li class="article-spec-item"><span class="spec-label">4. Stored energy relief:</span> After applying lockout devices, all potentially hazardous residual or stored energy must be relieved, disconnected, restrained, and rendered safe.<sup><a href="#ref-2">[2]</a></sup> On a robot cell this includes air left in pneumatic lines and parts that could move under gravity.</li>
+                            <li class="article-spec-item"><span class="spec-label">5. Verification of isolation:</span> Before starting work, confirm that the machine really is isolated and de-energized.</li>
+                        </ul>
+                        <p>
+                            Energy control rules enforce personal accountability. Energy control procedures must enforce that only the authorized worker who applied a lockout device is permitted to remove it.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            When major maintenance requires several craftspeople or shifts working together, group lockout protocols coordinate safety. During group maintenance, every authorized employee must affix an individual personal lockout device to the group lockbox before beginning work.<sup><a href="#ref-2">[2]</a></sup> The machine cannot be restarted until the last person has removed their lock.
+                        </p>
+                        <p>
+                            To maintain the effectiveness of plant safety measures, employers must inspect their energy control procedures at least annually.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">03. Gathering symptoms and the risk of unverified resets</h2>
+                        <p>
+                            Once the cell is properly secured and ready for diagnostic inspection, troubleshooting begins by gathering facts. In <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a>, we saw that a robot arm operates as part of an integrated system comprising the manipulator, controller, end effector, part fixtures, and supervisory programmable logic controllers (PLCs).
+                        </p>
+                        <p>
+                            Under production pressure, it is tempting to reset a fault and restart. Resetting robot faults without identifying the root cause masks fault detection and increases the risk of personnel injury.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Programming a PLC to reset robot stops automatically is worse: UR warns that automatic acknowledgment and reset of robot stops masks faults that will lead to a failure condition.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Instead of resetting the fault, a methodical technician begins by collecting observable symptoms. What was the robot doing when it stopped? What step in the program was executing? Did the gripper drop the part? Are pneumatic pressure regulators showing normal line pressure?
+                        </p>
+                        <p>
+                            Status lights (LEDs) on the controller boards are another clue. Safety Control Board diagnostic LEDs show normal communication with a slow green flash and a hardware or safety error with permanent red.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. Reading controller logs and error codes</h2>
+                        <p>
+                            The controller keeps a log of what happened, which is usually the best clue.
+                        </p>
+                        <p>
+                            The UR Support File is automatically generated inside the robot controller and bundles log files, robot programs, and flight reports.<sup><a href="#ref-4">[4]</a></sup> UR's Log Viewer is a program for reading it on a computer.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            A controller log entry records the message description, error category, error code, error source, and timestamp.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Timestamp:</span> When it happened, so it can be compared with other events in the cell (a correct clock matters; see 9.1).</li>
+                            <li class="article-spec-item"><span class="spec-label">Error source:</span> Which part of the system reported it.</li>
+                            <li class="article-spec-item"><span class="spec-label">Error category:</span> What kind of message it is.</li>
+                            <li class="article-spec-item"><span class="spec-label">Error code:</span> A number you can look up in the maker's error code list.</li>
+                            <li class="article-spec-item"><span class="spec-label">Message description:</span> A short text describing the problem.</li>
+                        </ul>
+                        <p>
+                            The meaning of a code depends on the controller generation. Universal Robots error code numbers ranging from 1 to 255 apply exclusively to CB3 and earlier robot controllers.<sup><a href="#ref-5">[5]</a></sup> In contrast, Universal Robots error code numbers higher than 256 designate faults on e-Series and newer controllers.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            So always look a code up in the list for your controller.
+                        </p>
+
+                        <h2 class="article-section-title">05. Flight reports and hypothesis testing</h2>
+                        <p>
+                            A log entry says what went wrong, but not always why.
+                        </p>
+                        <p>
+                            Flight record diagnostics plot joint position, velocity, acceleration, motor current, and torque at the exact moment a fault occurs.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            UR describes this flight record view as intended for expert-level users, to be used when advised.<sup><a href="#ref-4">[4]</a></sup> For a beginner, the point is that the data exists and can be sent to the robot maker's support team.</p>
+                        <p>
+                            With the symptoms, status lights and log in hand, work through the problem one step at a time:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">1. Define the problem clearly:</span> State the exact symptoms, error codes, affected joints, and operating conditions under which the fault appeared.</li>
+                            <li class="article-spec-item"><span class="spec-label">2. Formulate a single hypothesis:</span> Propose one clear, testable explanation that accounts for all observed evidence. For example, if joint 3 shows an unexpected torque spike during high-acceleration moves while carrying a new workpiece, hypothesize that the configured tool center point (TCP) payload mass is lower than the actual physical payload.</li>
+                            <li class="article-spec-item"><span class="spec-label">3. Change only one variable at a time:</span> Test the hypothesis by modifying a single parameter or swapping a single component. If testing payload settings, update the payload mass in the installation settings and re-run the program at reduced speed. Never change multiple variables at the same time—such as re-teaching points, modifying acceleration rates, swapping cables, and adjusting mechanical stops simultaneously. Changing multiple variables prevents knowing which adjustment solved the problem and risks introducing new secondary faults.</li>
+                            <li class="article-spec-item"><span class="spec-label">4. Verify the outcome:</span> Observe system behavior during test runs. Check the log again. If the fault recurs, discard the hypothesis, formulate a new one based on the new observations, and repeat the cycle.</li>
+                        </ul>
+
+                        <h2 class="article-section-title">06. Documenting root causes and repairs</h2>
+                        <p>
+                            A troubleshooting task is not finished when the robot begins moving again. The final phase of the troubleshooting method is documenting the intervention in the plant maintenance management system.
+                        </p>
+                        <p>
+                            Manufacturers generate maintenance records documenting equipment faults, failures, root causes, and repairs to speed up troubleshooting and improve failure prediction.<sup><a href="#ref-6">[6]</a></sup>
+                        </p>
+                        <p>
+                            Record the symptom, the cause you found and the fix. The next person who sees the same symptom, on this robot or an identical one, can start from your notes instead of from zero.
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What sequence of steps does OSHA standard 29 CFR 1910.147 mandate for applying hazardous energy control, and why are push buttons and selector switches not recognized as energy isolating devices?</li>
+                            <li class="article-spec-item">What fields does a UR controller log entry record, and what does a flight report show?</li>
+                            <li class="article-spec-item">How do UR error code numbers differ between CB3 and e-Series controllers, and why should robot stops not be reset automatically?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">OSHA, &ldquo;Lockout/Tagout.&rdquo; <a href="https://www.osha.gov/sites/default/files/publications/OSHAFS3529.pdf" target="_blank" rel="noopener noreferrer">osha.gov/sites/default/files/publications/OSHAFS3529.pdf</a>.</li>
+                            <li id="ref-2">OSHA, &ldquo;1910.147 - The control of hazardous energy (lockout/tagout).&rdquo; <a href="https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147" target="_blank" rel="noopener noreferrer">osha.gov/laws-regs/regulations/standardnumber/1910/1910.147</a>.</li>
+                            <li id="ref-3">Universal Robots, &ldquo;Service Handbook.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
+                            <li id="ref-4">Universal Robots, &ldquo;UR Log Viewer - Manual.&rdquo; <a href="https://www.universal-robots.com/articles/ur/robot-care-maintenance/ur-log-viewer-manual/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/robot-care-maintenance/ur-log-viewer-manual/</a>.</li>
+                            <li id="ref-5">Universal Robots, &ldquo;Error Codes Directory.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/ErrorCodes/ErrorCodes.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/ErrorCodes/ErrorCodes.pdf</a>.</li>
+                            <li id="ref-6">NIST, &ldquo;Summary Report: Meeting of the ASME Standards Subcommittee on Advanced Monitoring, Diagnostics, and Prognostics for Manufacturing Operations Hosted at NIST.&rdquo; <a href="https://nvlpubs.nist.gov/nistpubs/ams/NIST.AMS.100-31.pdf" target="_blank" rel="noopener noreferrer">nvlpubs.nist.gov/nistpubs/ams/NIST.AMS.100-31.pdf</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-9-1.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">9.1 Preventive Maintenance</span>
+                                </a>
+                                <a href="robotics-9-3.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">9.3 Mechanical Problems</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

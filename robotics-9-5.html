@@ -1,0 +1,293 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 9.5 Calibration, Backups and Recovery
+-->
+<html lang="en">
+    <head>
+        <title>9.5 Calibration, Backups and Recovery — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Robot calibration, revolution counters, tool center point (TCP) definition, joint replacement validation, program correction, and controller backups." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-9-5.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="9.5 Calibration, Backups and Recovery — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Robot calibration, revolution counters, tool center point (TCP) definition, joint replacement validation, program correction, and controller backups." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-9-5.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="9.5 Calibration, Backups and Recovery, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="9.5 Calibration, Backups and Recovery — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Robot calibration, revolution counters, tool center point (TCP) definition, joint replacement validation, program correction, and controller backups." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-maintenance.html">Chapter 9 &middot; Maintenance</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">9.5 Calibration, Backups and Recovery</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Revolution counters and axis synchronization</h2>
+                        <p>
+                            A robot only knows where its joints are if its position sensors and its stored calibration data agree with the real arm (<a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a> covers the joints). After some repairs that agreement is lost and has to be restored. This lesson uses ABB's and Universal Robots' procedures as examples; always follow the manual for your own robot.
+                        </p>
+                        <p>
+                            On ABB robots, each motor has a resolver that measures its angle, and the controller also counts whole motor turns (the revolution counter).
+                        </p>
+                        <p>
+                            Updating the revolution counter is necessary when calibration values have been entered manually or an axis revolution counter must be updated against the synchronization position.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The first step when updating the revolution counter is to move the robot and positioner axes to their respective zero positions at the synchronization marking.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Then, on the FlexPendant: To update revolution counters in the service window, tap <code>Calibration</code>, select the mechanical unit, tap <code>Revolution Counters</code>, and tap <code>Update Rev. Counters</code>.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Resolver calibration and fine calibration</h2>
+                        <p>
+                            Updating the revolution counter is different from changing the calibration values themselves.
+                        </p>
+                        <p>
+                            Manual setting of calibration values is only necessary if the robot system has lost its resolver calibration values.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Cells can also have external axes, such as a turntable or a linear track.
+                        </p>
+                        <p>
+                            Recalibrating axes with fine calibration is necessary when external axes lack calibration values, but should not be used if calibration values already exist for that axis.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">03. Tool center point and load data</h2>
+                        <p>
+                            After a tool is changed or repaired, its tool center point (TCP) and load data must be checked (see <a href="robotics-2-5.html">2.5 End-of-Arm Tooling and I/O</a>).
+                        </p>
+                        <p>
+                            A TCP is taught by touching a fixed point from several directions. Tool center point definition uses a 5-point method when weaving during welding, whereas a 4-point method is sufficient without weaving.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The load data (mass and center of gravity) matters too.
+                        </p>
+                        <p>
+                            Having the correct tool load defined in tool data is most important when using collision detection functionality.<sup><a href="#ref-1">[1]</a></sup> 9.3 showed the same point for UR: wrong payload settings are a common cause of protective stops.
+                        </p>
+
+                        <h2 class="article-section-title">04. Joint replacement and type validation</h2>
+                        <p>
+                            On a UR robot, a failed joint can be replaced as a whole unit.
+                        </p>
+                        <p>
+                            The replacement must match the robot model. Replacing robot joints with joints from a different robot model can trigger error <code>C364A1</code> indicating a robot type disagreement in the joints when attempting to release the brakes.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            UR's joint validation procedure is a service-technician task. Before joint validation, power on the robot until a yellow indicator shows the <code>Idle</code> state in PolyScope or <code>Locked</code> in PolyScope X.<sup><a href="#ref-2">[2]</a></sup> The rest of the procedure is in the service manual and is not covered here.
+                        </p>
+
+                        <h2 class="article-section-title">05. Workspace recalibration and program correction</h2>
+                        <p>
+                            A replaced joint also changes the arm's geometry slightly, so old programs may miss their positions.
+                        </p>
+                        <p>
+                            Dual Robot Calibration calibrates the robot across its full workspace so it can resume production after joint replacement without modifying program waypoints.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            The other option is to correct the program. Program Correction by Key Waypoints adjusts waypoints when transferring programs between robots or making programs work following joint replacements.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Program Correction by Key Waypoints supports only fixed waypoints and does not support Move nodes configured with <code>Use Joint Angles</code>.<sup><a href="#ref-3">[3]</a></sup> Those moves have to be checked and re-taught by hand.
+                        </p>
+
+                        <h2 class="article-section-title">06. Controller backups and storage recovery</h2>
+                        <p>
+                            Programs, settings and calibration data live on the controller's storage card, so backups matter.
+                        </p>
+                        <p>
+                            The flashcard, USB drive, or SD card serves as the hard drive of the robot and must never be removed while power is on to avoid operating system corruption.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Backing up old storage media before replacement is necessary because all files including joint calibration data can be permanently lost.<sup><a href="#ref-4">[4]</a></sup> Reflashing an SD card or USB stick deletes all robot programs and calibration files, requiring a full backup prior to image reinstallation.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Universal Robots magic files automatically back up data to a USB stick, copying programs, installation files, and configuration files.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Manual backup of the SD card <code>datafs</code> partition requires copying the programs directory, root serial and log files, and the urcontrol calibration files.<sup><a href="#ref-3">[3]</a></sup> The <code>datafs</code> partition contains the <code>programs/</code> directory (holding all application and installation scripts), <code>root/ur-serial</code>, <code>root/log_history.txt</code>, and the <code>.urcontrol/</code> configuration directory containing <code>calibration.conf</code> and <code>calibration.log</code>.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Creating a bootable storage device allows users to boot a control box with a new robot image to recover when internal storage is damaged.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            A PolyScope system backup requires a USB drive with at least 4 GB capacity and can be restored if the software must be downgraded below version 5.8.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What is the difference between a 4-point and a 5-point method when defining a tool center point (TCP), and why is accurate tool load data required for collision detection?</li>
+                            <li class="article-spec-item">What error code appears when a UR joint from a different robot model is fitted, and why must the storage card be backed up before it is replaced or reflashed?</li>
+                            <li class="article-spec-item">What data must be copied during a manual backup of the SD card <code>datafs</code> partition, and why must storage media never be removed while controller power is on?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 4 of 4 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">ABB, &ldquo;System Settings: Welding Robot Station M2004, IRC5.&rdquo; <a href="https://library.e.abb.com/public/0dd781963d32811dc125766d003a238c/3HEA802352-001_revA_en.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/.../3HEA802352-001_revA_en.pdf</a>.</li>
+                            <li id="ref-2">Universal Robots, &ldquo;Validation after Joint Replacement.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-serv-man/UR20/serv-man-validation-joint.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/.../serv-man-validation-joint.htm</a>.</li>
+                            <li id="ref-3">Universal Robots, &ldquo;Service Handbook.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/.../Service_Manual_UR-Series_en.pdf</a>.</li>
+                            <li id="ref-4">Universal Robots, &ldquo;How to replace flashcard in CB3 and E-series robots.&rdquo; <a href="https://www.universal-robots.com/articles/ur/robot-care-maintenance/how-to-replace-flashcard-in-cb3-and-e-series-robots/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/robot-care-maintenance/how-to-replace-flashcard-in-cb3-and-e-series-robots/</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-9-4.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">9.4 Electrical and I/O Faults</span>
+                                </a>
+                                <a href="robotics-9-6.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">9.6 Lab: Check a Robot's State from Python</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>&copy; Gerald L&ecirc;, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

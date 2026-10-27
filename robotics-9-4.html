@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 9.4 Electrical and I/O Faults
+-->
+<html lang="en">
+    <head>
+        <title>9.4 Electrical and I/O Faults — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Troubleshoot electrical and I/O faults in industrial robot cells: multimeter verification of 24 V DC power supplies, sensor wiring protection, solid-state leakage, galvanic relay isolation, and industrial network diagnostics." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-9-4.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="9.4 Electrical and I/O Faults — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Troubleshoot electrical and I/O faults in industrial robot cells: multimeter verification of 24 V DC power supplies, sensor wiring protection, solid-state leakage, galvanic relay isolation, and industrial network diagnostics." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-9-4.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="9.4 Electrical and I/O Faults, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="9.4 Electrical and I/O Faults — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Troubleshoot electrical and I/O faults in industrial robot cells: multimeter verification of 24 V DC power supplies, sensor wiring protection, solid-state leakage, galvanic relay isolation, and industrial network diagnostics." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-maintenance.html">Chapter 9 &middot; Maintenance</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">9.4 Electrical and I/O Faults</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Power supplies and multimeter safety</h2>
+                        <p>
+                            Many cell faults are electrical: a sensor that does not switch, a missing supply voltage, or a network link that drops. This lesson builds on the I/O in <a href="robotics-2-5.html">2.5 End-of-Arm Tooling and I/O</a> and the wiring in <a href="robotics-8-1.html">8.1 From Wires to Networks</a>.
+                        </p>
+                        <p>
+                            Before opening an enclosure, apply the lockout/tagout steps from 9.2; measurements on live circuits are only for people trained and authorized to make them.
+                        </p>
+                        <p>
+                            The main tool is a digital multimeter (DMM). Technicians should ohm out multimeter test leads prior to testing to verify the resistance measurement is close to zero.<sup><a href="#ref-1">[1]</a></sup> To do this, set the meter to resistance and touch the probe tips together.
+                        </p>
+                        <p>
+                            Control panels use DC power supplies fed from the AC mains. If devices lose power, Fluke's procedure starts by checking the AC input. Measuring AC input voltage on a DC power supply requires placing the black probe on neutral and the red probe on line.<sup><a href="#ref-1">[1]</a></sup> The meter should show the input AC voltage (120V or 240V), within the range the supply accepts.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Then check the DC output. Disconnecting or powering off devices attached to a DC power supply output prevents sudden voltage spikes during measurement.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            A DMM has limits. Digital multimeters take snapshots in time and cannot detect transient events, electrical noise, or waveform variations without an oscilloscope.<sup><a href="#ref-1">[1]</a></sup> A supply can read correctly on a DMM and still have short dips that upset the devices it feeds.
+                        </p>
+
+                        <h2 class="article-section-title">02. Measuring DC voltages and testing continuity</h2>
+                        <p>
+                            When setting up a multimeter for DC voltage measurements, the black probe connects to COM, the red probe connects to V-omega, and probes are removed in reverse order.<sup><a href="#ref-2">[2]</a></sup> "Reverse order" means the red probe comes out first, then the black.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Touching modern digital multimeter test probes to opposite polarity terminals displays a negative symbol without damaging the meter.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Using the wrong jacks is dangerous. Plugging test probes into current jacks rather than voltage jacks will create a short circuit when attempting to measure voltage.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            A continuity test checks for an unbroken path, such as an intact wire. Continuity testing must be performed on de-energized circuits with the component isolated from other circuit components.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            A functioning electrical fuse displays continuity when tested with a digital multimeter.<sup><a href="#ref-3">[3]</a></sup> A blown fuse shows no continuity; fix whatever caused the overcurrent before replacing it.
+                        </p>
+                        <p>
+                            A digital multimeter triggers an audible continuity beep when component resistance drops below a threshold such as 40 ohms on a 400 ohm range setting.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">03. Field sensor wiring and protection limitations</h2>
+                        <p>
+                            Sensors are a common fault point. <a href="robotics-8-1.html">8.1 From Wires to Networks</a> explains sinking (NPN) and sourcing (PNP) sensors and why the input module has to match.
+                        </p>
+                        <p>
+                            Most industrial sensor failures stem from improper wiring installation where the sensor output is connected directly to the power supply or AC line.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Fuses will not save a sensor from a wiring mistake: fast-acting fuses and electronic current-limiting circuits operate too slowly to protect solid-state sensors from short circuits or reverse polarity wiring.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            So check a replacement sensor's wiring against its data sheet before switching the power back on.
+                        </p>
+
+                        <h2 class="article-section-title">04. Solid-state switching, leakage, and signal timing</h2>
+                        <p>
+                            Some sensors switch AC with a solid-state device called a TRIAC.
+                        </p>
+                        <p>
+                            A switched-off TRIAC still lets a little current through. High off-state leakage current exceeding 1 mA makes TRIAC outputs unsuitable as inputs for programmable logic controllers.<sup><a href="#ref-4">[4]</a></sup> The input may then never see the sensor turn off.
+                        </p>
+                        <p>
+                            Two-wire sensors take their power through the load circuit, which limits how they can be combined. Higher voltage drops and operating power requirements typically limit the number of series-connected two-wire sensors to two devices.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            A very short sensor pulse can also be missed if it starts and ends between two PLC scans. High-speed sensors often incorporate an off-delay pulse stretcher to ensure fast signals persist long enough for slower PLC scan cycles to detect them.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">05. Controller I/O capacity, isolation, and noise mitigation</h2>
+                        <p>
+                            The robot controller's own I/O has limits too.
+                        </p>
+                        <p>
+                            When adding devices, check the current budget. The controller internal 24V supply supports up to 2A of total I/O current consumption, whereas an external power supply can deliver up to 6A.<sup><a href="#ref-5">[5]</a></sup> If the internal supply is not enough, UR says an external supply can be connected; the user manual gives the details.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Noise from other equipment can also cause false signals.
+                        </p>
+                        <p>
+                            Electrical noise interference from external equipment can be mitigated by establishing galvanic isolation using an intermediate relay.<sup><a href="#ref-5">[5]</a></sup> Galvanic isolation means there is no direct electrical connection between the two circuits. In UR's example, a robot digital output drives a relay, and the relay's contact switches a signal from an external power supply to a frequency converter.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">06. Diagnosing network and fieldbus faults</h2>
+                        <p>
+                            Network faults are the last group. <a href="robotics-8-3.html">8.3 Lab: Connecting a Robot to a PLC</a> showed Modbus TCP, and <a href="robotics-8-6.html">8.6 Network Design, Security and Diagnostics</a> showed how to watch traffic in Wireshark.
+                        </p>
+                        <p>
+                            A watchdog is a timer that raises an error when expected messages stop arriving. Modbus TCP communication watchdogs time out when program execution stops on signals configured with zero hertz update frequency.<sup><a href="#ref-6">[6]</a></sup>
+                        </p>
+                        <p>
+                            For EtherCAT, the ETG's diagnosis guide starts with the status lights. A visual inspection showing an unlit Link/Activity LED indicates a permanent interruption of the physical network link to an industrial Ethernet device.<sup><a href="#ref-7">[7]</a></sup> Check the cable, connector and the power to the neighboring device.
+                        </p>
+                        <p>
+                            Intermittent drops are harder to see. EtherCAT slave hardware registers provide dedicated Lost Link Counters that increment whenever physical communication link is interrupted.<sup><a href="#ref-7">[7]</a></sup> They are registers <code>0x0310</code> to <code>0x0313</code>, one per port, so reading them shows which port lost its link.<sup><a href="#ref-7">[7]</a></sup>
+                        </p>
+                        <p>
+                            In EtherCAT networks, an unexpected Working Counter in a returned frame indicates slave communication failure and causes the master to discard input data.<sup><a href="#ref-7">[7]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why should technicians ohm out multimeter test leads before taking measurements, and what hazard is created if test probes are connected to current jacks during voltage testing?</li>
+                            <li class="article-spec-item">What causes most industrial sensor failures, and why do fuses not prevent them?</li>
+                            <li class="article-spec-item">What does an unexpected Working Counter in EtherCAT mean, and which registers record intermittent link drops?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 7 of 7 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Fluke, &ldquo;How to Troubleshoot DC Power Supplies Using a Digital Multimeter.&rdquo; <a href="https://www.fluke.com/en-us/learn/blog/predictive-maintenance/troubleshooting-dc-power-supply-with-digital-multimeter" target="_blank" rel="noopener noreferrer">fluke.com/en-us/learn/blog/predictive-maintenance/troubleshooting-dc-power-supply-with-digital-multimeter</a>.</li>
+                            <li id="ref-2">Fluke, &ldquo;How to Measure DC Voltage with a Digital Multimeter.&rdquo; <a href="https://www.fluke.com/en-us/learn/blog/digital-multimeters/how-to-measure-dc-voltage-with-a-digital-multimeter" target="_blank" rel="noopener noreferrer">fluke.com/en-us/learn/blog/digital-multimeters/how-to-measure-dc-voltage-with-a-digital-multimeter</a>.</li>
+                            <li id="ref-3">Fluke, &ldquo;A Guide to Continuity Testing with a Multimeter.&rdquo; <a href="https://www.fluke.com/en-us/learn/blog/digital-multimeters/how-to-test-for-continuity" target="_blank" rel="noopener noreferrer">fluke.com/en-us/learn/blog/digital-multimeters/how-to-test-for-continuity</a>.</li>
+                            <li id="ref-4">Rockwell Automation, &ldquo;Sensor Technology and Application Basics.&rdquo; <a href="https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/c117-rm001_-en-p.pdf" target="_blank" rel="noopener noreferrer">literature.rockwellautomation.com/idc/groups/literature/documents/rm/c117-rm001_-en-p.pdf</a>.</li>
+                            <li id="ref-5">Universal Robots, &ldquo;Connecting Internal Inputs and Outputs (I/O) on the robot's controller.&rdquo; <a href="https://www.universal-robots.com/articles/ur/connecting-internal-inputs-and-outputs-io-on-the-robots-controller/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/connecting-internal-inputs-and-outputs-io-on-the-robots-controller/</a>.</li>
+                            <li id="ref-6">Universal Robots, &ldquo;Modbus client troubleshooting.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/modbus-client-troubleshooting/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/modbus-client-troubleshooting/</a>.</li>
+                            <li id="ref-7">EtherCAT Technology Group, &ldquo;EtherCAT Diagnosis For Users.&rdquo; <a href="https://www.ethercat.org/download/documents/EtherCAT_Diagnosis_For_Users.pdf" target="_blank" rel="noopener noreferrer">ethercat.org/download/documents/EtherCAT_Diagnosis_For_Users.pdf</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-9-3.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">9.3 Mechanical Problems</span>
+                                </a>
+                                <a href="robotics-9-5.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">9.5 Calibration, Backups and Recovery</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

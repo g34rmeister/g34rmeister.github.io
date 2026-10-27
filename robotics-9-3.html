@@ -1,0 +1,315 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    RISE Bot Instructor: 9.3 Mechanical Problems
+-->
+<html lang="en">
+    <head>
+        <title>9.3 Mechanical Problems — Gerald Lê | RISE Bot Instructor @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Diagnose and service industrial robot mechanical systems: joint flat rings and seals, collision recovery and loose joints, electromechanical brakes, shaft alignment with flexible couplings, and dress pack cable retraction." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-9-3.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="9.3 Mechanical Problems — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta property="og:description" content="Diagnose and service industrial robot mechanical systems: joint flat rings and seals, collision recovery and loose joints, electromechanical brakes, shaft alignment with flexible couplings, and dress pack cable retraction." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-9-3.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="9.3 Mechanical Problems, part of RISE Bot Instructor by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="9.3 Mechanical Problems — Gerald Lê | RISE Bot Instructor @ LSU" />
+        <meta name="twitter:description" content="Diagnose and service industrial robot mechanical systems: joint flat rings and seals, collision recovery and loose joints, electromechanical brakes, shaft alignment with flexible couplings, and dress pack cable retraction." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="RISE Bot Instructor">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">RISE Bot Instructor</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-maintenance.html">Chapter 9 &middot; Maintenance</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">9.3 Mechanical Problems</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Joint seals, flat rings, and fastener torques</h2>
+                        <p>
+                            In <a href="robotics-1-6.html">Lesson 1.6 Robot Anatomy and Coordinate Frames</a>, we examined how articulated manipulators use precision gearboxes and bearings to transmit mechanical power while maintaining high repeatability. This lesson looks at what wears or breaks in that hardware and how to recognize it. Seals keep dirt and fluids out of the joints.
+                        </p>
+                        <p>
+                            On a UR arm, the outside seals are called flat rings. If visual inspection reveals wear or damage on any joint flat ring, all flat rings should be replaced because they share the same operating environment.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Lubrication leakage caused by a worn or broken sealing ring does not affect overall robot performance and can be wiped off when replacing seals.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The blue joint lids are held by small screws. Screws securing the joint lids must be tightened to 0.4 Nm using calibrated torque tools.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Collisions, protective stops, and loose joints</h2>
+                        <p>
+                            Even in a well-designed cell (see <a href="robotics-4-4.html">4.4 Making a Robot Cell Safe</a>), a robot sometimes hits something or stops close to an obstacle.
+                        </p>
+                        <p>
+                            When a robot is close to colliding with an object, backdrive mode releases joint brakes where needed so the arm can be manually moved to a safe position before initializing.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Not every protective stop means a real collision. Protective stops indicating exceeded force safety settings can be caused by high accelerations with sudden trajectory changes or operation close to performance limits.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Pushing excessively during pick-and-place positions creates unwanted forces that trigger protective stops and require re-teaching waypoints.<sup><a href="#ref-2">[2]</a></sup> For example, a place position taught slightly too low makes the tool press into the fixture.
+                        </p>
+                        <p>
+                            Collisions can also leave lasting damage. If programmed waypoints shift and protective stops increase, a robot joint may have become loose after hard or multiple collisions.<sup><a href="#ref-2">[2]</a></sup> After a hard collision, check the bolts as in 9.1.
+                        </p>
+
+                        <h2 class="article-section-title">03. Repeated protective stops: what to check</h2>
+                        <p>
+                            UR's service manual separates two cases after a robot stop. If there was a collision, remove the obstacle and make sure people are clear before resuming. If there was no collision, the robot is working too close to its limits, and the program should be changed to reduce the load, for example with lower accelerations or better use of blends. An application that causes robot stops every day is not designed correctly and needs to be changed.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            For repeated C153 protective stops ("joint positions deviates from path"), UR's support article gives a checklist:<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <ol class="article-spec-list">
+                            <li>Check that the installation settings are correct: payload, tool center point, center of gravity of the end effector, and mounting.</li>
+                            <li>Check that the safety settings match the application's risk assessment.</li>
+                            <li>Check that the robot does not push too hard at pick and place positions; re-teach those waypoints if needed.</li>
+                            <li>To find the motions that come close to a stop, temporarily lower the force limit, then reduce speed or acceleration in those motions and set the force limit back.</li>
+                            <li>Only if the risk assessment allows it, raise the force limit in steps of 5N; UR says no more than 25N should be necessary.</li>
+                            <li>After a very hard collision, or if waypoints start shifting and stops increase, check whether a joint has become loose (use the inspection plan in 9.1).</li>
+                        </ol>
+                        <p>
+                            If none of this helps, contact the distributor. UR asks for a description of the application and where the stop happens, videos and pictures (especially of the end effector), a backup of the programs and installation file, and the log history and crash report.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <h2 class="article-section-title">04. Safe joint brake operation and inspection</h2>
+                        <p>
+                            Each joint has a brake that holds the arm when power is off.
+                        </p>
+                        <p>
+                            When the robot detects that a joint brake system failed to engage, motor power is maintained to keep the arm at a standstill until an operator performs a controlled shutdown.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            This matters because if a joint brake fails to engage before power is removed, the affected joint cannot prevent the robot arm from sliding downwards under gravity.<sup><a href="#ref-3">[3]</a></sup> Never stand or reach under an arm with a brake fault. The log shows which joint reported the faulty brake, and the robot will not release its brakes again until that brake has been checked.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            A properly engaged joint brake permits only a limited mechanical motion of one to two degrees before hitting the brake pin.<sup><a href="#ref-3">[3]</a></sup> Much more movement than that suggests the brake is not working.
+                        </p>
+                        <p>
+                            When repairing a faulty robot joint brake, technicians should first replace the brake solenoid before investigating the friction brake.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">05. Shaft alignment and flexible couplings</h2>
+                        <p>
+                            Conveyors, positioners and other machines around a robot are often driven by a motor coupled to a shaft.
+                        </p>
+                        <p>
+                            Two shafts are never perfectly lined up. Parallel misalignment means their center lines are offset from each other.
+                        </p>
+                        <p>
+                            Flexible couplings must be used instead of rigid couplings to compensate for parallel misalignment and prevent bearing failure.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">06. Cable routing, stress loops, and bundling</h2>
+                        <p>
+                            Cables and hoses to the tool (see <a href="robotics-2-5.html">2.5 End-of-Arm Tooling and I/O</a>) bend every time the robot moves, so they are a common source of faults.
+                        </p>
+                        <p>
+                            Providing an adequate bend radius increases cable life by allowing the cable to absorb bending energy over a greater length.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Building a sufficient stress loop into cable installations prevents undue stress on the cable near the connector.<sup><a href="#ref-4">[4]</a></sup> A stress loop is a little slack in the cable just before the connector.
+                        </p>
+                        <p>
+                            Systems with moving connections should design extra cable length using cable loops, coiled cables, or C-tracks to prevent stress.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Cable ties must not pinch or compress cables, allowing relatively free movement of cables within the bundle.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Routing cables along outside corners should be avoided because the corner is a potential pinch point.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">07. Cable carriers and dynamic retraction systems</h2>
+                        <p>
+                            A dress pack is the bundle of cables and hoses run along the outside of the arm to the tool.
+                        </p>
+                        <p>
+                            Cable retraction systems guide the cable carrier to prevent loops in the robot work area.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            A cable carrier features a fixed bending radius stop to prevent cable stress.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            A pneumatic retraction system provides adjustable pull-back force using a pressure control valve.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Monitoring the limit position of a retraction system avoids significant damage during failures.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">08. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why must all joint flat rings be replaced together if visual inspection reveals wear or damage on only one ring?</li>
+                            <li class="article-spec-item">What safety mechanism keeps a robot arm from falling if a joint brake fails to engage during shutdown, and how much mechanical motion should an engaged brake permit?</li>
+                            <li class="article-spec-item">How do cable retraction systems and fixed bending radius stops protect dress pack cables from mechanical stress during robot motion?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">09. References</h2>
+                        <p class="references-note">Source check (October 2026): 5 of 5 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Universal Robots, &ldquo;Inspection And Maintenance Plan.&rdquo; <a href="https://www.universal-robots.com/articles/ur/robot-care-maintenance/inspection-and-maintenance-plan/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/robot-care-maintenance/inspection-and-maintenance-plan/</a>.</li>
+                            <li id="ref-2">Universal Robots, &ldquo;Preventive actions for error code C153.&rdquo; <a href="https://www.universal-robots.com/articles/ur/robot-care-maintenance/preventive-actions-for-error-code-c153-protective-stop-joint-positions-deviates-from-path/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/robot-care-maintenance/preventive-actions-for-error-code-c153-protective-stop-joint-positions-deviates-from-path/</a>.</li>
+                            <li id="ref-3">Universal Robots, &ldquo;Service Handbook.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
+                            <li id="ref-4">Rockwell Automation, &ldquo;Sensor Technology and Application Basics.&rdquo; <a href="https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/c117-rm001_-en-p.pdf" target="_blank" rel="noopener noreferrer">literature.rockwellautomation.com/idc/groups/literature/documents/rm/c117-rm001_-en-p.pdf</a>.</li>
+                            <li id="ref-5">igus, &ldquo;Robot Dresspack Retraction Systems for triflex® R.&rdquo; <a href="https://www.igus.com/info/robot-dresspack-retraction-systems" target="_blank" rel="noopener noreferrer">igus.com/info/robot-dresspack-retraction-systems</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-9-2.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">9.2 A Troubleshooting Method</span>
+                                </a>
+                                <a href="robotics-9-4.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">9.4 Electrical and I/O Faults</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

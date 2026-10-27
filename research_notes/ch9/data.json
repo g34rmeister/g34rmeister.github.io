@@ -1,0 +1,322 @@
+{
+ "chapter": {
+  "id": 9,
+  "title": "Maintenance and Troubleshooting",
+  "url": "robotics-maintenance.html",
+  "prerequisites": "Chapter 1, especially 1.6 Robot Anatomy and Coordinate Frames and 1.7 The Industrial Robot Cell; 2.5 End-of-Arm Tooling and I/O; 4.4 Making a Robot Cell Safe; 8.1 From Wires to Networks; 8.3 Lab: Connecting a Robot to a PLC. Python for the lab in 9.6.",
+  "handsOn": "query a stand-in for the Universal Robots Dashboard Server over TCP port 29999 from Python to check robot mode, safety status, and program state, and recover from a protective stop; no hardware needed.",
+  "summary": "Preventive, predictive, and reactive maintenance strategies and inspection intervals, OSHA 29 CFR 1910.147 lockout/tagout and controller log troubleshooting, mechanical cable carriers, dress packs, and joint brakes, multimeter electrical diagnostics and 24 V sensor I/O faults, axis zero-synchronization, TCP calibration, and controller storage recovery, and a Python Dashboard Server remote state monitoring lab.",
+  "lessons": [
+   {
+    "id": "9-1",
+    "minutes": 14,
+    "title": "Preventive Maintenance",
+    "objectives": [
+     "Distinguish between preventive, predictive, and reactive maintenance strategies and compare their impact on machine downtime and defect rates.",
+     "Identify the maintenance intervals recommended for robot inspection, safety function testing, and service center checks.",
+     "Follow a robot maker's inspection checklist (UR's plan) for the arm, the monthly safety tests and the control box, including correct cleaning and ESD precautions.",
+     "Perform fastener and joint inspections following collisions using calibrated torque wrenches and explain the significance of joint grease."
+    ],
+    "keyTerms": [
+     "preventive maintenance",
+     "predictive maintenance",
+     "reactive maintenance",
+     "CMOS battery",
+     "ESD vacuum",
+     "torque wrench"
+    ]
+   },
+   {
+    "id": "9-2",
+    "minutes": 15,
+    "title": "A Troubleshooting Method",
+    "objectives": [
+     "Follow the five-step OSHA 29 CFR 1910.147 lockout/tagout sequence to isolate machinery and relieve stored hazardous energy.",
+     "Differentiate energy isolating devices from control circuit devices and evaluate lock and tag hardware specifications.",
+     "Analyze robot controller log entries, error code numbering ranges across controller generations, and flight record diagnostics.",
+     "Interpret Safety Control Board status LEDs and explain why resetting faults without root cause analysis risks component failure and injury."
+    ],
+    "keyTerms": [
+     "lockout/tagout",
+     "energy isolating device",
+     "stored energy",
+     "Support File",
+     "flight record",
+     "Safety Control Board"
+    ]
+   },
+   {
+    "id": "9-3",
+    "minutes": 15,
+    "title": "Mechanical Problems",
+    "objectives": [
+     "Apply cable routing rules for dress packs: bend radius, stress loops, cable ties and corners, and explain what cable retraction systems do.",
+     "Recognize seal wear and leakage, and state the replacement rule for flat rings and the torque for joint lid screws.",
+     "Work through UR's checklist for repeated protective stops and use backdrive mode to move an arm away from an obstacle.",
+     "Recognize a joint brake fault, explain why the arm may drop when power is removed, and check brake engagement."
+    ],
+    "keyTerms": [
+     "cable retraction system",
+     "cable carrier",
+     "stress loop",
+     "backdrive mode",
+     "flat ring",
+     "brake solenoid"
+    ]
+   },
+   {
+    "id": "9-4",
+    "minutes": 15,
+    "title": "Electrical and I/O Faults",
+    "objectives": [
+     "Configure a digital multimeter for DC/AC voltage and continuity testing, observing probe jack selection and polarity conventions.",
+     "Diagnose discrete sensor wiring failures, current limitations of internal versus external 24 V supplies, and leakage current issues.",
+     "Explain how galvanic isolation through a relay and off-delay pulse stretchers prevent noise problems and missed short signals.",
+     "Troubleshoot industrial communication faults using Link/Activity LEDs, Modbus watchdog timeouts, and EtherCAT Working Counters and Lost Link Counters."
+    ],
+    "keyTerms": [
+     "continuity testing",
+     "pulse stretcher",
+     "galvanic isolation",
+     "Working Counter",
+     "Lost Link Counter",
+     "TRIAC"
+    ]
+   },
+   {
+    "id": "9-5",
+    "minutes": 14,
+    "title": "Calibration, Backups and Recovery",
+    "objectives": [
+     "Describe when and how revolution counters are updated on an ABB robot, and how this differs from entering calibration values.",
+     "Explain why correct tool load data matters and when a 4-point or 5-point TCP method is used.",
+     "Resolve joint replacement mismatches such as error C364A1 and apply Dual Robot Calibration or Program Correction by Key Waypoints.",
+     "Perform automated and manual backups using magic files and datafs partition copies, and restore controllers from bootable images."
+    ],
+    "keyTerms": [
+     "revolution counter",
+     "fine calibration",
+     "Dual Robot Calibration",
+     "Program Correction by Key Waypoints",
+     "magic files",
+     "datafs"
+    ]
+   },
+   {
+    "id": "9-6",
+    "minutes": 15,
+    "title": "Lab: Check a Robot's State from Python",
+    "objectives": [
+     "Establish a TCP socket connection to the Universal Robots Dashboard Server on port 29999 using Python.",
+     "Query robot mode, safety status, and program execution state using ASCII commands terminated with newlines.",
+     "Execute the recovery sequence for protective stops by handling safety popups and unlocking the stop.",
+     "Contrast protective stop recovery with emergency stop recovery regarding manual intervention and program restart behavior."
+    ],
+    "keyTerms": [
+     "Dashboard Server",
+     "robotmode",
+     "safetystatus",
+     "programState",
+     "protective stop",
+     "unlock protective stop"
+    ]
+   }
+  ]
+ },
+ "manifest": {
+  "nav": "Maintenance",
+  "icon": "fa-screwdriver-wrench",
+  "blurbs": {
+   "9-1": "Preventive, predictive and reactive maintenance strategies: inspection intervals, cleaning and ESD protection, fastener torque checks, and maintenance records.",
+   "9-2": "A systematic troubleshooting method: OSHA 29 CFR 1910.147 lockout/tagout, controller error logs, flight records, and avoiding masked faults.",
+   "9-3": "Mechanical fault diagnosis: cable dress packs and carriers, bend radii, seal inspection, collision recovery in backdrive mode, and joint brake engagement.",
+   "9-4": "Electrical and I/O troubleshooting: multimeter voltage and continuity checks, discrete sensor wiring, 24 V power budgets, and fieldbus diagnostics.",
+   "9-5": "Calibration, backups and recovery: axis revolution counter updates, TCP calibration, joint replacement alignment, and controller storage backups.",
+   "9-6": "Lab: querying the Universal Robots Dashboard Server over TCP port 29999 with Python to check robot mode, safety status, and recover from protective stops."
+  }
+ },
+ "glossary": {
+  "backdrive mode": "An operating mode that releases joint brakes where needed so the arm can be manually moved to a safe position before initializing.",
+  "brake solenoid": "An electromechanical actuator that technicians replace first before investigating the friction brake when repairing a faulty joint brake.",
+  "cable carrier": "A cable guidance mechanism featuring a fixed bending radius stop to prevent cable stress.",
+  "cable retraction system": "A system that guides the cable carrier to prevent cable loops in the robot work area.",
+  "CMOS battery": "A controller battery whose low state is indicated by an incorrect date and clock in the controller log.",
+  "continuity testing": "A digital multimeter test performed on de-energized, isolated circuits that triggers an audible beep when component resistance drops below a threshold.",
+  "Dashboard Server": "A remote control interface on Universal Robots controllers accessed over a TCP/IP socket on port 29999 using newline-terminated commands.",
+  "datafs": "A storage partition on a UR controller SD card holding user programs, serial and log files, and controller calibration configuration files.",
+  "Dual Robot Calibration": "A calibration routine that calibrates a robot across its full workspace so production can resume after joint replacement without modifying waypoints.",
+  "energy isolating device": "A mechanical device capable of being locked out with a hasp, attachment point, or locking mechanism, excluding push buttons and control circuit devices.",
+  "fine calibration": "A recalibration procedure used when external axes lack calibration values, but not when calibration values already exist.",
+  "flat ring": "A joint seal that must be replaced on all robot joints if wear or damage is detected on any single ring.",
+  "flight record": "A diagnostic tool that plots joint position, velocity, acceleration, motor current, and torque at the moment a fault occurs.",
+  "galvanic isolation": "Electrical isolation established between circuits using an intermediate relay to mitigate noise interference from external equipment.",
+  "lockout/tagout": "Procedures under OSHA 29 CFR 1910.147 to disable machinery and prevent the release of hazardous energy during servicing.",
+  "Lost Link Counter": "A dedicated hardware register in an EtherCAT slave that increments whenever a physical communication link is interrupted.",
+  "magic files": "Automated scripts on a USB stick that automatically back up robot programs, installation files, and configuration files.",
+  "predictive maintenance": "Maintenance initiated based on predictions of failure made using observed data such as temperature, noise, and vibration.",
+  "preventive maintenance": "Maintenance that is scheduled, timed, or based on an operating cycle.",
+  "Program Correction by Key Waypoints": "A utility that adjusts fixed waypoints when transferring programs between robots or restoring program operation following joint replacements.",
+  "programState": "A Dashboard Server query command that returns STOPPED if no program is running, PLAYING if running, or PAUSED if paused.",
+  "protective stop": "A controller-initiated stop caused by proximity to a limit where the robot halts program execution while retaining electrical power.",
+  "pulse stretcher": "An off-delay circuit in a high-speed sensor ensuring fast signals persist long enough for slower PLC scan cycles to detect them.",
+  "reactive maintenance": "Maintenance done after equipment has failed or stopped.",
+  "revolution counter": "An axis position counter updated against a synchronization position marking in an ABB robot controller.",
+  "robotmode": "A Dashboard Server query command that returns controller power and brake states such as POWER_OFF, IDLE, or RUNNING.",
+  "Safety Control Board": "A robot controller board whose diagnostic LEDs show normal communication with a slow green flash and hardware or safety errors with permanent red.",
+  "safetystatus": "A Dashboard Server query command that returns the safety state such as NORMAL, PROTECTIVE_STOP, or FAULT.",
+  "stored energy": "Potentially hazardous residual energy that must be relieved, disconnected, restrained, and rendered safe after applying lockout devices.",
+  "stress loop": "An intentional cable loop built into an installation near a connector to prevent undue stress on the cable.",
+  "Support File": "A diagnostic bundle automatically generated inside the robot controller that packages log files, robot programs, and flight reports.",
+  "torque wrench": "A calibrated tool used during functional inspections to confirm that robot arm bolts and tooling fasteners are properly torqued.",
+  "TRIAC": "A solid-state switching device whose high off-state leakage current exceeding 1 mA makes it unsuitable as an input for PLCs.",
+  "unlock protective stop": "A Dashboard Server command that releases a protective stop, subject to an enforced 5-second delay under certain fault conditions.",
+  "Working Counter": "An EtherCAT frame field that indicates slave communication failure and causes the master to discard input data when unexpected.",
+  "ESD vacuum": "An electrostatic discharge vacuum cleaner used to clean accumulated dirt or dust inside the control box."
+ },
+ "quiz": [
+  {
+   "lesson": "9-1",
+   "question": "According to NIST manufacturing studies, how does the downtime of establishments relying most heavily on reactive maintenance compare to those relying on it least?",
+   "choices": [
+    "They experience 1.5 times more downtime.",
+    "They experience 3.3 times more downtime.",
+    "They experience 5.0 times more downtime.",
+    "They experience equal downtime but higher defect rates."
+   ],
+   "answer": 1,
+   "explanation": "Manufacturing establishments relying most heavily on reactive maintenance experience 3.3 times more downtime than those relying on it least."
+  },
+  {
+   "lesson": "9-1",
+   "question": "Why does Universal Robots prohibit the use of compressed air for cleaning a robot arm?",
+   "choices": [
+    "It can strip exterior paint and markings.",
+    "It can damage internal components.",
+    "It generates electrostatic charge on joint housings.",
+    "It increases air pressure inside sealed gearboxes."
+   ],
+   "answer": 1,
+   "explanation": "Compressed air must never be used to clean the robot arm because it can damage internal components."
+  },
+  {
+   "lesson": "9-2",
+   "question": "Under OSHA standard 29 CFR 1910.147, which devices are NOT considered energy isolating devices?",
+   "choices": [
+    "Push buttons, selector switches, and control circuit devices",
+    "Manually operated electrical circuit breakers",
+    "Disconnect switches with hasps",
+    "Bolted mechanical line valves"
+   ],
+   "answer": 0,
+   "explanation": "Push buttons, selector switches, and control circuit devices are not considered energy isolating devices under OSHA standards."
+  },
+  {
+   "lesson": "9-2",
+   "question": "Which range of Universal Robots error codes designates faults occurring on e-Series and newer controllers?",
+   "choices": [
+    "Codes 1 to 255",
+    "Codes higher than 256",
+    "Codes between 500 and 1000",
+    "Negative code numbers"
+   ],
+   "answer": 1,
+   "explanation": "Universal Robots error code numbers higher than 256 designate faults on e-Series and newer controllers, while codes 1 to 255 apply to CB3 and earlier controllers."
+  },
+  {
+   "lesson": "9-3",
+   "question": "To what torque value must the screws securing the robot joint lids be tightened when using calibrated torque tools?",
+   "choices": [
+    "0.4 Nm",
+    "1.2 Nm",
+    "2.5 Nm",
+    "5.0 Nm"
+   ],
+   "answer": 0,
+   "explanation": "Screws securing the joint lids must be tightened to 0.4 Nm using calibrated torque tools."
+  },
+  {
+   "lesson": "9-3",
+   "question": "How much mechanical motion does a properly engaged joint brake permit before hitting the brake pin?",
+   "choices": [
+    "Zero motion",
+    "One to two degrees",
+    "Five to ten degrees",
+    "Exactly ninety degrees"
+   ],
+   "answer": 1,
+   "explanation": "A properly engaged joint brake permits only a limited mechanical motion of one to two degrees before hitting the brake pin."
+  },
+  {
+   "lesson": "9-4",
+   "question": "Why are TRIAC output solid-state switches unsuitable as inputs for programmable logic controllers?",
+   "choices": [
+    "Their response time exceeds 100 milliseconds",
+    "Their off-state leakage current exceeds 1 mA",
+    "They only switch DC negative polarities",
+    "They require external 480 V excitation"
+   ],
+   "answer": 1,
+   "explanation": "High off-state leakage current exceeding 1 mA makes TRIAC outputs unsuitable as inputs for programmable logic controllers."
+  },
+  {
+   "lesson": "9-4",
+   "question": "In an EtherCAT network, what does an unexpected Working Counter value in a returned datagram frame indicate to the master?",
+   "choices": [
+    "The network cycle time has decreased",
+    "A slave device has duplicated its node address",
+    "Slave communication failure has occurred, causing the master to discard input data",
+    "The physical cable length exceeds 100 meters"
+   ],
+   "answer": 2,
+   "explanation": "In EtherCAT networks, an unexpected Working Counter in a returned frame indicates slave communication failure and causes the master to discard input data."
+  },
+  {
+   "lesson": "9-5",
+   "question": "What is the first step when updating revolution counters on an ABB robot system?",
+   "choices": [
+    "Re-flash the controller operating system image",
+    "Move the robot and positioner axes to their respective zero positions at the synchronization marking",
+    "Replace the serial measurement board backup battery",
+    "Enter resolver calibration offset angles manually"
+   ],
+   "answer": 1,
+   "explanation": "The first step when updating the revolution counter is to move the robot and positioner axes to their respective zero positions at the synchronization marking."
+  },
+  {
+   "lesson": "9-5",
+   "question": "Which type of Move node is NOT supported by the Universal Robots Program Correction by Key Waypoints utility?",
+   "choices": [
+    "MoveL nodes with linear blending",
+    "MoveP process moves",
+    "Move nodes configured with Use Joint Angles",
+    "Fixed Cartesian waypoints"
+   ],
+   "answer": 2,
+   "explanation": "Program Correction by Key Waypoints supports only fixed waypoints and does not support Move nodes configured with Use Joint Angles."
+  },
+  {
+   "lesson": "9-6",
+   "question": "What does the robotmode state RUNNING indicate when queried from the Universal Robots Dashboard Server?",
+   "choices": [
+    "A robot program is actively moving the manipulator arm",
+    "The robot is powered on with brakes released, distinct from program execution",
+    "The controller is currently undergoing a system backup",
+    "Safeguard inputs have been bypassed"
+   ],
+   "answer": 1,
+   "explanation": "The robot mode state Running indicates that the robot is powered on with brakes released, which is distinct from program execution."
+  },
+  {
+   "lesson": "9-6",
+   "question": "What specific condition triggers error 163 (TOO_FREQUENT_PROTECTIVE_STOPS) on a Universal Robots controller?",
+   "choices": [
+    "More than 5 protective stops within 1 hour",
+    "More than 10 emergency stops within 24 hours",
+    "A joint encounters more than 50 protective stops within 8 hours",
+    "Controller CPU temperature exceeds 80 degrees Celsius"
+   ],
+   "answer": 2,
+   "explanation": "When a joint encounters more than 50 protective stops within 8 hours, error 163: TOO_FREQUENT_PROTECTIVE_STOPS is triggered and imposes a 5-second delay before unlock is permitted."
+  }
+ ]
+}
