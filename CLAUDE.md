@@ -26,7 +26,7 @@ Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot 
 ## Checks
 Two workflows run on PRs and pushes to main. `site-hygiene.yml`: internal links, sitemap/page set, shared head/footer, browser layout tests. `site-sync.yml`: `site_sync.py --check`, `check_site.py` (citation numbering, anchors, assets, course data and glossary), `sources.py check`, `build_index.py --check`. Run them all locally before pushing:
 `python3 scripts/site_sync.py --check && python3 scripts/check_site.py && python3 scripts/sources.py check && python3 scripts/build_index.py --check`
-After changing a lesson or `sources.json`, run `python3 scripts/sources.py sync && python3 scripts/build_index.py`.
+After changing a lesson or `sources.json`, run `python3 scripts/sources.py sync && python3 scripts/build_index.py && python3 scripts/site_sync.py` (each lesson shows a source-check line generated from `sources.json`).
 
 ## Agentic workflow
 Bulk lesson drafting is delegated to Gemini via Antigravity and reviewed by Claude; see `docs/agentic-workflow.md` before starting multi-lesson work.
