@@ -19,7 +19,7 @@ Personal developer portfolio hosted on GitHub Pages. Built with semantic HTML5, 
 * `project-sample.html` - Sample project case study template
 * `resume.html` - Interactive CV viewer (self-hosted PDF)
 * `contact.html` - Direct contact channels
-* `robotics.html` - RISE Bot Instructor course hub (honors research project)
+* `robotics.html` - robOSStics course hub (honors research project)
 * `robotics-intro.html` / `robotics-programming.html` / `robotics-ros.html` / `robotics-ethics.html` / `robotics-control.html` / `robotics-capstone.html` - Chapter overview pages (Intro to Robotics, Robot Programming, ROS, Ethics, an extra Electronics and Control chapter, and Capstone Projects)
 * `robotics-<chapter>-<n>.html` - Chapter articles (7, 8, 9, 5, 10 and 3 per chapter)
 * `robotics-glossary.html` - Glossary of every key term, rendered from `assets/js/glossary-data.js`

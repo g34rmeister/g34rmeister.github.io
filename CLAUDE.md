@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot Instructor**: an industrial robotics course. Read `CHANGELOG.agents.md` first instead of re-exploring the repo, and append an entry to it in every PR.
+Static GitHub Pages site (no build step) for Gerald's honors thesis, **robOSStics**: an industrial robotics course. Read `CHANGELOG.agents.md` first instead of re-exploring the repo, and append an entry to it in every PR.
 
 ## Layout
 - Course pages are root-level HTML: `robotics.html` (hub), chapter pages `robotics-intro|programming|ros|ethics|control|capstone.html`, lessons `robotics-<chapter>-<n>.html`.

@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Exports the RISE Bot Instructor robotics site into a 100% self-contained, standalone repository.
+    Exports the robOSStics robotics site into a 100% self-contained, standalone repository.
 
 .DESCRIPTION
     This script extracts all thesis pages, stylesheets, scripts, fonts, and schematics
@@ -34,7 +34,7 @@ if ([string]::IsNullOrWhiteSpace($DestinationPath)) {
 }
 
 Write-Host "==========================================================" -ForegroundColor Cyan
-Write-Host " RISE Bot Instructor - Standalone Site Exporter" -ForegroundColor Yellow
+Write-Host " robOSStics - Standalone Site Exporter" -ForegroundColor Yellow
 Write-Host " Source: $WorkspaceRoot" -ForegroundColor Gray
 Write-Host " Destination: $DestFull" -ForegroundColor Gray
 Write-Host "==========================================================" -ForegroundColor Cyan
@@ -101,11 +101,11 @@ Write-Host "[4/5] Generating thesis repository README.md and .nojekyll..." -Fore
 Set-Content "$DestFull\.nojekyll" -Value "" -Encoding UTF8
 
 $readmeContent = @"
-# RISE Bot Instructor
+# robOSStics
 ### Honors Independent Research (CSC 3991) | Louisiana State University (2026)
 **Author:** Gerald Lê
 
-This repository contains the standalone RISE Bot Instructor site, a web-based course that teaches students to program robots:
+This repository contains the standalone robOSStics site, a web-based course that teaches students to program robots:
 - **Chapter 1, Intro to Robotics:** definitions, history, types of robots, prerequisites and applications.
 - **Chapter 2, Robot Programming:** online vs. offline programming, RobotStudio and PolyScope, URScript, RAPID and RRL, and an intro to ROS.
 - **Chapter 3, Robot Operating System (ROS):** ROS 1 vs. ROS 2, installation, Turtlesim and ROS tools.
@@ -122,7 +122,7 @@ This repository contains the standalone RISE Bot Instructor site, a web-based co
    ````bash
    git init
    git add .
-   git commit -m "Initial commit: Standalone RISE Bot Instructor site"
+   git commit -m "Initial commit: Standalone robOSStics site"
    git branch -M main
    git remote add origin https://github.com/<YOUR_USER>/<REPO_NAME>.git
    git push -u origin main

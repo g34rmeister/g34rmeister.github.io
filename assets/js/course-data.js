@@ -1,5 +1,5 @@
 /*
-	RISE Bot Instructor: course data
+	robOSStics: course data
 	One machine-readable description of the course: chapters, lessons, learning
 	objectives and chapter quizzes. assets/js/learning.js renders objectives,
 	progress and quizzes from it, and a phase 2 AI tutor can read the same data
@@ -11,7 +11,7 @@
 */
 window.RISE_COURSE = {
 	id: 'rise-bot-instructor',
-	title: 'RISE Bot Instructor',
+	title: 'robOSStics',
 	author: 'Gerald Lê',
 	institution: 'Louisiana State University',
 	version: '2026-10b',
