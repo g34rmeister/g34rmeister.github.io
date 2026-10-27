@@ -5835,10 +5835,9 @@
     },
     "6-1": {
      "status": "verified",
-     "claim": "URSim Docker setup: docker run command, 127.0.0.1 binds keep GUI off LAN, browser URL, volume mounts for programs/urcaps, start_ursim.sh…",
-     "evidence": "\"If you omit the bind address... exposes the simulator to the local network\"; -v ${HOME}/.ursim/urcaps:/urcaps -v ...:/ursim/programs; start_ursim.sh: 192.168.56.101, ports 30001-30004 and 29999…",
-     "note": "'--rm deletes the container' is Docker behavior, not stated in this doc (minor).",
-     "checked": "2026-10-22"
+     "claim": "start_ursim.sh starts URSim at 192.168.56.101 with ports 30001-30004 and 29999 published and External Control preinstalled",
+     "evidence": "ursim_docker.rst: 'Publishes the robot interface ports (30001-30004, and 29999 for CB3 / PolyScope 5)'; '--ip 192.168.56.101'; 'External Control'",
+     "checked": "2026-10-27"
     }
    }
   },
@@ -9196,9 +9195,10 @@
    "checks": {
     "4-2": {
      "status": "verified",
-     "claim": "PL depends on category, MTTFd, DC; MTTFd high 30-100 y; DC high >=99%",
-     "evidence": "KEYENCE parameters: 30 <= MTTFd < 100 years; 99% <= DC",
-     "checked": "2026-10-22"
+     "claim": "High diagnostic coverage means at least 99%",
+     "evidence": "KEYENCE PL parameters table: 'High' '99% <= DC'; 'Medium' '90% <= DC < 99%'",
+     "note": "Supports the DC threshold; the Category 4 -> high DC link rests on ref 15. Lesson wording changed from 'above 99%' to 'at least 99%'.",
+     "checked": "2026-10-27"
     }
    }
   },
@@ -15990,23 +15990,22 @@
     }
    }
   },
-  "https://www.nber.org/papers/w23285": {
+  "https://www.nber.org/system/files/working_papers/w23285/w23285.pdf": {
    "citedBy": [
     "4-3#ref-3"
    ],
    "refText": "D. Acemoglu and P. Restrepo, “Robots and Jobs: Evidence from US Labor Markets,” NBER Working Paper 23285, National Bureau of Economic Research, 2017 (working-paper version of the article above). nber.org/papers/w23285.",
-   "http": 200,
-   "linkChecked": "2026-10-22",
-   "title": "Robots and Jobs: Evidence from US Labor Markets | NBER",
    "checks": {
     "4-3": {
-     "status": "partial",
-     "claim": "5.6 workers per robot; 0.18-0.34 pp / 0.25-0.5% range",
-     "evidence": "NBER page summary: 'one new industrial robot ... employment drop of 5.6 workers'; issue date March 2017; published version JPE 128(6)",
-     "note": "5.6 verified; the 0.18-0.34 and 0.25-0.5 ranges are not on the page (paper PDF not opened)",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "2017 working paper: 0.18 to 0.34 percentage points employment, 0.25 to 0.5 percent wages",
+     "evidence": "NBER w23285 PDF: 'the employment to population ratio by about 0.18-0.34 percentage points and wages by 0.25-0.5'",
+     "note": "Link moved from the NBER landing page to the PDF",
+     "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-10-27"
   },
   "https://www.ni.com/docs/en-US/bundle/ni-9361-getting-started/page/inc-encoder-measurement.html": {
    "citedBy": [
