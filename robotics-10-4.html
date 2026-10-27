@@ -1,0 +1,252 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 6.1 Capstone: Build a Simulated Work Cell
+-->
+<html lang="en">
+    <head>
+        <title>10.4 Capstone: An Open-Source Cell Monitor — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Capstone project: build an open-source ROS 2 cell monitor that reads robot state, cell I/O and a camera check from stand-in servers, keeps a maintenance log, and is published with a real pull request. No hardware needed." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-10-4.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="10.4 Capstone: An Open-Source Cell Monitor — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="Capstone project: build an open-source ROS 2 cell monitor that reads robot state, cell I/O and a camera check from stand-in servers, keeps a maintenance log, and is published with a real pull request. No hardware needed." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-10-4.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="10.4 Capstone: An Open-Source Cell Monitor, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="10.4 Capstone: An Open-Source Cell Monitor — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="Capstone project: build an open-source ROS 2 cell monitor that reads robot state, cell I/O and a camera check from stand-in servers, keeps a maintenance log, and is published with a real pull request. No hardware needed." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-capstone.html">Chapter 10 &middot; Capstone Projects</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">10.4 Capstone: An Open-Source Cell Monitor</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. What you will build and why</h2>
+                            <p>
+                                The first three capstones each go deep in one area. This one uses a little of everything. You will build a small open-source program that watches a robot cell: it reads the robot's state, the cell's handshake signals and a camera check, writes a maintenance log, and is published so that someone else could use it and contribute to it.
+                            </p>
+                            <p>
+                                Everything runs on your own computer. The robot and the cell I/O are the stand-in servers from the labs in <a href="robotics-8-3.html">8.3</a> and <a href="robotics-9-6.html">9.6</a>, and the camera is the test image publisher from <a href="robotics-7-6.html">7.6</a>. On a real cell you would point the same program at the robot's IP address.
+                            </p>
+                            <p>
+                                It is a monitor, not a controller. It reads and reports, and it never clears a stop on its own: UR's service manual says robot stops must never be acknowledged and reset automatically; resuming must be a deliberate action by a person.<sup><a href="#ref-4">[4]</a></sup> Safety functions stay on the safety-rated paths from <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a> and <a href="robotics-8-4.html">8.4 Safety over the Network</a>.
+                            </p>
+
+                            <h2 class="article-section-title">02. Prerequisites</h2>
+                            <ul class="article-spec-list">
+                                <li><a href="robotics-3-2.html">3.2</a> to <a href="robotics-3-4.html">3.4</a>: how open-source contributions and pull requests work.</li>
+                                <li><a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a>: a Python ROS 2 package with a node and a topic.</li>
+                                <li><a href="robotics-7-6.html">7.6 Lab: A ROS 2 Camera Pipeline</a>: <code>cv_bridge</code>, thresholds and the <code>cam2image</code> test source.</li>
+                                <li><a href="robotics-8-3.html">8.3 Lab: Connecting a Robot to a PLC</a>: Modbus registers with <code>pymodbus</code>.</li>
+                                <li><a href="robotics-9-2.html">9.2 A Troubleshooting Method</a> and <a href="robotics-9-6.html">9.6 Lab: Check a Robot's State from Python</a>: logs, stops and the Dashboard Server.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Software (all free)</h2>
+                            <ul class="article-spec-list">
+                                <li>ROS 2 as installed in <a href="robotics-4-3.html">4.3</a>, Python 3, and <code>pymodbus==3.16.1</code>.</li>
+                                <li>The stand-in servers <code>fake_ur_server.py</code> (8.3) and <code>fake_dashboard_server.py</code> (9.6).</li>
+                                <li>The <code>image_tools</code> demo: with <code>burger_mode</code> turned on, <code>cam2image</code> publishes a generated test image instead of a camera feed.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li>A GitHub account.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">04. Milestones and what to hand in</h2>
+                            <ol class="article-spec-list">
+                                <li><span class="spec-label">M0 Plan and repository:</span> a public repository with a README that says what the monitor does and how to run it, and a LICENSE file. ROS 2's developer guide asks every package to have a LICENSE file, typically Apache 2.0, and a README with a description, usage examples, and build and test instructions.<sup><a href="#ref-5">[5]</a></sup> Hand in: the repository link.</li>
+                                <li><span class="spec-label">M1 Robot state:</span> a ROS 2 node that connects to the Dashboard Server stand-in on port 29999, asks <code>robotmode</code> and <code>safetystatus</code> once a second, and publishes the answers on a topic.<sup><a href="#ref-1">[1]</a></sup> Hand in: <code>ros2 topic echo</code> output while you trigger and clear the stand-in's protective stop by hand.</li>
+                                <li><span class="spec-label">M2 Cell handshake:</span> read and write the handshake signals on the Modbus stand-in. Put up to 16 on/off signals in one general-purpose register (UR's general-purpose registers are 128 to 255).<sup><a href="#ref-2">[2]</a></sup> Hand in: a table of which bit means what, and a short run log.</li>
+                                <li><span class="spec-label">M3 Camera check:</span> subscribe to the <code>cam2image</code> images and publish a simple "part present" flag from a threshold or contour count, as in 7.3 and 7.6. Hand in: the threshold you chose and why.</li>
+                                <li><span class="spec-label">M4 Maintenance log:</span> write every state change to a log file with a time stamp, and raise a warning, not a reset, when protective stops repeat. Hand in: a log excerpt and the checklist from <a href="robotics-9-3.html">9.3</a> you would follow next.</li>
+                                <li><span class="spec-label">M5 Open it up:</span> add a CONTRIBUTING file, open one issue that a newcomer could take, and open one real pull request: to your classmates' monitor, to robOSStics, or to a robotics project from Chapter 3. Pull requests do not have to be finished; you can open one early as a draft to get feedback.<sup><a href="#ref-6">[6]</a></sup> Hand in: the links.</li>
+                            </ol>
+
+                            <h2 class="article-section-title">05. Testing and verification</h2>
+                            <p>
+                                Write the pass conditions before you test. For example: M1 reports <code>PROTECTIVE_STOP</code> within two seconds of the stand-in entering it; M2 reads back exactly the bits you wrote; M4 never sends <code>unlock protective stop</code>. Run each test, record the result, and keep the record in the repository.
+                            </p>
+
+                            <h2 class="article-section-title">06. Grading rubric</h2>
+                            <p>
+                                Use the same four-level rubric format as <a href="robotics-10-1.html">10.1</a>, with one row per milestone (M0 to M5) and two more rows: "the monitor never resets a stop" (pass/fail) and "someone else could run it from your README".
+                            </p>
+
+                            <h2 class="article-section-title">07. Reflection questions and stretch goals</h2>
+                            <ul class="article-spec-list">
+                                <li>Which signal in your monitor would you trust least on a real cell, and why?</li>
+                                <li>What would a maintainer of your repository need to know before accepting a pull request?</li>
+                                <li>Stretch: show the robot state and the "part present" flag in RViz2 or a small web page.</li>
+                                <li>Stretch: watch your own monitor's Modbus traffic in Wireshark, as in <a href="robotics-8-6.html">8.6</a>.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">08. References</h2>
+                            <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">Universal Robots, &ldquo;Dashboard Server Remote Control Interface e-Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm</a>.</li>
+                                <li id="ref-2">Universal Robots, &ldquo;Modbus server bit access.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access</a>.</li>
+                                <li id="ref-3">ROS 2 demos, &ldquo;image_tools README.&rdquo; <a href="https://github.com/ros2/demos/blob/rolling/image_tools/README.md" target="_blank" rel="noopener noreferrer">github.com/ros2/demos/blob/rolling/image_tools/README.md</a>.</li>
+                                <li id="ref-4">Universal Robots, &ldquo;Service Handbook UR Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
+                                <li id="ref-5">ROS 2 Documentation, &ldquo;ROS 2 developer guide.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation (Developer-Guide.rst)</a>.</li>
+                                <li id="ref-6">Open Source Guides, &ldquo;How to Contribute to Open Source.&rdquo; <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">opensource.guide/how-to-contribute</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-10-3.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">10.3 Capstone: Speed-Controlled Wheel</span>
+                                </a>
+                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Finished -&gt;</span>
+                                    <span class="article-nav-target">Course home</span>
+                                </a>
+                            </div>
+
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

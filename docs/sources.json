@@ -8133,7 +8133,8 @@
   },
   "https://github.com/ros2/demos/blob/rolling/image_tools/README.md": {
    "citedBy": [
-    "7-6#ref-10"
+    "7-6#ref-10",
+    "10-4#ref-3"
    ],
    "refText": "ROS 2 demos, “image_tools README.” github.com/ros2/demos/blob/rolling/image_tools/README.md.",
    "checks": {
@@ -8142,6 +8143,13 @@
      "claim": "cam2image publishes the default camera's images on /image; burger_mode:=true when no camera is available",
      "evidence": "image_tools README: 'connects to your workstation's default camera device's video stream and publishes the images on /image and /flipimage topics'; 'If a camera device is not available, run ros2 run image_tools cam2image --ros-args -p burger_mode:=true'",
      "note": "Claude review pass",
+     "checked": "2026-10-27"
+    },
+    "10-4": {
+     "status": "verified",
+     "claim": "cam2image with burger_mode publishes a test image when no camera is available",
+     "evidence": "image_tools README: \"If a camera device is not available, run ros2 run image_tools cam2image --ros-args -p burger_mode:=true\"",
+     "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
    }
@@ -8178,6 +8186,21 @@
     }
    },
    "title": "Release ROS Lyrical Luth - Patch Release 2 (2026/08/07) · ros2/ros2 · GitHub"
+  },
+  "https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst": {
+   "citedBy": [
+    "10-4#ref-5"
+   ],
+   "refText": "ROS 2 Documentation, “ROS 2 developer guide.” github.com/ros2/ros2_documentation (Developer-Guide.rst).",
+   "checks": {
+    "10-4": {
+     "status": "verified",
+     "claim": "ROS 2 packages need a LICENSE file (typically Apache 2.0) and a README with description, usage, build and test instructions",
+     "evidence": "ROS 2 Developer-Guide.rst (cached oss-map): facts verified in research_notes/oss-map/facts.md",
+     "note": "10-4, Claude",
+     "checked": "2026-10-27"
+    }
+   }
   },
   "https://github.com/ros2/ros2cli/blob/lyrical/ros2pkg/ros2pkg/resource/ament_python/setup.py.em": {
    "citedBy": [
@@ -10926,6 +10949,21 @@
    },
    "finalUrl": "https://www.openrobotics.org/blog/2024/3/18/announcing-the-open-source-robotics-alliance-osra",
    "title": "Announcing the Open Source Robotics Alliance — Open Robotics"
+  },
+  "https://opensource.guide/how-to-contribute/": {
+   "citedBy": [
+    "10-4#ref-6"
+   ],
+   "refText": "Open Source Guides, “How to Contribute to Open Source.” opensource.guide/how-to-contribute.",
+   "checks": {
+    "10-4": {
+     "status": "verified",
+     "claim": "Pull requests can be opened early as a draft or WIP for feedback",
+     "evidence": "opensource.guide how-to-contribute (cached oss-map): \"Pull requests do not have to represent finished work\"; open early as draft/WIP",
+     "note": "10-4, Claude",
+     "checked": "2026-10-27"
+    }
+   }
   },
   "https://openstax.org/books/college-physics-2e/pages/17-6-hearing": {
    "citedBy": [
@@ -18511,7 +18549,8 @@
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/": {
    "citedBy": [
-    "8-3#ref-6"
+    "8-3#ref-6",
+    "10-4#ref-2"
    ],
    "refText": "Universal Robots, “Modbus server bit access.” universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/.",
    "checks": {
@@ -18520,6 +18559,13 @@
      "claim": "The Universal Robots Modbus TCP server provides 128 general-purpose 16-bit registers at addresses 128 to 255.; Up to 16 binary on/off signals can be consolidated into a single 16-bit register instead of using a separate address for each.; Registers can be read from a robot program using read_port_register, which returns an integer value between 0 and 65535.; The URScript command integer_to_binary_",
      "evidence": "Matches research_notes/ch8/facts.md, whose lines were checked word-for-word against the cached page in step 18 (Ch8).",
      "note": "Ch8 draft, step 19",
+     "checked": "2026-10-27"
+    },
+    "10-4": {
+     "status": "verified",
+     "claim": "UR general-purpose registers 128-255; up to 16 on/off signals in one register",
+     "evidence": "UR Modbus server bit access article (cached ch8): \"128 general purpose 16-bit registers (addresses 128-255)\", \"up to 16 ... binary signals ... consolidated in a single register\"",
+     "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
    }
@@ -19029,7 +19075,8 @@
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm": {
    "citedBy": [
-    "9-6#ref-3"
+    "9-6#ref-3",
+    "10-4#ref-1"
    ],
    "refText": "Universal Robots, “Dashboard Server Remote Control Interface e-Series.” universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm.",
    "checks": {
@@ -19038,6 +19085,13 @@
      "claim": "Sending the command robotmode returns Robotmode: followed by the state, which can be NO_CONTROLLER, DISCONNECTED, CONFIRM_SAFETY, BOOTING, POWER_OFF, POWER_ON, IDLE, BACKDRIVE, or RUNNING.; Sending the command safetystatus returns Safetystatus: followed by the safety state, which can be NORMAL, REDUCED, PROTECTIVE_STOP, RECOVERY, SAFEGUARD_STOP, SYSTEM_EMERGENCY_STOP, ROBOT_EMERGENCY_STOP, VIOLATI",
      "evidence": "Matches research_notes/ch9/facts.md, whose lines were checked word-for-word against the cached page in step 21 (Ch9).",
      "note": "Ch9 draft, step 22",
+     "checked": "2026-10-27"
+    },
+    "10-4": {
+     "status": "verified",
+     "claim": "Dashboard Server on port 29999 answers robotmode and safetystatus",
+     "evidence": "UR Dashboard table (cached ch9): robotmode returns \"Robotmode: <mode>\", safetystatus returns \"Safetystatus: <status>\"; port 29999 (developer page)",
+     "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
    }
@@ -19171,7 +19225,8 @@
     "9-1#ref-4",
     "9-2#ref-3",
     "9-3#ref-3",
-    "9-5#ref-3"
+    "9-5#ref-3",
+    "10-4#ref-4"
    ],
    "refText": "Universal Robots, “Service Handbook.” universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf.",
    "checks": {
@@ -19201,6 +19256,13 @@
      "claim": "Dual Robot Calibration calibrates the robot across its full workspace so it can resume production after joint replacement without modifying program waypoints.; Program Correction by Key Waypoints adjusts waypoints when transferring programs between robots or making programs work following joint replacements.; Program Correction by Key Waypoints supports only fixed waypoints and does not support Mo",
      "evidence": "Matches research_notes/ch9/facts.md, whose lines were checked word-for-word against the cached page in step 21 (Ch9).",
      "note": "Ch9 draft, step 22",
+     "checked": "2026-10-27"
+    },
+    "10-4": {
+     "status": "verified",
+     "claim": "Robot stops must never be acknowledged and reset automatically; resuming is a deliberate user action",
+     "evidence": "UR Service Handbook 7.5.1 (cached ch9): \"Robot stops must never be acknowledged and reset automatically, it must always be a deliberate action by a user to resume after a robot stop.\"",
+     "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
    }
