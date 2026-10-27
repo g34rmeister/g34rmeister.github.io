@@ -39,7 +39,7 @@ def load_course():
     js = ("global.window={};require(process.argv[1]);"
           "process.stdout.write(JSON.stringify(window.RISE_COURSE.chapters))")
     out = subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js')],
-                         capture_output=True, check=True, text=True).stdout
+                         capture_output=True, check=True, text=True, encoding="utf-8").stdout
     chapters = json.loads(out)
     manifest = json.loads((ROOT / 'scripts/site_manifest.json').read_text(encoding='utf-8'))['chapters']
     for ch in chapters:

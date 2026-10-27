@@ -24,7 +24,7 @@ def norm(text):
 def fetch(url, cache):
     if url not in cache:
         run = subprocess.run([sys.executable, str(FETCH), url, "--max", "400000"],
-                             capture_output=True, text=True, timeout=120)
+                             capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=120)
         cache[url] = norm(run.stdout) if run.returncode == 0 else None
     return cache[url]
 
