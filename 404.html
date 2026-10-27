@@ -17,6 +17,15 @@
         <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
         <link rel="stylesheet" href="assets/css/retro.css?v=2.9" />
         <script>
+            // Lessons were renumbered on 2026-10-27 (new Chapter 3, capstones moved to Chapter 10).
+            // Old lesson URLs whose number is now free redirect to the lesson's new address.
+            (function() {
+                var moved = {"robotics-3-5.html": "robotics-4-5.html", "robotics-3-6.html": "robotics-4-6.html", "robotics-3-7.html": "robotics-4-7.html", "robotics-3-8.html": "robotics-4-8.html", "robotics-3-9.html": "robotics-4-9.html", "robotics-5-6.html": "robotics-6-6.html", "robotics-5-7.html": "robotics-6-7.html", "robotics-5-8.html": "robotics-6-8.html", "robotics-5-9.html": "robotics-6-9.html", "robotics-5-10.html": "robotics-6-10.html"};
+                var page = location.pathname.split('/').pop();
+                if (moved[page]) { location.replace(moved[page] + location.hash); }
+            })();
+        </script>
+        <script>
             (function() {
                 var saved = localStorage.getItem('theme');
                 if (saved === 'dark' || saved === 'light') {

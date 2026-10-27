@@ -64,10 +64,10 @@
                         <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
                         <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
                         <li><a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a></li>
                         <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
                         <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
@@ -106,10 +106,10 @@
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
-                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
                     <a href="robotics-vision.html" class="active"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
                     <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -145,7 +145,7 @@
 
                         <h2 class="article-section-title">01. Cameras in the ROS 2 architecture</h2>
                         <p>
-                            In a robot cell, the camera is often the robot's main way of seeing what has changed. In earlier chapters, we examined how ROS 2 nodes communicate over topics to coordinate robot trajectories and handle sensor streams. In <a href="robotics-3-6.html">Lesson 3.6 Writing Your First ROS 2 Package</a>, you wrote a Python node with the <code>rclpy</code> client library, built it with colcon and ran it. In <a href="robotics-2-8.html">Lesson 2.8 Vision-Guided Picking</a>, you explored how physical cameras are mounted in eye-in-hand or eye-to-hand configurations and calibrated relative to robot work coordinates.
+                            In a robot cell, the camera is often the robot's main way of seeing what has changed. In earlier chapters, we examined how ROS 2 nodes communicate over topics to coordinate robot trajectories and handle sensor streams. In <a href="robotics-4-6.html">Lesson 4.6 Writing Your First ROS 2 Package</a>, you wrote a Python node with the <code>rclpy</code> client library, built it with colcon and ran it. In <a href="robotics-2-8.html">Lesson 2.8 Vision-Guided Picking</a>, you explored how physical cameras are mounted in eye-in-hand or eye-to-hand configurations and calibrated relative to robot work coordinates.
                         </p>
                         <p>
                             A robust ROS 2 vision architecture separates hardware device drivers from high-level computer vision processing. At the hardware interface boundary, a dedicated camera driver node communicates directly with the physical camera sensor across an industrial bus. Industrial machine vision cameras comply with standardized device architectures to maintain software compatibility across hardware vendors. The GenICam standard provides a generic programming interface for all camera types regardless of interface hardware.<sup><a href="#ref-1">[1]</a></sup>
@@ -338,7 +338,7 @@ if __name__ == '__main__':
 
                         <h2 class="article-section-title">07. Running and testing the node</h2>
                         <p>
-                            Put the script in an <code>ament_python</code> package the same way as in <a href="robotics-3-6.html">3.6</a>, add <code>rclpy</code>, <code>sensor_msgs</code> and <code>cv_bridge</code> as dependencies in <code>package.xml</code>, register the script as an entry point, then build with colcon and source the workspace. If <code>cv_bridge</code> is missing, install <code>ros-lyrical-cv-bridge</code>.
+                            Put the script in an <code>ament_python</code> package the same way as in <a href="robotics-4-6.html">4.6</a>, add <code>rclpy</code>, <code>sensor_msgs</code> and <code>cv_bridge</code> as dependencies in <code>package.xml</code>, register the script as an entry point, then build with colcon and source the workspace. If <code>cv_bridge</code> is missing, install <code>ros-lyrical-cv-bridge</code>.
                         </p>
                         <p>
                             You do not need a camera to test the node. The <code>image_tools</code> demo package has a <code>cam2image</code> executable that publishes images from the computer's default camera on the <code>/image</code> topic, and with <code>burger_mode</code> turned on it publishes a generated test image instead.<sup><a href="#ref-10">[10]</a></sup> Remap its topic to the one your node subscribes to:

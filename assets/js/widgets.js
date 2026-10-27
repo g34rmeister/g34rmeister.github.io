@@ -577,7 +577,7 @@
 		draw();
 	}
 
-	/* ---------- State machine: the line follower from lesson 5.7 ---------- */
+	/* ---------- State machine: the line follower from lesson 6.7 ---------- */
 
 	var FSM = {
 		FOLLOW_LINE: { obstacle: ['AVOID_OBSTACLE', 'Record state entry timestamp; command right spin.'], lineLost: ['SEARCH', 'Record state entry timestamp; command arc sweep.'] },
@@ -626,7 +626,7 @@
 		show('Waiting for an event.');
 	}
 
-	/* ---------- Kalman filter: the 1D hallway robot from lesson 5.8 ---------- */
+	/* ---------- Kalman filter: the 1D hallway robot from lesson 6.8 ---------- */
 
 	function initKalman(root) {
 		var qs = slider('Filter process noise Q', 'kf-q', 0.001, 0.1, 0.001, 0.01, ' m²');

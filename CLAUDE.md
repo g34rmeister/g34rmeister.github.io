@@ -10,7 +10,7 @@ The site is becoming an open-source platform for robotics newcomers (renamed rob
 
 ## Layout
 - Course pages are root-level HTML: `robotics.html` (hub), chapter pages `robotics-intro|programming|ros|ethics|control|capstone|vision|networks|maintenance.html`, lessons `robotics-<chapter>-<n>.html`.
-- Current lessons: Ch1 1-1..1-7, Ch2 2-1..2-8, Ch3 3-1..3-9, Ch4 4-1..4-5, Ch5 (optional, control) 5-1..5-10, Ch6 (capstones) 6-1..6-3, Ch7 (machine vision) 7-1..7-6, Ch8 (industrial networks) 8-1..8-6, Ch9 (maintenance and troubleshooting) 9-1..9-6.
+- Current lessons: Ch1 1-1..1-7, Ch2 2-1..2-8, Ch3 (how to contribute to open source; in progress), Ch4 (ROS) 4-1..4-9, Ch5 (ethics) 5-1..5-5, Ch6 (optional, electronics and control) 6-1..6-10, Ch7 (machine vision) 7-1..7-6, Ch8 (industrial networks) 8-1..8-6, Ch9 (maintenance and troubleshooting) 9-1..9-6, Ch10 (capstones) 10-1..10-3. Chapters 3-6 and 10 were renumbered on 2026-10-27 (old free URLs redirect via `404.html`).
 - Extras: `robotics-quiz.html`, `robotics-glossary.html`, `robotics-method.html` (how the course was made; update its sources/AI table if the process changes).
 - Data and scripts: `assets/js/course-data.js` (objectives, keyTerms, minutes, quiz; bump `version` when quiz data changes), `assets/js/glossary-data.js`, `assets/js/learning.js`, `assets/js/widgets.js`, `assets/css/robotics.css`.
 - Non-course pages (index, about, resume, portfolio, etc.) are the original HTML5 UP site.

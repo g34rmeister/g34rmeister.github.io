@@ -1,0 +1,637 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 6.3 Capstone: Speed-Controlled Wheel
+-->
+<html lang="en">
+    <head>
+        <title>10.3 Capstone: Speed-Controlled Wheel — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Capstone project: build an Arduino speed-controlled wheel with a quadrature encoder, H-bridge driver, PID loop and a state machine with ramps and a FAULT state, with milestones, safety and a rubric." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-10-3.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="10.3 Capstone: Speed-Controlled Wheel — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="Capstone project: build an Arduino speed-controlled wheel with a quadrature encoder, H-bridge driver, PID loop and a state machine with ramps and a FAULT state, with milestones, safety and a rubric." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-10-3.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="10.3 Capstone: Speed-Controlled Wheel, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="10.3 Capstone: Speed-Controlled Wheel — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="Capstone project: build an Arduino speed-controlled wheel with a quadrature encoder, H-bridge driver, PID loop and a state machine with ramps and a FAULT state, with milestones, safety and a rubric." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-capstone.html">Chapter 10 &middot; Capstone Projects</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">10.3 Capstone: Speed-Controlled Wheel</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. What you will build and why</h2>
+                            <p>
+                                In this capstone you build a small machine that holds a wheel at a speed you choose, in revolutions per minute (RPM), and keeps it there when the load changes. An Arduino reads a quadrature encoder on a DC gearmotor, works out the wheel speed, and runs a PID loop that sets the PWM duty cycle sent to an H-bridge driver. A state machine wraps the loop: the wheel ramps up gently, runs under PID control, ramps back down, and drops into a FAULT state if something goes wrong, such as a stalled shaft or a lost encoder signal.
+                            </p>
+                            <p>
+                                Every closed-loop axis has the same parts, from a hobby robot's drive wheel to a joint inside an industrial arm (see the nested servo loops in <a href="robotics-6-4.html">6.4</a>): a sensor that measures motion, a controller that compares it with a target, a power stage that drives the motor, and supervisory logic that decides when the loop may run at all. Lessons in Chapter 6 taught these parts one at a time. Here you join them, measure how well the result works, and write up what you learned.
+                            </p>
+                            <p>
+                                This page is a project brief, not a lecture. It follows teaching-center advice for project work: the rubric is shared at the start, and the work is split into graded milestones such as a plan, a prototype and a progress briefing.<sup><a href="#ref-1">[1]</a></sup> You hand in evidence at each milestone, so problems surface early instead of the night before the final demo.
+                            </p>
+                            <p>
+                                By the end you should be able to show a plot of measured RPM against the setpoint, explain every number in your sketch, and show that the FAULT state stops the motor when you hold the wheel or unplug the encoder.
+                            </p>
+
+                            <h2 class="article-section-title">02. Prerequisites</h2>
+                            <p>
+                                The project builds directly on six Chapter 6 lessons. Reread the parts listed here before Milestone 1:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-6-1.html">6.1 Arduino for Robotics</a>:</span> separate logic and motor power domains, a common ground, and how the L298 and TB6612FNG drivers differ.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-6-2.html">6.2 Pulse Width Modulation</a>:</span> duty cycle, <code>analogWrite()</code> and which pins can produce PWM.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-6-3.html">6.3 Encoders</a>:</span> quadrature signals, counts per revolution (CPR), 4&times; decoding and interrupts.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-6-4.html">6.4 PID Control</a>:</span> the three terms, discrete-time PID, integral windup and derivative kick.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-6-7.html">6.7 State Machines</a>:</span> states, transitions, guard conditions and non-blocking timing with <code>millis()</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-6-9.html">6.9 Motion Profiles</a>:</span> why a ramped setpoint is gentler on mechanics than a step.</li>
+                            </ul>
+                            <p>
+                                You should also be comfortable with the basic safety ideas from <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a>: a small motor on a bench is not a robot cell, but the habits of planning for faults and keeping a way to cut power apply at every scale.
+                            </p>
+
+                            <h2 class="article-section-title">03. Equipment and software</h2>
+                            <p>
+                                The software is free: the Arduino IDE, the PJRC Encoder library and Brett Beauregard's Arduino PID Library (MIT license).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> You can also rehearse tuning in the interactive PID simulation in <a href="robotics-6-4.html">6.4</a> before you touch hardware. The hardware below is one tested-on-paper combination; any similar parts work if you redo the numbers.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Part</th>
+                                        <th scope="col">Example</th>
+                                        <th scope="col">What matters</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Controller</strong></td>
+                                        <td>Arduino Uno R3 or Nano (ATmega328-based)</td>
+                                        <td>Only pins 2 and 3 can take external interrupts on these boards. A Mega adds 18, 19, 20 and 21, and a Nano Every can use every digital pin.<sup><a href="#ref-4">[4]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Gearmotor with encoder</strong></td>
+                                        <td>Pololu 37D, 12 V, 30:1, 64 CPR encoder (#4752)</td>
+                                        <td>About 330 RPM and 200 mA with no load; stall torque 14 kg&middot;cm at 5.5 A; 1920 counts per output revolution; listed at US$60.95 for one unit.<sup><a href="#ref-5">[5]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>H-bridge driver</strong></td>
+                                        <td>Pololu TB6612FNG Dual Motor Driver Carrier (#713)</td>
+                                        <td>Motor supply 4.5&ndash;13.5 V, 1 A continuous and 3 A peak per channel, PWM up to 100 kHz, logic 2.7&ndash;5.5 V; about US$5 to US$6.<sup><a href="#ref-6">[6]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Motor supply</strong></td>
+                                        <td>12 V bench supply with an adjustable current limit, or a 12 V battery with a fuse</td>
+                                        <td>Must stay inside the driver's motor-voltage range above.<sup><a href="#ref-6">[6]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Mechanics</strong></td>
+                                        <td>Wheel or disc on the 6 mm D-shaft, motor bracket, clamp to the bench</td>
+                                        <td>The 37D family has a 6 mm D-shaft, 16 mm long.<sup><a href="#ref-7">[7]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Extras</strong></td>
+                                        <td>Two push buttons (START and STOP/RESET), short wires, capacitor near the driver</td>
+                                        <td>Buttons drive the state machine; short encoder wires reduce noise.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                <strong>Why the TB6612FNG and not the L298N?</strong> The TB6612FNG uses MOSFET outputs. Third-party guides describe the drop across it as small, roughly 0.2&ndash;0.5 V,<sup><a href="#ref-8">[8]</a></sup> against about 1.4 V for the bipolar L298N.<sup><a href="#ref-9">[9]</a></sup> ST's L298 datasheet gives a total drop of 1.8 to 3.2 V per bridge at 1 A.<sup><a href="#ref-10">[10]</a></sup> These figures vary between sources, so treat them as rough. On a 12 V supply, losing several volts in the driver leaves noticeably less for the motor. The L298 does handle more: ST rates it for supplies up to 46 V and up to 4 A total DC current.<sup><a href="#ref-11">[11]</a></sup> <a href="robotics-6-1.html">6.1</a> compares the two chips from their datasheets.
+                            </p>
+                            <p>
+                                <strong>The current mismatch you must design around.</strong> The 37D motor draws 5.5 A at stall.<sup><a href="#ref-5">[5]</a></sup> That is far above the TB6612FNG carrier's 1 A continuous and 3 A peak rating.<sup><a href="#ref-6">[6]</a></sup> Every 12 V variant of this motor family stalls at 5.5 A, whatever the gear ratio.<sup><a href="#ref-12">[12]</a></sup> So the project must either prevent long stalls (the FAULT state does this in software), limit current at the supply, choose a smaller motor, or use a driver with a higher current rating. Write down which option you chose in your Milestone 0 plan.
+                            </p>
+                            <p>
+                                Part specifications and prices in this table come from search summaries of vendor pages that could not be opened while this course was written, so check them against the current product pages before you buy.
+                            </p>
+
+                            <h2 class="article-section-title">04. Electrical and mechanical safety</h2>
+                            <p>
+                                A 12 V gearmotor looks harmless, but a geared output shaft is strong enough to trap a finger or fling a loose wheel, and a stalled motor can overheat its driver and wiring. These are standard bench practices; your lab's own rules come first.
+                            </p>
+                            <div class="article-callout">
+                                <div class="article-callout-header"><i class="fas fa-exclamation-triangle"></i> Bench safety for this project</div>
+                                <ul>
+                                    <li><strong>Separate supplies, common ground.</strong> Power the motor from its own supply, never from the Arduino's 5 V pin, and connect the two grounds together so the logic signals share a reference (see <a href="robotics-6-1.html">6.1</a>).</li>
+                                    <li><strong>Fuse the motor supply.</strong> Put a fuse in the positive lead of the motor supply, close to the source. If you use a bench supply, set its current limit low while you test.</li>
+                                    <li><strong>Bulk capacitance.</strong> Fit a capacitor across the motor supply near the driver to smooth the current pulses from PWM switching.</li>
+                                    <li><strong>No long stalls.</strong> Never stall-test at full PWM for long periods. The motor's stall current is far above the driver's rating, so keep stall tests short, at low PWM, and with the supply current-limited.</li>
+                                    <li><strong>Clamp and guard the mechanics.</strong> Clamp the motor bracket to the bench, tighten the wheel's set screw on the flat of the D-shaft, keep hair, sleeves and cables clear, and wear safety glasses while the wheel turns.</li>
+                                    <li><strong>A real way to stop.</strong> The STOP button in your sketch is a software input, not a safety-rated emergency stop. Keep the motor supply switch or plug within reach so you can cut motor power directly if the code misbehaves (compare the stop functions in <a href="robotics-5-4.html">5.4</a>).</li>
+                                    <li><strong>Wire with power off.</strong> Disconnect the motor supply before you change any wiring, and check polarity before you switch it back on.</li>
+                                </ul>
+                            </div>
+
+                            <h2 class="article-section-title">05. Milestones and what to hand in</h2>
+                            <p>
+                                Project-based learning guidance recommends splitting complex work into milestones and collecting individual evidence, such as contribution statements or progress notes, alongside the team result.<sup><a href="#ref-1">[1]</a></sup> One engineering capstone used milestone evaluations to hold each team member accountable to the group.<sup><a href="#ref-13">[13]</a></sup> The table gives five milestones for this project. If you work in a team, each milestone also needs a short contribution statement from every member.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Milestone</th>
+                                        <th scope="col">Goal</th>
+                                        <th scope="col">Hand in</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>M0 Plan</strong></td>
+                                        <td>Scope, parts, wiring and risks</td>
+                                        <td>One page: parts list, pin map, wiring diagram, how you handle the stall-current mismatch, a list of risks, and a test plan with target numbers.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M1 Measure</strong></td>
+                                        <td>Encoder counts and RPM are correct</td>
+                                        <td>Short video or log showing one hand-turned output revolution gives about 1920 counts, the sign matches the direction, and RPM is printed at a fixed rate.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M2 Control</strong></td>
+                                        <td>Open-loop drive, then a working PID speed loop</td>
+                                        <td>A PWM-versus-RPM table from open-loop tests and a step-response plot under PID, with the gains you used.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M3 Integrate and verify</strong></td>
+                                        <td>State machine with ramps and FAULT, tested</td>
+                                        <td>State diagram, test log for every test in Section 09, and a completed safety checklist.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M4 Report and reflect</strong></td>
+                                        <td>Explain the system and what you learned</td>
+                                        <td>A short report with plots, final code, a live or recorded demo, and the reflection answers in Section 10.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Reflection can be brief and frequent or more substantial at key milestones.<sup><a href="#ref-1">[1]</a></sup> Keep a short build log as you go: a few lines per session on what you changed, what happened and what you will try next. It costs five minutes and makes the M4 report much easier to write.
+                            </p>
+
+                            <h2 class="article-section-title">06. Milestone 1: measure speed with the encoder</h2>
+                            <p>
+                                <strong>Pins.</strong> Connect encoder channels A and B to pins 2 and 3, the two interrupt pins on an Uno.<sup><a href="#ref-4">[4]</a></sup> The PJRC Encoder library "counts pulses from quadrature encoded signals" and uses interrupts by default; it performs best when both pins are interrupt pins.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> Pin 3 is also a PWM pin, but you have just used it for the encoder, so put the motor PWM on another PWM-capable pin such as 5, 6, 9 or 10.<sup><a href="#ref-16">[16]</a></sup> Power the encoder as the motor's documentation describes and check its supply voltage range before you connect it.
+                            </p>
+                            <p>
+                                <strong>Counts.</strong> The library's API is short: <code>Encoder enc(pin1, pin2);</code>, then <code>enc.read()</code> returns a 32-bit count and <code>enc.write(0)</code> resets it.<sup><a href="#ref-14">[14]</a></sup> The encoder on the 37D gives 64 counts per motor-shaft revolution when both edges of both channels are counted, and the output-shaft CPR is 64 times the gear ratio.<sup><a href="#ref-7">[7]</a></sup> The PJRC library counts both edges of both channels, so for the 30:1 motor you should see 64 &times; 30 = 1920 counts per output revolution.<sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                If you write your own interrupt service routine (ISR) instead, follow the Arduino rules: attach it with <code>attachInterrupt(digitalPinToInterrupt(pin), ISR, mode)</code>, where mode is LOW, CHANGE, RISING or FALLING; keep it short; and declare any variable shared with <code>loop()</code> as <code>volatile</code>. Inside an ISR, <code>delay()</code> does not work and <code>millis()</code> does not advance.<sup><a href="#ref-4">[4]</a></sup> A multi-byte count can change halfway through being copied, so copy it between <code>noInterrupts()</code> and <code>interrupts()</code>. The library handles this for you.
+                            </p>
+                            <p>
+                                <strong>From counts to RPM.</strong> Every sample period, take the change in count and divide by the output CPR and the elapsed time:
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\text{RPM} = \frac{\Delta\text{counts}}{\text{CPR}_{\text{output}}} \times \frac{60\,000}{\Delta t_{\text{ms}}}\]</p>
+                            </div>
+                            <p>
+                                Worked example: at the 30:1 motor's no-load speed of about 330 RPM,<sup><a href="#ref-5">[5]</a></sup> the output turns 5.5 times per second, so the encoder produces about 5.5 &times; 1920 = 10&nbsp;560 counts per second, or about 1056 counts in a 100 ms sample. One count in a 100 ms window is worth 60&nbsp;000 / (1920 &times; 100) = 0.3125 RPM, which is the resolution of your speed reading. With a 10 ms window, one count would be worth 3.125 RPM, so short windows give coarse, jumpy speed readings.
+                            </p>
+                            <p>
+                                <strong>M1 check.</strong> Mark the wheel, reset the count, turn the wheel exactly one revolution by hand with the motor supply off, and read the count. It should be close to &plusmn;1920. Then turn it the way you will call "forward" and confirm the count goes up. If it goes down, swap the A and B wires (or the pin order in the constructor).
+                            </p>
+
+                            <h2 class="article-section-title">07. Milestone 2: open-loop drive, then the PID speed loop</h2>
+                            <p>
+                                <strong>Open loop first.</strong> Before adding feedback, drive the motor with fixed duty cycles and record the speed. <code>analogWrite()</code> takes values from 0 to 255; on an Uno or Nano, pins 9 and 10 run at 490 Hz and pins 5 and 6 at 980 Hz.<sup><a href="#ref-16">[16]</a></sup> Step through values such as 50, 100, 150, 200 and 255 and note the RPM each time. This table shows you the dead zone (the PWM below which the motor does not turn) and how nearly linear the motor is, and it gives you a sanity check for the PID output later.
+                            </p>
+                            <p>
+                                <strong>The PID library.</strong> Beauregard's library uses the constructor <code>PID(&amp;Input, &amp;Output, &amp;Setpoint, Kp, Ki, Kd, DIRECT)</code> with methods <code>SetMode(AUTOMATIC)</code>, <code>Compute()</code>, <code>SetTunings()</code>, <code>SetSampleTime()</code> and <code>SetOutputLimits()</code>.<sup><a href="#ref-2">[2]</a></sup> Several details of its source code matter for this project:<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Fixed sample time:</span> the default is 100 ms, and <code>Compute()</code> only calculates when that much time has passed according to <code>millis()</code>. Call it on every pass of <code>loop()</code> and let it decide.</li>
+                                <li class="article-spec-item"><span class="spec-label">Output limits:</span> the default range is 0&ndash;255. For a motor that can drive both ways, set <code>SetOutputLimits(-255, 255)</code> and use the sign to choose the direction pins.</li>
+                                <li class="article-spec-item"><span class="spec-label">Anti-windup:</span> the integral sum is clamped to the output limits, which limits integral windup.</li>
+                                <li class="article-spec-item"><span class="spec-label">No derivative kick:</span> the derivative term acts on the measurement, not the error, so a setpoint change does not cause a spike.</li>
+                                <li class="article-spec-item"><span class="spec-label">Bumpless transfer:</span> a control technique that matches internal controller states during mode transitions to prevent abrupt jumps in the control signal; switching from MANUAL to AUTOMATIC re-initializes the controller so the output does not jump.</li>
+                            </ul>
+                            <p>
+                                The sketch below shows the measurement and control core. It is an example to test, not proven code: try your gains in the 5.4 simulation first, then run it with the wheel free, the supply current-limited and the PWM limit set low. Pin numbers for the direction inputs are placeholders; check your driver carrier's documentation for its pin names and any enable or standby input.
+                            </p>
+                            <pre class="article-code"><code>#include &lt;Encoder.h&gt;
+#include &lt;PID_v1.h&gt;
+
+const int PIN_PWM = 9;      // not pin 3: that is an encoder interrupt pin
+const int PIN_IN1 = 7;      // direction inputs (check your driver's labels)
+const int PIN_IN2 = 8;
+const double CPR_OUT = 1920.0;          // 64 CPR x 30:1 gear ratio
+const unsigned long SAMPLE_MS = 100;
+
+Encoder enc(2, 3);                       // both interrupt pins on an Uno
+double rpm = 0, pwmCmd = 0, targetRpm = 0;
+// Placeholder gains: start with Kp only, then add Ki.
+PID speedPid(&amp;rpm, &amp;pwmCmd, &amp;targetRpm, 0.5, 0.0, 0.0, DIRECT);
+
+long lastCount = 0;
+unsigned long lastMs = 0;
+
+void measureSpeed() {
+  unsigned long now = millis();
+  if (now - lastMs &gt;= SAMPLE_MS) {
+    long count = enc.read();
+    rpm = (count - lastCount) / CPR_OUT * 60000.0 / (now - lastMs);
+    lastCount = count;
+    lastMs = now;
+  }
+}
+
+void driveMotor(double cmd) {            // cmd in -255..255
+  digitalWrite(PIN_IN1, cmd &gt;= 0 ? HIGH : LOW);
+  digitalWrite(PIN_IN2, cmd &gt;= 0 ? LOW : HIGH);
+  analogWrite(PIN_PWM, (int)fabs(cmd));
+}
+
+void setup() {
+  pinMode(PIN_PWM, OUTPUT);
+  pinMode(PIN_IN1, OUTPUT);
+  pinMode(PIN_IN2, OUTPUT);
+  speedPid.SetSampleTime(SAMPLE_MS);
+  speedPid.SetOutputLimits(-255, 255);
+  speedPid.SetMode(MANUAL);              // the state machine switches it on
+  Serial.begin(115200);
+}</code></pre>
+                            <p>
+                                <strong>Tuning.</strong> Start with proportional gain only and a fixed setpoint such as 150 RPM. You will see a steady-state error: the wheel settles below the target, because a pure P controller needs some error to produce any output. Add integral gain slowly until the error disappears without large overshoot, as described in <a href="robotics-6-4.html">6.4</a>. The library pre-scales Ki and Kd by the sample time, and <code>SetSampleTime()</code> rescales them when you change the period, so your gains keep their meaning.<sup><a href="#ref-3">[3]</a></sup> A shorter period still makes the speed reading coarser (Section 06), so check the response again after changing it. A speed loop usually needs little or no derivative gain, and the quantized speed reading from Section 06—which changes in discrete integer steps rather than continuous values due to digital encoder resolution—makes the derivative term noisy.
+                            </p>
+
+                            <h2 class="article-section-title">08. Milestone 3: the state machine, ramps and FAULT</h2>
+                            <p>
+                                The PID loop should not run all the time. A supervisory state machine (see <a href="robotics-6-7.html">6.7</a>) decides when the motor may move. Use five states:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">IDLE:</span> PWM is 0 and the PID is in MANUAL. Pressing START moves to RAMP_UP.</li>
+                                <li class="article-spec-item"><span class="spec-label">RAMP_UP:</span> the PID is in AUTOMATIC and the setpoint rises at a fixed rate (for example a few hundred RPM per second) until it reaches the target, then the machine moves to RUN. This is a simple version of the trapezoidal velocity profile from <a href="robotics-6-9.html">6.9</a>: the gearbox sees a gentle acceleration instead of a step.</li>
+                                <li class="article-spec-item"><span class="spec-label">RUN:</span> the setpoint is constant and the PID holds speed. Pressing STOP moves to RAMP_DOWN.</li>
+                                <li class="article-spec-item"><span class="spec-label">RAMP_DOWN:</span> the setpoint falls at the same rate to 0, then the machine returns to IDLE.</li>
+                                <li class="article-spec-item"><span class="spec-label">FAULT:</span> PWM is forced to 0 and the PID goes to MANUAL. Entered from any moving state on a stall, an encoder loss or the STOP button held down. Leaving it needs a deliberate manual reset, not a timeout.</li>
+                            </ul>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 336" role="img" aria-label="State machine with five states. IDLE, with PWM 0 and the PID in MANUAL, goes to RAMP_UP when START is pressed. In RAMP_UP the setpoint rises until it reaches the target, then the machine moves to RUN, where the PID holds speed. Pressing STOP moves to RAMP_DOWN, where the setpoint falls to 0, and then back to IDLE. From any moving state, RAMP_UP, RUN or RAMP_DOWN, a stall, an encoder loss or STOP held down leads to FAULT, where PWM is forced to 0 and the PID goes to MANUAL. FAULT returns to IDLE only on a manual reset." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-fsm63" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="20" y="135" width="150" height="56" rx="6"/><text class="d-title" x="95" y="159" text-anchor="middle">IDLE</text><text class="d-muted" x="95" y="179" text-anchor="middle">PWM 0, PID MANUAL</text><rect class="d-box" x="255" y="20" width="170" height="56" rx="6"/><text class="d-title" x="340" y="44" text-anchor="middle">RAMP_UP</text><text class="d-muted" x="340" y="64" text-anchor="middle">setpoint rises</text><rect class="d-box" x="510" y="135" width="150" height="56" rx="6"/><text class="d-title" x="585" y="159" text-anchor="middle">RUN</text><text class="d-muted" x="585" y="179" text-anchor="middle">PID holds speed</text><rect class="d-box" x="255" y="250" width="170" height="56" rx="6"/><text class="d-title" x="340" y="274" text-anchor="middle">RAMP_DOWN</text><text class="d-muted" x="340" y="294" text-anchor="middle">setpoint falls to 0</text><rect class="d-box-gold" x="270" y="135" width="140" height="56" rx="6"/><text class="d-title" x="340" y="159" text-anchor="middle">FAULT</text><text class="d-muted" x="340" y="179" text-anchor="middle">PWM 0, PID MANUAL</text><path class="d-line" d="M95,135 Q100,48 253,48" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="100" y="62" text-anchor="end">START</text><path class="d-line" d="M425,48 Q580,48 585,133" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="584" y="62">target reached</text><path class="d-line" d="M585,191 Q580,278 427,278" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="584" y="270">STOP pressed</text><path class="d-line" d="M255,278 Q100,278 95,193" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="100" y="270" text-anchor="end">setpoint at 0</text><line class="d-line" x1="340" y1="76" x2="340" y2="133" stroke-dasharray="5 4" marker-end="url(#arrow-fsm63)"/><line class="d-line" x1="340" y1="250" x2="340" y2="193" stroke-dasharray="5 4" marker-end="url(#arrow-fsm63)"/><line class="d-line" x1="510" y1="163" x2="412" y2="163" stroke-dasharray="5 4" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="461" y="155" text-anchor="middle">fault</text><line class="d-strong" x1="270" y1="163" x2="172" y2="163" marker-end="url(#arrow-fsm63)"/><text class="d-muted" x="221" y="155" text-anchor="middle">RESET</text><text class="d-muted" x="221" y="181" text-anchor="middle">manual only</text><text class="d-muted" x="340" y="326" text-anchor="middle">Dashed: a stall, an encoder loss or STOP held down, from any moving state.</text>
+                                </svg>
+                                <figcaption>The five states and their transitions. The normal cycle runs around the outside; the dashed fault transitions lead from every moving state into FAULT, which forces PWM to 0 and clears only on a deliberate manual reset, never on a timeout.</figcaption>
+                            </figure>
+
+                            <p>
+                                <strong>Detecting a stall or a lost encoder.</strong> Both look the same from the controller's point of view: the commanded PWM is high but the measured speed is about zero. Start a timer when that condition becomes true and clear it when it stops being true; if it stays true longer than a limit you choose (a few hundred milliseconds is a reasonable starting point), go to FAULT. Choose the PWM threshold from your open-loop table: it should be clearly above the dead zone. Given the stall current, this check is what protects the driver, so test it in M3.
+                            </p>
+                            <p>
+                                The sketch below continues the code from Section 07. It is also an example to test with the wheel free and the supply current-limited before you rely on it. It uses <code>millis()</code> for all timing and never calls <code>delay()</code>, so the loop keeps running in every state.
+                            </p>
+                            <pre class="article-code"><code>enum State { IDLE, RAMP_UP, RUN, RAMP_DOWN, FAULT };
+State state = IDLE;
+
+const double TARGET_RPM = 200.0;
+const double RAMP_RPM_PER_S = 300.0;     // choose and justify in M0
+const double STALL_PWM = 120.0;          // from your open-loop table
+const double STALL_RPM = 5.0;
+const unsigned long STALL_MS = 300;
+unsigned long stallStart = 0, lastRampMs = 0;
+
+void enterFault() {
+  speedPid.SetMode(MANUAL);
+  pwmCmd = 0;
+  targetRpm = 0;
+  driveMotor(0);
+  state = FAULT;
+}
+
+void loop() {
+  measureSpeed();
+  unsigned long now = millis();
+  double dt = (now - lastRampMs) / 1000.0;
+  lastRampMs = now;
+
+  switch (state) {
+    case IDLE:
+      pwmCmd = 0;
+      driveMotor(0);
+      if (startPressed()) { targetRpm = 0; speedPid.SetMode(AUTOMATIC); state = RAMP_UP; }
+      break;
+    case RAMP_UP:
+      targetRpm = min(TARGET_RPM, targetRpm + RAMP_RPM_PER_S * dt);
+      if (targetRpm &gt;= TARGET_RPM) state = RUN;
+      break;
+    case RUN:
+      if (stopPressed()) state = RAMP_DOWN;
+      break;
+    case RAMP_DOWN:
+      targetRpm = max(0.0, targetRpm - RAMP_RPM_PER_S * dt);
+      if (targetRpm &lt;= 0.0 &amp;&amp; fabs(rpm) &lt; STALL_RPM) { speedPid.SetMode(MANUAL); pwmCmd = 0; state = IDLE; }
+      break;
+    case FAULT:
+      driveMotor(0);
+      if (resetPressed()) state = IDLE;    // manual reset only
+      return;
+  }
+
+  // Stall or encoder-loss check in every moving state
+  if (fabs(pwmCmd) &gt; STALL_PWM &amp;&amp; fabs(rpm) &lt; STALL_RPM) {
+    if (stallStart == 0) stallStart = now;
+    if (now - stallStart &gt; STALL_MS) { stallStart = 0; enterFault(); return; }
+  } else {
+    stallStart = 0;
+  }
+
+  if (state != IDLE) { speedPid.Compute(); driveMotor(pwmCmd); }
+}</code></pre>
+                            <p>
+                                You write <code>startPressed()</code>, <code>stopPressed()</code> and <code>resetPressed()</code> yourself, with debouncing, as in <a href="robotics-6-7.html">6.7</a>. Add the "STOP held down" trigger for FAULT as well. Log the state name with the speed so your plots show when each transition happened.
+                            </p>
+
+                            <h2 class="article-section-title">09. Testing, verification and common problems</h2>
+                            <p>
+                                Write your test plan in M0, before you know the results, and give each test a pass condition. Log time, state, setpoint, RPM and PWM every 100 ms over serial, then paste the log into a spreadsheet to plot. A suggested set:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">T1 Count check:</span> one hand-turned revolution gives about 1920 counts with the right sign (M1).</li>
+                                <li class="article-spec-item"><span class="spec-label">T2 Step and ramp response:</span> plot RPM against setpoint at two targets, such as 100 and 200 RPM. Report rise time, overshoot and steady-state error, and state your own pass limits for each.</li>
+                                <li class="article-spec-item"><span class="spec-label">T3 Load disturbance:</span> while in RUN, add a light, fixed drag (for example a felt pad held in a clamp against the wheel, never your hand) and measure how far the speed dips and how quickly it recovers.</li>
+                                <li class="article-spec-item"><span class="spec-label">T4 Stall fault:</span> with the supply current-limited and a low PWM limit, block the wheel with a fixed stop and show that FAULT is entered within your time limit and PWM goes to 0.</li>
+                                <li class="article-spec-item"><span class="spec-label">T5 Encoder loss:</span> with the motor running slowly, unplug one encoder lead (power off when you reconnect it) and show the system goes to FAULT.</li>
+                                <li class="article-spec-item"><span class="spec-label">T6 Reset behavior:</span> show that FAULT does not clear by itself and that the motor stays stopped until you press RESET and then START.</li>
+                            </ul>
+                            <p>
+                                When something goes wrong, these are the usual causes:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Speed runs away or the wheel spins at full speed:</span> the encoder counts the wrong way, so feedback is positive. Swap A and B, or invert the controller direction.</li>
+                                <li class="article-spec-item"><span class="spec-label">Noisy or jumping counts:</span> use short wires, twisted or shielded if possible, keep them away from the motor leads, and add pull-ups if your encoder needs them.</li>
+                                <li class="article-spec-item"><span class="spec-label">Counts miss or the PWM misbehaves:</span> check that the motor PWM is not on pin 3 while the encoder uses pins 2 and 3.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Big overshoot at startup:</span> integral windup. Use the ramp, keep the PID in MANUAL while idle so the integral does not build up, and rely on the library's clamped integral.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Control gets worse when you add debug output:</span> <code>Serial.print</code> slows the loop. Print once per sample, use a fast baud rate, and keep messages short.</li>
+                                <li class="article-spec-item"><span class="spec-label">Speed reading steps in large jumps:</span> the sample time is too short for the encoder resolution (Section 06). Lengthen it or average.</li>
+                                <li class="article-spec-item"><span class="spec-label">Motor never reaches its rated speed:</span> with an L298N on 12 V, the driver's voltage drop leaves too little for the motor.<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Driver gets hot or shuts down:</span> the motor is drawing more than the driver's rating, most likely from a stall or hard load.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-5">[5]</a></sup> Stop and recheck your current limit.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">10. Grading rubric, reflection and stretch goals</h2>
+                            <p>
+                                The rubric uses four levels with no neutral middle, following an engineering-technology capstone that rated projects from 1 ("Not Acceptable") to 4 ("Exemplary"). The scale was a deliberate choice, so that the instructor has to make a clear decision about whether expectations were met.<sup><a href="#ref-17">[17]</a></sup> This course uses the same four labels. Capstone research also warns that very detailed rubrics can narrow students' creativity,<sup><a href="#ref-18">[18]</a></sup> so the rows describe outcomes, not one correct design.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Criterion</th>
+                                        <th scope="col">1 Not acceptable</th>
+                                        <th scope="col">2 Below expectations</th>
+                                        <th scope="col">3 Meets expectations</th>
+                                        <th scope="col">4 Exemplary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Functionality</strong></td>
+                                        <td>Wheel does not hold speed, or states do not work.</td>
+                                        <td>Holds speed at one setpoint; ramps or FAULT missing or unreliable.</td>
+                                        <td>Holds speed at two setpoints with ramps; all five states work.</td>
+                                        <td>As level 3, plus recovers well from load changes and handles edge cases such as a setpoint change during a ramp.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Test evidence</strong></td>
+                                        <td>No logs or plots.</td>
+                                        <td>Some plots, no pass conditions or missing tests.</td>
+                                        <td>T1 to T6 run, each with a log, plot and pass/fail against limits set in M0.</td>
+                                        <td>As level 3, plus repeated runs and an honest discussion of anything that failed.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Safety</strong></td>
+                                        <td>Motor powered from the Arduino, no fuse, or unclamped mechanics.</td>
+                                        <td>Most checklist items done; stall or encoder-loss fault untested.</td>
+                                        <td>Every Section 04 item in place; FAULT tested and needs a manual reset.</td>
+                                        <td>As level 3, plus a written risk list from M0 with each risk traced to a measure and a test.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Code and documentation</strong></td>
+                                        <td>Code does not compile or uses <code>delay()</code> in the control loop.</td>
+                                        <td>Works, but magic numbers and no wiring diagram.</td>
+                                        <td>Named constants with units, comments, a pin map and a state diagram that matches the code.</td>
+                                        <td>As level 3, plus the RPM and gain choices are derived and explained so another student could rebuild it.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Reflection</strong></td>
+                                        <td>Missing.</td>
+                                        <td>Describes what was done, not what was learned.</td>
+                                        <td>Answers the questions below with specific examples from the build log.</td>
+                                        <td>As level 3, plus connects the lessons to how a real industrial axis or cell would be built.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                For team projects, grade the group product and each person's contribution separately, using the contribution statements from each milestone.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Reflection questions (M4).</strong> Answer each in a short paragraph:
+                            </p>
+                            <ol>
+                                <li>What failed first, and how did you work out the cause?</li>
+                                <li>Which gain change made the biggest difference to your step response, and why does the theory in 6.4 predict that?</li>
+                                <li>How did your sample time trade off speed resolution against how fast the loop could react?</li>
+                                <li>Which safety measure would you keep even if the project had no rubric, and why?</li>
+                                <li>An industrial servo drive does this same job on a robot joint. What would you change in your design for a real machine cell?</li>
+                            </ol>
+                            <p>
+                                <strong>Stretch goals.</strong> Choose one or more after M3 is complete:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Bidirectional profiles:</span> ramp smoothly from +150 RPM through zero to &minus;150 RPM.</li>
+                                <li class="article-spec-item"><span class="spec-label">Position mode:</span> add a second PID that moves the wheel to an angle, with speed control as the inner loop (the cascaded structure from 6.4).</li>
+                                <li class="article-spec-item"><span class="spec-label">Feed-forward:</span> use your open-loop table to predict the PWM for a setpoint and let the PID correct only the remainder.</li>
+                                <li class="article-spec-item"><span class="spec-label">Two wheels:</span> drive both channels of the TB6612FNG carrier and hold two wheels at matched speeds, the first step towards a differential-drive robot.</li>
+                                <li class="article-spec-item"><span class="spec-label">Current sensing:</span> add a current sensor and enter FAULT on overcurrent directly, rather than inferring a stall from speed.</li>
+                            </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Before you order parts, write your M0 pin map. Assign the two encoder channels, the PWM output, the two direction outputs and three buttons on an Uno, and explain why the PWM is not on pin 3.</li>
+                                    <li>Using the RPM formula, work out how many counts your encoder will produce in one sample at your chosen target speed and sample time, and the RPM value of one count.</li>
+                                    <li>Draw the five-state diagram with every transition and its guard condition, including the stall check, and mark which transitions need a button press.</li>
+                                    <li>List your three biggest risks (electrical, mechanical and software) and the measure and test that covers each.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">11. References</h2>
+                            <p class="references-note">Source check (October 2026): 18 of 18 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">Virginia Tech TLOS, &ldquo;Assessing and reflecting on project work,&rdquo; Project-Based Learning teaching resources (statement seen in a search summary; page not opened). <a href="https://teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html" target="_blank" rel="noopener noreferrer">teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html</a>.</li>
+                                <li id="ref-2">B. Beauregard, &ldquo;PID_v1.h,&rdquo; Arduino PID Library v1.2.1 (MIT license), GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/br3ttb/Arduino-PID-Library/blob/master/PID_v1.h" target="_blank" rel="noopener noreferrer">github.com/br3ttb/Arduino-PID-Library/blob/master/PID_v1.h</a>.</li>
+                                <li id="ref-3">B. Beauregard, &ldquo;PID_v1.cpp,&rdquo; Arduino PID Library v1.2.1, GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/br3ttb/Arduino-PID-Library/blob/master/PID_v1.cpp" target="_blank" rel="noopener noreferrer">github.com/br3ttb/Arduino-PID-Library/blob/master/PID_v1.cpp</a>.</li>
+                                <li id="ref-4">Arduino, &ldquo;attachInterrupt()&rdquo; language reference (source file <code>attachInterrupt.adoc</code>), reference-en repository, GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/arduino/reference-en/blob/master/Language/Functions/External%20Interrupts/attachInterrupt.adoc" target="_blank" rel="noopener noreferrer">github.com/arduino/reference-en/blob/master/Language/Functions/External%20Interrupts/attachInterrupt.adoc</a>.</li>
+                                <li id="ref-5">Pololu, 30:1 metal gearmotor 37D, 12 V, with 64 CPR encoder, item #4752, specifications (statement seen in a search summary; page not opened). <a href="https://www.pololu.com/product/4752/specs" target="_blank" rel="noopener noreferrer">pololu.com/product/4752/specs</a>.</li>
+                                <li id="ref-6">Pololu, &ldquo;TB6612FNG Dual Motor Driver Carrier,&rdquo; item #713, specifications (price snapshots in search results conflicted) (statement seen in a search summary; page not opened). <a href="https://www.pololu.com/product/713/specs" target="_blank" rel="noopener noreferrer">pololu.com/product/713/specs</a>.</li>
+                                <li id="ref-7">Pololu, 37D metal gearmotors with 64 CPR encoder, 12 V family, item #4753 specifications (statement seen in a search summary; page not opened). <a href="https://www.pololu.com/product/4753/specs" target="_blank" rel="noopener noreferrer">pololu.com/product/4753/specs</a>.</li>
+                                <li id="ref-8">Zbotic, &ldquo;Motor driver IC comparison: L298N vs DRV8833 vs TB6612FNG,&rdquo; zbotic.in (third-party figures; seen in a search summary, page not opened). <a href="https://zbotic.in/motor-driver-ic-comparison-l298n-vs-drv8833-vs-tb6612fng/" target="_blank" rel="noopener noreferrer">zbotic.in/motor-driver-ic-comparison-l298n-vs-drv8833-vs-tb6612fng</a>.</li>
+                                <li id="ref-9">DroneBot Workshop, &ldquo;TB6612FNG H-Bridge&rdquo; tutorial, dronebotworkshop.com (third-party figures; seen in a search summary, page not opened). <a href="https://dronebotworkshop.com/tb6612fng-h-bridge/" target="_blank" rel="noopener noreferrer">dronebotworkshop.com/tb6612fng-h-bridge</a>.</li>
+                                <li id="ref-10">STMicroelectronics, &ldquo;L298: Dual full-bridge driver,&rdquo; datasheet (copy hosted by the National University of Singapore), electrical characteristics, V<sub>CEsat</sub> total drop, accessed October 22, 2026. <a href="https://www.ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf" target="_blank" rel="noopener noreferrer">ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf</a>.</li>
+                                <li id="ref-11">STMicroelectronics, &ldquo;L298: Dual full-bridge driver,&rdquo; product page (statement seen in a search summary; page not opened). <a href="https://www.st.com/en/motor-drivers/l298.html" target="_blank" rel="noopener noreferrer">st.com/en/motor-drivers/l298.html</a>.</li>
+                                <li id="ref-12">Pololu, 37D metal gearmotor 12 V variants (10:1, 30:1, 50:1), product listings via item #4750 specifications (statement seen in a search summary; page not opened). <a href="https://pololu.com/product/4750/specs" target="_blank" rel="noopener noreferrer">pololu.com/product/4750/specs</a>.</li>
+                                <li id="ref-13">T. Ericson and S. Kiefer, &ldquo;Capstone Design Assessment and Student Motivation,&rdquo; York College of Pennsylvania, ASEE PEER paper 49669. <a href="https://peer.asee.org/49669.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/49669.pdf</a>.</li>
+                                <li id="ref-14">P. Stoffregen (PJRC), Encoder library, &ldquo;README.md&rdquo; and &ldquo;Encoder.h,&rdquo; GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/PaulStoffregen/Encoder/blob/master/README.md" target="_blank" rel="noopener noreferrer">github.com/PaulStoffregen/Encoder/blob/master/README.md</a>.</li>
+                                <li id="ref-15">P. Stoffregen (PJRC), &ldquo;Encoder Library,&rdquo; PJRC Teensy documentation, accessed October 22, 2026. <a href="https://www.pjrc.com/teensy/td_libs_Encoder.html" target="_blank" rel="noopener noreferrer">pjrc.com/teensy/td_libs_Encoder.html</a>.</li>
+                                <li id="ref-16">Arduino, &ldquo;analogWrite()&rdquo; language reference (source file <code>analogWrite.adoc</code>), reference-en repository, GitHub, master branch, accessed October 21, 2026. <a href="https://github.com/arduino/reference-en/blob/master/Language/Functions/Analog%20IO/analogWrite.adoc" target="_blank" rel="noopener noreferrer">github.com/arduino/reference-en/blob/master/Language/Functions/Analog%20IO/analogWrite.adoc</a>.</li>
+                                <li id="ref-17">D. K. Jones and A. Tadros, &ldquo;Successful use of rubrics to assess student performance in capstone projects,&rdquo; ASEE Annual Conference, paper AC 2010-359, 2010. <a href="https://peer.asee.org/15865.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/15865.pdf</a>.</li>
+                                <li id="ref-18">J. Edmondson and R. A. Gupta, &ldquo;Work in Progress: Project Health as a Capstone Rubric Element,&rdquo; ASEE Annual Conference, paper 48955, 2025. <a href="https://nemo.asee.org/public/conferences/365/papers/48955/download" target="_blank" rel="noopener noreferrer">nemo.asee.org/public/conferences/365/papers/48955/download</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-10-2.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</span>
+                                </a>
+                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Finished -&gt;</span>
+                                    <span class="article-nav-target">Course home</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

@@ -98,175 +98,155 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 984.
 - Key terms: vision-guided robotics, eye-in-hand, eye-to-hand, snapshot position, intrinsic calibration, camera matrix, lens distortion, re-projection error, hand-eye calibration, work object (user frame)
 - Sections: Why a taught point is not enough · 2D, 2.5D and 3D guidance · Where the camera goes: eye-to-hand or eye-in-hand · Camera calibration, part 1: the lens · Camera calibration, part 2: hand-eye and AX = XB · The industrial shortcut for 2D: calibrate to a user frame · From vision result to robot move: shifting the frame · The math of a frame shift, worked through · How accurate can it be? Pixels, calibration and light
 
-## Chapter 3: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 133 min)
+## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 133 min)
 
-### 3.1 Definition and Introduction
-`robotics-3-1.html` · 14 min · 30 refs (partial 2, unreachable 1, verified 27) · 1 figures · 1 Try it
+### 4.1 Definition and Introduction
+`robotics-4-1.html` · 14 min · 30 refs (partial 2, unreachable 1, verified 27) · 1 figures · 1 Try it
 - Objectives: Define ROS 2 as open-source robot middleware and contrast its architecture with traditional monolithic robot controllers. / Differentiate the core communication primitives: nodes, topics (pub/sub), services (req/res), actions (goal/feedback), and parameters. / Explain network discovery under DDS and how ROS_DOMAIN_ID calculates port offsets to isolate robots on a shared subnet. / Quote global ROS adoption trends from the annual ROS Metrics Report, highlighting the transition to ROS 2.
 - Key terms: node, topic, service, action, parameter, SLAM, ROS_DOMAIN_ID, Willow Garage, publish-subscribe, Open Source Robotics Alliance
 - Sections: Deconstructing the Robot Operating System · Historical roots: Stanford and Willow Garage · The node-based computational graph · Topics and the publish-subscribe pattern · The lidar, SLAM, and path planning pipeline · Services: request-response transactions · Actions: preemptible goals with feedback · Local parameters in ROS 2 · Network isolation: ROS_DOMAIN_ID · Global adoption and metrics · Governance and the Open Source Robotics Alliance
 
-### 3.2 ROS 1 vs. ROS 2
-`robotics-3-2.html` · 14 min · 30 refs (partial 2, verified 28) · 1 figures · 1 Try it
+### 4.2 ROS 1 vs. ROS 2
+`robotics-4-2.html` · 14 min · 30 refs (partial 2, verified 28) · 1 figures · 1 Try it
 - Objectives: Contrast the centralized master architecture of ROS 1 (roscore) with the distributed peer-to-peer DDS discovery of ROS 2. / Explain the ROS Middleware (RMW) abstraction layer and how to switch implementations (Fast DDS, Cyclone DDS, Zenoh) via environment variables. / Evaluate Quality of Service (QoS) policies (Reliability, Durability, History, Depth) and explain why mismatched QoS settings prevent communication. / Describe the lifecycle states of a ROS 2 managed node and the programmatic flexibility of Python-based launch files.
 - Key terms: DDS, RMW, Quality of Service (QoS), Reliable, Best Effort, Transient Local, Volatile, Zenoh, lifecycle node, launch file
 - Sections: Why the robotics community rebuilt ROS from scratch · Master versus decentralized discovery · The ROS Middleware (RMW) abstraction layer · Quality of Service (QoS) in practice · The QoS compatibility rule · Managed lifecycle nodes · Programmable Python launch files · Multi-platform and security enhancements · Migration timeline: from Noetic to Lyrical Luth
 
-### 3.3 Installing ROS on Your Local Environment
-`robotics-3-3.html` · 14 min · 33 refs (fixed 2, verified 31) · 1 figures · 1 Try it
+### 4.3 Installing ROS on Your Local Environment
+`robotics-4-3.html` · 14 min · 33 refs (fixed 2, verified 31) · 1 figures · 1 Try it
 - Objectives: Navigate the platform support tiers for ROS 2 Lyrical Luth (Lyrical supported-platforms page; REP 2000 for earlier releases) across Ubuntu 26.04, Windows 11 and macOS. / Execute the complete Debian package installation pipeline on Ubuntu, including UTF-8 locale generation, adding the ROS 2 apt source (ros2-apt-source package), and desktop package selection. / Configure shell environment variables (PATH, AMENT_PREFIX_PATH, ROS_DISTRO) via setup.bash and automate startup via .bashrc. / Troubleshoot common post-installation errors: missing environment sourcing, UDP multicast firewall blocks, and a missing UTF-8 locale.
 - Key terms: Ubuntu 26.04, Lyrical Luth, Tier 1, WSL 2, setup.bash, colcon, rosdep, GPG key, multicast discovery, REP 2000
 - Sections: Choosing your installation strategy · Platform support tiers and REP 2000 · Native Ubuntu 26.04 installation step by step · Setting up the UTF-8 locale and the ROS 2 apt repository · Desktop versus base installations · Sourcing the environment: setup.bash · Windows installation: WSL 2 versus native · Windows on ARM (Snapdragon laptops) · macOS strategies: Docker and virtual machines · Post-installation verification: talker and listener · Essential developer utilities: rosdep and colcon · Troubleshooting common setup errors
 
-### 3.4 Running Your First Example (Turtlesim)
-`robotics-3-4.html` · 15 min · 15 refs (verified 15) · 1 figures · 1 Try it
+### 4.4 Running Your First Example (Turtlesim)
+`robotics-4-4.html` · 15 min · 15 refs (verified 15) · 1 figures · 1 Try it
 - Objectives: Run and teleoperate the Turtlesim simulator, introspecting nodes, topics, and message types using the ros2 CLI. / Call ROS 2 services from the command line and use startup remapping arguments to control multiple simulated robots. / Structure a standard ROS 2 workspace (src, build, install, log) and compile packages using colcon. / Write, build, and execute custom publisher and subscriber nodes in Python using rclpy and geometry_msgs.
 - Key terms: Turtlesim, teleop, geometry_msgs/msg/Twist, remapping, rclpy, colcon build, package.xml, setup.py, spin, entry_points
 - Sections: Hands-on robotics with Turtlesim · Launching and teleoperating your first robot · Topic introspection and the Twist message · Calling services from the CLI: spawning robots · Remapping names on the command line · ROS 2 workspace architecture · Python package layout: package.xml and setup.py · Writing a custom rclpy velocity publisher · Writing a custom rclpy pose subscriber · Compiling with colcon and running custom nodes · Transferring skills to physical robots
 
-### 3.5 ROS Tools
-`robotics-3-5.html` · 14 min · 25 refs (partial 3, unreachable 1, verified 21) · 1 figures · 1 Try it
+### 4.5 ROS Tools
+`robotics-4-5.html` · 14 min · 25 refs (partial 3, unreachable 1, verified 21) · 1 figures · 1 Try it
 - Objectives: Differentiate the purpose of 3D data visualizers (RViz2) from physics simulators (Gazebo), explaining coordinate transforms via tf2. / Inspect and diagnose running ROS 2 computational graph topologies using rqt_graph and associated GUI debugging plugins. / Record, inspect, and replay high-bandwidth sensor telemetry datasets using ros2 bag with sqlite3 and MCAP storage plugins. / Explain how the ros_gz bridge interfaces simulated rigid-body physics, sensor noise models, and Gazebo transport with ROS 2 topics.
 - Key terms: RViz, rqt_graph, Gazebo, ros2 bag, tf2, ros_gz, MCAP, Fixed Frame, robot_state_publisher, SDF
 - Sections: The ROS developer toolchain · RViz2: visualizing robot perception in 3D · The tf2 transform library and the Fixed Frame · rqt and rqt_graph: computational graph inspection · Specialized rqt plugins · ros2 bag: telemetry recording and playback · Storage backends: sqlite3 and MCAP · Gazebo: multi-physics simulation · Bridging worlds: the ros_gz architecture · Essential community packages
 
-### 3.6 Writing Your First ROS 2 Package
-`robotics-3-6.html` · 15 min · 17 refs (fixed 2, verified 15) · 1 figures · 1 Try it
+### 4.6 Writing Your First ROS 2 Package
+`robotics-4-6.html` · 15 min · 17 refs (fixed 2, verified 15) · 1 figures · 1 Try it
 - Objectives: Set up a ROS 2 Lyrical workspace as an overlay on the /opt/ros/lyrical underlay and source setup vs. local_setup scripts correctly in a fresh terminal. / Create an ament_python package with ros2 pkg create (remembering that --build-type defaults to ament_cmake) and explain each generated file, including setup.py entry points, setup.cfg and py.typed. / Declare runtime dependencies in package.xml with the right tags and install them with rosdep before building with colcon. / Write a timer-driven rclpy node using the Lyrical 'with rclpy.init()' pattern that drives Turtlesim in a square, accounting for the turtlesim_msgs package and Turtlesim's one-second command timeout.
 - Key terms: overlay, underlay, ros2 pkg create, ament_python, setup.cfg, exec_depend, rosdep, turtlesim_msgs, finite state machine, open-loop control
 - Sections: From running examples to owning a package · Workspaces, underlays and overlays · Creating the package with ros2 pkg create · What the generator wrote · Declaring dependencies: package.xml and rosdep · Writing the node: the Lyrical rclpy pattern · Turtlesim's interface on Lyrical · Designing the square driver: a timer-driven state machine · Building, running and troubleshooting · Stretch: closing the loop with pose feedback
 
-### 3.7 Launch Files and Parameters
-`robotics-3-7.html` · 16 min · 16 refs (fixed 3, verified 13) · 1 figures · 1 Try it
+### 4.7 Launch Files and Parameters
+`robotics-4-7.html` · 16 min · 16 refs (fixed 3, verified 13) · 1 figures · 1 Try it
 - Objectives: Explain what the ROS 2 launch system does and how it differs from ROS 1 roslaunch, including the choice between Python, XML and YAML launch files. / Write and run a Python launch file that starts several nodes with namespaces, remappings and ROS arguments, using the official turtlesim_mimic example. / Install launch and configuration files in an ament_python package through setup.py data_files, and expose launch arguments with DeclareLaunchArgument and LaunchConfiguration. / Declare, inspect and save node parameters with rclpy and ros2 param, and load a YAML parameter file keyed by fully qualified node name from a launch file.
 - Key terms: launch file, LaunchDescription, namespace, remapping, launch argument, substitution, data_files, parameter, parameter file, event handler
 - Sections: Why launch files exist · From ROS 1 roslaunch to ROS 2 launch · Anatomy of a Python launch file · Running the mimic system, and the same file in XML · Installing launch files in a package · Launch arguments and substitutions · Larger systems: includes, namespaces and event handlers · Parameters belong to nodes · Parameter files and launch · Common mistakes, and what is new in Lyrical
 
-### 3.8 Moving an Arm with MoveIt 2
-`robotics-3-8.html` · 16 min · 35 refs (fixed 2, verified 33) · 1 figures · 1 Try it
+### 4.8 Moving an Arm with MoveIt 2
+`robotics-4-8.html` · 16 min · 35 refs (fixed 2, verified 33) · 1 figures · 1 Try it
 - Objectives: Explain what the URDF and the SRDF each tell MoveIt, using the UR description's xacro macro and the ur_manipulator planning group as examples. / Describe how ros2_control mock hardware, the joint_trajectory_controller and the joint_state_broadcaster connect move_group to a robot, and name the legacy use_fake_hardware argument. / Compare OMPL with the Pilz PTP, LIN and CIRC planners and map them to MoveJ, MoveL and MoveC. / Launch a UR5e on mock hardware with ur_moveit_config on ROS 2 Lyrical and plan and execute a pre-grasp and straight-line approach of tool0 in RViz.
 - Key terms: MoveIt 2, URDF, SRDF, planning group, ros2_control, mock hardware, joint_trajectory_controller, move_group, planning scene, Pilz industrial motion planner
 - Sections: From teach-pendant moves to motion planning · Describing the arm: URDF and xacro · The SRDF: what MoveIt adds on top · ros2_control and mock hardware · Inside move_group · Planning scene, collisions and kinematics · Choosing a planner: OMPL or Pilz · From path to trajectory to execution · The Setup Assistant and the code interfaces · Launching a UR5e on mock hardware
 
-### 3.9 ROS-Industrial and Vendor Drivers
-`robotics-3-9.html` · 15 min · 50 refs (fixed 8, verified 42) · 1 figures · 1 Try it
+### 4.9 ROS-Industrial and Vendor Drivers
+`robotics-4-9.html` · 15 min · 50 refs (fixed 8, verified 42) · 1 figures · 1 Try it
 - Objectives: Describe what ROS-Industrial is and why the support level of a driver matters / Explain the common driver pattern: a vendor-language program on the controller, a ros2_control hardware interface, and a FollowJointTrajectory action / Compare the UR, ABB, FANUC, KUKA and Yaskawa ROS 2 drivers by controller program, network link, supported distros and maintainer, including the Lyrical change in UR's trajectory controller / Explain why the robot controller's safety system stays in charge and decide when to use ROS 2, the vendor language, or both
 - Key terms: ROS-Industrial, ROS driver, ros2_control, hardware interface, FollowJointTrajectory, External Control URCap, speed scaling, Externally Guided Motion (EGM), MotoROS2, real-time kernel
 - Sections: Why ROS needs a driver for every robot brand · ROS-Industrial: a community, not a single program · The common pattern: three layers · Universal Robots: the official driver · ABB: a community driver built on EGM · FANUC and KUKA: drivers from the robot makers · Yaskawa MotoROS2 and a side-by-side comparison · Real time and safety: the controller stays in charge · ROS or the vendor language? · Hands-on: one move, two languages
 
-## Chapter 4: Ethics (`robotics-ethics.html`, 5 lessons, 73 min)
+## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 73 min)
 
-### 4.1 Ethics in Engineering
-`robotics-4-1.html` · 14 min · 20 refs (partial 1, unreachable 1, verified 18) · 1 figures · 1 Try it
+### 5.1 Ethics in Engineering
+`robotics-5-1.html` · 14 min · 20 refs (partial 1, unreachable 1, verified 18) · 1 figures · 1 Try it
 - Objectives: Apply the Fundamental Canons of the NSPE and IEEE Codes of Ethics to robotics, emphasizing paramount public safety and conflict of interest disclosure. / Examine ISO 10218:2025 and ISO/TS 15066 collaborative modes (monitored stop, hand guiding, speed-and-separation, power-and-force limiting). / Analyze OSHA industrial robot accident statistics, identifying why non-routine tasks (maintenance, teaching, jam clearing) carry the highest fatality risks. / Evaluate legal liability, strict product liability, and the European Union Machinery Regulation 2023/1230 governing autonomous and AI-driven machines.
 - Key terms: Fundamental Canons, conflict of interest, ISO 10218:2025, ISO/TS 15066, collaborative application, OSHA, EU Machinery Regulation, strict product liability, lockout/tagout, biomechanical threshold
 - Sections: Why ethics is an engineering discipline · The NSPE Code of Ethics and the Fundamental Canons · The IEEE Code of Ethics · Conflicts of interest and professional competence · Physical safety standards: ISO 10218:2025 · Collaborative applications under ISO/TS 15066 · Biomechanical thresholds for physical contact · Industrial accident analysis: OSHA and NIOSH data · The European Union Machinery Regulation 2023/1230 · Legal liability and professional engineering duty · Case study: production pressure versus safety sign-off
 
-### 4.2 Ethics in Robotics (Hardware, Software)
-`robotics-4-2.html` · 14 min · 31 refs (partial 1, unreachable 4, verified 26) · 1 figures · 1 Try it
+### 5.2 Ethics in Robotics (Hardware, Software)
+`robotics-5-2.html` · 14 min · 31 refs (partial 1, unreachable 4, verified 26) · 1 figures · 1 Try it
 - Objectives: Analyze functional hardware safety mechanisms including ISO 13850 emergency stop categories, three-position enabling devices, and dual-channel redundant safety architectures. / Evaluate software safety systems including hardware watchdog timers, geofencing safety zones, and ISO 13849 Performance Levels (PL d/e). / Examine privacy risks and algorithmic bias in robotics perception systems, from sensor data harvesting to demographic disparities in vision models. / Assess governance frameworks for autonomous systems, including the UN CCW debate on lethal autonomous weapons, IEEE 7000 value-based design, and EU AI Act risk tiers.
 - Key terms: emergency stop, watchdog timer, enabling device, functional safety, geofencing, algorithmic bias, meaningful human control, IEEE 7000, EU AI Act
 - Sections: Physical safety as an ethical obligation · Hardware safeguards and emergency stops · Safeguards while teaching: the enabling device · Functional safety architectures and safety PLCs · Software safety layers: watchdogs and geofencing · Sensor privacy and data harvesting · Algorithmic bias in robotics perception · Autonomous weapons and meaningful human control · Governance frameworks: IEEE 7000 and the EU AI Act
 
-### 4.3 Robots and Society
-`robotics-4-3.html` · 15 min · 17 refs (fixed 1, partial 1, unreachable 5, verified 10) · 1 figures · 1 Try it
+### 5.3 Robots and Society
+`robotics-5-3.html` · 15 min · 17 refs (fixed 1, partial 1, unreachable 5, verified 10) · 1 figures · 1 Try it
 - Objectives: Analyze empirical labor economics research on industrial robotics, including Acemoglu and Restrepo's local labor market findings and task framework. / Evaluate global robot density metrics from the International Federation of Robotics (IFR) and OECD workforce transformation data. / Apply data minimization and privacy engineering principles to autonomous mobile robots equipped with ambient perception sensors. / Examine moral crumple zones, human-in-the-loop governance, and legal accountability architectures for autonomous robotic systems.
 - Key terms: robot density, displacement effect, reinstatement effect, data minimization, edge processing, moral crumple zone, human-in-the-loop, IFR World Robotics
 - Sections: Expanding our perspective: robots in society · Empirical evidence on jobs and automation · The task framework: displacement, productivity, and reinstatement · Global robot density and industrial trends · Job polarization and workforce transition · Privacy: robots as mobile surveillance platforms · Data minimization and edge privacy architectures · Accountability and the moral crumple zone · Questions to ask before you build
 
-### 4.4 Making a Robot Cell Safe
-`robotics-4-4.html` · 15 min · 48 refs (fixed 21, verified 27) · 1 figures · 1 Try it
+### 5.4 Making a Robot Cell Safe
+`robotics-5-4.html` · 15 min · 48 refs (fixed 21, verified 27) · 1 figures · 1 Try it
 - Objectives: Apply the ISO 12100 three-step method and a task-based S/E/A risk assessment to a robot cell. / Select fences, interlocked doors, light curtains and emergency stops for each access point, and calculate a light curtain safety distance with S = K × T + C. / Explain how Performance Levels, architecture categories and robot controller safety functions make safeguards reliable. / Distinguish teach-mode protection from lockout/tagout and analyze a real robot fatality (NIOSH FACE 8420) layer by layer.
 - Key terms: three-step method, task-based risk assessment, residual risk, safety distance, light curtain, interlock, Performance Level, emergency stop, enabling device, lockout/tagout
 - Sections: From principles to a working safety plan · The ISO 12100 three-step method · Task-based risk assessment with S, E and A · Fences and interlocked doors · Light curtains and the safety distance S = K × T + C · Emergency stops and teach mode · Functional safety in brief: Performance Levels and categories · Safety functions inside the robot controller · Lockout/tagout: when the robot must have no energy at all · Case study: NIOSH FACE 8420
 
-### 4.5 AI in Robotics: Uses and Limits
-`robotics-4-5.html` · 15 min · 38 refs (fixed 6, unreachable 1, verified 31) · 1 figures · 1 Try it
+### 5.5 AI in Robotics: Uses and Limits
+`robotics-5-5.html` · 15 min · 38 refs (fixed 6, unreachable 1, verified 31) · 1 figures · 1 Try it
 - Objectives: Describe where AI is used in industrial robotics as of October 2026 (learned vision, predictive maintenance, LLM coding assistants) and separate shipping products from research foundation models. / Summarise the evidence on hallucinated packages and failure types in LLM-written code, and explain how the same errors appear in robot programs. / Explain why the safety configuration stays deterministic and outline how ISO 10218:2025, the EU Machinery Regulation and the 2026 AI Act Omnibus treat AI in machinery. / Find unit, frame, invented-function and safety-bypass errors in an AI-written URScript program and apply a nine-point verification checklist before running it.
 - Key terms: large language model, hallucination, vision-language-action model, foundation model, predictive maintenance, safety configuration, provenance, pose_trans, URSim
 - Sections: Why this lesson exists · Learned vision: bin picking, pose estimation and inspection · Predictive maintenance · LLM programming assistants ("copilots") · Foundation models that output robot actions · What the evidence says about AI-written code · How AI mistakes look in robot code · The safety layer stays deterministic · Regulation (as of October 2026) · Accountability, and this course
 
-## Chapter 5: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 149 min)
+## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 149 min)
 
-### 5.1 Arduino for Robotics
-`robotics-5-1.html` · 15 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
+### 6.1 Arduino for Robotics
+`robotics-6-1.html` · 15 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
 - Objectives: Compare the hardware architectures of the Arduino Uno R3 (ATmega328P) and Uno R4 (Renesas RA4M1), analyzing pin current limits and voltage ratings. / Configure digital GPIO modes including high-impedance floating inputs and internal pull-up resistors (INPUT_PULLUP). / Evaluate H-bridge motor drivers (L298N vs. MOSFET TB6612FNG) and implement proper power isolation with shared electrical grounds. / Apply critical Lithium Polymer (LiPo) battery safety protocols, including cell voltage thresholds, C-ratings, and thermal runaway mitigation.
 - Key terms: Arduino Uno, ATmega328P, pinMode, INPUT_PULLUP, H-bridge, L298N, TB6612FNG, LiPo battery, common ground
 - Sections: Microcontrollers at the physical frontier · Hardware architecture: Arduino Uno R3 versus Uno R4 · GPIO pin functions and input modes · Actuator power: why microcontrollers cannot drive motors · H-bridge motor drivers: L298N versus TB6612FNG · Power architecture: the common ground rule · Mobile robot power: Lithium Polymer (LiPo) safety · Sketch structure and non-blocking sensor timing
 
-### 5.2 Pulse Width Modulation (PWM)
-`robotics-5-2.html` · 15 min · 16 refs (partial 3, unreachable 3, verified 10) · 0 figures · 1 Try it
+### 6.2 Pulse Width Modulation (PWM)
+`robotics-6-2.html` · 15 min · 16 refs (partial 3, unreachable 3, verified 10) · 0 figures · 1 Try it
 - Objectives: Calculate duty cycle, period, and average output voltage for high-speed PWM motor drives. / Analyze microcontroller hardware timers (Timer0, Timer1, Timer2 on ATmega328P) and their default carrier frequencies. / Differentiate DC motor duty-cycle modulation from RC servomotor microsecond pulse width control (1.0 ms to 2.0 ms at 50 Hz). / Identify real-world actuation challenges including acoustic coil whine, gearbox stiction dead zones, and inductive flyback suppression.
 - Key terms: pulse width modulation, duty cycle, carrier frequency, average voltage, Timer1, servo pulse timing, audible whine, dead zone, flyback diode
 - Sections: Simulating analog control in a digital world · Mathematics of duty cycle and average voltage · Interactive PWM simulation · Microcontroller hardware timers: ATmega328P and RA4M1 · DC motor PWM versus RC servo pulse timing · The Timer1 conflict: Servo library and pin trade-offs · Acoustic whine and ultrasonic modulation · Mechanical dead zones, stiction, and flyback protection · Application case study: precision robotic gripper
 
-### 5.3 Encoders and Shaft Encoders
-`robotics-5-3.html` · 15 min · 18 refs (partial 2, unreachable 1, verified 15) · 0 figures · 1 Try it
+### 6.3 Encoders and Shaft Encoders
+`robotics-6-3.html` · 15 min · 18 refs (partial 2, unreachable 1, verified 15) · 0 figures · 1 Try it
 - Objectives: Differentiate incremental and absolute rotary encoders, analyzing power-loss recovery and homing requirements. / Apply quadrature decoding mathematics (1x, 2x, 4x) to calculate Counts Per Revolution (CPR) from Pulses Per Revolution (PPR). / Evaluate physical transducer technologies (optical, magnetic, capacitive) and their operational trade-offs in harsh robotic environments. / Implement interrupt-driven microcontroller decoding algorithms and evaluate industrial serial protocols (SSI, BiSS-C) used in articulated manipulators.
 - Key terms: rotary encoder, incremental encoder, absolute encoder, quadrature decoding, PPR, CPR, hardware interrupt, BiSS-C, homing
 - Sections: Closing the loop: sensing motion and displacement · Incremental versus absolute encoders · Quadrature decoding: direction and resolution · Interactive quadrature encoder simulation · Physical sensing technologies · Kinematic calculations: from ticks to linear distance and velocity · Microcontroller decoding: interrupts and state tables · Absolute encoders in industrial robotics: multi-axis arms and serial protocols · Engineering pitfalls: backlash, frequency limits, and electrical noise
 
-### 5.4 PID Control
-`robotics-5-4.html` · 15 min · 19 refs (partial 2, unreachable 3, verified 14) · 1 figures · 1 Try it
+### 6.4 PID Control
+`robotics-6-4.html` · 15 min · 19 refs (partial 2, unreachable 3, verified 14) · 1 figures · 1 Try it
 - Objectives: Formulate continuous and discrete-time Proportional-Integral-Derivative (PID) control equations for robotic systems. / Apply classical tuning methodologies, including Ziegler-Nichols closed-loop oscillation and Cohen-Coon reaction curve methods. / Implement industrial anti-windup clamping, derivative filtering, and derivative-on-measurement architectures to prevent actuator saturation and derivative kick. / Analyze cascaded multi-loop servo architectures (current, velocity, position) and dynamic feed-forward compensation utilized in industrial robotic arms.
 - Key terms: PID control, proportional term, integral term, derivative term, integral windup, derivative kick, Ziegler-Nichols, cascaded control, feed-forward
 - Sections: The challenge of closed-loop motion control · Historical origins: Minorsky and the USS New Mexico · The three control actions: present, past, and future · Block diagram and continuous mathematical formulation · Discrete-time implementation in robot software · Classical tuning methods: Ziegler–Nichols and Cohen–Coon · Interactive PID simulation · Critical practical modifications: anti-windup, derivative kick, and noise filtering · How industrial servo drives nest their control loops
 
-### 5.5 Sensors for Robots
-`robotics-5-5.html` · 15 min · 19 refs (partial 1, unreachable 3, verified 15) · 1 figures · 1 Try it
+### 6.5 Sensors for Robots
+`robotics-6-5.html` · 15 min · 19 refs (partial 1, unreachable 3, verified 15) · 1 figures · 1 Try it
 - Objectives: Categorize robotic sensors into proprioceptive, exteroceptive, active, and passive functional classifications. / Evaluate distance measurement modalities, contrasting ultrasonic acoustics (HC-SR04), optical triangulation (Sharp GP2Y0A21YK0F), and laser Time-of-Flight (VL53L1X). / Analyze MEMS Inertial Measurement Unit (IMU) architectures (MPU-6050 and ICM-20948), calculating tilt angles and evaluating mathematical mechanisms of gyroscope bias drift. / Assess line reflectance (QTR-8RC) and spectral color sensing (TCS34725), establishing multi-sensor fusion architectures to mitigate single-sensor noise modes.
 - Key terms: proprioceptive sensor, exteroceptive sensor, ultrasonic rangefinder, time-of-flight, optical triangulation, IMU, gyroscope drift, reflectance sensor, sensor fusion
 - Sections: The sensory foundation of autonomous robotics · Classification of robotic sensors · Acoustic ranging: HC-SR04 ultrasonic sensor · Optical distance sensing: triangulation versus laser Time-of-Flight · Inertial Measurement Units (IMUs): MPU-6050 and ICM-20948 · The mathematics of gyroscope drift · Surface reflectance and color detection · High-dimensional perception: 2D/3D LiDAR and cameras · Comparing common sensors and multi-sensor fusion
 
-### 5.6 Odometry
-`robotics-5-6.html` · 15 min · 15 refs (fixed 1, unreachable 5, verified 9) · 1 figures · 1 Try it
+### 6.6 Odometry
+`robotics-6-6.html` · 15 min · 15 refs (fixed 1, unreachable 5, verified 9) · 1 figures · 1 Try it
 - Objectives: Formulate forward kinematic odometry update equations for two-wheeled differential-drive robots. / Implement midpoint numerical integration (2nd-order Runge-Kutta) and heading normalization in embedded robot software. / Classify odometry drift using Borenstein and Feng's taxonomy into systematic and non-systematic error mechanisms. / Apply calibration procedures including the University of Michigan Benchmark (UMBmark) and design sensor fusion pipelines using IMU gyroscopes.
 - Key terms: odometry, dead reckoning, differential drive, wheelbase, midpoint integration, systematic error, non-systematic error, UMBmark, heading drift
 - Sections: Dead reckoning and mobile robot pose · Differential-drive forward kinematics · The kinematic update equations: displacement and rotation · Numerical integration: Euler forward versus midpoint Runge-Kutta · Embedded odometry implementation in C++ · Error propagation: why heading error dominates position error · Borenstein and Feng's error taxonomy · Calibration in practice: the UMBmark benchmark · Multi-sensor fusion: limiting slip with IMU gyroscopes
 
-### 5.7 State Machines
-`robotics-5-7.html` · 14 min · 20 refs (fixed 5, partial 2, unreachable 1, verified 12) · 1 figures · 1 Try it
+### 6.7 State Machines
+`robotics-6-7.html` · 14 min · 20 refs (fixed 5, partial 2, unreachable 1, verified 12) · 1 figures · 1 Try it
 - Objectives: Model complex robot behavioral logic using Finite State Machine (FSM) formalisms including states, events, guards, and transition tables. / Implement non-blocking, multi-rate embedded execution loops using C++ enum, switch statements, and Arduino millis() timer arithmetic. / Analyze industrial automation state standards including IEC 61131-3 Sequential Function Charts (SFC) and OMAC PackML. / Differentiate ROS 2 managed lifecycle node states and contrast FSM scalability limits against Nav2 Behavior Tree architectures.
 - Key terms: finite state machine, state transition table, guard condition, cooperative multitasking, millis(), IEC 61131-3 SFC, PackML, ROS 2 lifecycle node, Behavior Tree
 - Sections: Why robots require state machines · Core components of a state machine · Worked example: line follower with obstacle avoidance · Non-blocking timing: why delay() is fatal in robotics · Embedded C++ implementation · State machine anti-patterns and pitfalls · Industrial automation standards: IEC 61131-3 SFC and PackML · ROS 2 managed nodes: the rclcpp_lifecycle state machine · Beyond state machines: Behavior Trees in ROS 2 Nav2
 
-### 5.8 Intro to Kalman Filters
-`robotics-5-8.html` · 14 min · 18 refs (fixed 5, unreachable 1, verified 12) · 1 figures · 1 Try it
+### 6.8 Intro to Kalman Filters
+`robotics-6-8.html` · 14 min · 18 refs (fixed 5, unreachable 1, verified 12) · 1 figures · 1 Try it
 - Objectives: Explain the probabilistic principles of recursive state estimation and sensor fusion. / Derive and compute the predict and update stages of a one-dimensional discrete Kalman filter. / Analyze the physical effects of process noise covariance (Q) and measurement noise covariance (R) on the Kalman gain (K). / Compare non-linear state estimators (EKF vs UKF) and examine the dual-EKF state estimation architecture of the ROS 2 robot_localization package.
 - Key terms: sensor fusion, Kalman filter, predict step, update step, Kalman gain, process noise (Q), measurement noise (R), innovation, extended Kalman filter, robot_localization
 - Sections: Why robots require sensor fusion · Historical origins: Rudolf Kálmán and Apollo navigation · The recursive Predict-Update architecture · One-dimensional scalar worked example · Embedded C++ implementation · Tuning process noise Q and measurement noise R · Non-linear state estimation: EKF versus UKF · ROS 2 state estimation: the robot_localization dual-EKF architecture · Complementary filters for microcontrollers
 
-### 5.9 Motion Profiles and Interpolation
-`robotics-5-9.html` · 15 min · 26 refs (partial 7, unreachable 1, verified 18) · 1 figures · 1 Try it
+### 6.9 Motion Profiles and Interpolation
+`robotics-6-9.html` · 15 min · 26 refs (partial 7, unreachable 1, verified 18) · 1 figures · 1 Try it
 - Objectives: Compute the accel, cruise and total times of a trapezoidal velocity profile by hand and check them with the area under v(t). / Recognize when a short move becomes a triangular profile and explain why jerk-limited S-curve profiles reduce vibration. / Compare cubic and quintic time scaling and distinguish joint, linear and circular interpolation as separate path choices. / Explain how zones and blend radii round corners, how MoveIt time-parameterizes a path with TOTG and Ruckig, and why MoveL can fail near a singularity.
 - Key terms: trapezoidal velocity profile, triangular profile, jerk, S-curve profile, time scaling, quintic time scaling, linear interpolation (MoveL), blending (zone), time parameterization, singularity
 - Sections: From "go there" to a plan in time · The trapezoidal velocity profile · When the move is too short: the triangular profile · Jerk and the S-curve profile · Polynomial time scaling: cubic and quintic · Interpolation: joint, linear and circular paths · Corners: zones, blend radius and parabolic blends · Time parameterization in ROS and MoveIt · Why MoveL can fail where MoveJ succeeds · Choosing a profile in practice
 
-### 5.10 Kinematics of a 2-Link Arm
-`robotics-5-10.html` · 16 min · 9 refs (fixed 1, unreachable 1, verified 7) · 1 figures · 1 Try it
+### 6.10 Kinematics of a 2-Link Arm
+`robotics-6-10.html` · 16 min · 9 refs (fixed 1, unreachable 1, verified 7) · 1 figures · 1 Try it
 - Objectives: Derive the forward kinematics of a planar two-link arm and describe its ring-shaped workspace. / Solve closed-form inverse kinematics with the law of cosines and atan2, and identify both elbow solutions. / Handle boundary and unreachable targets in code by clamping cos θ2 and snapping with a tolerance. / Compute the 2×2 Jacobian, show that det J = L1·L2·sin θ2, and explain the singularities at θ2 = 0 and 180°.
 - Key terms: forward kinematics, inverse kinematics, workspace (work envelope), law of cosines, atan2, elbow-up / elbow-down, Jacobian, singularity, spherical wrist, numerical inverse kinematics
 - Sections: From the idea to the full math · Forward kinematics: adding two rotating vectors · The workspace is a ring · Closed-form inverse kinematics · Worked example: two answers for one target · Why atan2, and not atan or acos · Edge cases: rounding at the boundary · Robust IK in Python · The Jacobian and singularities · From two links to a six-axis robot
-
-## Chapter 6: Capstone Projects (`robotics-capstone.html`, 3 lessons, 46 min)
-
-### 6.1 Capstone: Build a Simulated Work Cell
-`robotics-6-1.html` · 15 min · 23 refs (fixed 6, partial 1, unreachable 2, verified 14) · 1 figures · 1 Try it
-- Objectives: Plan a robot work cell on paper with a layout sketch, an I/O list and a sequence chart before programming it. / Run a complete pick-and-place cell in URSim (Docker) or ABB RobotStudio with simulated gripper outputs and a part-present input. / Set up and test a simulated safety configuration (UR safety plane and reduced limits, or an ABB stand-in) and explain why it does not carry over to a real cell. / Verify the cell with a FAT-style test sheet and reflect on the results against a four-level rubric.
-- Key terms: URSim, factory acceptance test (FAT), safety planes, safety configuration, SafeMove, sequence chart, I/O list, analytic rubric
-- Sections: What you will build and why · Prerequisites · Software and equipment (free options first) · Milestones and what to hand in · Build guidance: M0 plan and M1 cell up · Build guidance: M2 integrated pick-and-place · Build guidance: M3 safety configuration · Testing and verification: M4 FAT-style test sheet · Common problems · Grading rubric · Reflection questions and stretch goals
-
-### 6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
-`robotics-6-2.html` · 16 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
-- Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Bring up a UR5e on ros2_control mock hardware with MoveIt, add a table and a part as collision objects, and know the limits of mock hardware. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach in the planning scene when the arm has no gripper. / Test the task over randomised object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
-- Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene, analytic rubric
-- Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals
-
-### 6.3 Capstone: Speed-Controlled Wheel
-`robotics-6-3.html` · 15 min · 18 refs (fixed 8, verified 10) · 1 figures · 1 Try it
-- Objectives: Wire an Arduino, quadrature-encoder gearmotor and TB6612FNG H-bridge with separate supplies, a common ground, a fuse and pins that avoid interrupt/PWM conflicts. / Convert encoder counts per sample period into RPM using CPR times gear ratio, and explain how the sample time sets speed resolution. / Close a PID speed loop with the Arduino PID Library and integrate it into a state machine with ramps and a manually reset FAULT state for stalls and encoder loss. / Plan milestones, test the system against pass conditions set in advance, and assess the result with a four-level rubric and written reflection.
-- Key terms: H-bridge, TB6612FNG, CPR, hardware interrupt, setpoint, integral windup, finite state machine, stall current, sample time, analytic rubric
-- Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals
 
 ## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 86 min)
 
@@ -381,3 +361,23 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 984.
 - Objectives: Establish a TCP socket connection to the Universal Robots Dashboard Server on port 29999 using Python. / Query robot mode, safety status, and program execution state using ASCII commands terminated with newlines. / Execute the recovery sequence for protective stops by handling safety popups and unlocking the stop. / Contrast protective stop recovery with emergency stop recovery regarding manual intervention and program restart behavior.
 - Key terms: Dashboard Server, robotmode, safetystatus, programState, protective stop, unlock protective stop
 - Sections: The Dashboard Server interface and remote control · Querying controller modes and execution state · Protective stops and emergency stops · The stop recovery workflow and the five-second rule · Lab: Querying robot state with Python · Lab: Clearing stops and resuming program execution · Check your understanding
+
+## Chapter 10: Capstone Projects (`robotics-capstone.html`, 3 lessons, 46 min)
+
+### 10.1 Capstone: Build a Simulated Work Cell
+`robotics-10-1.html` · 15 min · 23 refs (fixed 6, partial 1, unreachable 2, verified 14) · 1 figures · 1 Try it
+- Objectives: Plan a robot work cell on paper with a layout sketch, an I/O list and a sequence chart before programming it. / Run a complete pick-and-place cell in URSim (Docker) or ABB RobotStudio with simulated gripper outputs and a part-present input. / Set up and test a simulated safety configuration (UR safety plane and reduced limits, or an ABB stand-in) and explain why it does not carry over to a real cell. / Verify the cell with a FAT-style test sheet and reflect on the results against a four-level rubric.
+- Key terms: URSim, factory acceptance test (FAT), safety planes, safety configuration, SafeMove, sequence chart, I/O list, analytic rubric
+- Sections: What you will build and why · Prerequisites · Software and equipment (free options first) · Milestones and what to hand in · Build guidance: M0 plan and M1 cell up · Build guidance: M2 integrated pick-and-place · Build guidance: M3 safety configuration · Testing and verification: M4 FAT-style test sheet · Common problems · Grading rubric · Reflection questions and stretch goals
+
+### 10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
+`robotics-10-2.html` · 16 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
+- Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Bring up a UR5e on ros2_control mock hardware with MoveIt, add a table and a part as collision objects, and know the limits of mock hardware. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach in the planning scene when the arm has no gripper. / Test the task over randomised object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
+- Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene, analytic rubric
+- Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals
+
+### 10.3 Capstone: Speed-Controlled Wheel
+`robotics-10-3.html` · 15 min · 18 refs (fixed 8, verified 10) · 1 figures · 1 Try it
+- Objectives: Wire an Arduino, quadrature-encoder gearmotor and TB6612FNG H-bridge with separate supplies, a common ground, a fuse and pins that avoid interrupt/PWM conflicts. / Convert encoder counts per sample period into RPM using CPR times gear ratio, and explain how the sample time sets speed resolution. / Close a PID speed loop with the Arduino PID Library and integrate it into a state machine with ramps and a manually reset FAULT state for stalls and encoder loss. / Plan milestones, test the system against pass conditions set in advance, and assess the result with a four-level rubric and written reflection.
+- Key terms: H-bridge, TB6612FNG, CPR, hardware interrupt, setpoint, integral windup, finite state machine, stall current, sample time, analytic rubric
+- Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals

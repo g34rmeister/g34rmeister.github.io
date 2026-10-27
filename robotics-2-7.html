@@ -64,10 +64,10 @@
                         <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
                         <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
                         <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
                         <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
                         <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
@@ -106,10 +106,10 @@
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
-                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
                     <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -453,7 +453,7 @@ end</code></pre>
                                 Because the loop body contains the approach, grip and check, every retry really re-grips. Place the function inside <code>pallet3x3</code> and call it at the comment in section 06.
                             </p>
                             <p>
-                                <strong>A popup is not a safety function.</strong> Users on UR's forum point out that a popup followed by <code>halt</code> cannot be resumed, and a popup without <code>halt</code> does not stop the program at all; for real safety behavior they are directed to the configured safety functions, such as a protective stop, rather than script messages.<sup><a href="#ref-26">[26]</a></sup> UR does document a <code>protective_stop()</code> script function, and UR's error code C209 reads "A protective stop was triggered (for test purposes only)".<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-28">[28]</a></sup> Error handling keeps production running and tells people what went wrong; it does not protect people. Guarding, safety-rated stops and safety I/O do that, as covered in <a href="robotics-4-4.html">4.4 Making a Robot Cell Safe</a>.
+                                <strong>A popup is not a safety function.</strong> Users on UR's forum point out that a popup followed by <code>halt</code> cannot be resumed, and a popup without <code>halt</code> does not stop the program at all; for real safety behavior they are directed to the configured safety functions, such as a protective stop, rather than script messages.<sup><a href="#ref-26">[26]</a></sup> UR does document a <code>protective_stop()</code> script function, and UR's error code C209 reads "A protective stop was triggered (for test purposes only)".<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-28">[28]</a></sup> Error handling keeps production running and tells people what went wrong; it does not protect people. Guarding, safety-rated stops and safety I/O do that, as covered in <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a>.
                             </p>
                             <p>
                                 FANUC's teach-pendant (TP) language is also built from explicit checks, not exceptions. A wait can name a jump label for the timeout case, as in <code>WAIT DI[n]=ON TIMEOUT,LBL[x]</code>; the time limit is set separately. In the timeout branch, a user alarm <code>UALM[n]</code> shows a message that the programmer defined, and if the operator resumes the program, execution continues at the next line.<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-30">[30]</a></sup> Sources disagree about exactly when a user alarm pauses the program, so check the FANUC manual for your controller before relying on that behavior. These FANUC details come from secondary sources.
@@ -518,7 +518,7 @@ ENDMODULE</code></pre>
                                     <li>In RobotStudio, build the <code>Pallet3x3</code> module from sections 06, 08 and 10. Run it and check that the robot visits all nine slots in order, with <code>row = i DIV 3</code> and <code>col = i MOD 3</code>. Then stop it after the fourth part, move the program pointer to main, start again, and confirm that it resumes at slot 4 because <code>nPlaced</code> is PERS.</li>
                                     <li>In URSim, run <code>pallet3x3</code> from section 06 with <code>pose_trans</code>. Rotate the corner pose a few degrees about Z and watch the grid follow it. Then change the slot line to use <code>pose_add</code> and describe what changes.</li>
                                     <li>Simulate a missed pick by keeping the part-present input low (set it by hand in the simulator's I/O window). Confirm that each of the three attempts re-approaches and re-grips, then the program shows its message and stops. Then try the "looks right" <code>PickPart</code> from section 08 and watch RETRY re-read the sensor without re-gripping.</li>
-                                    <li>Explain in two sentences why <code>popup</code> plus <code>halt</code> is not a safety stop, and what in the cell provides safety (see <a href="robotics-4-4.html">4.4</a>).</li>
+                                    <li>Explain in two sentences why <code>popup</code> plus <code>halt</code> is not a safety stop, and what in the cell provides safety (see <a href="robotics-5-4.html">5.4</a>).</li>
                                 </ol>
                             </div>
 

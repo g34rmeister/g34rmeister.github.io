@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <!--
     Gerald Lê | Personal Developer Portfolio
-    robOSStics: 6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
+    robOSStics: 5.2 Pulse Width Modulation (PWM)
 -->
 <html lang="en">
     <head>
-        <title>6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2 — Gerald Lê | robOSStics @ LSU</title>
+        <title>6.2 Pulse Width Modulation (PWM) — Gerald Lê | robOSStics @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric." />
+        <meta name="description" content="How PWM lets a digital pin control motor speed, servo angle and LED brightness, and the practical details that matter on a real robot." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -16,14 +16,14 @@
         <link rel="canonical" href="https://g34rmeister.github.io/robotics-6-2.html" />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
-        <meta property="og:title" content="6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2 — Gerald Lê | robOSStics @ LSU" />
-        <meta property="og:description" content="Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric." />
+        <meta property="og:title" content="6.2 Pulse Width Modulation (PWM) — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="How PWM lets a digital pin control motor speed, servo angle and LED brightness, and the practical details that matter on a real robot." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-6-2.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
-        <meta property="og:image:alt" content="6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2, part of robOSStics by Gerald Lê" />
+        <meta property="og:image:alt" content="6.2 Pulse Width Modulation (PWM), part of robOSStics by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2 — Gerald Lê | robOSStics @ LSU" />
-        <meta name="twitter:description" content="Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric." />
+        <meta name="twitter:title" content="6.2 Pulse Width Modulation (PWM) — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="How PWM lets a digital pin control motor speed, servo angle and LED brightness, and the practical details that matter on a real robot." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
@@ -63,11 +63,11 @@
                         <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
                         <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a></li>
                         <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
                         <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
                         <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
@@ -105,11 +105,11 @@
                     <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
-                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
-                    <a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
                     <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -131,10 +131,10 @@
                             <div class="article-breadcrumb-bar">
                                 <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
                                 <span class="article-breadcrumb-divider">/</span>
-                                <a href="robotics-capstone.html">Chapter 6 &middot; Capstone Projects</a>
+                                <a href="robotics-control.html">Chapter 6 &middot; Extra: Electronics and Control Basics</a>
                             </div>
 
-                            <h1 class="robotics-article-headline">6.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</h1>
+                            <h1 class="robotics-article-headline">6.2 Pulse Width Modulation (PWM)</h1>
 
                             <div class="robotics-article-meta-bar">
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
@@ -143,398 +143,218 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What you will build and why</h2>
+                            <h2 class="article-section-title">01. Simulating analog control in a digital world</h2>
                             <p>
-                                In this capstone you will program a simulated Universal Robots arm to pick up an object from a table and put it down somewhere else, using ROS 2 and MoveIt 2. The arm never touches real hardware. It runs on ros2_control <strong>mock hardware</strong>, and if you want physics you can move it into Gazebo. The planning is done with the <strong>MoveIt Task Constructor</strong> (MTC), which breaks a pick-and-place job into a chain of small, inspectable steps called stages.
+                                Digital microcontroller pins are binary: an output is either fully on (the board's supply voltage, such as 5 V on an Uno or 3.3 V on boards like the MKR family) or fully off (0 V).<sup><a href="#ref-1">[1]</a></sup> However, the physical world inhabited by robots is analog and continuous. A mobile robot rarely drives its motors at only 0% or 100% speed. To turn smoothly, track a line or hold a steady speed down a slope, the controller must command intermediate power levels.
                             </p>
                             <p>
-                                You do not start from a blank page. The official MoveIt 2 tutorial "Pick and Place with MoveIt Task Constructor" is a complete, staged pipeline: it reads the current state, opens the hand, approaches, generates grasp poses and solves inverse kinematics for them, allows contact with the object, attaches it, lifts, generates place poses, detaches, retreats and returns home.<sup><a href="#ref-1">[1]</a></sup> The catch is that the tutorial uses the Franka Panda robot.<sup><a href="#ref-1">[1]</a></sup> Your job is to get that pipeline working as-is, then move it onto a UR5e, add your own planning scene, and show with evidence how reliable it is.
+                                Producing a true intermediate voltage at motor currents would need extra analog circuitry, such as a Digital-to-Analog Converter (DAC) followed by a power amplifier, and a linear amplifier turns the voltage it drops into heat. In battery-powered robots, that wasted heat means shorter run time, so designers avoid it.
                             </p>
                             <p>
-                                Pick and place is the "hello world" of industrial manipulation. It pulls together most of the ROS chapter (workspaces, launch files, robot descriptions, ros2_control, MoveIt and RViz), and it has a clear pass or fail result that you can test and measure.
-                            </p>
-                            <p>
-                                This page is a project brief, not a lecture. Read all of it, including the rubric, before you write any code. Teaching guidance on project work recommends sharing the criteria and rubric when the project starts, not at the end, so you know what "good" looks like while you still have time to aim for it.<sup><a href="#ref-2">[2]</a></sup>
+                                The standard solution is <strong>Pulse Width Modulation (PWM)</strong>, "a technique for getting analog results with digital means".<sup><a href="#ref-1">[1]</a></sup> Instead of outputting a steady partial voltage, a pin switches rapidly between 0 V and the full supply voltage. Changing the fraction of time the signal stays on simulates voltages between 0 V and the supply.<sup><a href="#ref-1">[1]</a></sup> Because the switches are either fully on or fully off most of the time, little power is lost in them, apart from the switching losses discussed in Section 07.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">02. Prerequisites</h2>
+                            <h2 class="article-section-title">02. Mathematics of duty cycle and average voltage</h2>
                             <p>
-                                If one of these lessons feels shaky, revisit it first.
+                                A periodic square wave has two basic variables: its <strong>period</strong> \(T\) (the duration of one complete cycle in seconds, or frequency \(f = 1/T\) in hertz) and the on-time \(t_{on}\) within each period.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                The <strong>duty cycle</strong> \(D\) is the fraction of each period during which the signal is HIGH:<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[D = \frac{t_{on}}{T} = \frac{t_{on}}{t_{on} + t_{off}}\]</p>
+                            </div>
+                            <p>
+                                As a percentage, a 0% duty cycle is always off, a 50% duty cycle is on for half of each period, and a 100% duty cycle is always on.<sup><a href="#ref-1">[1]</a></sup> A DC motor responds to the average of these fast pulses because its rotor's inertia and its winding's inductance smooth them out; the pulses are much faster than the motor can react to.
+                            </p>
+                            <p>
+                                The effective <strong>average voltage</strong> \(V_{avg}\) across the load is the duty cycle times the supply voltage \(V_{cc}\):<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[V_{avg} = D \times V_{cc}\]</p>
+                            </div>
+                            <p>
+                                Worked example: a motor driver runs at a 25% duty cycle from a 12 V battery. What is the average voltage delivered to the motor? The calculation is straightforward:
+                            </p>
+                            <div class="article-callout">
+                                <p>\[V_{avg} = 0.25 \times 12\text{ V} = 3.0\text{ V}\]</p>
+                            </div>
+                            <p>
+                                In the Arduino environment, <code>analogWrite(pin, value)</code> controls hardware PWM.<sup><a href="#ref-3">[3]</a></sup> Despite its name, <code>analogWrite()</code> does not output an analog voltage on most pins: it makes the pin generate a steady rectangular wave of the chosen duty cycle until the next call.<sup><a href="#ref-3">[3]</a></sup> The <code>value</code> runs on a 0 to 255 scale: 255 means always on and 127 means on about half the time.<sup><a href="#ref-1">[1]</a></sup> Worked example: commanding an average of 3.0 V from a 5.0 V Arduino pin corresponds to:
+                            </p>
+                            <div class="article-callout">
+                                <p>\[\text{value} = \text{round}\left(\frac{3.0\text{ V}}{5.0\text{ V}} \times 255\right) = \text{round}(0.60 \times 255) = 153\]</p>
+                            </div>
+
+                            <h2 class="article-section-title">03. Interactive PWM simulation</h2>
+                            <p>
+                                Adjust the interactive sliders below to explore how varying duty cycle and supply voltage changes the digital waveform and the resulting average voltage delivered to an actuator:
+                            </p>
+
+                            <div data-widget="pwm">
+                                <p class="widget-note">The PWM simulator needs JavaScript. With it on, you can change the duty cycle and supply voltage and see the waveform and average voltage.</p>
+                            </div>
+
+                            <h2 class="article-section-title">04. Microcontroller hardware timers: ATmega328P and RA4M1</h2>
+                            <p>
+                                Generating PWM by toggling a pin in software (with loops and short delays) ties up the processor and is disturbed whenever an interrupt runs. Microcontrollers instead generate PWM with <strong>hardware timer/counter peripherals</strong>: once configured, the timer's output-compare hardware switches the pin by itself on every timer cycle.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                On the <strong>Arduino Uno R3 (ATmega328P)</strong>, PWM comes from three hardware timers across six pins. The Arduino core sets the prescaler of all three timers to 64, so each timer counts at \(16\text{ MHz} / 64 = 250\text{ kHz}\).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">3.3 Installing ROS:</span> a working ROS 2 install that you can source in every terminal (see <a href="robotics-3-3.html">3.3</a>).</li>
-                                <li class="article-spec-item"><span class="spec-label">3.6 Your first package:</span> creating a workspace, cloning packages into <code>src</code>, running <code>rosdep</code> and <code>colcon build</code> (see <a href="robotics-3-6.html">3.6</a>).</li>
-                                <li class="article-spec-item"><span class="spec-label">3.7 Launch files and parameters:</span> reading a launch file, passing launch arguments such as <code>ur_type:=ur5e</code>, and knowing which nodes a launch starts (see <a href="robotics-3-7.html">3.7</a>).</li>
-                                <li class="article-spec-item"><span class="spec-label">3.8 MoveIt 2:</span> the URDF and SRDF, planning groups, the planning scene, mock hardware, and bringing up a UR5e with MoveIt in RViz (see <a href="robotics-3-8.html">3.8</a>). This is the most important prerequisite.</li>
-                                <li class="article-spec-item"><span class="spec-label">3.9 Vendor drivers:</span> what the UR ROS 2 driver does and how URSim fits in (see <a href="robotics-3-9.html">3.9</a>).</li>
-                                <li class="article-spec-item"><span class="spec-label">2.8 Vision-guided picking:</span> the idea of a grasp pose relative to an object, approach and retreat moves, and why the pick pose comes from somewhere else in a real cell (see <a href="robotics-2-8.html">2.8</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">Timer0 (8-bit):</span> Drives PWM on <strong>pins 5 and 6</strong> in Fast PWM mode, which counts from 0 to 255 and restarts, giving \(16\text{ MHz} / (64 \times 256) \approx 976.56\text{ Hz}\) (listed by Arduino as 980 Hz).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup> Timer0 also drives <code>millis()</code> and <code>delay()</code>, so changing its settings breaks sketch timekeeping.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-4">[4]</a></sup> Arduino also notes that pins 5 and 6 give slightly higher-than-expected duty cycles at low settings because of this shared timer.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Timer1 (16-bit):</span> Drives PWM on <strong>pins 9 and 10</strong>. The Arduino core puts it in 8-bit Phase-Correct PWM mode, which counts up to 255 and back down to 0 (510 clock steps per cycle), giving \(16\text{ MHz} / (64 \times 510) \approx 490.20\text{ Hz}\) (listed as 490 Hz). Counting up and then down makes the pulses more symmetrical than Fast PWM.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Timer2 (8-bit):</span> Drives PWM on <strong>pins 3 and 11</strong>, also in Phase-Correct PWM mode with a prescaler of 64, so it too runs at about <strong>490.20 Hz</strong> (490 Hz).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
                             </ul>
                             <p>
-                                You will also read and edit C++. The MTC tutorial node, <code>mtc_node.cpp</code>, is written in C++, so be ready to work in that language even if you write most of your other ROS code in Python.<sup><a href="#ref-3">[3]</a></sup>
+                                On the 32-bit <strong>Arduino Uno R4 (Renesas RA4M1)</strong>, <code>analogWrite()</code> uses the same six pins (3, 5, 6, 9, 10 and 11) and runs at 490 Hz by default.<sup><a href="#ref-3">[3]</a></sup> Underneath, the RA4M1 contains a General PWM Timer (GPT) block with two 32-bit channels and six 16-bit channels that can count up, down, or up and down, and its CPU runs at up to 48 MHz.<sup><a href="#ref-7">[7]</a></sup> Higher PWM frequencies on the R4 require configuring these timers beyond the default <code>analogWrite()</code> settings.
                             </p>
 
-                            <h2 class="article-section-title">03. Equipment and software</h2>
+                            <h2 class="article-section-title">05. DC motor PWM versus RC servo pulse timing</h2>
                             <p>
-                                Everything here is free software and runs on one Linux computer or virtual machine. You need no robot.
-                            </p>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">ROS 2 and MoveIt 2:</span> the same install you used in 3.8.</li>
-                                <li class="article-spec-item"><span class="spec-label">MoveIt Task Constructor:</span> built from source in your workspace. The tutorial says to clone <code>moveit_task_constructor</code> on the <code>humble</code> branch for ROS 2 Humble, or on the <code>ros2</code> branch to build against MoveIt 2 main, then run rosdep and colcon build.<sup><a href="#ref-1">[1]</a></sup> The tutorial names only these two branches, so check the repository's branch list for your ROS 2 release before you clone.</li>
-                                <li class="article-spec-item"><span class="spec-label">The UR ROS 2 driver and MoveIt config:</span> <code>ur_robot_driver</code> and <code>ur_moveit_config</code>, as in 3.8. The driver can run against ros2_control mock hardware or against URSim, and from the driver's point of view the two are equivalent.<sup><a href="#ref-4">[4]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Optional, Gazebo:</span> the separate <code>ur_simulation_gz</code> package (repository Universal_Robots_ROS2_GZ_Simulation). Its branches are <code>humble</code>, <code>jazzy</code> (also used for Kilted) and <code>ros2</code> (for Lyrical and Rolling).<sup><a href="#ref-5">[5]</a></sup> Gazebo Classic and GZ Sim support live in separate packages from the driver itself.<sup><a href="#ref-4">[4]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Optional, URSim:</span> Universal Robots' simulator in Docker. With URSim running, the driver connects with <code>ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101 launch_rviz:=true</code>.<sup><a href="#ref-4">[4]</a></sup> It is not needed for the core project.</li>
-                            </ul>
-                            <p>
-                                <strong>Choosing mock hardware or Gazebo.</strong> Start with mock hardware: it is the lightest option and enough to test planning and the MTC stage chain. Know its limits. UR's simulation page lists that on mock hardware there is no TCP pose broadcaster, the passthrough trajectory controller and force mode do not work, and the GPIO (general-purpose input/output) controller reports a failure when you try to set I/O.<sup><a href="#ref-4">[4]</a></sup> So if you planned to open and close a gripper through UR digital outputs, you cannot check that in mock mode.<sup><a href="#ref-4">[4]</a></sup> Gazebo adds a physics simulation and comes with its own MoveIt launch (milestone 4).<sup><a href="#ref-5">[5]</a></sup>
-                            </p>
-
-                            <h2 class="article-section-title">04. Milestones and what to hand in</h2>
-                            <p>
-                                Complex project work is easier to manage, and to grade fairly, when it is split into milestones such as a plan, a prototype and a progress briefing.<sup><a href="#ref-2">[2]</a></sup> Each milestone below has a short, concrete hand-in. Hand them in as you go, not all at the end. If you work in a team, add a short <strong>contribution statement</strong> to every hand-in that says who did what. Teaching guidance recommends collecting individual evidence of this kind alongside the team product, and grading group, individual, process and product parts separately.<sup><a href="#ref-2">[2]</a></sup> One engineering capstone used milestone evaluations for exactly this purpose: to keep each team member accountable to the group.<sup><a href="#ref-6">[6]</a></sup>
+                                A frequent source of confusion is the difference between PWM for <strong>DC motor speed control</strong> and the pulse signal used for <strong>RC servo position control</strong>. Both are trains of rectangular pulses, but they carry different information:<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Milestone</th>
-                                        <th scope="col">Goal</th>
-                                        <th scope="col">Hand in</th>
+                                        <th scope="col">Feature</th>
+                                        <th scope="col">DC Motor PWM</th>
+                                        <th scope="col">RC Servomotor PWM</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td><strong>M0 Plan and baseline</strong></td>
-                                        <td>Build MTC and run the Panda pick-and-place demo unchanged.</td>
-                                        <td>One-page plan (scope, risks, test plan), a screenshot of the demo's stage tree in RViz, and a short reflection.</td>
+                                        <td><strong>Controlled Variable</strong></td>
+                                        <td>Average motor voltage, and so motor speed<sup><a href="#ref-1">[1]</a></sup></td>
+                                        <td>Angular shaft position (common servos move about 90&deg; over the standard pulse range; some are rated for 180&deg;)<sup><a href="#ref-8">[8]</a></sup></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>M1 UR5e moves</strong></td>
-                                        <td>Bring up a UR5e on mock hardware with MoveIt and plan joint and pose goals in RViz.</td>
-                                        <td>Screenshots of one joint goal and one pose goal planned and executed; the exact launch commands you used.</td>
+                                        <td><strong>Signal Metric</strong></td>
+                                        <td><strong>Duty cycle</strong> (0% to 100%)<sup><a href="#ref-1">[1]</a></sup></td>
+                                        <td><strong>Absolute pulse width</strong> (1.0 ms to 2.0 ms)<sup><a href="#ref-8">[8]</a></sup></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>M2 Planning scene</strong></td>
-                                        <td>Add a table and a box or cylinder as collision objects.</td>
-                                        <td>Screenshot of the scene; a plan that moves around the table instead of through it.</td>
+                                        <td><strong>Carrier Frequency</strong></td>
+                                        <td>490 Hz or 980 Hz on an Uno by default, or ultrasonic (above 20 kHz) with a reconfigured timer<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-9">[9]</a></sup></td>
+                                        <td>One pulse every 20 ms (<strong>50 Hz</strong>)<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>M3 MTC on the UR</strong></td>
-                                        <td>Port the MTC node to UR group and frame names and complete a full pick and place.</td>
-                                        <td>Your source code in a Git repository, a stage tree screenshot, and a screen recording of one full run.</td>
+                                        <td><strong>Power Handling</strong></td>
+                                        <td>The PWM signal switches the motor current through an external H-bridge<sup><a href="#ref-11">[11]</a></sup></td>
+                                        <td>Signal wire carries control pulses only; power arrives on separate power and ground wires<sup><a href="#ref-12">[12]</a></sup></td>
                                     </tr>
                                     <tr>
-                                        <td><strong>M4 Gazebo (optional)</strong></td>
-                                        <td>Run the same task through the Gazebo MoveIt launch.</td>
-                                        <td>Screen recording and a note on anything that behaved differently from mock hardware.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>M5 Test evidence and report</strong></td>
-                                        <td>Measure success over many runs with randomised object poses and analyse failures.</td>
-                                        <td>Test table, failure analysis, final report (3 to 5 pages) and final reflection.</td>
+                                        <td><strong>Internal Driver</strong></td>
+                                        <td>Requires an external H-bridge (for example L298 or TB6612FNG)<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-13">[13]</a></sup></td>
+                                        <td>Motor, gears, position potentiometer and control board with drive transistors built inside the servo<sup><a href="#ref-8">[8]</a></sup></td>
                                     </tr>
                                 </tbody>
                             </table>
                             <p>
-                                This structure (a plan, working subsystems, an integrated demo, test evidence and a written report) mirrors capstones described in the engineering education literature, where students wrote specifications, planned milestones, gave oral presentations and wrote a final report.<sup><a href="#ref-7">[7]</a></sup>
+                                A standard hobby servo contains a small DC motor, a gear train, a potentiometer attached to the output shaft to sense its position, and a small circuit board whose transistors likely form an H-bridge so the motor can turn either way.<sup><a href="#ref-8">[8]</a></sup> The servo reads the width of a pulse that repeats every 20 milliseconds (50 Hz):<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">1.0 millisecond pulse:</span> Moves the servo to one end of its standard range.<sup><a href="#ref-8">[8]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">1.5 millisecond pulse:</span> Moves the servo to the center (neutral) position.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">2.0 millisecond pulse:</span> Moves the servo to the other end of its standard range.<sup><a href="#ref-8">[8]</a></sup></li>
+                            </ul>
+                            <p>
+                                What pulse width sent at 50 Hz commands a standard hobby servo to its neutral center position? The answer is <strong>1.5 milliseconds</strong> (1500 microseconds).<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup> Real servos differ: some accept wider pulses, while others hit mechanical limits and can be damaged if driven past them.<sup><a href="#ref-8">[8]</a></sup> The Arduino <code>Servo</code> library's <code>write(angle)</code> maps 0&deg; to 180&deg; onto a default pulse range of 544 to 2400 microseconds, starts servos at 1500 microseconds, and refreshes them every 20 milliseconds; <code>writeMicroseconds()</code> sets the pulse width directly.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">05. M0: run the Panda demo and read the stage tree</h2>
+                            <h2 class="article-section-title">06. The Timer1 conflict: Servo library and pin trade-offs</h2>
                             <p>
-                                Begin with code that is known to work. Clone <code>moveit_task_constructor</code> into the <code>src</code> folder of your workspace on the right branch, install dependencies and build:<sup><a href="#ref-1">[1]</a></sup>
+                                Robots that combine DC motors and hobby servos run into a timer conflict on the Arduino Uno R3. The Servo library documentation states that on boards other than the Mega, using the library disables <code>analogWrite()</code> PWM on pins 9 and 10, whether or not a servo is attached to those pins.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
-                            <pre class="article-code"><code>cd ~/ws_moveit/src
-git clone https://github.com/moveit/moveit_task_constructor.git -b ros2
-cd ~/ws_moveit
-rosdep install --from-paths src --ignore-src -r -y
-colcon build
-source install/setup.bash</code></pre>
                             <p>
-                                Use <code>-b humble</code> instead if you are on Humble.<sup><a href="#ref-1">[1]</a></sup> Then start the demo environment in one terminal and the pick-and-place demo in a second one:<sup><a href="#ref-1">[1]</a></sup>
+                                The reason is the timer. On the ATmega328P the library uses the 16-bit <strong>Timer1</strong> to time its servo pulses.<sup><a href="#ref-12">[12]</a></sup> Why does calling <code>myServo.attach()</code> on an Arduino Uno R3 disable <code>analogWrite()</code> PWM on pins 9 and 10? Because the Servo library takes over Timer1: it switches the timer to normal counting mode with a prescaler of 8 and uses its output-compare interrupt to end each servo pulse, so Timer1 can no longer produce the PWM outputs on pins 9 and 10.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-4">[4]</a></sup>
                             </p>
-                            <pre class="article-code"><code># Terminal 1: move_group, ros2_control, RViz and the robot
-ros2 launch moveit_task_constructor_demo demo.launch.py
+                            <p>
+                                If you try to drive a motor driver with <code>analogWrite(9, speed)</code> while the Servo library is in use, pin 9 will not produce the expected PWM signal. So, when an Uno robot uses servos, put the motor PWM lines on pins 3, 5, 6 or 11, which are driven by Timer0 and Timer2.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                            </p>
 
-# Terminal 2: the pick-and-place task
-ros2 launch moveit_task_constructor_demo run.launch.py exe:=pick_place_demo</code></pre>
+                            <h2 class="article-section-title">07. Acoustic whine and ultrasonic modulation</h2>
                             <p>
-                                The tutorial describes its environment launch file (<code>mtc_demo.launch.py</code> in <code>moveit2_tutorials</code>) as starting <code>move_group</code>, <code>ros2_control</code>, a static TF publisher, <code>robot_state_publisher</code> and RViz.<sup><a href="#ref-1">[1]</a></sup> In RViz, add the <strong>Motion Planning Tasks</strong> display and set its Task Solution Topic to <code>/solution</code>.<sup><a href="#ref-1">[1]</a></sup> You can now click on each stage to see its successful and failed solutions and their costs.<sup><a href="#ref-1">[1]</a></sup> Take your stage-tree screenshot here.
+                                When DC motors are driven at the standard Arduino PWM frequencies (490 Hz or 980 Hz), robots often emit an annoying whine at the PWM frequency.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
-                                <strong>How MTC thinks.</strong> MTC splits a task into stages of three kinds.<sup><a href="#ref-1">[1]</a></sup> <strong>Generators</strong> create states on their own (the current state, candidate grasp poses). <strong>Propagators</strong> take a neighbour's state and push it forward or backward ("move 10 cm up"). <strong>Connectors</strong> plan a free motion between two states that already exist. Stages can be grouped in containers: wrappers, serial containers and parallel containers.<sup><a href="#ref-1">[1]</a></sup> MTC also has three planners (solvers) a stage can use: a Cartesian planner for straight-line moves, joint interpolation for simple moves, and the full planning pipeline using OMPL (the Open Motion Planning Library, which provides sampling-based path planning algorithms). The tutorial uses joint interpolation for the simple hand move.<sup><a href="#ref-1">[1]</a></sup>
+                                Normal human hearing covers about <strong>20 Hz to 20,000 Hz</strong> (20 kHz), and the ear is most sensitive between about 2,000 Hz and 5,000 Hz.<sup><a href="#ref-14">[14]</a></sup> Carrier frequencies of 490 Hz and 980 Hz sit well inside the audible range. Each current pulse slightly shakes the motor's windings and structure at the PWM frequency, so the motor sounds a tone at that pitch.
                             </p>
                             <p>
-                                The tutorial's task is this sequence of stages:<sup><a href="#ref-1">[1]</a></sup>
+                                Pololu's engineers note that the best way to reduce PWM-related motor whine is an ultrasonic PWM frequency, such as 20 kHz, above the range of human hearing.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> Modern drivers support this: the TB6612FNG, for example, is specified for PWM switching frequencies up to 100 kHz.<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <p>
+                                Ultrasonic PWM has an electrical cost: <strong>switching losses</strong>. Each time a transistor turns on or off, it passes briefly through a state where both its voltage and its current are non-zero, and it dissipates energy as heat. A common estimate of this loss is:<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <div class="article-callout">
+                                <p>\[P_{switching} = \frac{1}{2} V_{supply} I_{load} (t_{rise} + t_{fall}) f_{PWM}\]</p>
+                            </div>
+                            <p>
+                                Because the loss is proportional to \(f_{PWM}\), switching at 25 kHz produces about \(25{,}000 / 500 = 50\) times more switching loss than switching at 500 Hz with the same transistors and load.<sup><a href="#ref-2">[2]</a></sup> For a small driver such as the DRV8833, TI notes that conduction (on-resistance) loss usually dominates and switching losses are typically 10% to 30% of it, so check the driver's thermal limits when you raise the frequency.<sup><a href="#ref-16">[16]</a></sup>
+                            </p>
+
+                            <h2 class="article-section-title">08. Mechanical dead zones, stiction, and flyback protection</h2>
+                            <p>
+                                When applying PWM to physical DC motors, two practical constraints must be managed:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Mechanical Dead Zone (Stiction):</span> Real gearboxes have static friction, or "stiction." At low duty cycles the motor's torque is too small to overcome the friction of the gears and bearings: current flows and heats the windings, but the shaft does not turn. The threshold differs from motor to motor, so measure it for your own motor (see the Try it box). Robot controllers add a <strong>dead zone compensation offset</strong>, mapping commands so that the smallest non-zero command jumps straight to the measured breakaway value.</li>
+                                <li class="article-spec-item"><span class="spec-label">Inductive Flyback Voltage Spikes:</span> Motor windings are inductors, so abruptly switching off their current produces a voltage spike. H-bridge circuits must give this current a safe path. The L298 datasheet requires an external bridge of fast-recovery diodes (trr of 200 ns or less) when driving inductive loads.<sup><a href="#ref-11">[11]</a></sup> MOSFET drivers such as the DRV8833 instead let the recirculating current flow back to the power supply through the output transistors' body diodes (fast decay) or recirculate it through the shorted motor winding (slow decay).<sup><a href="#ref-16">[16]</a></sup></li>
+                            </ul>
+
+                            <h2 class="article-section-title">09. Application case study: precision robotic gripper</h2>
+                            <p>
+                                This section is an illustrative design, not a description of a particular product. A robotic parallel gripper shows the value of combining PWM with sensor feedback. If a gripper is driven only by an on/off switch, the fingers close at full speed and force, which can crush delicate objects (such as eggs or fruit) or stall and overheat the motor.
+                            </p>
+                            <p>
+                                With PWM, the robot can run a staged grasping routine:
                             </p>
                             <ol class="article-spec-list">
-                                <li><code>CurrentState</code>: start from where the robot is now.</li>
-                                <li><code>MoveTo</code> "open hand", to the named SRDF pose <code>open</code>.</li>
-                                <li>Connect: plan a free move to the pre-grasp area.</li>
-                                <li>"approach object": a <code>MoveRelative</code> of between 0.1 and 0.15 m.</li>
-                                <li><code>GenerateGraspPose</code>, wrapped in <code>ComputeIK</code> (up to 8 IK solutions).</li>
-                                <li><code>ModifyPlanningScene</code>: allow collisions between hand and object.</li>
-                                <li>Close the hand.</li>
-                                <li><code>ModifyPlanningScene</code>: <code>attachObject("object", hand_frame)</code>.</li>
-                                <li>"lift object": a <code>MoveRelative</code> of between 0.1 and 0.3 m.</li>
-                                <li><code>GeneratePlacePose</code> plus <code>ComputeIK</code>.</li>
-                                <li>Open the hand.</li>
-                                <li><code>allowCollisions(..., false)</code>: forbid hand and object contact again.</li>
-                                <li><code>detachObject("object", hand_frame)</code>.</li>
-                                <li>Retreat.</li>
-                                <li><code>MoveTo</code> "return home".</li>
+                                <li><strong>Approach Phase:</strong> The gripper closes at a high duty cycle (e.g., 70% PWM) to minimize cycle time while moving through free air.</li>
+                                <li><strong>Deceleration Phase:</strong> Optical distance sensors or tactile switches detect proximity to the target object, prompting the controller to drop PWM to a gentle 20% duty cycle.</li>
+                                <li><strong>Contact and Grip Holding:</strong> Current sensors or stall-detecting shaft encoders indicate that finger motion has stopped against the object. The controller applies a continuous holding duty cycle (e.g., 15% PWM), supplying enough torque to keep the object from slipping without overheating the motor windings or crushing the payload.</li>
                             </ol>
-
-                            <figure class="lesson-diagram">
-                                <svg viewBox="0 0 680 322" role="img" aria-label="The fifteen stages of the MoveIt Task Constructor pick-and-place tutorial task, in order: 1 CurrentState; 2 MoveTo open hand; 3 Connect, a free move to the pre-grasp area; 4 approach object, a MoveRelative of 0.1 to 0.15 m; 5 GenerateGraspPose wrapped in ComputeIK with up to 8 IK solutions; 6 ModifyPlanningScene allowing collisions between hand and object; 7 close the hand; 8 ModifyPlanningScene attaching the object to the hand frame; 9 lift object, a MoveRelative of 0.1 to 0.3 m; 10 GeneratePlacePose plus ComputeIK; 11 open the hand; 12 allowCollisions false, forbidding hand and object contact again; 13 detachObject; 14 retreat; 15 MoveTo return home. Stages 6, 8, 12 and 13 are highlighted because they change the planning scene rather than move the arm." xmlns="http://www.w3.org/2000/svg">
-                                    <defs><marker id="arrow-mtc" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="6" y="14" width="124" height="66" rx="6"/><text class="d-text" x="68.0" y="45" text-anchor="middle">1 current state</text><text class="d-muted" x="68.0" y="63" text-anchor="middle">CurrentState</text><line class="d-line" x1="130" y1="47.0" x2="139" y2="47.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="140" y="14" width="124" height="66" rx="6"/><text class="d-text" x="202.0" y="45" text-anchor="middle">2 open hand</text><text class="d-muted" x="202.0" y="63" text-anchor="middle">MoveTo &#8220;open&#8221;</text><line class="d-line" x1="264" y1="47.0" x2="273" y2="47.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="274" y="14" width="124" height="66" rx="6"/><text class="d-text" x="336.0" y="36" text-anchor="middle">3 connect</text><text class="d-muted" x="336.0" y="54" text-anchor="middle">free move to</text><text class="d-muted" x="336.0" y="69" text-anchor="middle">pre-grasp area</text><line class="d-line" x1="398" y1="47.0" x2="407" y2="47.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="408" y="14" width="124" height="66" rx="6"/><text class="d-text" x="470.0" y="36" text-anchor="middle">4 approach</text><text class="d-muted" x="470.0" y="54" text-anchor="middle">MoveRelative</text><text class="d-muted" x="470.0" y="69" text-anchor="middle">0.1 to 0.15 m</text><line class="d-line" x1="532" y1="47.0" x2="541" y2="47.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="542" y="14" width="124" height="66" rx="6"/><text class="d-text" x="604.0" y="36" text-anchor="middle">5 grasp pose</text><text class="d-muted" x="604.0" y="54" text-anchor="middle">GenerateGraspPose</text><text class="d-muted" x="604.0" y="69" text-anchor="middle">+ ComputeIK (&#8804; 8)</text><path class="d-line" d="M604.0,80 L604.0,97.0 L68.0,97.0 L68.0,113" marker-end="url(#arrow-mtc)"/><rect class="d-box-gold" x="6" y="114" width="124" height="66" rx="6"/><text class="d-text" x="68.0" y="136" text-anchor="middle">6 allow contact</text><text class="d-muted" x="68.0" y="154" text-anchor="middle">hand and object</text><text class="d-muted" x="68.0" y="169" text-anchor="middle">may collide</text><line class="d-line" x1="130" y1="147.0" x2="139" y2="147.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="140" y="114" width="124" height="66" rx="6"/><text class="d-text" x="202.0" y="152" text-anchor="middle">7 close hand</text><line class="d-line" x1="264" y1="147.0" x2="273" y2="147.0" marker-end="url(#arrow-mtc)"/><rect class="d-box-gold" x="274" y="114" width="124" height="66" rx="6"/><text class="d-text" x="336.0" y="136" text-anchor="middle">8 attach object</text><text class="d-muted" x="336.0" y="154" text-anchor="middle">attachObject</text><text class="d-muted" x="336.0" y="169" text-anchor="middle">to hand_frame</text><line class="d-line" x1="398" y1="147.0" x2="407" y2="147.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="408" y="114" width="124" height="66" rx="6"/><text class="d-text" x="470.0" y="136" text-anchor="middle">9 lift object</text><text class="d-muted" x="470.0" y="154" text-anchor="middle">MoveRelative</text><text class="d-muted" x="470.0" y="169" text-anchor="middle">0.1 to 0.3 m</text><line class="d-line" x1="532" y1="147.0" x2="541" y2="147.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="542" y="114" width="124" height="66" rx="6"/><text class="d-text" x="604.0" y="136" text-anchor="middle">10 place pose</text><text class="d-muted" x="604.0" y="154" text-anchor="middle">GeneratePlacePose</text><text class="d-muted" x="604.0" y="169" text-anchor="middle">+ ComputeIK</text><path class="d-line" d="M604.0,180 L604.0,197.0 L68.0,197.0 L68.0,213" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="6" y="214" width="124" height="66" rx="6"/><text class="d-text" x="68.0" y="252" text-anchor="middle">11 open hand</text><line class="d-line" x1="130" y1="247.0" x2="139" y2="247.0" marker-end="url(#arrow-mtc)"/><rect class="d-box-gold" x="140" y="214" width="124" height="66" rx="6"/><text class="d-text" x="202.0" y="236" text-anchor="middle">12 forbid contact</text><text class="d-muted" x="202.0" y="254" text-anchor="middle">allowCollisions</text><text class="d-muted" x="202.0" y="269" text-anchor="middle">(..., false)</text><line class="d-line" x1="264" y1="247.0" x2="273" y2="247.0" marker-end="url(#arrow-mtc)"/><rect class="d-box-gold" x="274" y="214" width="124" height="66" rx="6"/><text class="d-text" x="336.0" y="245" text-anchor="middle">13 detach object</text><text class="d-muted" x="336.0" y="263" text-anchor="middle">detachObject</text><line class="d-line" x1="398" y1="247.0" x2="407" y2="247.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="408" y="214" width="124" height="66" rx="6"/><text class="d-text" x="470.0" y="252" text-anchor="middle">14 retreat</text><line class="d-line" x1="532" y1="247.0" x2="541" y2="247.0" marker-end="url(#arrow-mtc)"/><rect class="d-box" x="542" y="214" width="124" height="66" rx="6"/><text class="d-text" x="604.0" y="245" text-anchor="middle">15 return home</text><text class="d-muted" x="604.0" y="263" text-anchor="middle">MoveTo &#8220;home&#8221;</text><rect class="d-box-gold" x="10" y="299" width="14" height="14" rx="3"/><text class="d-muted" x="32" y="310">ModifyPlanningScene stages: they change the planning scene (collisions, attached object), not the arm.</text>
-                                </svg>
-                                <figcaption>The tutorial task as a chain of stages, read left to right and row by row. The gold stages only change the planning scene: they allow or forbid hand-object contact and attach or detach the object.</figcaption>
-                            </figure>
-
-                            <p>
-                                In your M0 reflection, label each stage as a generator, propagator or connector, and say in one sentence why the grasp pose generator has to be wrapped in <code>ComputeIK</code>. (Hint: a grasp pose is a pose for the hand in space. The planner needs joint angles.)
-                            </p>
-
-                            <h2 class="article-section-title">06. M1 and M2: a UR5e and its planning scene</h2>
-                            <p>
-                                <strong>M1.</strong> Bring up the UR5e on mock hardware with MoveIt exactly as you did in <a href="robotics-3-8.html">3.8</a>, with the driver in one terminal and <code>ur_moveit_config</code> in another, using the same <code>ur_type</code> in both. In RViz, drag the interactive marker to plan a pose goal, then pick a named state for a joint goal, and execute both. Record the exact commands in your hand-in.
-                            </p>
-                            <p>
-                                <strong>M2.</strong> Now give the robot something to work with. The MTC tutorial adds a cylinder to the planning scene as a <strong>collision object</strong>, and it shows that if you move the cylinder out of the robot's reach, planning fails.<sup><a href="#ref-1">[1]</a></sup> Add two objects: a flat box for the table and a small box or cylinder for the part. The snippet below follows the pattern of the tutorial node. It is an example: try it in simulation first, and set the sizes, positions and <code>frame_id</code> to match your own scene (check the Fixed Frame in RViz).
-                            </p>
-                            <pre class="article-code"><code>moveit_msgs::msg::CollisionObject object;
-object.id = "object";
-object.header.frame_id = "world";          // use your scene's fixed frame
-object.primitives.resize(1);
-object.primitives[0].type = shape_msgs::msg::SolidPrimitive::CYLINDER;
-object.primitives[0].dimensions = { 0.10, 0.02 };   // height, radius in m
-
-geometry_msgs::msg::Pose pose;
-pose.position.x = 0.5;
-pose.position.y = -0.25;
-pose.position.z = 0.05;
-pose.orientation.w = 1.0;
-object.pose = pose;
-
-moveit::planning_interface::PlanningSceneInterface psi;
-psi.applyCollisionObject(object);</code></pre>
-                            <p>
-                                Keep the object id as <code>"object"</code> for now, because the tutorial's attach and detach stages refer to it by that name.<sup><a href="#ref-1">[1]</a></sup> Add the table the same way with a <code>BOX</code> primitive and a different id. Your M2 hand-in should show a plan that clearly goes around the table. If MoveIt happily plans through it, the table is in the wrong frame or was never applied.
-                            </p>
-
-                            <h2 class="article-section-title">07. M3: port the MTC node to the UR</h2>
-                            <p>
-                                This is the main engineering step. Copy the tutorial's <code>mtc_node.cpp</code> into your own package (as in 3.6) and change the robot-specific names. The tutorial node uses <code>panda_arm</code> as the arm group, <code>hand</code> as the hand group and <code>panda_hand</code> as the hand frame.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> On the UR the arm group is the <code>ur_manipulator</code> chain you met in 3.8, which ends at <code>tool0</code>.
-                            </p>
-                            <pre class="article-code"><code>// Panda names in the tutorial:
-//   arm "panda_arm", hand group "hand", hand frame "panda_hand"
-const auto&amp; arm_group_name = "ur_manipulator";
-const auto&amp; hand_frame     = "tool0";   // or your gripper's TCP link</code></pre>
-                            <p>
-                                <strong>The gripper problem.</strong> The default UR description has no gripper, so there is no hand group and no SRDF poses called <code>open</code> or <code>close</code>. You have two options. Choose one in your M0 plan and justify it.
-                            </p>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Option A, fixed tool (recommended):</span> delete the "open hand" and "close hand" <code>MoveTo</code> stages. Keep the <code>allowCollisions</code>, <code>attachObject</code> and <code>detachObject</code> stages, pointed at <code>tool0</code> or a simple tool link you add. The part is "picked" when it is attached to the tool in the planning scene. This is a common simplification, and it isolates the planning problem.</li>
-                                <li class="article-spec-item"><span class="spec-label">Option B, add a gripper:</span> add a gripper's links, a hand planning group and open and closed poses to your URDF and SRDF. One lead is PickNik Robotics' <code>ros2_robotiq_gripper</code>, which provides "the ROS 2 driver, controller and description packages for working with a Robotiq Gripper", starting with the 2F-85.<sup><a href="#ref-8">[8]</a></sup> It is not sponsored or maintained by Robotiq, and its README lists its <code>main</code> branch for Humble, Iron and Rolling, not Jazzy.<sup><a href="#ref-8">[8]</a></sup> No source used for this page covers combining it with the UR description, so treat Option B as a stretch goal.</li>
-                            </ul>
-                            <p>
-                                For Option A, the attach stage looks like this in the tutorial's style. Again, it is an example to try in simulation first:<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup>
-                            </p>
-                            <pre class="article-code"><code>auto stage = std::make_unique&lt;mtc::stages::ModifyPlanningScene&gt;("attach object");
-stage-&gt;attachObject("object", hand_frame);
-grasp-&gt;insert(std::move(stage));   // inside the "pick object" container</code></pre>
-                            <p>
-                                In the tutorial, <code>allowCollisions</code> uses the links of the hand group. Without a hand group, you must list the link names of your tool yourself. Read the tutorial's version of that stage carefully before you change it.<sup><a href="#ref-1">[1]</a></sup>
-                            </p>
-                            <p>
-                                <strong>Plan, then execute.</strong> At the end of the node, <code>task.plan(5)</code> searches until it has found 5 complete solutions, and <code>task.execute()</code> runs the chosen solution through an action server.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> On mock hardware the "execution" just copies commanded positions into the joint states, but the arm still moves in RViz. Watch the object: when it is attached, RViz draws it in a different colour and it moves with the tool. When it is detached, it stays at the place pose.
-                            </p>
-                            <p>
-                                Tune one thing at a time. The tutorial's approach and lift distances (0.1 to 0.15 m and 0.1 to 0.3 m) were set for the Panda hand.<sup><a href="#ref-1">[1]</a></sup> With a bare <code>tool0</code> you will probably need to change the grasp transform and approach direction. Log each change and its effect; that log feeds your failure analysis.
-                            </p>
-
-                            <h2 class="article-section-title">08. M4 (optional): run it in Gazebo</h2>
-                            <p>
-                                Once the task works on mock hardware, try it with physics. The UR Gazebo package has a launch that starts the simulated robot with its controllers, and another that adds MoveIt:<sup><a href="#ref-5">[5]</a></sup>
-                            </p>
-                            <pre class="article-code"><code># Robot and controllers only
-ros2 launch ur_simulation_gz ur_sim_control.launch.py
-
-# Robot, controllers and MoveIt
-ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
-                            <p>
-                                Use the branch of <code>ur_simulation_gz</code> that matches your ROS 2 release (<code>humble</code>, <code>jazzy</code> for Jazzy and Kilted, or <code>ros2</code> for Lyrical and Rolling).<sup><a href="#ref-5">[5]</a></sup> Start your MTC node against this MoveIt instance instead of the mock-hardware one.
-                            </p>
-                            <p>
-                                Be careful what you claim. The sources for this page do not cover whether a part attached in MoveIt's planning scene also follows the tool in Gazebo's physics. If the part stays on the table while MoveIt shows it attached, explain that in your report; a physically gripped part is a stretch goal.
-                            </p>
-
-                            <h2 class="article-section-title">09. M5: testing and verification</h2>
-                            <p>
-                                One successful run proves very little. Your test plan must show how often the task works and why it fails. As in the 6.1 test sheets, record for each test an ID, the expected and actual result, pass or fail, and evidence (a screenshot or log).
-                            </p>
-                            <table class="article-table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Test</th>
-                                        <th scope="col">Pass if</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>T1</td>
-                                        <td>Attach and detach</td>
-                                        <td>The object visibly changes to attached at pick, moves with the tool, and is detached at the place pose.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>T2</td>
-                                        <td>Table clearance</td>
-                                        <td>No stage solution passes through the table, and no collision is reported.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>T3</td>
-                                        <td>Planning time</td>
-                                        <td>A plan is found within the time limit you set in your M0 plan.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>T4</td>
-                                        <td>Out of reach</td>
-                                        <td>With the object moved out of reach, planning fails and your node prints a clear message instead of crashing or executing anything.</td>
-                                    </tr>
-                                    <tr>
-                                        <td>T5</td>
-                                        <td>Success rate</td>
-                                        <td>Over N runs (N of at least 20) with randomised object positions inside a stated area, you report successes and failures and classify every failure.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <p>
-                                T4 builds on a behaviour the tutorial itself points out: moving the object out of reach makes planning fail.<sup><a href="#ref-1">[1]</a></sup> Your node should check the result of <code>plan()</code> and report it. For T5, randomise the object's x and y within a rectangle on the table and log the seed, so that a failing case can be repeated exactly. For each failure, note which stage failed. The Motion Planning Tasks panel shows failed solutions per stage, and the tutorial has a section on the debugging information MTC prints to the terminal.<sup><a href="#ref-1">[1]</a></sup> Typical classes are "no IK solution", "connect failed" and "table collision".
-                            </p>
-
-                            <h2 class="article-section-title">10. Common problems</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">The Motion Planning Tasks panel is empty.</span> Check that the display is added and its Task Solution Topic is <code>/solution</code>.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Every run fails at the grasp stage.</span> Click the <code>ComputeIK</code> stage and look at its failed solutions.<sup><a href="#ref-1">[1]</a></sup> Usually the object is out of reach, the grasp transform points the tool the wrong way, or the frame names still say <code>panda_hand</code>.</li>
-                                <li class="article-spec-item"><span class="spec-label">The node crashes at start-up with an unknown group.</span> A Panda name is left over. Search your code for <code>panda</code> and <code>hand</code>.</li>
-                                <li class="article-spec-item"><span class="spec-label">Setting a gripper output fails on mock hardware.</span> That is a documented limit: the GPIO controller reports a failure when setting I/O in mock mode.<sup><a href="#ref-4">[4]</a></sup> Use attach and detach in the planning scene instead, or move to a simulator that supports it.</li>
-                                <li class="article-spec-item"><span class="spec-label">The build fails inside <code>moveit_task_constructor</code>.</span> The most likely cause is a branch that does not match your ROS 2 and MoveIt version. Re-check the branch before anything else.<sup><a href="#ref-1">[1]</a></sup></li>
-                            </ul>
-                            <p>
-                                <strong>From simulation to a real cell.</strong> Nothing you verify here is a safety validation. Mock hardware has no physics, Gazebo is an approximation, and the speeds, accelerations and collision margins that work in simulation do not carry straight over to a real robot. A real UR cell would need its own risk assessment, a safety configuration on the robot controller, reduced-speed first runs and the safeguards discussed in <a href="robotics-4-4.html">4.4 Making a Robot Cell Safe</a>. Your reflection should name at least two things you would have to check before running your node on real hardware.
-                            </p>
-
-                            <h2 class="article-section-title">11. Grading rubric</h2>
-                            <p>
-                                The rubric uses four levels with no neutral middle. An ASEE paper on capstone rubrics used a 1 to 4 scale from "Not Acceptable" to "Exemplary" and chose that scale on purpose, so that the instructor has to make a clear decision about whether expectations were met.<sup><a href="#ref-7">[7]</a></sup> (The two middle labels below are this course's own.) Capstone research also warns that very detailed rubrics can narrow students' creativity, so the rows describe outcomes, not one fixed way to reach them.<sup><a href="#ref-9">[9]</a></sup>
-                            </p>
-                            <table class="article-table">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Criterion</th>
-                                        <th scope="col">1 Not acceptable</th>
-                                        <th scope="col">2 Developing</th>
-                                        <th scope="col">3 Meets expectations</th>
-                                        <th scope="col">4 Exemplary</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><strong>Functionality</strong></td>
-                                        <td>The UR task does not complete.</td>
-                                        <td>Completes for one hand-placed object pose only.</td>
-                                        <td>Completes a full pick and place with attach and detach for the stated area.</td>
-                                        <td>As 3, plus a stretch goal (gripper, Gazebo, several objects) working.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Planning scene and collisions</strong></td>
-                                        <td>No table, or plans pass through it.</td>
-                                        <td>Table present, but collisions are allowed too broadly.</td>
-                                        <td>No table collisions; collisions with the object are allowed only between grasp and release.</td>
-                                        <td>As 3, and the scene is built from parameters, not hard-coded numbers.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Test evidence</strong></td>
-                                        <td>No test results.</td>
-                                        <td>A few runs, with no randomisation or failure classes.</td>
-                                        <td>T1 to T5 done, with N of at least 20 and every failure classified by stage.</td>
-                                        <td>As 3, plus a change made in response to the failure analysis and re-tested.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Robustness and safety awareness</strong></td>
-                                        <td>The node crashes or hangs when planning fails.</td>
-                                        <td>Failure is logged, but the message is unclear.</td>
-                                        <td>Clear out-of-reach message; the report states the sim-to-real limits.</td>
-                                        <td>As 3, plus a concrete list of real-cell checks tied to 4.4.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Code and documentation</strong></td>
-                                        <td>Code missing or does not build.</td>
-                                        <td>Builds, but no README or launch instructions.</td>
-                                        <td>Git repository with a README that lets someone else reproduce a run.</td>
-                                        <td>As 3, with clear commits, comments where the UR port differs from the tutorial, and a launch file that starts everything.</td>
-                                    </tr>
-                                    <tr>
-                                        <td><strong>Reflection</strong></td>
-                                        <td>Missing.</td>
-                                        <td>Describes what was done, not what was learned.</td>
-                                        <td>Answers the milestone prompts with specific examples.</td>
-                                        <td>As 3, and connects the failures to what would change in a real cell.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <h2 class="article-section-title">12. Reflection questions</h2>
-                            <p>
-                                Reflection can be brief and frequent, or longer at key milestones.<sup><a href="#ref-2">[2]</a></sup> This project uses both: a few sentences with every hand-in, and a longer reflection with the M5 report.
-                            </p>
-                            <ol class="article-spec-list">
-                                <li>What failed first, and how did you work out why? Name the tool you used (stage tree, terminal output, RViz).</li>
-                                <li>Which stage was hardest to get working on the UR, and what was different about it compared with the Panda?</li>
-                                <li>What does your success rate mean? Over what range of object poses does it hold, and where does it break down?</li>
-                                <li>In a real cell the object pose would come from a camera (see 2.8). What new failure modes would that add to your test plan?</li>
-                                <li>What would you change, check or measure before running this node on a real UR in a real cell?</li>
-                            </ol>
-
-                            <h2 class="article-section-title">13. Stretch goals</h2>
-                            <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">A real gripper model.</span> Add a gripper to the UR description and SRDF (Option B) and restore the open and close stages.<sup><a href="#ref-8">[8]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Gazebo physics.</span> Make the part physically move with the tool in Gazebo, and document how you did it.</li>
-                                <li class="article-spec-item"><span class="spec-label">URSim.</span> Run the driver against URSim instead of mock hardware, which from the driver's point of view is equivalent, and compare the behaviour.<sup><a href="#ref-4">[4]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Choose by cost.</span> Plan more than 5 solutions and compare the costs shown in the stage tree before executing the cheapest.<sup><a href="#ref-1">[1]</a></sup></li>
-                            </ul>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Before you start: confirm that you can still launch the UR5e on mock hardware with MoveIt from 3.8, and plan one pose goal in RViz.</li>
-                                    <li>Clone and build <code>moveit_task_constructor</code> on the branch that matches your ROS 2 release, run <code>demo.launch.py</code> and the <code>pick_place_demo</code>, and add the Motion Planning Tasks display on <code>/solution</code>.</li>
-                                    <li>Click through all the stages, then move the cylinder out of reach in the demo code, rebuild and run again. Screenshot the stage that fails. That screenshot and a one-page plan are your M0 hand-in.</li>
+                                    <li>In the interactive PWM simulator above, set the supply voltage to 12 V and adjust the duty cycle slider until the average output voltage displays 6.0 V. Calculate the corresponding 8-bit integer value required by Arduino <code>analogWrite()</code>.</li>
+                                    <li>Connect a standard hobby servomotor to an Arduino board and write a sketch using <code>myServo.writeMicroseconds()</code>. Sweep pulse widths between 1000 and 2000 microseconds in 100-microsecond increments, observing the resulting shaft angles.</li>
+                                    <li>Connect a DC gearmotor to an H-bridge driver and slowly ramp the PWM duty cycle from 0 to 255 in steps of 5. Identify the exact threshold value at which the shaft begins turning; this represents your motor's static friction dead zone.</li>
                                 </ol>
                             </div>
 
-                            <h2 class="article-section-title">14. References</h2>
-                            <p class="references-note">Source check (October 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <h2 class="article-section-title">10. References</h2>
+                            <p class="references-note">Source check (October 2026): 10 of 16 references match their source text; 3 support only part of their sentence; 3 could not be opened (paywall, book or blocked site). How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
-                                <li id="ref-1">MoveIt maintainers (PickNik Robotics), &ldquo;Pick and Place with MoveIt Task Constructor,&rdquo; <em>MoveIt 2 Tutorials</em>; file <code>doc/tutorials/pick_and_place_with_moveit_task_constructor/pick_and_place_with_moveit_task_constructor.rst</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/pick_and_place_with_moveit_task_constructor.rst" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor</a>.</li>
-                                <li id="ref-2">Virginia Tech, Teaching and Learning Online Support (TLOS), &ldquo;Assessing and reflecting on project work,&rdquo; <em>Project-Based Learning</em> teaching resources (page not opened; content taken from a search summary, October 2026). <a href="https://teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html" target="_blank" rel="noopener noreferrer">teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html</a>.</li>
-                                <li id="ref-3">MoveIt maintainers (PickNik Robotics), MTC pick-and-place tutorial node, <code>doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp</code> (source read on GitHub: moveit/moveit2_tutorials, <code>main</code> branch), October 2026. Available: <a href="https://github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2_tutorials/blob/main/doc/tutorials/pick_and_place_with_moveit_task_constructor/src/mtc_node.cpp</a>.</li>
-                                <li id="ref-4">Universal Robots, &ldquo;Simulation,&rdquo; <em>Universal Robots ROS 2 Documentation</em>; file <code>ur_robot_driver/doc/usage/simulation.rst</code> (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_Driver, <code>main</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/simulation.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/simulation.rst</a>.</li>
-                                <li id="ref-5">Universal Robots, <em>Universal_Robots_ROS2_GZ_Simulation</em> README (source read on GitHub: UniversalRobots/Universal_Robots_ROS2_GZ_Simulation, <code>ros2</code> branch), October 2026. Available: <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_GZ_Simulation/blob/ros2/README.md" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_GZ_Simulation/blob/ros2/README.md</a>.</li>
-                                <li id="ref-6">T. Ericson and S. Kiefer (York College of Pennsylvania), &ldquo;Capstone Design Assessment and Student Motivation,&rdquo; ASEE Mid-Atlantic Fall Conference, 2014 (PEER paper 49669; PDF read October 2026). Available: <a href="https://peer.asee.org/49669.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/49669.pdf</a>.</li>
-                                <li id="ref-7">D. K. Jones and A. Tadros (SUNYIT), &ldquo;Successful Use of Rubrics to Assess Student Performance in Capstone Projects,&rdquo; ASEE Annual Conference, 2010, paper AC 2010-359 (PDF read October 2026). Available: <a href="https://peer.asee.org/15865.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/15865.pdf</a>.</li>
-                                <li id="ref-8">PickNik Robotics, <em>ros2_robotiq_gripper</em> README (source read on GitHub: PickNikRobotics/ros2_robotiq_gripper, <code>main</code> branch), October 2026. Available: <a href="https://github.com/PickNikRobotics/ros2_robotiq_gripper/blob/main/README.md" target="_blank" rel="noopener noreferrer">github.com/PickNikRobotics/ros2_robotiq_gripper/blob/main/README.md</a>.</li>
-                                <li id="ref-9">J. Edmondson and R. A. Gupta (North Carolina State University), &ldquo;Project Health as a Capstone Rubric Element,&rdquo; ASEE conference paper 48955 (PDF read October 2026). Available: <a href="https://nemo.asee.org/public/conferences/365/papers/48955/download" target="_blank" rel="noopener noreferrer">nemo.asee.org/public/conferences/365/papers/48955/download</a>.</li>
+                                <li id="ref-1">T. Hirzel, &ldquo;Basics of PWM (Pulse Width Modulation),&rdquo; <em>Arduino Docs</em>. <a href="https://docs.arduino.cc/learn/microcontrollers/analog-output/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/learn/microcontrollers/analog-output/</a>.</li>
+                                <li id="ref-2">R. Keim, &ldquo;Introduction to MOSFET Switching Losses,&rdquo; <em>All About Circuits</em>, April 2024. <a href="https://www.allaboutcircuits.com/technical-articles/introduction-to-mosfet-switching-losses" target="_blank" rel="noopener noreferrer">allaboutcircuits.com/technical-articles/introduction-to-mosfet-switching-losses</a>.</li>
+                                <li id="ref-3">Arduino, &ldquo;analogWrite(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/analog-io/analogWrite/</a>.</li>
+                                <li id="ref-4">Arduino, &ldquo;Secrets of Arduino PWM,&rdquo; <em>Arduino Docs</em> (adapted from an article originally published at arcfn.com). <a href="https://docs.arduino.cc/tutorials/generic/secrets-of-arduino-pwm/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/tutorials/generic/secrets-of-arduino-pwm/</a>.</li>
+                                <li id="ref-5">Arduino, <code>wiring.c</code> timer initialisation in the <em>ArduinoCore-avr</em> board core, GitHub. <a href="https://github.com/arduino/ArduinoCore-avr/blob/master/cores/arduino/wiring.c" target="_blank" rel="noopener noreferrer">github.com/arduino/ArduinoCore-avr/blob/master/cores/arduino/wiring.c</a>.</li>
+                                <li id="ref-6">Arduino, &ldquo;millis(),&rdquo; <em>Arduino Language Reference</em>. <a href="https://docs.arduino.cc/language-reference/en/functions/time/millis/" target="_blank" rel="noopener noreferrer">docs.arduino.cc/language-reference/en/functions/time/millis/</a>.</li>
+                                <li id="ref-7">Renesas Electronics, <em>RA4M1 Group Datasheet</em>, R01DS0355EJ0100, Rev. 1.00, October 2019. <a href="https://docs.arduino.cc/resources/datasheets/ra4m1-datasheet.pdf" target="_blank" rel="noopener noreferrer">docs.arduino.cc/resources/datasheets/ra4m1-datasheet.pdf</a>.</li>
+                                <li id="ref-8">M. Grusin and B. Jacquot, &ldquo;Hobby Servo Tutorial,&rdquo; <em>SparkFun Learn</em>. <a href="https://learn.sparkfun.com/tutorials/hobby-servo-tutorial/all" target="_blank" rel="noopener noreferrer">learn.sparkfun.com/tutorials/hobby-servo-tutorial/all</a>.</li>
+                                <li id="ref-9">Pololu Robotics &amp; Electronics, &ldquo;PWM frequency and noise,&rdquo; <em>Pololu Forum</em> (reply by Pololu staff), May 2012. <a href="https://forum.pololu.com/t/pwm-frequency-and-noise/4636" target="_blank" rel="noopener noreferrer">forum.pololu.com/t/pwm-frequency-and-noise/4636</a>.</li>
+                                <li id="ref-10">R. Corpuz, H. Peng, and J. Liang, &ldquo;G4 Servo Motor PWM App Note,&rdquo; ECE 492 application notes, University of Alberta. <a href="https://sites.ualberta.ca/~delliott/ece492/appnotes/2015w/G4_Servo_PWM_V2/G4_Servo_PWM_AppNote_W2015.pdf" target="_blank" rel="noopener noreferrer">sites.ualberta.ca/.../G4_Servo_PWM_AppNote_W2015.pdf</a>.</li>
+                                <li id="ref-11">STMicroelectronics, <em>L298: Dual Full-Bridge Driver</em>, datasheet DS0218, Rev. 5, October 2023. <a href="https://www.st.com/resource/en/datasheet/l298.pdf" target="_blank" rel="noopener noreferrer">st.com/resource/en/datasheet/l298.pdf</a>.</li>
+                                <li id="ref-12">Arduino, <em>Servo library</em> (documentation and source code), GitHub: <a href="https://github.com/arduino-libraries/Servo/blob/master/docs/readme.md" target="_blank" rel="noopener noreferrer"><code>docs/readme.md</code></a>, <a href="https://github.com/arduino-libraries/Servo/blob/master/src/Servo.h" target="_blank" rel="noopener noreferrer"><code>src/Servo.h</code></a>, <a href="https://github.com/arduino-libraries/Servo/blob/master/src/avr/ServoTimers.h" target="_blank" rel="noopener noreferrer"><code>src/avr/ServoTimers.h</code></a> and <a href="https://github.com/arduino-libraries/Servo/blob/master/src/avr/Servo.cpp" target="_blank" rel="noopener noreferrer"><code>src/avr/Servo.cpp</code></a>.</li>
+                                <li id="ref-13">Toshiba Electronic Devices &amp; Storage, <em>TB6612FNG: Driver IC for Dual DC Motor</em>, datasheet. <a href="https://toshiba.semicon-storage.com/info/docget.jsp?did=10660" target="_blank" rel="noopener noreferrer">toshiba.semicon-storage.com/info/docget.jsp?did=10660</a>.</li>
+                                <li id="ref-14">P. P. Urone and R. Hinrichs, &ldquo;17.6 Hearing,&rdquo; <em>College Physics 2e</em>, OpenStax, 2022. <a href="https://openstax.org/books/college-physics-2e/pages/17-6-hearing" target="_blank" rel="noopener noreferrer">openstax.org/books/college-physics-2e/pages/17-6-hearing</a>.</li>
+                                <li id="ref-15">Pololu, &ldquo;5.2. Motor Settings,&rdquo; <em>Pololu Simple Motor Controller User&rsquo;s Guide</em>. <a href="https://www.pololu.com/docs/0J44/5.2" target="_blank" rel="noopener noreferrer">pololu.com/docs/0J44/5.2</a>.</li>
+                                <li id="ref-16">Texas Instruments, <em>DRV8833 Dual H-Bridge Motor Driver</em>, datasheet SLVSAR1E, revised July 2015. <a href="https://www.ti.com/lit/ds/symlink/drv8833.pdf" target="_blank" rel="noopener noreferrer">ti.com/lit/ds/symlink/drv8833.pdf</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-6-1.html" class="article-nav-card">
                                     <span class="article-nav-dir">&lt;- Previous</span>
-                                    <span class="article-nav-target">6.1 Capstone: Build a Simulated Work Cell</span>
+                                    <span class="article-nav-target">6.1 Arduino for Robotics</span>
                                 </a>
                                 <a href="robotics-6-3.html" class="article-nav-card" style="text-align: right;">
                                     <span class="article-nav-dir">Next -&gt;</span>
-                                    <span class="article-nav-target">6.3 Capstone: Speed-Controlled Wheel</span>
+                                    <span class="article-nav-target">6.3 Encoders and Shaft Encoders</span>
                                 </a>
                             </div>
 
@@ -562,6 +382,7 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
             <script src="assets/js/course-data.js?v=1.8" defer></script>
             <script src="assets/js/glossary-data.js?v=1.5" defer></script>
             <script src="assets/js/learning.js?v=1.3" defer></script>
+            <script src="assets/js/widgets.js?v=1.1" defer></script>
 
     </body>
 </html>

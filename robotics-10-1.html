@@ -1,0 +1,516 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 6.1 Capstone: Build a Simulated Work Cell
+-->
+<html lang="en">
+    <head>
+        <title>10.1 Capstone: Build a Simulated Work Cell — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Capstone project: build a simulated pick-and-place work cell in URSim or ABB RobotStudio with gripper I/O, a safety configuration and a FAT-style test sheet, graded by milestones and a four-level rubric." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-10-1.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="10.1 Capstone: Build a Simulated Work Cell — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="Capstone project: build a simulated pick-and-place work cell in URSim or ABB RobotStudio with gripper I/O, a safety configuration and a FAT-style test sheet, graded by milestones and a four-level rubric." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-10-1.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="10.1 Capstone: Build a Simulated Work Cell, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="10.1 Capstone: Build a Simulated Work Cell — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="Capstone project: build a simulated pick-and-place work cell in URSim or ABB RobotStudio with gripper I/O, a safety configuration and a FAT-style test sheet, graded by milestones and a four-level rubric." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <a href="robotics-capstone.html">Chapter 10 &middot; Capstone Projects</a>
+                            </div>
+
+                            <h1 class="robotics-article-headline">10.1 Capstone: Build a Simulated Work Cell</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. What you will build and why</h2>
+                            <p>
+                                In this capstone you build a complete robot work cell in software. A simulated arm picks a part from an infeed position, places it at an outfeed position, uses simulated I/O for its gripper and a part-present sensor, respects a safety configuration you set up yourself, and passes a test sheet modelled on a factory acceptance test (FAT, a formal verification process conducted at the supplier facility to ensure equipment meets contract specifications before delivery). You can use either Universal Robots' URSim or ABB RobotStudio. Both are free to start, and both run the same controller software a real robot runs.
+                            </p>
+                            <p>
+                                Most of the skills you need were taught earlier in the course; here you combine them and prove that they work. The result is something you can show: a working program, a safety configuration, a test sheet with evidence, and a short report.
+                            </p>
+                            <p>
+                                The project is organised the way teaching-center guidance recommends for project work. The grading criteria and the rubric are published now, at the start, rather than at the end. The work is split into milestones (a plan, a first working piece, an integrated demo, test evidence and a report), so that problems show up early while there is still time to fix them.<sup><a href="#ref-1">[1]</a></sup> The final grade uses a four-level analytic rubric with no neutral middle level, a format documented in an engineering-technology capstone program where each project was rated from &ldquo;Not Acceptable&rdquo; to &ldquo;Exemplary&rdquo;.<sup><a href="#ref-2">[2]</a></sup> The rubric is kept short on purpose: capstone researchers note that rubrics must balance depth against simplicity, and that very detailed rubrics can narrow student creativity.<sup><a href="#ref-3">[3]</a></sup> If you work in a team, you also hand in a short contribution statement at each milestone, because milestone evaluations are one documented way to keep each team member accountable to the group.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                Why a cell and not just a robot? A real cell also has fixtures, sensors, a gripper, guarding and a safety design (see <a href="robotics-1-7.html">1.7</a>). Building all of it teaches you to think like an integrator: what must be true before the robot moves, what happens when something fails, and how you prove the cell works.
+                            </p>
+
+                            <h2 class="article-section-title">02. Prerequisites</h2>
+                            <p>
+                                You should be comfortable with the following lessons before you start. Each one supplies a piece of the cell.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-1-7.html">1.7 The Industrial Robot Cell</a>:</span> what a cell contains, PLC-robot handshakes, FAT and SAT, and cycle time. You use this vocabulary in your layout sketch and test sheet.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-2-5.html">2.5 End-of-Arm Tooling and I/O</a>:</span> setting payload, and using digital outputs to open and close a gripper and digital inputs to confirm a grip or a part.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-2-6.html">2.6 Your First Pick-and-Place</a>:</span> starting URSim or RobotStudio, defining the TCP, teaching targets in a fixture frame, approach offsets and exact stops at the grip.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-2-7.html">2.7 Program Structure and Error Handling</a>:</span> splitting a program into routines and recovering from errors such as a missed pick.</li>
+                                <li class="article-spec-item"><span class="spec-label"><a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a>:</span> risk assessment, guards and robot safety functions. You need it to understand what your simulated safety configuration can and cannot prove.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">03. Software and equipment (free options first)</h2>
+                            <p>
+                                You need a computer that can run Docker (for URSim) or Windows (for RobotStudio), a web browser, and a way to take screenshots. No robot hardware is needed. Pick one path and stay on it for the whole project.
+                            </p>
+                            <p>
+                                <strong>Path A: URSim in Docker (free).</strong> Universal Robots publishes one Docker image per software generation: <code>universalrobots/ursim_polyscopex</code> for PolyScope X, <code>universalrobots/ursim_e-series</code> for PolyScope 5 and <code>universalrobots/ursim_cb3</code> for the older CB3 robots.<sup><a href="#ref-5">[5]</a></sup> This project assumes the e-Series (PolyScope 5) image, which matches lesson 2.6. You open PolyScope in your browser, so the whole teach pendant runs on your laptop.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Path B: ABB RobotStudio.</strong> RobotStudio has a free &ldquo;Basic functionality mode&rdquo; that needs no activation but allows only online and basic Virtual Controller features. Without activation, the Premium features run as a trial for up to 30 days and then revert to Basic.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup> Those terms come from an older ABB document, so check the current offer. From version 2026.1, RobotStudio uses user-based licensing tied to a Robotics One account (node-locked licenses are the exception), and ABB's comparison lists an &ldquo;Education&rdquo; license type alongside Freemium, Trial, Enterprise, Node-Locked and Partner.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> What the Education tier includes was not confirmed, so ask your instructor whether your school has one before you rely on a trial that may expire mid-project.
+                            </p>
+                            <p>
+                                Whichever path you choose, keep a project folder with three subfolders from day one: <code>plan/</code> (sketches, I/O list, sequence chart), <code>program/</code> (exported programs and installation or station files) and <code>evidence/</code> (screenshots and logs named by test ID). You will hand in that folder at the end.
+                            </p>
+
+                            <h2 class="article-section-title">04. Milestones and what to hand in</h2>
+                            <p>
+                                The project has five milestones. Each one ends with a small hand-in so that you, and your instructor, can see progress and catch problems early.<sup><a href="#ref-1">[1]</a></sup> Suggested timing is for a three to four week project; your instructor may change it.
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Milestone</th>
+                                        <th scope="col">Goal</th>
+                                        <th scope="col">Hand in</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>M0 Plan</strong></td>
+                                        <td>Decide what the cell does before you touch the simulator.</td>
+                                        <td>Cell layout sketch, I/O list, sequence chart, draft test list, list of risks to the schedule.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M1 Cell up</strong></td>
+                                        <td>URSim running in Docker, or a RobotStudio station built; tool and frames set; waypoints taught.</td>
+                                        <td>Screenshot of the robot at each taught point; saved installation or station file.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M2 Integrated demo</strong></td>
+                                        <td>Pick-and-place program using simulated gripper outputs and a part-present input.</td>
+                                        <td>Program file and a short screen recording of three full cycles.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M3 Safety config</strong></td>
+                                        <td>Add a safety plane and reduced limits (UR) or a stand-in zone (ABB), and show the robot reacts.</td>
+                                        <td>Screenshots of the safety settings and of the robot stopping or slowing.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>M4 Test and report</strong></td>
+                                        <td>Run a FAT-style test sheet and write up what you learned.</td>
+                                        <td>Completed test sheet with evidence, two-page report, reflection, project folder.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Team projects add one more item to every hand-in: a contribution statement of a few lines from each member, saying what they did since the last milestone. Individual evidence like this lets an instructor grade the group product and each person's part separately.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 680 272" role="img" aria-label="Timeline of the five project milestones, suggested for a three to four week project. M0 Plan: hand in a cell layout sketch, I/O list, sequence chart, draft test list and list of risks to the schedule. M1 Cell up: a screenshot of the robot at each taught point and the saved installation or station file. M2 Integrated demo: the program file and a short screen recording of three full cycles. M3 Safety config: screenshots of the safety settings and of the robot stopping or slowing. M4 Test and report: the completed test sheet with evidence, a two-page report, a reflection and the project folder. In team projects every hand-in also carries a contribution statement from each member." xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-ms61" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><text class="d-muted" x="340" y="18" text-anchor="middle">Suggested timing: a three to four week project (your instructor may change it)</text><line class="d-line" x1="16" y1="38" x2="664" y2="38" marker-end="url(#arrow-ms61)"/><circle class="d-box" cx="76" cy="38" r="7"/><rect class="d-box" x="16" y="56" width="120" height="182" rx="6"/><text class="d-title" x="76" y="80" text-anchor="middle">M0</text><text class="d-text" x="76" y="100" text-anchor="middle">Plan</text><line class="d-line" x1="26" y1="112" x2="126" y2="112"/><text class="d-muted" x="26" y="132">Hand in:</text><text class="d-muted" x="26" y="152">layout sketch</text><text class="d-muted" x="26" y="169">I/O list</text><text class="d-muted" x="26" y="186">sequence chart</text><text class="d-muted" x="26" y="203">draft test list</text><text class="d-muted" x="26" y="220">schedule risks</text><circle class="d-box" cx="208" cy="38" r="7"/><rect class="d-box" x="148" y="56" width="120" height="182" rx="6"/><text class="d-title" x="208" y="80" text-anchor="middle">M1</text><text class="d-text" x="208" y="100" text-anchor="middle">Cell up</text><line class="d-line" x1="158" y1="112" x2="258" y2="112"/><text class="d-muted" x="158" y="132">Hand in:</text><text class="d-muted" x="158" y="152">screenshot per</text><text class="d-muted" x="158" y="169">taught point</text><text class="d-muted" x="158" y="186">installation or</text><text class="d-muted" x="158" y="203">station file</text><circle class="d-box" cx="340" cy="38" r="7"/><rect class="d-box" x="280" y="56" width="120" height="182" rx="6"/><text class="d-title" x="340" y="80" text-anchor="middle">M2</text><text class="d-text" x="340" y="100" text-anchor="middle">Integrated demo</text><line class="d-line" x1="290" y1="112" x2="390" y2="112"/><text class="d-muted" x="290" y="132">Hand in:</text><text class="d-muted" x="290" y="152">program file</text><text class="d-muted" x="290" y="169">recording of</text><text class="d-muted" x="290" y="186">three full cycles</text><circle class="d-box" cx="472" cy="38" r="7"/><rect class="d-box" x="412" y="56" width="120" height="182" rx="6"/><text class="d-title" x="472" y="80" text-anchor="middle">M3</text><text class="d-text" x="472" y="100" text-anchor="middle">Safety config</text><line class="d-line" x1="422" y1="112" x2="522" y2="112"/><text class="d-muted" x="422" y="132">Hand in:</text><text class="d-muted" x="422" y="152">screenshots:</text><text class="d-muted" x="422" y="169">safety settings</text><text class="d-muted" x="422" y="186">robot stopping</text><text class="d-muted" x="422" y="203">or slowing</text><circle class="d-box-gold" cx="604" cy="38" r="7"/><rect class="d-box-gold" x="544" y="56" width="120" height="182" rx="6"/><text class="d-title" x="604" y="80" text-anchor="middle">M4</text><text class="d-text" x="604" y="100" text-anchor="middle">Test and report</text><line class="d-line" x1="554" y1="112" x2="654" y2="112"/><text class="d-muted" x="554" y="132">Hand in:</text><text class="d-muted" x="554" y="152">test sheet with</text><text class="d-muted" x="554" y="169">evidence</text><text class="d-muted" x="554" y="186">two-page report</text><text class="d-muted" x="554" y="203">reflection</text><text class="d-muted" x="554" y="220">project folder</text><text class="d-muted" x="340" y="262" text-anchor="middle">Team projects: every hand-in also carries a contribution statement from each member.</text>
+                                </svg>
+                                <figcaption>The five milestones and their hand-ins, in order. Each one ends with a small hand-in so that problems show up early; in team projects each hand-in also includes a contribution statement from every member.</figcaption>
+                            </figure>
+
+                            <h2 class="article-section-title">05. Build guidance: M0 plan and M1 cell up</h2>
+                            <p>
+                                <strong>M0: plan on paper first.</strong> Draw the cell from above: robot base, infeed and outfeed positions, table edge, and where a fence would be in a real cell. Then write an I/O list. A minimal cell has one gripper output, one gripper-closed input (if your simulated gripper offers one) and one part-present input at the infeed. Give each signal a name, a number and a meaning, for example &ldquo;DO0 gripper close, 1 = closed&rdquo;. Finally write a sequence chart: a numbered list of steps with the condition that must be true before each step starts.
+                            </p>
+                            <pre class="article-code"><code>Step  Action                          Start condition
+ 0    Move to Home                    Program started, gripper open
+ 1    Wait for part                   At Home
+ 2    Approach above pick             DI part_present = 1
+ 3    Linear down to pick, exact stop At approach
+ 4    Close gripper, wait             At pick
+ 5    Linear up to approach           Grip confirmed (or wait time done)
+ 6    Move to approach above place    Clear of infeed
+ 7    Linear down to place, exact stop At place approach
+ 8    Open gripper, wait              At place
+ 9    Linear up, return to Home       Gripper open
+10    Repeat from step 1</code></pre>
+                            <p>
+                                This chart is the core of your program and of your test sheet. Every condition in the right-hand column is something you can test later. Also write a target cycle time, for example in seconds per part, so you have a number to measure against (cycle time is covered in <a href="robotics-1-7.html">1.7</a>).
+                            </p>
+                            <p>
+                                <strong>M1 on Path A: start URSim.</strong> The basic start command from the Universal Robots Client Library documentation is:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>docker run --rm -it -p 127.0.0.1:5900:5900 -p 127.0.0.1:6080:6080 --name ursim universalrobots/ursim_e-series</code></pre>
+                            <p>
+                                PolyScope then runs in your browser at <code>http://127.0.0.1:6080/vnc.html</code>. Keep the <code>127.0.0.1:</code> bind address in each port option: it keeps the simulator's screen on your own machine. If you leave the bind address out, the simulator is exposed to everyone on your local network.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                The <code>--rm</code> option deletes the container when you stop it, so without extra steps your programs disappear. To keep programs and installations between runs, mount a folder on your computer into the container:<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <pre class="article-code"><code>docker run --rm -it -p 127.0.0.1:5900:5900 -p 127.0.0.1:6080:6080 \
+  -v ${HOME}/.ursim/programs:/ursim/programs \
+  -v ${HOME}/.ursim/urcaps:/urcaps \
+  --name ursim universalrobots/ursim_e-series</code></pre>
+                            <p>
+                                The second mount is for URCaps, the plug-ins that extend PolyScope. You only need it for the ROS stretch goal below, where the External Control URCap is dropped into that folder.<sup><a href="#ref-6">[6]</a></sup> If you already have ROS 2 and the UR driver installed, there is also a helper, <code>ros2 run ur_client_library start_ursim.sh -m &lt;ur_type&gt; -v &lt;version&gt;</code>. It starts URSim on a Docker network at 192.168.56.101 with ports 30001 to 30004 and 29999 published and External Control preinstalled. Without <code>-v</code> it uses the latest PolyScope 5 image, and without <code>-m</code> it uses a UR5e.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <p>
+                                In PolyScope, power on and release the brakes, set the TCP and payload for your gripper (see <a href="robotics-2-5.html">2.5</a>), define a feature frame for the infeed fixture, and teach Home, the pick and place points and their approach points as in <a href="robotics-2-6.html">2.6</a>. Save the installation and the program into the mounted folder, then stop and restart the container once to prove they survive.
+                            </p>
+                            <p>
+                                <strong>M1 on Path B: build a RobotStudio station.</strong> Create a station with a robot and a virtual controller, add a simple table and two part positions, attach a tool, and create a work object for the infeed fixture. Teach the same targets as in Path A. Save the station and make a backup copy in your <code>program/</code> folder.
+                            </p>
+
+                            <h2 class="article-section-title">06. Build guidance: M2 integrated pick-and-place</h2>
+                            <p>
+                                Now turn the sequence chart into a program. Reuse the structure from <a href="robotics-2-7.html">2.7</a>: a main routine that loops, a routine for picking, a routine for placing and a routine that returns safely to Home. Keep the motion rules from <a href="robotics-2-6.html">2.6</a>: approach and transfer moves may blend, but the robot must make an exact stop wherever the gripper changes state.
+                            </p>
+                            <p>
+                                The I/O is what makes this a cell rather than a motion demo. Before each pick, the program must wait for the part-present input. At the pick point it sets the gripper output and waits, either for a grip-confirmed input or for a fixed time. At the place point it clears the output and waits again. In the simulator nobody is going to put a real part on the infeed, so you toggle the part-present input yourself from the I/O screen (PolyScope) or the I/O simulator window (RobotStudio). That is also how you will test the cell in M4.
+                            </p>
+                            <p>
+                                Add at least one error path. For example, if the grip is not confirmed within a time limit, open the gripper, retract to the approach point, and stop with a clear message instead of carrying an empty gripper to the place point. Lesson 2.7 shows the patterns for both RAPID and URScript.
+                            </p>
+                            <p>
+                                There is one limit of URSim to know about. The UR ROS 2 driver documentation notes that effort control &ldquo;has no effect in URSim&rdquo;, so a simulated robot asked to move by effort simply stays still.<sup><a href="#ref-5">[5]</a></sup> Keep this project to position-controlled moves; anything that depends on force or effort cannot be tested in URSim and must wait for real hardware.
+                            </p>
+                            <p>
+                                Run the program slowly first (speed slider or speed override). When three cycles in a row complete without a fault, record them for M2.
+                            </p>
+
+                            <h2 class="article-section-title">07. Build guidance: M3 safety configuration</h2>
+                            <p>
+                                A safety configuration limits where the robot may go and how fast it may move, independently of the program. Here you set one up and show that the simulated robot reacts. Read the last paragraph of this section first.
+                            </p>
+                            <p>
+                                <strong>Path A: PolyScope safety settings.</strong> PolyScope 5 has a dedicated safety menu that covers everything &ldquo;from creating safety planes to limiting a joint's range of motion&rdquo;; the current PolyScope 5 release is 5.24.<sup><a href="#ref-11">[11]</a></sup> The PolyScope X handbook has matching sections on joint limits, safety planes and tool position restriction,<sup><a href="#ref-12">[12]</a></sup> and its joint-limits page covers joint positions and speeds and notes that a wrist clamping-position protection is enabled by default.<sup><a href="#ref-13">[13]</a></sup> The PolyScope 5 manuals cover setting a software safety password, the configurable safety functions and the software safety configuration.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> From software 5.17, the System settings screens can be protected by the Admin password, and on new robots they are locked by default.<sup><a href="#ref-16">[16]</a></sup> The exact menu steps were not checked for this course, so follow the handbook for your PolyScope version. Your M3 task is:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">1. Password:</span> set a safety password and write it in your project notes (it is only a simulator, so this is fine here; never do this for a real robot).</li>
+                                <li class="article-spec-item"><span class="spec-label">2. One safety plane:</span> add a plane that acts as a virtual wall or table surface, placed so that your normal cycle stays on the allowed side.</li>
+                                <li class="article-spec-item"><span class="spec-label">3. Reduced limits:</span> lower a joint speed or TCP speed limit and record the values before and after.</li>
+                                <li class="article-spec-item"><span class="spec-label">4. Show the reaction:</span> jog or program the robot towards the plane and capture what happens: a stop, a switch to reduced mode, or nothing. Record exactly what you saw.</li>
+                            </ul>
+                            <p>
+                                Record what you observe rather than what you expect. Whether URSim's safety menu behaves exactly like a real controller, for example whether a plane violation triggers the same protective stop, was not confirmed by any source used for this course. If the robot does not react the way you expected, that is a valid and interesting result for your report.
+                            </p>
+                            <p>
+                                <strong>Path B: ABB and SafeMove.</strong> ABB's safety option is SafeMove, but a participant on ABB's forum replied, while saying he was not sure, that &ldquo;SafeMove runs on separate hardware which isn't simulated by the virtual controller&rdquo;.<sup><a href="#ref-17">[17]</a></sup> Forum users describe partial workarounds, such as starting the virtual controller separately to reach the Authenticate menu, or forcing safety I/O signals such as AS1 and AS2 (the dual automatic stop safety input channels monitored by ABB safety controllers) on so the robot can run.<sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-18">[18]</a></sup> These are community reports, not official procedures. The official reference is ABB's manual &ldquo;Functional safety and SafeMove for OmniCore&rdquo; (3HAC066559), which covers the system parameters, safety user grants and how to start Visual SafeMove.<sup><a href="#ref-19">[19]</a></sup> For this project, use a programmed stand-in agreed with your instructor, such as a RAPID world zone or software axis limits, and say clearly in your report that it is a stand-in and not a safety function.
+                            </p>
+                            <p>
+                                <strong>Sim settings do not carry over to a real cell.</strong> A safety configuration in a simulator is not a validated safety function. Speeds that look slow on screen, distances that look comfortable, and planes that stop a virtual robot say nothing about stopping distances, sensor placement or the performance level a real cell needs. A real cell needs a risk assessment and a validated safety design, as described in <a href="robotics-5-4.html">5.4</a>. Treat your M3 work as practice with the tools, not as a design you could install.
+                            </p>
+
+                            <h2 class="article-section-title">08. Testing and verification: M4 FAT-style test sheet</h2>
+                            <p>
+                                A factory acceptance test is a check, attended by the customer at the supplier before shipment, that confirms the equipment matches the contract specification, operates correctly and has its required safety functions.<sup><a href="#ref-20">[20]</a></sup> Industry guidance lists safety items to check such as guarding and pinch points, sharp edges, whether limit switches and E-stops work and are well placed, and the built-in safety components.<sup><a href="#ref-21">[21]</a></sup> FAT checklist templates are usually split into a documentation review, pre-test preparation and inspection steps, with items such as testing alarms, interlocks and emergency stops and checking that calibration and material certificates are available.<sup><a href="#ref-22">[22]</a></sup>
+                            </p>
+                            <p>
+                                Your simulated cell cannot have its guarding inspected, but it can be tested the same way. Every row of your test sheet needs an ID, the requirement it checks, the procedure, the expected result, the actual result, pass or fail, and the file name of the evidence (a screenshot or a log). Start from these rows and add your own from the sequence chart:
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Requirement</th>
+                                        <th scope="col">Procedure (short)</th>
+                                        <th scope="col">Expected result</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>T01</td><td>Cycle runs reliably</td><td>Run N cycles back to back (agree N with your instructor)</td><td>All N complete with no fault</td></tr>
+                                    <tr><td>T02</td><td>Cycle time</td><td>Time ten cycles, divide by ten</td><td>At or below your M0 target</td></tr>
+                                    <tr><td>T03</td><td>No part, no pick</td><td>Start with part-present = 0</td><td>Robot waits at Home and does not move to pick</td></tr>
+                                    <tr><td>T04</td><td>Stop halts motion</td><td>Press E-stop or trigger a protective stop mid-move</td><td>Motion halts; state is shown on the pendant</td></tr>
+                                    <tr><td>T05</td><td>Safety plane</td><td>Jog the TCP towards the plane</td><td>Violation is detected (record what happens)</td></tr>
+                                    <tr><td>T06</td><td>Reduced speed</td><td>Move in the reduced zone or mode</td><td>Speed stays at or below the reduced limit</td></tr>
+                                    <tr><td>T07</td><td>Gripper I/O</td><td>Watch the I/O screen during one cycle</td><td>Output on at pick, off at place, never on during transfer</td></tr>
+                                    <tr><td>T08</td><td>Recovery</td><td>Stop mid-cycle, reset, restart</td><td>Robot returns to Home by a safe path before resuming</td></tr>
+                                    <tr><td>T09</td><td>Backup</td><td>Restore program and installation from your backup in a fresh container or station</td><td>Cell runs unchanged</td></tr>
+                                </tbody>
+                            </table>
+                            <p>
+                                Write the expected result before you run each test. When a test fails, do not edit the row: record the failure, fix the cause, and add a dated retest. An honest failure with a documented fix is worth more than a sheet of unbelievable passes.
+                            </p>
+                            <p>
+                                Keep the limits of simulation in mind when you write up T04 to T06. A cell can pass a demonstration in the shop and still fail on site, because parameters, networks and interfaces differ there; integrators therefore treat the robot, controls, safety functions and plant interfaces as one system with documented acceptance criteria.<sup><a href="#ref-23">[23]</a></sup> Your test sheet is a first version of those criteria, not a substitute for a real FAT and site acceptance test.
+                            </p>
+
+                            <h2 class="article-section-title">09. Common problems</h2>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Programs vanish after restarting URSim:</span> the container was started with <code>--rm</code> and no volume mount. Use the <code>-v</code> options from section 05 and save into <code>/ursim/programs</code>.<sup><a href="#ref-6">[6]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Robot never leaves Home:</span> the program is waiting for the part-present input. Toggle it on in the I/O screen; if that does not help, check that the program reads the same input number your I/O list names.</li>
+                                <li class="article-spec-item"><span class="spec-label">Gripper closes while the robot is still moving:</span> the grip point is blended. Make it an exact stop (see <a href="robotics-2-6.html">2.6</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">Robot stops for no clear reason after M3:</span> your safety plane or reduced limit also cuts through the normal path. Move the plane or re-teach the path, and record the change.</li>
+                                <li class="article-spec-item"><span class="spec-label">RobotStudio features disappear partway through:</span> the Premium trial has ended and the software reverted to Basic mode.<sup><a href="#ref-7">[7]</a></sup> Ask about an Education license early.</li>
+                                <li class="article-spec-item"><span class="spec-label">ABB robot will not run after adding SafeMove:</span> the virtual controller does not simulate SafeMove.<sup><a href="#ref-17">[17]</a></sup> Remove it and use the programmed stand-in described in section 07.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">10. Grading rubric</h2>
+                            <p>
+                                The rubric uses four levels with no neutral middle, so a grader has to decide whether each expectation was met.<sup><a href="#ref-2">[2]</a></sup> It has only five rows to stay simple enough to use.<sup><a href="#ref-3">[3]</a></sup> In team projects, the reflection row and the contribution statements are graded per person; the other rows are graded for the team.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Criterion</th>
+                                        <th scope="col">1 Not acceptable</th>
+                                        <th scope="col">2 Developing</th>
+                                        <th scope="col">3 Proficient</th>
+                                        <th scope="col">4 Exemplary</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Functionality</strong></td>
+                                        <td>Cycle does not complete.</td>
+                                        <td>Cycle completes but ignores I/O or fails often.</td>
+                                        <td>Cycle runs reliably and waits for the part-present input.</td>
+                                        <td>As 3, plus a working error path and safe recovery to Home.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Test evidence</strong></td>
+                                        <td>No test sheet.</td>
+                                        <td>Some tests, missing expected results or evidence.</td>
+                                        <td>All core rows run with expected result written first and evidence filed.</td>
+                                        <td>As 3, plus added rows from the sequence chart and documented retests after fixes.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Safety</strong></td>
+                                        <td>No safety configuration.</td>
+                                        <td>Configuration set, but not tested.</td>
+                                        <td>Plane and reduced limit set and tested, with observed behaviour recorded.</td>
+                                        <td>As 3, plus a clear statement of what the simulation cannot prove for a real cell.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Code and documentation</strong></td>
+                                        <td>Program missing or unreadable.</td>
+                                        <td>Program runs but has no structure or I/O list.</td>
+                                        <td>Routines, named signals, I/O list and sequence chart that match the program.</td>
+                                        <td>As 3, plus a backup that restores cleanly (T09) and a layout another student could follow.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Reflection</strong></td>
+                                        <td>Missing.</td>
+                                        <td>Describes what was done, not what was learned.</td>
+                                        <td>Explains one failure, how it was diagnosed and what changed.</td>
+                                        <td>As 3, plus a specific plan for what would change in a real cell.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">11. Reflection questions and stretch goals</h2>
+                            <p>
+                                Reflection works best in two sizes: brief and frequent, and more substantial at key milestones.<sup><a href="#ref-1">[1]</a></sup> After M1, M2 and M3, write three or four sentences on what went wrong first and how you found it. At M4, answer these questions in about a page:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">1. First failure:</span> What failed first, how did you diagnose it, and how long did it take?</li>
+                                <li class="article-spec-item"><span class="spec-label">2. Plan versus reality:</span> Which part of your M0 sequence chart changed most, and why?</li>
+                                <li class="article-spec-item"><span class="spec-label">3. Evidence:</span> Which test result would you trust least if someone else had run it, and how would you make it more convincing?</li>
+                                <li class="article-spec-item"><span class="spec-label">4. Sim to real:</span> List three things that would have to change before this cell could run with a real robot and real people nearby. Use the ideas in <a href="robotics-5-4.html">5.4</a>.</li>
+                                <li class="article-spec-item"><span class="spec-label">5. Next time:</span> What would you do differently if you started again tomorrow?</li>
+                            </ul>
+                            <p>
+                                <strong>Stretch goals.</strong> Choose one if you finish early. Each one should add at least one row to your test sheet.
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">PLC handshake:</span> add a &ldquo;cell ready&rdquo; output and a &ldquo;start&rdquo; input that a PLC would use, and write the handshake into your sequence chart (see <a href="robotics-1-7.html">1.7</a>).</li>
+                                <li class="article-spec-item"><span class="spec-label">Second part type:</span> use a second input to choose between two place positions.</li>
+                                <li class="article-spec-item"><span class="spec-label">Cycle time study:</span> change blend radii and approach heights and plot cycle time against the change, keeping exact stops at the grip.</li>
+                                <li class="article-spec-item"><span class="spec-label">Control from ROS 2:</span> start URSim with <code>start_ursim.sh</code>, which preinstalls the External Control URCap, and drive the robot from ROS 2.<sup><a href="#ref-5">[5]</a></sup> This leads straight into <a href="robotics-10-2.html">10.2</a>.</li>
+                            </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Before you start: choose Path A or Path B, start the simulator once, and take a screenshot of the robot at its home position. If you choose RobotStudio, write down which license you are on and when it expires.</li>
+                                    <li>Create the project folder with <code>plan/</code>, <code>program/</code> and <code>evidence/</code>, and save the screenshot into <code>evidence/</code>.</li>
+                                    <li>Draft your M0 I/O list (at least a gripper output and a part-present input) and a sequence chart of about ten steps, each with its start condition.</li>
+                                    <li>Turn two of your start conditions into test rows with an ID, procedure and expected result. You now have the first lines of your FAT sheet.</li>
+                                </ol>
+                            </div>
+
+                            <h2 class="article-section-title">12. References</h2>
+                            <p class="references-note">Source check (October 2026): 20 of 23 references match their source text; 1 supports only part of its sentence; 2 could not be opened (paywall, book or blocked site). How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">Virginia Tech Center for Excellence in Teaching and Learning, &ldquo;Assessing and Reflecting on Project Work,&rdquo; Project-Based Learning teaching resources, accessed October 22, 2026. <a href="https://teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html" target="_blank" rel="noopener noreferrer">teaching.vt.edu/teachingresources/project-based-learning/assessing-and-reflecting-on-project-work.html</a>.</li>
+                                <li id="ref-2">American Society for Engineering Education (ASEE), &ldquo;Successful use of rubrics to assess student performance in capstone projects,&rdquo; conference paper PDF (search summary; not opened), accessed October 21, 2026. <a href="https://strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-projects.pdf" target="_blank" rel="noopener noreferrer">strategy.asee.org/successful-use-of-rubrics-to-assess-student-performance-in-capstone-projects.pdf</a>.</li>
+                                <li id="ref-3">J. Edmondson and R. A. Gupta (North Carolina State University), &ldquo;Work in Progress: Project Health as a Capstone Rubric Element,&rdquo; ASEE Annual Conference, 2025, paper 48955, accessed October 22, 2026. <a href="https://nemo.asee.org/public/conferences/365/papers/48955/download" target="_blank" rel="noopener noreferrer">nemo.asee.org/public/conferences/365/papers/48955/download</a>.</li>
+                                <li id="ref-4">T. Ericson and S. Kiefer (York College of Pennsylvania), &ldquo;Capstone Design Assessment and Student Motivation,&rdquo; ASEE PEER paper 49669, accessed October 22, 2026. <a href="https://peer.asee.org/49669.pdf" target="_blank" rel="noopener noreferrer">peer.asee.org/49669.pdf</a>.</li>
+                                <li id="ref-5">Universal Robots, &ldquo;simulation.rst&rdquo; (Usage: simulation), Universal_Robots_ROS2_Driver documentation, GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/simulation.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/ur_robot_driver/doc/usage/simulation.rst</a>.</li>
+                                <li id="ref-6">Universal Robots, &ldquo;ursim_docker.rst&rdquo; (URSim Docker setup), Universal_Robots_Client_Library documentation, GitHub, accessed October 21, 2026. <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/setup/ursim_docker.rst" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/doc/setup/ursim_docker.rst</a>.</li>
+                                <li id="ref-7">ABB Robotics, &ldquo;RobotStudio Subscription Model,&rdquo; ABB Library PDF, around 2012 (terms may have changed), accessed October 22, 2026. <a href="https://library.e.abb.com/public/797ae9069bffa5efc1257b130057a6a2/RobotStudioSubscriptionModel.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/797ae9069bffa5efc1257b130057a6a2/RobotStudioSubscriptionModel.pdf</a>.</li>
+                                <li id="ref-8">ABB Robotics Tech Community, &ldquo;RobotStudio 5.11 versions,&rdquo; forum thread, accessed October 22, 2026. <a href="https://tech-community.robotics.abb.com/t/robotstudio-5-11-versions/2189" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/robotstudio-5-11-versions/2189</a>.</li>
+                                <li id="ref-9">ABB Robotics, &ldquo;RobotStudio,&rdquo; Robotics One software page (search summary; not opened), accessed October 21, 2026. <a href="https://one.robotics.abb.com/en/software/p/RobotStudio" target="_blank" rel="noopener noreferrer">one.robotics.abb.com/en/software/p/RobotStudio</a>.</li>
+                                <li id="ref-10">ABB Robotics, &ldquo;RobotStudio 2026.2 Release Notes,&rdquo; ABB Library PDF, accessed October 22, 2026. <a href="https://library.e.abb.com/public/db6ae87c1cf9468bba3faa01b094fb3b/RobotStudio%202026.2%20Release%20Notes.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/db6ae87c1cf9468bba3faa01b094fb3b/RobotStudio 2026.2 Release Notes.pdf</a>.</li>
+                                <li id="ref-11">Universal Robots, &ldquo;PolyScope 5,&rdquo; product page, accessed October 22, 2026. <a href="https://www.universal-robots.com/products/polyscope-5" target="_blank" rel="noopener noreferrer">universal-robots.com/products/polyscope-5</a>.</li>
+                                <li id="ref-12">Universal Robots, <em>PolyScope X Software Handbook</em> (PDF, latest version), sections 10.8.3 Joint Limits and 10.8.6 Tool Position Restriction, accessed October 22, 2026. <a href="https://www.universal-robots.com/manuals/latest/en/pdf/polyx/sw-handbook/" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/latest/en/pdf/polyx/sw-handbook</a>.</li>
+                                <li id="ref-13">Universal Robots, &ldquo;Joint Limits,&rdquo; PolyScope X user manual, UR5e, software 10.12, accessed October 22, 2026. <a href="https://www.universal-robots.com/manuals/EN/HTML/SW10_12/Content/prod-usr-man/complianceUR5e/PolyX_SW/psx_joint_limits.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW10_12/Content/prod-usr-man/complianceUR5e/PolyX_SW/psx_joint_limits.htm</a>.</li>
+                                <li id="ref-14">Universal Robots, PolyScope 5 user manual, UR3e, latest edition, accessed October 22, 2026. <a href="https://www.universal-robots.com/manuals/latest/en/pdf/ps5/ur3e/" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/latest/en/pdf/ps5/ur3e</a>.</li>
+                                <li id="ref-15">Universal Robots, &ldquo;e-Series Software Handbook,&rdquo; PolyScope 5, software 5.24, PDF, accessed October 22, 2026. <a href="https://www.universal-robots.com/manuals/EN/PDF/SW5_24/Poly5_handbook_online/e-Series_Software_Handbook_en_Global.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/SW5_24/Poly5_handbook_online/e-Series_Software_Handbook_en_Global.pdf</a>.</li>
+                                <li id="ref-16">Universal Robots, &ldquo;Release note software version 5.17.xx,&rdquo; support article, accessed October 22, 2026. <a href="https://www.universal-robots.com/articles/ur/release-notes/release-note-software-version-517xx/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/release-notes/release-note-software-version-517xx</a>.</li>
+                                <li id="ref-17">ABB Robotics Tech Community, &ldquo;Is it possible to get safemove to work in RobotStudio?,&rdquo; forum thread (community claims), accessed October 22, 2026. <a href="https://tech-community.robotics.abb.com/t/is-it-possible-to-get-safemove-to-work-in-robotstudio/6977" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/is-it-possible-to-get-safemove-to-work-in-robotstudio/6977</a>.</li>
+                                <li id="ref-18">ABB Robotics Tech Community, &ldquo;Simulate Safemove Stop Configurations,&rdquo; forum thread (community claims), accessed October 22, 2026. <a href="https://tech-community.robotics.abb.com/t/simulate-safemove-stop-configurations/9568" target="_blank" rel="noopener noreferrer">tech-community.robotics.abb.com/t/simulate-safemove-stop-configurations/9568</a>.</li>
+                                <li id="ref-19">ABB Robotics, &ldquo;Functional safety and SafeMove for OmniCore,&rdquo; application manual 3HAC066559, ABB Library PDF (search summary; not opened), accessed October 21, 2026. <a href="https://library.e.abb.com/public/c9ec98da197e4a61b6265af91ec5091c/3HAC066559%20AM%20Functional%20safety%20and%20SafeMove%20for%20OmniCore-en.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/public/c9ec98da197e4a61b6265af91ec5091c/3HAC066559 AM Functional safety and SafeMove for OmniCore-en.pdf</a>.</li>
+                                <li id="ref-20">Huarong, &ldquo;FAT and SAT guide&rdquo; (injection molding machines), company news, 2026, accessed October 22, 2026. <a href="https://www.huarong.com.tw/page/news/en/company_news/detail/180/" target="_blank" rel="noopener noreferrer">huarong.com.tw/page/news/en/company_news/detail/180</a>.</li>
+                                <li id="ref-21">PMMI PROSOURCE, &ldquo;Roadmap for a successful factory acceptance test,&rdquo; article (search summary; not opened), accessed October 21, 2026. <a href="https://www.prosource.org/article/roadmap-for-a-successful-factory-acceptance-test" target="_blank" rel="noopener noreferrer">prosource.org/article/roadmap-for-a-successful-factory-acceptance-test</a>.</li>
+                                <li id="ref-22">Mitti (by SafetyCulture), &ldquo;Free Factory Acceptance Test (FAT) Checklists,&rdquo; checklist article, 2026 (formerly at safetyculture.com/checklists/factory-acceptance-test), accessed October 22, 2026. <a href="https://mitti.com/checklists/quality/factory-acceptance-test" target="_blank" rel="noopener noreferrer">mitti.com/checklists/quality/factory-acceptance-test</a>.</li>
+                                <li id="ref-23">Robotics &amp; Automation News, &ldquo;How certified systems integrators reduce commissioning risk in robotic production cells,&rdquo; August 3, 2026, accessed October 22, 2026. <a href="https://roboticsandautomationnews.com/2026/08/03/how-certified-systems-integrators-reduce-commissioning-risk-in-robotic-production-cells/103840/" target="_blank" rel="noopener noreferrer">roboticsandautomationnews.com/2026/08/03/how-certified-systems-integrators-reduce-commissioning-risk-in-robotic-production-cells/103840</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-capstone.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">Chapter 10 overview</span>
+                                </a>
+                                <a href="robotics-10-2.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</span>
+                                </a>
+                            </div>
+
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>
