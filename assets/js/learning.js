@@ -353,7 +353,7 @@
 
 	/* ---------- Quiz page ---------- */
 
-	// Compare lesson ids like "6-2" and "6-10" by number, so 5.10 comes after 6.9
+	// Compare lesson ids like "6-2" and "6-10" by number, so 6.10 comes after 6.9
 	function lessonOrder(a, b) {
 		var x = a.split('-').map(Number), y = b.split('-').map(Number);
 		return x[0] - y[0] || x[1] - y[1];
