@@ -64,3 +64,6 @@ Short log of agent-made changes so new sessions can skip re-exploring. Newest fi
 - Each lesson's References note now shows a generated source-check line (e.g. "Source check (October 2026): 26 of 31 references match their source text; 1 supports only part of its sentence; 4 could not be opened"). `site_sync.py` builds it from `docs/sources.json`, so `site_sync.py --check` fails in CI when the counts are stale; run `site_sync.py` after any `sources.py import`.
 - Full link sweep (`sources.py links --all`, 2026-10-27): one link died since 10-22, the Robotiq eLearning CNC-door PDF (1-7 ref 31, never archived). Now cites Robotiq's Machine Tending Playbook; sentence reworded to what it states ("usually slow" dropped).
 - Windows encoding fix: `site_sync.load_course()`, `check_site.py` and `verify_notes.py` now decode subprocess output as UTF-8. On Windows the default code page garbled `docs/lessons-index.md` (e.g. "ÄŒapek" for "Čapek"), which failed `build_index.py --check`; index regenerated.
+
+## Branch gemini/ch7-and-reviews
+- Step 9 (quiz review, `docs/handoff/step-9.md`): Gemini reported 0 problems in 133 questions; Claude's word-overlap check flagged 4#2, which overstated lesson 4-1 ("vast majority of fatal accidents" vs the lesson's "many robot accidents"). Question and answer reworded to the lesson's wording; course-data version bumped to 2026-10c.
