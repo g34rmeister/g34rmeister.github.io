@@ -9,7 +9,8 @@ Generated (only these regions are touched; everything else in a page is left alo
   .github/workflows/site-hygiene.yml  the (chapter, lesson count) tuple in the page-set check
   robotics.html                       lesson rows in each chapter's feed
   chapter pages                       "Articles in this chapter" list and footer nav
-  lesson pages                        prev/next footer nav
+  lesson pages                        prev/next footer nav, source-check line under References
+                                      (counts from docs/sources.json)
   every robotics-* page               navbar and drawer links
 
 Usage (from the repo root):
@@ -38,7 +39,7 @@ def load_course():
     js = ("global.window={};require(process.argv[1]);"
           "process.stdout.write(JSON.stringify(window.RISE_COURSE.chapters))")
     out = subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js')],
-                         capture_output=True, check=True, text=True).stdout
+                         capture_output=True, check=True, text=True, encoding="utf-8").stdout
     chapters = json.loads(out)
     manifest = json.loads((ROOT / 'scripts/site_manifest.json').read_text(encoding='utf-8'))['chapters']
     for ch in chapters:
@@ -99,7 +100,38 @@ def sync_navbars(text, active, where):
     return replace_once(text, r'<div class="thesis-drawer-links">(.*?)</div>', nav_links(CHAPTERS, active, True), where)
 
 
+def load_source_status():
+    """{lesson: (counts by status, latest check date)} from docs/sources.json, counting each ref once."""
+    sys.path.insert(0, str(ROOT / 'scripts'))
+    import sources
+    reg = sources.load()
+    latest = {}
+    for entry in reg['sources'].values():
+        for lesson, check in entry.get('checks', {}).items():
+            latest[lesson] = max(latest.get(lesson, ''), check.get('checked', ''))
+    return {lesson: (counts, latest.get(lesson, '')) for lesson, counts in sources.lesson_status(reg).items()}
+
+
+def references_note(lesson_id):
+    counts, checked = SOURCE_STATUS.get(lesson_id, ({}, ''))
+    total = sum(counts.values())
+    match = counts.get('verified', 0) + counts.get('fixed', 0)
+    parts = [f'{match} of {total} references match their source text']
+    if counts.get('partial'):
+        n = counts['partial']
+        parts.append(f'{n} supports only part of its sentence' if n == 1 else f'{n} support only part of their sentence')
+    if counts.get('unreachable'):
+        parts.append(f'{counts["unreachable"]} could not be opened (paywall, book or blocked site)')
+    problems = sum(counts.get(s, 0) for s in ('dead', 'mismatch', 'unchecked'))
+    if problems:
+        parts.append(f'{problems} still need fixing')
+    when = date.fromisoformat(checked).strftime('%B %Y') if checked else 'not yet'
+    return (f'Source check ({when}): ' + '; '.join(parts) + '. How these sources were chosen and checked: '
+            '<a href="robotics-method.html">How this course was made</a>.')
+
+
 def lesson_page(text, ch, i, where):
+    text = replace_once(text, r'<p class="references-note">(.*?)</p>', references_note(ch['lessons'][i]['id']), where)
     lessons = ch['lessons']
     if i == 0:
         left = (ch['url'], '&lt;- Previous', f'Chapter {ch["id"]} overview')
@@ -202,6 +234,7 @@ def main(check):
 
 
 CHAPTERS = load_course()
+SOURCE_STATUS = load_source_status()
 
 if __name__ == '__main__':
     sys.exit(main('--check' in sys.argv))

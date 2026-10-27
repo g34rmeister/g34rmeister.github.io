@@ -19,14 +19,14 @@ Static GitHub Pages site (no build step) for Gerald's honors thesis, **RISE Bot 
 
 ## Agent tools (read these instead of the pages)
 - `docs/lessons-index.md`: every lesson's objectives, key terms, sections, ref count and source-check status. Start here to find where a topic lives.
-- `docs/sources.json`: every cited source with link status and per-lesson claim checks. `python3 scripts/sources.py report 4-4` lists one lesson's unverified or wrong refs. After checking claims, record them (`sources.py import FILE LESSON`) so nobody re-checks.
+- `docs/sources.json`: every cited source with link status and per-lesson claim checks. `python3 scripts/sources.py report 4-4` lists one lesson's unverified or wrong refs. After checking claims, record them (`sources.py import FILE LESSON`) so nobody re-checks. CI (`sources.py check`) fails if any cited ref has no recorded check, so every new citation must be checked before it is pushed.
 - `python3 scripts/ref_claims.py 4-4 [N ...]`: each ref with the exact text that cites it.
 - `python3 scripts/fetch_text.py URL --grep word`: a source as plain text (handles PDFs, github.com via raw, bot walls via Chromium).
 
 ## Checks
 Two workflows run on PRs and pushes to main. `site-hygiene.yml`: internal links, sitemap/page set, shared head/footer, browser layout tests. `site-sync.yml`: `site_sync.py --check`, `check_site.py` (citation numbering, anchors, assets, course data and glossary), `sources.py check`, `build_index.py --check`. Run them all locally before pushing:
 `python3 scripts/site_sync.py --check && python3 scripts/check_site.py && python3 scripts/sources.py check && python3 scripts/build_index.py --check`
-After changing a lesson or `sources.json`, run `python3 scripts/sources.py sync && python3 scripts/build_index.py`.
+After changing a lesson or `sources.json`, run `python3 scripts/sources.py sync && python3 scripts/build_index.py && python3 scripts/site_sync.py` (each lesson shows a source-check line generated from `sources.json`).
 
 ## Agentic workflow
 Bulk lesson drafting is delegated to Gemini via Antigravity and reviewed by Claude; see `docs/agentic-workflow.md` before starting multi-lesson work.

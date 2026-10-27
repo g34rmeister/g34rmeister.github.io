@@ -100,7 +100,7 @@ def check_course(lesson_pages):
           "process.stdout.write(JSON.stringify({c: window.RISE_COURSE, g: Object.keys(window.RISE_GLOSSARY)}))")
     data = json.loads(subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js'),
                                       str(ROOT / 'assets/js/glossary-data.js')],
-                                     capture_output=True, check=True, text=True).stdout)
+                                     capture_output=True, check=True, text=True, encoding="utf-8").stdout)
     course, glossary = data['c'], set(data['g'])
     lessons = {l['id']: l for ch in course['chapters'] for l in ch['lessons']}
     on_disk = {p.stem.replace('robotics-', '') for p in lesson_pages}

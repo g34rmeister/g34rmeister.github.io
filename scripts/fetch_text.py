@@ -5,6 +5,7 @@
 - github.com pages are read from raw.githubusercontent.com (agent sandboxes block github.com).
 - PDFs go through pdftotext.
 - Pages behind a bot challenge ("Just a moment...") are retried in headless Chromium (Playwright).
+- If that is still empty, or the page is JS-rendered, it is read via Jina Reader (r.jina.ai).
 - --grep prints only the paragraphs that contain any of the words (case-insensitive), so you can
   check a number or a name without reading the whole page.
 """
@@ -18,6 +19,8 @@ import tempfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from sources import UA, raw_github  # noqa: E402
+
+MIN_TEXT = 200  # fewer characters than this means the page did not really render
 
 PW_SCRIPT = r"""
 const path = require('path');
@@ -59,6 +62,12 @@ def browser_text(url):
     return out.stdout.decode('utf-8', 'replace')
 
 
+def jina_text(url):
+    """Last resort for JS-rendered or bot-walled pages: Jina Reader (r.jina.ai) renders them server-side."""
+    _, _, body = curl_bytes('https://r.jina.ai/' + url)
+    return body.decode('utf-8', 'replace')
+
+
 def get_text(url):
     if url.startswith('https://github.com/'):
         url = raw_github(url) or url
@@ -73,10 +82,16 @@ def get_text(url):
         return f'[HTTP {code}, PDF]\n{text}'
     html = body.decode('utf-8', 'replace')
     if code in (403, 429, 503, 0) or 'Just a moment...' in html[:2000]:
-        return f'[HTTP {code} via curl; retried in Chromium]\n{browser_text(url)}'
+        text = browser_text(url)
+        if len(text) > MIN_TEXT and 'PLAYWRIGHT ERROR' not in text:
+            return f'[HTTP {code} via curl; retried in Chromium]\n{text}'
+        return f'[HTTP {code} via curl; Chromium empty; read via Jina Reader]\n{jina_text(url)}'
     if 'html' not in ctype:
         return f'[HTTP {code}, {ctype}]\n{html}'
-    return f'[HTTP {code}]\n{html_to_text(html)}'
+    text = html_to_text(html)
+    if len(text) < MIN_TEXT:
+        return f'[HTTP {code}, page empty (JS-rendered); read via Jina Reader]\n{jina_text(url)}'
+    return f'[HTTP {code}]\n{text}'
 
 
 def main(argv):

@@ -16,7 +16,7 @@ Usage (from the repo root):
   python3 scripts/sources.py links [--all]      # fetch new (or all) URLs, record HTTP status
   python3 scripts/sources.py import FILE.json LESSON   # merge a claim-check result file
   python3 scripts/sources.py report [LESSON]    # status counts per lesson, or one lesson's problems
-  python3 scripts/sources.py check              # CI: registry covers every cited source
+  python3 scripts/sources.py check              # CI: registry covers every cited source and every ref has a check
 
 Check status values:
   verified     the source was opened and supports the cited text
@@ -215,7 +215,14 @@ def check(reg):
         for url in sorted(missing):
             print(f'  {url}')
         return 1
-    print(f'OK: docs/sources.json covers all {len(reg["sources"])} cited sources.')
+    unchecked = sorted(ref for entry in reg['sources'].values() for ref in entry['citedBy']
+                       if ref.split('#')[0] not in entry.get('checks', {}))
+    if unchecked:
+        print('These refs have no claim check. Check them and record the result (sources.py import FILE LESSON):')
+        for ref in unchecked:
+            print(f'  {ref}')
+        return 1
+    print(f'OK: docs/sources.json covers all {len(reg["sources"])} cited sources, and every ref has a claim check.')
     return 0
 
 
