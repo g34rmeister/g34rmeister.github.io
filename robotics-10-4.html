@@ -61,6 +61,7 @@
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
                         <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
                         <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
                         <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
                         <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
                         <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
@@ -103,6 +104,7 @@
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
                     <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a>
                     <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
                     <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
@@ -151,7 +153,7 @@
                                 Everything runs on your own computer. The robot and the cell I/O are the stand-in servers from the labs in <a href="robotics-8-3.html">8.3</a> and <a href="robotics-9-6.html">9.6</a>, and the camera is the test image publisher from <a href="robotics-7-6.html">7.6</a>. On a real cell you would point the same program at the robot's IP address.
                             </p>
                             <p>
-                                It is a monitor, not a controller. It reads and reports, and it never clears a stop on its own: UR's service manual says robot stops must never be acknowledged and reset automatically; resuming must be a deliberate action by a person.<sup><a href="#ref-4">[4]</a></sup> Safety functions stay on the safety-rated paths from <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a> and <a href="robotics-8-4.html">8.4 Safety over the Network</a>.
+                                It is a monitor, not a controller. It reads and reports, and it never clears a stop on its own: UR's service manual says robot stops must never be acknowledged and reset automatically; resuming must be a deliberate action by a person.<sup><a href="#ref-1">[1]</a></sup> Safety functions stay on the safety-rated paths from <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a> and <a href="robotics-8-4.html">8.4 Safety over the Network</a>.
                             </p>
 
                             <h2 class="article-section-title">02. Prerequisites</h2>
@@ -167,15 +169,15 @@
                             <ul class="article-spec-list">
                                 <li>ROS 2 as installed in <a href="robotics-4-3.html">4.3</a>, Python 3, and <code>pymodbus==3.16.1</code>.</li>
                                 <li>The stand-in servers <code>fake_ur_server.py</code> (8.3) and <code>fake_dashboard_server.py</code> (9.6).</li>
-                                <li>The <code>image_tools</code> demo: with <code>burger_mode</code> turned on, <code>cam2image</code> publishes a generated test image instead of a camera feed.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li>The <code>image_tools</code> demo: with <code>burger_mode</code> turned on, <code>cam2image</code> publishes a generated test image instead of a camera feed.<sup><a href="#ref-2">[2]</a></sup></li>
                                 <li>A GitHub account.</li>
                             </ul>
 
                             <h2 class="article-section-title">04. Milestones and what to hand in</h2>
                             <ol class="article-spec-list">
-                                <li><span class="spec-label">M0 Plan and repository:</span> a public repository with a README that says what the monitor does and how to run it, and a LICENSE file. ROS 2's developer guide asks every package to have a LICENSE file, typically Apache 2.0, and a README with a description, usage examples, and build and test instructions.<sup><a href="#ref-5">[5]</a></sup> Hand in: the repository link.</li>
-                                <li><span class="spec-label">M1 Robot state:</span> a ROS 2 node that connects to the Dashboard Server stand-in on port 29999, asks <code>robotmode</code> and <code>safetystatus</code> once a second, and publishes the answers on a topic.<sup><a href="#ref-1">[1]</a></sup> Hand in: <code>ros2 topic echo</code> output while you trigger and clear the stand-in's protective stop by hand.</li>
-                                <li><span class="spec-label">M2 Cell handshake:</span> read and write the handshake signals on the Modbus stand-in. Put up to 16 on/off signals in one general-purpose register (UR's general-purpose registers are 128 to 255).<sup><a href="#ref-2">[2]</a></sup> Hand in: a table of which bit means what, and a short run log.</li>
+                                <li><span class="spec-label">M0 Plan and repository:</span> a public repository with a README that says what the monitor does and how to run it, and a LICENSE file. ROS 2's developer guide asks every package to have a LICENSE file, typically Apache 2.0, and a README with a description, usage examples, and build and test instructions.<sup><a href="#ref-3">[3]</a></sup> Hand in: the repository link.</li>
+                                <li><span class="spec-label">M1 Robot state:</span> a ROS 2 node that connects to the Dashboard Server stand-in on port 29999, asks <code>robotmode</code> and <code>safetystatus</code> once a second, and publishes the answers on a topic.<sup><a href="#ref-4">[4]</a></sup> Hand in: <code>ros2 topic echo</code> output while you trigger and clear the stand-in's protective stop by hand.</li>
+                                <li><span class="spec-label">M2 Cell handshake:</span> read and write the handshake signals on the Modbus stand-in. Put up to 16 on/off signals in one general-purpose register (UR's general-purpose registers are 128 to 255).<sup><a href="#ref-5">[5]</a></sup> Hand in: a table of which bit means what, and a short run log.</li>
                                 <li><span class="spec-label">M3 Camera check:</span> subscribe to the <code>cam2image</code> images and publish a simple "part present" flag from a threshold or contour count, as in 7.3 and 7.6. Hand in: the threshold you chose and why.</li>
                                 <li><span class="spec-label">M4 Maintenance log:</span> write every state change to a log file with a time stamp, and raise a warning, not a reset, when protective stops repeat. Hand in: a log excerpt and the checklist from <a href="robotics-9-3.html">9.3</a> you would follow next.</li>
                                 <li><span class="spec-label">M5 Open it up:</span> add a CONTRIBUTING file, open one issue that a newcomer could take, and open one real pull request: to your classmates' monitor, to robOSStics, or to a robotics project from Chapter 3. Pull requests do not have to be finished; you can open one early as a draft to get feedback.<sup><a href="#ref-6">[6]</a></sup> Hand in: the links.</li>
@@ -202,11 +204,11 @@
                             <h2 class="article-section-title">08. References</h2>
                             <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
                             <ol class="article-spec-list">
-                                <li id="ref-1">Universal Robots, &ldquo;Dashboard Server Remote Control Interface e-Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm</a>.</li>
-                                <li id="ref-2">Universal Robots, &ldquo;Modbus server bit access.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access</a>.</li>
-                                <li id="ref-3">ROS 2 demos, &ldquo;image_tools README.&rdquo; <a href="https://github.com/ros2/demos/blob/rolling/image_tools/README.md" target="_blank" rel="noopener noreferrer">github.com/ros2/demos/blob/rolling/image_tools/README.md</a>.</li>
-                                <li id="ref-4">Universal Robots, &ldquo;Service Handbook UR Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
-                                <li id="ref-5">ROS 2 Documentation, &ldquo;ROS 2 developer guide.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation (Developer-Guide.rst)</a>.</li>
+                                <li id="ref-1">Universal Robots, &ldquo;Service Handbook UR Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
+                                <li id="ref-2">ROS 2 demos, &ldquo;image_tools README.&rdquo; <a href="https://github.com/ros2/demos/blob/rolling/image_tools/README.md" target="_blank" rel="noopener noreferrer">github.com/ros2/demos/blob/rolling/image_tools/README.md</a>.</li>
+                                <li id="ref-3">ROS 2 Documentation, &ldquo;ROS 2 developer guide.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation (Developer-Guide.rst)</a>.</li>
+                                <li id="ref-4">Universal Robots, &ldquo;Dashboard Server Remote Control Interface e-Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm</a>.</li>
+                                <li id="ref-5">Universal Robots, &ldquo;Modbus server bit access.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access</a>.</li>
                                 <li id="ref-6">Open Source Guides, &ldquo;How to Contribute to Open Source.&rdquo; <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">opensource.guide/how-to-contribute</a>.</li>
                             </ol>
 

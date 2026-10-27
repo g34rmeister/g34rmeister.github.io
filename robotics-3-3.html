@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 3.3 How Robotics Projects Work
+-->
+<html lang="en">
+    <head>
+        <title>3.3 How Robotics Projects Work — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How major open-source robotics projects operate: ROS 2 release branching, stability rules, DCO sign-offs, build farm CI, and contribution norms across MoveIt 2, ros2_control, Gazebo, and Nav2." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-3.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.3 How Robotics Projects Work — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="How major open-source robotics projects operate: ROS 2 release branching, stability rules, DCO sign-offs, build farm CI, and contribution norms across MoveIt 2, ros2_control, Gazebo, and Nav2." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-3.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.3 How Robotics Projects Work, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.3 How Robotics Projects Work — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="How major open-source robotics projects operate: ROS 2 release branching, stability rules, DCO sign-offs, build farm CI, and contribution norms across MoveIt 2, ros2_control, Gazebo, and Nav2." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-oss.html">Chapter 3 &middot; Open Source</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">3.3 How Robotics Projects Work</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. ROS 2 distributions and release branches</h2>
+                        <p>
+                            In <a href="robotics-2-4.html">2.4 Intro to ROS (Vendor-Agnostic)</a>, we were introduced to ROS. The ROS chapter (Chapter 4) comes right after this one; <a href="robotics-4-1.html">4.1 Definition and Introduction</a> defines what ROS is. Because robots interact with physical machinery in factory and lab environments, unexpected software changes can cause physical damage or cell downtime. The open-source robotics ecosystem uses structured branching policies to maintain stability.
+                        </p>
+                        <p>
+                            In ROS, software is released in named distributions. A distribution is a versioned collection of ROS packages released together. In ROS 2, packages maintain separate branches in their source repository for each ROS distribution they target, named after that distribution.<sup><a href="#ref-1">[1]</a></sup> Maintaining distribution-specific branches allows developers to install and target a specific ROS release without receiving untested code from newer versions.
+                        </p>
+                        <p>
+                            Once a distribution is published, its interfaces remain fixed. Major version increments and breaking API changes are prohibited within an already released ROS distribution.<sup><a href="#ref-1">[1]</a></sup> An Application Programming Interface (API) is the contract of functions, classes, and message definitions that other programs use to communicate with a library. A breaking API change alters these interfaces and causes existing user code to fail to build or run. Prohibiting breaking changes ensures that a running robot system does not fail after updating packages.
+                        </p>
+                        <p>
+                            Active development continues on a separate branch. In ROS 2 development, features or fixes must be accepted and merged into the rolling branch before opening a pull request to backport them to older releases.<sup><a href="#ref-1">[1]</a></sup> The rolling branch is the unreleased, continuously updated version of ROS 2 where new capabilities land first. Backporting means copying a fix or non-breaking feature that was already merged into the rolling branch back into an older, supported distribution branch. This rule guarantees that improvements are validated in current development before being backported.
+                        </p>
+
+                        <h2 class="article-section-title">02. Package quality categories and the build farm</h2>
+                        <p>
+                            Robotics software must maintain high standards because programming faults can cause physical damage. To set clear expectations, ROS 2 packages ascribe to quality categories defined in REP 2004, which sets differentiated standards for versioning, testing, and documentation.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            A ROS Enhancement Proposal (REP) is a design document describing community processes, standards, and conventions. REP 2004 classifies packages into quality levels based on test coverage, documentation completeness, and interface policies.
+                        </p>
+                        <p>
+                            Testing across different operating systems and hardware platforms requires continuous integration (CI). The ROS 2 build farm at ci.ros2.org runs nightly jobs that build code and execute automated tests across platforms and architectures.<sup><a href="#ref-1">[1]</a></sup> A build farm is a network of automated servers that compile code, execute tests, and create binary packages. Nightly testing catches regressions before changes reach users.
+                        </p>
+
+                        <h2 class="article-section-title">03. ROS 2 pull request requirements</h2>
+                        <p>
+                            Submitting changes to ROS 2 requires opening a pull request (PR), which is a proposal to merge code from a contributor branch into upstream. To establish clean licensing, ROS 2 enforces the Developer Certificate of Origin on ROSCore pull requests, requiring every commit message to include a Signed-off-by line.<sup><a href="#ref-1">[1]</a></sup> The Developer Certificate of Origin (DCO) is a declaration that the contributor wrote the code or has legal authority to submit it under an open-source license.
+                        </p>
+                        <p>
+                            For small edits, this administrative requirement is lifted. DCO sign-off in ROS 2 is not required for pull requests that only perform trivial changes such as whitespace removal or typo corrections.<sup><a href="#ref-1">[1]</a></sup> Contributors can fix obvious documentation typos without setting up commit sign-offs.
+                        </p>
+                        <p>
+                            Every non-trivial submission must be verified. In ROS 2, merging a pull request requires a minimum of one approval from a developer who did not author the contribution.<sup><a href="#ref-1">[1]</a></sup> Peer review ensures that an independent engineer checks code logic, test results, and documentation.
+                        </p>
+                        <p>
+                            Once a ROS 2 pull request is approved, it is typically merged using Squash and Merge to keep a clean history, and the branch is deleted.<sup><a href="#ref-1">[1]</a></sup> Squash and merge combines all commits from a pull request into a single commit on the main branch. This keeps the project history readable and removes temporary checkpoint commits.
+                        </p>
+
+                        <h2 class="article-section-title">04. MoveIt 2: branches, chunked PRs, and community feedback</h2>
+                        <p>
+                            MoveIt 2 is the primary manipulation and motion planning framework in ROS 2, introduced in <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>. MoveIt 2 balances research innovation against production arm reliability.
+                        </p>
+                        <p>
+                            MoveIt 2 uses the main branch for active development allowing breaking changes, while stable branches like humble and jazzy only accept bug fix backports.<sup><a href="#ref-2">[2]</a></sup> Developers building production systems can rely on stable branches like humble or jazzy, while developers working on new algorithms contribute to main.
+                        </p>
+                        <p>
+                            Because motion planning pipelines are complex, large pull requests are difficult to review. MoveIt asks contributors to submit pull requests in small digestible chunks rather than thousands of lines of code to maintain stability and review quality.<sup><a href="#ref-3">[3]</a></sup> Small PRs allow maintainers to review logic thoroughly and merge fixes promptly.
+                        </p>
+                        <p>
+                            Before writing code for major changes, contributors should discuss their ideas with the community. If unsure about a proposed feature, MoveIt contributors are encouraged to open an issue or post on Discourse first to request community feedback.<sup><a href="#ref-3">[3]</a></sup> Discourse is an online forum used for ROS community discussions. MoveIt also encourages contributions beyond code, such as enhancing documentation, answering user questions, and reviewing open pull requests.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">05. ros2_control: approvals and review hygiene</h2>
+                        <p>
+                            The ros2_control framework provides real-time hardware interfaces and controller loops, which <a href="robotics-8-5.html">8.5 From the Plant Floor to IT</a> introduces. Because controller code directly commands physical motors, review rules are strict.
+                        </p>
+                        <p>
+                            Pull requests in ros2_control must be explicitly approved by two maintainers before merging, with an exception for maintainer PRs needing one approval.<sup><a href="#ref-4">[4]</a></sup> Two independent maintainer reviews ensure that safety-critical control loops are examined thoroughly.
+                        </p>
+                        <p>
+                            Maintainer time is limited, so community participation is welcomed. The ros2_control project encourages non-maintainers to review pull requests to increase review pace, improve code quality, and spot overlooked limitations.<sup><a href="#ref-4">[4]</a></sup> Anyone can review PRs, test branches locally, and point out edge cases.
+                        </p>
+                        <p>
+                            To keep the review process smooth, contributors must follow Git review rules. In ros2_control, contributors must not force-push after a PR has been reviewed because force-pushing breaks the GitHub review UI.<sup><a href="#ref-4">[4]</a></sup> A force-push rewrites commit history on the branch. This wipes out GitHub's inter-commit diff views, forcing reviewers to re-read everything from scratch.
+                        </p>
+                        <p>
+                            Pull requests to ros2_control should maintain a limited scope that accomplishes one thing, placing unrelated fixes into separate PRs.<sup><a href="#ref-4">[4]</a></sup> Contributions submitted to ros2_control are licensed under the Apache 2 License according to Section 5 of that license.<sup><a href="#ref-4">[4]</a></sup> The ros2_control project maintains a dedicated Contributing Board project board to help newcomers find issues suitable for first contributions.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">06. Gazebo and Nav2: governance and project leadership</h2>
+                        <p>
+                            Simulation and mobile robot navigation are two other major areas of open-source robotics. Gazebo simulates multi-robot physics and sensors, while Nav2 is the navigation framework for mobile robots.
+                        </p>
+                        <p>
+                            In Gazebo, pull requests must clear explicit quality checks. Gazebo pull requests can be merged once they have at least one approval from the core team, zero unresolved comments, passing CI, and a passing DCO check.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            To satisfy DCO sign-offs easily, developers use standard Git options. In Gazebo, developers can satisfy the DCO requirement by running git commit -s to automatically append their signature to commit messages.<sup><a href="#ref-5">[5]</a></sup> The <code>-s</code> option appends a <code>Signed-off-by:</code> line with the author's configured Git name and email.
+                        </p>
+                        <p>
+                            To guide new contributors, Gazebo maintainers triage project issues and apply the help wanted label to issues that the team thinks should be tackled by the community.<sup><a href="#ref-5">[5]</a></sup> Everyone participating in Gazebo is governed by the Gazebo Code of Conduct, with unacceptable behavior reported through Gazebo support.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <p>
+                            Nav2 demonstrates how dedicated stewardship manages open-source infrastructure. Open Navigation LLC provides project leadership, maintenance, development, and support services for the Nav2 robotics navigation framework.<sup><a href="#ref-6">[6]</a></sup> This leadership model provides continuous engineering, bug triage, and long-term maintenance for autonomous navigation.
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why are breaking API changes prohibited within an already released ROS distribution, and why must new features merge into the rolling branch before backporting?</li>
+                            <li class="article-spec-item">How do pull request approval rules differ between ROS 2 core packages and ros2_control, and why should contributors avoid force-pushing after review has begun?</li>
+                            <li class="article-spec-item">How can developers use Git to satisfy Developer Certificate of Origin (DCO) requirements in Gazebo, and what type of contributions are exempt from DCO sign-offs in ROS 2?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">ROS 2, &ldquo;Contributing to code.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst</a>.</li>
+                            <li id="ref-2">MoveIt, &ldquo;MoveIt 2.&rdquo; <a href="https://github.com/moveit/moveit2" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2</a>.</li>
+                            <li id="ref-3">MoveIt, &ldquo;Contributing to MoveIt.&rdquo; <a href="https://moveit.ai/documentation/contributing/" target="_blank" rel="noopener noreferrer">moveit.ai/documentation/contributing/</a>.</li>
+                            <li id="ref-4">ros2_control, &ldquo;Contributing Guidelines.&rdquo; <a href="https://control.ros.org/master/doc/contributing/contributing.html" target="_blank" rel="noopener noreferrer">control.ros.org/master/doc/contributing/contributing.html</a>.</li>
+                            <li id="ref-5">Gazebo, &ldquo;Contributing to Gazebo.&rdquo; <a href="https://gazebosim.org/docs/latest/contributing" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/contributing</a>.</li>
+                            <li id="ref-6">Nav2, &ldquo;Nav2.&rdquo; <a href="https://github.com/ros-navigation/navigation2" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-3-2.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.2 Your First Contribution</span>
+                                </a>
+                                <a href="robotics-3-4.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">3.4 Lab: Your First Pull Request</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

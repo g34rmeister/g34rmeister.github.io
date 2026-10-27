@@ -1,0 +1,337 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 3.4 Lab: Your First Pull Request
+-->
+<html lang="en">
+    <head>
+        <title>3.4 Lab: Your First Pull Request — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A practical lab for making your first pull request to robOSStics: selecting an edit, submitting via the browser, local Git checks, and responding to review." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-4.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.4 Lab: Your First Pull Request — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="A practical lab for making your first pull request to robOSStics: selecting an edit, submitting via the browser, local Git checks, and responding to review." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-4.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.4 Lab: Your First Pull Request, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.4 Lab: Your First Pull Request — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="A practical lab for making your first pull request to robOSStics: selecting an edit, submitting via the browser, local Git checks, and responding to review." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-oss.html">Chapter 3 &middot; Open Source</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">3.4 Lab: Your First Pull Request</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Choosing a first contribution to robOSStics</h2>
+                        <p>
+                            You now know what open source is and how contributions work (<a href="robotics-3-2.html">3.2</a>). In this lab you make one, to this site.
+                        </p>
+                        <p>
+                            Before building standalone packages, this lab guides you through opening your first pull request. robOSStics is an open-source learning platform for robotics newcomers hosted at <code>github.com/g34rmeister/g34rmeister.github.io</code>.<sup><a href="#ref-1">[1]</a></sup> It is organized to provide a friendly, safe place to make your first pull request, where every improvement helps whether you fix a single typo or suggest a new lesson.
+                        </p>
+                        <p>
+                            You do not need to be an expert in robotics to contribute.<sup><a href="#ref-1">[1]</a></sup> The project highlights three easy ways to make a first contribution:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Fix a typo:</span> If you spot a spelling mistake, grammatical error, or confusing sentence, you can submit an edit. Clear wording helps every learner.</li>
+                            <li class="article-spec-item"><span class="spec-label">Suggest or fix a source:</span> Every factual claim on this site must trace back to a verified source. If you see a missing citation, an outdated link, or a better manual, you can suggest it.</li>
+                            <li class="article-spec-item"><span class="spec-label">Report a broken link:</span> Documentation links move or disappear over time. If a reference link leads to a 404 error, reporting it helps keep lessons working.</li>
+                        </ul>
+                        <p>
+                            If you want to take on a larger contribution, such as proposing a lesson idea for a robotics topic or hands-on lab, open an issue first.<sup><a href="#ref-1">[1]</a></sup> Maintainers discuss the outline, scope, and sources together with you before you write code or text.
+                        </p>
+
+                        <h2 class="article-section-title">02. Lab Path A: Editing directly in your browser</h2>
+                        <p>
+                            You do not need to install Git or Python to fix typos or wording.<sup><a href="#ref-1">[1]</a></sup> You can complete the entire edit directly in your web browser.
+                        </p>
+                        <p>
+                            To submit an edit using your browser, follow the seven steps documented in the repository contributing guide:<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <ol class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Step 1:</span> Visit <code>https://github.com/g34rmeister/g34rmeister.github.io</code>.</li>
+                            <li class="article-spec-item"><span class="spec-label">Step 2:</span> Find the file you want to edit. Lesson pages are in the root directory and look like <code>robotics-1-1.html</code>.</li>
+                            <li class="article-spec-item"><span class="spec-label">Step 3:</span> Click the pencil icon near the top right of the file preview to open the editor.</li>
+                            <li class="article-spec-item"><span class="spec-label">Step 4:</span> Edit the text in your browser.</li>
+                            <li class="article-spec-item"><span class="spec-label">Step 5:</span> Scroll down to the <strong>Propose changes</strong> section at the bottom of the page.</li>
+                            <li class="article-spec-item"><span class="spec-label">Step 6:</span> Write a short title and a one-sentence summary explaining what you changed.</li>
+                            <li class="article-spec-item"><span class="spec-label">Step 7:</span> Click <strong>Propose changes</strong>, then click <strong>Create pull request</strong>.</li>
+                        </ol>
+                        <p>
+                            Maintainers will review your pull request, answer questions, and help you merge it.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            This browser-based flow allows anyone encountering a typo or broken URL while reading a lesson to submit a fix immediately without configuring local development tools.
+                        </p>
+
+                        <h2 class="article-section-title">03. Lab Path B: Working locally with Git and running checks</h2>
+                        <p>
+                            If you want to make larger changes or test files on your machine, you can work locally.<sup><a href="#ref-1">[1]</a></sup> This workflow gives you access to the project scripts and verification checks before you submit your pull request.
+                        </p>
+                        <p>
+                            To work locally, follow these steps:
+                        </p>
+                        <ol class="article-spec-list">
+                            <li class="article-spec-item">
+                                <span class="spec-label">Step 1: Clone the repository.</span> Download a local copy of the repository and switch into its directory:
+                                <pre class="article-code"><code>git clone https://github.com/g34rmeister/g34rmeister.github.io.git
+cd g34rmeister.github.io</code></pre>
+                            </li>
+                            <li class="article-spec-item">
+                                <span class="spec-label">Step 2: Open and inspect your changes.</span> Open the project in your text editor. Because this is a static site with no build step, you can open any HTML file directly in your web browser to see your changes.
+                            </li>
+                            <li class="article-spec-item">
+                                <span class="spec-label">Step 3: Renumber references.</span> If you add or edit citations in a lesson file, renumber the references in order of appearance:
+                                <pre class="article-code"><code>python3 scripts/renumber_refs.py robotics-X-Y.html</code></pre>
+                            </li>
+                            <li class="article-spec-item">
+                                <span class="spec-label">Step 4: Regenerate synced files.</span> If you change a lesson or update sources, regenerate synced files:
+                                <pre class="article-code"><code>python3 scripts/sources.py sync &amp;&amp; python3 scripts/build_index.py &amp;&amp; python3 scripts/site_sync.py</code></pre>
+                            </li>
+                            <li class="article-spec-item">
+                                <span class="spec-label">Step 5: Run the four checks.</span> Run the four checks from <code>CLAUDE.md</code> to ensure everything passes:
+                                <pre class="article-code"><code>python3 scripts/site_sync.py --check &amp;&amp; python3 scripts/check_site.py &amp;&amp; python3 scripts/sources.py check &amp;&amp; python3 scripts/build_index.py --check</code></pre>
+                            </li>
+                        </ol>
+                        <p>
+                           
+                        </p>
+
+                        <h2 class="article-section-title">04. The source rule and repository constraints</h2>
+                        <p>
+                            Accuracy is central to this project.<sup><a href="#ref-1">[1]</a></sup> Every factual claim must trace to a checked source.
+                        </p>
+                        <p>
+                            The repository uses two files to manage citation verification:<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">docs/sources.json:</span> Stores every cited source along with its verification status and per-lesson claim checks.</li>
+                            <li class="article-spec-item"><span class="spec-label">scripts/sources.py:</span> Inspects and updates citation records.</li>
+                        </ul>
+                        <p>
+                            When pull requests run, <code>python3 scripts/sources.py check</code> ensures that no cited reference is unverified.<sup><a href="#ref-1">[1]</a></sup> If you add a new citation or claim, it must be recorded in <code>docs/sources.json</code>.
+                        </p>
+                        <p>
+                            If you are new to the source checking script, do not worry.<sup><a href="#ref-1">[1]</a></sup> You can open an issue or pull request with your suggested source URL. Maintainers will check the claims, run the script, and update <code>docs/sources.json</code> for you.
+                        </p>
+                        <p>
+                            To keep the site reliable for readers and search engines, contributors must avoid two actions:<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Do not renumber lessons:</span> URLs must stay stable so existing links do not break. Append new lessons to the end of a chapter instead.</li>
+                            <li class="article-spec-item"><span class="spec-label">Do not hand-edit generated regions:</span> Several files and page sections are built automatically by <code>python3 scripts/site_sync.py</code>. Never edit these parts by hand: <code>sitemap.xml</code>, lesson rows on the course hub (<code>robotics.html</code>), the chapter list, previous and next lesson navigation links, navigation bars, the page set in <code>site-hygiene.yml</code>, and the source-check line in each lesson. Instead, update the underlying data or templates and run <code>python3 scripts/site_sync.py</code> to regenerate them.</li>
+                        </ul>
+
+                        <h2 class="article-section-title">05. Opening the pull request with the repository template</h2>
+                        <p>
+                            A pull request is a request to merge changes from your edit branch into the repository.
+                        </p>
+                        <p>
+                            You do not need to wait until your work is complete before asking for feedback. Pull requests do not have to represent finished work and can be opened early as a draft or marked WIP to get early feedback from reviewers.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            When opening a pull request, robOSStics supplies a standard pull request template. Using the template ensures that you provide the necessary context for maintainers. The template consists of two parts:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Summary:</span> A concise statement detailing what changed and why, alongside a list of which lesson or page files were touched.</li>
+                            <li class="article-spec-item"><span class="spec-label">Checklist:</span> A list of confirmation items verifying that:
+                                <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                                    <li>Every factual claim traces to a source in <code>docs/sources.json</code> (or none was added).</li>
+                                    <li>If citations were edited, references were renumbered with <code>python3 scripts/renumber_refs.py &lt;file&gt;</code>.</li>
+                                    <li>If lesson or source data changed, sync scripts were run (<code>python3 scripts/sources.py sync &amp;&amp; python3 scripts/build_index.py &amp;&amp; python3 scripts/site_sync.py</code>).</li>
+                                    <li>The four checks from <code>CLAUDE.md</code> were run and passed.</li>
+                                    <li>For larger changes, an entry was appended to <code>CHANGELOG.agents.md</code>.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <p>
+                            Completing the template enables reviewers to understand your intentions quickly and inspect test results before approving the change.
+                        </p>
+
+                        <h2 class="article-section-title">06. Responding to review and getting help</h2>
+                        <p>
+                            Once your pull request is open, communication takes place on GitHub. Keep the conversation in the pull request, in public, as <a href="robotics-3-2.html">3.2</a> explained.
+                        </p>
+                        <p>
+                            If you get stuck, run into an error, or want feedback before starting, please open an issue: <code>https://github.com/g34rmeister/g34rmeister.github.io/issues</code>.<sup><a href="#ref-1">[1]</a></sup> You do not need to select issue labels. Maintainers will label it, answer questions, and help you with your contribution.
+                        </p>
+                        <p>
+                            When a reviewer asks a question or suggests a wording change, reply directly in the pull request discussion thread. If edits are requested, update your branch. Once discussions conclude and automated checks succeed, a maintainer merges your contribution into the repository.
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What are three easy ways to make a first contribution to robOSStics without prior robotics expertise, and what share of casual open-source contributions consists of documentation according to Igor Steinmacher's research?</li>
+                            <li class="article-spec-item">What are the seven steps required to edit a lesson file directly through the GitHub web browser interface?</li>
+                            <li class="article-spec-item">What single command executes the four automated verification checks before pushing local changes, and why must contributors never hand-edit generated files such as sitemap.xml or navigation bars?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 2 of 2 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">robOSStics, &ldquo;Contributing to robOSStics.&rdquo; <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">github.com/g34rmeister/g34rmeister.github.io/blob/main/CONTRIBUTING.md</a>.</li>
+                            <li id="ref-2">Open Source Guides, &ldquo;How to Contribute to Open Source.&rdquo; <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">opensource.guide/how-to-contribute/</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-3-3.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.3 How Robotics Projects Work</span>
+                                </a>
+                                <a href="robotics-ros.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-target">Chapter 4: Robot Operating System (ROS)</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>

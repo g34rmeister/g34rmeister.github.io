@@ -1,0 +1,322 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 3.2 Your First Contribution
+-->
+<html lang="en">
+    <head>
+        <title>3.2 Your First Contribution — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A guide to your first open-source contribution: non-code tasks, finding beginner-friendly issues in robotics projects, the fork and pull request flow, draft PRs, and communication norms." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-2.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.2 Your First Contribution — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="A guide to your first open-source contribution: non-code tasks, finding beginner-friendly issues in robotics projects, the fork and pull request flow, draft PRs, and communication norms." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-2.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.2 Your First Contribution, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.2 Your First Contribution — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="A guide to your first open-source contribution: non-code tasks, finding beginner-friendly issues in robotics projects, the fork and pull request flow, draft PRs, and communication norms." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-oss.html">Chapter 3 &middot; Open Source</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">3.2 Your First Contribution</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Contributions beyond code</h2>
+                        <p>
+                            In <a href="robotics-2-4.html">2.4 Intro to ROS (Vendor-Agnostic)</a>, we saw that open robotics software provides a vendor-neutral foundation for industrial and research systems. The ROS chapter (Chapter 4) comes right after this one and guides you through writing nodes and packages. Before developing complex robotics packages, however, many newcomers wonder how to take their first step as an open-source contributor.
+                        </p>
+                        <p>
+                            A common misconception among newcomers is that contributing requires writing complex code. Contributing to open source does not require contributing code, as non-code parts of a project are often the most neglected or overlooked.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            As <a href="robotics-3-1.html">3.1</a> said, that work is public, so even small fixes show how you work.
+                        </p>
+                        <p>
+                            A study by Igor Steinmacher found that 28% of casual contributions to open source are documentation, such as typo fixes, reformatting, or writing a translation.<sup><a href="#ref-1">[1]</a></sup> Documentation tasks are accessible entry points because they allow you to improve the project while learning its terminology and conventions.
+                        </p>
+
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 680 160" role="img" aria-label="Bar chart showing findings from Igor Steinmacher: 28 percent of casual open-source contributions are documentation, such as typo fixes, reformatting, and translations, while 72 percent represent other casual contributions." xmlns="http://www.w3.org/2000/svg">
+                                <text class="d-title" x="340" y="24" text-anchor="middle">Casual Open Source Contributions (Steinmacher Study)</text>
+                                <rect class="d-box-gold" x="60" y="44" width="157" height="42" rx="4"/>
+                                <text class="d-title" x="138" y="70" text-anchor="middle">Documentation (28%)</text>
+                                <rect class="d-box" x="223" y="44" width="397" height="42" rx="4"/>
+                                <text class="d-muted" x="421" y="70" text-anchor="middle">Other casual contributions (72%)</text>
+                                <rect class="d-box" x="60" y="104" width="120" height="34" rx="4"/>
+                                <text class="d-muted" x="120" y="126" text-anchor="middle">Typo fixes</text>
+                                <rect class="d-box" x="190" y="104" width="130" height="34" rx="4"/>
+                                <text class="d-muted" x="255" y="126" text-anchor="middle">Reformatting</text>
+                                <rect class="d-box" x="330" y="104" width="160" height="34" rx="4"/>
+                                <text class="d-muted" x="410" y="126" text-anchor="middle">Writing a translation</text>
+                            </svg>
+                            <figcaption>Casual contributions to open source identified in research by Igor Steinmacher. Documentation accounts for 28% of casual contributions, including typo fixes, reformatting, and writing translations.</figcaption>
+                        </figure>
+
+                        <p>
+                            Beyond documentation, projects need organizational help. Non-code contributions include organizing projects by linking duplicate issues, suggesting issue labels, and asking clarifying questions on opened issues.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Community support is another valuable contribution path. Contributors can help communities by answering user questions on forums or issues, reviewing code on submissions, and offering to mentor other contributors.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Robotics frameworks actively encourage these non-code contributions. MoveIt encourages contributions beyond code, such as enhancing documentation, answering user questions, and reviewing open pull requests.<sup><a href="#ref-2">[2]</a></sup> (Later in <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>, we will use MoveIt 2 for robot arm motion planning.)
+                        </p>
+                        <p>
+                            Reviewing open pull requests is not limited to project maintainers. The ros2_control project encourages non-maintainers to review pull requests to increase review pace, improve code quality, and spot overlooked limitations.<sup><a href="#ref-3">[3]</a></sup> Reviewing incoming pull requests helps newcomers see how code changes are proposed and evaluated.
+                        </p>
+
+                        <h2 class="article-section-title">02. Finding a first issue in robotics projects</h2>
+                        <p>
+                            When you are ready to make a contribution, selecting the right issue helps you start smoothly. Large repositories often maintain hundreds of open tickets, ranging from broad feature requests to simple fixes.
+                        </p>
+                        <p>
+                            To help beginners find accessible tasks, maintainers use dedicated labels. The first-timers-only label explicitly marks issues that are easier than normal and reserved exclusively for newcomers who have never contributed to open source before.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            You do not need to check individual repositories manually. Aggregator websites up-for-grabs.net and goodfirstissue.dev help newcomers find issues labeled up-for-grabs, jump-in, help wanted, or Good First Issue.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            Open-source robotics projects follow these labeling conventions:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">ROS 2:</span> ROS 2 marks approachable issues for first-time contributors with the label good first issue and broader tasks with help wanted across repositories.<sup><a href="#ref-5">[5]</a></sup> (<a href="robotics-4-1.html">4.1 Definition and Introduction</a> explains what ROS is and how its software ecosystem is structured.)</li>
+                            <li class="article-spec-item"><span class="spec-label">MoveIt:</span> MoveIt provides a dedicated section directing newcomers to tackle their first issue by browsing GitHub issues labeled Good First Issue.<sup><a href="#ref-2">[2]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Gazebo:</span> Gazebo maintainers triage project issues and apply the help wanted label to issues that the team thinks should be tackled by the community.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">ros2_control:</span> The ros2_control project maintains a dedicated Contributing Board project board to help newcomers find issues suitable for first contributions.<sup><a href="#ref-3">[3]</a></sup></li>
+                        </ul>
+                        <p>
+                            Browsing these labeled issues or project boards lets you inspect the problem description, read previous comments, and pick a manageable task.
+                        </p>
+
+                        <h2 class="article-section-title">03. The fork, clone, and branch workflow</h2>
+                        <p>
+                            Once you select an issue to address, you carry out your work using Git and GitHub. Because you do not have direct write permissions to the official repository, you work in a copy under your account.
+                        </p>
+                        <p>
+                            When opening a pull request on GitHub, contributors fork the repository, clone locally, connect upstream as a remote, and create an edit branch.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Each step in this sequence has an explicit purpose:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Fork:</span> A fork is a personal copy of the repository hosted on your GitHub account. Forking lets you make changes without affecting the original project.</li>
+                            <li class="article-spec-item"><span class="spec-label">Clone:</span> Cloning copies the files from your remote GitHub fork to your local computer so that you can edit files and run tests.</li>
+                            <li class="article-spec-item"><span class="spec-label">Upstream remote:</span> The original project repository is called the upstream repository. Connecting upstream as a remote allows your local Git client to track and fetch changes from the original project.</li>
+                            <li class="article-spec-item"><span class="spec-label">Edit branch:</span> Rather than modifying the main branch directly, you create a dedicated branch for your edits. A separate branch keeps your proposed changes isolated.</li>
+                        </ul>
+                        <p>
+                            This workflow separates your personal experiments from the official codebase, making it straightforward to prepare clean pull requests.
+                        </p>
+
+                        <h2 class="article-section-title">04. Draft pull requests and staying in sync</h2>
+                        <p>
+                            Open-source repositories change constantly as other contributors merge changes. Keeping your edit branch aligned with upstream development prevents integration issues.
+                        </p>
+                        <p>
+                            Pulling in upstream changes often keeps a local repository up to date and reduces the likelihood of encountering merge conflicts on a pull request.<sup><a href="#ref-1">[1]</a></sup> A merge conflict occurs when two contributors edit the same lines in a file, requiring manual reconciliation. Frequent upstream pulls identify overlapping changes early.
+                        </p>
+                        <p>
+                            When you begin preparing your submission, you do not have to wait until every detail is finished. Pull requests do not have to represent finished work and can be opened early as a draft or marked WIP to get early feedback from reviewers.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            Opening a draft pull request (or marking it with WIP, meaning Work In Progress) signals to maintainers that your work is still evolving. Reviewers can check your overall direction and suggest improvements before you invest time completing every detail.
+                        </p>
+
+                        <h2 class="article-section-title">05. Communication norms: public collaboration and reproduction</h2>
+                        <p>
+                            Open-source development relies on transparent communication among people distributed across the world. Following standard community norms makes your interactions effective and polite.
+                        </p>
+                        <p>
+                            Communication in open source should remain public rather than via private messages to maintainers, allowing the wider community to learn from discussions.<sup><a href="#ref-1">[1]</a></sup> When discussions occur in public issue trackers or forums, other contributors encountering similar problems can read the explanations and benefit from past solutions.
+                        </p>
+                        <p>
+                            When reporting a bug or asking for technical guidance, clarity is required. Effective communication requires providing context and reproduction steps when reporting errors, and checking existing documentation and issues beforehand.<sup><a href="#ref-1">[1]</a></sup> Providing exact error messages and the sequence of steps needed to reproduce an error allows maintainers to diagnose the problem quickly without guessing.
+                        </p>
+                        <p>
+                            Coordinating on open issues prevents wasted effort. Commenting on an open issue alerts others that a contributor is working on it to prevent duplicate effort, and documenting self-resolved solutions benefits others.<sup><a href="#ref-1">[1]</a></sup> If you find the solution to an issue yourself after asking, writing a brief explanation of how you solved it before closing the issue creates a permanent resource for the community.
+                        </p>
+                        <p>
+                            When proposing new features or major modifications, community discussion comes first. If unsure about a proposed feature, MoveIt contributors are encouraged to open an issue or post on Discourse first to request community feedback.<sup><a href="#ref-2">[2]</a></sup> Discussing design ideas on Discourse or an issue tracker confirms that maintainers support the concept before anyone writes code.
+                        </p>
+
+                        <h2 class="article-section-title">06. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">According to research by Igor Steinmacher, what percentage of casual open-source contributions consists of documentation, and what specific tasks does that include?</li>
+                            <li class="article-spec-item">What four steps make up the standard GitHub contribution flow when preparing a pull request, and why should you pull upstream changes often?</li>
+                            <li class="article-spec-item">Why should communication with project maintainers stay public, and what should you do on an issue before you begin working on it?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">07. References</h2>
+                        <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Open Source Guides, &ldquo;How to Contribute to Open Source.&rdquo; <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">opensource.guide/how-to-contribute/</a>.</li>
+                            <li id="ref-2">MoveIt, &ldquo;Contributing.&rdquo; <a href="https://moveit.ai/documentation/contributing/" target="_blank" rel="noopener noreferrer">moveit.ai/documentation/contributing/</a>.</li>
+                            <li id="ref-3">ros2_control, &ldquo;Contributing.&rdquo; <a href="https://control.ros.org/master/doc/contributing/contributing.html" target="_blank" rel="noopener noreferrer">control.ros.org/master/doc/contributing/contributing.html</a>.</li>
+                            <li id="ref-4">First Timers Only, &ldquo;First Timers Only.&rdquo; <a href="https://www.firsttimersonly.com/" target="_blank" rel="noopener noreferrer">firsttimersonly.com/</a>.</li>
+                            <li id="ref-5">ROS 2, &ldquo;Contributing.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing.rst</a>.</li>
+                            <li id="ref-6">Gazebo, &ldquo;Contributing to Gazebo.&rdquo; <a href="https://gazebosim.org/docs/latest/contributing" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/contributing</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-3-1.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.1 What Open Source Is</span>
+                                </a>
+                                <a href="robotics-3-3.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">3.3 How Robotics Projects Work</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>
