@@ -64,14 +64,48 @@
 
 	function loadProgress() {
 		try {
-			var data = JSON.parse(localStorage.getItem(STORAGE_KEY));
-			if (data && typeof data === 'object') {
-				data.completed = data.completed || {};
-				data.quizzes = data.quizzes || {};
-				return data;
+			var raw = localStorage.getItem(STORAGE_KEY);
+			if (raw) {
+				var data = JSON.parse(raw);
+				if (data && typeof data === 'object') {
+					data.completed = data.completed || {};
+					data.quizzes = data.quizzes || {};
+					// Chapters 7-10 and lessons 4.6-4.9 exist only under the new numbering,
+					// so progress that mentions them was saved after the renumber.
+					var newStyle = Object.keys(data.completed).some(function (id) {
+						return /^(7|8|9|10)-|^4-[6-9]$/.test(id);
+					}) || Object.keys(data.quizzes).some(function (ch) { return Number(ch) >= 7; });
+					if (newStyle && !data.migrated) { data.migrated = 2; saveProgress(data); }
+					if (!data.migrated || Number(data.migrated) < 2) {
+						// On 2026-10-27 chapters were renumbered:
+						// old chapter 3 -> 4, old 4 -> 5, old 5 -> 6, old 6 -> 10.
+						// Compute from copies so ids are not remapped twice.
+						var chMap = { '3': '4', '4': '5', '5': '6', '6': '10' };
+						var oldCompleted = data.completed;
+						var newCompleted = {};
+						Object.keys(oldCompleted).forEach(function (id) {
+							var parts = id.split('-');
+							var newCh = chMap[parts[0]] || parts[0];
+							newCompleted[newCh + '-' + parts.slice(1).join('-')] = oldCompleted[id];
+						});
+						data.completed = newCompleted;
+
+						var oldQuizzes = data.quizzes;
+						var newQuizzes = {};
+						Object.keys(oldQuizzes).forEach(function (ch) {
+							var newCh = chMap[String(ch)] || ch;
+							newQuizzes[newCh] = oldQuizzes[ch];
+						});
+						data.quizzes = newQuizzes;
+
+						data.migrated = 2;
+						saveProgress(data);
+					}
+					return data;
+				}
 			}
 		} catch (e) { /* storage blocked or corrupt: start fresh */ }
-		return { completed: {}, quizzes: {} };
+		return { completed: {}, quizzes: {}, migrated: 2 };
 	}
 
 	function saveProgress(p) {

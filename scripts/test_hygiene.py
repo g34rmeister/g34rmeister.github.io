@@ -27,12 +27,15 @@ if failures:
 print(f'OK: {len(pages)} pages, all internal .html links resolve.')
 
 # Check 2: Sitemap
-expected = {
-    'index.html', 'about.html', 'affiliations.html', 'portfolio.html',
-    'project-sample.html', 'resume.html', 'contact.html', 'robotics.html',
-    'robotics-intro.html', 'robotics-programming.html', 'robotics-ros.html',
-    'robotics-ethics.html', 'robotics-control.html', 'robotics-capstone.html', 'robotics-quiz.html', 'robotics-glossary.html', 'robotics-method.html',
-} | {f'robotics-{c}-{n}.html' for c, count in ((1, 7), (2, 8), (3, 9), (4, 5), (5, 10), (6, 3)) for n in range(1, count + 1)}
+hygiene_text = (root / '.github/workflows/site-hygiene.yml').read_text(encoding='utf-8')
+m = re.search(r'^\s*(expected\s*=\s*.+?range\(1,\s*count\s*\+\s*1\)\})', hygiene_text, re.DOTALL | re.MULTILINE)
+if not m:
+    print('Could not find expected page set in .github/workflows/site-hygiene.yml')
+    sys.exit(1)
+scope = {}
+exec(m.group(1), {'range': range}, scope)
+expected = scope['expected']
+
 actual_pages = {p.name for p in root.glob('*.html') if p.name != '404.html'}
 if actual_pages != expected:
     print(f'Page set drift. Actual: {sorted(actual_pages)} Expected: {sorted(expected)}')
