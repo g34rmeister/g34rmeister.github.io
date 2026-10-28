@@ -299,7 +299,13 @@ if rr.isError():
     print("Function code:", rr.function_code)
     print("Exception code:", rr.exception_code)
 
-\1\n                        <p>Expected output:</p>\n                        <pre class="article-code"><code>Exception response: ExceptionResponse(dev_id=1, function_code=131, exception_code=2)\nFunction code: 131\nException code: 2</code></pre>\2, the server rejects the request with exception code 2 (ILLEGAL DATA ADDRESS). In pymodbus, this result appears as an <code>ExceptionResponse</code> with <code>function_code=131</code> (0x03 + 0x80) and <code>exception_code=2</code>. Similarly, attempting to write to register 256 triggers an <code>ExceptionResponse</code> with exception code 2, confirming that the server rejected the unmapped address.
+client.close()</code></pre>
+                        <p>Expected output:</p>
+                        <pre class="article-code"><code>Exception response: ExceptionResponse(dev_id=1, function_code=131, exception_code=2)
+Function code: 131
+Exception code: 2</code></pre>
+                        <p>
+                            When executed against the active stand-in server, the server rejects the request with exception code 2 (ILLEGAL DATA ADDRESS). In pymodbus, this result appears as an <code>ExceptionResponse</code> with <code>function_code=131</code> (0x03 + 0x80) and <code>exception_code=2</code>. Similarly, attempting to write to register 256 triggers an <code>ExceptionResponse</code> with exception code 2, confirming that the server rejected the unmapped address.
                         </p>
                         <p>
                             As a further idea for advanced exploration, students can test fieldbus communications against a virtual robot controller. Universal Robots provides its offline simulator as Docker images, and the simulator includes Modbus client functionality.<sup><a href="#ref-9">[9]</a></sup>
