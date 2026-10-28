@@ -1,0 +1,485 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: robotics open-source map
+-->
+<html lang="en">
+    <head>
+        <title>Robotics Open-Source Map — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A map of open-source robotics projects used in robOSStics, including repositories, licenses, contribution paths, and governance." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-oss-map.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="Robotics Open-Source Map — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="A map of open-source robotics projects used in robOSStics, including repositories, licenses, contribution paths, and governance." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-oss-map.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="Robotics Open-Source Map, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Robotics Open-Source Map — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="A map of open-source robotics projects used in robOSStics, including repositories, licenses, contribution paths, and governance." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <span>Robotics Open-Source Map</span>
+                            </div>
+
+                            <h1 class="robotics-article-headline">Robotics Open-Source Map</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <h2 class="article-section-title">01. Overview</h2>
+                            <p>
+                                This page is a map of the open-source projects used across robOSStics. It summarizes what each project does, its license, where its source code is hosted, and how to make a first contribution. To learn the full contribution workflow, including licensing basics, issue labels, and pull requests, see <a href="robotics-oss.html">Chapter 3: How to Contribute to Open Source</a>.
+                            </p>
+
+                            <h2 class="article-section-title">02. ROS 2</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>The Robot Operating System (ROS) is a set of software libraries and tools that help you build robot applications.<sup><a href="#ref-1">[1]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>Every ROS 2 package must have a LICENSE file, typically under the Apache 2.0 license unless an existing permissive license is in place.<sup><a href="#ref-2">[2]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>ROS 2 source code lives across repositories in the ros2 and ament organizations on GitHub.<sup><a href="#ref-3">[3]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>First-time contributors to ROS 2 are encouraged to begin by looking at issues labeled good first issue across the repositories.<sup><a href="#ref-3">[3]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>Becoming a maintainer of ROS 2 repositories is an invitation-only process evaluated approximately every three months based on contributions and reviews.<sup><a href="#ref-3">[3]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-1.html">4.1 Definition and Introduction</a> and <a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a>.</p>
+
+                            <h2 class="article-section-title">03. MoveIt 2</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>MoveIt 2 is an open source robotics manipulation platform for developing commercial applications, prototyping designs, and benchmarking algorithms.<sup><a href="#ref-4">[4]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>See the project's repository.</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>MoveIt 2&rsquo;s source code is on GitHub in the moveit/moveit2 repository.<sup><a href="#ref-4">[4]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Newcomers to MoveIt can start contributing by finding GitHub issues labeled Good First Issue.<sup><a href="#ref-5">[5]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>PickNik Inc is leading the development of the MoveIt open source project.<sup><a href="#ref-4">[4]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>.</p>
+
+                            <h2 class="article-section-title">04. Nav2</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>Nav2 is the ROS 2 navigation framework; its README links its navigation plugins, general tutorials and algorithm developer tutorials.<sup><a href="#ref-6">[6]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>See the project's repository.</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>Nav2&rsquo;s source code is on GitHub in the ros-navigation/navigation2 repository.<sup><a href="#ref-6">[6]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Nav2 directs prospective contributors to its development guides involvement documentation page for how to contribute.<sup><a href="#ref-6">[6]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>Open Navigation LLC provides project leadership, maintenance, development, and support services to the Nav2 and ROS community.<sup><a href="#ref-6">[6]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-3-3.html">3.3 How Robotics Projects Work</a>.</p>
+
+                            <h2 class="article-section-title">05. ros2_control</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>The ros2_control package is a part of the ros2_control robot control framework.<sup><a href="#ref-7">[7]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>Any contribution made to ros2_control is submitted under the Apache 2 License as dictated by that license.<sup><a href="#ref-8">[8]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>The ros2_control codebase is organized across repositories including ros2_control, ros2_controllers, and ros2_control_demos.<sup><a href="#ref-8">[8]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Newcomers can find issues suitable for a first contribution using the dedicated Contributing Board project board.<sup><a href="#ref-8">[8]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>Every pull request must be explicitly approved by two maintainers before it can be considered for merging.<sup><a href="#ref-8">[8]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a> and <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
+
+                            <h2 class="article-section-title">06. Gazebo</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>Gazebo includes gz-sim, a high-fidelity 3D rigid-body dynamic simulator.<sup><a href="#ref-9">[9]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>See the project's repository.</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>Gazebo and its component libraries are hosted in the Gazebo Organization on GitHub.<sup><a href="#ref-9">[9]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Maintainers triage issues and apply the help wanted label to issues that the team thinks should be tackled by the community.<sup><a href="#ref-9">[9]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>Gazebo pull requests can be merged once they have at least one approval from the core team, zero unresolved comments, passing CI, and passing DCO.<sup><a href="#ref-9">[9]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
+
+                            <h2 class="article-section-title">07. OpenCV</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>OpenCV is an open source computer vision library.<sup><a href="#ref-10">[10]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>Contributors must agree to contribute their code under the OpenCV Apache 2.0 license.<sup><a href="#ref-11">[11]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>OpenCV code is hosted on GitHub at https://github.com/opencv/opencv with all new algorithms directed to the opencv_contrib repository.<sup><a href="#ref-11">[11]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Contributors should read the contribution guidelines wiki before starting work on a pull request.<sup><a href="#ref-10">[10]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>When a reviewer and BuildBot approve a pull request, an approval comment is added signaling OpenCV maintainers that they can merge the pull request.<sup><a href="#ref-11">[11]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-7-3.html">7.3 Image Processing Basics</a> and <a href="robotics-7-6.html">7.6 Lab: A ROS 2 Camera Pipeline</a>.</p>
+
+                            <h2 class="article-section-title">08. PCL</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>The Point Cloud Library (PCL) is a standalone, large scale, open project for 2D/3D image and point cloud processing.<sup><a href="#ref-12">[12]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>PCL is released under the terms of the BSD license and is free for commercial and research use.<sup><a href="#ref-12">[12]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>PCL source code and releases are hosted on GitHub in the PointCloudLibrary/pcl repository.<sup><a href="#ref-12">[12]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Anyone wishing to contribute to PCL is asked to read the CONTRIBUTING.md guide in the repository master branch.<sup><a href="#ref-12">[12]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>PCL is financially supported by a consortium of commercial companies through its non-profit organization, Open Perception.<sup><a href="#ref-12">[12]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-7-4.html">7.4 3D Sensing</a>.</p>
+
+                            <h2 class="article-section-title">09. Universal Robots Client Library</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>The Universal Robots Client Library is a C++ library for accessing Universal Robots interfaces to implement drivers for robotic manipulators.<sup><a href="#ref-13">[13]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>The majority of the Universal Robots Client Library is licensed under the Apache-2.0 license.<sup><a href="#ref-13">[13]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>The source code is on GitHub in the UniversalRobots/Universal_Robots_Client_Library repository.<sup><a href="#ref-13">[13]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>The repository supports pre-commit for automatic code formatting, so install it before your first commit.<sup><a href="#ref-13">[13]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>The library was developed in collaboration between Universal Robots A/S and FZI Research Center for Information Technology.<sup><a href="#ref-13">[13]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-9-6.html">9.6 Lab: Check a Robot's State from Python</a>.</p>
+
+                            <h2 class="article-section-title">10. Universal Robots ROS 2 driver</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>The Universal Robots ROS 2 driver is a manipulator driver supporting cobot features like safeguard stop and emergency stop pause.<sup><a href="#ref-14">[14]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>See the project's repository.</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>The source code is on GitHub in the UniversalRobots/Universal_Robots_ROS2_Driver repository, which keeps branches for specific ROS 2 distributions such as kilted.<sup><a href="#ref-14">[14]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Contributor guidelines instruct developers to install pre-commit and clang-format 14 so code is auto-formatted whenever a commit is made.<sup><a href="#ref-14">[14]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>The driver is built on top of the Universal Robots Client Library.<sup><a href="#ref-14">[14]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-9.html">4.9 ROS-Industrial and Vendor Drivers</a>.</p>
+
+                            <h2 class="article-section-title">11. Wireshark</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>Wireshark is an open-source network analyzer tool.<sup><a href="#ref-15">[15]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>See the project's repository.</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>Wireshark's code repository and review system is hosted on GitLab at https://gitlab.com/wireshark/wireshark.<sup><a href="#ref-15">[15]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Contributors wishing to submit code changes to Wireshark create a merge request on GitLab following instructions in the Developer's Guide for patches.<sup><a href="#ref-15">[15]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>The development of Wireshark is supported by the non-profit Wireshark Foundation.<sup><a href="#ref-15">[15]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-8-6.html">8.6 Network Design, Security and Diagnostics</a>.</p>
+
+                            <h2 class="article-section-title">12. Contributing to robOSStics</h2>
+                            <p>
+                                To contribute directly to the robOSStics course platform itself, see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for instructions on fixing typos, suggesting new sources, and submitting pull requests.
+                            </p>
+
+                            <h2 class="article-section-title">13. References</h2>
+                            <ol class="article-spec-list">
+                                <li id="ref-1">ROS 2, &ldquo;About.&rdquo; <a href="https://github.com/ros2/ros2" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2</a>.</li>
+                                <li id="ref-2">ROS 2, &ldquo;Contributing to code.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst</a>.</li>
+                                <li id="ref-3">ROS 2, &ldquo;Contributing.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing.rst</a>.</li>
+                                <li id="ref-4">MoveIt, &ldquo;MoveIt 2.&rdquo; <a href="https://github.com/moveit/moveit2" target="_blank" rel="noopener noreferrer">github.com/moveit/moveit2</a>.</li>
+                                <li id="ref-5">MoveIt, &ldquo;Contributing to MoveIt.&rdquo; <a href="https://moveit.ai/documentation/contributing/" target="_blank" rel="noopener noreferrer">moveit.ai/documentation/contributing/</a>.</li>
+                                <li id="ref-6">Nav2, &ldquo;Nav2.&rdquo; <a href="https://github.com/ros-navigation/navigation2" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2</a>.</li>
+                                <li id="ref-7">ros2_control, &ldquo;ros2_control.&rdquo; <a href="https://github.com/ros-controls/ros2_control" target="_blank" rel="noopener noreferrer">github.com/ros-controls/ros2_control</a>.</li>
+                                <li id="ref-8">ros2_control, &ldquo;Contributing Guidelines.&rdquo; <a href="https://control.ros.org/master/doc/contributing/contributing.html" target="_blank" rel="noopener noreferrer">control.ros.org/master/doc/contributing/contributing.html</a>.</li>
+                                <li id="ref-9">Gazebo, &ldquo;Contributing to Gazebo.&rdquo; <a href="https://gazebosim.org/docs/latest/contributing" target="_blank" rel="noopener noreferrer">gazebosim.org/docs/latest/contributing</a>.</li>
+                                <li id="ref-10">OpenCV, &ldquo;OpenCV: Open Source Computer Vision Library.&rdquo; <a href="https://github.com/opencv/opencv" target="_blank" rel="noopener noreferrer">github.com/opencv/opencv</a>.</li>
+                                <li id="ref-11">OpenCV, &ldquo;How to contribute to OpenCV.&rdquo; <a href="https://github.com/opencv/opencv/wiki/How_to_contribute" target="_blank" rel="noopener noreferrer">github.com/opencv/opencv/wiki/How_to_contribute</a>.</li>
+                                <li id="ref-12">PCL, &ldquo;Point Cloud Library.&rdquo; <a href="https://github.com/PointCloudLibrary/pcl" target="_blank" rel="noopener noreferrer">github.com/PointCloudLibrary/pcl</a>.</li>
+                                <li id="ref-13">UR Client Library, &ldquo;Universal Robots Client Library.&rdquo; <a href="https://github.com/UniversalRobots/Universal_Robots_Client_Library" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_Client_Library</a>.</li>
+                                <li id="ref-14">UR ROS 2 driver, &ldquo;Universal Robots ROS2 Driver.&rdquo; <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver</a>.</li>
+                                <li id="ref-15">Wireshark, &ldquo;Contribute to Wireshark's Development.&rdquo; <a href="https://www.wireshark.org/develop.html" target="_blank" rel="noopener noreferrer">www.wireshark.org/develop.html</a>.</li>
+                            </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Course home</span>
+                                    <span class="article-nav-target">All chapters</span>
+                                </a>
+                                <a href="robotics-oss.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Chapter 3 -&gt;</span>
+                                    <span class="article-nav-target">How to Contribute to Open Source</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.3" defer></script>
+
+    </body>
+</html>
