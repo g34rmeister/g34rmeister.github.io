@@ -2,7 +2,7 @@
 	robOSStics: interactive widgets
 	Any element with data-widget="pwm" | "encoder" | "pid" | "arm" | "blocks" |
 	"odometry" | "fsm" | "kalman" | "rosgraph" | "movejl" | "threshold" | "prflow" |
-	"modbus" | "trapezoid" | "zones" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"modbus" | "trapezoid" | "zones" | "qos" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -710,7 +710,7 @@
 	/* ---------- ROS graph: Turtlesim nodes and topics from lesson 4.4 ---------- */
 
 	function initRosgraph(root) {
-		var W = 620, H = 220;
+		var W = 380, H = 320;
 		var svg = plotFrame(W, H, 'ROS node and topic graph for Turtlesim');
 		svg.setAttribute('class', 'widget-plot lesson-diagram');
 
@@ -723,18 +723,18 @@
 		svg.appendChild(defs);
 
 		var ITEMS = [
-			{ id: 'teleop', kind: 'node', label: '/teleop_turtle', sub: 'node', x: 20, y: 30, w: 145, h: 52, rx: 4 },
-			{ id: 'cmd_vel', kind: 'topic', label: '/turtle1/cmd_vel', sub: 'geometry_msgs/msg/Twist', x: 215, y: 30, w: 185, h: 52, rx: 16 },
-			{ id: 'turtlesim', kind: 'node', label: '/turtlesim', sub: 'node', x: 450, y: 30, w: 145, h: 52, rx: 4 },
-			{ id: 'pose', kind: 'topic', label: '/turtle1/pose', sub: 'turtlesim_msgs/msg/Pose', x: 215, y: 135, w: 185, h: 52, rx: 16 },
-			{ id: 'color_sensor', kind: 'topic', label: '/turtle1/color_sensor', sub: 'turtlesim_msgs/msg/Color', x: 430, y: 135, w: 175, h: 52, rx: 16 }
+			{ id: 'teleop', kind: 'node', label: '/teleop_turtle', sub: 'node', x: 100, y: 15, w: 180, h: 52, rx: 4 },
+			{ id: 'cmd_vel', kind: 'topic', label: '/turtle1/cmd_vel', sub: 'geometry_msgs/msg/Twist', x: 80, y: 90, w: 220, h: 52, rx: 16 },
+			{ id: 'turtlesim', kind: 'node', label: '/turtlesim', sub: 'node', x: 100, y: 165, w: 180, h: 52, rx: 4 },
+			{ id: 'pose', kind: 'topic', label: '/turtle1/pose', sub: 'turtlesim_msgs/msg/Pose', x: 8, y: 250, w: 178, h: 52, rx: 16 },
+			{ id: 'color_sensor', kind: 'topic', label: '/turtle1/color_sensor', sub: 'turtlesim_msgs/msg/Color', x: 194, y: 250, w: 178, h: 52, rx: 16 }
 		];
 
 		var ARROWS = [
-			{ id: 'a-teleop-cmd', from: 'teleop', to: 'cmd_vel', type: 'line', x1: 165, y1: 56, x2: 213, y2: 56 },
-			{ id: 'a-cmd-sim', from: 'cmd_vel', to: 'turtlesim', type: 'line', x1: 400, y1: 56, x2: 448, y2: 56 },
-			{ id: 'a-sim-pose', from: 'turtlesim', to: 'pose', type: 'path', d: 'M 480,82 C 480,115 425,135 402,148' },
-			{ id: 'a-sim-color', from: 'turtlesim', to: 'color_sensor', type: 'line', x1: 518, y1: 82, x2: 518, y2: 133 }
+			{ id: 'a-teleop-cmd', from: 'teleop', to: 'cmd_vel', type: 'line', x1: 190, y1: 67, x2: 190, y2: 88 },
+			{ id: 'a-cmd-sim', from: 'cmd_vel', to: 'turtlesim', type: 'line', x1: 190, y1: 142, x2: 190, y2: 163 },
+			{ id: 'a-sim-pose', from: 'turtlesim', to: 'pose', type: 'path', d: 'M 150,217 C 150,238 97,232 97,248' },
+			{ id: 'a-sim-color', from: 'turtlesim', to: 'color_sensor', type: 'path', d: 'M 230,217 C 230,238 283,232 283,248' }
 		];
 
 		var arrowEls = {};
@@ -1101,7 +1101,7 @@
 	/* ---------- Pull request workflow from lesson 3.2 ---------- */
 
 	function initPrflow(root) {
-		var W = 620, H = 220;
+		var W = 380, H = 400;
 		var svg = plotFrame(W, H, 'Fork and pull request workflow step-through diagram');
 		svg.setAttribute('class', 'widget-plot lesson-diagram');
 
@@ -1114,60 +1114,60 @@
 		svg.appendChild(defs);
 
 		var gUpstream = s('g', { id: 'pr-upstream' });
-		gUpstream.appendChild(s('rect', { 'class': 'd-box', x: 20, y: 24, width: 205, height: 66, rx: 6 }));
-		var tU1 = s('text', { 'class': 'd-title', x: 122, y: 48, 'text-anchor': 'middle' }); tU1.textContent = 'Upstream repository';
-		var tU2 = s('text', { 'class': 'd-muted', x: 122, y: 68, 'text-anchor': 'middle' }); tU2.textContent = 'official project (GitHub)';
+		gUpstream.appendChild(s('rect', { 'class': 'd-box', x: 30, y: 15, width: 320, height: 80, rx: 6 }));
+		var tU1 = s('text', { 'class': 'd-title', x: 190, y: 36, 'text-anchor': 'middle' }); tU1.textContent = 'Upstream repository';
+		var tU2 = s('text', { 'class': 'd-muted', x: 190, y: 53, 'text-anchor': 'middle' }); tU2.textContent = 'official project (GitHub)';
 		gUpstream.appendChild(tU1); gUpstream.appendChild(tU2);
 		svg.appendChild(gUpstream);
 
 		var gFork = s('g', { id: 'pr-fork' });
-		gFork.appendChild(s('rect', { 'class': 'd-box', x: 395, y: 24, width: 205, height: 66, rx: 6 }));
-		var tF1 = s('text', { 'class': 'd-title', x: 497, y: 48, 'text-anchor': 'middle' }); tF1.textContent = 'Your fork';
-		var tF2 = s('text', { 'class': 'd-muted', x: 497, y: 68, 'text-anchor': 'middle' }); tF2.textContent = 'personal copy (GitHub)';
+		gFork.appendChild(s('rect', { 'class': 'd-box', x: 50, y: 160, width: 280, height: 60, rx: 6 }));
+		var tF1 = s('text', { 'class': 'd-title', x: 190, y: 186, 'text-anchor': 'middle' }); tF1.textContent = 'Your fork';
+		var tF2 = s('text', { 'class': 'd-muted', x: 190, y: 206, 'text-anchor': 'middle' }); tF2.textContent = 'personal copy (GitHub)';
 		gFork.appendChild(tF1); gFork.appendChild(tF2);
 		svg.appendChild(gFork);
 
 		var gLocal = s('g', { id: 'pr-local' });
-		gLocal.appendChild(s('rect', { 'class': 'd-box', x: 110, y: 132, width: 400, height: 76, rx: 6 }));
-		var tL1 = s('text', { 'class': 'd-title', x: 310, y: 154, 'text-anchor': 'middle' }); tL1.textContent = 'Your local clone';
-		var tL2 = s('text', { 'class': 'd-muted', x: 310, y: 172, 'text-anchor': 'middle' }); tL2.textContent = 'local computer (Git workspace)';
+		gLocal.appendChild(s('rect', { 'class': 'd-box', x: 30, y: 285, width: 320, height: 100, rx: 6 }));
+		var tL1 = s('text', { 'class': 'd-title', x: 190, y: 310, 'text-anchor': 'middle' }); tL1.textContent = 'Your local clone';
+		var tL2 = s('text', { 'class': 'd-muted', x: 190, y: 330, 'text-anchor': 'middle' }); tL2.textContent = 'local computer (Git workspace)';
 		gLocal.appendChild(tL1); gLocal.appendChild(tL2);
 		svg.appendChild(gLocal);
 
 		var bBranch = s('g', { id: 'badge-branch' });
-		bBranch.appendChild(s('rect', { 'class': 'd-box', x: 150, y: 178, width: 140, height: 22, rx: 3 }));
-		var tB = s('text', { 'class': 'd-muted', x: 220, y: 194, 'text-anchor': 'middle' }); tB.textContent = 'edit branch';
+		bBranch.appendChild(s('rect', { 'class': 'd-box', x: 45, y: 345, width: 130, height: 26, rx: 3 }));
+		var tB = s('text', { 'class': 'd-muted', x: 110, y: 362, 'text-anchor': 'middle' }); tB.textContent = 'edit branch';
 		bBranch.appendChild(tB);
 		svg.appendChild(bBranch);
 
 		var bCommit = s('g', { id: 'badge-commit' });
-		bCommit.appendChild(s('rect', { 'class': 'd-box', x: 330, y: 178, width: 140, height: 22, rx: 3 }));
-		var tC = s('text', { 'class': 'd-muted', x: 400, y: 194, 'text-anchor': 'middle' }); tC.textContent = 'commits';
+		bCommit.appendChild(s('rect', { 'class': 'd-box', x: 205, y: 345, width: 130, height: 26, rx: 3 }));
+		var tC = s('text', { 'class': 'd-muted', x: 270, y: 362, 'text-anchor': 'middle' }); tC.textContent = 'commits';
 		bCommit.appendChild(tC);
 		svg.appendChild(bCommit);
 
-		var aFork = s('line', { 'class': 'd-line', x1: 225, y1: 44, x2: 393, y2: 44, 'marker-end': 'url(#arrow-pr)' });
-		var lFork = s('text', { 'class': 'd-muted', x: 310, y: 38, 'text-anchor': 'middle' }); lFork.textContent = 'fork';
+		var aFork = s('line', { 'class': 'd-line', x1: 120, y1: 97, x2: 120, y2: 158, 'marker-end': 'url(#arrow-pr)' });
+		var lFork = s('text', { 'class': 'd-muted', x: 108, y: 132, 'text-anchor': 'end' }); lFork.textContent = 'fork';
 
-		var aClone = s('path', { 'class': 'd-line', d: 'M 465,90 C 465,115 440,120 420,130', fill: 'none', 'marker-end': 'url(#arrow-pr)' });
-		var lClone = s('text', { 'class': 'd-muted', x: 485, y: 115, 'text-anchor': 'middle' }); lClone.textContent = 'clone';
+		var aClone = s('line', { 'class': 'd-line', x1: 120, y1: 222, x2: 120, y2: 283, 'marker-end': 'url(#arrow-pr)' });
+		var lClone = s('text', { 'class': 'd-muted', x: 108, y: 257, 'text-anchor': 'end' }); lClone.textContent = 'clone';
 
-		var aBranch = s('line', { 'class': 'd-line', x1: 290, y1: 189, x2: 328, y2: 189, 'marker-end': 'url(#arrow-pr)' });
+		var aBranch = s('line', { 'class': 'd-line', x1: 177, y1: 358, x2: 203, y2: 358, 'marker-end': 'url(#arrow-pr)' });
 
-		var aPush = s('path', { 'class': 'd-line', d: 'M 470,132 C 500,120 535,115 535,92', fill: 'none', 'marker-end': 'url(#arrow-pr)' });
-		var lPush = s('text', { 'class': 'd-muted', x: 550, y: 115, 'text-anchor': 'middle' }); lPush.textContent = 'push';
+		var aPush = s('line', { 'class': 'd-line', x1: 260, y1: 283, x2: 260, y2: 222, 'marker-end': 'url(#arrow-pr)' });
+		var lPush = s('text', { 'class': 'd-muted', x: 272, y: 257, 'text-anchor': 'start' }); lPush.textContent = 'push';
 
-		var aPR = s('line', { 'class': 'd-line', x1: 395, y1: 74, x2: 227, y2: 74, 'marker-end': 'url(#arrow-pr)' });
-		var lPR = s('text', { 'class': 'd-muted', x: 310, y: 88, 'text-anchor': 'middle' }); lPR.textContent = 'pull request';
+		var aPR = s('line', { 'class': 'd-line', x1: 260, y1: 158, x2: 260, y2: 97, 'marker-end': 'url(#arrow-pr)' });
+		var lPR = s('text', { 'class': 'd-muted', x: 272, y: 132, 'text-anchor': 'start' }); lPR.textContent = 'pull request';
 
 		var bReview = s('g', { id: 'badge-review' });
-		bReview.appendChild(s('rect', { 'class': 'd-box', x: 30, y: 62, width: 85, height: 22, rx: 3 }));
-		var tRev = s('text', { 'class': 'd-muted', x: 72, y: 77, 'text-anchor': 'middle' }); tRev.textContent = 'review';
+		bReview.appendChild(s('rect', { 'class': 'd-box', x: 80, y: 62, width: 100, height: 24, rx: 3 }));
+		var tRev = s('text', { 'class': 'd-muted', x: 130, y: 78, 'text-anchor': 'middle' }); tRev.textContent = 'review';
 		bReview.appendChild(tRev);
 
 		var bMerge = s('g', { id: 'badge-merge' });
-		bMerge.appendChild(s('rect', { 'class': 'd-box', x: 125, y: 62, width: 85, height: 22, rx: 3 }));
-		var tMrg = s('text', { 'class': 'd-muted', x: 167, y: 77, 'text-anchor': 'middle' }); tMrg.textContent = 'merge';
+		bMerge.appendChild(s('rect', { 'class': 'd-box', x: 200, y: 62, width: 100, height: 24, rx: 3 }));
+		var tMrg = s('text', { 'class': 'd-muted', x: 250, y: 78, 'text-anchor': 'middle' }); tMrg.textContent = 'merge';
 		bMerge.appendChild(tMrg);
 
 		[aFork, lFork, aClone, lClone, aBranch, aPush, lPush, aPR, lPR, bReview, bMerge].forEach(function (el) {
@@ -1912,6 +1912,169 @@
 		update();
 	}
 
+	/* ---------- QoS compatibility calculator from lesson 4.2 ---------- */
+
+	function initQos(root) {
+		var pubRel = 'Reliable';
+		var pubDur = 'Volatile';
+		var subRel = 'Reliable';
+		var subDur = 'Volatile';
+
+		var W = 380, H = 120;
+		var svg = plotFrame(W, H, 'ROS 2 QoS compatibility diagram between publisher and subscription');
+		svg.setAttribute('class', 'widget-plot lesson-diagram');
+
+		var defs = s('defs', {});
+		var mk = s('marker', { id: 'arrow-qos', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', 'class': 'd-fill' }));
+		defs.appendChild(mk);
+		svg.appendChild(defs);
+
+		// Publisher box (left)
+		var gPub = s('g', {});
+		var rPub = s('rect', { 'class': 'd-box', x: 10, y: 15, width: 140, height: 90, rx: 6 });
+		var tPubTitle = s('text', { 'class': 'd-title', x: 80, y: 36, 'text-anchor': 'middle' });
+		tPubTitle.textContent = 'Publisher';
+		var tPubSub = s('text', { 'class': 'd-muted', x: 80, y: 52, 'text-anchor': 'middle' });
+		tPubSub.textContent = 'offers QoS';
+		var tPubRel = s('text', { 'class': 'd-muted', x: 80, y: 72, 'text-anchor': 'middle' });
+		var tPubDur = s('text', { 'class': 'd-muted', x: 80, y: 88, 'text-anchor': 'middle' });
+		[rPub, tPubTitle, tPubSub, tPubRel, tPubDur].forEach(function (el) { gPub.appendChild(el); });
+		svg.appendChild(gPub);
+
+		// Subscription box (right)
+		var gSub = s('g', {});
+		var rSub = s('rect', { 'class': 'd-box', x: 230, y: 15, width: 140, height: 90, rx: 6 });
+		var tSubTitle = s('text', { 'class': 'd-title', x: 300, y: 36, 'text-anchor': 'middle' });
+		tSubTitle.textContent = 'Subscription';
+		var tSubSub = s('text', { 'class': 'd-muted', x: 300, y: 52, 'text-anchor': 'middle' });
+		tSubSub.textContent = 'requests QoS';
+		var tSubRel = s('text', { 'class': 'd-muted', x: 300, y: 72, 'text-anchor': 'middle' });
+		var tSubDur = s('text', { 'class': 'd-muted', x: 300, y: 88, 'text-anchor': 'middle' });
+		[rSub, tSubTitle, tSubSub, tSubRel, tSubDur].forEach(function (el) { gSub.appendChild(el); });
+		svg.appendChild(gSub);
+
+		// Connection link (center)
+		var connLine = s('line', { x1: 152, y1: 65, x2: 226, y2: 65 });
+		var connCross1 = s('line', { x1: 184, y1: 58, x2: 196, y2: 72, stroke: '#d33', 'stroke-width': '2.5' });
+		var connCross2 = s('line', { x1: 184, y1: 72, x2: 196, y2: 58, stroke: '#d33', 'stroke-width': '2.5' });
+		var connLabel = s('text', { 'class': 'd-title', x: 190, y: 46, 'text-anchor': 'middle', 'font-size': '12' });
+		var connSub = s('text', { 'class': 'd-muted', x: 190, y: 86, 'text-anchor': 'middle', 'font-size': '10' });
+		[connLine, connCross1, connCross2, connLabel, connSub].forEach(function (el) { svg.appendChild(el); });
+
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		// Toggle buttons
+		var btnPubRelReliable = button('Reliable', function () { pubRel = 'Reliable'; update(); });
+		var btnPubRelBestEffort = button('Best Effort', function () { pubRel = 'Best Effort'; update(); });
+
+		var btnPubDurTL = button('Transient Local', function () { pubDur = 'Transient Local'; update(); });
+		var btnPubDurVol = button('Volatile', function () { pubDur = 'Volatile'; update(); });
+
+		var btnSubRelReliable = button('Reliable', function () { subRel = 'Reliable'; update(); });
+		var btnSubRelBestEffort = button('Best Effort', function () { subRel = 'Best Effort'; update(); });
+
+		var btnSubDurTL = button('Transient Local', function () { subDur = 'Transient Local'; update(); });
+		var btnSubDurVol = button('Volatile', function () { subDur = 'Volatile'; update(); });
+
+		function makeRow(label, btn1, btn2) {
+			return h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': label }, [
+				h('span', { style: 'display: inline-block; min-width: 170px; font-size: 13px; font-weight: 600; line-height: 28px;', text: label + ': ' }),
+				btn1, btn2
+			]);
+		}
+
+		var rowPubRel = makeRow('Offered Reliability', btnPubRelReliable, btnPubRelBestEffort);
+		var rowPubDur = makeRow('Offered Durability', btnPubDurTL, btnPubDurVol);
+		var rowSubRel = makeRow('Requested Reliability', btnSubRelReliable, btnSubRelBestEffort);
+		var rowSubDur = makeRow('Requested Durability', btnSubDurTL, btnSubDurVol);
+
+		var resetBtn = button('Reset to defaults', function () {
+			pubRel = 'Reliable';
+			pubDur = 'Volatile';
+			subRel = 'Reliable';
+			subDur = 'Volatile';
+			update();
+		});
+
+		function update() {
+			btnPubRelReliable.setAttribute('aria-pressed', String(pubRel === 'Reliable'));
+			btnPubRelBestEffort.setAttribute('aria-pressed', String(pubRel === 'Best Effort'));
+			btnPubDurTL.setAttribute('aria-pressed', String(pubDur === 'Transient Local'));
+			btnPubDurVol.setAttribute('aria-pressed', String(pubDur === 'Volatile'));
+
+			btnSubRelReliable.setAttribute('aria-pressed', String(subRel === 'Reliable'));
+			btnSubRelBestEffort.setAttribute('aria-pressed', String(subRel === 'Best Effort'));
+			btnSubDurTL.setAttribute('aria-pressed', String(subDur === 'Transient Local'));
+			btnSubDurVol.setAttribute('aria-pressed', String(subDur === 'Volatile'));
+
+			var relCompat = !(pubRel === 'Best Effort' && subRel === 'Reliable');
+			var durCompat = !(pubDur === 'Volatile' && subDur === 'Transient Local');
+			var isConnected = relCompat && durCompat;
+
+			tPubRel.textContent = 'Rel: ' + pubRel;
+			tPubDur.textContent = 'Dur: ' + pubDur;
+			tSubRel.textContent = 'Rel: ' + subRel;
+			tSubDur.textContent = 'Dur: ' + subDur;
+
+			if (isConnected) {
+				connLine.setAttribute('class', 'd-strong');
+				connLine.setAttribute('marker-end', 'url(#arrow-qos)');
+				connLine.removeAttribute('stroke-dasharray');
+				connCross1.setAttribute('display', 'none');
+				connCross2.setAttribute('display', 'none');
+				connLabel.textContent = 'Connected';
+				connLabel.setAttribute('class', 'd-title');
+				connLabel.removeAttribute('fill');
+				connSub.textContent = '';
+			} else {
+				connLine.setAttribute('class', 'd-line');
+				connLine.removeAttribute('marker-end');
+				connLine.setAttribute('stroke-dasharray', '4 3');
+				connCross1.removeAttribute('display');
+				connCross2.removeAttribute('display');
+				connLabel.textContent = 'No connection';
+				connLabel.setAttribute('fill', '#d33');
+				connSub.textContent = '(incompatible)';
+			}
+
+			if (isConnected) {
+				var explanation = '';
+				if (pubRel === 'Reliable' && subRel === 'Reliable') {
+					explanation = 'Both endpoints agree on delivery acknowledgments.';
+				} else if (pubRel === 'Reliable' && subRel === 'Best Effort') {
+					explanation = 'Publisher offers higher quality than requested; subscriber receives data.';
+				} else if (pubRel === 'Best Effort' && subRel === 'Best Effort') {
+					explanation = 'Both endpoints accept that some samples may be lost.';
+				}
+				readout.textContent = 'Connected. ' + explanation;
+			} else if (!relCompat && !durCompat) {
+				readout.textContent = 'No connection (incompatible QoS): Reliability and Durability incompatible. Reliability: Subscriber demands delivery guarantees that the publisher cannot provide. No connection is made. Durability: Subscriber asks for old (latched) samples, but the publisher keeps none. No communication.';
+			} else if (!relCompat) {
+				readout.textContent = 'No connection (incompatible QoS): Reliability incompatible. Subscriber demands delivery guarantees that the publisher cannot provide. No connection is made.';
+			} else {
+				readout.textContent = 'No connection (incompatible QoS): Durability incompatible. Subscriber asks for old (latched) samples, but the publisher keeps none. No communication.';
+			}
+		}
+
+		var wrap = h('figure', { 'class': 'lesson-diagram', style: 'margin: 8px 0; padding: 0; border: 0;' }, [svg]);
+
+		root.replaceChildren(frame('QoS compatibility rule (Offered vs Requested)', [
+			h('p', { 'class': 'widget-note', text: 'Choose the publisher offered policies and subscriber requested policies to check compatibility. Offered quality must meet or exceed requested quality (Offered QoS \u2265 Requested QoS).' }),
+			h('p', { 'class': 'widget-note', style: 'font-weight: 700; margin: 8px 0 2px;', text: 'Publisher (Offered QoS):' }),
+			rowPubRel,
+			rowPubDur,
+			h('p', { 'class': 'widget-note', style: 'font-weight: 700; margin: 12px 0 2px;', text: 'Subscription (Requested QoS):' }),
+			rowSubRel,
+			rowSubDur,
+			wrap,
+			h('div', { 'class': 'widget-buttons' }, [resetBtn]),
+			readout
+		]));
+
+		update();
+	}
+
 	var INIT = {
 		pwm: initPwm,
 		encoder: initEncoder,
@@ -1927,7 +2090,8 @@
 		prflow: initPrflow,
 		modbus: initModbus,
 		trapezoid: initTrapezoid,
-		zones: initZones
+		zones: initZones,
+		qos: initQos
 	};
 
 	function boot() {

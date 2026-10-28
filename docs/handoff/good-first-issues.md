@@ -13,9 +13,6 @@ For each, check whether the same page loads over `https://`. If it does, change 
 ## 2. Hub page description is out of date [seo]
 The `description`, `og:description` and `twitter:description` in `robotics.html` still list only robot types, RobotStudio, PolyScope, URScript, RAPID, ROS and ethics. They miss open-source contribution, machine vision, industrial networks and maintenance. Rewrite the three tags (same text in all three, under about 160 characters) so they match the chapter list on the hub.
 
-## 3. Diagram labels are too small on phones [widget]
-The `prflow` widget (lesson 3.2) and the `rosgraph` widget (lesson 4.4) draw on a 620-unit-wide SVG, so at 320 px the labels are about 5 px tall. Rearrange each diagram to stack vertically in a viewBox about 400 units wide, without changing what it shows. Code is in `assets/js/widgets.js` (`initPrflow`, `initRosgraph`). Check in a phone-sized window in light and dark mode.
-
 ## 4. Find the licences of five projects on the Open-Source Map [references]
 `robotics-oss-map.html` shows "See the project's repository" for the licence of MoveIt 2, Nav2, Gazebo, the UR ROS 2 driver and Wireshark. For each, find the licence in the project's own repository (the `LICENSE` file or the README) and put the licence name in the table with a link to that file. One project per PR is fine.
 
