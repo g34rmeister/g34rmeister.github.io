@@ -33,6 +33,7 @@ SITE_PAGES = ['index.html', 'about.html', 'affiliations.html', 'portfolio.html',
               'resume.html', 'contact.html']
 EXTRA_COURSE_PAGES = ['robotics-quiz.html']
 TRAILING_COURSE_PAGES = ['robotics-method.html', 'robotics-glossary.html']
+REPO_EDIT = 'https://github.com/g34rmeister/g34rmeister.github.io/edit/main/'  # 'Suggest an edit' link in each lesson
 
 
 def load_course():
@@ -112,7 +113,7 @@ def load_source_status():
     return {lesson: (counts, latest.get(lesson, '')) for lesson, counts in sources.lesson_status(reg).items()}
 
 
-def references_note(lesson_id):
+def references_note(lesson_id, url=None):
     counts, checked = SOURCE_STATUS.get(lesson_id, ({}, ''))
     total = sum(counts.values())
     match = counts.get('verified', 0) + counts.get('fixed', 0)
@@ -127,11 +128,13 @@ def references_note(lesson_id):
         parts.append(f'{problems} still need fixing')
     when = date.fromisoformat(checked).strftime('%B %Y') if checked else 'not yet'
     return (f'Source check ({when}): ' + '; '.join(parts) + '. How these sources were chosen and checked: '
-            '<a href="robotics-method.html">How this course was made</a>.')
+            '<a href="robotics-method.html">How this course was made</a>.' + (
+                f' Spot a mistake or know a better source? <a href="{REPO_EDIT}{url}" target="_blank" '
+                'rel="noopener noreferrer">Suggest an edit on GitHub</a>.' if url else ''))
 
 
 def lesson_page(text, ch, i, where):
-    text = replace_once(text, r'<p class="references-note">(.*?)</p>', references_note(ch['lessons'][i]['id']), where)
+    text = replace_once(text, r'<p class="references-note">(.*?)</p>', references_note(ch['lessons'][i]['id'], ch['lessons'][i]['url']), where)
     lessons = ch['lessons']
     if i == 0:
         left = (ch['url'], '&lt;- Previous', f'Chapter {ch["id"]} overview')
