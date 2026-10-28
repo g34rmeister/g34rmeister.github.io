@@ -101,7 +101,7 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 ## Chapter 3: How to Contribute to Open Source (`robotics-oss.html`, 4 lessons, 56 min)
 
 ### 3.1 What Open Source Is
-`robotics-3-1.html` · 13 min · 4 refs (verified 4) · 0 figures · 0 Try it
+`robotics-3-1.html` · 13 min · 4 refs (verified 4) · 1 figures · 0 Try it
 - Objectives: Explain why an open source license is required for a project to be open source. / Describe how public open-source contributions build experience, reputation, and career artifacts. / Identify standard project files (README, CONTRIBUTING, CODE_OF_CONDUCT, LICENSE) and what each does. / Examine how ROS 2 packages document purpose, build instructions, and permissive licensing.
 - Key terms: open source license, README, CONTRIBUTING, CODE_OF_CONDUCT, Apache 2.0 license
 - Sections: The definition of open source and why licenses matter · Public collaboration and career growth · Project structure and the LICENSE file · Guiding users: the README file · Guiding contributors: the CONTRIBUTING guide · Setting community expectations: CODE_OF_CONDUCT · Check your understanding
@@ -113,13 +113,13 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 - Sections: Contributions beyond code · Finding a first issue in robotics projects · The fork, clone, and branch workflow · Draft pull requests and staying in sync · Communication norms: public collaboration and reproduction · Check your understanding
 
 ### 3.3 How Robotics Projects Work
-`robotics-3-3.html` · 15 min · 6 refs (verified 6) · 0 figures · 0 Try it
+`robotics-3-3.html` · 15 min · 6 refs (verified 6) · 1 figures · 0 Try it
 - Objectives: Explain the ROS 2 development flow: rolling development, distribution branches, and backport rules. / Satisfy contributor governance requirements, including Developer Certificate of Origin (DCO) sign-off and maintainer approvals. / Describe the role of the ROS 2 build farm and REP 2004 quality categories in software stability. / Compare contribution policies across MoveIt 2, ros2_control, Gazebo, and Nav2.
 - Key terms: Developer Certificate of Origin, backport, rolling, REP 2004, build farm
 - Sections: ROS 2 distributions and release branches · Package quality categories and the build farm · ROS 2 pull request requirements · MoveIt 2: branches, chunked PRs, and community feedback · ros2_control: approvals and review hygiene · Gazebo and Nav2: governance and project leadership · Check your understanding
 
 ### 3.4 Lab: Your First Pull Request
-`robotics-3-4.html` · 14 min · 2 refs (verified 2) · 0 figures · 0 Try it
+`robotics-3-4.html` · 14 min · 2 refs (verified 2) · 1 figures · 0 Try it
 - Objectives: Select a small, actionable improvement such as a typo fix, wording clarification, or source correction. / Edit files and open a pull request directly in the web browser using GitHub's file editor. / Clone the repository locally, apply changes, and run the project verification checks before submitting. / Submit a pull request using the repository template and respond constructively to maintainer review.
 - Key terms: pull request, pull request template, Propose changes, generated regions
 - Sections: Choosing a first contribution to robOSStics · Lab Path A: Editing directly in your browser · Lab Path B: Working locally with Git and running checks · The source rule and repository constraints · Opening the pull request with the repository template · Responding to review and getting help · Check your understanding
@@ -277,13 +277,13 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 ## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 86 min)
 
 ### 7.1 Industrial Cameras and Optics
-`robotics-7-1.html` · 15 min · 9 refs (verified 9) · 0 figures · 0 Try it
+`robotics-7-1.html` · 15 min · 9 refs (verified 9) · 1 figures · 0 Try it
 - Objectives: Compare CMOS and CCD image sensor architectures, evaluating readout speed, blooming resistance, and pixel saturation capacity. / Distinguish global shutter from rolling shutter mechanisms, explaining how exposure timing affects moving parts and how strobe lighting prevents rolling shutter distortion. / Calculate lens aperture stops and optical throughput using f-numbers, and analyze the trade-off between depth of field and light throughput. / Explain how telecentric lenses eliminate parallax error in precision dimensional gauging and describe how the GenICam standard provides hardware-independent camera control.
 - Key terms: CMOS sensor, global shutter, rolling shutter, f-number, telecentric lens, GenICam
 - Sections: The machine vision camera: from photons to pixels · Pixel size, resolution, and sensor performance · Shutter mechanisms: global shutter versus rolling shutter · Lens optics: focal length and field of view · Aperture and f-number: light throughput and depth of field · Telecentric lenses for precision gauging · Industrial camera interfaces and GenICam · Check your understanding
 
 ### 7.2 Lighting for Machine Vision
-`robotics-7-2.html` · 14 min · 8 refs (verified 8) · 0 figures · 0 Try it
+`robotics-7-2.html` · 14 min · 8 refs (verified 8) · 1 figures · 0 Try it
 - Objectives: Select appropriate illumination geometries—including backlighting, ring lighting, glancing, and darkfield—based on part geometry, surface finish, and inspection goals. / Explain how diffuse dome lights and coaxial beamsplitters reduce glare and hot spots on curved and flat shiny surfaces. / Use colored filters matched to the light, infrared cut-off filters and cross-polarization to bring out target features and reject ambient factory light. / Evaluate the benefits of pulsed strobe illumination and LED overdriving for freezing rapid part motion and extending emitter life expectancy.
 - Key terms: backlighting, darkfield illumination, coaxial illumination, diffuse dome light, cross-polarization, strobe mode
 - Sections: Why illumination comes first in machine vision · Backlighting: silhouetting and edge contrast · Directional, glancing, and darkfield illumination · Diffuse dome lights for curved specular objects · Coaxial and in-line illumination · Optical filters, wavelength selection, and cross-polarization · Strobing, overdriving, and timing control · Check your understanding
@@ -301,13 +301,13 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 - Sections: Direct 3D sensing versus 2D inference · Stereo vision principles and disparity calculation · Point cloud filtering: pass-through, voxel grids, and outlier removal · Planar segmentation and table surface extraction · Euclidean cluster extraction for object segmentation · Industrial bin picking and piece picking requirements · The complete 3D vision guidance workflow · Check your understanding
 
 ### 7.5 Inspection and Measurement
-`robotics-7-5.html` · 14 min · 13 refs (verified 13) · 0 figures · 0 Try it
+`robotics-7-5.html` · 14 min · 13 refs (verified 13) · 1 figures · 0 Try it
 - Objectives: Explain the two kinds of inspection error, missed defects and false alarms, and what each costs a production line. / Apply spatial resolution metrics and the Nyquist sampling limit to determine the optical tolerance limits of a camera sensor. / Explain how optical distortion is classified into barrel and pincushion types and corrected through camera calibration. / Name the ISO/IEC 15416 and 15415 print quality standards for 1D and 2D codes, and explain how Reed-Solomon error correction lets a damaged Data Matrix ECC 200 symbol still be read.
 - Key terms: Nyquist limit, dimensional gauging, barrel distortion, pincushion distortion, presence verification, Data Matrix ECC 200
 - Sections: Quality assurance and automated inspection · Spatial resolution and the Nyquist limit · Dimensional gauging and telecentric optics · Optical distortion and software calibration · Presence verification and flaw detection · Barcode verification and 2D symbol reading · Check your understanding
 
 ### 7.6 Lab: A ROS 2 Camera Pipeline
-`robotics-7-6.html` · 15 min · 10 refs (verified 10) · 0 figures · 0 Try it
+`robotics-7-6.html` · 15 min · 10 refs (verified 10) · 1 figures · 0 Try it
 - Objectives: Describe the ROS 2 camera pipeline architecture and message definitions (sensor_msgs/Image and sensor_msgs/CameraInfo). / Interpret optical camera coordinate frame conventions (+x right, +y down, +z forward) and map them to robot base frames. / Manage network bandwidth using image_transport plugins and synchronize image and calibration streams with message_filters TimeSynchronizer. / Implement a complete ROS 2 Python node using cv_bridge to convert images between ROS messages and OpenCV NumPy arrays for real-time edge processing.
 - Key terms: sensor_msgs/Image, sensor_msgs/CameraInfo, plumb_bob, image_transport, TimeSynchronizer, cv_bridge
 - Sections: Cameras in the ROS 2 architecture · Image data representation: sensor_msgs/Image · Calibration metadata: sensor_msgs/CameraInfo · Streaming transport and message synchronization · Bridging ROS 2 and OpenCV with cv_bridge · Lab: Implementing an OpenCV vision node · Running and testing the node · Check your understanding
@@ -315,13 +315,13 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 ## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 87 min)
 
 ### 8.1 From Wires to Networks
-`robotics-8-1.html` · 14 min · 5 refs (verified 5) · 0 figures · 0 Try it
+`robotics-8-1.html` · 14 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Compare sinking and sourcing DC circuits, evaluating how NPN and PNP 3-wire field devices interface with PLC I/O modules. / Explain how fieldbuses replaced point-to-point wiring and analyze how industrial Ethernet supports multiple protocols on shared media. / Differentiate cyclic I/O data exchange from acyclic diagnostic messaging between controllers and field devices. / Evaluate line, star, and ring physical topologies, examining recovery times and node limits in Device Level Ring networks.
 - Key terms: sinking, sourcing, fieldbus, cyclic communication, acyclic communication, Device Level Ring
 - Sections: Discrete DC I/O: sinking and sourcing · Three-wire sensors: NPN and PNP field devices · Point-to-point wiring and fieldbus technology · The shift to industrial Ethernet · Cyclic and acyclic communication · Network topologies and Device Level Ring resilience · Check your understanding
 
 ### 8.2 Industrial Ethernet Protocols
-`robotics-8-2.html` · 15 min · 8 refs (verified 8) · 0 figures · 0 Try it
+`robotics-8-2.html` · 15 min · 8 refs (verified 8) · 1 figures · 0 Try it
 - Objectives: Explain how EtherNet/IP combines standard Ethernet with CIP, contrasting implicit UDP messaging with explicit TCP messaging. / Analyze PROFINET RT and IRT communication mechanisms, device hierarchy models, and the 50 percent bandwidth reservation rule. / Describe how EtherCAT processes frames on the fly using EtherType 0x88A4, dedicated slave controllers, and distributed clocks. / Interpret XML-based device description files (GSDML, ESI) and examine the Modbus TCP register model and MBAP header.
 - Key terms: EtherNet/IP, implicit messaging, explicit messaging, PROFINET RT, GSDML, EtherCAT
 - Sections: The industrial Ethernet landscape · EtherNet/IP and the Common Industrial Protocol · PROFINET: real-time deterministic Ethernet · EtherCAT: processing on the fly · Modbus TCP: industrial messaging on port 502 · Device description files in engineering software · Check your understanding
@@ -333,13 +333,13 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 - Sections: Connecting robots to cell PLCs · Modbus TCP server architecture · Register mapping and bit packing · Python communication with pymodbus · Lab: Talk to a Modbus server from Python · Modbus exceptions and offline simulation · Check your understanding
 
 ### 8.4 Safety over the Network
-`robotics-8-4.html` · 14 min · 5 refs (verified 5) · 0 figures · 0 Try it
+`robotics-8-4.html` · 14 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Explain the black channel principle and how safety communication operates over unverified transmission media. / Compare functional safety standards across PROFIsafe (IEC 61784-3-3), FailSafe over EtherCAT (IEC 61784-3), and CIP Safety. / Describe how CIP Safety verifies data transfer integrity using timestamps, production identifiers, and Safety Network Numbers. / Describe the safety signals a robot and a safety PLC exchange over PROFIsafe and which stop category each one triggers.
 - Key terms: black channel principle, PROFIsafe, FailSafe over EtherCAT, CIP Safety, Safety Network Number, F-device
 - Sections: Standard networks versus safety requirements · The black-channel principle · PROFIsafe protocol and functional safety standards · CIP Safety and message integrity validation · Safety over EtherCAT (FSoE) · What a robot and a safety PLC exchange · Check your understanding
 
 ### 8.5 From the Plant Floor to IT
-`robotics-8-5.html` · 14 min · 5 refs (verified 5) · 0 figures · 0 Try it
+`robotics-8-5.html` · 14 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Characterize point-to-point IO-Link sensor communication under IEC 61131-9, baud rates, and IODD device descriptions. / Explain the OPC UA architecture under IEC 62541, binary TCP transport over port 4840, and X.509v3 PKI security. / Explain what the VDMA 40010 OPC UA Robotics companion specification standardizes. / Explain MQTT publish/subscribe and its three Quality of Service levels, and how ros2_control's Controller Manager runs the control loop.
 - Key terms: IO-Link, OPC UA, VDMA 40010, MQTT, Quality of Service, Controller Manager
 - Sections: The industrial communication hierarchy: bridging OT and IT · Device-level intelligence with IO-Link · Structured industrial data: OPC Unified Architecture · Standardized robot models: VDMA companion specifications · Publish-subscribe telemetry with MQTT · Advanced robotics and IT: ROS 2 and ros2_control · Check your understanding
@@ -353,19 +353,19 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 ## Chapter 9: Maintenance and Troubleshooting (`robotics-maintenance.html`, 6 lessons, 88 min)
 
 ### 9.1 Preventive Maintenance
-`robotics-9-1.html` · 14 min · 4 refs (verified 4) · 0 figures · 0 Try it
+`robotics-9-1.html` · 14 min · 4 refs (verified 4) · 1 figures · 0 Try it
 - Objectives: Distinguish between preventive, predictive, and reactive maintenance strategies and compare their impact on machine downtime and defect rates. / Identify the maintenance intervals recommended for robot inspection, safety function testing, and service center checks. / Follow a robot maker's inspection checklist (UR's plan) for the arm, the monthly safety tests and the control box, including correct cleaning and ESD precautions. / Perform fastener and joint inspections following collisions using calibrated torque wrenches and explain the significance of joint grease.
 - Key terms: preventive maintenance, predictive maintenance, reactive maintenance, CMOS battery, ESD vacuum, torque wrench
 - Sections: Maintenance strategies in automated manufacturing · Balancing schedules, sensor data, and maintenance records · Routine service intervals and safety system testing · Robot arm inspection, cleaning, and joint lubrication · Control cabinet maintenance and electrostatic discharge protection · A worked checklist: UR's inspection plan · Structural fasteners, collisions, and torque verification · Check your understanding
 
 ### 9.2 A Troubleshooting Method
-`robotics-9-2.html` · 15 min · 6 refs (verified 6) · 0 figures · 0 Try it
+`robotics-9-2.html` · 15 min · 6 refs (verified 6) · 1 figures · 0 Try it
 - Objectives: Follow the five-step OSHA 29 CFR 1910.147 lockout/tagout sequence to isolate machinery and relieve stored hazardous energy. / Differentiate energy isolating devices from control circuit devices and evaluate lock and tag hardware specifications. / Analyze robot controller log entries, error code numbering ranges across controller generations, and flight record diagnostics. / Interpret Safety Control Board status LEDs and explain why resetting faults without root cause analysis risks component failure and injury.
 - Key terms: lockout/tagout, energy isolating device, stored energy, Support File, flight record, Safety Control Board
 - Sections: Safety first: controlling hazardous energy · Lockout and tagout procedures · Gathering symptoms and the risk of unverified resets · Reading controller logs and error codes · Flight reports and hypothesis testing · Documenting root causes and repairs · Check your understanding
 
 ### 9.3 Mechanical Problems
-`robotics-9-3.html` · 15 min · 5 refs (verified 5) · 0 figures · 0 Try it
+`robotics-9-3.html` · 15 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Apply cable routing rules for dress packs: bend radius, stress loops, cable ties and corners, and explain what cable retraction systems do. / Recognize seal wear and leakage, and state the replacement rule for flat rings and the torque for joint lid screws. / Work through UR's checklist for repeated protective stops and use backdrive mode to move an arm away from an obstacle. / Recognize a joint brake fault, explain why the arm may drop when power is removed, and check brake engagement.
 - Key terms: cable retraction system, cable carrier, stress loop, backdrive mode, flat ring, brake solenoid
 - Sections: Joint seals, flat rings, and fastener torques · Collisions, protective stops, and loose joints · Repeated protective stops: what to check · Safe joint brake operation and inspection · Shaft alignment and flexible couplings · Cable routing, stress loops, and bundling · Cable carriers and dynamic retraction systems · Check your understanding
@@ -377,13 +377,13 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 - Sections: Power supplies and multimeter safety · Measuring DC voltages and testing continuity · Field sensor wiring and protection limitations · Solid-state switching, leakage, and signal timing · Controller I/O capacity, isolation, and noise mitigation · Diagnosing network and fieldbus faults · Check your understanding
 
 ### 9.5 Calibration, Backups and Recovery
-`robotics-9-5.html` · 14 min · 4 refs (verified 4) · 0 figures · 0 Try it
+`robotics-9-5.html` · 14 min · 4 refs (verified 4) · 1 figures · 0 Try it
 - Objectives: Describe when and how revolution counters are updated on an ABB robot, and how this differs from entering calibration values. / Explain why correct tool load data matters and when a 4-point or 5-point TCP method is used. / Resolve joint replacement mismatches such as error C364A1 and apply Dual Robot Calibration or Program Correction by Key Waypoints. / Perform automated and manual backups using magic files and datafs partition copies, and restore controllers from bootable images.
 - Key terms: revolution counter, fine calibration, Dual Robot Calibration, Program Correction by Key Waypoints, magic files, datafs
 - Sections: Revolution counters and axis synchronization · Resolver calibration and fine calibration · Tool center point and load data · Joint replacement and type validation · Workspace recalibration and program correction · Controller backups and storage recovery · Check your understanding
 
 ### 9.6 Lab: Check a Robot's State from Python
-`robotics-9-6.html` · 15 min · 4 refs (verified 4) · 0 figures · 0 Try it
+`robotics-9-6.html` · 15 min · 4 refs (verified 4) · 1 figures · 0 Try it
 - Objectives: Establish a TCP socket connection to the Universal Robots Dashboard Server on port 29999 using Python. / Query robot mode, safety status, and program execution state using ASCII commands terminated with newlines. / Execute the recovery sequence for protective stops by handling safety popups and unlocking the stop. / Contrast protective stop recovery with emergency stop recovery regarding manual intervention and program restart behavior.
 - Key terms: Dashboard Server, robotmode, safetystatus, programState, protective stop, unlock protective stop
 - Sections: The Dashboard Server interface and remote control · Querying controller modes and execution state · Protective stops and emergency stops · The stop recovery workflow and the five-second rule · Lab: Querying robot state with Python · Lab: Clearing stops and resuming program execution · Check your understanding
@@ -409,7 +409,7 @@ Source checks, all lessons: fixed 126, partial 43, unreachable 72, verified 1023
 - Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals
 
 ### 10.4 Capstone: An Open-Source Cell Monitor
-`robotics-10-4.html` · 15 min · 6 refs (verified 6) · 0 figures · 0 Try it
+`robotics-10-4.html` · 15 min · 6 refs (verified 6) · 1 figures · 0 Try it
 - Objectives: Build a ROS 2 node that reports a robot's mode and safety status from the Dashboard Server. / Read and write packed handshake bits on a Modbus server and add a simple camera check. / Keep a time-stamped maintenance log that warns about repeated stops without ever resetting them. / Publish the project with a README, LICENSE and CONTRIBUTING file and open a real pull request.
 - Key terms: cell monitor, maintenance log, draft pull request
 - Sections: What you will build and why · Prerequisites · Software (all free) · Milestones and what to hand in · Testing and verification · Grading rubric · Reflection questions and stretch goals

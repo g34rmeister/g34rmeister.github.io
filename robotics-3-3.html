@@ -158,6 +158,32 @@
                         <p>
                             Active development continues on a separate branch. In ROS 2 development, features or fixes must be accepted and merged into the rolling branch before opening a pull request to backport them to older releases.<sup><a href="#ref-1">[1]</a></sup> The rolling branch is the unreleased, continuously updated version of ROS 2 where new capabilities land first. Backporting means copying a fix or non-breaking feature that was already merged into the rolling branch back into an older, supported distribution branch. This rule guarantees that improvements are validated in current development before being backported.
                         </p>
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 255" role="img" aria-label="Diagram of ROS 2 branching: active development in rolling, backporting non-breaking fixes to release branches like jazzy and humble." xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <marker id="arrow-3-3-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                                        <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                    </marker>
+                                </defs>
+                                <rect class="d-box-gold" x="20" y="15" width="360" height="58" rx="6"/>
+                                <text class="d-title" x="200" y="38" text-anchor="middle">rolling (active development)</text>
+                                <text class="d-muted" x="200" y="56" text-anchor="middle">unreleased, continuously updated; new capabilities land first</text>
+                                <line class="d-line" x1="120" y1="73" x2="105" y2="138" marker-end="url(#arrow-3-3-1)"/>
+                                <line class="d-line" x1="280" y1="73" x2="295" y2="138" marker-end="url(#arrow-3-3-1)"/>
+                                <text class="d-text" x="200" y="98" text-anchor="middle">backport fixes</text>
+                                <text class="d-muted" x="200" y="116" text-anchor="middle">no breaking API changes</text>
+                                <rect class="d-box" x="20" y="140" width="170" height="75" rx="5"/>
+                                <text class="d-title" x="105" y="165" text-anchor="middle">jazzy branch</text>
+                                <text class="d-muted" x="105" y="185" text-anchor="middle">stable distribution</text>
+                                <text class="d-muted" x="105" y="202" text-anchor="middle">fixed interfaces</text>
+                                <rect class="d-box" x="210" y="140" width="170" height="75" rx="5"/>
+                                <text class="d-title" x="295" y="165" text-anchor="middle">humble branch</text>
+                                <text class="d-muted" x="295" y="185" text-anchor="middle">stable distribution</text>
+                                <text class="d-muted" x="295" y="202" text-anchor="middle">backported bug fixes</text>
+                                <text class="d-muted" x="200" y="238" text-anchor="middle">(MoveIt 2 uses main for active dev, backporting to humble &amp; jazzy)</text>
+                            </svg>
+                            <figcaption>ROS 2 branching model: active development in rolling, backporting non-breaking fixes to distribution branches like jazzy and humble.<sup><a href="#ref-1">[1]</a></sup></figcaption>
+                        </figure>
 
                         <h2 class="article-section-title">02. Package quality categories and the build farm</h2>
                         <p>

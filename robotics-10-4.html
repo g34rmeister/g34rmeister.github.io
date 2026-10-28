@@ -155,6 +155,45 @@
                             <p>
                                 It is a monitor, not a controller. It reads and reports, and it never clears a stop on its own: UR's service manual says robot stops must never be acknowledged and reset automatically; resuming must be a deliberate action by a person.<sup><a href="#ref-1">[1]</a></sup> Safety functions stay on the safety-rated paths from <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a> and <a href="robotics-8-4.html">8.4 Safety over the Network</a>.
                             </p>
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 400 305" role="img" aria-label="Architecture diagram of the capstone cell monitor: stand-in servers feed the ROS 2 monitor node, which records a maintenance log and is published in a public repository with a pull request." xmlns="http://www.w3.org/2000/svg">
+                                    <defs>
+                                        <marker id="arrow-10-4-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                                            <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                        </marker>
+                                    </defs>
+                                    <rect class="d-box" x="15" y="20" width="165" height="44" rx="5"/>
+                                    <text class="d-title" x="97" y="38" text-anchor="middle">Dashboard stand-in</text>
+                                    <text class="d-muted" x="97" y="54" text-anchor="middle">port 29999: robot state</text>
+                                    <rect class="d-box" x="15" y="74" width="165" height="44" rx="5"/>
+                                    <text class="d-title" x="97" y="92" text-anchor="middle">Modbus stand-in</text>
+                                    <text class="d-muted" x="97" y="108" text-anchor="middle">fake_ur_server: cell I/O</text>
+                                    <rect class="d-box" x="15" y="128" width="165" height="44" rx="5"/>
+                                    <text class="d-title" x="97" y="146" text-anchor="middle">cam2image publisher</text>
+                                    <text class="d-muted" x="97" y="162" text-anchor="middle">camera check images</text>
+                                    <rect class="d-box-gold" x="220" y="20" width="165" height="152" rx="6"/>
+                                    <text class="d-title" x="302" y="44" text-anchor="middle">ROS 2 Cell Monitor</text>
+                                    <text class="d-muted" x="302" y="66" text-anchor="middle">reads robotmode state</text>
+                                    <text class="d-muted" x="302" y="84" text-anchor="middle">reads cell handshake I/O</text>
+                                    <text class="d-muted" x="302" y="102" text-anchor="middle">runs camera part check</text>
+                                    <text class="d-muted" x="302" y="124" text-anchor="middle">publishes topic status</text>
+                                    <text class="d-muted" x="302" y="146" text-anchor="middle">never resets a stop</text>
+                                    <line class="d-line" x1="180" y1="42" x2="218" y2="42" marker-end="url(#arrow-10-4-1)"/>
+                                    <line class="d-line" x1="180" y1="96" x2="218" y2="96" marker-end="url(#arrow-10-4-1)"/>
+                                    <line class="d-line" x1="180" y1="150" x2="218" y2="150" marker-end="url(#arrow-10-4-1)"/>
+                                    <rect class="d-box" x="15" y="215" width="165" height="72" rx="5"/>
+                                    <text class="d-title" x="97" y="236" text-anchor="middle">Maintenance Log</text>
+                                    <text class="d-muted" x="97" y="256" text-anchor="middle">state changes with time</text>
+                                    <text class="d-muted" x="97" y="274" text-anchor="middle">repeating-stop warning</text>
+                                    <rect class="d-box" x="220" y="215" width="165" height="72" rx="5"/>
+                                    <text class="d-title" x="302" y="236" text-anchor="middle">Public Repository</text>
+                                    <text class="d-muted" x="302" y="256" text-anchor="middle">README &amp; LICENSE</text>
+                                    <text class="d-muted" x="302" y="274" text-anchor="middle">CONTRIBUTING &amp; PR</text>
+                                    <path class="d-line" d="M255,172 C255,195 97,192 97,213" marker-end="url(#arrow-10-4-1)"/>
+                                    <line class="d-line" x1="302" y1="172" x2="302" y2="213" marker-end="url(#arrow-10-4-1)"/>
+                                </svg>
+                                <figcaption>Architecture of what the capstone builds: stand-in servers feeding the ROS 2 monitor node, which records a maintenance log and is published in a public repository.</figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">02. Prerequisites</h2>
                             <ul class="article-spec-list">

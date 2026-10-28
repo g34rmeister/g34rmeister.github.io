@@ -214,6 +214,32 @@
                         <p>
                             Program Correction by Key Waypoints supports only fixed waypoints and does not support Move nodes configured with <code>Use Joint Angles</code>.<sup><a href="#ref-3">[3]</a></sup> Those moves have to be checked and re-taught by hand.
                         </p>
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 335" role="img" aria-label="Flowchart of robot calibration sequence: revolution counters, resolver and fine calibration, tool data, and workspace recalibration or program correction." xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <marker id="arrow-9-5-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                                        <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                    </marker>
+                                </defs>
+                                <rect class="d-box" x="30" y="15" width="340" height="58" rx="5"/>
+                                <text class="d-title" x="200" y="38" text-anchor="middle">1. Revolution Counters</text>
+                                <text class="d-muted" x="200" y="56" text-anchor="middle">zero position at synchronization marks; update in service window</text>
+                                <line class="d-line" x1="200" y1="73" x2="200" y2="93" marker-end="url(#arrow-9-5-1)"/>
+                                <rect class="d-box" x="30" y="95" width="340" height="58" rx="5"/>
+                                <text class="d-title" x="200" y="118" text-anchor="middle">2. Resolver &amp; Fine Calibration</text>
+                                <text class="d-muted" x="200" y="136" text-anchor="middle">restore resolver values; fine calibration if external axis lacks data</text>
+                                <line class="d-line" x1="200" y1="153" x2="200" y2="173" marker-end="url(#arrow-9-5-1)"/>
+                                <rect class="d-box" x="30" y="175" width="340" height="58" rx="5"/>
+                                <text class="d-title" x="200" y="198" text-anchor="middle">3. TCP and Load Data</text>
+                                <text class="d-muted" x="200" y="216" text-anchor="middle">define TCP (4- or 5-point); set tool mass &amp; center of gravity</text>
+                                <line class="d-line" x1="200" y1="233" x2="200" y2="253" marker-end="url(#arrow-9-5-1)"/>
+                                <rect class="d-box-gold" x="30" y="255" width="340" height="66" rx="5"/>
+                                <text class="d-title" x="200" y="278" text-anchor="middle">4. Workspace &amp; Program Correction</text>
+                                <text class="d-muted" x="200" y="296" text-anchor="middle">Dual Robot Calibration across full workspace, or</text>
+                                <text class="d-muted" x="200" y="312" text-anchor="middle">Program Correction by Key Waypoints for fixed moves</text>
+                            </svg>
+                            <figcaption>The calibration order: revolution counters, resolver and fine calibration, tool data, and workspace recalibration or program correction.</figcaption>
+                        </figure>
 
                         <h2 class="article-section-title">06. Controller backups and storage recovery</h2>
                         <p>

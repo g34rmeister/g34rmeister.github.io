@@ -155,6 +155,41 @@
                         <p>
                             This lesson covers four technologies that sit at different levels: IO-Link at the sensor, OPC UA and MQTT for getting machine data to IT systems, and ROS 2 as a robot software framework that connects to all of them.
                         </p>
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 230" role="img" aria-label="The industrial communication hierarchy from device-level IO-Link to control-level industrial Ethernet and IT-level OPC UA and MQTT" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <marker id="arrow-8-5-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                    </marker>
+                                </defs>
+                                <!-- IT Level -->
+                                <rect class="d-box" x="20" y="8" width="360" height="52" rx="4"/>
+                                <text class="d-title" x="200" y="27" text-anchor="middle">Information Technology (IT) Level</text>
+                                <text class="d-muted" x="200" y="41" text-anchor="middle">Business systems: plan production, store records</text>
+                                <text class="d-muted" x="200" y="53" text-anchor="middle">OPC UA (client-server) &middot; MQTT (publish-subscribe)</text>
+
+                                <!-- Inter-tier arrows IT <-> OT -->
+                                <line class="d-line" x1="180" y1="60" x2="180" y2="82" marker-end="url(#arrow-8-5-1)"/>
+                                <line class="d-line" x1="220" y1="84" x2="220" y2="62" marker-end="url(#arrow-8-5-1)"/>
+
+                                <!-- OT / Control Level -->
+                                <rect class="d-box-gold" x="20" y="84" width="360" height="56" rx="4"/>
+                                <text class="d-title" x="200" y="103" text-anchor="middle">Operational Technology (OT) &middot; Control Level</text>
+                                <text class="d-muted" x="200" y="119" text-anchor="middle">PLCs, robot controllers, ROS 2 nodes</text>
+                                <text class="d-muted" x="200" y="132" text-anchor="middle">PLC, robot and I/O networks (8.1 to 8.4)</text>
+
+                                <!-- Inter-tier arrows OT <-> Device -->
+                                <line class="d-line" x1="180" y1="140" x2="180" y2="162" marker-end="url(#arrow-8-5-1)"/>
+                                <line class="d-line" x1="220" y1="164" x2="220" y2="142" marker-end="url(#arrow-8-5-1)"/>
+
+                                <!-- Device Level -->
+                                <rect class="d-box" x="20" y="164" width="360" height="52" rx="4"/>
+                                <text class="d-title" x="200" y="183" text-anchor="middle">Device Level</text>
+                                <text class="d-muted" x="200" y="198" text-anchor="middle">IO-Link masters, sensors, actuators</text>
+                                <text class="d-muted" x="200" y="210" text-anchor="middle">Three-wire digital link (IEC 61131-9)</text>
+                            </svg>
+                            <figcaption>The industrial communication hierarchy bridging operational technology (OT) and information technology (IT), from device-level sensors up to the business systems.</figcaption>
+                        </figure>
 
                         <h2 class="article-section-title">02. Device-level intelligence with IO-Link</h2>
                         <p>
