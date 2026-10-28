@@ -1,0 +1,238 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: how the course was made (sources policy, AI-assisted drafting, review steps)
+-->
+<html lang="en">
+    <head>
+        <title>Using This in a Class — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How to use robOSStics in a class or study group: chapter order, which chapter is optional, time estimates, quizzes as self-checks and the four capstone projects." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-teaching.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="Using This in a Class — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="How to use robOSStics in a class or study group: chapter order, which chapter is optional, time estimates, quizzes as self-checks and the four capstone projects." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-teaching.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="Using This in a Class, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Using This in a Class — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="How to use robOSStics in a class or study group: chapter order, which chapter is optional, time estimates, quizzes as self-checks and the four capstone projects." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <div class="article-breadcrumb-bar">
+                                <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                                <span class="article-breadcrumb-divider">/</span>
+                                <span>Using This in a Class</span>
+                            </div>
+
+                            <h1 class="robotics-article-headline">Using This in a Class</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                            <p>
+                                robOSStics is free to read and can be used as it is in a class, a club or a study group. This page collects what a teacher or group lead needs from the course itself: the chapter order, how long each chapter takes, which chapter is optional, how the quizzes work and what the capstone projects ask for.
+                            </p>
+
+                            <h2 class="article-section-title">01. Chapters and time</h2>
+                            <p>
+                                The chapters are meant to be taken in order. Each lesson page shows an estimated time; the table adds them up per chapter. All ten chapters come to about 944 minutes (roughly 16 hours) of reading and exercises, or about 795 minutes (roughly 13 hours) without the optional Chapter 6. Labs and capstones take longer than their reading time.
+                            </p>
+                            <table class="article-table" style="width: 100%;">
+                                <thead>
+                                    <tr><th>Ch.</th><th>Chapter</th><th>Lessons</th><th>Minutes</th><th>Quiz questions</th><th>Note</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td><a href="robotics-intro.html">Intro to Robotics</a></td><td>7</td><td>96</td><td>28</td><td></td></tr>
+                                    <tr><td>2</td><td><a href="robotics-programming.html">Robot Programming</a></td><td>8</td><td>115</td><td>24</td><td></td></tr>
+                                    <tr><td>3</td><td><a href="robotics-oss.html">How to Contribute to Open Source</a></td><td>4</td><td>56</td><td>10</td><td></td></tr>
+                                    <tr><td>4</td><td><a href="robotics-ros.html">Robot Operating System (ROS)</a></td><td>9</td><td>133</td><td>27</td><td></td></tr>
+                                    <tr><td>5</td><td><a href="robotics-ethics.html">Ethics</a></td><td>5</td><td>73</td><td>15</td><td></td></tr>
+                                    <tr><td>6</td><td><a href="robotics-control.html">Extra: Electronics and Control Basics</a></td><td>10</td><td>149</td><td>30</td><td>Optional</td></tr>
+                                    <tr><td>7</td><td><a href="robotics-vision.html">Machine Vision</a></td><td>6</td><td>86</td><td>12</td><td></td></tr>
+                                    <tr><td>8</td><td><a href="robotics-networks.html">Industrial Networks</a></td><td>6</td><td>87</td><td>12</td><td></td></tr>
+                                    <tr><td>9</td><td><a href="robotics-maintenance.html">Maintenance and Troubleshooting</a></td><td>6</td><td>88</td><td>12</td><td></td></tr>
+                                    <tr><td>10</td><td><a href="robotics-capstone.html">Capstone Projects</a></td><td>4</td><td>61</td><td>9</td><td></td></tr>
+                                </tbody>
+                            </table>
+
+                            <h2 class="article-section-title">02. The optional chapter</h2>
+                            <p>
+                                Chapter 6 (Electronics and Control Basics) is an extra chapter. It can be skipped by groups that only program robots, and added for groups that build hardware. Capstone 10.3 (speed-controlled wheel) builds on it, so skip that capstone if you skip Chapter 6.
+                            </p>
+
+                            <h2 class="article-section-title">03. Quizzes are self-checks</h2>
+                            <p>
+                                Every chapter has a short quiz on the <a href="robotics-quiz.html">quiz page</a>. The quizzes are there for learners to check themselves, not to grade them. Progress and quiz results are saved only in the learner's own browser, so they are not visible to a teacher and are lost if the browser's site data is cleared. If you need grades, use the capstone rubrics or your own assessment.
+                            </p>
+
+                            <h2 class="article-section-title">04. Capstone projects</h2>
+                            <p>
+                                Chapter 10 has four capstones. Each one is a small project with milestones, a list of what to hand in, and a grading rubric, so it can be used as a course project or worked through alone.
+                            </p>
+                            <ul>
+                                <li><a href="robotics-10-1.html">10.1 Simulated work cell</a>: builds on Chapters 1, 2 and 5.</li>
+                                <li><a href="robotics-10-2.html">10.2 ROS 2 pick-and-place with MoveIt 2</a>: builds on Chapter 4.</li>
+                                <li><a href="robotics-10-3.html">10.3 Speed-controlled wheel</a>: builds on Chapter 6 and needs hardware.</li>
+                                <li><a href="robotics-10-4.html">10.4 Open-source cell monitor</a>: builds on Chapters 3, 4, 7, 8 and 9.</li>
+                            </ul>
+
+                            <h2 class="article-section-title">05. Corrections and changes</h2>
+                            <p>
+                                Every lesson has a "Suggest an edit on GitHub" link under its references. If you find an error while teaching, please report it there or through the <a href="contact.html">contact page</a>, with the lesson number and, if you can, a source. <a href="robotics-method.html">How This Course Was Made</a> explains how the lessons were written and checked.
+                            </p>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Course home</span>
+                                    <span class="article-nav-target">All chapters</span>
+                                </a>
+                                <a href="robotics-glossary.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Look up a term -&gt;</span>
+                                    <span class="article-nav-target">Glossary</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>September 2026</span>.</li>
+                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=1.6" defer></script>
+            <script src="assets/js/course-data.js?v=1.8" defer></script>
+            <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+            <script src="assets/js/learning.js?v=1.4" defer></script>
+
+    </body>
+</html>

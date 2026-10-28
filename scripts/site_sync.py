@@ -32,7 +32,7 @@ SITE = 'https://g34rmeister.github.io/'
 SITE_PAGES = ['index.html', 'about.html', 'affiliations.html', 'portfolio.html', 'project-sample.html',
               'resume.html', 'contact.html']
 EXTRA_COURSE_PAGES = ['robotics-quiz.html']
-TRAILING_COURSE_PAGES = ['robotics-oss-map.html', 'robotics-method.html', 'robotics-glossary.html']
+TRAILING_COURSE_PAGES = ['robotics-oss-map.html', 'robotics-teaching.html', 'robotics-method.html', 'robotics-glossary.html']
 REPO_EDIT = 'https://github.com/g34rmeister/g34rmeister.github.io/edit/main/'  # 'Suggest an edit' link in each lesson
 
 

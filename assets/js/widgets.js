@@ -2,7 +2,7 @@
 	robOSStics: interactive widgets
 	Any element with data-widget="pwm" | "encoder" | "pid" | "arm" | "blocks" |
 	"odometry" | "fsm" | "kalman" | "rosgraph" | "movejl" | "threshold" | "prflow" |
-	"modbus" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"modbus" | "trapezoid" | "zones" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -1398,6 +1398,520 @@
 		update();
 	}
 
+	/* ---------- Trapezoidal and triangular velocity profiles from lesson 6.9 ---------- */
+
+	function initTrapezoid(root) {
+		var dSlider = slider('Distance (D)', 'trap-d', 0.01, 1.0, 0.01, 0.5, ' m');
+		var vSlider = slider('Max velocity (v_max)', 'trap-vmax', 0.05, 0.5, 0.01, 0.25, ' m/s');
+		var aSlider = slider('Max acceleration (a_max)', 'trap-amax', 0.1, 1.0, 0.05, 0.5, ' m/s²');
+
+		var W = 380, H = 200;
+		var left = 45, right = 355, top = 25, bottom = 160;
+		var yVmax = top + 15;
+
+		var svg = plotFrame(W, H, 'Velocity against time profile');
+
+		svg.appendChild(s('line', { 'class': 'plot-axis', x1: left, y1: bottom, x2: right + 10, y2: bottom }));
+		svg.appendChild(s('line', { 'class': 'plot-axis', x1: left, y1: top - 5, x2: left, y2: bottom }));
+
+		var yAxisLabel = s('text', { 'class': 'plot-label', x: left - 6, y: top, 'text-anchor': 'end' });
+		yAxisLabel.textContent = 'v (m/s)';
+		var xAxisLabel = s('text', { 'class': 'plot-label', x: right + 10, y: bottom + 16, 'text-anchor': 'end' });
+		xAxisLabel.textContent = 't (s)';
+		svg.appendChild(yAxisLabel);
+		svg.appendChild(xAxisLabel);
+
+		var vMaxLine = s('line', { 'class': 'plot-ref', x1: left, y1: yVmax, x2: right, y2: yVmax });
+		var vMaxText = s('text', { 'class': 'plot-label', x: right, y: yVmax - 5, 'text-anchor': 'end' });
+		svg.appendChild(vMaxLine);
+		svg.appendChild(vMaxText);
+
+		var areaPoly = s('polygon', { 'class': 'plot-band' });
+		svg.appendChild(areaPoly);
+
+		var vLine = s('polyline', { 'class': 'plot-line', fill: 'none' });
+		svg.appendChild(vLine);
+
+		var t0Label = s('text', { 'class': 'plot-label', x: left, y: bottom + 14, 'text-anchor': 'middle' });
+		t0Label.textContent = '0';
+		var taLabel = s('text', { 'class': 'plot-label', y: bottom + 14, 'text-anchor': 'middle' });
+		var tcLabel = s('text', { 'class': 'plot-label', y: bottom + 14, 'text-anchor': 'middle' });
+		var tEndLabel = s('text', { 'class': 'plot-label', x: right, y: bottom + 14, 'text-anchor': 'middle' });
+		[t0Label, taLabel, tcLabel, tEndLabel].forEach(function (el) { svg.appendChild(el); });
+
+		var zeroVLabel = s('text', { 'class': 'plot-label', x: left - 6, y: bottom + 4, 'text-anchor': 'end' });
+		zeroVLabel.textContent = '0';
+		var peakVLabel = s('text', { 'class': 'plot-label', x: left - 6, 'text-anchor': 'end' });
+		[zeroVLabel, peakVLabel].forEach(function (el) { svg.appendChild(el); });
+
+		var taLine = s('line', { 'class': 'plot-axis', stroke: 'var(--wp-border)', 'stroke-dasharray': '2 3' });
+		var tcLine = s('line', { 'class': 'plot-axis', stroke: 'var(--wp-border)', 'stroke-dasharray': '2 3' });
+		svg.appendChild(taLine);
+		svg.appendChild(tcLine);
+
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		function draw() {
+			var D = Number(dSlider.input.value);
+			var v_max = Number(vSlider.input.value);
+			var a_max = Number(aSlider.input.value);
+
+			dSlider.out.textContent = D.toFixed(2) + ' m';
+			vSlider.out.textContent = v_max.toFixed(2) + ' m/s';
+			aSlider.out.textContent = a_max.toFixed(2) + ' m/s²';
+
+			var isTrapezoid = D >= (v_max * v_max) / a_max;
+			var t_a, t_c, T, v_peak, area;
+
+			if (isTrapezoid) {
+				t_a = v_max / a_max;
+				v_peak = v_max;
+				t_c = (D - (v_max * v_max) / a_max) / v_max;
+				T = 2 * t_a + t_c;
+				area = v_max * (t_a + t_c);
+			} else {
+				t_a = Math.sqrt(D / a_max);
+				v_peak = Math.sqrt(D * a_max);
+				t_c = 0;
+				T = 2 * t_a;
+				area = 0.5 * T * v_peak;
+			}
+
+			function yMap(v) {
+				return bottom - (v / v_max) * (bottom - yVmax);
+			}
+			function xMap(t) {
+				return left + (t / T) * (right - left);
+			}
+
+			var xTa = xMap(t_a);
+			var xTc = xMap(t_a + t_c);
+			var yPeak = yMap(v_peak);
+
+			var curvePts = [];
+			var bandPts = [];
+
+			if (isTrapezoid) {
+				curvePts = [
+					[left, bottom],
+					[xTa, yVmax],
+					[xTc, yVmax],
+					[right, bottom]
+				];
+				bandPts = [
+					[left, bottom],
+					[xTa, yVmax],
+					[xTc, yVmax],
+					[right, bottom]
+				];
+				taLine.style.display = '';
+				tcLine.style.display = '';
+				taLine.setAttribute('x1', xTa); taLine.setAttribute('y1', yVmax);
+				taLine.setAttribute('x2', xTa); taLine.setAttribute('y2', bottom);
+				tcLine.setAttribute('x1', xTc); tcLine.setAttribute('y1', yVmax);
+				tcLine.setAttribute('x2', xTc); tcLine.setAttribute('y2', bottom);
+
+				taLabel.style.display = '';
+				tcLabel.style.display = '';
+				taLabel.setAttribute('x', xTa);
+				taLabel.textContent = t_a.toFixed(2) + 's';
+				tcLabel.setAttribute('x', xTc);
+				tcLabel.textContent = (t_a + t_c).toFixed(2) + 's';
+			} else {
+				curvePts = [
+					[left, bottom],
+					[xTa, yPeak],
+					[right, bottom]
+				];
+				bandPts = [
+					[left, bottom],
+					[xTa, yPeak],
+					[right, bottom]
+				];
+				taLine.style.display = '';
+				tcLine.style.display = 'none';
+				taLine.setAttribute('x1', xTa); taLine.setAttribute('y1', yPeak);
+				taLine.setAttribute('x2', xTa); taLine.setAttribute('y2', bottom);
+
+				taLabel.style.display = '';
+				tcLabel.style.display = 'none';
+				taLabel.setAttribute('x', xTa);
+				taLabel.textContent = t_a.toFixed(2) + 's';
+			}
+
+			vLine.setAttribute('points', pts(curvePts));
+			areaPoly.setAttribute('points', pts(bandPts));
+
+			vMaxText.textContent = 'v_max = ' + v_max.toFixed(2) + ' m/s';
+			tEndLabel.textContent = 'T=' + T.toFixed(2) + 's';
+
+			if (!isTrapezoid) {
+				peakVLabel.style.display = '';
+				peakVLabel.setAttribute('y', yPeak + 4);
+				peakVLabel.textContent = v_peak.toFixed(2);
+			} else {
+				peakVLabel.style.display = 'none';
+			}
+
+			var caseName = isTrapezoid ? 'trapezoidal' : 'triangular';
+			readout.textContent = 'Profile: ' + caseName + ' · t_a = ' + t_a.toFixed(3) + ' s, t_c = ' + t_c.toFixed(3) +
+				' s, T = ' + T.toFixed(3) + ' s · peak velocity = ' + v_peak.toFixed(3) +
+				' m/s · area under curve = ' + area.toFixed(3) + ' m (D = ' + D.toFixed(3) + ' m).';
+		}
+
+		[dSlider, vSlider, aSlider].forEach(function (c) {
+			c.input.addEventListener('input', draw);
+		});
+
+		var presetWorked = button('Worked example (0.5 m)', function () {
+			dSlider.input.value = 0.5;
+			vSlider.input.value = 0.25;
+			aSlider.input.value = 0.5;
+			draw();
+		});
+		var presetShort = button('Short move (0.05 m)', function () {
+			dSlider.input.value = 0.05;
+			vSlider.input.value = 0.25;
+			aSlider.input.value = 0.5;
+			draw();
+		});
+
+		var presets = h('div', { 'class': 'widget-buttons' }, [presetWorked, presetShort]);
+
+		root.replaceChildren(frame('trapezoidal and triangular velocity profiles', [
+			h('p', { 'class': 'widget-note', text: 'Adjust distance (D), speed limit (v_max), and acceleration (a_max). If D >= v_max² / a_max the profile reaches cruise speed (trapezoid); shorter moves must brake before reaching v_max (triangle).' }),
+			dSlider.row,
+			vSlider.row,
+			aSlider.row,
+			presets,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Network segmentation: zones, conduits, and the DMZ from lesson 8.6 ---------- */
+
+	function initZones(root) {
+		var W = 380, H = 455;
+		var svg = plotFrame(W, H, 'Interactive network segmentation diagram showing zones, conduits and DMZ');
+		svg.setAttribute('class', 'widget-plot lesson-diagram');
+
+		var defs = s('defs', {});
+		var mk1 = s('marker', { id: 'arrow-zone', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk1.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', 'class': 'd-fill' }));
+		var mk2 = s('marker', { id: 'arrow-zone-gold', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk2.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--wp-gold-text)' }));
+		defs.appendChild(mk1); defs.appendChild(mk2);
+		svg.appendChild(defs);
+
+		var ITEMS = {
+			'zone-corp': {
+				label: 'Enterprise (corporate) network',
+				note: 'The enterprise corporate network is on the far side of the DMZ, which sits between it and the industrial control network.'
+			},
+			'zone-dmz': {
+				label: 'DMZ (Demilitarized Zone)',
+				note: 'A demilitarized zone is a physical and logical subnet that acts as an intermediary so connected devices avoid direct exposure to untrusted networks.'
+			},
+			'zone-cell': {
+				label: 'Cell Security Zone',
+				note: 'The Cell Security Zone contains Level 2 area control, Level 1 controller LANs, and Level 0 field basic input/output devices such as sensors and actuators. A robot cell, with its PLC, robot controller and I/O, is one such zone.'
+			},
+			'dev-office': {
+				label: 'Office application',
+				note: 'If an enterprise accounting application requires production data, it connects only to a database or reporting server located inside the DMZ. It never touches a robot controller or safety PLC directly.'
+			},
+			'dev-remote': {
+				label: 'Remote user',
+				note: 'Remote access into industrial control systems should be routed through hardened intermediary authentication jump boxes in the DMZ using multifactor authentication.'
+			},
+			'dev-db': {
+				label: 'Database / reporting server',
+				note: 'Placing corporate-accessible components in a DMZ ensures that no direct communication paths are required from the corporate network to the control network.'
+			},
+			'dev-jump': {
+				label: 'Jump box',
+				note: 'A jump box is a computer in the DMZ that a remote user must log in to before reaching the cell.'
+			},
+			'dev-l2': {
+				label: 'Level 2 area control',
+				note: 'Level 2 area control is one of the tiers inside the Cell Security Zone.'
+			},
+			'dev-l1': {
+				label: 'Level 1 controller LANs',
+				note: 'Level 1 controller LANs are one of the tiers inside the Cell Security Zone.'
+			},
+			'dev-l0': {
+				label: 'Level 0 field basic I/O (Sensors and actuators)',
+				note: 'Level 0 holds field basic input/output devices such as sensors and actuators.'
+			},
+			'cond-push': {
+				label: 'Conduit: Push production records',
+				note: 'Secure DMZ communication models require control zones to push data to the DMZ: the cell sends its production records to a server in the DMZ.'
+			},
+			'cond-pull': {
+				label: 'Conduit: Pull data from DMZ',
+				note: 'Enterprise users pull data from DMZ application servers: an office application reads the records from that server, so nothing in the office ever connects to the robot.'
+			},
+			'cond-remote': {
+				label: 'Conduit: Authenticated remote access',
+				note: 'Remote access into industrial control systems should be routed through hardened intermediary authentication jump boxes in the DMZ using multifactor authentication.'
+			},
+			'cond-direct': {
+				label: 'Direct path (not needed)',
+				note: 'Placing corporate-accessible components in a DMZ ensures that no direct communication paths are required from the corporate network to the control network. The office only talks to the DMZ.'
+			}
+		};
+
+		var selected = null;
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+		var itemEls = {};
+		var lineEls = {};
+
+		function makeInteractive(g, id, label) {
+			g.setAttribute('tabindex', '0');
+			g.setAttribute('role', 'button');
+			g.setAttribute('aria-label', label);
+			g.style.cursor = 'pointer';
+			g.addEventListener('click', function () { select(id); });
+			g.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+					e.preventDefault();
+					select(id);
+				}
+			});
+			itemEls[id] = g;
+			return g;
+		}
+
+		function select(id) {
+			selected = (selected === id) ? null : id;
+			update();
+		}
+
+		function update() {
+			Object.keys(ITEMS).forEach(function (id) {
+				var g = itemEls[id];
+				var isSel = (selected === id);
+				if (g) {
+					g.classList.toggle('d-active', isSel);
+					g.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+				}
+			});
+
+			['cond-push', 'cond-pull', 'cond-remote', 'cond-direct'].forEach(function (cid) {
+				var lines = lineEls[cid] || [];
+				var isSel = (selected === cid);
+				lines.forEach(function (ln) {
+					if (cid === 'cond-direct') {
+						if (isSel) {
+							ln.setAttribute('class', 'd-strong');
+							ln.setAttribute('style', 'stroke: #d33; stroke-width: 2.5; stroke-dasharray: 4 4;');
+						} else {
+							ln.setAttribute('class', 'd-line');
+							ln.setAttribute('style', 'stroke: var(--wp-text-muted); stroke-dasharray: 4 4;');
+						}
+					} else {
+						if (isSel) {
+							ln.setAttribute('class', 'd-strong');
+							ln.setAttribute('style', 'stroke: var(--wp-gold-text); stroke-width: 2.5;');
+							ln.setAttribute('marker-end', 'url(#arrow-zone-gold)');
+						} else {
+							ln.setAttribute('class', 'd-line');
+							ln.removeAttribute('style');
+							ln.setAttribute('marker-end', 'url(#arrow-zone)');
+						}
+					}
+				});
+			});
+
+			if (!selected) {
+				readout.textContent = 'Click or select any zone, conduit, or device to inspect its role.';
+			} else {
+				readout.textContent = ITEMS[selected].note;
+			}
+		}
+
+		// --- Layer 1: Zones ---
+		var gCorp = s('g', {});
+		var rCorp = s('rect', { 'class': 'd-box', x: 10, y: 8, width: 360, height: 66, rx: 6, fill: 'var(--wp-bg)' });
+		var tCorp = s('text', { 'class': 'd-title', x: 20, y: 24, 'font-size': '12' });
+		tCorp.textContent = 'Enterprise (Corporate) Network';
+		gCorp.appendChild(rCorp);
+		gCorp.appendChild(tCorp);
+		makeInteractive(gCorp, 'zone-corp', ITEMS['zone-corp'].label);
+		svg.appendChild(gCorp);
+
+		var gDmz = s('g', {});
+		var rDmz = s('rect', { 'class': 'd-box', x: 10, y: 122, width: 285, height: 74, rx: 6, fill: 'var(--wp-bg)' });
+		var tDmz = s('text', { 'class': 'd-title', x: 20, y: 138, 'font-size': '12' });
+		tDmz.textContent = 'DMZ (Demilitarized Zone)';
+		gDmz.appendChild(rDmz);
+		gDmz.appendChild(tDmz);
+		makeInteractive(gDmz, 'zone-dmz', ITEMS['zone-dmz'].label);
+		svg.appendChild(gDmz);
+
+		var gCell = s('g', {});
+		var rCell = s('rect', { 'class': 'd-box', x: 10, y: 246, width: 360, height: 196, rx: 6, fill: 'var(--wp-bg)' });
+		var tCell = s('text', { 'class': 'd-title', x: 20, y: 262, 'font-size': '12' });
+		tCell.textContent = 'Cell Security Zone';
+		gCell.appendChild(rCell);
+		gCell.appendChild(tCell);
+		makeInteractive(gCell, 'zone-cell', ITEMS['zone-cell'].label);
+		svg.appendChild(gCell);
+
+		// --- Layer 2: Conduits ---
+		var gCondDirect = s('g', {});
+		var lineDirect = s('line', { 'class': 'd-line', x1: 335, y1: 74, x2: 335, y2: 246, 'stroke-dasharray': '4 4' });
+		var hitDirect = s('line', { x1: 335, y1: 74, x2: 335, y2: 246, stroke: 'transparent', 'stroke-width': '16' });
+		var badgeDirectRect = s('rect', { 'class': 'd-box', x: 298, y: 148, width: 74, height: 24, rx: 3 });
+		var badgeDirectText = s('text', { 'class': 'd-muted', x: 335, y: 164, 'text-anchor': 'middle', 'font-size': '10', 'font-weight': 'bold', fill: '#d33' });
+		badgeDirectText.textContent = '✕ no direct path';
+		gCondDirect.appendChild(lineDirect);
+		gCondDirect.appendChild(hitDirect);
+		gCondDirect.appendChild(badgeDirectRect);
+		gCondDirect.appendChild(badgeDirectText);
+		makeInteractive(gCondDirect, 'cond-direct', ITEMS['cond-direct'].label);
+		svg.appendChild(gCondDirect);
+		lineEls['cond-direct'] = [lineDirect];
+
+		var gCondPull = s('g', {});
+		var linePull = s('line', { 'class': 'd-line', x1: 88, y1: 148, x2: 88, y2: 73, 'marker-end': 'url(#arrow-zone)' });
+		var hitPull = s('line', { x1: 88, y1: 148, x2: 88, y2: 73, stroke: 'transparent', 'stroke-width': '16' });
+		var badgePullRect = s('rect', { 'class': 'd-box', x: 64, y: 94, width: 48, height: 20, rx: 3 });
+		var badgePullText = s('text', { 'class': 'd-muted', x: 88, y: 108, 'text-anchor': 'middle', 'font-size': '10.5' });
+		badgePullText.textContent = 'pull';
+		gCondPull.appendChild(linePull);
+		gCondPull.appendChild(hitPull);
+		gCondPull.appendChild(badgePullRect);
+		gCondPull.appendChild(badgePullText);
+		makeInteractive(gCondPull, 'cond-pull', ITEMS['cond-pull'].label);
+		svg.appendChild(gCondPull);
+		lineEls['cond-pull'] = [linePull];
+
+		var gCondPush = s('g', {});
+		var linePush = s('line', { 'class': 'd-line', x1: 88, y1: 272, x2: 88, y2: 194, 'marker-end': 'url(#arrow-zone)' });
+		var hitPush = s('line', { x1: 88, y1: 272, x2: 88, y2: 194, stroke: 'transparent', 'stroke-width': '16' });
+		var badgePushRect = s('rect', { 'class': 'd-box', x: 64, y: 215, width: 48, height: 20, rx: 3 });
+		var badgePushText = s('text', { 'class': 'd-muted', x: 88, y: 229, 'text-anchor': 'middle', 'font-size': '10.5' });
+		badgePushText.textContent = 'push';
+		gCondPush.appendChild(linePush);
+		gCondPush.appendChild(hitPush);
+		gCondPush.appendChild(badgePushRect);
+		gCondPush.appendChild(badgePushText);
+		makeInteractive(gCondPush, 'cond-push', ITEMS['cond-push'].label);
+		svg.appendChild(gCondPush);
+		lineEls['cond-push'] = [linePush];
+
+		var gCondRemote = s('g', {});
+		var lineRemote1 = s('line', { 'class': 'd-line', x1: 224, y1: 66, x2: 224, y2: 142, 'marker-end': 'url(#arrow-zone)' });
+		var hitRemote1 = s('line', { x1: 224, y1: 66, x2: 224, y2: 142, stroke: 'transparent', 'stroke-width': '16' });
+		var lineRemote2 = s('line', { 'class': 'd-line', x1: 224, y1: 188, x2: 224, y2: 266, 'marker-end': 'url(#arrow-zone)' });
+		var hitRemote2 = s('line', { x1: 224, y1: 188, x2: 224, y2: 266, stroke: 'transparent', 'stroke-width': '16' });
+		var badgeRemote1Rect = s('rect', { 'class': 'd-box', x: 195, y: 94, width: 58, height: 20, rx: 3 });
+		var badgeRemote1Text = s('text', { 'class': 'd-muted', x: 224, y: 108, 'text-anchor': 'middle', 'font-size': '10' });
+		badgeRemote1Text.textContent = 'MFA login';
+		var badgeRemote2Rect = s('rect', { 'class': 'd-box', x: 180, y: 215, width: 88, height: 20, rx: 3 });
+		var badgeRemote2Text = s('text', { 'class': 'd-muted', x: 224, y: 229, 'text-anchor': 'middle', 'font-size': '10' });
+		badgeRemote2Text.textContent = 'remote access';
+		gCondRemote.appendChild(lineRemote1);
+		gCondRemote.appendChild(hitRemote1);
+		gCondRemote.appendChild(lineRemote2);
+		gCondRemote.appendChild(hitRemote2);
+		gCondRemote.appendChild(badgeRemote1Rect);
+		gCondRemote.appendChild(badgeRemote1Text);
+		gCondRemote.appendChild(badgeRemote2Rect);
+		gCondRemote.appendChild(badgeRemote2Text);
+		makeInteractive(gCondRemote, 'cond-remote', ITEMS['cond-remote'].label);
+		svg.appendChild(gCondRemote);
+		lineEls['cond-remote'] = [lineRemote1, lineRemote2];
+
+		// --- Layer 3: Devices ---
+		var gOffice = s('g', {});
+		var rOffice = s('rect', { 'class': 'd-box', x: 18, y: 32, width: 140, height: 34, rx: 4 });
+		var tOffice = s('text', { 'class': 'd-title', x: 88, y: 53, 'text-anchor': 'middle', 'font-size': '11.5' });
+		tOffice.textContent = 'Office application';
+		gOffice.appendChild(rOffice); gOffice.appendChild(tOffice);
+		makeInteractive(gOffice, 'dev-office', ITEMS['dev-office'].label);
+		svg.appendChild(gOffice);
+
+		var gRemote = s('g', {});
+		var rRemote = s('rect', { 'class': 'd-box', x: 168, y: 32, width: 112, height: 34, rx: 4 });
+		var tRemote = s('text', { 'class': 'd-title', x: 224, y: 53, 'text-anchor': 'middle', 'font-size': '11.5' });
+		tRemote.textContent = 'Remote user';
+		gRemote.appendChild(rRemote); gRemote.appendChild(tRemote);
+		makeInteractive(gRemote, 'dev-remote', ITEMS['dev-remote'].label);
+		svg.appendChild(gRemote);
+
+		var gDb = s('g', {});
+		var rDb = s('rect', { 'class': 'd-box', x: 18, y: 148, width: 140, height: 40, rx: 4 });
+		var tDb1 = s('text', { 'class': 'd-title', x: 88, y: 164, 'text-anchor': 'middle', 'font-size': '11' });
+		tDb1.textContent = 'DB / reporting server';
+		var tDb2 = s('text', { 'class': 'd-muted', x: 88, y: 179, 'text-anchor': 'middle', 'font-size': '10' });
+		tDb2.textContent = 'production records';
+		gDb.appendChild(rDb); gDb.appendChild(tDb1); gDb.appendChild(tDb2);
+		makeInteractive(gDb, 'dev-db', ITEMS['dev-db'].label);
+		svg.appendChild(gDb);
+
+		var gJump = s('g', {});
+		var rJump = s('rect', { 'class': 'd-box', x: 168, y: 148, width: 112, height: 40, rx: 4 });
+		var tJump1 = s('text', { 'class': 'd-title', x: 224, y: 164, 'text-anchor': 'middle', 'font-size': '11' });
+		tJump1.textContent = 'Jump box';
+		var tJump2 = s('text', { 'class': 'd-muted', x: 224, y: 179, 'text-anchor': 'middle', 'font-size': '10' });
+		tJump2.textContent = 'MFA authentication';
+		gJump.appendChild(rJump); gJump.appendChild(tJump1); gJump.appendChild(tJump2);
+		makeInteractive(gJump, 'dev-jump', ITEMS['dev-jump'].label);
+		svg.appendChild(gJump);
+
+		var gL2 = s('g', {});
+		var rL2 = s('rect', { 'class': 'd-box', x: 18, y: 272, width: 344, height: 46, rx: 4 });
+		var tL2a = s('text', { 'class': 'd-title', x: 30, y: 291, 'font-size': '12' });
+		tL2a.textContent = 'Level 2: Area control';
+		var tL2b = s('text', { 'class': 'd-muted', x: 30, y: 308, 'font-size': '10.5' });
+		tL2b.textContent = '';
+		gL2.appendChild(rL2); gL2.appendChild(tL2a); gL2.appendChild(tL2b);
+		makeInteractive(gL2, 'dev-l2', ITEMS['dev-l2'].label);
+		svg.appendChild(gL2);
+
+		var gL1 = s('g', {});
+		var rL1 = s('rect', { 'class': 'd-box', x: 18, y: 328, width: 344, height: 46, rx: 4 });
+		var tL1a = s('text', { 'class': 'd-title', x: 30, y: 347, 'font-size': '12' });
+		tL1a.textContent = 'Level 1: Controller LANs';
+		var tL1b = s('text', { 'class': 'd-muted', x: 30, y: 364, 'font-size': '10.5' });
+		tL1b.textContent = '';
+		gL1.appendChild(rL1); gL1.appendChild(tL1a); gL1.appendChild(tL1b);
+		makeInteractive(gL1, 'dev-l1', ITEMS['dev-l1'].label);
+		svg.appendChild(gL1);
+
+		var gL0 = s('g', {});
+		var rL0 = s('rect', { 'class': 'd-box', x: 18, y: 384, width: 344, height: 46, rx: 4 });
+		var tL0a = s('text', { 'class': 'd-title', x: 30, y: 403, 'font-size': '12' });
+		tL0a.textContent = 'Level 0: Field basic I/O';
+		var tL0b = s('text', { 'class': 'd-muted', x: 30, y: 420, 'font-size': '10.5' });
+		tL0b.textContent = 'Sensors and actuators';
+		gL0.appendChild(rL0); gL0.appendChild(tL0a); gL0.appendChild(tL0b);
+		makeInteractive(gL0, 'dev-l0', ITEMS['dev-l0'].label);
+		svg.appendChild(gL0);
+
+		var clearBtn = button('Clear selection', function () {
+			selected = null;
+			update();
+		});
+
+		var wrap = h('figure', { 'class': 'lesson-diagram', style: 'margin: 8px 0; padding: 0; border: 0;' }, [svg]);
+
+		root.replaceChildren(frame('network segmentation: zones, conduits, and the DMZ', [
+			h('p', { 'class': 'widget-note', text: 'A robot cell, with its PLC, robot controller and I/O, is one Cell Security Zone. Click or focus (Enter or Space) any zone, conduit or device to read what the lesson says about it.' }),
+			wrap,
+			h('div', { 'class': 'widget-buttons' }, [clearBtn]),
+			readout
+		]));
+
+		update();
+	}
+
 	var INIT = {
 		pwm: initPwm,
 		encoder: initEncoder,
@@ -1411,7 +1925,9 @@
 		movejl: initMovejl,
 		threshold: initThreshold,
 		prflow: initPrflow,
-		modbus: initModbus
+		modbus: initModbus,
+		trapezoid: initTrapezoid,
+		zones: initZones
 	};
 
 	function boot() {
