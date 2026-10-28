@@ -1,7 +1,8 @@
 /*
 	robOSStics: interactive widgets
 	Any element with data-widget="pwm" | "encoder" | "pid" | "arm" | "blocks" |
-	"odometry" | "fsm" | "kalman" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"odometry" | "fsm" | "kalman" | "rosgraph" | "movejl" | "threshold" | "prflow" |
+	"modbus" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -706,7 +707,712 @@
 		reset();
 	}
 
-	var INIT = { pwm: initPwm, encoder: initEncoder, pid: initPid, arm: initArm, blocks: initBlocks, odometry: initOdometry, fsm: initFsm, kalman: initKalman };
+	/* ---------- ROS graph: Turtlesim nodes and topics from lesson 4.4 ---------- */
+
+	function initRosgraph(root) {
+		var W = 620, H = 220;
+		var svg = plotFrame(W, H, 'ROS node and topic graph for Turtlesim');
+		svg.setAttribute('class', 'widget-plot lesson-diagram');
+
+		var defs = s('defs', {});
+		var mk1 = s('marker', { id: 'arrow-ros', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk1.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', 'class': 'd-fill' }));
+		var mk2 = s('marker', { id: 'arrow-ros-gold', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk2.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--wp-gold-text)' }));
+		defs.appendChild(mk1); defs.appendChild(mk2);
+		svg.appendChild(defs);
+
+		var ITEMS = [
+			{ id: 'teleop', kind: 'node', label: '/teleop_turtle', sub: 'node', x: 20, y: 30, w: 145, h: 52, rx: 4 },
+			{ id: 'cmd_vel', kind: 'topic', label: '/turtle1/cmd_vel', sub: 'geometry_msgs/msg/Twist', x: 215, y: 30, w: 185, h: 52, rx: 16 },
+			{ id: 'turtlesim', kind: 'node', label: '/turtlesim', sub: 'node', x: 450, y: 30, w: 145, h: 52, rx: 4 },
+			{ id: 'pose', kind: 'topic', label: '/turtle1/pose', sub: 'turtlesim_msgs/msg/Pose', x: 215, y: 135, w: 185, h: 52, rx: 16 },
+			{ id: 'color_sensor', kind: 'topic', label: '/turtle1/color_sensor', sub: 'turtlesim_msgs/msg/Color', x: 430, y: 135, w: 175, h: 52, rx: 16 }
+		];
+
+		var ARROWS = [
+			{ id: 'a-teleop-cmd', from: 'teleop', to: 'cmd_vel', type: 'line', x1: 165, y1: 56, x2: 213, y2: 56 },
+			{ id: 'a-cmd-sim', from: 'cmd_vel', to: 'turtlesim', type: 'line', x1: 400, y1: 56, x2: 448, y2: 56 },
+			{ id: 'a-sim-pose', from: 'turtlesim', to: 'pose', type: 'path', d: 'M 480,82 C 480,115 425,135 402,148' },
+			{ id: 'a-sim-color', from: 'turtlesim', to: 'color_sensor', type: 'line', x1: 518, y1: 82, x2: 518, y2: 133 }
+		];
+
+		var arrowEls = {};
+		ARROWS.forEach(function (a) {
+			var el;
+			if (a.type === 'line') {
+				el = s('line', { 'class': 'd-line', x1: a.x1, y1: a.y1, x2: a.x2, y2: a.y2, 'marker-end': 'url(#arrow-ros)' });
+			} else {
+				el = s('path', { 'class': 'd-line', d: a.d, fill: 'none', 'marker-end': 'url(#arrow-ros)' });
+			}
+			svg.appendChild(el);
+			arrowEls[a.id] = el;
+		});
+
+		var itemEls = {};
+		var selected = null;
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		function update() {
+			ITEMS.forEach(function (item) {
+				var g = itemEls[item.id];
+				var isSel = selected === item.id;
+				var isConn = false;
+				if (selected === 'teleop') isConn = item.id === 'cmd_vel';
+				else if (selected === 'cmd_vel') isConn = item.id === 'teleop' || item.id === 'turtlesim';
+				else if (selected === 'turtlesim') isConn = item.id === 'cmd_vel' || item.id === 'pose' || item.id === 'color_sensor';
+				else if (selected === 'pose' || selected === 'color_sensor') isConn = item.id === 'turtlesim';
+
+				g.classList.toggle('d-active', isSel || isConn);
+				g.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+			});
+
+			ARROWS.forEach(function (a) {
+				var el = arrowEls[a.id];
+				var active = false;
+				if (selected === 'teleop' && a.id === 'a-teleop-cmd') active = true;
+				else if (selected === 'cmd_vel' && (a.id === 'a-teleop-cmd' || a.id === 'a-cmd-sim')) active = true;
+				else if (selected === 'turtlesim' && (a.id === 'a-cmd-sim' || a.id === 'a-sim-pose' || a.id === 'a-sim-color')) active = true;
+				else if (selected === 'pose' && a.id === 'a-sim-pose') active = true;
+				else if (selected === 'color_sensor' && a.id === 'a-sim-color') active = true;
+
+				if (active) {
+					el.setAttribute('class', 'd-strong');
+					el.setAttribute('style', 'stroke: var(--wp-gold-text);');
+					el.setAttribute('marker-end', 'url(#arrow-ros-gold)');
+				} else {
+					el.setAttribute('class', 'd-line');
+					el.removeAttribute('style');
+					el.setAttribute('marker-end', 'url(#arrow-ros)');
+				}
+			});
+
+			if (!selected) {
+				readout.textContent = 'Click or select a node (box) or topic (rounded box) to inspect connections.';
+			} else if (selected === 'teleop') {
+				readout.textContent = 'teleop_turtle publishes /turtle1/cmd_vel';
+			} else if (selected === 'cmd_vel') {
+				readout.textContent = '/turtle1/cmd_vel [geometry_msgs/msg/Twist]: published by /teleop_turtle, subscribed by /turtlesim';
+			} else if (selected === 'turtlesim') {
+				readout.textContent = 'turtlesim subscribes to /turtle1/cmd_vel; publishes /turtle1/color_sensor and /turtle1/pose';
+			} else if (selected === 'pose') {
+				readout.textContent = '/turtle1/pose [turtlesim_msgs/msg/Pose]: published by /turtlesim';
+			} else if (selected === 'color_sensor') {
+				readout.textContent = '/turtle1/color_sensor [turtlesim_msgs/msg/Color]: published by /turtlesim';
+			}
+		}
+
+		function select(id) {
+			selected = (selected === id) ? null : id;
+			update();
+		}
+
+		ITEMS.forEach(function (item) {
+			var g = s('g', {
+				tabindex: '0',
+				role: 'button',
+				'aria-label': (item.kind === 'node' ? 'Node ' : 'Topic ') + item.label + ' (' + item.sub + ')',
+				style: 'cursor: pointer;'
+			});
+			var rect = s('rect', { 'class': 'd-box', x: item.x, y: item.y, width: item.w, height: item.h, rx: item.rx });
+			var t1 = s('text', { 'class': 'd-title', x: item.x + item.w / 2, y: item.y + 23, 'text-anchor': 'middle' });
+			t1.textContent = item.label;
+			var t2 = s('text', { 'class': 'd-muted', x: item.x + item.w / 2, y: item.y + 41, 'text-anchor': 'middle' });
+			t2.textContent = item.sub;
+			g.appendChild(rect); g.appendChild(t1); g.appendChild(t2);
+
+			g.addEventListener('click', function () { select(item.id); });
+			g.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+					e.preventDefault();
+					select(item.id);
+				}
+			});
+			svg.appendChild(g);
+			itemEls[item.id] = g;
+		});
+
+		var resetBtn = button('Clear selection', function () { selected = null; update(); });
+		var wrap = h('figure', { 'class': 'lesson-diagram', style: 'margin: 8px 0; padding: 0; border: 0;' }, [svg]);
+
+		root.replaceChildren(frame('ROS 2 node and topic graph', [
+			h('p', { 'class': 'widget-note', text: 'Nodes are boxes; topics are rounded boxes. Click or focus any item (Enter or Space) to highlight its publisher and subscriber connections.' }),
+			wrap,
+			h('div', { 'class': 'widget-buttons' }, [resetBtn]),
+			readout
+		]));
+		update();
+	}
+
+	/* ---------- MoveJ vs MoveL: joint vs linear interpolation from lesson 2.3 ---------- */
+
+	function initMovejl(root) {
+		var L1 = 0.4, L2 = 0.3, S = 230, C = 200, DEG = Math.PI / 180;
+		var svg = plotFrame(400, 400, 'Two-link arm comparing MoveJ curved path and MoveL straight-line path');
+		svg.setAttribute('class', 'widget-plot widget-plot-square');
+
+		function px(x, y) { return [C + x * S, C - y * S]; }
+
+		svg.appendChild(s('circle', { 'class': 'plot-ref', cx: C, cy: C, r: (L1 + L2) * S, fill: 'none' }));
+		svg.appendChild(s('circle', { 'class': 'plot-ref', cx: C, cy: C, r: Math.abs(L1 - L2) * S, fill: 'none' }));
+		svg.appendChild(s('line', { 'class': 'plot-axis', x1: 20, y1: C, x2: 380, y2: C }));
+		svg.appendChild(s('line', { 'class': 'plot-axis', x1: C, y1: 20, x2: C, y2: 380 }));
+
+		var traceJ = s('polyline', { 'class': 'plot-line plot-line-b plot-trace', fill: 'none' });
+		var traceL = s('polyline', { 'class': 'plot-line plot-trace', fill: 'none' });
+		var link = s('polyline', { 'class': 'plot-line arm-link', fill: 'none' });
+		svg.appendChild(traceJ);
+		svg.appendChild(traceL);
+		svg.appendChild(link);
+
+		var markA = s('circle', { 'class': 'arm-mark', r: 6 });
+		var markB = s('circle', { 'class': 'arm-mark', r: 6 });
+		var tA = s('text', { 'class': 'plot-label' }); tA.textContent = 'A';
+		var tB = s('text', { 'class': 'plot-label' }); tB.textContent = 'B';
+		[markA, markB, tA, tB].forEach(function (n) { svg.appendChild(n); });
+
+		var joints = [0, 1, 2].map(function () {
+			var c = s('circle', { 'class': 'arm-joint', r: 6 });
+			svg.appendChild(c);
+			return c;
+		});
+
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var A = [30, 45], B = [-10, 100];
+		var anim = null;
+		var jPts = [], lPts = [];
+
+		function fk(a, b) {
+			var q1 = a * DEG, q2 = b * DEG;
+			var ex = L1 * Math.cos(q1), ey = L1 * Math.sin(q1);
+			return { elbow: [ex, ey], tip: [ex + L2 * Math.cos(q1 + q2), ey + L2 * Math.sin(q1 + q2)] };
+		}
+
+		function ik(x, y, sign) {
+			var c2 = (x * x + y * y - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+			if (Math.abs(c2) > 1) return null;
+			var q2 = sign * Math.acos(c2);
+			var q1 = Math.atan2(y, x) - Math.atan2(L2 * Math.sin(q2), L1 + L2 * Math.cos(q2));
+			var a = q1 / DEG;
+			if (a > 180) a -= 360; if (a < -180) a += 360;
+			return [a, q2 / DEG];
+		}
+
+		function drawPose(a, b) {
+			var k = fk(a, b), p0 = px(0, 0), p1 = px(k.elbow[0], k.elbow[1]), p2 = px(k.tip[0], k.tip[1]);
+			link.setAttribute('points', pts([p0, p1, p2]));
+			[p0, p1, p2].forEach(function (p, i) { joints[i].setAttribute('cx', p[0]); joints[i].setAttribute('cy', p[1]); });
+		}
+
+		function setupTargets() {
+			[[A, markA, tA], [B, markB, tB]].forEach(function (m) {
+				var p = fk(m[0][0], m[0][1]).tip, q = px(p[0], p[1]);
+				m[1].setAttribute('cx', q[0]); m[1].setAttribute('cy', q[1]);
+				m[2].setAttribute('x', q[0] + 9); m[2].setAttribute('y', q[1] - 8);
+			});
+		}
+
+		function stop() {
+			if (anim) { cancelAnimationFrame(anim); anim = null; }
+		}
+
+		function runMove(kind) {
+			stop();
+			var N = 60, path = [];
+			var pa = fk(A[0], A[1]).tip, pb = fk(B[0], B[1]).tip;
+			var signA = A[1] >= 0 ? 1 : -1;
+
+			for (var i = 0; i <= N; i++) {
+				var u = i / N, q;
+				if (kind === 'J') {
+					q = [A[0] + (B[0] - A[0]) * u, A[1] + (B[1] - A[1]) * u];
+				} else {
+					q = ik(pa[0] + (pb[0] - pa[0]) * u, pa[1] + (pb[1] - pa[1]) * u, signA);
+					if (!q) break;
+				}
+				path.push(q);
+			}
+
+			var tipScreenPts = path.map(function (q) {
+				var t = fk(q[0], q[1]).tip;
+				return px(t[0], t[1]);
+			});
+
+			var straightDist = Math.hypot(pb[0] - pa[0], pb[1] - pa[1]);
+			var curveDist = 0;
+			for (var j = 1; j < path.length; j++) {
+				var t0 = fk(path[j - 1][0], path[j - 1][1]).tip, t1p = fk(path[j][0], path[j][1]).tip;
+				curveDist += Math.hypot(t1p[0] - t0[0], t1p[1] - t0[1]);
+			}
+
+			var msg = kind === 'J'
+				? 'MoveJ: joint angles interpolate linearly, so the tool tip traces a curved path (' + curveDist.toFixed(3) + ' m; straight line is ' + straightDist.toFixed(3) + ' m).'
+				: 'MoveL: tool position interpolates in a straight line (' + straightDist.toFixed(3) + ' m). Inverse kinematics finds the matching joint positions at each step.';
+
+			if (reduceMotion || !path.length) {
+				if (kind === 'J') {
+					jPts = tipScreenPts;
+					traceJ.setAttribute('points', pts(jPts));
+				} else {
+					lPts = tipScreenPts;
+					traceL.setAttribute('points', pts(lPts));
+				}
+				var last = path[path.length - 1];
+				drawPose(last[0], last[1]);
+				readout.textContent = msg;
+				return;
+			}
+
+			var k = 0;
+			readout.textContent = kind === 'J' ? 'Running MoveJ A → B…' : 'Running MoveL A → B…';
+			(function frameStep() {
+				k = Math.min(path.length - 1, k + 1);
+				drawPose(path[k][0], path[k][1]);
+				if (kind === 'J') {
+					jPts = tipScreenPts.slice(0, k + 1);
+					traceJ.setAttribute('points', pts(jPts));
+				} else {
+					lPts = tipScreenPts.slice(0, k + 1);
+					traceL.setAttribute('points', pts(lPts));
+				}
+				if (k < path.length - 1) anim = requestAnimationFrame(frameStep);
+				else { anim = null; readout.textContent = msg; }
+			})();
+		}
+
+		function reset() {
+			stop();
+			jPts = []; lPts = [];
+			traceJ.setAttribute('points', '');
+			traceL.setAttribute('points', '');
+			drawPose(A[0], A[1]);
+			readout.textContent = 'Arm at target A. Press MoveJ or MoveL to trace motion to target B.';
+		}
+
+		var btnJ = button('MoveJ', function () { runMove('J'); });
+		var btnL = button('MoveL', function () { runMove('L'); });
+		var btnReset = button('Reset', reset);
+
+		var controls = h('div', { 'class': 'widget-buttons' }, [btnJ, btnL, btnReset]);
+		var legend = h('p', { 'class': 'widget-note', text: 'The gold dashed trace is MoveJ (joint move, curved path); the other dashed trace is MoveL (linear move, straight line). Both stay visible for comparison.' });
+
+		root.replaceChildren(frame('MoveJ vs MoveL motion interpolation', [
+			h('p', { 'class': 'widget-note', text: 'Compare MoveJ and MoveL between the same two fixed targets A and B. MoveJ moves the arm without forcing a straight-line path; MoveL moves the tool in a straight line.' }),
+			controls,
+			svg,
+			legend,
+			readout
+		]));
+
+		setupTargets();
+		reset();
+	}
+
+	/* ---------- Image thresholding: grayscale to binary from lesson 7.3 ---------- */
+
+	function initThreshold(root) {
+		var W_CELLS = 32, H_CELLS = 24, TOTAL = W_CELLS * H_CELLS;
+		var CSIZE = 8;
+		var W_IMG = W_CELLS * CSIZE, H_IMG = H_CELLS * CSIZE;
+		var X_ORIG = 15, X_BIN = 305, Y_TOP = 26;
+		var svg = plotFrame(580, 230, 'Original grayscale image next to binary threshold result');
+
+		var raw = [];
+		for (var y = 0; y < H_CELLS; y++) {
+			for (var x = 0; x < W_CELLS; x++) {
+				var bg = Math.round(35 + 45 * (x / (W_CELLS - 1)) + 25 * (y / (H_CELLS - 1)));
+				var dx = (x - 15) / 7.5;
+				var dy = (y - 11) / 5.5;
+				var d = Math.sqrt(dx * dx + dy * dy);
+				var val;
+				if (d <= 1.0 && d >= 0.35) {
+					val = Math.round(180 + 40 * (1 - Math.abs(d - 0.65) / 0.35));
+				} else {
+					val = bg;
+				}
+				raw.push(Math.max(0, Math.min(255, val)));
+			}
+		}
+
+		var tOrig = s('text', { 'class': 'd-title', x: X_ORIG + W_IMG / 2, y: 18, 'text-anchor': 'middle' });
+		tOrig.textContent = 'Original grayscale';
+		var tBin = s('text', { 'class': 'd-title', x: X_BIN + W_IMG / 2, y: 18, 'text-anchor': 'middle' });
+		tBin.textContent = 'Binary result (cv.THRESH_BINARY)';
+		svg.appendChild(tOrig); svg.appendChild(tBin);
+
+		svg.appendChild(s('rect', { 'class': 'd-line', x: X_ORIG - 1, y: Y_TOP - 1, width: W_IMG + 2, height: H_IMG + 2, fill: 'none' }));
+		svg.appendChild(s('rect', { 'class': 'd-line', x: X_BIN - 1, y: Y_TOP - 1, width: W_IMG + 2, height: H_IMG + 2, fill: 'none' }));
+
+		for (var i = 0; i < TOTAL; i++) {
+			var cx = i % W_CELLS, cy = Math.floor(i / W_CELLS);
+			var v = raw[i];
+			var hex = v.toString(16);
+			if (hex.length < 2) hex = '0' + hex;
+			svg.appendChild(s('rect', {
+				x: X_ORIG + cx * CSIZE,
+				y: Y_TOP + cy * CSIZE,
+				width: CSIZE,
+				height: CSIZE,
+				fill: '#' + hex + hex + hex
+			}));
+		}
+
+		var binCells = [];
+		for (var j = 0; j < TOTAL; j++) {
+			var bx = j % W_CELLS, by = Math.floor(j / W_CELLS);
+			var bRect = s('rect', {
+				x: X_BIN + bx * CSIZE,
+				y: Y_TOP + by * CSIZE,
+				width: CSIZE,
+				height: CSIZE,
+				fill: '#000000'
+			});
+			svg.appendChild(bRect);
+			binCells.push(bRect);
+		}
+
+		var sl = slider('Threshold value', 'thresh-val', 0, 255, 1, 127, '');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		function draw() {
+			var th = Number(sl.input.value);
+			sl.out.textContent = th;
+			var onCount = 0;
+			for (var k = 0; k < TOTAL; k++) {
+				var on = raw[k] > th;
+				if (on) onCount++;
+				binCells[k].setAttribute('fill', on ? '#ffffff' : '#000000');
+			}
+			readout.textContent = 'Threshold: ' + th + ' · On pixels (white, 255): ' + onCount + ' of ' + TOTAL +
+				' (' + (onCount * 100 / TOTAL).toFixed(1) + '%) · Background pixels (black, 0): ' + (TOTAL - onCount) + '.';
+		}
+
+		sl.input.addEventListener('input', draw);
+		root.replaceChildren(frame('image thresholding', [
+			h('p', { 'class': 'widget-note', text: 'Binarization converts an 8-bit grayscale image into a 1-bit binary image. In simple thresholding with cv.threshold and cv.THRESH_BINARY, pixels smaller than or equal to the threshold are set to 0 (black background) while all others are set to 255 (white foreground).' }),
+			sl.row,
+			svg,
+			readout
+		]));
+		draw();
+	}
+
+	/* ---------- Pull request workflow from lesson 3.2 ---------- */
+
+	function initPrflow(root) {
+		var W = 620, H = 220;
+		var svg = plotFrame(W, H, 'Fork and pull request workflow step-through diagram');
+		svg.setAttribute('class', 'widget-plot lesson-diagram');
+
+		var defs = s('defs', {});
+		var mk1 = s('marker', { id: 'arrow-pr', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk1.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', 'class': 'd-fill' }));
+		var mk2 = s('marker', { id: 'arrow-pr-gold', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+		mk2.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--wp-gold-text)' }));
+		defs.appendChild(mk1); defs.appendChild(mk2);
+		svg.appendChild(defs);
+
+		var gUpstream = s('g', { id: 'pr-upstream' });
+		gUpstream.appendChild(s('rect', { 'class': 'd-box', x: 20, y: 24, width: 205, height: 66, rx: 6 }));
+		var tU1 = s('text', { 'class': 'd-title', x: 122, y: 48, 'text-anchor': 'middle' }); tU1.textContent = 'Upstream repository';
+		var tU2 = s('text', { 'class': 'd-muted', x: 122, y: 68, 'text-anchor': 'middle' }); tU2.textContent = 'official project (GitHub)';
+		gUpstream.appendChild(tU1); gUpstream.appendChild(tU2);
+		svg.appendChild(gUpstream);
+
+		var gFork = s('g', { id: 'pr-fork' });
+		gFork.appendChild(s('rect', { 'class': 'd-box', x: 395, y: 24, width: 205, height: 66, rx: 6 }));
+		var tF1 = s('text', { 'class': 'd-title', x: 497, y: 48, 'text-anchor': 'middle' }); tF1.textContent = 'Your fork';
+		var tF2 = s('text', { 'class': 'd-muted', x: 497, y: 68, 'text-anchor': 'middle' }); tF2.textContent = 'personal copy (GitHub)';
+		gFork.appendChild(tF1); gFork.appendChild(tF2);
+		svg.appendChild(gFork);
+
+		var gLocal = s('g', { id: 'pr-local' });
+		gLocal.appendChild(s('rect', { 'class': 'd-box', x: 110, y: 132, width: 400, height: 76, rx: 6 }));
+		var tL1 = s('text', { 'class': 'd-title', x: 310, y: 154, 'text-anchor': 'middle' }); tL1.textContent = 'Your local clone';
+		var tL2 = s('text', { 'class': 'd-muted', x: 310, y: 172, 'text-anchor': 'middle' }); tL2.textContent = 'local computer (Git workspace)';
+		gLocal.appendChild(tL1); gLocal.appendChild(tL2);
+		svg.appendChild(gLocal);
+
+		var bBranch = s('g', { id: 'badge-branch' });
+		bBranch.appendChild(s('rect', { 'class': 'd-box', x: 150, y: 178, width: 140, height: 22, rx: 3 }));
+		var tB = s('text', { 'class': 'd-muted', x: 220, y: 194, 'text-anchor': 'middle' }); tB.textContent = 'edit branch';
+		bBranch.appendChild(tB);
+		svg.appendChild(bBranch);
+
+		var bCommit = s('g', { id: 'badge-commit' });
+		bCommit.appendChild(s('rect', { 'class': 'd-box', x: 330, y: 178, width: 140, height: 22, rx: 3 }));
+		var tC = s('text', { 'class': 'd-muted', x: 400, y: 194, 'text-anchor': 'middle' }); tC.textContent = 'commits';
+		bCommit.appendChild(tC);
+		svg.appendChild(bCommit);
+
+		var aFork = s('line', { 'class': 'd-line', x1: 225, y1: 44, x2: 393, y2: 44, 'marker-end': 'url(#arrow-pr)' });
+		var lFork = s('text', { 'class': 'd-muted', x: 310, y: 38, 'text-anchor': 'middle' }); lFork.textContent = 'fork';
+
+		var aClone = s('path', { 'class': 'd-line', d: 'M 465,90 C 465,115 440,120 420,130', fill: 'none', 'marker-end': 'url(#arrow-pr)' });
+		var lClone = s('text', { 'class': 'd-muted', x: 485, y: 115, 'text-anchor': 'middle' }); lClone.textContent = 'clone';
+
+		var aBranch = s('line', { 'class': 'd-line', x1: 290, y1: 189, x2: 328, y2: 189, 'marker-end': 'url(#arrow-pr)' });
+
+		var aPush = s('path', { 'class': 'd-line', d: 'M 470,132 C 500,120 535,115 535,92', fill: 'none', 'marker-end': 'url(#arrow-pr)' });
+		var lPush = s('text', { 'class': 'd-muted', x: 550, y: 115, 'text-anchor': 'middle' }); lPush.textContent = 'push';
+
+		var aPR = s('line', { 'class': 'd-line', x1: 395, y1: 74, x2: 227, y2: 74, 'marker-end': 'url(#arrow-pr)' });
+		var lPR = s('text', { 'class': 'd-muted', x: 310, y: 88, 'text-anchor': 'middle' }); lPR.textContent = 'pull request';
+
+		var bReview = s('g', { id: 'badge-review' });
+		bReview.appendChild(s('rect', { 'class': 'd-box', x: 30, y: 62, width: 85, height: 22, rx: 3 }));
+		var tRev = s('text', { 'class': 'd-muted', x: 72, y: 77, 'text-anchor': 'middle' }); tRev.textContent = 'review';
+		bReview.appendChild(tRev);
+
+		var bMerge = s('g', { id: 'badge-merge' });
+		bMerge.appendChild(s('rect', { 'class': 'd-box', x: 125, y: 62, width: 85, height: 22, rx: 3 }));
+		var tMrg = s('text', { 'class': 'd-muted', x: 167, y: 77, 'text-anchor': 'middle' }); tMrg.textContent = 'merge';
+		bMerge.appendChild(tMrg);
+
+		[aFork, lFork, aClone, lClone, aBranch, aPush, lPush, aPR, lPR, bReview, bMerge].forEach(function (el) {
+			svg.appendChild(el);
+		});
+
+		var STEPS = [
+			{
+				title: 'Upstream repository',
+				note: 'The original project repository is called the upstream repository, where the official codebase lives.',
+				box: gUpstream,
+				arrow: null
+			},
+			{
+				title: 'Your fork',
+				note: 'A fork is a personal copy of the repository hosted on your GitHub account, letting you make changes without affecting the original project.',
+				box: gFork,
+				arrow: aFork
+			},
+			{
+				title: 'Your local clone',
+				note: 'Cloning copies the files from your remote GitHub fork to your local computer so that you can edit files and run tests.',
+				box: gLocal,
+				arrow: aClone
+			},
+			{
+				title: 'An edit branch',
+				note: 'Rather than modifying the main branch directly, you create a dedicated branch for your edits to keep changes isolated.',
+				box: bBranch,
+				arrow: aBranch
+			},
+			{
+				title: 'Commit changes',
+				note: 'Make your edits and commit them to your local edit branch.',
+				box: bCommit,
+				arrow: aBranch
+			},
+			{
+				title: 'Push to your fork',
+				note: 'Push the branch with your commits from your local computer to your fork on GitHub.',
+				box: gFork,
+				arrow: aPush
+			},
+			{
+				title: 'Open a pull request',
+				note: 'Open a pull request from your branch on your fork to the upstream repository to propose your changes.',
+				box: gUpstream,
+				arrow: aPR
+			},
+			{
+				title: 'Review',
+				note: 'Maintainers and community members review open pull requests to evaluate proposed changes and suggest improvements.',
+				box: bReview,
+				arrow: aPR
+			},
+			{
+				title: 'Merge',
+				note: 'Once approved, maintainers merge the pull request into the upstream repository.',
+				box: bMerge,
+				arrow: null
+			}
+		];
+
+		var curStep = 0;
+		var stepCounter = h('span', { 'class': 'widget-readout', 'aria-live': 'polite' });
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		function highlight(el, active, isArrow) {
+			if (!el) return;
+			if (isArrow) {
+				if (active) {
+					el.setAttribute('class', 'd-strong');
+					el.setAttribute('style', 'stroke: var(--wp-gold-text); stroke-width: 3;');
+					el.setAttribute('marker-end', 'url(#arrow-pr-gold)');
+				} else {
+					el.setAttribute('class', 'd-line');
+					el.removeAttribute('style');
+					el.setAttribute('marker-end', 'url(#arrow-pr)');
+				}
+			} else {
+				el.classList.toggle('d-active', active);
+			}
+		}
+
+		var prevBtn = button('◀ Back', function () { if (curStep > 0) { curStep--; render(); } });
+		var nextBtn = button('Next ▶', function () { if (curStep < STEPS.length - 1) { curStep++; render(); } });
+		var resetBtn = button('Reset', function () { curStep = 0; render(); });
+
+		function render() {
+			var sInfo = STEPS[curStep];
+			[gUpstream, gFork, gLocal, bBranch, bCommit, bReview, bMerge].forEach(function (b) { highlight(b, false, false); });
+			[aFork, aClone, aBranch, aPush, aPR].forEach(function (a) { highlight(a, false, true); });
+
+			highlight(sInfo.box, true, false);
+			if (sInfo.arrow) highlight(sInfo.arrow, true, true);
+
+			stepCounter.textContent = 'Step ' + (curStep + 1) + ' of ' + STEPS.length + ': ' + sInfo.title;
+			readout.textContent = sInfo.note;
+
+			prevBtn.disabled = curStep === 0;
+			nextBtn.disabled = curStep === STEPS.length - 1;
+		}
+
+		var btnRow = h('div', { 'class': 'widget-buttons' }, [prevBtn, nextBtn, resetBtn, stepCounter]);
+
+		root.replaceChildren(frame('fork and pull request workflow', [
+			h('p', { 'class': 'widget-note', text: 'Step through the fork, clone, branch, push, and pull request workflow using the controls below.' }),
+			btnRow,
+			svg,
+			readout
+		]));
+		render();
+	}
+
+	/* ---------- Modbus TCP request explorer from lesson 8.3 ---------- */
+
+	function initModbus(root) {
+		var CODES = [
+			{ code: '0x03', name: 'Read Holding Registers', fn: 'read_holding_registers', kind: 'read' },
+			{ code: '0x06', name: 'Write Single Register', fn: 'write_register', kind: 'write_single' },
+			{ code: '0x10', name: 'Write Multiple Registers', fn: 'write_registers', kind: 'write_multi' }
+		];
+
+		var curCode = CODES[0];
+		var addrSlider = slider('Start / Register address', 'modbus-addr', 128, 255, 1, 128, '');
+		var qtySlider = slider('Quantity of registers', 'modbus-qty', 1, 8, 1, 3, '');
+		var valInput = h('input', { type: 'number', id: 'modbus-val', min: '0', max: '65535', value: '1', style: 'width: 6em; font: inherit; padding: 2px 4px;' });
+		var valRow = h('div', { 'class': 'widget-control' }, [
+			h('label', { 'for': 'modbus-val', text: 'Value to write (16-bit)' }),
+			valInput
+		]);
+
+		var svg = plotFrame(560, 70, 'Modbus request fields');
+		var codePre = h('pre', { 'class': 'article-code' });
+		var codeEl = h('code');
+		codePre.appendChild(codeEl);
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var box1 = s('rect', { 'class': 'd-box', x: 10, y: 10, width: 170, height: 50, rx: 4 });
+		var t1Title = s('text', { 'class': 'd-title', x: 95, y: 31, 'text-anchor': 'middle' });
+		var t1Sub = s('text', { 'class': 'd-muted', x: 95, y: 49, 'text-anchor': 'middle' });
+
+		var box2 = s('rect', { 'class': 'd-box', x: 195, y: 10, width: 160, height: 50, rx: 4 });
+		var t2Title = s('text', { 'class': 'd-title', x: 275, y: 31, 'text-anchor': 'middle' });
+		var t2Sub = s('text', { 'class': 'd-muted', x: 275, y: 49, 'text-anchor': 'middle' });
+
+		var box3 = s('rect', { 'class': 'd-box', x: 370, y: 10, width: 180, height: 50, rx: 4 });
+		var t3Title = s('text', { 'class': 'd-title', x: 460, y: 31, 'text-anchor': 'middle' });
+		var t3Sub = s('text', { 'class': 'd-muted', x: 460, y: 49, 'text-anchor': 'middle' });
+
+		[box1, t1Title, t1Sub, box2, t2Title, t2Sub, box3, t3Title, t3Sub].forEach(function (n) { svg.appendChild(n); });
+
+		function update() {
+			var addr = Number(addrSlider.input.value);
+			var qty = Number(qtySlider.input.value);
+			var val = Math.max(0, Math.min(65535, Number(valInput.value) || 0));
+			addrSlider.out.textContent = addr;
+			qtySlider.out.textContent = qty;
+
+			qtySlider.row.style.display = (curCode.kind === 'read' || curCode.kind === 'write_multi') ? '' : 'none';
+			valRow.style.display = (curCode.kind === 'write_single') ? '' : 'none';
+
+			t1Title.textContent = 'Function code: ' + curCode.code;
+			t1Sub.textContent = curCode.name;
+
+			t2Title.textContent = (curCode.kind === 'write_single' ? 'Register: ' : 'Start address: ') + addr;
+			t2Sub.textContent = 'General-purpose (0-based)';
+
+			var multiVals = [250, 7, 12, 45, 99, 1, 0, 15].slice(0, qty);
+			var valsStr = '[' + multiVals.join(', ') + ']';
+
+			if (curCode.kind === 'read') {
+				t3Title.textContent = 'Quantity: ' + qty + ' registers';
+				t3Sub.textContent = 'Addresses ' + addr + ' to ' + (addr + qty - 1);
+				codeEl.textContent = 'rr = client.' + curCode.fn + '(' + addr + ', count=' + qty + ')';
+			} else if (curCode.kind === 'write_single') {
+				t3Title.textContent = 'Register value: ' + val;
+				t3Sub.textContent = '16-bit integer (0–65535)';
+				codeEl.textContent = 'client.write_register(' + addr + ', ' + val + ')';
+			} else {
+				t3Title.textContent = 'Quantity: ' + qty + ' registers';
+				t3Sub.textContent = 'Values: ' + valsStr;
+				codeEl.textContent = 'client.write_registers(' + addr + ', ' + valsStr + ')';
+			}
+
+			var lastAddr = curCode.kind === 'write_single' ? addr : (addr + qty - 1);
+			if (lastAddr > 255) {
+				readout.textContent = 'Address ' + lastAddr + ' is outside the general-purpose range 128 to 255, so the server answers with exception code 2 (ILLEGAL DATA ADDRESS).';
+			} else if (curCode.kind === 'read') {
+				readout.textContent = 'Request: read ' + qty + ' register(s) starting at address ' + addr + ' (addresses ' + addr + ' to ' + lastAddr + ').';
+			} else if (curCode.kind === 'write_single') {
+				readout.textContent = 'Request: write value ' + val + ' into holding register ' + addr + '.';
+			} else {
+				readout.textContent = 'Request: write ' + qty + ' register(s) starting at address ' + addr + ' with values ' + valsStr + '.';
+			}
+		}
+
+		var codeButtons = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Function code' });
+		CODES.forEach(function (c) {
+			var b = button(c.code + ' ' + c.name, function () {
+				curCode = c;
+				Array.prototype.forEach.call(codeButtons.children, function (btn) {
+					btn.setAttribute('aria-pressed', String(btn === b));
+				});
+				if (c.kind === 'write_multi' && Number(qtySlider.input.value) < 2) {
+					qtySlider.input.value = 2;
+				}
+				update();
+			});
+			b.setAttribute('aria-pressed', String(c === curCode));
+			codeButtons.appendChild(b);
+		});
+
+		addrSlider.input.addEventListener('input', update);
+		qtySlider.input.addEventListener('input', update);
+		valInput.addEventListener('input', update);
+
+		root.replaceChildren(frame('Modbus request explorer', [
+			h('p', { 'class': 'widget-note', text: 'Select a function code from this lesson and set the address and quantity to inspect the request fields and matching pymodbus code from the lesson.' }),
+			codeButtons,
+			addrSlider.row,
+			qtySlider.row,
+			valRow,
+			svg,
+			codePre,
+			readout
+		]));
+		update();
+	}
+
+	var INIT = {
+		pwm: initPwm,
+		encoder: initEncoder,
+		pid: initPid,
+		arm: initArm,
+		blocks: initBlocks,
+		odometry: initOdometry,
+		fsm: initFsm,
+		kalman: initKalman,
+		rosgraph: initRosgraph,
+		movejl: initMovejl,
+		threshold: initThreshold,
+		prflow: initPrflow,
+		modbus: initModbus
+	};
 
 	function boot() {
 		Array.prototype.forEach.call(document.querySelectorAll('[data-widget]'), function (el) {
