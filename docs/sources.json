@@ -1683,7 +1683,7 @@
   "https://developercenter.robotstudio.com/api/fpsdk/html/fb6df07f-0116-77ed-cd7f-7a5aab872b19.htm": {
    "citedBy": [
     "1-6#ref-25",
-    "6-9#ref-15"
+    "6-9#ref-14"
    ],
    "refText": "ABB Robotics, “ZoneData” structure, FlexPendant SDK reference. developercenter.robotstudio.com/api/fpsdk/.../ZoneData.",
    "http": 206,
@@ -5384,10 +5384,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "6-9": {
-     "status": "partial",
-     "claim": "UR forum: movep for extrusion",
-     "evidence": "Thread body not extracted",
-     "checked": "2026-10-22"
+     "status": "fixed",
+     "claim": "Users recommend movep for extrusion because it keeps the tool speed constant.",
+     "evidence": "MoveP is also better suited for extrusion applications as it guarantees the velocity is maintained as opposed to ramped up and down in a MoveL (without Blend radius)",
+     "note": "2026-10-28: 'with circular blends' dropped; not in the thread.",
+     "checked": "2026-10-28"
     }
    },
    "title": "How to create smooth robot motion for extrusion - Technical Questions - Universal Robots Forum"
@@ -5484,17 +5485,18 @@
   },
   "https://forums.robotstudio.com/discussion/comment/25437": {
    "citedBy": [
-    "6-9#ref-26"
+    "6-9#ref-25"
    ],
    "refText": "RobotStudio forums (ABB), discussion comment 25437 on detecting singularities in RAPID (seen in a search summary; not opened). forums.robotstudio.com/discussion/comment/25437.",
    "http": 200,
    "linkChecked": "2026-10-27",
    "checks": {
     "6-9": {
-     "status": "partial",
-     "claim": "RobotStudio forum: no RAPID error for singularity",
-     "evidence": "Thread body not extracted",
-     "checked": "2026-10-22"
+     "status": "fixed",
+     "claim": "Forum users suggest a MoveJ as a second way through the wrist singularity.",
+     "evidence": "Yes SingArea\\Wrist if you want to do a linear motion thru the singlularity point or do a joint motion (MoveJ) thru it.",
+     "note": "2026-10-28: this thread (post 6) now carries the MoveJ sentence; the old 'no error code' sentence was not supported by it.",
+     "checked": "2026-10-28"
     }
    },
    "finalUrl": "https://tech-community.robotics.abb.com/t/singularity-error-number/7153/7",
@@ -5543,7 +5545,7 @@
   "https://fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html": {
    "citedBy": [
     "1-6#ref-18",
-    "6-9#ref-17"
+    "6-9#ref-16"
    ],
    "refText": "FZI Research Center for Information Technology, “ABB” (robtarget, confdata and RAPID motion instructions), Robot Interface Proposal documentation. fzi-robot-interface-proposal.readthedocs.io/en/latest/industry/ABB.html.",
    "http": 200,
@@ -11212,7 +11214,7 @@
   },
   "https://openlab.citytech.cuny.edu/robot/assignment2/": {
    "citedBy": [
-    "6-9#ref-16"
+    "6-9#ref-15"
    ],
    "refText": "CityTech OpenLab, City University of New York, robotics course “Assignment 2” page (seen in a search summary; not opened). openlab.citytech.cuny.edu/robot/assignment2.",
    "http": 200,
@@ -12891,10 +12893,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "6-9": {
-     "status": "partial",
-     "claim": "Corner path failure reported as event 50024, often after a wait",
-     "note": "Forum thread not opened; mechanism verified in RAPID manual (ref 13); event number and 'wait' cause rest on the forum only",
-     "checked": "2026-10-27"
+     "status": "verified",
+     "claim": "Forum users report corner path failure as event 50024, often caused by a wait right after a zone point.",
+     "evidence": "The most common reason for 50024 is that you have programmed a zone point, but that the robot has to stop anyway (for example if you have added a delay after the zone).",
+     "note": "2026-10-28: thread read via its Discourse JSON (was partial).",
+     "checked": "2026-10-28"
     }
    },
    "title": "Corner Path failure 50024 - Robot Controller - ABB Robotics Community"
@@ -12953,17 +12956,18 @@
   },
   "https://tech-community.robotics.abb.com/t/does-abb-robot-support-continuous-trajectory-control/11270": {
    "citedBy": [
-    "6-9#ref-14"
+    "6-9#ref-17"
    ],
    "refText": "ABB Robotics tech community, “Does ABB robot support continuous trajectory control?” forum thread (seen in a search summary; not opened). tech-community.robotics.abb.com/t/does-abb-robot-support-continuous-trajectory-control/11270.",
    "http": 200,
    "linkChecked": "2026-10-27",
    "checks": {
     "6-9": {
-     "status": "partial",
-     "claim": "z0 fly-by 0.3 mm",
-     "note": "Forum thread not opened; claim now carried by the RAPID manual (ref 13)",
-     "checked": "2026-10-27"
+     "status": "fixed",
+     "claim": "A bigger zone is smoother; forum users give the same advice to robots that hesitate at fine points.",
+     "evidence": "If they are using fine, the robot must reach that point exactly, causing the hesitation. Use larger zones for smoother motion.",
+     "note": "2026-10-28: thread read via its Discourse JSON; the z0 = 0.3 mm claim it was cited for is not in it, so the citation moved to the sentence it supports.",
+     "checked": "2026-10-28"
     }
    },
    "title": "Does ABB robot support continuous trajectory control? - RAPID Programming - ABB Robotics Community"
@@ -13005,17 +13009,18 @@
   },
   "https://tech-community.robotics.abb.com/t/how-do-i-check-if-a-movel-instruction-can-be-completed-without-a-singularity-or-avoid-it/7883": {
    "citedBy": [
-    "6-9#ref-24"
+    "6-9#ref-26"
    ],
    "refText": "ABB Robotics tech community, “How do I check if a MoveL instruction can be completed without a singularity or avoid it?” forum thread (seen in a search summary; not opened). tech-community.robotics.abb.com/t/how-do-i-check-if-a-movel-instruction-can-be-completed-without-a-singularity-or-avoid-it/788",
    "http": 200,
    "linkChecked": "2026-10-27",
    "checks": {
     "6-9": {
-     "status": "partial",
-     "claim": "Replace the move with a MoveJ",
-     "note": "Forum thread not opened; SingArea facts moved to the RAPID manual (ref 13)",
-     "checked": "2026-10-27"
+     "status": "fixed",
+     "claim": "ABB support confirmed MoveL errors cannot be caught with an error handler; non-motion execution can check the path first.",
+     "evidence": "The ABB support hotline confirmed that it is not possible to catch MoveL errors before or during a movement, either with an error handler or an error interrupt. / ... you could use non motion execution.",
+     "note": "2026-10-28: sentence reworded to what the thread says.",
+     "checked": "2026-10-28"
     }
    },
    "title": "How do I check if a MoveL instruction can be completed without a singularity or avoid it? - RobotStudio - ABB Robotics Community"
@@ -13216,17 +13221,18 @@
   },
   "https://tech-community.robotics.abb.com/t/singarea-help/7164": {
    "citedBy": [
-    "6-9#ref-25"
+    "6-9#ref-24"
    ],
    "refText": "ABB Robotics tech community, “SingArea help,” forum thread (seen in a search summary; not opened). tech-community.robotics.abb.com/t/singarea-help/7164.",
    "http": 200,
    "linkChecked": "2026-10-27",
    "checks": {
     "6-9": {
-     "status": "partial",
-     "claim": "Replace the move with a MoveJ",
-     "note": "Forum thread not opened; SingArea facts moved to the RAPID manual (ref 13)",
-     "checked": "2026-10-27"
+     "status": "verified",
+     "claim": "SingArea \\Wrist stays active until another SingArea instruction.",
+     "evidence": "SingArea\\Wrist is active until you do a SingArea\\Off or the other way",
+     "note": "2026-10-28: thread read via its Discourse JSON; citation moved here from the MoveJ sentence, which it did not support.",
+     "checked": "2026-10-28"
     }
    },
    "title": "SingArea help - RobotStudio - ABB Robotics Community"
