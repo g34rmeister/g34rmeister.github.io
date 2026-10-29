@@ -1,0 +1,178 @@
+[HTTP 200, text/plain; charset=utf-8]
+# Navigation Plugins { #navigation-plugins }
+
+There are a number of plugin interfaces for users to create their own custom applications or algorithms with.
+Namely, the costmap layer, planner, controller, behavior tree, and behavior plugins.
+A list of all known plugins are listed here below for ROS 2 Navigation.
+If you know of a plugin, or you have created a new plugin, please consider submitting a pull request with that information.
+
+This file can be found and edited under `docs/configuration_and_development/navigation_plugins/index.md`.
+For tutorials on creating your own plugins, please see:
+
+- [Writing a New Costmap2D Plugin][writing-a-new-costmap-2d-plugin]
+- [Writing a New Behavior Tree Plugin][writing-a-new-behavior-tree-plugin]
+- [Writing a New Controller Plugin][writing-a-new-controller-plugin]
+- [Writing a New Planner Plugin][writing-a-new-planner-plugin]
+- [Writing a New Behavior Plugin][writing-a-new-behavior-plugin]
+- [Writing a New Navigator Plugin][writing-a-new-navigator-plugin]
+
+## Behavior-Tree Navigators
+
+<div class="center-table" markdown>
+
+| Plugin Name                       | Creator        | Description                                                           |
+|-----------------------------------|----------------|-----------------------------------------------------------------------|
+| [NavigateToPoseNavigator][]       | Steve Macenski | Point-to-point navigation via a behavior tree action server           |
+| [NavigateThroughPosesNavigator][] | Steve Macenski | Point-through-points navigation via a behavior tree action server     |
+| [CoverageNavigator][]             | Steve Macenski | Complete coverage navigation (Cartesian or GPS) via a BTs             |
+
+</div>
+
+[NavigateToPoseNavigator]: https://github.com/ros-navigation/navigation2/tree/main/nav2_bt_navigator/src/navigators
+[NavigateThroughPosesNavigator]: https://github.com/ros-navigation/navigation2/tree/main/nav2_bt_navigator/src/navigators
+[CoverageNavigator]: https://github.com/open-navigation/opennav_coverage/tree/main/opennav_coverage_navigator
+
+## Costmap Layers
+
+<div class="center-table" markdown>
+
+| Plugin Name                            | Creator                    | Description                                                                                                                                                                |
+|----------------------------------------|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Voxel Layer][]                        | Eitan Marder-Eppstein      | Maintains persistent 3D voxel layer using depth and laser sensor readings and raycasting to clear free space                                                               |
+| [Range Layer][]                        | David Lu                   | Uses a probabilistic model to put data from sensors that publish range msgs on the costmap                                                                                 |
+| [Static Layer][]                       | Eitan Marder-Eppstein      | Gets static `map` and loads occupancy information into costmap                                                                                                             |
+| [Inflation Layer][]                    | Tony Najjar                | Inflates lethal obstacles in costmap with exponential decay (with the option to use OpenMP for parallelization)                                                            |
+| [Legacy Inflation Layer][]             | Eitan Marder-Eppstein      | Inflates lethal obstacles in costmap with exponential decay                                                                                                                |
+| [Asymmetric Inflation Layer][]         | Marc Blöchlinger           | Uses the global plan to asymmetrically inflate lethal obstacles depending on path side                                                                                     |
+| [Obstacle Layer][]                     | Eitan Marder-Eppstein      | Maintains persistent 2D costmap from 2D laser scans with raycasting to clear free space                                                                                    |
+| [Spatio-Temporal Voxel Layer][]        | Steve Macenski             | Maintains temporal 3D sparse volumetric voxel grid with decay through sensor models                                                                                        |
+| [Non-Persistent Voxel Layer][]         | Steve Macenski             | Maintains 3D occupancy grid consisting only of the most sets of measurements                                                                                               |
+| [Denoise Layer][]                      | Andrey Ryzhikov            | Filters noise-induced standalone obstacles or small obstacles groups                                                                                                       |
+| [Plugin Container Layer][]             | Alexander Yuen             | Combines the different costmap layers specified under this layer in order populate the same costmap with different isolated combinations of costmap layers                 |
+| [Ground Consistency Layer][]           | Muhammad Haider Khan Lodhi | Height-aware costmap layer using 3D ground segmentation. Pair with Inflation Layer for terrain-aware navigation.                                                           |
+| [Semantic Segmentation Layer][]        | Pedro Gonzalez             | Vision-based semantic segmentation costmap layer using per-pixel class masks and registered pointclouds for terrain-aware navigation.                                      |
+| [Virtual Layer][]                      | Sherif Fathey              | Creates dynamic virtual cost zones and restriction areas using polygons, lines, and circles                                                                                |
+
+</div>
+
+[Voxel Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/voxel_layer.cpp
+[Range Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/range_sensor_layer.cpp
+[Static Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/static_layer.cpp
+[Inflation Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/inflation_layer.cpp
+[Legacy Inflation Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/legacy_inflation_layer.cpp
+[Asymmetric Inflation Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/asymmetric_inflation_layer.cpp
+[Obstacle Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/obstacle_layer.cpp
+[Spatio-Temporal Voxel Layer]: https://github.com/SteveMacenski/spatio_temporal_voxel_layer/
+[Non-Persistent Voxel Layer]: https://github.com/SteveMacenski/nonpersistent_voxel_layer
+[Denoise Layer]: https://github.com/ryzhikovas/navigation2/tree/feature-costmap2d-denoise/nav2_costmap_2d/plugins/denoise_layer.cpp
+[Plugin Container Layer]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/plugin_container_layer.cpp
+[Ground Consistency Layer]: https://github.com/dfki-ric/nav2_ground_consistency_costmap_plugin
+[Semantic Segmentation Layer]: https://github.com/kiwicampus/semantic_segmentation_layer
+[Virtual Layer]: https://github.com/SherifFathey/nav2-virtual-layer
+
+## Costmap Filters { #navigation-plugins-costmap-filters }
+
+<div class="center-table" markdown>
+
+| Plugin Name               | Creator           | Description                                                                            |
+|---------------------------|-------------------|----------------------------------------------------------------------------------------|
+| [Keepout Filter][]        | Alexey Merzlyakov | Maintains keep-out/safety zones and preferred lanes for moving                         |
+| [Speed Filter][]          | Alexey Merzlyakov | Limits maximum velocity of robot in speed restriction areas                            |
+| [Binary Filter][]         | Alexey Merzlyakov | Enables binary (boolean) mask behavior to trigger actions                              |
+| [Zone Parameter Filter][] | Akihiko Komada    | Applies a configured set of ROS parameters based on the mask value at the robot's pose |
+
+</div>
+
+[Keepout Filter]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/costmap_filters/keepout_filter.cpp
+[Speed Filter]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/costmap_filters/speed_filter.cpp
+[Binary Filter]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/costmap_filters/binary_filter.cpp
+[Zone Parameter Filter]: https://github.com/ros-navigation/navigation2/tree/main/nav2_costmap_2d/plugins/costmap_filters/zone_parameter_filter.cpp
+
+## Controllers
+
+<div class="center-table" markdown>
+
+| Plugin Name                               | Creator                             | Description                                                                                            | Drivetrain support                                           |
+|-------------------------------------------|-------------------------------------|--------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
+| [DWB Controller][]                        | David Lu!!                          | A highly configurable  DWA implementation with plugin interfaces                                       | Differential, Omnidirectional, Legged                        |
+| [TEB Controller][]                        | Christoph Rösmann                   | A MPC-like controller suitable for ackermann, differential, and holonomic robots.                      | **Ackermann**, Legged, Omnidirectional, Differential         |
+| [Regulated Pure Pursuit][]                | Steve Macenski                      | A service / industrial robot variation on the pure pursuit algorithm with adaptive features.           | **Ackermann**, Legged, Differential                          |
+| [MPPI Controller][]                       | Steve Macenski and Aleksei Budyakov | A predictive MPC controller with modular & custom cost functions that can accomplish many tasks.       | Differential, Omni, **Ackermann**                            |
+| [Rotation Shim Controller][]              | Steve Macenski                      | A "shim" controller to rotate to path heading before passing to main controller for  tracking.         | Differential, Omni, model rotate in place                    |
+| [Graceful Controller][]                   | Alberto Tudela                      | A controller based on a pose-following control law to generate smooth trajectories.                    | Differential, Omni, Legged                                   |
+| [Vector Pursuit Controller][]             | Black Coffee Robotics               | A controller based on the vector pursuit algorithm useful for high speed accurate path tracking.       | Differential, Ackermann, Legged                              |
+
+</div>
+
+[DWB Controller]: https://github.com/ros-navigation/navigation2/tree/main/nav2_dwb_controller
+[TEB Controller]: https://github.com/rst-tu-dortmund/teb_local_planner
+[Regulated Pure Pursuit]: https://github.com/ros-navigation/navigation2/tree/main/nav2_regulated_pure_pursuit_controller
+[MPPI Controller]: https://github.com/ros-navigation/navigation2/tree/main/nav2_mppi_controller
+[Rotation Shim Controller]: https://github.com/ros-navigation/navigation2/tree/main/nav2_rotation_shim_controller
+[Graceful Controller]: https://github.com/ros-navigation/navigation2/tree/main/nav2_graceful_controller
+[Vector Pursuit Controller]: https://github.com/blackcoffeerobotics/vector_pursuit_controller
+
+## Planners
+
+<div class="center-table" markdown>
+
+| Plugin Name                                         | Creator                               | Description                                                                                                                                                                                                                                                          | Drivetrain support                                                                   |
+|-----------------------------------------------------|---------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| [NavFn Planner][]                                   | Eitan Marder-Eppstein & Kurt Konolige | A navigation function using A\* or Dijkstras expansion, assumes 2D holonomic particle                                                                                                                                                                                | Differential, Omnidirectional, Legged                                                |
+| [SmacPlannerHybrid][] <br> (formerly *SmacPlanner*) | Steve Macenski                        | A SE2 Hybrid-A\* implementation using either Dubin or Reeds-shepp motion models with smoother and multi-resolution query. Cars, car-like, and ackermann vehicles. Kinematically feasible.                                                                            | **Ackermann**, Differential, Omnidirectional, Legged                                 |
+| [SmacPlanner2D][]                                   | Steve Macenski                        | A 2D A\* implementation Using either 4 or 8 connected neighborhoods with smoother and multi-resolution query                                                                                                                                                         | Differential, Omnidirectional, Legged                                                |
+| [SmacPlannerLattice][]                              | Steve Macenski                        | An implementation of State Lattice Planner using pre-generated minimum control sets for kinematically feasible planning with any type of vehicle imaginable. Includes generator script for Ackermann, diff, omni, and legged robots.                                 | Differential, Omnidirectional, Ackermann, Legged, Arbitrary / Custom                 |
+| [ThetaStarPlanner][]                                | Anshumaan Singh                       | An implementation of Theta\* using either 4 or 8 connected neighborhoods, assumes the robot as a 2D holonomic particle                                                                                                                                               | Differential, Omnidirectional                                                        |
+
+</div>
+
+[NavFn Planner]: https://github.com/ros-navigation/navigation2/tree/main/nav2_navfn_planner
+[SmacPlannerHybrid]: https://github.com/ros-navigation/navigation2/tree/main/nav2_smac_planner
+[SmacPlanner2D]: https://github.com/ros-navigation/navigation2/tree/main/nav2_smac_planner
+[SmacPlannerLattice]: https://github.com/ros-navigation/navigation2/tree/main/nav2_smac_planner
+[ThetaStarPlanner]: https://github.com/ros-navigation/navigation2/tree/main/nav2_theta_star_planner
+
+## Smoothers
+
+<div class="center-table" markdown>
+
+| Plugin Name                          | Creator                          | Description                                                                                                                                                                               |
+|--------------------------------------|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [Simple Smoother][]                  | Steve Macenski                   | A simple path smoother for infeasible (e.g. 2D) planners                                                                                                                                  |
+| [Constrained Smoother][]             | Matej Vargovcik & Steve Macenski | A path smoother using a constraints problem solver to optimize various criteria such as smoothness or distance from obstacles, maintaining minimum turning radius                         |
+| [Savitzky-Golay Smoother][]          | Steve Macenski                   | A path smoother using a Savitzky-Golay filter to smooth the path via digital signal processing to remove noise from the path.                                                             |
+
+</div>
+
+[Simple Smoother]: https://github.com/ros-navigation/navigation2/tree/main/nav2_smoother
+[Constrained Smoother]: https://github.com/ros-navigation/navigation2/tree/main/nav2_constrained_smoother
+[Savitzky-Golay Smoother]: https://github.com/ros-navigation/navigation2/tree/main/nav2_smoother
+
+## Behaviors
+
+<div class="center-table" markdown>
+
+| Plugin Name                       | Creator               | Description                                                                                                                            |
+|-----------------------------------|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------|
+| [Clear Costmap][]                 | Eitan Marder-Eppstein | A service to clear the given costmap in case of incorrect perception or robot is stuck                                                 |
+| [Spin][]                          | Steve Macenski        | Rotate behavior of configurable angles to clear out free space and nudge robot out of potential local failures                         |
+| [Back Up][]                       | Brian Wilcox          | Back up behavior of configurable distance to back out of a situation where the robot is stuck                                          |
+| [Wait][]                          | Steve Macenski        | Wait behavior with configurable time to wait in case of time based obstacle like human traffic or getting more sensor data             |
+| [Drive On Heading][]              | Joshua Wallace        | Drive on heading behavior with configurable distance to drive                                                                          |
+| [Assisted Teleop][]               | Joshua Wallace        | AssistedTeleop behavior that scales teleop commands to prevent collisions.                                                             |
+
+</div>
+
+[Clear Costmap]: https://github.com/ros-navigation/navigation2/blob/main/nav2_costmap_2d/src/clear_costmap_service.cpp
+[Spin]: https://github.com/ros-navigation/navigation2/tree/main/nav2_behaviors/plugins
+[Back Up]: https://github.com/ros-navigation/navigation2/tree/main/nav2_behaviors/plugins
+[Wait]: https://github.com/ros-navigation/navigation2/tree/main/nav2_behaviors/plugins
+[Drive On Heading]: https://github.com/ros-navigation/navigation2/tree/main/nav2_behaviors/plugins
+[Assisted Teleop]: https://github.com/ros-navigation/navigation2/tree/main/nav2_behaviors/plugins
+
+## Waypoint Task Executors
+
+<div class="center-table" markdown>
+
+| Plugin Name          | Creator        | Description                                                                           |
+|----------------------|----------------|-----------------------------------------------------

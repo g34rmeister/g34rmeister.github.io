@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 3.5 Case Study: Contributing to Nav2
+-->
+<html lang="en">
+    <head>
+        <title>3.5 Case Study: Contributing to Nav2 — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="A case study on contributing to the Nav2 mobile robotics navigation framework: core navigation concepts, plugin architecture, licensing, and community contribution processes." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-3-5.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="3.5 Case Study: Contributing to Nav2 — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="A case study on contributing to the Nav2 mobile robotics navigation framework: core navigation concepts, plugin architecture, licensing, and community contribution processes." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-3-5.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="3.5 Case Study: Contributing to Nav2, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="3.5 Case Study: Contributing to Nav2 — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="A case study on contributing to the Nav2 mobile robotics navigation framework: core navigation concepts, plugin architecture, licensing, and community contribution processes." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="assets/css/main.css?v=3.5" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=2.8" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
+                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
+                        <li><a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a></li>
+                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
+                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
+                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
+                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
+                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
+                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
+                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-oss.html">Chapter 3 &middot; Open Source</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">3.5 Case Study: Contributing to Nav2</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. What Nav2 is</h2>
+                        <p>
+                            Nav2 is the navigation project for mobile robots in ROS 2. The project works to make autonomous navigation accessible to everyone in robotics.<sup><a href="#ref-1">[1]</a></sup> Alongside MoveIt, Nav2 serves as a flagship application framework for the ROS ecosystem.<sup><a href="#ref-1">[1]</a></sup> <!-- F1 F2 -->
+                        </p>
+                        <p>
+                            Before ROS 2, mobile robots relied on the ROS 1 Navigation Stack.<sup><a href="#ref-1">[1]</a></sup> Nav2 redesigns that earlier system to be more flexible, incorporating a decade of community experience and feedback.<sup><a href="#ref-1">[1]</a></sup> Like all open-source projects, Nav2 thrives through the collective effort of developers, maintainers, users, and collaborators.<sup><a href="#ref-1">[1]</a></sup> <!-- F3 F4 F5 -->
+                        </p>
+                        <p>
+                            Open Navigation LLC provides professional stewardship, leading project maintenance, development, and support services across the Nav2 and ROS community.<sup><a href="#ref-2">[2]</a></sup> <!-- F6 -->
+                        </p>
+
+                        <h2 class="article-section-title">02. How a mobile robot navigates</h2>
+                        <p>
+                            Nav2 relies on ROS 2 middleware for communication and lifecycle management.<sup><a href="#ref-3">[3]</a></sup> Before exploring code, newcomers should understand how coordinates, maps, and algorithms interact to steer a robot. <!-- F7 -->
+                        </p>
+                        <p>
+                            Autonomous movement requires tracking coordinate frames. Standards call for two primary transformations: global positioning links <code>map</code> to <code>odom</code>, while odometry calculates <code>odom</code> to <code>base_link</code>.<sup><a href="#ref-4">[4]</a></sup> Nav2 manages these changing relationships using TF2, ROS 2's time-variant transform library.<sup><a href="#ref-4">[4]</a></sup> <!-- F8 F9 F10 -->
+                        </p>
+                        <p>
+                            Global positioning estimates robot coordinates on a map. Nav2 includes <code>amcl</code>, which implements Adaptive Monte-Carlo Localization via particle filtering.<sup><a href="#ref-4">[4]</a></sup> For mapping while driving, Nav2 supplies SLAM Toolbox as the default algorithm to position the vehicle and build static maps.<sup><a href="#ref-4">[4]</a></sup> <!-- F11 F12 -->
+                        </p>
+                        <p>
+                            Odometry establishes the local <code>odom</code> to <code>base_link</code> transformation.<sup><a href="#ref-4">[4]</a></sup> Measurements can originate from wheel encoders, inertial measurement units (IMUs), visual-inertial odometry (VIO), radar, or lidar.<sup><a href="#ref-4">[4]</a></sup> Odometry aims to create a smooth, continuous local frame that tracks vehicle motion.<sup><a href="#ref-4">[4]</a></sup> <!-- F13 F14 F15 -->
+                        </p>
+                        <p>
+                            Robots perceive obstacles through an environmental representation, which Nav2 implements as a costmap.<sup><a href="#ref-5">[5]</a></sup> In Nav2, a costmap is a regular two-dimensional cell grid, assigning values that represent unknown, free, occupied, or inflated obstacle regions.<sup><a href="#ref-5">[5]</a></sup> Planners search this grid to compute a global plan, and controllers sample it to compute local control efforts.<sup><a href="#ref-5">[5]</a></sup> Costmap layers, written as plugins, feed information into the costmap.<sup><a href="#ref-5">[5]</a></sup> <!-- F16 F17 F18 F19 F20 -->
+                        </p>
+                        <p>
+                            Planning and control algorithms drive navigation tasks.<sup><a href="#ref-6">[6]</a></sup> Nav2 groups algorithms into action servers, including the planner, controller, behavior, smoother, and route servers, each hosting swappable algorithm plugins.<sup><a href="#ref-6">[6]</a></sup> The planner calculates a path to satisfy an objective function, usually a valid, and potentially optimal, path from the current pose to a goal pose.<sup><a href="#ref-6">[6]</a></sup> <!-- F21 F22 F23 F24 F25 -->
+                        </p>
+                        <p>
+                            Controllers (local planners in ROS 1) compute control efforts to follow the global plan or execute local maneuvers.<sup><a href="#ref-6">[6]</a></sup> Recovery behaviors make the system fault tolerant: they handle unknown or failure conditions on their own.<sup><a href="#ref-6">[6]</a></sup> <!-- F26 F27 F28 F29 -->
+                        </p>
+                        <p>
+                            Nav2 coordinates these planning, control, and recovery steps through behavior trees.<sup><a href="#ref-7">[7]</a></sup> Behavior trees arrange tasks into a hierarchy, creating a scalable, human-understandable framework for multi-step applications.<sup><a href="#ref-7">[7]</a></sup> This formal structure organizes navigation logic so it can be formally verified and validated as correct.<sup><a href="#ref-7">[7]</a></sup> Inside the <code>BT Navigator</code>, custom node plugins assemble into complete trees.<sup><a href="#ref-7">[7]</a></sup> <!-- F30 F31 F32 F33 F34 -->
+                        </p>
+
+                        <h2 class="article-section-title">03. How the project is organised</h2>
+                        <p>
+                            Nav2 relies on a modular architecture divided into packages and plugin interfaces.<sup><a href="#ref-8">[8]</a></sup> The project defines plugin interfaces for costmap layers, planners, controllers, behavior trees, and recovery behaviors so developers can insert custom navigation algorithms.<sup><a href="#ref-8">[8]</a></sup> <!-- F35 F36 -->
+                        </p>
+                        <p>
+                            Examples of existing plugins include voxel layers, DWB controllers and Smac planners.<sup><a href="#ref-8">[8]</a></sup> Nav2 lists documented plugins in <code>docs/configuration_and_development/navigation_plugins/index.md</code>.<sup><a href="#ref-8">[8]</a></sup> Anyone who designs or discovers an unlisted plugin is invited to submit a pull request adding it to that index.<sup><a href="#ref-8">[8]</a></sup> <!-- F37 F38 -->
+                        </p>
+                        <p>
+                            The project documentation lives in its own dedicated repository at <code>docs.nav2.org</code>. <!-- F37 -->
+                        </p>
+
+                        <h2 class="article-section-title">04. Licensing and sign-off</h2>
+                        <p>
+                            Nav2 defines licensing rules across two documents: the repository <code>LICENSE</code> file and the <code>CONTRIBUTING.md</code> guide. <!-- F39 F41 -->
+                        </p>
+                        <p>
+                            In the repository <code>LICENSE</code>, the project states: &ldquo;Portions of this repository are available under one of the following licenses * Apache-2.0 * BSD-3-Clause * Apache-2.0 AND BSD-3-Clause.&rdquo;<sup><a href="#ref-9">[9]</a></sup> For modifications, it specifies: &ldquo;Contributions to existing files should be made under the license of that file.&rdquo;<sup><a href="#ref-9">[9]</a></sup> Because several packages originated in ROS 1, each package carries its own license history. Modifications should follow the predominant license of that package, while entirely new packages belong under Apache 2.0.<sup><a href="#ref-10">[10]</a></sup> <!-- F39 F40 F43 F44 -->
+                        </p>
+                        <p>
+                            Meanwhile, the repository <code>CONTRIBUTING.md</code> file states: &ldquo;Any contribution that you make to this repository will be under the Apache 2 License, as dictated by that license&rdquo;.<sup><a href="#ref-11">[11]</a></sup> <!-- F41 -->
+                        </p>
+                        <p>
+                            Contributors must also certify code origin through the Developer Certificate of Origin (DCO).<sup><a href="#ref-11">[11]</a></sup> Developers certify they have the right to submit code by adding a <code>Signed-off-by</code> line to each commit message.<sup><a href="#ref-11">[11]</a></sup> Running <code>git commit -s -m "..."</code> automatically appends this sign-off line, confirming agreement with the DCO.<sup><a href="#ref-10">[10]</a></sup> <!-- F42 F45 F46 -->
+                        </p>
+
+                        <h2 class="article-section-title">05. How to get involved</h2>
+                        <p>
+                            Nav2 welcomes developers to engage through its community platforms. All ROS 2 Technical Steering Committee working group meetings are published on the ROS working group calendar, where contributors can check scheduled dates and times for Nav2 working group sessions.<sup><a href="#ref-10">[10]</a></sup> The project also hosts a Community Slack where contributors discuss topics in public channels or send direct messages to maintainers.<sup><a href="#ref-10">[10]</a></sup> <!-- F47 F48 -->
+                        </p>
+                        <p>
+                            Nav2 structures contributions through a three-step workflow. First, open an issue ticket for any defect or enhancement; fixing it immediately is optional, as reporting bugs is already valuable.<sup><a href="#ref-10">[10]</a></sup> Second, claim an issue by commenting on the ticket, ideally providing an implementation strategy and timeline so others can coordinate.<sup><a href="#ref-10">[10]</a></sup> Third, submit a pull request with the PR template completed.<sup><a href="#ref-10">[10]</a></sup> Submissions undergo review by one to two reviewers. While a single maintainer can merge trivial fixes, substantial changes require approval from at least one maintainer and one other community member.<sup><a href="#ref-10">[10]</a></sup> <!-- F49 F50 -->
+                        </p>
+
+                        <h2 class="article-section-title">06. A first contribution path</h2>
+                        <p>
+                            Lessons <a href="robotics-3-2.html">3.2</a> and <a href="robotics-3-4.html">3.4</a> introduced GitHub workflows for branching, making commits, and opening pull requests. Those mechanics apply directly to Nav2.
+                        </p>
+                        <p>
+                            If your changes mean that documentation must be updated, the contribution rules say that update belongs in the same pull request.<sup><a href="#ref-10">[10]</a></sup> For learners not yet writing C++ navigation code, reporting bugs is explicitly recognized as a valuable contribution.<sup><a href="#ref-10">[10]</a></sup> <!-- F49 -->
+                        </p>
+                        <p>
+                            Another accessible path is expanding the navigation plugins list. The plugin catalog is stored at <code>docs/configuration_and_development/navigation_plugins/index.md</code> in the documentation repository.<sup><a href="#ref-8">[8]</a></sup> If you develop a new plugin or find one built by the community, the project invites a pull request that adds it to the list.<sup><a href="#ref-8">[8]</a></sup> <!-- F37 F38 -->
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What is the role of a costmap in the Nav2 environmental representation, and how do costmap layers buffer sensor data into it?</li>
+                            <li class="article-spec-item">How do the licensing requirements in Nav2's repository LICENSE file differ from the terms in CONTRIBUTING.md, and how do contributors certify their commits under the DCO?</li>
+                            <li class="article-spec-item">What are the three steps in the Nav2 contribution process, and what level of community approval is required before merging substantial pull requests?</li>
+                        </ul>
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (October 2026): 11 of 11 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-3-5.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Nav2, &ldquo;About &amp; Contact.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/about_and_contact/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/about_and_contact/index.md</a>.</li>
+                            <li id="ref-2">Nav2, &ldquo;Nav2 README.&rdquo; <a href="https://github.com/ros-navigation/navigation2/blob/main/README.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/main/README.md</a>.</li>
+                            <li id="ref-3">Nav2, &ldquo;Navigation Concepts.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md</a>.</li>
+                            <li id="ref-4">Nav2, &ldquo;State Estimation.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/state_estimation.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/state_estimation.md</a>.</li>
+                            <li id="ref-5">Nav2, &ldquo;Environmental Representation.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/environmental_representation.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/environmental_representation.md</a>.</li>
+                            <li id="ref-6">Nav2, &ldquo;Navigation Servers.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md</a>.</li>
+                            <li id="ref-7">Nav2, &ldquo;Behavior Trees.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md</a>.</li>
+                            <li id="ref-8">Nav2, &ldquo;Navigation Plugins.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/navigation_plugins.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/navigation_plugins.md</a>.</li>
+                            <li id="ref-9">Nav2, &ldquo;Navigation 2 License.&rdquo; <a href="https://github.com/ros-navigation/navigation2/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/main/LICENSE</a>.</li>
+                            <li id="ref-10">Nav2, &ldquo;Getting Involved.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/community/getting_involved.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/community/getting_involved.md</a>.</li>
+                            <li id="ref-11">Nav2, &ldquo;Contributing to Navigation 2.&rdquo; <a href="https://github.com/ros-navigation/navigation2/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/main/CONTRIBUTING.md</a>.</li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-3-4.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">3.4 Lab: Your First Pull Request</span>
+                                </a>
+                                <a href="robotics-ros.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-target">Chapter 4: Robot Operating System (ROS)</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                            <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=1.6" defer></script>
+        <script src="assets/js/course-data.js?v=1.8" defer></script>
+        <script src="assets/js/glossary-data.js?v=1.5" defer></script>
+        <script src="assets/js/learning.js?v=1.4" defer></script>
+
+    </body>
+</html>
