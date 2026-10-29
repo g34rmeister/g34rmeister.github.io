@@ -1,0 +1,50 @@
+name: PR Explainer
+
+# Posts (and keeps updating) one plain-language comment on each pull request:
+# which lessons or pages it touches and what a reviewer checks.
+# Security: pull_request_target runs with a token that can comment, even on fork
+# PRs, so this workflow NEVER checks out or runs code from the PR. It checks out
+# the base branch (trusted), reads the PR's file list from the API as data, and
+# runs scripts/pr_explain.py from the base branch. No secrets, no AI.
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  explain:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout base branch (not the PR)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          persist-credentials: false
+
+      - name: List changed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: gh api "repos/$REPO/pulls/$PR/files" --paginate --jq '.[].filename' > "$RUNNER_TEMP/files.txt"
+
+      - name: Write the explanation
+        run: python3 scripts/pr_explain.py "$RUNNER_TEMP/files.txt" > "$RUNNER_TEMP/comment.md"
+
+      - name: Post or update the comment
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          id=$(gh api "repos/$REPO/issues/$PR/comments" --paginate \
+                 --jq '.[] | select(.body | startswith("<!-- robosstics-pr-explainer -->")) | .id' | head -n 1)
+          if [ -n "$id" ]; then
+            gh api --method PATCH "repos/$REPO/issues/comments/$id" -F body=@"$RUNNER_TEMP/comment.md" > /dev/null
+          else
+            gh api --method POST "repos/$REPO/issues/$PR/comments" -F body=@"$RUNNER_TEMP/comment.md" > /dev/null
+          fi
