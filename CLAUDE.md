@@ -20,7 +20,7 @@ The site is becoming an open-source platform for robotics newcomers (renamed rob
 - Keep the Wikipedia-style theming already live. Do not reuse the abandoned "sketchbook" redesign.
 - Every lesson needs a References list. Cite inline with `<sup><a href="#ref-N">[N]</a></sup>` pointing to `<li id="ref-N">`, numbered by first use (after editing citations run `python3 scripts/renumber_refs.py robotics-X-Y.html`). Never copy unchecked statistics or citations from Gerald's Gemini-drafted material.
 - Append new lessons; never renumber (URLs must stay stable).
-- Adding a lesson: create `robotics-<c>-<n>.html`, add it to `course-data.js`, a one-line summary to `scripts/site_manifest.json` and glossary definitions for new key terms, then run `python3 scripts/site_sync.py`. That regenerates `sitemap.xml`, hub rows, the chapter list, prev/next links, navbars and the page set in `site-hygiene.yml`; never edit those by hand.
+- Adding a lesson: create `robotics-<c>-<n>.html`, add it to `course-data.js`, a one-line summary to `scripts/site_manifest.json` and glossary definitions for new key terms, then run `python3 scripts/site_sync.py`. That regenerates `sitemap.xml`, hub rows, the chapter list, prev/next links, navbars, the page set in `site-hygiene.yml`, each lesson's `minutes` (reading time from the page), the `?v=` hash on every `assets/` link, lesson JSON-LD and the teaching-page table; never edit those by hand (no more manual `?v=` bumps).
 - Each page needs exactly one `<h1>`, the shared head tags (canonical, og:title, twitter:card, color-scheme), the skip link, `data-build-date`, the HTML5 UP footer credit and the licence line (course text CC BY-SA 4.0, code Apache 2.0; see README).
 
 ## Agent tools (read these instead of the pages)

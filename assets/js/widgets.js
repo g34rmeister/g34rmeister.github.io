@@ -2,7 +2,7 @@
 	robOSStics: interactive widgets
 	Any element with data-widget="pwm" | "encoder" | "pid" | "arm" | "blocks" |
 	"odometry" | "fsm" | "kalman" | "rosgraph" | "movejl" | "threshold" | "prflow" |
-	"modbus" | "trapezoid" | "zones" | "qos" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"modbus" | "trapezoid" | "zones" | "qos" | "dashboard" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -2075,6 +2075,57 @@
 		update();
 	}
 
+	/* ---------- Pretend Dashboard Server console from lesson 9.6 ---------- */
+
+	function initDashboard(root) {
+		var CMDS = [
+			{ cmd: 'robotmode', reply: 'Robotmode: followed by the state, which can be NO_CONTROLLER, DISCONNECTED, CONFIRM_SAFETY, BOOTING, POWER_OFF, POWER_ON, IDLE, BACKDRIVE, or RUNNING.' },
+			{ cmd: 'safetystatus', reply: 'Safetystatus: followed by the safety state, which can be NORMAL, REDUCED, PROTECTIVE_STOP, RECOVERY, SAFEGUARD_STOP, SYSTEM_EMERGENCY_STOP, ROBOT_EMERGENCY_STOP, VIOLATION, or FAULT.' },
+			{ cmd: 'programState', reply: 'STOPPED if no program is running, PLAYING if a program is running, or PAUSED if paused.' },
+			{ cmd: 'running', reply: 'Program running: true or Program running: false' },
+			{ cmd: 'power on', reply: null },
+			{ cmd: 'brake release', reply: 'Brake releasing' }
+		];
+		var powered = false;
+		var cur = null;
+
+		var codeEl = h('code', { text: 'Choose a command.' });
+		var codePre = h('pre', { 'class': 'article-code' }, [codeEl]);
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', text: 'Choose a command to see the reply listed in this lesson.' });
+
+		function show(c) {
+			cur = c;
+			codeEl.textContent = c.cmd + '\\n';
+			if (c.cmd === 'power on') {
+				powered = true;
+				readout.textContent = 'The lesson does not list a reply for power on. It says this command must be sent before brake release to avoid an error message.';
+			} else if (c.cmd === 'brake release' && !powered) {
+				readout.textContent = 'The lesson says power on must be sent before brake release to avoid an error message, but it does not give the error text. Send power on first.';
+			} else {
+				readout.textContent = 'Reply: ' + c.reply;
+			}
+		}
+
+		var group = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Dashboard Server command' });
+		CMDS.forEach(function (c) {
+			var b = button(c.cmd, function () {
+				Array.prototype.forEach.call(group.children, function (btn) {
+					btn.setAttribute('aria-pressed', String(btn === b));
+				});
+				show(c);
+			});
+			b.setAttribute('aria-pressed', 'false');
+			group.appendChild(b);
+		});
+
+		root.replaceChildren(frame('Dashboard Server console', [
+			h('p', { 'class': 'widget-note', text: 'Pretend server showing the replies listed in this lesson. Each command is sent ending with a newline character, written \\n in Python.' }),
+			group,
+			codePre,
+			readout
+		]));
+	}
+
 	var INIT = {
 		pwm: initPwm,
 		encoder: initEncoder,
@@ -2091,7 +2142,8 @@
 		modbus: initModbus,
 		trapezoid: initTrapezoid,
 		zones: initZones,
-		qos: initQos
+		qos: initQos,
+		dashboard: initDashboard
 	};
 
 	function boot() {

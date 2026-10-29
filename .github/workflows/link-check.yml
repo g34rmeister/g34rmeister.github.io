@@ -1,0 +1,45 @@
+name: Weekly Link Check
+
+# Re-checks every cited source URL once a week and opens (or updates) one issue
+# listing links that loaded last time and fail now. Bot walls are ignored.
+# It does not commit anything; sources.json in the repo stays as it is.
+
+on:
+  schedule:
+    - cron: '17 6 * * 1'   # Mondays 06:17 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Re-check every cited URL
+        run: |
+          cp docs/sources.json "$RUNNER_TEMP/old.json"
+          python3 scripts/sources.py links --all
+          python3 scripts/link_report.py "$RUNNER_TEMP/old.json" docs/sources.json > "$RUNNER_TEMP/report.md"
+          cat "$RUNNER_TEMP/report.md" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Open or update the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if grep -q 'None this week.' "$RUNNER_TEMP/report.md"; then
+            echo "No newly broken links."
+            exit 0
+          fi
+          num=$(gh issue list --repo "$REPO" --state open --search 'in:title "Broken source links"' --json number --jq '.[0].number')
+          if [ -n "$num" ]; then
+            gh issue comment "$num" --repo "$REPO" --body-file "$RUNNER_TEMP/report.md"
+          else
+            gh issue create --repo "$REPO" --title "Broken source links" --body-file "$RUNNER_TEMP/report.md"
+          fi

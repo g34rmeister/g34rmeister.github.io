@@ -11,7 +11,13 @@ Generated (only these regions are touched; everything else in a page is left alo
   chapter pages                       "Articles in this chapter" list and footer nav
   lesson pages                        prev/next footer nav, source-check line under References
                                       (counts from docs/sources.json)
-  every robotics-* page               navbar and drawer links
+  every robotics-* page               navbar and drawer links; ?v= on assets/ links set to a
+                                      hash of the file, so caches refresh exactly when it changes
+  assets/js/course-data.js            each lesson's "minutes" (reading time computed from the page)
+  lesson pages                        a schema.org LearningResource JSON-LD block in <head>
+  robotics-teaching.html              the per-chapter table (lessons, minutes, quiz questions)
+  footer "last updated" fallback      the page's last commit month (written locally only, never
+                                      checked in CI, because CI checkouts are shallow)
 
 Usage (from the repo root):
   python3 scripts/site_sync.py          # rewrite out-of-date regions
@@ -22,6 +28,7 @@ site_manifest.json, then run this script.
 """
 from datetime import date
 from pathlib import Path
+import hashlib
 import json
 import re
 import subprocess
@@ -53,6 +60,93 @@ def load_course():
                 sys.exit(f'scripts/site_manifest.json: add a summary for lesson {lesson["id"]}')
             lesson['blurb'] = extra['blurbs'][lesson['id']]
     return chapters
+
+
+def load_quiz_counts():
+    js = ("global.window={};require(process.argv[1]);"
+          "const q=window.RISE_COURSE.quizzes,o={};for(const k in q)o[k]=(q[k].questions||q[k]).length;"
+          "process.stdout.write(JSON.stringify(o))")
+    out = subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js')],
+                         capture_output=True, check=True, text=True, encoding="utf-8").stdout
+    return json.loads(out)
+
+
+def reading_minutes(lesson_url):
+    """Reading time of a lesson: prose at 200 words a minute, code at 100 (at least 3 minutes)."""
+    text = (ROOT / lesson_url).read_text(encoding='utf-8')
+    body = text[text.find('robotics-article-body'):]
+    end = body.find('References</h2>')
+    body = body[:end] if end > 0 else body
+    code = sum(len(re.sub(r'<[^>]+>', ' ', c).split()) for c in re.findall(r'<pre[^>]*>(.*?)</pre>', body, re.S))
+    prose = re.sub(r'<(pre|script|style|svg)[^>]*>.*?</\1>', ' ', body, flags=re.S)
+    words = len(re.sub(r'<[^>]+>', ' ', prose).split())
+    return max(3, round(words / 200 + code / 100))
+
+
+def course_data(text):
+    for ch in CHAPTERS:
+        for lesson in ch['lessons']:
+            pat = r'(\{"id": "%s", "minutes": )\d+' % re.escape(lesson['id'])
+            if not re.search(pat, text):
+                sys.exit(f'assets/js/course-data.js: cannot find "minutes" for lesson {lesson["id"]}')
+            text = re.sub(pat, lambda m: m.group(1) + str(MINUTES[lesson['id']]), text, count=1)
+    return text
+
+
+NEW_TEXT = {}  # files rewritten earlier in this run, so asset hashes see their new content
+
+
+def stamp_assets(text):
+    def repl(m):
+        path = m.group(1)
+        data = NEW_TEXT.get(path)
+        raw = data.encode('utf-8') if data is not None else (ROOT / path).read_bytes()
+        return f'{path}?v={hashlib.sha1(raw).hexdigest()[:8]}{m.group(3)}'
+    return re.sub(r'(assets/(?:js|css)/[A-Za-z0-9_.-]+\.(?:js|css))(\?v=[^"\']*)?(["\'])', repl, text)
+
+
+def lesson_jsonld(text, lesson, where):
+    m = re.search(r'<meta name="description" content="([^"]*)"', text)
+    data = {'@context': 'https://schema.org', '@type': 'LearningResource',
+            'name': f'{lesson["id"].replace("-", ".")} {lesson["title"]}', 'url': SITE + lesson['url'],
+            'description': m.group(1) if m else '', 'inLanguage': 'en', 'learningResourceType': 'Lesson',
+            'educationalLevel': 'Beginner', 'timeRequired': f'PT{MINUTES[lesson["id"]]}M',
+            'teaches': lesson.get('keyTerms', []),
+            'isPartOf': {'@type': 'Course', 'name': 'robOSStics', 'url': SITE + 'robotics.html'},
+            'author': {'@type': 'Person', 'name': 'Gerald Lê'},
+            'license': 'https://creativecommons.org/licenses/by-sa/4.0/'}
+    block = ('<script type="application/ld+json" id="lesson-ld">\n'
+             + json.dumps(data, ensure_ascii=False, indent=4).replace('\n', '\n        ')
+             + '\n        </script>')
+    if 'id="lesson-ld"' in text:
+        return re.sub(r'<script type="application/ld\+json" id="lesson-ld">.*?</script>', lambda _: block, text, count=1, flags=re.S)
+    if '</head>' not in text:
+        sys.exit(f'{where}: no </head>')
+    return text.replace('</head>', '    ' + block + '\n    </head>', 1)
+
+
+def teaching_page(text, where):
+    text = sync_navbars(text, None, where)
+    rows = []
+    for ch in CHAPTERS:
+        mins = sum(MINUTES[l['id']] for l in ch['lessons'])
+        note = 'Optional' if ch['title'].startswith('Extra') else ''
+        rows.append(f'{" " * 36}<tr><td>{ch["id"]}</td><td><a href="{ch["url"]}">{ch["title"]}</a></td>'
+                    f'<td>{len(ch["lessons"])}</td><td>{mins}</td><td>{QUIZ_COUNTS.get(str(ch["id"]), 0)}</td><td>{note}</td></tr>')
+    text = re.sub(r'(<table class="article-table"[^>]*>\s*<thead>.*?</thead>\s*<tbody>)(.*?)(\s*</tbody>)',
+                  lambda m: m.group(1) + '\n' + '\n'.join(rows) + m.group(3), text, count=1, flags=re.S)
+    # Keep the two totals in the intro sentence current, if that wording is still there.
+    total = sum(MINUTES.values())
+    core = total - sum(MINUTES[l['id']] for ch in CHAPTERS if ch['title'].startswith('Extra') for l in ch['lessons'])
+    text = re.sub(r'come to about \d+ minutes \(roughly \d+ hours\)', f'come to about {total} minutes (roughly {round(total / 60)} hours)', text)
+    return re.sub(r'or about \d+ minutes \(roughly \d+ hours\) without', f'or about {core} minutes (roughly {round(core / 60)} hours) without', text)
+
+
+def last_commit_month(path):
+    out = subprocess.run(['git', 'log', '-1', '--format=%cs', '--', path], cwd=ROOT,
+                         capture_output=True, text=True).stdout.strip()
+    return date.fromisoformat(out).strftime('%B %Y') if out else None
+
 
 
 def card(href, direction, target, right=False, indent=32):
@@ -134,6 +228,7 @@ def references_note(lesson_id, url=None):
 
 
 def lesson_page(text, ch, i, where):
+    text = lesson_jsonld(text, ch['lessons'][i], where)
     text = replace_once(text, r'<p class="references-note">(.*?)</p>', references_note(ch['lessons'][i]['id'], ch['lessons'][i]['url']), where)
     lessons = ch['lessons']
     if i == 0:
@@ -202,7 +297,8 @@ def hygiene_workflow(text, where):
 
 
 def page_jobs():
-    jobs = {'sitemap.xml': sitemap,
+    jobs = {'assets/js/course-data.js': course_data,
+            'sitemap.xml': sitemap,
             '.github/workflows/site-hygiene.yml': lambda t: hygiene_workflow(t, 'site-hygiene.yml'),
             'robotics.html': lambda t: hub_page(t, 'robotics.html')}
     for ch in CHAPTERS:
@@ -212,6 +308,7 @@ def page_jobs():
     jobs['robotics-quiz.html'] = lambda t: sync_navbars(t, 'robotics-quiz.html', 'robotics-quiz.html')
     for page in TRAILING_COURSE_PAGES:
         jobs[page] = lambda t, p=page: sync_navbars(t, None, p)
+    jobs['robotics-teaching.html'] = lambda t: teaching_page(t, 'robotics-teaching.html')
     return jobs
 
 
@@ -223,6 +320,14 @@ def main(check):
             sys.exit(f'{name} is listed in course-data.js but the file does not exist')
         text = path.read_text(encoding='utf-8')
         new = job(text)
+        if name.startswith('robotics') and name.endswith('.html'):
+            new = stamp_assets(new)
+            if not check:
+                month = last_commit_month(name)
+                if month:
+                    new = re.sub(r'(<span data-build-date>)[^<]*(</span>)', lambda m: m.group(1) + month + m.group(2), new)
+        if name.startswith('assets/'):
+            NEW_TEXT[name] = new
         if new != text:
             stale.append(name)
             if not check:
@@ -238,6 +343,11 @@ def main(check):
 
 CHAPTERS = load_course()
 SOURCE_STATUS = load_source_status()
+QUIZ_COUNTS = load_quiz_counts()
+MINUTES = {l['id']: reading_minutes(l['url']) for ch in CHAPTERS for l in ch['lessons']}
+for _ch in CHAPTERS:  # pages built in this run use the new minutes, not the ones course-data.js had
+    for _l in _ch['lessons']:
+        _l['minutes'] = MINUTES[_l['id']]
 
 if __name__ == '__main__':
     sys.exit(main('--check' in sys.argv))
