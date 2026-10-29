@@ -30,6 +30,8 @@ You do not need to install Git or Python to fix typos or wording. You can do eve
 
 Maintainers will review your pull request, answer questions, and help you merge it.
 
+By contributing, you agree that your contribution is licensed under the same terms as the rest of the project: course text under [CC BY-SA 4.0](LICENSE-CONTENT.txt) and code under the [Apache License 2.0](LICENSE).
+
 A bot comment appears on your pull request a moment after you open it. It lists which lessons or pages you changed and what a reviewer will check. It is a fixed script (`scripts/pr_explain.py`), not an AI, and it updates the comment when you push more commits.
 
 ## Working Locally

@@ -52,4 +52,7 @@ The course is ready for an interactive tutor without changing the lesson pages:
 A GitHub Pages site cannot hold an API key, so the tutor's model calls need a small backend or proxy; the page only talks to that.
 
 ## 📄 License
-This template is based on [TXT by HTML5 UP](https://html5up.net) and licensed under [Creative Commons Attribution 3.0 (CCA 3.0)](LICENSE.txt).
+- **Course text** (the robOSStics lessons, chapter pages, quizzes and glossary): [Creative Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0)](LICENSE-CONTENT.txt). You may share and adapt it, including commercially, if you give credit and share your adaptations under the same licence.
+- **Code** (scripts, `assets/js/` course scripts and widgets, workflows): [Apache License 2.0](LICENSE).
+- **Site template:** based on [TXT by HTML5 UP](https://html5up.net), licensed under [Creative Commons Attribution 3.0](LICENSE-HTML5UP.txt).
+- Quoted material, figures and screenshots from cited sources belong to their owners and are used under their own terms.
