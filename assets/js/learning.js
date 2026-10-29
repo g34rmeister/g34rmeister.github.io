@@ -196,6 +196,19 @@
 			body.insertBefore(box, body.firstChild);
 		}
 
+		// "Key points" summary just before the References heading (from course-data.js keyPoints).
+		if (lesson.keyPoints && lesson.keyPoints.length) {
+			var refsHeading = null;
+			Array.prototype.forEach.call(body.querySelectorAll('h2'), function (h) {
+				if (!refsHeading && /References\s*$/.test(h.textContent)) refsHeading = h;
+			});
+			var kp = el('div', { 'class': 'article-callout key-points', role: 'note' }, [
+				el('div', { 'class': 'article-callout-header', html: '<i class="fas fa-clipboard-list" aria-hidden="true"></i> Key points' }),
+				el('ul', {}, lesson.keyPoints.map(function (k) { return el('li', { text: k }); }))
+			]);
+			if (refsHeading) body.insertBefore(kp, refsHeading);
+		}
+
 		var footerNav = body.querySelector('.article-footer-nav');
 		var status = el('p', { 'class': 'lesson-complete-status', 'aria-live': 'polite' });
 		var btn = el('button', { type: 'button', 'class': 'btn-copy-bibtex lesson-complete-btn' });

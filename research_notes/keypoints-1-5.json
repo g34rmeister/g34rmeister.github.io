@@ -1,0 +1,228 @@
+{
+  "1-1": [
+    "ISO 8373 defines a robot as a programmed actuated mechanism with a degree of autonomy to perform locomotion, manipulation or positioning.",
+    "Autonomy measures a machine's ability to perform intended tasks based on current state and sensing without human intervention.",
+    "Robots operate through a sense, think, act loop where sensors measure conditions, controllers make decisions, and actuators execute motion.",
+    "Control architectures organize robot decision-making into sense-plan-act, reactive subsumption, or hybrid three-layer systems."
+  ],
+  "1-2": [
+    "Early automata and Jacquard's punched cards introduced stored programs that let machines change behavior without being rebuilt.",
+    "Unimate became the first industrial robot in 1961, handling hot die-cast parts at General Motors.",
+    "The robotics industry shifted during the 1970s from hydraulic actuators to electrically powered, computer-controlled robot arms.",
+    "Universal Robots introduced the UR5 in 2008 as the first commercially viable collaborative robot that worked without safety cages.",
+    "Mobile robotics progressed from early research robots like Shakey to commercial warehouse systems and planetary rovers."
+  ],
+  "1-3": [
+    "Industrial robots are classified primarily by mechanical structure into articulated, SCARA, Cartesian, parallel delta, cylindrical, and polar types.",
+    "Robot spec sheets define mechanical capability through key metrics including payload, reach, repeatability, and cycle time.",
+    "Safety standards define collaborative applications rather than collaborative robots, requiring risk assessments for the entire work task.",
+    "Automated Guided Vehicles follow fixed physical guides, whereas Autonomous Mobile Robots map environments and dynamically plan paths around obstacles."
+  ],
+  "1-4": [
+    "Python and C++ serve as the primary programming languages for ROS 2 nodes and microcontroller code.",
+    "Robot kinematics relies on trigonometry, vectors, matrices, and calculus to calculate positions, orientations, and velocities.",
+    "Simulators such as URSim and Gazebo let engineers test code safely before deploying to physical robots.",
+    "Industrial robots communicate with controllers and peripherals over standard network protocols such as Modbus TCP and EtherNet/IP."
+  ],
+  "1-5": [
+    "Global industrial robot installations reached 603,307 in 2025, bringing the operational stock past five million robots.",
+    "Robot density measures operational industrial robots per 10,000 manufacturing employees, with the Republic of Korea leading at 1,220 in 2024.",
+    "Handling represents the largest industrial robot application, while electrical and automotive manufacturing buy the most robots.",
+    "Medical systems such as da Vinci operate via teleoperation where human surgeons directly control instruments from a console.",
+    "Extreme environments rely on specialized robots for deep space exploration, disaster response, and hazardous nuclear site investigations."
+  ],
+  "1-6": [
+    "A rigid object in three-dimensional space has six degrees of freedom, requiring six robot axes to control position and orientation.",
+    "Pose accuracy measures distance from a commanded target, whereas pose repeatability measures how closely repeated visits cluster together.",
+    "Setting up tool frames at the tool center point and work objects on fixtures makes robot motion programs reusable.",
+    "Forward kinematics calculates tool pose from joint angles, whereas inverse kinematics calculates required joint angles for a desired pose.",
+    "Motion instructions interpolate paths via joint, linear, or circular moves, using zone blending to smooth transitions without stopping."
+  ],
+  "1-7": [
+    "An industrial robot cell combines a robot manipulator with end-of-arm tooling, part presentation, controllers, and safeguarding to perform specific tasks.",
+    "A cell programmable logic controller coordinates operations with the robot through handshake signals while safety interlocks communicate along a separate dedicated path.",
+    "Commissioning a turnkey cell includes a factory acceptance test at the integrator facility and a site acceptance test at the customer plant.",
+    "Cell cycle time depends on the slowest bottleneck operation, which must remain at or below customer takt time.",
+    "Tooling, controls, safeguarding, programming, and system integration typically represent the majority of a robot cell's total cost."
+  ],
+  "2-1": [
+    "Online programming teaches target points directly on the physical robot using a teach pendant or manual lead-through.",
+    "Offline programming generates and simulates robot programs within 3D CAD environments without interrupting active production.",
+    "Bridging the simulation-to-reality gap requires calibration of tool center points, work objects, and robot kinematics.",
+    "Post-processors translate simulated paths from offline software into brand-specific languages like RAPID or URScript.",
+    "Block-based visual tools enable operators to build robot programs quickly using drag-and-drop programming nodes."
+  ],
+  "2-2": [
+    "ABB RobotStudio uses a Virtual Controller running the actual RobotWare software to simulate motions and calculate cycle times accurately.",
+    "Universal Robots PolyScope structures robot programs as visual trees where operators teach waypoints using Freedrive hand guiding.",
+    "Virtual commissioning connects simulation models to programmable logic controllers to validate cell interlocks and communication before physical installation.",
+    "The URCaps ecosystem lets third-party developers add custom hardware plugins and interface nodes directly into PolyScope.",
+    "Brand-agnostic platforms like RoboDK generate vendor-specific robot code across multiple manufacturers through specialized post-processors."
+  ],
+  "2-3": [
+    "Industrial robot makers develop proprietary languages to execute motion logic reliably within strict real-time controller cycles.",
+    "ABB RAPID structures programs into tasks, modules, and routines while using robtarget types to specify Cartesian poses and configurations.",
+    "Universal Robots URScript uses Python-like syntax and rotation vectors to define spatial orientations in standard metric units.",
+    "KUKA Robot Language separates program logic in source files from permanent coordinate targets stored in matching data files.",
+    "FANUC pairs simple Teach Pendant motion programs on the shop floor with compiled KAREL programs for complex communication."
+  ],
+  "2-4": [
+    "ROS provides open-source robot middleware that abstracts hardware interfaces and promotes algorithm reuse across different robot brands.",
+    "ROS 2 replaces the centralized roscore master with Data Distribution Service to enable distributed discovery and configurable Quality of Service.",
+    "The four pillars of ROS encompass plumbing middleware, developer tools, reusable algorithm capabilities, and a global open-source ecosystem.",
+    "Community stacks like Nav2 for mobile robots and MoveIt 2 for arms solve complex navigation and manipulation problems.",
+    "ROS-Industrial provides production-grade open-source drivers and interfaces to bridge standard industrial manipulators with advanced ROS 2 capabilities."
+  ],
+  "2-5": [
+    "Gripper families include vacuum cups, mechanical finger grippers, magnetic tools, and soft compliant grippers tailored to specific workpieces.",
+    "Vacuum gripper sizing calculates required holding force from workpiece mass, robot acceleration, and friction safety factors.",
+    "Standardized tool flanges conforming to ISO 9409-1 provide mechanical mounting patterns for robotic end-of-arm tooling.",
+    "Robot controllers require accurate tool center point, payload mass, and center of gravity configurations to maintain dynamic path accuracy.",
+    "Reliable pick programs never move away until digital input sensors confirm successful part gripping within a defined timeout."
+  ],
+  "2-6": [
+    "A standard pick-and-place cycle combines fast joint approach moves, slow linear descents, exact stops, and vertical retractions.",
+    "Robot simulators like URSim in Docker and ABB RobotStudio execute real controller code without requiring physical hardware.",
+    "Programmers must always execute exact stops without blending at positions where grippers actuate or release workpieces.",
+    "Computing approach points using coordinate offsets like RelTool or pose_trans ensures targets track the taught grip position automatically.",
+    "Teaching target points relative to a three-point fixture frame allows moving the fixture without re-teaching individual waypoints."
+  ],
+  "2-7": [
+    "ABB RAPID organizes robot logic into modular files containing procedures, functions, trap interrupt handlers, and typed declarations.",
+    "RAPID storage types determine persistence: CONST remains unchangeable, VAR resets upon returning to main, and PERS survives restarts.",
+    "Palletizing routines compute matrix slot positions from a single taught corner using integer division and modulo math with coordinate offsets.",
+    "Structured error handling in RAPID uses ERROR blocks and ERRNO codes to manage failures via RETRY, TRYNEXT, RETURN, or RAISE.",
+    "Production programs prevent infinite retry loops by limiting attempts, notifying operators with messages, and stopping safely."
+  ],
+  "2-8": [
+    "Vision-guided robotics locates parts with cameras and shifts robot frames dynamically without altering underlying motion paths.",
+    "System designers select between fixed eye-to-hand cameras and wrist-mounted eye-in-hand cameras based on cycle time and field of view.",
+    "Intrinsic camera calibration determines the camera matrix and models lens distortion to map raw image pixels accurately.",
+    "Hand-eye calibration solves the AX = XB equation to link camera coordinates with the robot manipulator coordinate system.",
+    "Adjusting pick positions requires full rigid transformations with translations and rotations rather than adding simple Cartesian offsets."
+  ],
+  "3-1": [
+    "A software repository requires an open source license to grant legal permissions to inspect, modify, and share code.",
+    "Public open-source contributions provide visible evidence of technical ability and collaborative communication skills.",
+    "Standard repository files include LICENSE for permissions, README.md for project overview, CONTRIBUTING for development processes, and CODE_OF_CONDUCT for community behavior.",
+    "ROS 2 packages standardly adopt permissive software licenses such as the Apache 2.0 license to maximize reuse."
+  ],
+  "3-2": [
+    "Non-code contributions like documentation improvements, issue triaging, and peer reviews offer accessible ways to support open-source robotics projects.",
+    "Issue labels such as first-timers-only, good first issue, and help wanted guide newcomers toward manageable initial tasks.",
+    "The GitHub contribution workflow involves forking the repository, cloning locally, connecting the upstream remote, and creating an edit branch.",
+    "Opening draft pull requests early invites constructive reviewer feedback while frequent upstream pulls prevent merge conflicts.",
+    "Open-source etiquette requires keeping technical discussions public, providing reproduction steps, and commenting on issues before starting work."
+  ],
+  "3-3": [
+    "ROS 2 packages maintain distribution-specific release branches where breaking API changes are prohibited to guarantee software stability.",
+    "New features and bug fixes land first in the rolling development branch before developers backport them to stable releases.",
+    "Quality standards defined in REP 2004 govern testing requirements verified continuously on the automated ROS 2 build farm.",
+    "Submitting contributions requires a Developer Certificate of Origin sign-off, peer review approval, and clean Git commit history without force-pushing."
+  ],
+  "3-4": [
+    "Beginners can make first open-source contributions by fixing typos, suggesting verified sources, or reporting broken links.",
+    "Contributors can submit small documentation fixes directly in web browsers using the GitHub Propose changes interface without local setup.",
+    "Working locally with Git allows contributors to test changes and run verification scripts before pushing commits upstream.",
+    "Every factual claim added to robOSStics must trace to an entry in docs/sources.json to maintain site accuracy.",
+    "Contributors should never hand-edit generated regions like sitemap.xml, instead letting scripts update those files automatically."
+  ],
+  "3-5": [
+    "Nav2 provides the flagship autonomous mobile robot navigation framework in ROS 2, maintained by Open Navigation LLC.",
+    "Mobile robot navigation combines state estimation coordinate transforms, 2D costmaps, path planners, trajectory controllers, and recovery behaviors.",
+    "Behavior trees organize navigation execution through hierarchical logic to verify and validate complex robot decision sequences.",
+    "Nav2 packages use plugin interfaces for custom algorithms, with code licensed under Apache-2.0 or BSD-3-Clause and requiring DCO sign-offs.",
+    "Contributing to Nav2 follows a structured path of opening an issue, claiming the task, and submitting pull requests."
+  ],
+  "4-1": [
+    "ROS functions as robot middleware that coordinates independent modular processes called nodes across host operating systems.",
+    "Nodes exchange continuous data streams anonymously using strongly typed messages over named publish-subscribe topics.",
+    "Services execute synchronous or asynchronous request-response transactions suitable for short one-off operations.",
+    "Actions manage long-running tasks by providing continuous feedback along with the ability to cancel or preempt goals.",
+    "The ROS_DOMAIN_ID environment variable isolates network traffic across distinct robot systems sharing the same local network subnet."
+  ],
+  "4-2": [
+    "ROS 2 replaces centralized roscore discovery with peer-to-peer Data Distribution Service middleware to eliminate single points of failure.",
+    "The ROS Middleware abstraction layer allows developers to select different communication implementations via the RMW_IMPLEMENTATION environment variable.",
+    "Configurable Quality of Service policies govern message delivery reliability, durability, and queue depth for each individual communication endpoint.",
+    "Communication requires compatible Quality of Service profiles where publishers must offer equal or higher guarantees than subscribers request.",
+    "Managed lifecycle nodes transition through Unconfigured, Inactive, Active, and Finalized states under supervisor control for safe system startup."
+  ],
+  "4-3": [
+    "ROS 2 categorizes host platforms into three support tiers, targeting Ubuntu Linux as the primary Tier 1 operating system.",
+    "Desktop installations provide visualization tools like RViz alongside communication libraries, whereas base installations omit graphical utilities for headless computers.",
+    "Sourcing the setup.bash file configures essential shell environment variables including PATH, PYTHONPATH, and AMENT_PREFIX_PATH to locate ROS commands.",
+    "Workspace development requires colcon to build multi-package projects and rosdep to resolve external system dependencies defined in package manifests.",
+    "Troubleshooting communication failures between nodes entails checking environment variables, matching domain identifiers, and verifying local network multicast permissions."
+  ],
+  "4-4": [
+    "Turtlesim provides a lightweight two-dimensional simulation environment for practicing node communication without risking physical hardware.",
+    "Keyboard teleoperation publishes velocity commands as Twist messages containing linear and angular vectors to control robot motion.",
+    "Command-line remapping redirects topic and service names at startup, enabling software reuse across different robots without modifying source code.",
+    "A standard ROS 2 workspace organizes user packages in a source folder alongside build, install, and log directories.",
+    "Custom Python nodes inherit from rclpy Node classes to manage publishers, subscribers, and periodic timers."
+  ],
+  "4-5": [
+    "RViz2 renders live sensor readings, occupancy maps, and robot models in three dimensions relative to a stationary Fixed Frame.",
+    "The tf2 library tracks spatial relationships between coordinate frames over time to let tools transform sensor data across links.",
+    "The rqt_graph plugin diagrams active node connections and communication topics to reveal graph topology and disconnected interfaces.",
+    "The ros2 bag utility records message traffic into MCAP storage files for deterministic telemetry replay and offline algorithm testing.",
+    "Gazebo simulates environmental physics and virtual sensors, exchanging data with ROS 2 through the ros_gz bridge interface."
+  ],
+  "4-6": [
+    "ROS 2 workspaces layer user packages as an overlay that overrides matching packages in the underlying core installation.",
+    "Running ros2 pkg create with the ament_python build type generates the manifest, setup scripts, and module directory for Python nodes.",
+    "Declaring runtime dependencies in package.xml enables rosdep to discover and install required system libraries before building.",
+    "Modern rclpy nodes utilize Python context managers to initialize middleware, spin event loops, and guarantee clean shutdown upon termination.",
+    "Open-loop state machine controllers accumulate position drift over time, requiring sensor feedback to achieve accurate path tracking."
+  ],
+  "4-7": [
+    "ROS 2 launch files coordinate starting and monitoring multiple nodes across distributed processes through Python, XML, or YAML descriptions.",
+    "Python launch files implement a generate_launch_description function that returns a LaunchDescription containing Node actions, namespaces, and remappings.",
+    "Substitutions and launch arguments evaluate dynamically at runtime, allowing operators to modify node behavior directly from the command line.",
+    "Individual nodes declare and manage their own parameters locally instead of storing configurations on a centralized global parameter server.",
+    "Parameter files use YAML formatting with fully qualified node names and ros__parameters keys to load startup configurations."
+  ],
+  "4-8": [
+    "MoveIt 2 calculates collision-free trajectories and joint angles to move robotic manipulators toward specified goals.",
+    "The URDF defines mechanical geometry and limits, whereas the SRDF specifies semantic planning groups and disabled collision pairs.",
+    "The ros2_control framework bridges trajectory controllers with physical actuators or software mock hardware interfaces.",
+    "The move_group node integrates planning scene models, inverse kinematics solvers, and trajectory generation adapters.",
+    "Planners include randomized OMPL algorithms for obstacle avoidance and deterministic Pilz generators for linear or point-to-point Cartesian motions."
+  ],
+  "4-9": [
+    "ROS-Industrial provides open-source packages and tools to integrate commercial industrial manipulators into the ROS 2 software ecosystem.",
+    "Vendor drivers share a three-layer architecture combining controller programs, ros2_control hardware interfaces, and standardized trajectory controllers.",
+    "The FollowJointTrajectory action interface serves as the standard abstraction for passing timed joint-space trajectories to robot controllers.",
+    "Streaming drivers require low-latency Linux kernels to meet cyclic control deadlines and prevent communication timeouts with the controller.",
+    "Industrial applications often combine vendor languages for cell sequence logic with ROS 2 planners for perception-driven motion segments."
+  ],
+  "5-1": [
+    "The NSPE and IEEE codes of ethics mandate that engineers hold paramount public safety, health, and welfare above all commercial pressures.",
+    "Engineers must disclose all potential conflicts of interest promptly and practice strictly within their verified domains of technical competence.",
+    "Safety standards evaluate collaborative applications as an integrated whole rather than certifying robot arms in isolation from tooling and workpieces.",
+    "The European Union Machinery Regulation establishes binding safety mandates addressing autonomous mobile machinery, cybersecurity risks, and self-evolving machine learning behaviors.",
+    "Strict product liability holds robotics manufacturers and system integrators legally accountable for injuries caused by design defects or insufficient warnings."
+  ],
+  "5-2": [
+    "Layered functional safety architectures isolate non-safe application software from certified safety controllers and physical emergency stops.",
+    "Hardware watchdog timers trigger automated safe stops whenever main application control loops crash or become unresponsive.",
+    "Robotics perception pipelines must apply data minimization and on-device edge processing to protect bystander privacy.",
+    "Computer vision models require rigorous auditing across diverse demographic groups to mitigate algorithmic detection disparities in pedestrian detection.",
+    "The European Union AI Act classifies artificial intelligence safety components in industrial machinery as high-risk applications requiring strict human oversight."
+  ],
+  "5-3": [
+    "Labor economists found adding one robot per thousand workers reduced the employment-to-population ratio by 0.2 percentage points and wages by 0.42%.",
+    "The task framework analyzes automation through competing displacement, productivity, and reinstatement mechanisms across production activities.",
+    "The reinstatement effect creates new complex occupations in which human workers maintain a comparative advantage over automated systems.",
+    "Implementing data minimization and on-device edge computing prevents mobile robots from leaking sensitive visual and spatial records.",
+    "The moral crumple zone concept describes how legal and moral blame disproportionately falls on human operators supervising autonomous machines."
+  ],
+  "5-5": [
+    "Industrial artificial intelligence operates around the robot for perception, predictive maintenance, and programming assistance while safety controllers remain deterministic.",
+    "Vision-language-action foundation models translate multimodal prompts into actions but remain research platforms exhibiting run-to-run behavioral variance.",
+    "Large language models frequently hallucinate nonexistent functions and output subtle unit or coordinate frame errors in generated robot code.",
+    "Syntactically valid robot scripts can cause physical collisions if programmers fail to catch confused coordinate frames or swapped transform functions.",
+    "Engineers maintain full legal and ethical accountability for thoroughly verifying generated robot programs and recording their provenance."
+  ]
+}

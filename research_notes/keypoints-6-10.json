@@ -1,0 +1,212 @@
+{
+  "6-1": [
+    "Microcontrollers provide the predictable timing needed for low-level motor switching and fast sensor reading.",
+    "Microcontroller pins cannot drive motors directly because motors require high currents and produce damaging inductive spikes.",
+    "An H-bridge motor driver uses low-current signals from a microcontroller to switch high current from an external battery.",
+    "Connecting the Arduino ground and motor battery ground gives the driver a shared zero-volt reference for control signals.",
+    "Non-blocking timing using millis lets a robot read sensors continuously instead of freezing execution with delay."
+  ],
+  "6-2": [
+    "Pulse Width Modulation rapidly switches between zero volts and full supply voltage to simulate intermediate analog voltages.",
+    "The duty cycle represents the percentage of each period the signal stays high, determining the average delivered voltage.",
+    "Microcontrollers rely on dedicated hardware timers to generate PWM waveforms without tying up the main processor in loops.",
+    "DC motors use PWM duty cycle to regulate speed, while RC servos use absolute pulse width at 50 Hz to command shaft position.",
+    "Using the Arduino Servo library on an Uno takes over Timer1 and disables analogWrite on pins 9 and 10."
+  ],
+  "6-3": [
+    "Incremental encoders report relative movement and lose their position during power loss, requiring the robot to home.",
+    "Absolute encoders report an exact shaft position immediately on power-up without requiring homing moves.",
+    "Quadrature encoders generate two square waves offset by 90 degrees, allowing a controller to detect the direction of rotation.",
+    "Full quadrature decoding counts every rising and falling edge across both channels, producing four counts per pulse.",
+    "Hardware interrupts allow microcontrollers to count fast encoder pulses without dropping edges during main loop execution."
+  ],
+  "6-4": [
+    "A PID controller combines present error, past accumulated error, and error rate of change to compute corrective actuator commands.",
+    "Pure proportional control leaves steady-state error, which the integral term eliminates by accumulating residual errors over time.",
+    "The derivative term opposes rapid error changes to damp oscillations, though it amplifies high-frequency sensor noise.",
+    "Anti-windup clamping prevents the integral term from accumulating excessive error while actuators operate at physical saturation limits.",
+    "Computing the derivative on the process measurement instead of error eliminates derivative kick when setpoints change abruptly."
+  ],
+  "6-5": [
+    "Proprioceptive sensors measure internal robot states, while exteroceptive sensors detect physical properties of the external world.",
+    "Active sensors emit energy to measure returns in darkness, while passive sensors detect ambient environmental signals.",
+    "The HC-SR04 ultrasonic sensor measures distance across a 15-degree cone, but smooth angled surfaces cause specular reflection.",
+    "Laser Time-of-Flight sensors measure photon transit times, making distance readings largely independent of target color and reflectance.",
+    "Integrating small zero-rate gyroscope biases over time causes heading drift that grows linearly unless corrected by sensor fusion."
+  ],
+  "6-6": [
+    "Odometry calculates a mobile robot's pose by continuously adding up wheel motions measured by encoders.",
+    "In differential drive, average wheel travel gives center displacement, while the difference divided by wheelbase gives heading change.",
+    "Midpoint Runge-Kutta integration computes motion using the average heading halfway through the step to improve accuracy on curves.",
+    "Heading errors rotate future coordinate updates, making sideways position drift grow proportionally to the total distance traveled.",
+    "Systematic odometry errors come from physical robot dimensions and can be calibrated, whereas unpredictable wheel slip requires sensor fusion."
+  ],
+  "6-7": [
+    "Finite state machines organize robot logic into distinct states, events, and guarded transitions so the robot occupies one state at a time.",
+    "Non-blocking timing using millis keeps the main loop running so controllers poll inputs and update timers without freezing execution.",
+    "Centralizing state transitions guarantees that entry timestamps and actuator commands are updated consistently.",
+    "ROS 2 managed nodes use four primary states—Unconfigured, Inactive, Active, and Finalized—to coordinate system bringup and shutdown.",
+    "Behavior trees route ticks through Sequence and Fallback control nodes to provide modular task execution and error recovery."
+  ],
+  "6-8": [
+    "The Kalman filter combines a motion model prediction with noisy sensor measurements to produce an estimate more certain than either source alone.",
+    "The predict step projects the state forward while adding process noise, increasing estimation uncertainty.",
+    "The update step compares the sensor reading to the prediction and shrinks uncertainty using the Kalman gain.",
+    "The Kalman gain shifts trust toward the sensor when measurement noise is small, and toward the motion model when noise is large.",
+    "Non-linear robotic motion models use the Extended Kalman Filter through Jacobian linearization or the Unscented Kalman Filter using sigma points."
+  ],
+  "6-9": [
+    "Motion profiles generate intermediate setpoints over time, separating the geometric path from how fast the robot moves along it.",
+    "A trapezoidal velocity profile accelerates, cruises, and decelerates, but short moves collapse into a triangular profile without a cruise phase.",
+    "S-curve profiles limit jerk by ramping acceleration gradually, reducing mechanical vibration and gearbox wear.",
+    "Joint moves follow straight lines in joint space, while linear moves guide the tool center point along Cartesian paths.",
+    "Blending zones allow a robot to round waypoints smoothly by overlapping deceleration of one move with acceleration of the next."
+  ],
+  "6-10": [
+    "Forward kinematics calculates the tool position by summing rotating link vectors along the serial chain.",
+    "The reachable workspace of a planar two-link arm forms a ring bounded by the difference and sum of its link lengths.",
+    "Closed-form inverse kinematics uses the law of cosines and atan2 to find the elbow and shoulder angles.",
+    "Robust inverse kinematics functions clamp trigonometric inputs to prevent computer rounding errors from causing mathematical domain crashes.",
+    "The Jacobian determinant equals zero when the arm is fully stretched or folded, marking singularities where radial movement is lost."
+  ],
+  "7-1": [
+    "CMOS sensors offer fast pixel readout without blooming, while CCD sensors provide high pixel-to-pixel uniformity.",
+    "Global shutters expose every pixel simultaneously to eliminate motion distortion when imaging moving parts.",
+    "Increasing the lens f-number by the square root of two halves light throughput while expanding depth of field.",
+    "Telecentric lenses eliminate parallax and keep magnification constant even as part distance varies.",
+    "The GenICam standard provides a universal programming interface to control industrial cameras regardless of hardware manufacturer."
+  ],
+  "7-2": [
+    "Proper illumination geometry improves vision system performance more effectively and economically than upgrading camera sensors or lenses.",
+    "Backlighting produces a high-contrast silhouette for measuring outer dimensions, but eliminates internal surface features.",
+    "Diffuse dome lights project omnidirectional light to eliminate glare and harsh shadows on curved, reflective parts.",
+    "Coaxial lighting uses a beamsplitter to project light along the camera axis, reducing glare on flat reflective objects.",
+    "Pulsed strobe operation lets lights overdrive LEDs up to 500 percent of nominal current to freeze motion while extending lifetime."
+  ],
+  "7-3": [
+    "The HSV color space isolates chromatic hue from lighting intensity, enabling reliable color segmentation using inRange binary masks.",
+    "Otsu thresholding automatically calculates an optimal binarization cutoff on bimodal histograms, while adaptive thresholding adjusts for uneven scene lighting.",
+    "Image moments computed from extracted contours yield precise centroid coordinates for guiding robotic pick-and-place motions.",
+    "The Canny edge detector combines Gaussian smoothing, gradient calculations, non-maximum suppression, and hysteresis thresholding to produce clean single-pixel boundaries.",
+    "Template matching slides a reference patch across an image to locate parts based on visual correlation scores."
+  ],
+  "7-4": [
+    "Direct 3D sensing determines depth from calibrated geometric baselines rather than unanchored neural network guesses.",
+    "Stereo vision calculates depth inversely proportional to horizontal disparity using baseline distance and focal length.",
+    "VoxelGrid filtering downsamples large point clouds into regular volumetric cubes to accelerate spatial processing.",
+    "RANSAC plane segmentation identifies and removes flat supporting surfaces like tables to isolate resting workpieces.",
+    "Euclidean cluster extraction groups segmented 3D points into individual objects based on spatial proximity."
+  ],
+  "7-5": [
+    "Automated inspection reduces human visual inspection errors, which include missed defects and false alarms that cause production waste.",
+    "The Nyquist sampling limit requires at least two sensor pixels per optical line pair to resolve fine features without aliasing.",
+    "Telecentric lenses eliminate parallax error in precision gauging because their constant magnification prevents part height variations from altering measured dimensions.",
+    "Optical distortion displaces image features geometrically without blurring, allowing software calibration to rectify measurements.",
+    "Data Matrix ECC 200 uses Reed-Solomon error correction to read damaged symbols on direct part markings."
+  ],
+  "7-6": [
+    "The ROS optical camera coordinate frame convention defines positive x pointing right, positive y pointing down, and positive z pointing forward.",
+    "CameraInfo messages supply intrinsic calibration matrices and plumb_bob distortion parameters to enable 3D geometric reconstruction.",
+    "The message_filters TimeSynchronizer matches image frames with calibration metadata by pairing messages that share identical header timestamps.",
+    "The cv_bridge package converts ROS Image messages to and from OpenCV NumPy arrays using imgmsg_to_cv2 and cv2_to_imgmsg.",
+    "Publishing processed images back to ROS requires preserving the original header timestamp and optical frame identifier."
+  ],
+  "8-1": [
+    "In direct current circuits, sinking provides a path to supply common, whereas sourcing provides a path to positive supply.",
+    "NPN sinking field sensors require sourcing PLC inputs, while PNP sourcing sensors connect to sinking inputs.",
+    "Fieldbus networks replace bulky point-to-point wiring bundles by connecting multiple sensors and actuators across a single shared digital cable.",
+    "Cyclic communication exchanges real-time I/O data at fixed intervals, while acyclic communication transfers diagnostics and parameters on demand.",
+    "Device Level Ring networks use supervisor beacon frames to achieve fault recovery within 2890 µs across rings of up to 50 nodes."
+  ],
+  "8-2": [
+    "EtherNet/IP separates time-critical implicit I/O data over UDP from acyclic explicit configuration requests over TCP.",
+    "PROFINET RT bypasses TCP/IP layers for millisecond determinism, while PROFINET IRT uses hardware switching for sub-millisecond motion control.",
+    "EtherCAT slave devices read and insert data on the fly as a single frame passes through the network.",
+    "Modbus TCP transmits big-endian registers and coils over TCP port 502 with a seven-byte MBAP header.",
+    "Engineering software imports standardized XML device description files like GSDML or ESI to configure field devices."
+  ],
+  "8-3": [
+    "Universal Robots controllers connect to cell PLCs using EtherNet/IP implicit messaging, PROFINET modules, or Modbus TCP on port 502.",
+    "Up to 16 binary handshake signals can be packed into a single 16-bit Modbus holding register to streamline network communication.",
+    "The Python pymodbus library provides ModbusTcpClient to connect to servers and execute read or write function codes.",
+    "A Modbus server indicates an exception by adding 0x80 to the requested function code and returning an exception code.",
+    "Reading or writing an address outside the server's configured register range triggers exception code 02 for ILLEGAL DATA ADDRESS."
+  ],
+  "8-5": [
+    "The industrial communication hierarchy connects real-time plant floor operational technology with enterprise information technology systems.",
+    "IO-Link enables bidirectional digital parameter setting and diagnostics with sensors across standard three-wire cables under IEC 61131-9.",
+    "OPC UA provides an object-oriented information model for machine data with binary transport over port 4840 and X.509v3 certificates.",
+    "The VDMA 40010 companion specification standardizes OPC UA information models for robotics across different manufacturers.",
+    "MQTT delivers lightweight publish-subscribe telemetry over TCP ports 1883 and 8883 using three defined Quality of Service levels."
+  ],
+  "8-6": [
+    "The ISA/IEC 62443 standard establishes cybersecurity requirements for industrial automation based on shared responsibility across asset owners, integrators, and product suppliers.",
+    "Industrial demilitarized zones prevent direct corporate connections to control networks by requiring control zones to push data outward.",
+    "Configuring managed switch ports as static access ports and pruning default VLANs prevents unauthorized network trunk spoofing.",
+    "Time-Sensitive Networking standards provide deterministic connectivity and traffic scheduling over standard bridged Ethernet networks.",
+    "Wireshark analyzes captured Modbus TCP frames using the mbtcp display filter and Decode As overrides for non-standard network ports."
+  ],
+  "9-1": [
+    "Reactive maintenance addresses equipment after failure, preventive maintenance follows scheduled operating intervals, and predictive maintenance initiates repairs from observed sensor data.",
+    "Maintenance logs recording faults and root causes must accompany sensor data to make equipment failure prediction effective.",
+    "Technicians wipe dust and oil off robot arms with approved cloths and solvents, never using damaging compressed air.",
+    "Cleaning dust inside the robot control box requires an electrostatic discharge vacuum cleaner to prevent damaging sensitive electronics.",
+    "Technicians must inspect robot arm and tool mounting bolts with a calibrated torque wrench after any heavy collision."
+  ],
+  "9-3": [
+    "Technicians replace all joint flat rings together when one shows wear because the seals share the same operating environment.",
+    "Backdrive mode releases joint brakes so operators can manually move the arm to a safe position when close to a collision.",
+    "A properly engaged joint brake permits only one to two degrees of mechanical motion before hitting its brake pin.",
+    "Flexible couplings compensate for parallel shaft misalignment to prevent premature bearing failure on peripheral drive equipment.",
+    "Cable retraction systems and stress loops protect robot dress packs by maintaining bend radiuses and preventing pinch points."
+  ],
+  "9-4": [
+    "Technicians ohm out multimeter test leads before testing to verify their resistance measurement is close to zero.",
+    "Continuity testing requires de-energizing circuits and isolating individual components from neighboring connections before taking measurements.",
+    "Fast-acting fuses operate too slowly to protect solid-state field sensors from short circuits or reverse polarity wiring mistakes.",
+    "Interposing relays provide galvanic isolation to eliminate electrical noise interference between the robot controller and external equipment.",
+    "In EtherCAT networks, dedicated Lost Link Counter registers track intermittent disconnects and an unexpected Working Counter invalidates frame data."
+  ],
+  "9-5": [
+    "Updating revolution counters synchronizes robot axes by moving joints to their zero markings and saving the position in the service window.",
+    "Defining accurate tool mass and center of gravity in tool data ensures correct operation of robot collision detection functionality.",
+    "Replacing a robot joint with a part from an incompatible model triggers error C364A1 indicating a robot type disagreement.",
+    "Dual Robot Calibration recalibrates kinematics across the full workspace so robots resume production after joint replacement without modifying waypoints.",
+    "Technicians must never remove controller SD cards or USB storage while power is on to avoid operating system and calibration corruption."
+  ],
+  "9-6": [
+    "The Universal Robots Dashboard Server accepts human-readable text commands terminated by newlines over TCP port 29999.",
+    "Controlling a robot externally requires enabling Dashboard Server access and Remote Control mode in controller settings.",
+    "The robot mode RUNNING indicates that the arm has electrical power and released brakes, independent of program execution state.",
+    "The Dashboard Server recovery sequence sends close safety popup, unlock protective stop, and play to resume program execution.",
+    "Resuming a program after unlocking a protective stop restarts execution from where it stopped rather than from the beginning."
+  ],
+  "10-1": [
+    "A factory acceptance test formally verifies that cell equipment meets engineering specifications and operates correctly before shipment to customer sites.",
+    "Mounting host directories into the URSim Docker container preserves exported robot programs and installation configurations across simulation restarts.",
+    "Programs must execute exact stops without blending wherever a robot gripper opens or closes during pick-and-place cycles.",
+    "A sequence chart maps numbered robotic actions to explicit starting conditions, forming the foundation of program logic and test sheets.",
+    "Simulated safety configurations demonstrate software limits but cannot replace physical risk assessments and validated safety hardware on real production cells."
+  ],
+  "10-2": [
+    "The MoveIt Task Constructor decomposes complex pick-and-place tasks into transparent stage chains classified as generators, propagators, and connectors.",
+    "Wrapping candidate grasp pose generators in ComputeIK converts Cartesian target poses into valid joint configurations for the robot planner.",
+    "The PlanningSceneInterface applies collision objects like tables into the environment so motion planners automatically calculate collision-free trajectories around them.",
+    "ModifyPlanningScene stages attach the target object to the tool frame so MoveIt moves the object along with the arm during transport.",
+    "Mock hardware provides a lightweight environment for testing MoveIt planning pipelines without requiring physical robots or heavy physics simulation."
+  ],
+  "10-3": [
+    "Connecting quadrature encoder channels to Arduino hardware interrupt pins enables reliable pulse counting without dropping edges during processor execution.",
+    "Calculating wheel rotational speed divides incremental encoder count changes by the output counts per revolution and elapsed sample time.",
+    "The TB6612FNG MOSFET driver exhibits smaller voltage drops than bipolar drivers like the L298N, delivering higher effective voltage to motors.",
+    "Velocity ramping increases speed setpoints gradually over time, reducing mechanical stress on gearboxes compared to abrupt step changes.",
+    "A supervisory state machine transitions into FAULT and cuts motor PWM whenever high commanded drive coincides with near-zero encoder feedback."
+  ],
+  "10-4": [
+    "A cell monitor observes and reports equipment status without ever automatically acknowledging or resetting robot stops.",
+    "The monitor integrates Dashboard Server commands, Modbus holding registers, and ROS 2 camera topics into a unified diagnostic pipeline.",
+    "Packing up to 16 digital handshake signals into a single Modbus general-purpose register optimizes network communications with cell controllers.",
+    "Recording timestamped robot state transitions creates an audit log that alerts operators to repeating protective stops.",
+    "Publishing an open-source ROS 2 package requires a descriptive README, an Apache 2.0 license, and contribution guidelines."
+  ]
+}

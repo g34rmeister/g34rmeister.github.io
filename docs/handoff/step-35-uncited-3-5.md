@@ -1,0 +1,4 @@
+robotics-3-5.html | 03. How the project is organised | "The project documentation lives in its own dedicated repository at docs.nav2.org." | kind: name | why it needs a source: specifies dedicated documentation repository host without citation
+robotics-3-5.html | 04. Licensing and sign-off | "Nav2 defines licensing rules across two documents: the repository LICENSE file and the CONTRIBUTING.md guide." | kind: name | why it needs a source: names specific repository files governing licensing rules without an inline citation
+
+Checked lessons: robotics-3-1.html, robotics-3-2.html, robotics-3-3.html, robotics-3-4.html, robotics-3-5.html, robotics-4-1.html, robotics-4-2.html, robotics-4-3.html, robotics-4-4.html, robotics-4-5.html, robotics-4-6.html, robotics-4-7.html, robotics-4-8.html, robotics-4-9.html, robotics-5-1.html, robotics-5-2.html, robotics-5-3.html, robotics-5-4.html, robotics-5-5.html
