@@ -53,7 +53,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 2.1 Types of Programming
 `robotics-2-1.html` · 14 min · 25 refs (partial 1, unreachable 4, verified 20) · 1 figures · 1 Try it
 - Objectives: Compare online programming (teach pendant, lead-through) with offline programming (OLP) and block-based visual tools. / Explain the safety interlocks on an industrial teach pendant, including the three-position enabling device and the 250 mm/s reduced teach speed. / Explain how the simulation-to-reality gap is bridged through work object and robot kinematic calibration. / Evaluate the economic and operational trade-offs of programming methods based on cell downtime and batch size.
-- Key terms: offline programming, teach pendant, lead-through, enabling device, reduced teach speed, simulation-to-reality gap, kinematic calibration, post-processor, block-based programming, MoveJ
+- Key terms: offline programming, teach pendant, lead-through, enabling device, reduced teach speed, simulation-to-reality gap, kinematic calibration, post-processor, block-based programming
 - Sections: The spectrum of programming methods · Online programming: teach pendants in practice · Pendant safety interlocks and reduced speed · Coordinate frames for manual jogging · Lead-through programming and collaborative robots · Offline programming (OLP) principles and architecture · The simulation-to-reality gap and cell calibration · Block-based visual programming · Economic and operational trade-offs · Case study: spot welding vs. custom deburring · Comparing online and offline workflows
 
 ### 2.2 Common Programming Environments
@@ -64,8 +64,8 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 
 ### 2.3 Common Programming Languages
 `robotics-2-3.html` · 14 min · 18 refs (unreachable 2, verified 16) · 1 figures · 1 Try it
-- Objectives: Analyze the syntax and program structure of ABB RAPID, including modules, routines (PROC, FUNC, TRAP), robtarget, and zonedata. / Examine Universal Robots URScript syntax, poses as rotation vectors, motion commands (movej, movel, movep), and real-time thread execution. / Compare vendor languages with KUKA KRL, FANUC TP/Karel, and historical standards like DIN 66312 IRL and academic RRL. / Explain how robot languages handle physical I/O, error recovery traps, and kinematic ambiguity.
-- Key terms: URScript, RAPID, movej, movel, robtarget, KRL, zonedata, speeddata, rotation vector, KAREL
+- Objectives: Analyze the syntax and program structure of ABB RAPID, including modules, routines (PROC, FUNC, TRAP), robtarget, and zonedata. / Examine Universal Robots URScript syntax, poses as rotation vectors, motion commands (movej, movel, movep), and real-time thread execution. / Compare vendor languages with KUKA KRL, FANUC TP/Karel, and historical standards like DIN 66312 IRL and academic RRL. / Explain how robot languages handle physical I/O, interrupt-triggered TRAP routines, and kinematic ambiguity.
+- Key terms: URScript, RAPID, movej, movel, robtarget, KRL, zonedata, speeddata, rotation vector, KAREL, MoveJ
 - Sections: Why proprietary vendor languages persist · ABB RAPID: architecture and routines · RAPID data types: robtarget, speed, and zones · Real-world RAPID program walkthrough · Universal Robots URScript: syntax and execution · URScript motion and rotation vectors · Real-world URScript program walkthrough · KUKA Robot Language (KRL) · FANUC TP and KAREL · RRL and historical standardization · Side-by-side technical comparison
 
 ### 2.4 Intro to ROS (Vendor-Agnostic)
@@ -108,7 +108,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 
 ### 3.2 Your First Contribution
 `robotics-3-2.html` · 14 min · 6 refs (verified 6) · 1 figures · 0 Try it
-- Objectives: Identify non-code contributions, including documentation, issue organization, and peer review. / Find beginner-friendly tasks using labels like first-timers-only, good first issue, and help wanted. / Follow the fork, clone, upstream remote, feature branch, and pull request workflow on GitHub. / Apply open-source communication norms: keeping discussions public, providing reproduction steps, and commenting on issues before starting.
+- Objectives: Identify non-code contributions, including documentation, issue organization, and peer review. / Find beginner-friendly tasks using labels like first-timers-only, good first issue, and help wanted. / Follow the fork, clone, upstream remote, edit branch, and pull request workflow on GitHub. / Apply open-source communication norms: keeping discussions public, providing reproduction steps, and commenting on issues before starting.
 - Key terms: first-timers-only, good first issue, upstream, draft pull request, help wanted
 - Sections: Contributions beyond code · Finding a first issue in robotics projects · The fork, clone, and branch workflow · Draft pull requests and staying in sync · Communication norms: public collaboration and reproduction · Check your understanding
 
@@ -141,7 +141,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 4.3 Installing ROS on Your Local Environment
 `robotics-4-3.html` · 14 min · 33 refs (fixed 2, verified 31) · 1 figures · 1 Try it
 - Objectives: Navigate the platform support tiers for ROS 2 Lyrical Luth (Lyrical supported-platforms page; REP 2000 for earlier releases) across Ubuntu 26.04, Windows 11 and macOS. / Execute the complete Debian package installation pipeline on Ubuntu, including UTF-8 locale generation, adding the ROS 2 apt source (ros2-apt-source package), and desktop package selection. / Configure shell environment variables (PATH, AMENT_PREFIX_PATH, ROS_DISTRO) via setup.bash and automate startup via .bashrc. / Troubleshoot common post-installation errors: missing environment sourcing, UDP multicast firewall blocks, and a missing UTF-8 locale.
-- Key terms: Ubuntu 26.04, Lyrical Luth, Tier 1, WSL 2, setup.bash, colcon, rosdep, GPG key, multicast discovery, REP 2000
+- Key terms: Ubuntu 26.04, Lyrical Luth, Tier 1, WSL 2, setup.bash, colcon, rosdep, signing key, DDS discovery, REP 2000
 - Sections: Choosing your installation strategy · Platform support tiers and REP 2000 · Native Ubuntu 26.04 installation step by step · Setting up the UTF-8 locale and the ROS 2 apt repository · Desktop versus base installations · Sourcing the environment: setup.bash · Windows installation: WSL 2 versus native · Windows on ARM (Snapdragon laptops) · macOS strategies: Docker and virtual machines · Post-installation verification: talker and listener · Essential developer utilities: rosdep and colcon · Troubleshooting common setup errors
 
 ### 4.4 Running Your First Example (Turtlesim)
@@ -153,13 +153,13 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 4.5 ROS Tools
 `robotics-4-5.html` · 14 min · 25 refs (partial 3, unreachable 1, verified 21) · 1 figures · 1 Try it
 - Objectives: Differentiate the purpose of 3D data visualizers (RViz2) from physics simulators (Gazebo), explaining coordinate transforms via tf2. / Inspect and diagnose running ROS 2 computational graph topologies using rqt_graph and associated GUI debugging plugins. / Record, inspect, and replay high-bandwidth sensor telemetry datasets using ros2 bag with sqlite3 and MCAP storage plugins. / Explain how the ros_gz bridge interfaces simulated rigid-body physics, sensor noise models, and Gazebo transport with ROS 2 topics.
-- Key terms: RViz, rqt_graph, Gazebo, ros2 bag, tf2, ros_gz, MCAP, Fixed Frame, robot_state_publisher, SDF
+- Key terms: RViz, rqt_graph, Gazebo, ros2 bag, tf2, ros_gz, MCAP, Fixed Frame, robot_state_publisher
 - Sections: The ROS developer toolchain · RViz2: visualizing robot perception in 3D · The tf2 transform library and the Fixed Frame · rqt and rqt_graph: computational graph inspection · Specialized rqt plugins · ros2 bag: telemetry recording and playback · Storage backends: sqlite3 and MCAP · Gazebo: multi-physics simulation · Bridging worlds: the ros_gz architecture · Essential community packages
 
 ### 4.6 Writing Your First ROS 2 Package
 `robotics-4-6.html` · 15 min · 17 refs (fixed 2, verified 15) · 1 figures · 1 Try it
 - Objectives: Set up a ROS 2 Lyrical workspace as an overlay on the /opt/ros/lyrical underlay and source setup vs. local_setup scripts correctly in a fresh terminal. / Create an ament_python package with ros2 pkg create (remembering that --build-type defaults to ament_cmake) and explain each generated file, including setup.py entry points, setup.cfg and py.typed. / Declare runtime dependencies in package.xml with the right tags and install them with rosdep before building with colcon. / Write a timer-driven rclpy node using the Lyrical 'with rclpy.init()' pattern that drives Turtlesim in a square, accounting for the turtlesim_msgs package and Turtlesim's one-second command timeout.
-- Key terms: overlay, underlay, ros2 pkg create, ament_python, setup.cfg, exec_depend, rosdep, turtlesim_msgs, finite state machine, open-loop control
+- Key terms: overlay, underlay, ros2 pkg create, ament_python, setup.cfg, exec_depend, rosdep, turtlesim_msgs, state machine, open-loop control
 - Sections: From running examples to owning a package · Workspaces, underlays and overlays · Creating the package with ros2 pkg create · What the generator wrote · Declaring dependencies: package.xml and rosdep · Writing the node: the Lyrical rclpy pattern · Turtlesim's interface on Lyrical · Designing the square driver: a timer-driven state machine · Building, running and troubleshooting · Stretch: closing the loop with pose feedback
 
 ### 4.7 Launch Files and Parameters
@@ -197,7 +197,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 5.3 Robots and Society
 `robotics-5-3.html` · 15 min · 17 refs (fixed 2, unreachable 2, verified 13) · 1 figures · 1 Try it
 - Objectives: Analyze empirical labor economics research on industrial robotics, including Acemoglu and Restrepo's local labor market findings and task framework. / Evaluate global robot density metrics from the International Federation of Robotics (IFR) and OECD workforce transformation data. / Apply data minimization and privacy engineering principles to autonomous mobile robots equipped with ambient perception sensors. / Examine moral crumple zones, human-in-the-loop governance, and legal accountability architectures for autonomous robotic systems.
-- Key terms: robot density, displacement effect, reinstatement effect, data minimization, edge processing, moral crumple zone, human-in-the-loop, IFR World Robotics
+- Key terms: robot density, displacement effect, reinstatement effect, data minimization, edge computing, moral crumple zone, human-in-the-loop, IFR World Robotics
 - Sections: Expanding our perspective: robots in society · Empirical evidence on jobs and automation · The task framework: displacement, productivity, and reinstatement · Global robot density and industrial trends · Job polarization and workforce transition · Privacy: robots as mobile surveillance platforms · Data minimization and edge privacy architectures · Accountability and the moral crumple zone · Questions to ask before you build
 
 ### 5.4 Making a Robot Cell Safe
@@ -223,13 +223,13 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 6.2 Pulse Width Modulation (PWM)
 `robotics-6-2.html` · 15 min · 16 refs (partial 3, unreachable 3, verified 10) · 0 figures · 1 Try it
 - Objectives: Calculate duty cycle, period, and average output voltage for high-speed PWM motor drives. / Analyze microcontroller hardware timers (Timer0, Timer1, Timer2 on ATmega328P) and their default carrier frequencies. / Differentiate DC motor duty-cycle modulation from RC servomotor microsecond pulse width control (1.0 ms to 2.0 ms at 50 Hz). / Identify real-world actuation challenges including acoustic coil whine, gearbox stiction dead zones, and inductive flyback suppression.
-- Key terms: pulse width modulation, duty cycle, carrier frequency, average voltage, Timer1, servo pulse timing, audible whine, dead zone, flyback diode
+- Key terms: pulse width modulation, duty cycle, carrier frequency, average voltage, Timer1, servo pulse timing, acoustic whine, dead zone, flyback protection
 - Sections: Simulating analog control in a digital world · Mathematics of duty cycle and average voltage · Interactive PWM simulation · Microcontroller hardware timers: ATmega328P and RA4M1 · DC motor PWM versus RC servo pulse timing · The Timer1 conflict: Servo library and pin trade-offs · Acoustic whine and ultrasonic modulation · Mechanical dead zones, stiction, and flyback protection · Application case study: precision robotic gripper
 
 ### 6.3 Encoders and Shaft Encoders
 `robotics-6-3.html` · 15 min · 18 refs (partial 2, unreachable 1, verified 15) · 0 figures · 1 Try it
-- Objectives: Differentiate incremental and absolute rotary encoders, analyzing power-loss recovery and homing requirements. / Apply quadrature decoding mathematics (1x, 2x, 4x) to calculate Counts Per Revolution (CPR) from Pulses Per Revolution (PPR). / Evaluate physical transducer technologies (optical, magnetic, capacitive) and their operational trade-offs in harsh robotic environments. / Implement interrupt-driven microcontroller decoding algorithms and evaluate industrial serial protocols (SSI, BiSS-C) used in articulated manipulators.
-- Key terms: rotary encoder, incremental encoder, absolute encoder, quadrature decoding, PPR, CPR, hardware interrupt, BiSS-C, homing
+- Objectives: Differentiate incremental and absolute rotary encoders, analyzing power-loss recovery and homing requirements. / Apply quadrature decoding mathematics (1x, 2x, 4x) to calculate Counts Per Revolution (CPR) from Pulses Per Revolution (PPR). / Evaluate physical transducer technologies (optical, magnetic, capacitive) and their operational trade-offs in harsh robotic environments. / Implement interrupt-driven microcontroller decoding algorithms and evaluate industrial serial protocols (SSI, BiSS) used in articulated manipulators.
+- Key terms: rotary encoder, incremental encoder, absolute encoder, quadrature decoding, PPR, CPR, hardware interrupt, BiSS, homing
 - Sections: Closing the loop: sensing motion and displacement · Incremental versus absolute encoders · Quadrature decoding: direction and resolution · Interactive quadrature encoder simulation · Physical sensing technologies · Kinematic calculations: from ticks to linear distance and velocity · Microcontroller decoding: interrupts and state tables · Absolute encoders in industrial robotics: multi-axis arms and serial protocols · Engineering pitfalls: backlash, frequency limits, and electrical noise
 
 ### 6.4 PID Control
@@ -247,7 +247,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 6.6 Odometry
 `robotics-6-6.html` · 15 min · 15 refs (fixed 1, unreachable 4, verified 10) · 1 figures · 1 Try it
 - Objectives: Formulate forward kinematic odometry update equations for two-wheeled differential-drive robots. / Implement midpoint numerical integration (2nd-order Runge-Kutta) and heading normalization in embedded robot software. / Classify odometry drift using Borenstein and Feng's taxonomy into systematic and non-systematic error mechanisms. / Apply calibration procedures including the University of Michigan Benchmark (UMBmark) and design sensor fusion pipelines using IMU gyroscopes.
-- Key terms: odometry, dead reckoning, differential drive, wheelbase, midpoint integration, systematic error, non-systematic error, UMBmark, heading drift
+- Key terms: odometry, dead reckoning, differential drive, wheelbase, midpoint integration, systematic error, non-systematic error, UMBmark, heading error
 - Sections: Dead reckoning and mobile robot pose · Differential-drive forward kinematics · The kinematic update equations: displacement and rotation · Numerical integration: Euler forward versus midpoint Runge-Kutta · Embedded odometry implementation in C++ · Error propagation: why heading error dominates position error · Borenstein and Feng's error taxonomy · Calibration in practice: the UMBmark benchmark · Multi-sensor fusion: limiting slip with IMU gyroscopes
 
 ### 6.7 State Machines
@@ -308,7 +308,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 
 ### 7.6 Lab: A ROS 2 Camera Pipeline
 `robotics-7-6.html` · 15 min · 10 refs (verified 10) · 1 figures · 0 Try it
-- Objectives: Describe the ROS 2 camera pipeline architecture and message definitions (sensor_msgs/Image and sensor_msgs/CameraInfo). / Interpret optical camera coordinate frame conventions (+x right, +y down, +z forward) and map them to robot base frames. / Manage network bandwidth using image_transport plugins and synchronize image and calibration streams with message_filters TimeSynchronizer. / Implement a complete ROS 2 Python node using cv_bridge to convert images between ROS messages and OpenCV NumPy arrays for real-time edge processing.
+- Objectives: Describe the ROS 2 camera pipeline architecture and message definitions (sensor_msgs/Image and sensor_msgs/CameraInfo). / Interpret optical camera coordinate frame conventions (+x right, +y down, +z into the image plane) and map them to robot base frames. / Manage network bandwidth using image_transport plugins and synchronize image and calibration streams with message_filters TimeSynchronizer. / Implement a complete ROS 2 Python node using cv_bridge to convert images between ROS messages and OpenCV NumPy arrays for real-time edge processing.
 - Key terms: sensor_msgs/Image, sensor_msgs/CameraInfo, plumb_bob, image_transport, TimeSynchronizer, cv_bridge
 - Sections: Cameras in the ROS 2 architecture · Image data representation: sensor_msgs/Image · Calibration metadata: sensor_msgs/CameraInfo · Streaming transport and message synchronization · Bridging ROS 2 and OpenCV with cv_bridge · Lab: Implementing an OpenCV vision node · Running and testing the node · Check your understanding
 
@@ -399,13 +399,13 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 65, verified 1035
 ### 10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
 `robotics-10-2.html` · 16 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
 - Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Bring up a UR5e on ros2_control mock hardware with MoveIt, add a table and a part as collision objects, and know the limits of mock hardware. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach in the planning scene when the arm has no gripper. / Test the task over randomised object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
-- Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene, analytic rubric
+- Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene
 - Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals
 
 ### 10.3 Capstone: Speed-Controlled Wheel
 `robotics-10-3.html` · 15 min · 18 refs (fixed 8, verified 10) · 1 figures · 1 Try it
 - Objectives: Wire an Arduino, quadrature-encoder gearmotor and TB6612FNG H-bridge with separate supplies, a common ground, a fuse and pins that avoid interrupt/PWM conflicts. / Convert encoder counts per sample period into RPM using CPR times gear ratio, and explain how the sample time sets speed resolution. / Close a PID speed loop with the Arduino PID Library and integrate it into a state machine with ramps and a manually reset FAULT state for stalls and encoder loss. / Plan milestones, test the system against pass conditions set in advance, and assess the result with a four-level rubric and written reflection.
-- Key terms: H-bridge, TB6612FNG, CPR, hardware interrupt, setpoint, integral windup, finite state machine, stall current, sample time, analytic rubric
+- Key terms: H-bridge, TB6612FNG, CPR, interrupt, setpoint, integral windup, state machine, stall current, sample time
 - Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals
 
 ### 10.4 Capstone: An Open-Source Cell Monitor
