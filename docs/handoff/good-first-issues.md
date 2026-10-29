@@ -13,9 +13,6 @@ For each, check whether the same page loads over `https://`. If it does, change 
 ## 2. Hub page description is out of date [seo]
 The `description`, `og:description` and `twitter:description` in `robotics.html` still list only robot types, RobotStudio, PolyScope, URScript, RAPID, ROS and ethics. They miss open-source contribution, machine vision, industrial networks and maintenance. Rewrite the three tags (same text in all three, under about 160 characters) so they match the chapter list on the hub.
 
-## 4. Find the licences of five projects on the Open-Source Map [references]
-`robotics-oss-map.html` shows "See the project's repository" for the licence of MoveIt 2, Nav2, Gazebo, the UR ROS 2 driver and Wireshark. For each, find the licence in the project's own repository (the `LICENSE` file or the README) and put the licence name in the table with a link to that file. One project per PR is fine.
-
 ## 5. Field-of-view calculator for lesson 7.1 [widget, needs a source]
 Lesson 7.1 explains focal length, field of view and working distance in words but has no formula, so it has no calculator yet. First step: find a formula in a source the lesson already cites (Edmund Optics, "Understanding Focal Length and Field of View") and propose a sentence plus citation for the lesson in the issue. A maintainer checks the source; only then is the widget built.
 
