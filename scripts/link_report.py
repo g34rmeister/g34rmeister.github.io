@@ -6,12 +6,18 @@ Used by .github/workflows/link-check.yml: it copies sources.json, runs
 runs this script to print a Markdown report. Only links that loaded before (HTTP < 400)
 and now fail (HTTP >= 400 or no answer) are reported; bot walls (403/429, or a detected
 bot challenge) are not counted, because they say nothing about whether the page exists.
+Each newly failing link is fetched once more after a pause and reported only if it fails
+again, so a site that is briefly down does not open an issue.
 
 Usage: python3 scripts/link_report.py OLD_sources.json NEW_sources.json > report.md
 Exit code 0 always; an empty report (no lines after the header) means nothing broke.
 """
 import json
 import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 BOT_WALL = {403, 429}
 
@@ -32,6 +38,12 @@ def main():
     old = json.load(open(sys.argv[1], encoding='utf-8'))['sources']
     new = json.load(open(sys.argv[2], encoding='utf-8'))['sources']
     rows = []
+    suspects = [u for u, e in sorted(new.items()) if ok(old.get(u, {})) and broken(e)]
+    if suspects:
+        import sources
+        time.sleep(60)
+        for url in suspects:
+            new[url].update(sources.fetch(url))
     for url, entry in sorted(new.items()):
         before = old.get(url, {})
         if ok(before) and broken(entry):
