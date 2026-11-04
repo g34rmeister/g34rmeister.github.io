@@ -2,7 +2,10 @@
 	robOSStics: interactive widgets
 	Any element with data-widget="pwm" | "encoder" | "pid" | "arm" | "blocks" |
 	"odometry" | "fsm" | "kalman" | "rosgraph" | "movejl" | "threshold" | "prflow" |
-	"modbus" | "trapezoid" | "zones" | "qos" | "dashboard" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"modbus" | "trapezoid" | "zones" | "qos" | "dashboard" | "agv-vs-amr" |
+	"cycle-time-positioner" | "vacuum-cup-sizing" | "offs-vs-reltool" |
+	"pallet-indexing" | "vision-frame-shift" | "ros-domain-id" | "square-fsm" |
+	"stereo-disparity" | "pinhole-projection" | "dlr-ring-recovery" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -2126,6 +2129,1359 @@
 		]));
 	}
 
+	/* ---------- AGV vs AMR (lesson 1.3) ---------- */
+
+	function initAgvVsAmr(root) {
+		var hasObstacle = false;
+		var running = false;
+		var progress = 0;
+		var animId = null;
+
+		var W = 380, H = 190;
+		var svg = plotFrame(W, H, 'Comparison of AGV fixed-path navigation and AMR dynamic rerouting');
+
+		var midLine = s('line', { 'class': 'd-line', x1: 20, y1: 95, x2: 360, y2: 95, 'stroke-dasharray': '2 2' });
+		svg.appendChild(midLine);
+
+		var tAgvTitle = s('text', { 'class': 'd-title', x: 24, y: 30 });
+		tAgvTitle.textContent = 'AGV (Fixed guide path)';
+		var agvTrack = s('line', { 'class': 'd-line', x1: 30, y1: 60, x2: 350, y2: 60, 'stroke-dasharray': '5 4' });
+		var agvTrackLabel = s('text', { 'class': 'd-muted', x: 30, y: 78 });
+		agvTrackLabel.textContent = 'floor marker / guide path';
+		svg.appendChild(tAgvTitle);
+		svg.appendChild(agvTrack);
+		svg.appendChild(agvTrackLabel);
+
+		var tAmrTitle = s('text', { 'class': 'd-title', x: 24, y: 120 });
+		tAmrTitle.textContent = 'AMR (Maps surroundings & plans route)';
+		var amrPath = s('path', { 'class': 'd-line', fill: 'none', 'stroke-dasharray': '3 3' });
+		var amrFloorLabel = s('text', { 'class': 'd-muted', x: 30, y: 178 });
+		amrFloorLabel.textContent = 'no physical markers required';
+		svg.appendChild(tAmrTitle);
+		svg.appendChild(amrPath);
+		svg.appendChild(amrFloorLabel);
+
+		var agvObs = s('rect', { 'class': 'd-box', x: 180, y: 51, width: 18, height: 18, rx: 2 });
+		var amrObs = s('rect', { 'class': 'd-box', x: 180, y: 141, width: 18, height: 18, rx: 2 });
+		var agvObsText = s('text', { 'class': 'd-muted', x: 189, y: 46, 'text-anchor': 'middle' });
+		agvObsText.textContent = 'Obstacle';
+		var amrObsText = s('text', { 'class': 'd-muted', x: 189, y: 136, 'text-anchor': 'middle' });
+		amrObsText.textContent = 'Obstacle';
+		[agvObs, amrObs, agvObsText, amrObsText].forEach(function (el) { svg.appendChild(el); });
+
+		var gAgv = s('g', {});
+		var rAgv = s('rect', { 'class': 'd-box-gold', x: -16, y: -10, width: 32, height: 20, rx: 3 });
+		var tAgvV = s('text', { 'class': 'd-muted', x: 0, y: 4, 'text-anchor': 'middle', 'font-size': '10px' });
+		tAgvV.textContent = 'AGV';
+		gAgv.appendChild(rAgv);
+		gAgv.appendChild(tAgvV);
+		svg.appendChild(gAgv);
+
+		var gAmr = s('g', {});
+		var rAmr = s('rect', { 'class': 'd-box', x: -16, y: -10, width: 32, height: 20, rx: 3 });
+		var cAmr = s('circle', { 'class': 'd-fill', cx: 0, cy: 0, r: 4 });
+		var tAmrV = s('text', { 'class': 'd-muted', x: 0, y: -12, 'text-anchor': 'middle', 'font-size': '10px' });
+		tAmrV.textContent = 'AMR';
+		gAmr.appendChild(rAmr);
+		gAmr.appendChild(cAmr);
+		gAmr.appendChild(tAmrV);
+		svg.appendChild(gAmr);
+
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		function updatePositions() {
+			agvObs.style.display = hasObstacle ? '' : 'none';
+			amrObs.style.display = hasObstacle ? '' : 'none';
+			agvObsText.style.display = hasObstacle ? '' : 'none';
+			amrObsText.style.display = hasObstacle ? '' : 'none';
+
+			var startX = 50, endX = 330;
+			var x = startX + progress * (endX - startX);
+
+			var agvX = x;
+			var agvStopped = false;
+			if (hasObstacle && agvX >= 155) {
+				agvX = 155;
+				agvStopped = true;
+			}
+			gAgv.setAttribute('transform', 'translate(' + agvX + ', 60)');
+
+			var amrX = x;
+			var amrY = 150;
+			if (hasObstacle) {
+				if (amrX > 115 && amrX < 265) {
+					var frac = (amrX - 115) / (265 - 115);
+					amrY = 150 - Math.sin(frac * Math.PI) * 26;
+				}
+				amrPath.setAttribute('d', 'M50,150 L115,150 Q190,118 265,150 L330,150');
+			} else {
+				amrPath.setAttribute('d', 'M50,150 L330,150');
+			}
+			gAmr.setAttribute('transform', 'translate(' + amrX + ', ' + amrY + ')');
+
+			if (hasObstacle) {
+				if (agvStopped) {
+					readout.textContent = 'When an obstacle blocks the path: the AGV stops and waits at the floor marker; the AMR detects the blockage, plans a route around it, and continues to its destination.';
+				} else {
+					readout.textContent = 'Encountering obstacle: AGV proceeds along floor marker toward obstacle; AMR computes alternate route around it.';
+				}
+			} else {
+				readout.textContent = 'Path clear: AGV follows predefined floor guide path; AMR follows its planned trajectory.';
+			}
+		}
+
+		function step() {
+			if (!running) return;
+			progress += 0.008;
+			if (progress > 1) {
+				progress = 1;
+				running = false;
+				btnRun.setAttribute('aria-pressed', 'false');
+				btnRun.textContent = 'Reset';
+			}
+			updatePositions();
+			if (running && !reduceMotion) {
+				animId = requestAnimationFrame(step);
+			}
+		}
+
+		var btnObstacle = button('Place obstacle', function () {
+			hasObstacle = !hasObstacle;
+			btnObstacle.textContent = hasObstacle ? 'Clear obstacle' : 'Place obstacle';
+			btnObstacle.setAttribute('aria-pressed', String(hasObstacle));
+			updatePositions();
+		});
+		btnObstacle.setAttribute('aria-pressed', 'false');
+
+		var btnRun = button('Run', function () {
+			if (reduceMotion) {
+				progress = (progress >= 1) ? 0 : 1;
+				updatePositions();
+				return;
+			}
+			if (progress >= 1) {
+				progress = 0;
+			}
+			running = !running;
+			btnRun.setAttribute('aria-pressed', String(running));
+			btnRun.textContent = running ? 'Pause' : 'Run';
+			if (running) step();
+		});
+
+		var btnReset = button('Reset', function () {
+			running = false;
+			if (animId) cancelAnimationFrame(animId);
+			progress = 0;
+			btnRun.setAttribute('aria-pressed', 'false');
+			btnRun.textContent = 'Run';
+			updatePositions();
+		});
+
+		var controls = h('div', { 'class': 'widget-buttons' }, [btnObstacle, btnRun, btnReset]);
+
+		root.replaceChildren(frame('AGV vs AMR: responding to an obstacle', [
+			h('p', { 'class': 'widget-note', text: 'When something blocks its way, an AGV stops and waits on its fixed marker, while an AMR plans a route around it.' }),
+			controls,
+			svg,
+			readout
+		]));
+
+		updatePositions();
+	}
+
+	/* ---------- Cycle time with two-station positioner (lesson 1.7) ---------- */
+
+	function initCycleTimePositioner(root) {
+		var sWeld = slider('Welding process time', 'ct-weld', 10, 180, 5, 90, ' s');
+		var sLoad = slider('Operator unload/load time', 'ct-load', 10, 180, 5, 60, ' s');
+		var sIndex = slider('Positioner index time', 'ct-index', 0, 10, 0.5, 2, ' s');
+
+		var W = 380, H = 150;
+		var svg = plotFrame(W, H, 'Cycle time comparison between single station and two-station positioner');
+
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnWorked = button('Worked example (90s / 60s / 2s)', function () {
+			sWeld.input.value = 90;
+			sLoad.input.value = 60;
+			sIndex.input.value = 2;
+			draw();
+		});
+		var btnOpBottleneck = button('Operator bottleneck (45s weld / 90s load)', function () {
+			sWeld.input.value = 45;
+			sLoad.input.value = 90;
+			sIndex.input.value = 2;
+			draw();
+		});
+		var btnEqual = button('Equal times (60s weld / 60s load)', function () {
+			sWeld.input.value = 60;
+			sLoad.input.value = 60;
+			sIndex.input.value = 2;
+			draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnWorked, btnOpBottleneck, btnEqual]);
+
+		function draw() {
+			var Tweld = Number(sWeld.input.value);
+			var Tload = Number(sLoad.input.value);
+			var Tindex = Number(sIndex.input.value);
+
+			sWeld.out.textContent = Tweld + ' s';
+			sLoad.out.textContent = Tload + ' s';
+			sIndex.out.textContent = Tindex + ' s';
+
+			var T1 = Tweld + Tload;
+			var T2 = Math.max(Tweld, Tload) + Tindex;
+
+			var busy1 = (Tweld / T1) * 100;
+			var busy2 = (Tweld / T2) * 100;
+			var outputGain = ((T1 / T2) - 1) * 100;
+
+			var bottleneck = '';
+			if (Tweld > Tload) bottleneck = 'process (welding)';
+			else if (Tload > Tweld) bottleneck = "operator's loading";
+			else bottleneck = 'tied (welding and loading)';
+
+			var maxT = Math.max(T1, 150);
+			var leftX = 24, plotW = 330;
+
+			svg.replaceChildren();
+
+			var tLabel1 = s('text', { 'class': 'd-title', x: leftX, y: 22 });
+			tLabel1.textContent = 'One station: ' + T1.toFixed(0) + ' s cycle';
+			svg.appendChild(tLabel1);
+
+			var w1Weld = (Tweld / maxT) * plotW;
+			var w1Load = (Tload / maxT) * plotW;
+
+			var r1Weld = s('rect', { 'class': 'd-box-gold', x: leftX, y: 30, width: w1Weld, height: 24, rx: 2 });
+			var t1Weld = s('text', { 'class': 'd-muted', x: leftX + w1Weld / 2, y: 46, 'text-anchor': 'middle' });
+			t1Weld.textContent = 'Weld ' + Tweld + 's';
+
+			var r1Load = s('rect', { 'class': 'd-box', x: leftX + w1Weld, y: 30, width: w1Load, height: 24, rx: 2 });
+			var t1Load = s('text', { 'class': 'd-muted', x: leftX + w1Weld + w1Load / 2, y: 46, 'text-anchor': 'middle' });
+			t1Load.textContent = 'Wait/Load ' + Tload + 's';
+
+			svg.appendChild(r1Weld);
+			svg.appendChild(t1Weld);
+			svg.appendChild(r1Load);
+			svg.appendChild(t1Load);
+
+			var tLabel2 = s('text', { 'class': 'd-title', x: leftX, y: 84 });
+			tLabel2.textContent = 'Two stations: ' + T2.toFixed(1) + ' s cycle (overlapped)';
+			svg.appendChild(tLabel2);
+
+			var overlapMax = Math.max(Tweld, Tload);
+			var w2Overlap = (overlapMax / maxT) * plotW;
+			var w2Index = Math.max(3, (Tindex / maxT) * plotW);
+
+			var r2Overlap = s('rect', { 'class': 'd-box-gold', x: leftX, y: 92, width: w2Overlap, height: 24, rx: 2 });
+			var t2Overlap = s('text', { 'class': 'd-muted', x: leftX + w2Overlap / 2, y: 108, 'text-anchor': 'middle' });
+			t2Overlap.textContent = 'Overlap max(' + Tweld + ', ' + Tload + ')';
+
+			var r2Index = s('rect', { 'class': 'd-box', x: leftX + w2Overlap, y: 92, width: w2Index, height: 24, rx: 2 });
+			var t2Index = s('text', { 'class': 'd-muted', x: leftX + w2Overlap + w2Index + 4, y: 108 });
+			t2Index.textContent = 'Index ' + Tindex + 's';
+
+			svg.appendChild(r2Overlap);
+			svg.appendChild(t2Overlap);
+			svg.appendChild(r2Index);
+			svg.appendChild(t2Index);
+
+			readout.textContent = 'One station: ' + Tweld + ' + ' + Tload + ' = ' + T1.toFixed(0) + ' s (robot busy ' +
+				busy1.toFixed(0) + '%). Two stations: max(' + Tweld + ', ' + Tload + ') + ' + Tindex + ' = ' +
+				T2.toFixed(1) + ' s (robot busy ' + Tweld + '/' + T2.toFixed(1) + ' s = ' + busy2.toFixed(0) +
+				'%). Output rises by ' + outputGain.toFixed(0) + '%. Bottleneck: ' + bottleneck + '.';
+		}
+
+		[sWeld, sLoad, sIndex].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('cycle time and two-station positioner', [
+			h('p', { 'class': 'widget-note', text: 'Designers shorten cycle time by overlapping work so the operator loads one station while the robot works on the other.' }),
+			sWeld.row,
+			sLoad.row,
+			sIndex.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Vacuum cup sizing (lesson 2.5) ---------- */
+
+	function initVacuumCupSizing(root) {
+		var sMass = slider('Part mass (m)', 'vc-mass', 0.5, 10, 0.5, 2, ' kg');
+		var sAccel = slider('Upward acceleration (a)', 'vc-accel', 0, 15, 0.5, 5, ' m/s²');
+		var sSafety = slider('Safety factor (S)', 'vc-safety', 1, 4, 0.5, 1.5, '');
+		var sPressure = slider('Pressure difference (ΔP)', 'vc-press', 20, 90, 5, 60, ' kPa');
+		var sCups = slider('Number of cups (n)', 'vc-cups', 1, 6, 1, 2, '');
+
+		var W = 380, H = 140;
+		var svg = plotFrame(W, H, 'Diagram of vacuum gripper suction cups holding a workpiece');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnWorked = button('Worked example (2 kg, a=5, S=1.5, 60 kPa, 2 cups)', function () {
+			sMass.input.value = 2;
+			sAccel.input.value = 5;
+			sSafety.input.value = 1.5;
+			sPressure.input.value = 60;
+			sCups.input.value = 2;
+			draw();
+		});
+
+		var btnSmooth = button('Smooth part (S=1.5)', function () {
+			sSafety.input.value = 1.5;
+			draw();
+		});
+		var btnPorous = button('Porous / oily part (S=2.0)', function () {
+			sSafety.input.value = 2.0;
+			draw();
+		});
+		var btnFast = button('Fast moves (S=2.5)', function () {
+			sSafety.input.value = 2.5;
+			draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnWorked, btnSmooth, btnPorous, btnFast]);
+
+		function draw() {
+			var m = Number(sMass.input.value);
+			var a = Number(sAccel.input.value);
+			var S = Number(sSafety.input.value);
+			var dP_kPa = Number(sPressure.input.value);
+			var n = Number(sCups.input.value);
+
+			sMass.out.textContent = m + ' kg';
+			sAccel.out.textContent = a + ' m/s²';
+			sSafety.out.textContent = S.toFixed(1);
+			sPressure.out.textContent = dP_kPa + ' kPa';
+			sCups.out.textContent = String(n);
+
+			var g = 9.81;
+			var Fh = m * (g + a) * S;
+			var dP_Pa = dP_kPa * 1000;
+			var Atot_m2 = Fh / dP_Pa;
+			var Atot_mm2 = Atot_m2 * 1e6;
+			var Acup_mm2 = Atot_mm2 / n;
+			var D_mm = 2 * Math.sqrt(Acup_mm2 / Math.PI);
+
+			svg.replaceChildren();
+
+			var barY = 30;
+			var bar = s('rect', { 'class': 'd-box', x: 50, y: barY, width: 280, height: 12, rx: 2 });
+			svg.appendChild(bar);
+
+			var cupSpacing = 240 / (n + 1);
+			var drawRadius = Math.max(6, Math.min(22, D_mm * 0.7));
+			for (var i = 1; i <= n; i++) {
+				var cx = 70 + i * cupSpacing;
+				var stem = s('line', { 'class': 'd-line', x1: cx, y1: barY + 12, x2: cx, y2: 60 });
+				var cupPath = s('path', {
+					'class': 'd-box-gold',
+					d: 'M' + (cx - drawRadius) + ',70 Q' + cx + ',56 ' + (cx + drawRadius) + ',70 Z'
+				});
+				svg.appendChild(stem);
+				svg.appendChild(cupPath);
+			}
+
+			var box = s('rect', { 'class': 'd-box', x: 70, y: 70, width: 240, height: 42, rx: 3 });
+			var boxText = s('text', { 'class': 'd-title', x: 190, y: 96, 'text-anchor': 'middle' });
+			boxText.textContent = 'Part: ' + m + ' kg';
+			svg.appendChild(box);
+			svg.appendChild(boxText);
+
+			var fLabel = s('text', { 'class': 'd-muted', x: 30, y: 65, 'text-anchor': 'middle' });
+			fLabel.textContent = 'F_H=' + Fh.toFixed(0) + 'N';
+			var aLabel = s('text', { 'class': 'd-muted', x: 30, y: 85, 'text-anchor': 'middle' });
+			aLabel.textContent = 'a=' + a + 'm/s²';
+			svg.appendChild(fLabel);
+			svg.appendChild(aLabel);
+
+			readout.textContent = 'F_H = ' + m + ' × (' + g + ' + ' + a + ') × ' + S.toFixed(1) +
+				' = ' + Fh.toFixed(1) + ' N · Total area = ' + Atot_mm2.toFixed(0) +
+				' mm² · ' + n + ' cup' + (n > 1 ? 's' : '') + ': ' + Acup_mm2.toFixed(0) +
+				' mm²/cup → D ≈ ' + D_mm.toFixed(1) + ' mm per cup.';
+		}
+
+		[sMass, sAccel, sSafety, sPressure, sCups].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('vacuum gripper suction cup sizing', [
+			h('p', { 'class': 'widget-note', text: 'Holding force F_H = m × (g + a) × S. Total required cup area is F_H divided by the vacuum pressure difference, and solving A = π(D/2)² gives cup diameter D.' }),
+			sMass.row,
+			sAccel.row,
+			sSafety.row,
+			sPressure.row,
+			sCups.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Offs vs RelTool coordinate frame shifts (lesson 2.6) ---------- */
+
+	function initOffsVsReltool(root) {
+		var sTilt = slider('Tool tilt angle (θ)', 'ovr-tilt', -60, 60, 5, 30, '°');
+		var sX = slider('Offset X (dx)', 'ovr-x', -100, 100, 5, 0, ' mm');
+		var sZ = slider('Offset Z (dz)', 'ovr-z', -100, 100, 5, -100, ' mm');
+
+		var W = 380, H = 240;
+		var svg = plotFrame(W, H, 'Comparison of Offs (work object frame) versus RelTool (tool frame)');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnRelApproach = button('RelTool approach (0, 0, -100)', function () {
+			sX.input.value = 0;
+			sZ.input.value = -100;
+			draw();
+		});
+		var btnOffsApproach = button('Offs approach (0, 0, 100)', function () {
+			sX.input.value = 0;
+			sZ.input.value = 100;
+			draw();
+		});
+		var btnSurprise = button('Beginner surprise: RelTool(p, 100, 0, 0)', function () {
+			sTilt.input.value = 30;
+			sX.input.value = 100;
+			sZ.input.value = 0;
+			draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnRelApproach, btnOffsApproach, btnSurprise]);
+
+		function draw() {
+			var deg = Number(sTilt.input.value);
+			var dx = Number(sX.input.value);
+			var dz = Number(sZ.input.value);
+
+			sTilt.out.textContent = deg + '°';
+			sX.out.textContent = dx + ' mm';
+			sZ.out.textContent = dz + ' mm';
+
+			var rad = deg * Math.PI / 180;
+
+			var offs_x = dx;
+			var offs_z = dz;
+
+			var rel_x = dx * Math.cos(rad) + dz * Math.sin(rad);
+			var rel_z = dx * Math.sin(rad) - dz * Math.cos(rad);
+
+			svg.replaceChildren();
+
+			var cx = 190, cy = 150;
+			var scale = 0.8;
+
+			var axisX = s('line', { 'class': 'd-line', x1: 50, y1: cy, x2: 330, y2: cy });
+			var axisZ = s('line', { 'class': 'd-line', x1: cx, y1: cy + 40, x2: cx, y2: 30 });
+			var tWobjX = s('text', { 'class': 'd-muted', x: 332, y: cy + 4 });
+			tWobjX.textContent = 'wobj X';
+			var tWobjZ = s('text', { 'class': 'd-muted', x: cx + 4, y: 34 });
+			tWobjZ.textContent = 'wobj Z (up)';
+
+			svg.appendChild(axisX);
+			svg.appendChild(axisZ);
+			svg.appendChild(tWobjX);
+			svg.appendChild(tWobjZ);
+
+			var ptPick = s('circle', { 'class': 'd-fill', cx: cx, cy: cy, r: 4 });
+			var tPick = s('text', { 'class': 'd-title', x: cx + 6, y: cy + 16 });
+			tPick.textContent = 'pPick (0,0)';
+			svg.appendChild(ptPick);
+			svg.appendChild(tPick);
+
+			var toolLen = 45;
+			var tzx = cx + toolLen * Math.sin(rad);
+			var tzy = cy + toolLen * Math.cos(rad);
+			var lineToolZ = s('line', { 'class': 'd-strong', x1: cx, y1: cy, x2: tzx, y2: tzy });
+			var labelToolZ = s('text', { 'class': 'd-muted', x: tzx + 4, y: tzy + 4 });
+			labelToolZ.textContent = 'Tool Z';
+			svg.appendChild(lineToolZ);
+			svg.appendChild(labelToolZ);
+
+			var ox_svg = cx + offs_x * scale;
+			var oz_svg = cy - offs_z * scale;
+			var dotOffs = s('circle', { 'class': 'd-box-gold', cx: ox_svg, cy: oz_svg, r: 6 });
+			var lineOffs = s('line', { 'class': 'd-line', 'stroke-dasharray': '3 3', x1: cx, y1: cy, x2: ox_svg, y2: oz_svg });
+			var txtOffs = s('text', { 'class': 'd-title', x: ox_svg + 8, y: oz_svg - 4 });
+			txtOffs.textContent = 'Offs';
+			svg.appendChild(lineOffs);
+			svg.appendChild(dotOffs);
+			svg.appendChild(txtOffs);
+
+			var rx_svg = cx + rel_x * scale;
+			var rz_svg = cy - rel_z * scale;
+			var dotRel = s('circle', { 'class': 'd-box', cx: rx_svg, cy: rz_svg, r: 6 });
+			var lineRel = s('line', { 'class': 'd-strong', 'stroke-dasharray': '2 2', x1: cx, y1: cy, x2: rx_svg, y2: rz_svg });
+			var txtRel = s('text', { 'class': 'd-title', x: rx_svg + 8, y: rz_svg - 4 });
+			txtRel.textContent = 'RelTool';
+			svg.appendChild(lineRel);
+			svg.appendChild(dotRel);
+			svg.appendChild(txtRel);
+
+			readout.textContent = 'Tool tilt ' + deg + '° · Offs(p, ' + dx + ', 0, ' + dz + '): world X=' +
+				offs_x.toFixed(1) + ' mm, Z=' + offs_z.toFixed(1) + ' mm · RelTool(p, ' + dx + ', 0, ' + dz +
+				'): world X=' + rel_x.toFixed(1) + ' mm, Z=' + rel_z.toFixed(1) + ' mm.' +
+				(dz === 0 && dx !== 0 && deg !== 0 ? ' (RelTool with zero Z argument moved world Z by ' + rel_z.toFixed(1) + ' mm!)' : '');
+		}
+
+		[sTilt, sX, sZ].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('Offs (work object) versus RelTool (tool frame)', [
+			h('p', { 'class': 'widget-note', text: 'Offs shifts along the work object axes. RelTool shifts along the tool axes. With tool pointing down, tool Z points into the table, so the approach is RelTool(pPick, 0, 0, -100).' }),
+			sTilt.row,
+			sX.row,
+			sZ.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Pallet indexing (lesson 2.7) ---------- */
+
+	function initPalletIndexing(root) {
+		var sIndex = slider('Pallet slot index (i)', 'pal-idx', 0, 8, 1, 4, '');
+
+		var W = 380, H = 200;
+		var svg = plotFrame(W, H, '3 by 3 pallet slot indexing grid with integer division and remainder');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnPrev = button('◀ Previous slot', function () {
+			var cur = Number(sIndex.input.value);
+			if (cur > 0) { sIndex.input.value = cur - 1; draw(); }
+		});
+		var btnNext = button('Next slot ▶', function () {
+			var cur = Number(sIndex.input.value);
+			if (cur < 8) { sIndex.input.value = cur + 1; draw(); }
+		});
+		var btnFirst = button('Slot 0 (corner)', function () {
+			sIndex.input.value = 0; draw();
+		});
+		var btnLast = button('Slot 8 (end)', function () {
+			sIndex.input.value = 8; draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnPrev, btnNext, btnFirst, btnLast]);
+
+		function draw() {
+			var i = Number(sIndex.input.value);
+			sIndex.out.textContent = String(i);
+
+			var row = Math.floor(i / 3);
+			var col = i % 3;
+			var pitchX = 60;
+			var pitchY = 60;
+			var offX = col * pitchX;
+			var offY = row * pitchY;
+
+			svg.replaceChildren();
+
+			var originX = 70, originY = 30;
+			var cellW = 75, cellH = 45;
+
+			for (var c = 0; c < 3; c++) {
+				var thCol = s('text', { 'class': 'd-muted', x: originX + c * cellW + cellW / 2, y: originY - 8, 'text-anchor': 'middle' });
+				thCol.textContent = 'col ' + c;
+				svg.appendChild(thCol);
+			}
+
+			for (var r = 0; r < 3; r++) {
+				var thRow = s('text', { 'class': 'd-muted', x: originX - 10, y: originY + r * cellH + cellH / 2 + 4, 'text-anchor': 'end' });
+				thRow.textContent = 'row ' + r;
+				svg.appendChild(thRow);
+
+				for (var c2 = 0; c2 < 3; c2++) {
+					var slotNum = r * 3 + c2;
+					var isSel = (slotNum === i);
+
+					var g = s('g', { 'tabindex': '0', 'role': 'button', 'aria-label': 'Slot ' + slotNum + ', row ' + r + ', col ' + c2 });
+					g.style.cursor = 'pointer';
+
+					(function (num) {
+						g.addEventListener('click', function () {
+							sIndex.input.value = num;
+							draw();
+						});
+						g.addEventListener('keydown', function (e) {
+							if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+								e.preventDefault();
+								sIndex.input.value = num;
+								draw();
+							}
+						});
+					})(slotNum);
+
+					var rect = s('rect', {
+						'class': isSel ? 'd-box-gold' : 'd-box',
+						x: originX + c2 * cellW,
+						y: originY + r * cellH,
+						width: cellW - 6,
+						height: cellH - 6,
+						rx: 3
+					});
+					var txt = s('text', {
+						'class': isSel ? 'd-title' : 'd-text',
+						x: originX + c2 * cellW + (cellW - 6) / 2,
+						y: originY + r * cellH + (cellH - 6) / 2 + 5,
+						'text-anchor': 'middle'
+					});
+					txt.textContent = 'slot ' + slotNum;
+
+					g.appendChild(rect);
+					g.appendChild(txt);
+					svg.appendChild(g);
+				}
+			}
+
+			var tPitch = s('text', { 'class': 'd-muted', x: originX, y: originY + 3 * cellH + 20 });
+			tPitch.textContent = 'pitch: PITCH_X = ' + pitchX + ' mm, PITCH_Y = ' + pitchY + ' mm';
+			svg.appendChild(tPitch);
+
+			readout.textContent = 'Slot i = ' + i + ' · row = ' + i + ' DIV 3 = ' + row +
+				' · col = ' + i + ' MOD 3 = ' + col + ' · Offset from corner = (' +
+				col + ' × ' + pitchX + ' mm, ' + row + ' × ' + pitchY + ' mm) = (' +
+				offX + ' mm, ' + offY + ' mm).';
+		}
+
+		sIndex.input.addEventListener('input', draw);
+
+		root.replaceChildren(frame('pallet grid indexing: DIV and MOD', [
+			h('p', { 'class': 'widget-note', text: 'Number slots 0 to 8: integer division computes the row (i DIV 3) and remainder computes the column (i MOD 3).' }),
+			sIndex.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Vision frame shift and lever arm (lesson 2.8) ---------- */
+
+	function initVisionFrameShift(root) {
+		var sDeg = slider('Part rotation angle (θ)', 'vfs-deg', -180, 180, 5, 30, '°');
+		var sDx = slider('Part translation dx', 'vfs-dx', -40, 40, 1, 15, ' mm');
+		var sDy = slider('Part translation dy', 'vfs-dy', -40, 40, 1, -10, ' mm');
+
+		var W = 380, H = 220;
+		var svg = plotFrame(W, H, 'Rigid transform frame shift versus naive offset error');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnWorked = button('Worked example (dx=+15, dy=-10, θ=30°)', function () {
+			sDeg.input.value = 30;
+			sDx.input.value = 15;
+			sDy.input.value = -10;
+			draw();
+		});
+		var btnZero = button('No rotation (θ=0°)', function () {
+			sDeg.input.value = 0;
+			draw();
+		});
+		var btn90 = button('90° turn (dx=0, dy=0, θ=90°)', function () {
+			sDeg.input.value = 90;
+			sDx.input.value = 0;
+			sDy.input.value = 0;
+			draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnWorked, btnZero, btn90]);
+
+		function draw() {
+			var deg = Number(sDeg.input.value);
+			var dx = Number(sDx.input.value);
+			var dy = Number(sDy.input.value);
+
+			sDeg.out.textContent = deg + '°';
+			sDx.out.textContent = (dx >= 0 ? '+' : '') + dx + ' mm';
+			sDy.out.textContent = (dy >= 0 ? '+' : '') + dy + ' mm';
+
+			var rad = deg * Math.PI / 180;
+
+			var T_ref_x = 200, T_ref_y = 150;
+			var armLen = 10;
+
+			var T_found_x = T_ref_x + dx;
+			var T_found_y = T_ref_y + dy;
+
+			var rot_x = armLen * Math.cos(rad);
+			var rot_y = armLen * Math.sin(rad);
+			var P_true_x = T_found_x + rot_x;
+			var P_true_y = T_found_y + rot_y;
+
+			var P_naive_x = (T_ref_x + armLen) + dx;
+			var P_naive_y = T_ref_y + dy;
+
+			var errX = P_true_x - P_naive_x;
+			var errY = P_true_y - P_naive_y;
+			var errDist = Math.sqrt(errX * errX + errY * errY);
+
+			svg.replaceChildren();
+
+			var scale = 3.5;
+			function toSvg(x, y) {
+				return [190 + (x - 215) * scale, 110 - (y - 140) * scale];
+			}
+
+			var pRefSvg = toSvg(T_ref_x, T_ref_y);
+			var ghost = s('circle', { 'class': 'd-line', 'stroke-dasharray': '3 3', cx: pRefSvg[0], cy: pRefSvg[1], r: armLen * scale, fill: 'none' });
+			var tRefLabel = s('text', { 'class': 'd-muted', x: pRefSvg[0] - 20, y: pRefSvg[1] + 18 });
+			tRefLabel.textContent = 'T_ref (200,150)';
+			svg.appendChild(ghost);
+			svg.appendChild(tRefLabel);
+
+			var pFoundSvg = toSvg(T_found_x, T_found_y);
+			var dotFound = s('circle', { 'class': 'd-fill', cx: pFoundSvg[0], cy: pFoundSvg[1], r: 5 });
+			var tFoundLabel = s('text', { 'class': 'd-title', x: pFoundSvg[0] - 10, y: pFoundSvg[1] + 20 });
+			tFoundLabel.textContent = 'Part (' + T_found_x + ',' + T_found_y + ')';
+			svg.appendChild(dotFound);
+			svg.appendChild(tFoundLabel);
+
+			var pTrueSvg = toSvg(P_true_x, P_true_y);
+			var leverLine = s('line', { 'class': 'd-strong', x1: pFoundSvg[0], y1: pFoundSvg[1], x2: pTrueSvg[0], y2: pTrueSvg[1] });
+			svg.appendChild(leverLine);
+
+			var dotTrue = s('circle', { 'class': 'd-box-gold', cx: pTrueSvg[0], cy: pTrueSvg[1], r: 6 });
+			var tTrueLabel = s('text', { 'class': 'd-title', x: pTrueSvg[0] + 8, y: pTrueSvg[1] - 4 });
+			tTrueLabel.textContent = 'True P_new (' + P_true_x.toFixed(1) + ',' + P_true_y.toFixed(1) + ')';
+			svg.appendChild(dotTrue);
+			svg.appendChild(tTrueLabel);
+
+			var pNaiveSvg = toSvg(P_naive_x, P_naive_y);
+			var dotNaive = s('circle', { 'class': 'd-box', cx: pNaiveSvg[0], cy: pNaiveSvg[1], r: 6 });
+			var tNaiveLabel = s('text', { 'class': 'd-muted', x: pNaiveSvg[0] + 8, y: pNaiveSvg[1] + 14 });
+			tNaiveLabel.textContent = 'Naive (' + P_naive_x.toFixed(1) + ',' + P_naive_y.toFixed(1) + ')';
+			svg.appendChild(dotNaive);
+			svg.appendChild(tNaiveLabel);
+
+			var lineErr = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 2', x1: pTrueSvg[0], y1: pTrueSvg[1], x2: pNaiveSvg[0], y2: pNaiveSvg[1] });
+			svg.appendChild(lineErr);
+
+			readout.textContent = 'T_found = (' + T_found_x + ', ' + T_found_y + ', ' + deg +
+				'°) · True P_new = (' + P_true_x.toFixed(3) + ', ' + P_true_y.toFixed(3) + ', ' + deg +
+				'°) · Naive point = (' + P_naive_x.toFixed(1) + ', ' + P_naive_y.toFixed(1) +
+				') · Lever arm position error = ' + errDist.toFixed(2) + ' mm.';
+		}
+
+		[sDeg, sDx, sDy].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('vision frame shift: lever arm vs naive offset', [
+			h('p', { 'class': 'widget-note', text: 'When a part turns, the pick point swings around with it like the end of a lever. A naive "add the offset" ignores rotation and produces position error.' }),
+			sDeg.row,
+			sDx.row,
+			sDy.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- ROS_DOMAIN_ID port calculation (lesson 4.1) ---------- */
+
+	function initRosDomainId(root) {
+		var sDomain = slider('ROS_DOMAIN_ID (0 to 101)', 'rdi-domain', 0, 115, 1, 0, '');
+		var sPart = slider('Participant ID', 'rdi-part', 0, 10, 1, 0, '');
+
+		var W = 380, H = 160;
+		var svg = plotFrame(W, H, 'DDS RTPS UDP port mapping based on ROS_DOMAIN_ID and participant ID');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnD0 = button('Domain 0 (default)', function () {
+			sDomain.input.value = 0; sPart.input.value = 0; draw();
+		});
+		var btnD7 = button('Domain 7 (worked example)', function () {
+			sDomain.input.value = 7; sPart.input.value = 0; draw();
+		});
+		var btnD12 = button('Domain 12 (Try it question)', function () {
+			sDomain.input.value = 12; sPart.input.value = 0; draw();
+		});
+		var btnD102 = button('Domain 102 (ephemeral warning)', function () {
+			sDomain.input.value = 102; draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnD0, btnD7, btnD12, btnD102]);
+
+		function draw() {
+			var D = Number(sDomain.input.value);
+			var P = Number(sPart.input.value);
+
+			sDomain.out.textContent = String(D);
+			sPart.out.textContent = String(P);
+
+			var pMultiDisc = 7400 + (250 * D);
+			var pMultiUser = 7401 + (250 * D);
+			var pUniDisc = 7410 + (250 * D) + (2 * P);
+			var pUniUser = 7411 + (250 * D) + (2 * P);
+
+			svg.replaceChildren();
+
+			var cards = [
+				{ name: 'Multicast Discovery', formula: '7400 + 250×' + D, port: pMultiDisc, x: 20, y: 16 },
+				{ name: 'Multicast User Data', formula: '7401 + 250×' + D, port: pMultiUser, x: 195, y: 16 },
+				{ name: 'Unicast Discovery', formula: '7410 + 250×' + D + ' + 2×' + P, port: pUniDisc, x: 20, y: 82 },
+				{ name: 'Unicast User Data', formula: '7411 + 250×' + D + ' + 2×' + P, port: pUniUser, x: 195, y: 82 }
+			];
+
+			cards.forEach(function (c) {
+				var box = s('rect', { 'class': 'd-box', x: c.x, y: c.y, width: 165, height: 56, rx: 4 });
+				var tName = s('text', { 'class': 'd-muted', x: c.x + 8, y: c.y + 18, 'font-size': '11px' });
+				tName.textContent = c.name;
+				var tPort = s('text', { 'class': 'd-title', x: c.x + 8, y: c.y + 38, 'font-size': '16px' });
+				tPort.textContent = 'Port ' + c.port;
+				var tFormula = s('text', { 'class': 'd-muted', x: c.x + 8, y: c.y + 50, 'font-size': '10px' });
+				tFormula.textContent = c.formula;
+
+				svg.appendChild(box);
+				svg.appendChild(tName);
+				svg.appendChild(tPort);
+				svg.appendChild(tFormula);
+			});
+
+			var rangeStatus = '';
+			if (D <= 101) {
+				rangeStatus = 'Recommended range (0-101).';
+			} else if (D <= 232) {
+				rangeStatus = 'Warning: IDs above 101 can collide with the Linux ephemeral port range.';
+			} else {
+				rangeStatus = 'Invalid: Highest assignable ID is 232.';
+			}
+
+			readout.textContent = 'export ROS_DOMAIN_ID=' + D + ' · Participant ' + P +
+				' · Multicast discovery: ' + pMultiDisc + ' · Multicast user: ' + pMultiUser +
+				' · Unicast discovery: ' + pUniDisc + ' · Unicast user: ' + pUniUser +
+				' · ' + rangeStatus;
+		}
+
+		[sDomain, sPart].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('ROS_DOMAIN_ID DDS RTPS port mapping', [
+			h('p', { 'class': 'widget-note', text: 'DDS wire protocol uses a base port of 7400, a domain gain of 250 and participant gain of 2. IDs between 0 and 101 are recommended.' }),
+			sDomain.row,
+			sPart.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Square FSM open-loop drift (lesson 4.6) ---------- */
+
+	function initSquareFsm(root) {
+		var sSpeed = slider('Forward speed (m/s)', 'sf-spd', 0.5, 2.0, 0.1, 1.0, ' m/s');
+		var sTurn = slider('Turn rate (rad/s)', 'sf-trn', 0.5, 2.0, 0.1, 1.0, ' rad/s');
+
+		var W = 380, H = 240;
+		var svg = plotFrame(W, H, 'Turtlesim open-loop square state machine and trajectory drift');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var dt = 0.1;
+		var sideLength = 2.0;
+		var state = 'FORWARD';
+		var elapsed = 0.0;
+		var sidesDone = 0;
+		var posX = 0.0, posY = 0.0, heading = 0.0;
+		var pathHistory = [[0.0, 0.0]];
+		var running = false;
+		var animId = null;
+
+		function reset() {
+			running = false;
+			if (animId) cancelAnimationFrame(animId);
+			state = 'FORWARD';
+			elapsed = 0.0;
+			sidesDone = 0;
+			posX = 0.0; posY = 0.0; heading = 0.0;
+			pathHistory = [[0.0, 0.0]];
+			btnRun.setAttribute('aria-pressed', 'false');
+			btnRun.textContent = 'Run';
+			draw();
+		}
+
+		function tick() {
+			var spd = Number(sSpeed.input.value);
+			var trn = Number(sTurn.input.value);
+
+			if (state === 'DONE') {
+				running = false;
+				btnRun.setAttribute('aria-pressed', 'false');
+				btnRun.textContent = 'Run';
+				draw();
+				return;
+			}
+
+			if (state === 'FORWARD' && elapsed >= (sideLength / spd)) {
+				state = 'TURN';
+				elapsed = 0.0;
+			} else if (state === 'TURN' && elapsed >= ((Math.PI / 2) / trn)) {
+				sidesDone++;
+				state = 'FORWARD';
+				elapsed = 0.0;
+				if (sidesDone === 4) {
+					state = 'DONE';
+				}
+			}
+
+			if (state === 'FORWARD') {
+				posX += spd * Math.cos(heading) * dt;
+				posY += spd * Math.sin(heading) * dt;
+			} else if (state === 'TURN') {
+				heading += trn * dt;
+			}
+
+			elapsed += dt;
+			pathHistory.push([posX, posY]);
+			draw();
+		}
+
+		function stepAnim() {
+			if (!running) return;
+			tick();
+			if (running && !reduceMotion) {
+				animId = requestAnimationFrame(stepAnim);
+			}
+		}
+
+		var btnStep = button('Step tick (+0.1 s)', function () {
+			tick();
+		});
+
+		var btnRun = button('Run', function () {
+			if (reduceMotion) {
+				while (state !== 'DONE' && pathHistory.length < 500) {
+					tick();
+				}
+				draw();
+				return;
+			}
+			running = !running;
+			btnRun.setAttribute('aria-pressed', String(running));
+			btnRun.textContent = running ? 'Pause' : 'Run';
+			if (running) stepAnim();
+		});
+
+		var btnReset = button('Reset', reset);
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnRun, btnStep, btnReset]);
+
+		function draw() {
+			sSpeed.out.textContent = Number(sSpeed.input.value).toFixed(1) + ' m/s';
+			sTurn.out.textContent = Number(sTurn.input.value).toFixed(1) + ' rad/s';
+
+			svg.replaceChildren();
+
+			var fsmStates = ['FORWARD', 'TURN', 'DONE'];
+			fsmStates.forEach(function (st, idx) {
+				var isCur = (state === st);
+				var bx = 24 + idx * 115;
+				var rBox = s('rect', {
+					'class': isCur ? 'd-box-gold' : 'd-box',
+					x: bx, y: 12, width: 100, height: 32, rx: 4
+				});
+				var tBox = s('text', {
+					'class': isCur ? 'd-title' : 'd-muted',
+					x: bx + 50, y: 32, 'text-anchor': 'middle'
+				});
+				tBox.textContent = st;
+				svg.appendChild(rBox);
+				svg.appendChild(tBox);
+			});
+
+			var originX = 110, originY = 190, scale = 55;
+
+			var idealPts = [
+				[originX, originY],
+				[originX + sideLength * scale, originY],
+				[originX + sideLength * scale, originY - sideLength * scale],
+				[originX, originY - sideLength * scale],
+				[originX, originY]
+			];
+			var idealPoly = s('polyline', {
+				'class': 'd-line',
+				'stroke-dasharray': '3 3',
+				points: idealPts.map(function (p) { return p.join(','); }).join(' '),
+				fill: 'none'
+			});
+			svg.appendChild(idealPoly);
+
+			var actualPts = pathHistory.map(function (pt) {
+				return (originX + pt[0] * scale).toFixed(1) + ',' + (originY - pt[1] * scale).toFixed(1);
+			}).join(' ');
+			var actualPoly = s('polyline', {
+				'class': 'd-strong',
+				points: actualPts,
+				fill: 'none'
+			});
+			svg.appendChild(actualPoly);
+
+			var curSvgX = originX + posX * scale;
+			var curSvgY = originY - posY * scale;
+			var dotTurtle = s('circle', { 'class': 'd-fill', cx: curSvgX, cy: curSvgY, r: 5 });
+			var headLine = s('line', {
+				'class': 'd-strong',
+				x1: curSvgX, y1: curSvgY,
+				x2: curSvgX + 14 * Math.cos(heading),
+				y2: curSvgY - 14 * Math.sin(heading)
+			});
+			svg.appendChild(dotTurtle);
+			svg.appendChild(headLine);
+
+			var degHeading = (heading * 180 / Math.PI) % 360;
+			readout.textContent = 'State: ' + state + ' · Side: ' + sidesDone + '/4 · Time in state: ' +
+				elapsed.toFixed(1) + ' s · Heading: ' + degHeading.toFixed(1) +
+				'° · Drift: 0.1 s ticks cause turn overshoot of ~1.7° per corner.';
+		}
+
+		[sSpeed, sTurn].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('open-loop square state machine (FORWARD / TURN / DONE)', [
+			h('p', { 'class': 'widget-note', text: 'A timer checks the clock every 0.1 s. A 90° turn (1.57 s at 1.0 rad/s) lasts until the next tick (1.6 s), causing small open-loop drift corner to corner.' }),
+			sSpeed.row,
+			sTurn.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Stereo disparity triangulation (lesson 7.4) ---------- */
+
+	function initStereoDisparity(root) {
+		var sBase = slider('Baseline (B)', 'sd-base', 50, 250, 10, 120, ' mm');
+		var sFocal = slider('Focal length (f)', 'sd-focal', 400, 1200, 50, 800, ' px');
+		var sDepth = slider('Object depth (Z)', 'sd-depth', 400, 3000, 50, 1000, ' mm');
+
+		var W = 380, H = 220;
+		var svg = plotFrame(W, H, 'Stereo triangulation geometry relating baseline, focal length, depth and disparity');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnDefault = button('Default (B=120 mm, f=800 px, Z=1000 mm)', function () {
+			sBase.input.value = 120; sFocal.input.value = 800; sDepth.input.value = 1000; draw();
+		});
+		var btnClose = button('Close object (Z=500 mm)', function () {
+			sDepth.input.value = 500; draw();
+		});
+		var btnFar = button('Far object (Z=2500 mm)', function () {
+			sDepth.input.value = 2500; draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnDefault, btnClose, btnFar]);
+
+		function draw() {
+			var B = Number(sBase.input.value);
+			var f = Number(sFocal.input.value);
+			var Z = Number(sDepth.input.value);
+
+			sBase.out.textContent = B + ' mm';
+			sFocal.out.textContent = f + ' px';
+			sDepth.out.textContent = Z + ' mm';
+
+			var disparity = (B * f) / Z;
+
+			svg.replaceChildren();
+
+			var cx = 190;
+			var camY = 35;
+			var bScale = 0.6;
+			var leftCamX = cx - (B * bScale) / 2;
+			var rightCamX = cx + (B * bScale) / 2;
+
+			var lineB = s('line', { 'class': 'd-strong', x1: leftCamX, y1: camY, x2: rightCamX, y2: camY });
+			var tB = s('text', { 'class': 'd-muted', x: cx, y: camY - 8, 'text-anchor': 'middle' });
+			tB.textContent = 'Baseline B = ' + B + ' mm';
+			svg.appendChild(lineB);
+			svg.appendChild(tB);
+
+			[leftCamX, rightCamX].forEach(function (camX, idx) {
+				var box = s('rect', { 'class': 'd-box-gold', x: camX - 14, y: camY, width: 28, height: 16, rx: 2 });
+				var txt = s('text', { 'class': 'd-muted', x: camX, y: camY + 12, 'text-anchor': 'middle', 'font-size': '10px' });
+				txt.textContent = idx === 0 ? 'L' : 'R';
+				svg.appendChild(box);
+				svg.appendChild(txt);
+			});
+
+			var depthY = camY + 20 + (Z / 3000) * 140;
+			var dotObj = s('circle', { 'class': 'd-fill', cx: cx, cy: depthY, r: 6 });
+			var tObj = s('text', { 'class': 'd-title', x: cx + 10, y: depthY + 4 });
+			tObj.textContent = 'Object (Z=' + (Z / 1000).toFixed(2) + ' m)';
+			svg.appendChild(dotObj);
+			svg.appendChild(tObj);
+
+			var rayL = s('line', { 'class': 'd-line', x1: leftCamX, y1: camY + 16, x2: cx, y2: depthY });
+			var rayR = s('line', { 'class': 'd-line', x1: rightCamX, y1: camY + 16, x2: cx, y2: depthY });
+			svg.appendChild(rayL);
+			svg.appendChild(rayR);
+
+			var axisZ = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: cx - 40, y1: camY + 16, x2: cx - 40, y2: depthY });
+			svg.appendChild(axisZ);
+
+			readout.textContent = 'disparity = (baseline × f) / depth = (' + B + ' mm × ' + f +
+				' px) / ' + Z + ' mm = ' + disparity.toFixed(1) + ' px · depth = ' + (Z / 1000).toFixed(2) +
+				' m. (Closer depth increases disparity; far depth approaches zero).';
+		}
+
+		[sBase, sFocal, sDepth].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('stereo vision: disparity and depth triangulation', [
+			h('p', { 'class': 'widget-note', text: 'In stereo vision triangulation, depth Z is inversely proportional to disparity: disparity = (baseline × f) / depth.' }),
+			sBase.row,
+			sFocal.row,
+			sDepth.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Pinhole camera projection matrix K (lesson 7.6) ---------- */
+
+	function initPinholeProjection(root) {
+		var sX = slider('3D coordinate X (m)', 'pp-x', -0.25, 0.25, 0.01, 0.10, ' m');
+		var sY = slider('3D coordinate Y (m)', 'pp-y', -0.20, 0.20, 0.01, 0.05, ' m');
+		var sZ = slider('3D coordinate Z (m)', 'pp-z', 0.40, 2.50, 0.05, 1.00, ' m');
+		var sF = slider('Focal length (fx = fy)', 'pp-f', 400, 1200, 50, 800, ' px');
+
+		var W = 380, H = 210;
+		var svg = plotFrame(W, H, 'Pinhole projection of 3D camera coordinates to 2D image pixel coordinates');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnWorked = button('Worked example ([0.10, 0.05, 1.00] m)', function () {
+			sX.input.value = 0.10; sY.input.value = 0.05; sZ.input.value = 1.00; sF.input.value = 800; draw();
+		});
+		var btnCenter = button('Optical center ([0.0, 0.0, 1.00] m)', function () {
+			sX.input.value = 0.0; sY.input.value = 0.0; sZ.input.value = 1.00; draw();
+		});
+		var btnClose = button('Closer point (Z=0.50 m)', function () {
+			sZ.input.value = 0.50; draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnWorked, btnCenter, btnClose]);
+
+		function draw() {
+			var X = Number(sX.input.value);
+			var Y = Number(sY.input.value);
+			var Z = Number(sZ.input.value);
+			var fx = Number(sF.input.value);
+			var fy = fx;
+			var cx = 320.0, cy = 240.0;
+
+			sX.out.textContent = X.toFixed(2) + ' m';
+			sY.out.textContent = Y.toFixed(2) + ' m';
+			sZ.out.textContent = Z.toFixed(2) + ' m';
+			sF.out.textContent = fx + ' px';
+
+			var x_norm = X / Z;
+			var y_norm = Y / Z;
+			var u = fx * x_norm + cx;
+			var v = fy * y_norm + cy;
+
+			svg.replaceChildren();
+
+			var sensorW = 224, sensorH = 168;
+			var originX = 78, originY = 20;
+
+			var frameBox = s('rect', { 'class': 'd-box', x: originX, y: originY, width: sensorW, height: sensorH, rx: 4 });
+			svg.appendChild(frameBox);
+
+			var cxSvg = originX + (cx / 640) * sensorW;
+			var cySvg = originY + (cy / 480) * sensorH;
+			var chX = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: originX, y1: cySvg, x2: originX + sensorW, y2: cySvg });
+			var chY = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: cxSvg, y1: originY, x2: cxSvg, y2: originY + sensorH });
+			var tCenter = s('text', { 'class': 'd-muted', x: cxSvg + 4, y: cySvg - 4, 'font-size': '10px' });
+			tCenter.textContent = '(cx, cy)';
+			svg.appendChild(chX);
+			svg.appendChild(chY);
+			svg.appendChild(tCenter);
+
+			var uSvg = originX + (u / 640) * sensorW;
+			var vSvg = originY + (v / 480) * sensorH;
+
+			var inBounds = (u >= 0 && u <= 640 && v >= 0 && v <= 480);
+			var dot = s('circle', {
+				'class': inBounds ? 'd-box-gold' : 'd-box',
+				cx: Math.max(originX, Math.min(originX + sensorW, uSvg)),
+				cy: Math.max(originY, Math.min(originY + sensorH, vSvg)),
+				r: 6
+			});
+			var tPoint = s('text', { 'class': 'd-title', x: originX + sensorW + 10, y: 100 });
+			tPoint.textContent = 'u = ' + u.toFixed(1) + ' px';
+			var tPointV = s('text', { 'class': 'd-title', x: originX + sensorW + 10, y: 120 });
+			tPointV.textContent = 'v = ' + v.toFixed(1) + ' px';
+
+			svg.appendChild(dot);
+			svg.appendChild(tPoint);
+			svg.appendChild(tPointV);
+
+			var tBounds = s('text', { 'class': 'd-muted', x: originX, y: originY + sensorH + 14 });
+			tBounds.textContent = '640 × 480 image frame (optical center at 320, 240)';
+			svg.appendChild(tBounds);
+
+			readout.textContent = '[X, Y, Z] = [' + X.toFixed(2) + ', ' + Y.toFixed(2) + ', ' +
+				Z.toFixed(2) + '] m · Normalized: x\' = ' + x_norm.toFixed(3) + ', y\' = ' +
+				y_norm.toFixed(3) + ' · Pixel: u = ' + fx + '×' + x_norm.toFixed(3) + ' + 320 = ' +
+				u.toFixed(1) + ' px, v = ' + fy + '×' + y_norm.toFixed(3) + ' + 240 = ' +
+				v.toFixed(1) + ' px ' + (inBounds ? '(inside frame)' : '(outside frame!)') + '.';
+		}
+
+		[sX, sY, sZ, sF].forEach(function (ctrl) {
+			ctrl.input.addEventListener('input', draw);
+		});
+
+		root.replaceChildren(frame('pinhole projection: 3D camera frame to 2D pixels', [
+			h('p', { 'class': 'widget-note', text: 'Intrinsic matrix K projects 3D camera coordinates to 2D pixels: normalized x\'=X/Z, y\'=Y/Z; then u = fx·x\' + cx, v = fy·y\' + cy.' }),
+			sX.row,
+			sY.row,
+			sZ.row,
+			sF.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Device Level Ring (DLR) supervisor & recovery (lesson 8.1) ---------- */
+
+	function initDlrRingRecovery(root) {
+		var brokenSeg = -1;
+
+		var W = 380, H = 230;
+		var svg = plotFrame(W, H, 'Device Level Ring supervisor behavior unblocking its alternate port upon link break');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnNone = button('Normal (no break)', function () {
+			brokenSeg = -1; draw();
+		});
+		var btnSeg1 = button('Break Seg 1 (Node 1 - Node 2)', function () {
+			brokenSeg = 1; draw();
+		});
+		var btnSeg2 = button('Break Seg 2 (Node 2 - Node 3)', function () {
+			brokenSeg = 2; draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnNone, btnSeg1, btnSeg2]);
+
+		function draw() {
+			btnNone.setAttribute('aria-pressed', String(brokenSeg === -1));
+			btnSeg1.setAttribute('aria-pressed', String(brokenSeg === 1));
+			btnSeg2.setAttribute('aria-pressed', String(brokenSeg === 2));
+
+			var hasFault = (brokenSeg !== -1);
+			var port2Blocked = !hasFault;
+
+			svg.replaceChildren();
+
+			var NODES = [
+				{ id: 'sup', name: 'Ring Supervisor', x: 190, y: 40, isSup: true },
+				{ id: 'n1', name: 'Ring Node 1', x: 300, y: 130, isSup: false },
+				{ id: 'n2', name: 'Ring Node 2', x: 190, y: 185, isSup: false },
+				{ id: 'n3', name: 'Ring Node 3', x: 80, y: 130, isSup: false }
+			];
+
+			var SEGS = [
+				{ id: 0, x1: 245, y1: 52, x2: 295, y2: 115, label: 'Seg 0' },
+				{ id: 1, x1: 295, y1: 145, x2: 235, y2: 180, label: 'Seg 1' },
+				{ id: 2, x1: 145, y1: 180, x2: 85, y2: 145, label: 'Seg 2' },
+				{ id: 3, x1: 85, y1: 115, x2: 135, y2: 52, label: 'Seg 3' }
+			];
+
+			SEGS.forEach(function (seg) {
+				var isBroken = (brokenSeg === seg.id);
+				var line = s('line', {
+					'class': isBroken ? 'd-line' : 'd-strong',
+					x1: seg.x1, y1: seg.y1, x2: seg.x2, y2: seg.y2
+				});
+				if (isBroken) line.setAttribute('stroke-dasharray', '4 4');
+				line.style.cursor = 'pointer';
+
+				(function (sId) {
+					line.addEventListener('click', function () {
+						brokenSeg = (brokenSeg === sId) ? -1 : sId;
+						draw();
+					});
+				})(seg.id);
+
+				svg.appendChild(line);
+
+				if (isBroken) {
+					var mx = (seg.x1 + seg.x2) / 2;
+					var my = (seg.y1 + seg.y2) / 2;
+					var tBreak = s('text', { 'class': 'd-title', x: mx + 6, y: my + 4 });
+					tBreak.textContent = '✕ BREAK';
+					svg.appendChild(tBreak);
+				}
+			});
+
+			NODES.forEach(function (n) {
+				var boxW = n.isSup ? 140 : 90;
+				var boxH = n.isSup ? 42 : 34;
+				var box = s('rect', {
+					'class': n.isSup ? 'd-box-gold' : 'd-box',
+					x: n.x - boxW / 2, y: n.y - boxH / 2,
+					width: boxW, height: boxH, rx: 4
+				});
+				var txt = s('text', {
+					'class': n.isSup ? 'd-title' : 'd-text',
+					x: n.x, y: n.y + 4,
+					'text-anchor': 'middle',
+					'font-size': n.isSup ? '13px' : '12px'
+				});
+				txt.textContent = n.name;
+				svg.appendChild(box);
+				svg.appendChild(txt);
+			});
+
+			var tPort1 = s('text', { 'class': 'd-muted', x: 260, y: 30, 'font-size': '11px' });
+			tPort1.textContent = 'Port 1 (unblocked)';
+			var tPort2 = s('text', { 'class': 'd-muted', x: 25, y: 30, 'font-size': '11px' });
+			tPort2.textContent = port2Blocked ? 'Port 2 [BLOCKED]' : 'Port 2 (UNBLOCKED)';
+			svg.appendChild(tPort1);
+			svg.appendChild(tPort2);
+
+			if (hasFault) {
+				readout.textContent = 'Cable break on Seg ' + brokenSeg + ' detected: beacon frames cease arriving at opposite supervisor port. Supervisor unblocks Port 2, restoring network path to all nodes within worst-case 2890 µs.';
+			} else {
+				readout.textContent = 'Normal operation: Ring supervisor transmits beacon frames through both ports. Port 2 is blocked to prevent loops; ring behaves like a line. Network health confirmed.';
+			}
+		}
+
+		root.replaceChildren(frame('Device Level Ring (DLR) supervisor and fault recovery', [
+			h('p', { 'class': 'widget-note', text: "During normal operation, the supervisor blocks one ring port to prevent loops. When a cable breaks, beacon loss triggers unblocking of the port within 2890 µs." }),
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
 	var INIT = {
 		pwm: initPwm,
 		encoder: initEncoder,
@@ -2143,13 +3499,28 @@
 		trapezoid: initTrapezoid,
 		zones: initZones,
 		qos: initQos,
-		dashboard: initDashboard
+		dashboard: initDashboard,
+		'agv-vs-amr': initAgvVsAmr,
+		'cycle-time-positioner': initCycleTimePositioner,
+		'vacuum-cup-sizing': initVacuumCupSizing,
+		'offs-vs-reltool': initOffsVsReltool,
+		'pallet-indexing': initPalletIndexing,
+		'vision-frame-shift': initVisionFrameShift,
+		'ros-domain-id': initRosDomainId,
+		'square-fsm': initSquareFsm,
+		'stereo-disparity': initStereoDisparity,
+		'pinhole-projection': initPinholeProjection,
+		'dlr-ring-recovery': initDlrRingRecovery
 	};
 
 	function boot() {
 		Array.prototype.forEach.call(document.querySelectorAll('[data-widget]'), function (el) {
 			var fn = INIT[el.getAttribute('data-widget')];
 			if (fn) { try { fn(el); } catch (e) { /* keep the static fallback */ } }
+			// The d-* shape and text classes are styled under .lesson-diagram; make sure every widget SVG has it.
+			Array.prototype.forEach.call(el.querySelectorAll('svg'), function (svg) {
+				if (svg.classList && !svg.classList.contains('lesson-diagram')) svg.classList.add('lesson-diagram');
+			});
 		});
 	}
 

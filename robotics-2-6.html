@@ -277,6 +277,10 @@
                             <p>
                                 Because tool axes are usually not aligned with the world, a <code>RelTool</code> offset can move the robot in world Z even when its Z argument is zero, which surprises beginners.<sup><a href="#ref-25">[25]</a></sup> Pick one convention per program and stick to it.
                             </p>
+
+                            <div data-widget="offs-vs-reltool">
+                                <p class="widget-note">The Offs versus RelTool visualizer needs JavaScript. With it on, you can adjust tool tilt angle and translation offsets to compare work object coordinates and tool coordinates.</p>
+                            </div>
                             <p>
                                 In URScript the same job is done by <code>pose_trans</code>. If <code>pick</code> is the grip pose and <code>app = p[0, 0, -0.100, 0, 0, 0]</code>, then <code>pose_trans(pick, app)</code> is the point 100 mm back along the tool Z axis, which is above the part when the tool points down. This is the pattern Pickit's UR example uses: define a pre-pick offset with a negative tool-Z component and compute the approach with <code>pose_trans</code>.<sup><a href="#ref-27">[27]</a></sup> UR also has <code>pose_add</code>, which adds a translation in the base frame; one third-party guide recommends <code>pose_trans</code> when the surface is tilted.<sup><a href="#ref-28">[28]</a></sup>
                             </p>
@@ -466,9 +470,10 @@ ENDMODULE</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=4095ff92" defer></script>
-            <script src="assets/js/glossary-data.js?v=b99d6a0f" defer></script>
+            <script src="assets/js/course-data.js?v=3101725b" defer></script>
+            <script src="assets/js/glossary-data.js?v=b68b29ea" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
+            <script src="assets/js/widgets.js?v=0afac891" defer></script>
 
     </body>
 </html>

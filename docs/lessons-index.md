@@ -241,7 +241,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 ### 6.4 PID Control
 `robotics-6-4.html` · 13 min · 19 refs (partial 2, unreachable 3, verified 14) · 1 figures · 1 Try it
 - Objectives: Formulate continuous and discrete-time Proportional-Integral-Derivative (PID) control equations for robotic systems. / Apply classical tuning methodologies, including Ziegler-Nichols closed-loop oscillation and Cohen-Coon reaction curve methods. / Implement industrial anti-windup clamping, derivative filtering, and derivative-on-measurement architectures to prevent actuator saturation and derivative kick. / Analyze cascaded multi-loop servo architectures (current, velocity, position) and dynamic feed-forward compensation utilized in industrial robotic arms.
-- Key terms: PID control, proportional term, integral term, derivative term, integral windup, derivative kick, Ziegler-Nichols, cascaded control, feed-forward
+- Key terms: PID control, proportional term, integral term, derivative term, integral windup, derivative kick, Ziegler–Nichols, cascaded control, feed-forward
 - Sections: The challenge of closed-loop motion control · Historical origins: Minorsky and the USS New Mexico · The three control actions: present, past, and future · Block diagram and continuous mathematical formulation · Discrete-time implementation in robot software · Classical tuning methods: Ziegler–Nichols and Cohen–Coon · Interactive PID simulation · Critical practical modifications: anti-windup, derivative kick, and noise filtering · How industrial servo drives nest their control loops
 
 ### 6.5 Sensors for Robots
@@ -259,7 +259,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 ### 6.7 State Machines
 `robotics-6-7.html` · 20 min · 20 refs (fixed 5, partial 2, unreachable 1, verified 12) · 1 figures · 1 Try it
 - Objectives: Model complex robot behavioral logic using Finite State Machine (FSM) formalisms including states, events, guards, and transition tables. / Implement non-blocking, multi-rate embedded execution loops using C++ enum, switch statements, and Arduino millis() timer arithmetic. / Analyze industrial automation state standards including IEC 61131-3 Sequential Function Charts (SFC) and OMAC PackML. / Differentiate ROS 2 managed lifecycle node states and contrast FSM scalability limits against Nav2 Behavior Tree architectures.
-- Key terms: finite state machine, state transition table, guard condition, cooperative multitasking, millis(), IEC 61131-3 SFC, PackML, ROS 2 lifecycle node, Behavior Tree
+- Key terms: finite state machine, state transition table, guard condition, cooperative multitasking, millis(), IEC 61131-3 SFC, PackML, lifecycle node, behavior tree
 - Sections: Why robots require state machines · Core components of a state machine · Worked example: line follower with obstacle avoidance · Non-blocking timing: why delay() is fatal in robotics · Embedded C++ implementation · State machine anti-patterns and pitfalls · Industrial automation standards: IEC 61131-3 SFC and PackML · ROS 2 managed nodes: the rclcpp_lifecycle state machine · Beyond state machines: Behavior Trees in ROS 2 Nav2
 
 ### 6.8 Intro to Kalman Filters
@@ -318,10 +318,10 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: sensor_msgs/Image, sensor_msgs/CameraInfo, plumb_bob, image_transport, TimeSynchronizer, cv_bridge
 - Sections: Cameras in the ROS 2 architecture · Image data representation: sensor_msgs/Image · Calibration metadata: sensor_msgs/CameraInfo · Streaming transport and message synchronization · Bridging ROS 2 and OpenCV with cv_bridge · Lab: Implementing an OpenCV vision node · Running and testing the node · Check your understanding
 
-## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 52 min)
+## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 53 min)
 
 ### 8.1 From Wires to Networks
-`robotics-8-1.html` · 9 min · 5 refs (verified 5) · 1 figures · 0 Try it
+`robotics-8-1.html` · 10 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Compare sinking and sourcing DC circuits, evaluating how NPN and PNP 3-wire field devices interface with PLC I/O modules. / Explain how fieldbuses replaced point-to-point wiring and analyze how industrial Ethernet supports multiple protocols on shared media. / Differentiate cyclic I/O data exchange from acyclic diagnostic messaging between controllers and field devices. / Evaluate line, star, and ring physical topologies, examining recovery times and node limits in Device Level Ring networks.
 - Key terms: sinking, sourcing, fieldbus, cyclic communication, acyclic communication, Device Level Ring
 - Sections: Discrete DC I/O: sinking and sourcing · Three-wire sensors: NPN and PNP field devices · Point-to-point wiring and fieldbus technology · The shift to industrial Ethernet · Cyclic and acyclic communication · Network topologies and Device Level Ring resilience · Check your understanding

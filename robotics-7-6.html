@@ -234,6 +234,10 @@
                             For example, imagine a calibrated monocular camera whose intrinsic matrix <code>K</code> has focal lengths <code>fx = 800.0</code>, <code>fy = 800.0</code> pixels and principal point offsets <code>cx = 320.0</code>, <code>cy = 240.0</code> pixels. Suppose a workpiece corner is located at physical 3D camera coordinates <code>[X, Y, Z] = [0.10 m, 0.05 m, 1.00 m]</code>. Under ideal pinhole projection, the normalized coordinates evaluate to <code>x' = X / Z = 0.10</code> and <code>y' = Y / Z = 0.05</code>. Multiplying by the focal lengths and adding the principal point offsets yields horizontal pixel coordinate <code>u = 800.0 &times; 0.10 + 320.0 = 400.0</code> pixels and vertical pixel coordinate <code>v = 800.0 &times; 0.05 + 240.0 = 280.0</code> pixels. When lens distortion is present, downstream rectification nodes use the coefficients in <code>D</code> alongside matrix <code>K</code> to remap raw distorted pixels into ideal rectilinear coordinates described by matrix <code>P</code>.
                         </p>
 
+                        <div data-widget="pinhole-projection">
+                            <p class="widget-note">The pinhole camera projection calculator needs JavaScript. With it on, you can adjust 3D coordinates and focal length to project physical points to 2D pixel coordinates.</p>
+                        </div>
+
                         <h2 class="article-section-title">04. Streaming transport and message synchronization</h2>
                         <p>
                             Distributing high-resolution image streams across a ROS 2 network introduces significant bandwidth and latency challenges. For example, a single 1080p uncompressed color stream at 30 frames per second generates over 180 megabytes per second of raw data. If multiple perception nodes subscribe to an uncompressed camera topic across an industrial Ethernet switch or wireless network, the physical bus can become saturated, resulting in dropped packets and processing jitter.
@@ -503,9 +507,10 @@ ros2 param set /vision_pipeline_node binary_threshold 100.0</code></pre>
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=4095ff92" defer></script>
-        <script src="assets/js/glossary-data.js?v=b99d6a0f" defer></script>
+        <script src="assets/js/course-data.js?v=3101725b" defer></script>
+        <script src="assets/js/glossary-data.js?v=b68b29ea" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
+        <script src="assets/js/widgets.js?v=0afac891" defer></script>
 
     </body>
 </html>
