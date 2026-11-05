@@ -413,6 +413,10 @@ if __name__ == "__main__":
                                 The joint speeds grow like 1/&theta;<sub>2</sub>. The condition number of J, a measure of how much it amplifies errors, grows the same way: about 4.4 at &theta;<sub>2</sub> = 1 rad, 48 at 0.1 rad, 483 at 0.01 rad and 4,830 at 0.001 rad. This is the outer-workspace singularity from lesson 1.6, now with the formula behind it: a straight-line tool move near the edge of the ring asks for joint speeds that grow without limit.
                             </p>
 
+                            <div data-widget="jacobian-singularity">
+                                <p class="widget-note">The Jacobian singularity simulation needs JavaScript. With it on, you can adjust the elbow angle and see det J drop to zero and joint speeds grow near singularities.</p>
+                            </div>
+
                             <h2 class="article-section-title">10. From two links to a six-axis robot</h2>
                             <p>
                                 An industrial arm uses the same ideas in 3D. Each joint adds a rotation and an offset, so forward kinematics becomes a product of 4 &times; 4 homogeneous transforms, one per joint, written either with Denavit&ndash;Hartenberg parameters (see 1.6) or as a <em>product of exponentials</em>. The Modern Robotics code library implements product-of-exponentials FK (which represents joint motions using matrix exponentials of screw axes) as <code>FKinSpace(M, Slist, thetalist)</code> and <code>FKinBody</code>, and computes the full 6 &times; n Jacobian with <code>JacobianSpace</code> and <code>JacobianBody</code>, the general version of the 2 &times; 2 matrix in section 09.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
@@ -474,7 +478,7 @@ if __name__ == "__main__":
                     <div class="container">
                         <div id="copyright">
                             <ul class="menu">
-                                <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                                <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
                                 <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
                                 <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
                             </ul>
@@ -489,6 +493,7 @@ if __name__ == "__main__":
             <script src="assets/js/course-data.js?v=3101725b" defer></script>
             <script src="assets/js/glossary-data.js?v=b68b29ea" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
+            <script src="assets/js/widgets.js?v=9c704200" defer></script>
 
     </body>
 </html>

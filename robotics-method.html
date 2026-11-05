@@ -208,12 +208,32 @@
                                     <tr>
                                         <td>Source check (all lessons, October 2026)</td>
                                         <td>Google Gemini, run from the Antigravity command line, proposed candidate sources and the exact words in each source that should support each cited sentence. It did not edit lessons.</td>
-                                        <td>A script fetched every proposed page and kept only words that actually appear in it; Claude then read the matches and edited the lessons. Gemini&rsquo;s own &ldquo;supported&rdquo; labels were often wrong, so none were accepted unchecked. Dead links were replaced, wrong attributions and figures were corrected, and claims no readable source supports were removed. Of 1,090 references, 975 now match their source text, 43 support only part of their sentence and 72 could not be opened (paywalls, books and blocked sites).</td>
+                                        <td>A script fetched every proposed page and kept only words that actually appear in it; Claude then read the matches and edited the lessons. Gemini&rsquo;s own &ldquo;supported&rdquo; labels were often wrong, so none were accepted unchecked. Dead links were replaced, wrong attributions and figures were corrected, and claims no readable source supports were removed. At that check, 975 of 1,090 references matched their source text. Later replacements and new lessons are checked the same way; in November 2026, 1,185 of 1,282 citations matched, 34 supported only part of their sentence and 63 could not be opened (paywalls, books and blocked sites).</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chapters 7, 8 and 9 (machine vision, industrial networks, maintenance) and capstone 10.4</td>
+                                        <td>Claude found and saved the source pages first. Google Gemini (Antigravity) then pulled facts out of the saved pages only and drafted the lessons from those facts.</td>
+                                        <td>A script checked that every fact appears word for word in its saved page. Claude read each draft, removed text that no fact supports and invented cross-references, and added sourced sections. Lab code (Modbus with pymodbus, the Dashboard Server stand-in) was run before publishing.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Chapter 3 (how to contribute to open source), the Open-Source Map and lesson 3.5</td>
+                                        <td>The same process, using the projects&rsquo; own contributing guides, licence files and documentation. Lessons 3.1 to 3.4 are drafts that Gerald is rewriting in his own voice.</td>
+                                        <td>As above. For 3.5, a script also confirmed that no run of nine or more words was copied from the sources without quotation marks.</td>
                                     </tr>
                                     <tr>
                                         <td>Diagrams, simulators and quizzes</td>
-                                        <td>Written with Claude to match the lesson text.</td>
-                                        <td>Quiz answers are tested against the lesson text, and every simulator is tested in a browser on desktop and phone widths.</td>
+                                        <td>Written with Claude, or drafted by Gemini and reviewed by Claude, to match the lesson text. Safety diagrams were drawn by Claude only, from the lessons&rsquo; exact wording.</td>
+                                        <td>Every number a simulator shows is checked against its lesson, and every simulator is tested in a browser at phone width in light and dark mode. Quiz answers and explanations are checked word by word against the lesson; a Claude model (Sonnet) reviewed the questions a script flagged.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Key points, search descriptions and glossary (November 2026)</td>
+                                        <td>Drafted by Gemini from each lesson. There are no key points for the safety lessons (5.4, 8.4 and 9.2).</td>
+                                        <td>A script checked every name, number and most words against the lesson; Claude rewrote or removed the points it flagged.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Audits (October and November 2026)</td>
+                                        <td>Gemini read every lesson and reported problems only: objectives and glossary entries that do not match the lessons, uncited factual sentences, terms used inconsistently between lessons, and small fixes for new contributors.</td>
+                                        <td>Every quoted sentence was matched against the page by a script before Claude acted on it. Safety findings are left for Gerald. A weekly automated check re-opens every cited link and reports links that stop working.</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -223,10 +243,10 @@
 
                             <h2 class="article-section-title">04. Review before publishing</h2>
                             <ol>
-                                <li>Every change is made on a separate branch and opened as a GitHub pull request that describes what changed and why.</li>
-                                <li>Automated checks run on each pull request: every internal link and every citation link must resolve, every page must follow the shared accessibility and metadata conventions, and the course data (objectives, key terms and quiz answers) must match the lessons.</li>
-                                <li>The lessons are opened in a real browser at desktop and phone widths to catch layout and script errors.</li>
-                                <li>Gerald approves the pull request before it goes live.</li>
+                                <li>Outside contributions arrive as GitHub pull requests; a comment on each one lists the lessons it touches and what a reviewer checks. Gerald approves them before they go live.</li>
+                                <li>Since late October 2026, Claude also publishes routine changes directly, under rules Gerald set: only after every check below passes locally, and never for safety content, new chapters, renumbered lessons or Gerald&rsquo;s own wording, which wait for his approval. Every change and its reason are recorded in the project changelog and the public commit history.</li>
+                                <li>Automated checks run on every change: every internal link and every citation must resolve and have a recorded source check, every page must follow the shared accessibility and metadata conventions, and the course data (objectives, key terms and quiz answers) must match the lessons.</li>
+                                <li>The lessons and their simulators are opened in a real browser at desktop and phone widths to catch layout and script errors.</li>
                             </ol>
 
                             <h2 class="article-section-title">05. Known limits</h2>
@@ -261,7 +281,7 @@
                     <div class="container">
                         <div id="copyright">
                             <ul class="menu">
-                                <li>© Gerald Lê, last updated <span data-build-date>October 2026</span>.</li>
+                                <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
                                 <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
                                 <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
                             </ul>

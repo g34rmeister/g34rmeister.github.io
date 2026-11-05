@@ -5,7 +5,10 @@
 	"modbus" | "trapezoid" | "zones" | "qos" | "dashboard" | "agv-vs-amr" |
 	"cycle-time-positioner" | "vacuum-cup-sizing" | "offs-vs-reltool" |
 	"pallet-indexing" | "vision-frame-shift" | "ros-domain-id" | "square-fsm" |
-	"stereo-disparity" | "pinhole-projection" | "dlr-ring-recovery" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"stereo-disparity" | "pinhole-projection" | "dlr-ring-recovery" |
+	"edge-case-classifier" | "ultrasonic-distance" | "gyro-drift" |
+	"jacobian-singularity" | "f-number-aperture" |
+	"presence-area-check" | "ethernet-ip-messaging" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -48,7 +51,7 @@
 	}
 
 	function plotFrame(w, hgt, label) {
-		var svg = s('svg', { viewBox: '0 0 ' + w + ' ' + hgt, 'class': 'widget-plot', role: 'img', 'aria-label': label });
+		var svg = s('svg', { viewBox: '0 0 ' + w + ' ' + hgt, 'class': 'widget-plot lesson-diagram', role: 'img', 'aria-label': label });
 		return svg;
 	}
 
@@ -3482,6 +3485,945 @@
 		draw();
 	}
 
+	/* ---------- ISO 8373 edge-case classifier (lesson 1.1) ---------- */
+
+	function initEdgeCaseClassifier(root) {
+		var CANDIDATES = [
+			{
+				name: 'Dishwasher',
+				prog: true,
+				act: true,
+				mech: true,
+				auto: true,
+				motion: false,
+				multipurpose: false,
+				verdict: 'Not a robot (ISO 3.1)',
+				notes: 'Passes the sense, think, act test. Struggles with ISO clause 3.1 because it does not move itself, handle objects or position anything.'
+			},
+			{
+				name: 'CNC machine tool',
+				prog: true,
+				act: true,
+				mech: true,
+				auto: true,
+				motion: true,
+				multipurpose: false,
+				verdict: 'Close to robot; single-job tool',
+				notes: 'Programmed, actuated and positions a cutting tool along several axes, but does one kind of job rather than being a multipurpose manipulator (clause 3.6).'
+			},
+			{
+				name: 'Autonomous drone',
+				prog: true,
+				act: true,
+				mech: true,
+				auto: true,
+				motion: true,
+				multipurpose: true,
+				verdict: 'Mobile robot',
+				notes: 'A drone that holds its position or flies a route by itself has the autonomy to be a mobile robot under ISO 8373.'
+			},
+			{
+				name: 'Piloted drone',
+				prog: true,
+				act: true,
+				mech: true,
+				auto: false,
+				motion: true,
+				multipurpose: true,
+				verdict: 'Robotic device',
+				notes: 'Flown entirely by a pilot; looks more like a robotic device (such as a teleoperated remote manipulator) than a robot.'
+			},
+			{
+				name: 'Chatbot',
+				prog: true,
+				act: false,
+				mech: false,
+				auto: true,
+				motion: false,
+				multipurpose: false,
+				verdict: 'Not a robot',
+				notes: 'Has no actuated mechanism. A robot is a physical system situated in the real world, and is not only software residing on a computer.'
+			},
+			{
+				name: 'Self-driving car',
+				prog: true,
+				act: true,
+				mech: true,
+				auto: true,
+				motion: true,
+				multipurpose: false,
+				verdict: 'Mobile robot',
+				notes: 'Meets clause 3.1 and the mobile robot definition: programmed, actuated, and moves itself with some autonomy across SAE levels.'
+			}
+		];
+
+		var currentIdx = 0;
+		var W = 380, H = 180;
+		var svg = plotFrame(W, H, 'ISO 8373 classification criteria and edge-case verdict');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var candButtons = CANDIDATES.map(function (c, idx) {
+			return button(c.name, function () {
+				currentIdx = idx;
+				draw();
+			});
+		});
+
+		var btnContainer = h('div', { 'class': 'widget-buttons' }, candButtons);
+
+		function draw() {
+			candButtons.forEach(function (btn, idx) {
+				btn.setAttribute('aria-pressed', String(idx === currentIdx));
+			});
+
+			var c = CANDIDATES[currentIdx];
+			svg.replaceChildren();
+
+			var tName = s('text', { 'class': 'd-title', x: 190, y: 24, 'text-anchor': 'middle', 'font-size': '13px' });
+			tName.textContent = c.name + ' · ISO 8373:2021 criteria check';
+			svg.appendChild(tName);
+
+			var CRITERIA = [
+				{ label: 'Programmed', pass: c.prog, note: 'Behavior from code' },
+				{ label: 'Actuated mech.', pass: c.act && c.mech, note: 'Physical actuator' },
+				{ label: 'Autonomy', pass: c.auto, note: 'Operates on its own' },
+				{ label: 'Locomotion / pos.', pass: c.motion, note: 'Moves or positions' }
+			];
+
+			CRITERIA.forEach(function (crit, i) {
+				var bx = 12 + i * 90;
+				var box = s('rect', {
+					'class': crit.pass ? 'd-box-gold' : 'd-box',
+					x: bx, y: 40, width: 80, height: 62, rx: 4
+				});
+				var tLbl = s('text', { 'class': 'd-muted', x: bx + 40, y: 58, 'text-anchor': 'middle', 'font-size': '11px' });
+				tLbl.textContent = crit.label;
+				var tBadge = s('text', {
+					'class': crit.pass ? 'd-title' : 'd-text',
+					x: bx + 40, y: 80, 'text-anchor': 'middle', 'font-size': '13px'
+				});
+				tBadge.textContent = crit.pass ? 'PASS ✓' : 'FAIL ✗';
+				var tSub = s('text', { 'class': 'd-muted', x: bx + 40, y: 94, 'text-anchor': 'middle', 'font-size': '11px' });
+				tSub.textContent = crit.pass ? 'Meets test' : 'Not met';
+				svg.appendChild(box);
+				svg.appendChild(tLbl);
+				svg.appendChild(tBadge);
+				svg.appendChild(tSub);
+			});
+
+			var isRobot = (c.verdict.indexOf('robot') !== -1 && c.verdict.indexOf('Not') === -1);
+			var vBox = s('rect', {
+				'class': isRobot ? 'd-box-gold' : 'd-box',
+				x: 12, y: 116, width: 350, height: 48, rx: 4
+			});
+			var tVerdict = s('text', { 'class': 'd-title', x: 187, y: 136, 'text-anchor': 'middle', 'font-size': '13px' });
+			tVerdict.textContent = 'Verdict: ' + c.verdict;
+			var tRule = s('text', { 'class': 'd-muted', x: 187, y: 153, 'text-anchor': 'middle', 'font-size': '11px' });
+			tRule.textContent = c.name === 'CNC machine tool' ? 'Clause 3.6 requires multipurpose manipulator; CNC is single-job' :
+				(c.name === 'Chatbot' ? 'Physical situatedness required; not software only' :
+				(c.name === 'Dishwasher' ? 'Fails clause 3.1 locomotion, manipulation or positioning' :
+				(c.name === 'Piloted drone' ? 'Lacks autonomy: robotic device under clause 3.1 notes' : 'Meets ISO 8373 clause 3.1 criteria')));
+			svg.appendChild(vBox);
+			svg.appendChild(tVerdict);
+			svg.appendChild(tRule);
+
+			readout.textContent = c.name + ': ' + c.notes;
+		}
+
+		root.replaceChildren(frame('ISO 8373 edge-case machine classification', [
+			h('p', { 'class': 'widget-note', text: 'Select candidate edge cases to test against ISO 8373 clause 3.1 criteria (programmed, actuated mechanism, degree of autonomy, locomotion/manipulation/positioning).' }),
+			btnContainer,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- HC-SR04 ultrasonic distance calculation (lesson 6.1) ---------- */
+
+	function initUltrasonicDistance(root) {
+		var sEcho = slider('Echo pulse duration (t_echo)', 'us-echo', 100, 24000, 50, 1750, ' µs');
+		var W = 380, H = 175;
+		var svg = plotFrame(W, H, 'HC-SR04 ultrasonic echo time and distance calculation');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btn10 = button('10 cm target (583 µs)', function () { sEcho.input.value = 583; draw(); });
+		var btn30 = button('30 cm target (1749 µs)', function () { sEcho.input.value = 1749; draw(); });
+		var btn100 = button('100 cm target (5831 µs)', function () { sEcho.input.value = 5831; draw(); });
+		var btnMin = button('2 cm min rating (117 µs)', function () { sEcho.input.value = 117; draw(); });
+		var btnMax = button('400 cm max rating (23324 µs)', function () { sEcho.input.value = 23324; draw(); });
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btn10, btn30, btn100, btnMin, btnMax]);
+
+		function draw() {
+			var tEcho = Number(sEcho.input.value);
+			sEcho.out.textContent = tEcho + ' µs';
+
+			// Formula from lesson 6.1:
+			// speed of sound in dry air at 20 °C = 343 m/s = 0.0343 cm/µs
+			// distance_cm = (echo_time_microseconds * 0.0343) / 2.0
+			var distCm = (tEcho * 0.0343) / 2.0;
+			var rule58Cm = tEcho / 58.0;
+
+			svg.replaceChildren();
+
+			// HC-SR04 sensor body on left
+			var body = s('rect', { 'class': 'd-box', x: 18, y: 46, width: 44, height: 64, rx: 4 });
+			var tTrig = s('circle', { 'class': 'd-box-gold', cx: 40, cy: 62, r: 12 });
+			var tEchoC = s('circle', { 'class': 'd-box', cx: 40, cy: 94, r: 12 });
+			var lblSensor = s('text', { 'class': 'd-text', x: 40, y: 124, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblSensor.textContent = 'HC-SR04';
+			var lblTxRx = s('text', { 'class': 'd-muted', x: 40, y: 38, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblTxRx.textContent = 'TX / RX';
+			svg.appendChild(body);
+			svg.appendChild(tTrig);
+			svg.appendChild(tEchoC);
+			svg.appendChild(lblSensor);
+			svg.appendChild(lblTxRx);
+
+			// Obstacle target position mapping (2 cm -> x=100, 400 cm -> x=340)
+			var clampedDist = Math.max(2, Math.min(400, distCm));
+			var targetX = 100 + ((clampedDist - 2) / 398) * 240;
+
+			// Acoustic wave lines
+			var waveFwd = s('line', {
+				'class': 'd-strong',
+				x1: 64, y1: 62, x2: targetX, y2: 62
+			});
+			svg.appendChild(waveFwd);
+
+			var waveRet = s('line', {
+				'class': 'd-line',
+				'stroke-dasharray': '4 4',
+				x1: targetX, y1: 94, x2: 64, y2: 94
+			});
+			svg.appendChild(waveRet);
+
+			// Target block
+			var targetBox = s('rect', {
+				'class': 'd-box-gold',
+				x: targetX, y: 40, width: 14, height: 76, rx: 2
+			});
+			var lblTarget = s('text', {
+				'class': 'd-title',
+				x: targetX + 7, y: 32, 'text-anchor': 'middle', 'font-size': '11px'
+			});
+			lblTarget.textContent = 'Target';
+			svg.appendChild(targetBox);
+			svg.appendChild(lblTarget);
+
+			// Dimension line
+			var dimLine = s('line', { 'class': 'd-line', x1: 64, y1: 146, x2: targetX, y2: 146 });
+			var dMark1 = s('line', { 'class': 'd-line', x1: 64, y1: 140, x2: 64, y2: 152 });
+			var dMark2 = s('line', { 'class': 'd-line', x1: targetX, y1: 140, x2: targetX, y2: 152 });
+			var tDist = s('text', {
+				'class': 'd-title',
+				x: (64 + targetX) / 2, y: 142, 'text-anchor': 'middle', 'font-size': '12px'
+			});
+			tDist.textContent = 'd = ' + distCm.toFixed(1) + ' cm';
+			svg.appendChild(dimLine);
+			svg.appendChild(dMark1);
+			svg.appendChild(dMark2);
+			svg.appendChild(tDist);
+
+			// Formula header
+			var tForm = s('text', { 'class': 'd-muted', x: 190, y: 18, 'text-anchor': 'middle', 'font-size': '11px' });
+			tForm.textContent = 'distance_cm = (echo_time_microseconds × 0.0343) / 2.0';
+			svg.appendChild(tForm);
+
+			// Warning text if out of range
+			if (distCm < 2.0 || distCm > 400.0) {
+				var tWarn = s('text', { 'class': 'd-title', x: 190, y: 168, 'text-anchor': 'middle', 'font-size': '11px' });
+				tWarn.textContent = 'Outside rated 2 cm to 400 cm range: readings should not be trusted';
+				svg.appendChild(tWarn);
+			}
+
+			readout.textContent = 'Echo time t = ' + tEcho + ' µs · Calculated distance = (' + tEcho + ' × 0.0343 cm/µs) / 2.0 = ' +
+				distCm.toFixed(1) + ' cm (' + (distCm / 100).toFixed(3) + ' m) · Datasheet formula (t / 58): ' +
+				rule58Cm.toFixed(1) + ' cm' +
+				(distCm < 2.0 || distCm > 400.0 ? ' · [Outside HC-SR04 2 cm to 400 cm operating range]' : '');
+		}
+
+		sEcho.input.addEventListener('input', draw);
+
+		root.replaceChildren(frame('HC-SR04 ultrasonic echo time and distance', [
+			h('p', { 'class': 'widget-note', text: 'In dry air at 20 °C sound travels at 343 m/s (0.0343 cm/µs). Because the acoustic pulse travels out and back, distance is half of speed times echo time.' }),
+			sEcho.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Gyroscope zero-rate bias drift (lesson 6.5) ---------- */
+
+	function initGyroDrift(root) {
+		var sBias = slider('Gyro zero-rate bias (b_gyro)', 'gd-bias', -2.0, 2.0, 0.1, 0.3, ' °/s');
+		var sTime = slider('Elapsed time (t)', 'gd-time', 0, 300, 5, 100, ' s');
+
+		var W = 380, H = 185;
+		var svg = plotFrame(W, H, 'Accumulated heading drift from integrated gyroscope zero-rate bias');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnEx = button('Lesson example (0.3 °/s, 100 s)', function () {
+			sBias.input.value = 0.3; sTime.input.value = 100; draw();
+		});
+		var btnZero = button('Zero bias (calibrated: 0 °/s)', function () {
+			sBias.input.value = 0.0; draw();
+		});
+		var btnHigh = button('High bias (1.0 °/s, 60 s)', function () {
+			sBias.input.value = 1.0; sTime.input.value = 60; draw();
+		});
+		var btnNeg = button('Negative bias (-0.3 °/s, 100 s)', function () {
+			sBias.input.value = -0.3; sTime.input.value = 100; draw();
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnEx, btnZero, btnHigh, btnNeg]);
+
+		function draw() {
+			var bias = Number(sBias.input.value);
+			var t = Number(sTime.input.value);
+			sBias.out.textContent = bias.toFixed(1) + ' °/s';
+			sTime.out.textContent = t + ' s';
+
+			// Formula from lesson 6.5:
+			// Error_ψ(t) = b_gyro × t
+			var errorDeg = bias * t;
+			var finalHeading = (errorDeg % 360 + 360) % 360;
+
+			svg.replaceChildren();
+
+			// Compass dial on left
+			var cx = 95, cy = 95, cr = 60;
+			var dial = s('circle', { 'class': 'd-box', cx: cx, cy: cy, r: cr });
+			var crossX = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: cx - cr, y1: cy, x2: cx + cr, y2: cy });
+			var crossY = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: cx, y1: cy - cr, x2: cx, y2: cy + cr });
+			svg.appendChild(dial);
+			svg.appendChild(crossX);
+			svg.appendChild(crossY);
+
+			var tN = s('text', { 'class': 'd-muted', x: cx, y: cy - cr + 14, 'text-anchor': 'middle', 'font-size': '11px' }); tN.textContent = '0° (N)';
+			var tE = s('text', { 'class': 'd-muted', x: cx + cr - 6, y: cy + 4, 'text-anchor': 'end', 'font-size': '11px' }); tE.textContent = '90°';
+			var tS = s('text', { 'class': 'd-muted', x: cx, y: cy + cr - 6, 'text-anchor': 'middle', 'font-size': '11px' }); tS.textContent = '180°';
+			var tW = s('text', { 'class': 'd-muted', x: cx - cr + 6, y: cy + 4, 'text-anchor': 'start', 'font-size': '11px' }); tW.textContent = '270°';
+			svg.appendChild(tN); svg.appendChild(tE); svg.appendChild(tS); svg.appendChild(tW);
+
+			// True heading line (straight up, 0°)
+			var trueLine = s('line', {
+				'class': 'd-line',
+				'stroke-dasharray': '3 3',
+				x1: cx, y1: cy, x2: cx, y2: cy - 54
+			});
+			svg.appendChild(trueLine);
+
+			// Drifted heading pointer (clockwise angle from North = errorDeg)
+			var rad = (errorDeg - 90) * Math.PI / 180;
+			var hx = cx + 52 * Math.cos(rad);
+			var hy = cy + 52 * Math.sin(rad);
+
+			var driftLine = s('line', {
+				'class': 'd-strong',
+				x1: cx, y1: cy, x2: hx, y2: hy
+			});
+			var driftDot = s('circle', { 'class': 'd-box-gold', cx: hx, cy: hy, r: 4 });
+			svg.appendChild(driftLine);
+			svg.appendChild(driftDot);
+
+			// Right summary card
+			var rBox = s('rect', { 'class': 'd-box', x: 180, y: 22, width: 188, height: 145, rx: 4 });
+			svg.appendChild(rBox);
+
+			var tTitle = s('text', { 'class': 'd-title', x: 274, y: 44, 'text-anchor': 'middle', 'font-size': '12px' });
+			tTitle.textContent = 'Heading Drift Math';
+			var tF1 = s('text', { 'class': 'd-text', x: 274, y: 66, 'text-anchor': 'middle', 'font-size': '11px' });
+			tF1.textContent = 'Error_ψ(t) = b_gyro × t';
+			var tB = s('text', { 'class': 'd-muted', x: 274, y: 88, 'text-anchor': 'middle', 'font-size': '11px' });
+			tB.textContent = 'Bias offset: ' + bias.toFixed(1) + ' °/s';
+			var tT = s('text', { 'class': 'd-muted', x: 274, y: 106, 'text-anchor': 'middle', 'font-size': '11px' });
+			tT.textContent = 'Elapsed time: ' + t + ' s';
+			var tErr = s('text', { 'class': 'd-title', x: 274, y: 130, 'text-anchor': 'middle', 'font-size': '13px' });
+			tErr.textContent = 'Error: ' + errorDeg.toFixed(1) + '°';
+			var tComp = s('text', { 'class': 'd-muted', x: 274, y: 150, 'text-anchor': 'middle', 'font-size': '11px' });
+			tComp.textContent = 'Computed yaw: ' + finalHeading.toFixed(1) + '°';
+
+			svg.appendChild(tTitle);
+			svg.appendChild(tF1);
+			svg.appendChild(tB);
+			svg.appendChild(tT);
+			svg.appendChild(tErr);
+			svg.appendChild(tComp);
+
+			readout.textContent = 'b_gyro = ' + bias.toFixed(1) + '°/s · t = ' + t + ' s · Accumulated heading error = ' +
+				bias.toFixed(1) + '°/s × ' + t + ' s = ' + errorDeg.toFixed(1) + '°' +
+				(Math.abs(errorDeg) >= 360 ? ' (' + (errorDeg / 360).toFixed(1) + ' full turns)' : '') +
+				'. In the lesson\'s example, after 100 seconds a bias of 0.3°/s produces a 30-degree heading error. Yaw has no gravity reference, so error accumulates indefinitely without external fusion.';
+		}
+
+		[sBias, sTime].forEach(function (ctrl) { ctrl.input.addEventListener('input', draw); });
+
+		root.replaceChildren(frame('gyroscope zero-rate bias drift', [
+			h('p', { 'class': 'widget-note', text: 'Small zero-rate bias offset in a MEMS gyroscope is integrated along with rotation rate. Integrating a constant offset gives an error that grows linearly with time: Error_ψ(t) = b_gyro × t.' }),
+			sBias.row,
+			sTime.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Jacobian singularity and joint speeds (lesson 6.10) ---------- */
+
+	function initJacobianSingularity(root) {
+		var sTheta2 = slider('Elbow joint angle (θ2)', 'js-theta2', 0, 180, 1, 45, '°');
+
+		var W = 380, H = 195;
+		var svg = plotFrame(W, H, '2R planar arm Jacobian determinant and joint speeds near singularity');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btn45 = button('45° (Lesson 1.6 pose)', function () { sTheta2.input.value = 45; draw(); });
+		var btn10 = button('10° (82°/s, -192°/s)', function () { sTheta2.input.value = 10; draw(); });
+		var btn5 = button('5° (164°/s, -383°/s)', function () { sTheta2.input.value = 5; draw(); });
+		var btn1 = button('1° (821°/s, -1915°/s)', function () { sTheta2.input.value = 1; draw(); });
+		var btn0 = button('0° (stretched singularity)', function () { sTheta2.input.value = 0; draw(); });
+		var btn180 = button('180° (folded singularity)', function () { sTheta2.input.value = 180; draw(); });
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btn45, btn10, btn5, btn1, btn0, btn180]);
+
+		var L1 = 0.4, L2 = 0.3; // Links from lesson 1.6 & 6.10
+
+		function draw() {
+			var th2Deg = Number(sTheta2.input.value);
+			sTheta2.out.textContent = th2Deg + '°';
+
+			var th2Rad = th2Deg * Math.PI / 180;
+			var s2 = Math.sin(th2Rad);
+			var c2 = Math.cos(th2Rad);
+
+			// Formula from lesson 6.10:
+			// det J = L1 · L2 · sin θ2 = 0.12 · sin θ2
+			var detJ = L1 * L2 * s2;
+
+			// FK at θ1 = 0
+			var tipX = L1 + L2 * c2;
+			var tipY = L2 * s2;
+			var reachR = Math.sqrt(tipX * tipX + tipY * tipY);
+
+			// Radial velocity components for v_r = 0.1 m/s along tool vector
+			var vx = reachR > 0 ? 0.1 * (tipX / reachR) : 0.1;
+			var vy = reachR > 0 ? 0.1 * (tipY / reachR) : 0;
+
+			var th1DotDeg = null, th2DotDeg = null;
+			if (Math.abs(detJ) > 0.0001) {
+				var th1Dot = (L2 * c2 * vx + L2 * s2 * vy) / detJ;
+				var th2Dot = (-(L1 + L2 * c2) * vx - L2 * s2 * vy) / detJ;
+				th1DotDeg = th1Dot * 180 / Math.PI;
+				th2DotDeg = th2Dot * 180 / Math.PI;
+			}
+
+			svg.replaceChildren();
+
+			// Arm diagram: shoulder at (60, 135)
+			var shX = 60, shY = 135;
+			var scale = 250; // px per meter
+			var elX = shX + L1 * scale; // Link 1 along x-axis (θ1 = 0)
+			var elY = shY;
+			var wrX = elX + L2 * scale * c2;
+			var wrY = shY - L2 * scale * s2;
+
+			// Draw link 1
+			var link1 = s('line', { 'class': 'd-strong', x1: shX, y1: shY, x2: elX, y2: elY });
+			// Draw link 2
+			var link2 = s('line', { 'class': 'd-strong', x1: elX, y1: elY, x2: wrX, y2: wrY });
+			svg.appendChild(link1);
+			svg.appendChild(link2);
+
+			// Joint circles
+			var jShoulder = s('circle', { 'class': 'd-box', cx: shX, cy: shY, r: 6 });
+			var jElbow = s('circle', { 'class': 'd-box', cx: elX, cy: elY, r: 5 });
+			var jTool = s('circle', { 'class': 'd-box-gold', cx: wrX, cy: wrY, r: 6 });
+			svg.appendChild(jShoulder);
+			svg.appendChild(jElbow);
+			svg.appendChild(jTool);
+
+			// Labels on links
+			var lblSh = s('text', { 'class': 'd-muted', x: shX, y: shY + 18, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblSh.textContent = 'Base (0,0)';
+			var lblL1 = s('text', { 'class': 'd-muted', x: (shX + elX) / 2, y: shY - 8, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblL1.textContent = 'L1 = 0.4 m';
+			var lblL2 = s('text', { 'class': 'd-muted', x: wrX + 6, y: wrY - 8, 'font-size': '11px' });
+			lblL2.textContent = 'L2 = 0.3 m';
+			svg.appendChild(lblSh);
+			svg.appendChild(lblL1);
+			svg.appendChild(lblL2);
+
+			// Top math header
+			var tDet = s('text', { 'class': 'd-title', x: 190, y: 22, 'text-anchor': 'middle', 'font-size': '12px' });
+			tDet.textContent = 'det J = L1·L2·sin θ2 = 0.12 · sin(' + th2Deg + '°) = ' + detJ.toFixed(4) + ' m²';
+			svg.appendChild(tDet);
+
+			// Status banner
+			var statBox = s('rect', {
+				'class': (th2Deg === 0 || th2Deg === 180) ? 'd-box-gold' : 'd-box',
+				x: 18, y: 152, width: 344, height: 36, rx: 4
+			});
+			svg.appendChild(statBox);
+
+			var tStat = s('text', { 'class': 'd-title', x: 190, y: 168, 'text-anchor': 'middle', 'font-size': '11px' });
+			var tSub = s('text', { 'class': 'd-muted', x: 190, y: 181, 'text-anchor': 'middle', 'font-size': '11px' });
+
+			if (th2Deg === 0) {
+				tStat.textContent = 'SINGULARITY (fully stretched, r = 0.7 m): det J = 0';
+				tSub.textContent = 'Arm loses radial motion; cannot move outward or inward';
+			} else if (th2Deg === 180) {
+				tStat.textContent = 'SINGULARITY (fully folded, r = 0.1 m): det J = 0';
+				tSub.textContent = 'Arm loses radial motion on inner workspace boundary';
+			} else {
+				tStat.textContent = 'Radial v = 0.1 m/s: θ̇1 ≈ ' + Math.round(th1DotDeg) + '°/s, θ̇2 ≈ ' + Math.round(th2DotDeg) + '°/s';
+				tSub.textContent = 'Joint speeds grow like 1/θ2 as arm approaches singularity';
+			}
+			svg.appendChild(tStat);
+			svg.appendChild(tSub);
+
+			readout.textContent = 'θ2 = ' + th2Deg + '° · Reach r = ' + reachR.toFixed(3) + ' m · det J = ' + detJ.toFixed(4) + ' m².' +
+				(th2Deg === 0 ? ' Fully stretched singularity: det J = 0, tool loses the radial direction of motion.' :
+				(th2Deg === 180 ? ' Fully folded singularity: det J = 0, inner circle boundary of reach ring.' :
+				' For radial speed 0.1 m/s: θ̇1 = ' + Math.round(th1DotDeg) + '°/s, θ̇2 = ' + Math.round(th2DotDeg) + '°/s (grows like 1/θ2 near singularity).'));
+		}
+
+		sTheta2.input.addEventListener('input', draw);
+
+		root.replaceChildren(frame('Jacobian singularity and joint speed limits', [
+			h('p', { 'class': 'widget-note', text: 'det J = L1·L2·sin θ2 tells whether joints can move the tool in every direction. At θ2 = 0° (fully stretched) or 180° (fully folded), det J = 0: the arm drops from two directions of motion to one.' }),
+			sTheta2.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Lens f-number and aperture throughput (lesson 7.1) ---------- */
+
+	function initFNumberAperture(root) {
+		var STOPS = [
+			{ name: 'f/1.4', val: 1.4, relThroughput: 1.0, relArea: '100% (1/1)', dof: 'Shallow (wide cone)' },
+			{ name: 'f/2', val: 2.0, relThroughput: 0.5, relArea: '50% (1/2)', dof: 'Shallow' },
+			{ name: 'f/2.8', val: 2.8, relThroughput: 0.25, relArea: '25% (1/4)', dof: 'Moderate' },
+			{ name: 'f/4', val: 4.0, relThroughput: 0.125, relArea: '12.5% (1/8)', dof: 'Moderate' },
+			{ name: 'f/5.6', val: 5.6, relThroughput: 0.0625, relArea: '6.25% (1/16)', dof: 'Moderate' },
+			{ name: 'f/8', val: 8.0, relThroughput: 0.03125, relArea: '3.13% (1/32)', dof: 'Deep (narrow cone)' },
+			{ name: 'f/11', val: 11.0, relThroughput: 0.015625, relArea: '1.56% (1/64)', dof: 'Deep' },
+			{ name: 'f/16', val: 16.0, relThroughput: 0.0078125, relArea: '0.78% (1/128)', dof: 'Very deep' }
+		];
+
+		var curIdx = 5; // Default f/8
+		var fLen = 50; // 50 mm focal length lens
+
+		var W = 380, H = 185;
+		var svg = plotFrame(W, H, 'Lens aperture diameter, area, and optical light throughput across f-number stops');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var stopButtons = STOPS.map(function (stop, idx) {
+			return button(stop.name, function () {
+				curIdx = idx;
+				draw();
+			});
+		});
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, stopButtons);
+
+		function draw() {
+			stopButtons.forEach(function (btn, idx) {
+				btn.setAttribute('aria-pressed', String(idx === curIdx));
+			});
+
+			var stop = STOPS[curIdx];
+			var diam = fLen / stop.val; // D = f / N
+
+			svg.replaceChildren();
+
+			// Lens barrel on left (center at 95, 95)
+			var cx = 95, cy = 95, outerR = 60;
+			var barrel = s('circle', { 'class': 'd-box', cx: cx, cy: cy, r: outerR });
+			svg.appendChild(barrel);
+
+			// Aperture iris opening
+			var apR = outerR * (1.4 / stop.val);
+			var irisOpening = s('circle', { 'class': 'd-box-gold', cx: cx, cy: cy, r: apR });
+			svg.appendChild(irisOpening);
+
+			// Iris blade lines
+			for (var a = 0; a < 6; a++) {
+				var ang = a * (Math.PI / 3);
+				var bLine = s('line', {
+					'class': 'd-line',
+					x1: cx + apR * Math.cos(ang),
+					y1: cy + apR * Math.sin(ang),
+					x2: cx + outerR * Math.cos(ang + 0.4),
+					y2: cy + outerR * Math.sin(ang + 0.4)
+				});
+				svg.appendChild(bLine);
+			}
+
+			var lblIris = s('text', { 'class': 'd-title', x: cx, y: cy - outerR - 6, 'text-anchor': 'middle', 'font-size': '13px' });
+			lblIris.textContent = stop.name + ' Aperture';
+			var lblD = s('text', { 'class': 'd-muted', x: cx, y: cy + outerR + 16, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblD.textContent = 'D = f / N = ' + diam.toFixed(1) + ' mm';
+			svg.appendChild(lblIris);
+			svg.appendChild(lblD);
+
+			// Right comparison card
+			var rBox = s('rect', { 'class': 'd-box', x: 180, y: 22, width: 188, height: 145, rx: 4 });
+			svg.appendChild(rBox);
+
+			var tH = s('text', { 'class': 'd-title', x: 274, y: 44, 'text-anchor': 'middle', 'font-size': '12px' });
+			tH.textContent = 'Optical Throughput';
+			var tForm = s('text', { 'class': 'd-muted', x: 274, y: 64, 'text-anchor': 'middle', 'font-size': '11px' });
+			tForm.textContent = 'f-number N = f / D (f = 50 mm)';
+			var tDiam = s('text', { 'class': 'd-text', x: 274, y: 86, 'text-anchor': 'middle', 'font-size': '11px' });
+			tDiam.textContent = 'Aperture diameter: ' + diam.toFixed(1) + ' mm';
+			var tArea = s('text', { 'class': 'd-title', x: 274, y: 108, 'text-anchor': 'middle', 'font-size': '12px' });
+			tArea.textContent = 'Light throughput: ' + stop.relArea;
+			var tDof = s('text', { 'class': 'd-muted', x: 274, y: 128, 'text-anchor': 'middle', 'font-size': '11px' });
+			tDof.textContent = 'Depth of field: ' + stop.dof;
+			var tStop = s('text', { 'class': 'd-muted', x: 274, y: 148, 'text-anchor': 'middle', 'font-size': '11px' });
+			tStop.textContent = 'Each stop: ×√2 f-number, ÷2 light';
+
+			svg.appendChild(tH);
+			svg.appendChild(tForm);
+			svg.appendChild(tDiam);
+			svg.appendChild(tArea);
+			svg.appendChild(tDof);
+			svg.appendChild(tStop);
+
+			readout.textContent = stop.name + ': Effective aperture diameter D = 50 mm / ' + stop.val + ' = ' + diam.toFixed(1) +
+				' mm. Relative aperture area and light throughput = ' + stop.relArea + '. Depth of field is ' + stop.dof.toLowerCase() +
+				'. Increasing the f-number by a factor of √2 halves the aperture area and reduces lens light throughput by a factor of two.';
+		}
+
+		root.replaceChildren(frame('f-number, aperture diameter, and light throughput', [
+			h('p', { 'class': 'widget-note', text: 'The f-number of a lens is the ratio of its focal length to the effective aperture diameter. Increasing the f-number by √2 halves aperture area and cuts light throughput by a factor of 2.' }),
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- Connected components presence and area check (lesson 7.5) ---------- */
+
+	function initPresenceAreaCheck(root) {
+		var sArea = slider('Observed CC_STAT_AREA', 'pa-area', 0, 7000, 100, 4500, ' px');
+
+		var W = 380, H = 185;
+		var svg = plotFrame(W, H, 'Connected component area CC_STAT_AREA classification against tolerance limits');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnNom = button('Nominal gasket (4,500 px)', function () { sArea.input.value = 4500; draw(); });
+		var btnTorn = button('Torn gasket (2,500 px)', function () { sArea.input.value = 2500; draw(); });
+		var btnMiss = button('Missing part (0 px)', function () { sArea.input.value = 0; draw(); });
+		var btnOver = button('Oversize / flash (5,800 px)', function () { sArea.input.value = 5800; draw(); });
+		var btnLow = button('Min limit (4,000 px)', function () { sArea.input.value = 4000; draw(); });
+		var btnHigh = button('Max limit (5,000 px)', function () { sArea.input.value = 5000; draw(); });
+
+		var buttons = h('div', { 'class': 'widget-buttons' }, [btnNom, btnTorn, btnMiss, btnOver, btnLow, btnHigh]);
+
+		// Lesson 7.5 limits:
+		// min_expected_area = 4000 px, max_expected_area = 5000 px (nominal gasket: 4,500 px).
+		// Observed component under 3,000 px indicates torn or missing gasket.
+		var minArea = 4000, maxArea = 5000;
+
+		function draw() {
+			var area = Number(sArea.input.value);
+			sArea.out.textContent = area + ' px';
+
+			var isPass = (area >= minArea && area <= maxArea);
+			var isTornOrMissing = (area < 3000);
+
+			var verdict = isPass ? 'PASS' : 'REJECT';
+			var reason = isPass ? 'Gasket present and within tolerance' :
+				(area === 0 ? 'Missing part (0 px detected)' :
+				(isTornOrMissing ? 'Torn or missing gasket (< 3,000 px)' :
+				(area < minArea ? 'Under minimum area threshold' : 'Oversize component / excess flash')));
+
+			svg.replaceChildren();
+
+			// Left: Part visual representation
+			var partBox = s('rect', { 'class': 'd-box', x: 15, y: 25, width: 145, height: 135, rx: 4 });
+			svg.appendChild(partBox);
+
+			var tPartH = s('text', { 'class': 'd-muted', x: 87, y: 44, 'text-anchor': 'middle', 'font-size': '11px' });
+			tPartH.textContent = 'Inspected Component';
+			svg.appendChild(tPartH);
+
+			var cx = 87, cy = 92;
+			if (area === 0) {
+				var cross1 = s('line', { 'class': 'd-line', x1: cx - 24, y1: cy - 24, x2: cx + 24, y2: cy + 24 });
+				var cross2 = s('line', { 'class': 'd-line', x1: cx - 24, y1: cy + 24, x2: cx + 24, y2: cy - 24 });
+				var tNo = s('text', { 'class': 'd-title', x: cx, y: cy + 38, 'text-anchor': 'middle', 'font-size': '11px' });
+				tNo.textContent = 'No component found';
+				svg.appendChild(cross1); svg.appendChild(cross2); svg.appendChild(tNo);
+			} else if (isPass) {
+				var ringOuter = s('circle', { 'class': 'd-box-gold', cx: cx, cy: cy, r: 32 });
+				var ringInner = s('circle', { 'class': 'd-box', cx: cx, cy: cy, r: 18 });
+				var tOk = s('text', { 'class': 'd-title', x: cx, y: cy + 46, 'text-anchor': 'middle', 'font-size': '11px' });
+				tOk.textContent = 'Intact gasket (4,500 px)';
+				svg.appendChild(ringOuter); svg.appendChild(ringInner); svg.appendChild(tOk);
+			} else if (area < minArea) {
+				var brokenArc = s('path', {
+					'class': 'd-strong',
+					d: 'M ' + (cx - 28) + ' ' + (cy + 12) + ' A 32 32 0 1 1 ' + (cx + 28) + ' ' + (cy + 12)
+				});
+				var tTorn = s('text', { 'class': 'd-title', x: cx, y: cy + 46, 'text-anchor': 'middle', 'font-size': '11px' });
+				tTorn.textContent = isTornOrMissing ? 'Torn gasket (< 3,000 px)' : 'Under min area';
+				svg.appendChild(brokenArc); svg.appendChild(tTorn);
+			} else {
+				var ringOver = s('circle', { 'class': 'd-box-gold', cx: cx, cy: cy, r: 38 });
+				var ringHole = s('circle', { 'class': 'd-box', cx: cx, cy: cy, r: 16 });
+				var tOver = s('text', { 'class': 'd-title', x: cx, y: cy + 50, 'text-anchor': 'middle', 'font-size': '11px' });
+				tOver.textContent = 'Oversize / excess flash';
+				svg.appendChild(ringOver); svg.appendChild(ringHole); svg.appendChild(tOver);
+			}
+
+			// Right: Area bar and threshold limits
+			var rBox = s('rect', { 'class': 'd-box', x: 172, y: 25, width: 194, height: 135, rx: 4 });
+			svg.appendChild(rBox);
+
+			var tRH = s('text', { 'class': 'd-title', x: 269, y: 44, 'text-anchor': 'middle', 'font-size': '12px' });
+			tRH.textContent = 'CC_STAT_AREA Evaluation';
+			svg.appendChild(tRH);
+
+			// Bar scale: 0 to 7000 px maps to width 160 px (x0 = 188)
+			var barX = 188, barW = 162, maxVal = 7000;
+			var barY = 66;
+
+			var barBg = s('rect', { 'class': 'd-box', x: barX, y: barY, width: barW, height: 12, rx: 2 });
+			// Accept band [4000, 5000]
+			var passX = barX + (minArea / maxVal) * barW;
+			var passW = ((maxArea - minArea) / maxVal) * barW;
+			var barPass = s('rect', { 'class': 'd-box-gold', x: passX, y: barY, width: passW, height: 12, rx: 2 });
+
+			// Indicator marker for observed area
+			var curX = barX + (Math.min(maxVal, area) / maxVal) * barW;
+			var curMarker = s('line', { 'class': 'd-strong', x1: curX, y1: barY - 4, x2: curX, y2: barY + 16 });
+			var curDot = s('circle', { 'class': isPass ? 'd-box-gold' : 'd-box', cx: curX, cy: barY - 6, r: 3 });
+
+			svg.appendChild(barBg);
+			svg.appendChild(barPass);
+			svg.appendChild(curMarker);
+			svg.appendChild(curDot);
+
+			var lblL = s('text', { 'class': 'd-muted', x: passX, y: barY + 22, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblL.textContent = '4,000';
+			var lblH = s('text', { 'class': 'd-muted', x: passX + passW, y: barY + 22, 'text-anchor': 'middle', 'font-size': '11px' });
+			lblH.textContent = '5,000';
+			svg.appendChild(lblL);
+			svg.appendChild(lblH);
+
+			// Verdict badge box
+			var vBadge = s('rect', {
+				'class': isPass ? 'd-box-gold' : 'd-box',
+				x: 184, y: 104, width: 170, height: 44, rx: 4
+			});
+			var tVerdict = s('text', { 'class': 'd-title', x: 269, y: 122, 'text-anchor': 'middle', 'font-size': '13px' });
+			tVerdict.textContent = verdict + ': ' + (isPass ? 'ACCEPT' : 'REJECT');
+			var tSub = s('text', { 'class': 'd-muted', x: 269, y: 138, 'text-anchor': 'middle', 'font-size': '11px' });
+			tSub.textContent = isPass ? 'Route part downstream' : 'Trigger robot reject routine';
+
+			svg.appendChild(vBadge);
+			svg.appendChild(tVerdict);
+			svg.appendChild(tSub);
+
+			readout.textContent = 'Observed CC_STAT_AREA = ' + area + ' px (expected: 4,500 px, tolerance: 4,000–5,000 px) · Verdict: ' +
+				verdict + ' (' + reason + '). ' +
+				(isPass ? 'Component passes presence check; robot continues regular cycle.' :
+				'Observed area violates threshold limits, triggering an immediate robot reject routine.');
+		}
+
+		sArea.input.addEventListener('input', draw);
+
+		root.replaceChildren(frame('connected components presence and area check', [
+			h('p', { 'class': 'widget-note', text: 'OpenCV connectedComponentsWithStats outputs CC_STAT_AREA (component pixel area). If an expected 4,500 px gasket has an area under 3,000 px, it indicates a torn or missing gasket, triggering a reject routine.' }),
+			sArea.row,
+			buttons,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
+	/* ---------- EtherNet/IP implicit vs explicit messaging (lesson 8.2) ---------- */
+
+	function initEthernetIpMessaging(root) {
+		var mode = 'implicit'; // 'implicit' | 'explicit'
+		var implicitSub = 'rpi'; // 'rpi' | 'cos'
+		var explicitTask = 'fault'; // 'fault' | 'param' | 'firmware'
+
+		var W = 380, H = 205;
+		var svg = plotFrame(W, H, 'EtherNet/IP Implicit cyclic UDP versus Explicit acyclic TCP client-server messaging');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		var btnImplicit = button('Implicit (Cyclic UDP I/O)', function () { mode = 'implicit'; draw(); });
+		var btnExplicit = button('Explicit (Acyclic TCP Client-Server)', function () { mode = 'explicit'; draw(); });
+
+		var btnSub1 = button('Requested Packet Interval (RPI)', function () { implicitSub = 'rpi'; draw(); });
+		var btnSub2 = button('Change-of-State (COS)', function () { implicitSub = 'cos'; draw(); });
+		var btnExpFault = button('Read Fault Log', function () { explicitTask = 'fault'; draw(); });
+		var btnExpParam = button('Reconfigure Drive Param', function () { explicitTask = 'param'; draw(); });
+		var btnExpFw = button('Query Firmware Version', function () { explicitTask = 'firmware'; draw(); });
+
+		var subControls = h('div', { 'class': 'widget-buttons' });
+
+		function draw() {
+			btnImplicit.setAttribute('aria-pressed', String(mode === 'implicit'));
+			btnExplicit.setAttribute('aria-pressed', String(mode === 'explicit'));
+
+			subControls.replaceChildren();
+			if (mode === 'implicit') {
+				btnSub1.setAttribute('aria-pressed', String(implicitSub === 'rpi'));
+				btnSub2.setAttribute('aria-pressed', String(implicitSub === 'cos'));
+				subControls.appendChild(btnSub1);
+				subControls.appendChild(btnSub2);
+			} else {
+				btnExpFault.setAttribute('aria-pressed', String(explicitTask === 'fault'));
+				btnExpParam.setAttribute('aria-pressed', String(explicitTask === 'param'));
+				btnExpFw.setAttribute('aria-pressed', String(explicitTask === 'firmware'));
+				subControls.appendChild(btnExpFault);
+				subControls.appendChild(btnExpParam);
+				subControls.appendChild(btnExpFw);
+			}
+
+			svg.replaceChildren();
+
+			// Header title
+			var tH = s('text', { 'class': 'd-title', x: 190, y: 22, 'text-anchor': 'middle', 'font-size': '12px' });
+			tH.textContent = mode === 'implicit' ? 'Implicit Messaging (UDP / Lightweight I/O)' : 'Explicit Messaging (TCP / Message Router)';
+			svg.appendChild(tH);
+
+			if (mode === 'implicit') {
+				// Packet stack diagram
+				// Eth, IP and UDP headers, then the I/O payload (no field sizes: the lesson gives none)
+				var yP = 38, hP = 36;
+				var bEth = s('rect', { 'class': 'd-box', x: 18, y: yP, width: 48, height: hP, rx: 2 });
+				var tEth = s('text', { 'class': 'd-muted', x: 42, y: yP + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tEth.textContent = 'Eth';
+
+				var bIp = s('rect', { 'class': 'd-box', x: 68, y: yP, width: 48, height: hP, rx: 2 });
+				var tIp = s('text', { 'class': 'd-muted', x: 92, y: yP + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tIp.textContent = 'IP';
+
+				var bUdp = s('rect', { 'class': 'd-box-gold', x: 118, y: yP, width: 50, height: hP, rx: 2 });
+				var tUdp = s('text', { 'class': 'd-title', x: 143, y: yP + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tUdp.textContent = 'UDP';
+
+				var bData = s('rect', { 'class': 'd-box-gold', x: 170, y: yP, width: 146, height: hP, rx: 2 });
+				var tData = s('text', { 'class': 'd-title', x: 243, y: yP + 18, 'text-anchor': 'middle', 'font-size': '11px' }); tData.textContent = 'Pure I/O Payload';
+				var tDataSub = s('text', { 'class': 'd-muted', x: 243, y: yP + 30, 'text-anchor': 'middle', 'font-size': '11px' }); tDataSub.textContent = '(no protocol headers)';
+
+				var bFcs = s('rect', { 'class': 'd-box', x: 318, y: yP, width: 44, height: hP, rx: 2 });
+				var tFcs = s('text', { 'class': 'd-muted', x: 340, y: yP + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tFcs.textContent = '';
+
+				svg.appendChild(bEth); svg.appendChild(tEth);
+				svg.appendChild(bIp); svg.appendChild(tIp);
+				svg.appendChild(bUdp); svg.appendChild(tUdp);
+				svg.appendChild(bData); svg.appendChild(tData); svg.appendChild(tDataSub);
+				svg.appendChild(bFcs); svg.appendChild(tFcs);
+
+				// Description Card
+				var card = s('rect', { 'class': 'd-box', x: 18, y: 88, width: 344, height: 104, rx: 4 });
+				svg.appendChild(card);
+
+				var tC1 = s('text', { 'class': 'd-title', x: 28, y: 108, 'font-size': '12px' });
+				tC1.textContent = 'Transport: UDP (User Datagram Protocol)';
+				var tC2 = s('text', { 'class': 'd-text', x: 28, y: 126, 'font-size': '11px' });
+				tC2.textContent = 'Connection established at startup: scanner and adapter';
+				var tC3 = s('text', { 'class': 'd-muted', x: 28, y: 144, 'font-size': '11px' });
+				tC3.textContent = 'Offsets pre-understood: no protocol decoding headers required';
+				var tC4 = s('text', { 'class': 'd-title', x: 28, y: 164, 'font-size': '11px' });
+				tC4.textContent = implicitSub === 'cos' ?
+					'Mode: Change-of-State (COS) - transmits immediately upon transition' :
+					'Mode: Requested Packet Interval (RPI) - regular cyclic production';
+				var tC5 = s('text', { 'class': 'd-muted', x: 28, y: 182, 'font-size': '11px' });
+				tC5.textContent = 'Purpose: Deterministic real-time I/O control for robotics & PLCs';
+
+				svg.appendChild(tC1); svg.appendChild(tC2); svg.appendChild(tC3); svg.appendChild(tC4); svg.appendChild(tC5);
+
+				readout.textContent = 'Implicit Messaging in EtherNet/IP: Time-critical connected communication that transports I/O data using UDP without embedded protocol headers. Both scanner (PLC) and adapter (robot) understand byte offsets beforehand. Data produced at the Requested Packet Interval (RPI) or on Change of State (COS) for fast cyclic control.';
+			} else {
+				// Explicit Packet stack diagram
+				// Eth (34), IP (34), TCP (36), Encap (44), CIP Router Header (120), Data (42), FCS (34)
+				var yP2 = 38, hP2 = 36;
+				var bEth2 = s('rect', { 'class': 'd-box', x: 16, y: yP2, width: 34, height: hP2, rx: 2 });
+				var tEth2 = s('text', { 'class': 'd-muted', x: 33, y: yP2 + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tEth2.textContent = 'Eth';
+
+				var bIp2 = s('rect', { 'class': 'd-box', x: 52, y: yP2, width: 34, height: hP2, rx: 2 });
+				var tIp2 = s('text', { 'class': 'd-muted', x: 69, y: yP2 + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tIp2.textContent = 'IP';
+
+				var bTcp = s('rect', { 'class': 'd-box-gold', x: 88, y: yP2, width: 36, height: hP2, rx: 2 });
+				var tTcp = s('text', { 'class': 'd-title', x: 106, y: yP2 + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tTcp.textContent = 'TCP';
+
+				var bEnc = s('rect', { 'class': 'd-box', x: 126, y: yP2, width: 44, height: hP2, rx: 2 });
+				var tEnc = s('text', { 'class': 'd-muted', x: 148, y: yP2 + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tEnc.textContent = '';
+
+				var bCip = s('rect', { 'class': 'd-box-gold', x: 172, y: yP2, width: 120, height: hP2, rx: 2 });
+				var tCip = s('text', { 'class': 'd-title', x: 232, y: yP2 + 18, 'text-anchor': 'middle', 'font-size': '11px' }); tCip.textContent = 'Message Router';
+				var tCipSub = s('text', { 'class': 'd-muted', x: 232, y: yP2 + 30, 'text-anchor': 'middle', 'font-size': '11px' }); tCipSub.textContent = 'Service|Class|Inst|Attr';
+
+				var bData2 = s('rect', { 'class': 'd-box', x: 294, y: yP2, width: 36, height: hP2, rx: 2 });
+				var tData2 = s('text', { 'class': 'd-muted', x: 312, y: yP2 + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tData2.textContent = 'Data';
+
+				var bFcs2 = s('rect', { 'class': 'd-box', x: 332, y: yP2, width: 32, height: hP2, rx: 2 });
+				var tFcs2 = s('text', { 'class': 'd-muted', x: 348, y: yP2 + 22, 'text-anchor': 'middle', 'font-size': '11px' }); tFcs2.textContent = '';
+
+				svg.appendChild(bEth2); svg.appendChild(tEth2);
+				svg.appendChild(bIp2); svg.appendChild(tIp2);
+				svg.appendChild(bTcp); svg.appendChild(tTcp);
+				svg.appendChild(bEnc); svg.appendChild(tEnc);
+				svg.appendChild(bCip); svg.appendChild(tCip); svg.appendChild(tCipSub);
+				svg.appendChild(bData2); svg.appendChild(tData2);
+				svg.appendChild(bFcs2); svg.appendChild(tFcs2);
+
+				// Description Card
+				var card2 = s('rect', { 'class': 'd-box', x: 18, y: 88, width: 344, height: 104, rx: 4 });
+				svg.appendChild(card2);
+
+				var tE1 = s('text', { 'class': 'd-title', x: 28, y: 108, 'font-size': '12px' });
+				tE1.textContent = 'Transport: TCP (Transmission Control Protocol)';
+				var tE2 = s('text', { 'class': 'd-text', x: 28, y: 126, 'font-size': '11px' });
+				tE2.textContent = 'Addressed to: Message Router object (request-reply client-server)';
+				var tE3 = s('text', { 'class': 'd-muted', x: 28, y: 144, 'font-size': '11px' });
+				tE3.textContent = 'Headers: explicit Service, Class ID, Instance ID, Attribute ID';
+				var tE4 = s('text', { 'class': 'd-title', x: 28, y: 164, 'font-size': '11px' });
+				tE4.textContent = explicitTask === 'fault' ? 'Selected task: Reading fault logs (acyclic diagnostic query)' :
+					(explicitTask === 'param' ? 'Selected task: Reconfiguring drive parameters (acyclic setting)' :
+					'Selected task: Querying firmware version (acyclic identification)');
+				var tE5 = s('text', { 'class': 'd-muted', x: 28, y: 182, 'font-size': '11px' });
+				tE5.textContent = 'Features: Reliable delivery through point-to-point connections with error retries';
+
+				svg.appendChild(tE1); svg.appendChild(tE2); svg.appendChild(tE3); svg.appendChild(tE4); svg.appendChild(tE5);
+
+				readout.textContent = 'Explicit Messaging in EtherNet/IP: Request-reply client-server transactions over TCP addressed to the Message Router object. Includes explicit descriptions of requested Service, Object Class, Instance number, and Attribute identifier with TCP error checking and retries for acyclic parameter/diagnostic tasks.';
+			}
+		}
+
+		var mainButtons = h('div', { 'class': 'widget-buttons' }, [btnImplicit, btnExplicit]);
+
+		root.replaceChildren(frame('EtherNet/IP implicit vs explicit messaging', [
+			h('p', { 'class': 'widget-note', text: 'EtherNet/IP separates communications into Implicit messaging (lightweight cyclic UDP for I/O data without embedded headers) and Explicit messaging (acyclic TCP client-server transactions addressed to the Message Router).' }),
+			mainButtons,
+			subControls,
+			svg,
+			readout
+		]));
+
+		draw();
+	}
+
 	var INIT = {
 		pwm: initPwm,
 		encoder: initEncoder,
@@ -3510,7 +4452,14 @@
 		'square-fsm': initSquareFsm,
 		'stereo-disparity': initStereoDisparity,
 		'pinhole-projection': initPinholeProjection,
-		'dlr-ring-recovery': initDlrRingRecovery
+		'dlr-ring-recovery': initDlrRingRecovery,
+		'edge-case-classifier': initEdgeCaseClassifier,
+		'ultrasonic-distance': initUltrasonicDistance,
+		'gyro-drift': initGyroDrift,
+		'jacobian-singularity': initJacobianSingularity,
+		'f-number-aperture': initFNumberAperture,
+		'presence-area-check': initPresenceAreaCheck,
+		'ethernet-ip-messaging': initEthernetIpMessaging
 	};
 
 	function boot() {
