@@ -361,10 +361,10 @@ def pose(A):
     return (round(A[0][2], 3), round(A[1][2], 3), round(math.degrees(math.atan2(A[1][0], A[0][0])), 3))
 
 T_ref   = T(200, 150, 0)    # where vision saw the part at teach time
-P_teach = T(210, 150, 0)    # pick point taught at teach time
+P_taught = T(210, 150, 0)   # pick point taught at teach time
 T_found = T(215, 140, 30)   # where vision sees the part now
 
-local = mul(inv(T_ref), P_teach)   # pick point in the part's own frame
+local = mul(inv(T_ref), P_taught)   # pick point in the part's own frame
 P_new = mul(T_found, local)        # same point, carried by the moved part
 print("local:", pose(local))       # (10.0, 0.0, 0.0)
 print("P_new:", pose(P_new))       # (223.66, 145.0, 30.0)
@@ -465,7 +465,7 @@ print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
                         <div id="copyright">
                             <ul class="menu">
                                 <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
-                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                                <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
                                 <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
                             </ul>
                         </div>

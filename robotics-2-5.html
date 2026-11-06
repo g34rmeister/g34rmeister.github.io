@@ -252,7 +252,7 @@
 
                             <h2 class="article-section-title">06. Telling the controller about the tool: payload and center of gravity</h2>
                             <p>
-                                The controller does not see the gripper; it has to be told what it carries. Two groups of numbers matter: the TCP (where the working point of the tool is, covered in lesson 2.3) and the <strong>payload</strong>, meaning the mass of the tool, and later of the tool plus the part, together with the position of its center of gravity (CoG). The controller uses these numbers in its model of the arm's dynamics. If they are wrong, that model is wrong: path accuracy suffers, and on a force-limited cobot the robot may stop for a collision that never happened, or press harder than expected before it reacts to a real one. So a careful program updates the payload at the pick and restores it at the place.
+                                The controller does not see the gripper; it has to be told what it carries. Two groups of numbers matter: the TCP (where the working point of the tool is, covered in <a href="robotics-1-6.html">lesson 1.6</a>) and the <strong>payload</strong>, meaning the mass of the tool, and later of the tool plus the part, together with the position of its center of gravity (CoG). The controller uses these numbers in its model of the arm's dynamics. If they are wrong, that model is wrong: path accuracy suffers, and on a force-limited cobot the robot may stop for a collision that never happened, or press harder than expected before it reacts to a real one. So a careful program updates the payload at the pick and restores it at the place.
                             </p>
                             <p>
                                 <strong>On a Universal Robots arm</strong>, UR's own open-source driver script shows the two calls in use. It calls <code>set_payload(mass, cog)</code>, with <code>cog</code> given as <code>[x, y, z]</code>, and on PolyScope 5.10.0 or newer it calls <code>set_target_payload(mass, cog, inertia, transition_time)</code> instead. On older software it falls back to <code>set_payload</code> and logs "PolyScope &lt; 5.10.0. Inertia and transition_time ignored."<sup><a href="#ref-18">[18]</a></sup> The e-Series script manual lists <code>set_payload(m, cog)</code>, <code>set_payload_mass(m)</code> and <code>set_target_payload(m, cog, inertia=[0,0,0,0,0,0], transition_time=0)</code>.<sup><a href="#ref-19">[19]</a></sup>
@@ -573,7 +573,7 @@ ENDPROC</code></pre>
                         <div id="copyright">
                             <ul class="menu">
                                 <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
-                                <li>Design: <a href="http://html5up.net">HTML5 UP</a>.</li>
+                                <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
                                 <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
                             </ul>
                         </div>

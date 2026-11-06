@@ -1,6 +1,6 @@
 # Good first issues, round 2 (harvested 2026-10-28)
 
-Drafted by Gemini (step 37), quotes checked by script. Issues already fixed by Claude were removed. Post the ones you like; do not create them automatically.
+Drafted by Gemini (step 37), quotes checked by script. **Closed 2026-11-06:** Gerald chose to fix these in-house rather than post them. Claude fixed every valid item (2.4, 2.5, 2.6, 2.8, 3.4, 4.3, 4.6, 7.5 code tags, 8.3, 8.5, 8.6, 9.4, 9.6); five had already been fixed by the line edits. Not applied: the two "use an ordered list for review questions" items (7.5, 9.5), because 19 lessons use `<ul>` for that list and only 4 use `<ol>`. Kept below as a record.
 
 ### Inconsistent tool reference in RAPID callout describing lesson 2.3
 - Lesson: 1-6, section "12. Motion types and blending"

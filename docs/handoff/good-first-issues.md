@@ -1,6 +1,6 @@
 # Good first issues (drafts for Gerald to post)
 
-Each one is small, real (found on 2026-10-28) and needs no course-wide knowledge. Labels: `good first issue`, plus the one in brackets. Do not post these automatically.
+Each one is small, real (found on 2026-10-28) and needs no course-wide knowledge. **2026-11-06:** Gerald chose to fix these in-house; status is noted under each item.
 
 ## 1. Use https for four reference links [references]
 Four references still link over plain `http://`:
@@ -9,6 +9,8 @@ Four references still link over plain `http://`:
 - `robotics-6-4.html`: two brettbeauregard.com blog posts
 
 For each, check whether the same page loads over `https://`. If it does, change the link. If it does not, leave it and say so in the PR. Do not change the reference text.
+
+**Status 2026-11-06:** none of the four load over https (brettbeauregard.com has no https; rovart.cimr.pub.ro and www.robotics.stanford.edu do not answer at all, and no live mirror of the 2009 ROS paper was found). Links kept as they are. The HTML5 UP footer credit on all 90 pages moved to https.
 
 ## 5. Field-of-view calculator for lesson 7.1 [widget, needs a source]
 Lesson 7.1 explains focal length, field of view and working distance in words but has no formula, so it has no calculator yet. First step: find a formula in a source the lesson already cites (Edmund Optics, "Understanding Focal Length and Field of View") and propose a sentence plus citation for the lesson in the issue. A maintainer checks the source; only then is the widget built.

@@ -61,7 +61,7 @@ required_snippets = [
     '<meta name="color-scheme"',
     '<a class="skip-link" href="#main">',
     'data-build-date',
-    'Design: <a href="http://html5up.net">HTML5 UP</a>',
+    'Design: <a href="https://html5up.net">HTML5 UP</a>',
 ]
 failures = []
 for page in [p for p in pages if p.name != '404.html']:
