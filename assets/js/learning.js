@@ -603,6 +603,25 @@
 		}
 	};
 
+	/* ---------- "Suggest an edit" link in the meta bar ---------- */
+
+	var REPO_EDIT = 'https://github.com/g34rmeister/g34rmeister.github.io/edit/main/';
+
+	function addEditLink(page) {
+		var meta = document.querySelector('.robotics-article-meta-bar');
+		if (!meta || meta.querySelector('.edit-link')) return;
+		var file = (location.pathname.split('/').pop() || 'robotics.html').replace(/\.html?$/, '') + '.html';
+		// Glossary definitions and quiz questions live in data files, not in the page.
+		if (page.type === 'glossary') file = 'assets/js/glossary-data.js';
+		else if (page.type === 'quiz') file = 'assets/js/course-data.js';
+		var a = el('a', {
+			href: REPO_EDIT + file, target: '_blank', rel: 'noopener noreferrer',
+			title: 'Opens this page in GitHub’s editor (free account needed). Lesson 3.4 walks through it.',
+			html: '<i class="fas fa-pen" aria-hidden="true"></i> Suggest an edit'
+		});
+		meta.appendChild(el('span', { 'class': 'article-meta-item edit-link' }, [a]));
+	}
+
 	/* ---------- Boot ---------- */
 
 	function boot() {
@@ -612,6 +631,7 @@
 		else if (page.type === 'chapter') initChapter(page.id);
 		else if (page.type === 'quiz') initQuiz();
 		else if (page.type === 'glossary') initGlossary();
+		addEditLink(page);
 		if (tutorRenderer) window.RISEBot.registerTutor(tutorRenderer);
 		emit('rise:ready', { page: page });
 	}
