@@ -186,7 +186,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: ROS-Industrial, ROS driver, ros2_control, hardware interface, FollowJointTrajectory, External Control URCap, speed scaling, Externally Guided Motion (EGM), MotoROS2, real-time kernel
 - Sections: Why ROS needs a driver for every robot brand · ROS-Industrial: a community, not a single program · The common pattern: three layers · Universal Robots: the official driver · ABB: a community driver built on EGM · FANUC and KUKA: drivers from the robot makers · Yaskawa MotoROS2 and a side-by-side comparison · Real time and safety: the controller stays in charge · ROS or the vendor language? · Hands-on: one move, two languages
 
-## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 78 min)
+## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 77 min)
 
 ### 5.1 Ethics in Engineering
 `robotics-5-1.html` · 14 min · 20 refs (partial 1, unreachable 1, verified 18) · 1 figures · 1 Try it
@@ -195,7 +195,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Why ethics is an engineering discipline · The NSPE Code of Ethics and the Fundamental Canons · The IEEE Code of Ethics · Conflicts of interest and professional competence · Physical safety standards: ISO 10218:2025 · Collaborative applications under ISO/TS 15066 · Biomechanical thresholds for physical contact · Industrial accident analysis: OSHA and NIOSH data · The European Union Machinery Regulation 2023/1230 · Legal liability and professional engineering duty · Case study: production pressure versus safety sign-off
 
 ### 5.2 Ethics in Robotics (Hardware, Software)
-`robotics-5-2.html` · 14 min · 31 refs (partial 1, unreachable 4, verified 26) · 1 figures · 1 Try it
+`robotics-5-2.html` · 13 min · 31 refs (partial 1, unreachable 4, verified 26) · 1 figures · 1 Try it
 - Objectives: Analyze functional hardware safety mechanisms including ISO 13850 emergency stop categories, three-position enabling devices, and dual-channel redundant safety architectures. / Evaluate software safety systems including hardware watchdog timers, geofencing safety zones, and ISO 13849 Performance Levels (PL d/e). / Examine privacy risks and algorithmic bias in robotics perception systems, from sensor data harvesting to demographic disparities in vision models. / Assess governance frameworks for autonomous systems, including the UN CCW debate on lethal autonomous weapons, IEEE 7000 value-based design, and EU AI Act risk tiers.
 - Key terms: emergency stop, watchdog timer, enabling device, functional safety, geofencing, algorithmic bias, meaningful human control, IEEE 7000, EU AI Act
 - Sections: Physical safety as an ethical obligation · Hardware safeguards and emergency stops · Safeguards while teaching: the enabling device · Functional safety architectures and safety PLCs · Software safety layers: watchdogs and geofencing · Sensor privacy and data harvesting · Algorithmic bias in robotics perception · Autonomous weapons and meaningful human control · Governance frameworks: IEEE 7000 and the EU AI Act
@@ -218,7 +218,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: large language model, hallucination, vision-language-action model, foundation model, predictive maintenance, safety configuration, provenance, pose_trans, URSim
 - Sections: Why this lesson exists · Learned vision: bin picking, pose estimation and inspection · Predictive maintenance · LLM programming assistants ("copilots") · Foundation models that output robot actions · What the evidence says about AI-written code · How AI mistakes look in robot code · The safety layer stays deterministic · Regulation (as of October 2026) · Accountability, and this course
 
-## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 164 min)
+## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 162 min)
 
 ### 6.1 Arduino for Robotics
 `robotics-6-1.html` · 14 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
@@ -245,7 +245,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: The challenge of closed-loop motion control · Historical origins: Minorsky and the USS New Mexico · The three control actions: present, past, and future · Block diagram and continuous mathematical formulation · Discrete-time implementation in robot software · Classical tuning methods: Ziegler–Nichols and Cohen–Coon · Interactive PID simulation · Critical practical modifications: anti-windup, derivative kick, and noise filtering · How industrial servo drives nest their control loops
 
 ### 6.5 Sensors for Robots
-`robotics-6-5.html` · 14 min · 19 refs (partial 1, unreachable 3, verified 15) · 1 figures · 1 Try it
+`robotics-6-5.html` · 13 min · 19 refs (partial 1, unreachable 3, verified 15) · 1 figures · 1 Try it
 - Objectives: Categorize robotic sensors into proprioceptive, exteroceptive, active, and passive functional classifications. / Evaluate distance measurement modalities, contrasting ultrasonic acoustics (HC-SR04), optical triangulation (Sharp GP2Y0A21YK0F), and laser Time-of-Flight (VL53L1X). / Analyze MEMS Inertial Measurement Unit (IMU) architectures (MPU-6050 and ICM-20948), calculating tilt angles and evaluating mathematical mechanisms of gyroscope bias drift. / Assess line reflectance (QTR-8RC) and spectral color sensing (TCS34725), establishing multi-sensor fusion architectures to mitigate single-sensor noise modes.
 - Key terms: proprioceptive sensor, exteroceptive sensor, ultrasonic rangefinder, time-of-flight, optical triangulation, IMU, gyroscope drift, reflectance sensor, sensor fusion
 - Sections: The sensory foundation of autonomous robotics · Classification of robotic sensors · Acoustic ranging: HC-SR04 ultrasonic sensor · Optical distance sensing: triangulation versus laser Time-of-Flight · Inertial Measurement Units (IMUs): MPU-6050 and ICM-20948 · The mathematics of gyroscope drift · Surface reflectance and color detection · High-dimensional perception: 2D/3D LiDAR and cameras · Comparing common sensors and multi-sensor fusion
@@ -257,7 +257,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Dead reckoning and mobile robot pose · Differential-drive forward kinematics · The kinematic update equations: displacement and rotation · Numerical integration: Euler forward versus midpoint Runge-Kutta · Embedded odometry implementation in C++ · Error propagation: why heading error dominates position error · Borenstein and Feng's error taxonomy · Calibration in practice: the UMBmark benchmark · Multi-sensor fusion: limiting slip with IMU gyroscopes
 
 ### 6.7 State Machines
-`robotics-6-7.html` · 20 min · 20 refs (fixed 5, partial 2, unreachable 1, verified 12) · 1 figures · 1 Try it
+`robotics-6-7.html` · 19 min · 20 refs (fixed 5, partial 2, unreachable 1, verified 12) · 1 figures · 1 Try it
 - Objectives: Model complex robot behavioral logic using Finite State Machine (FSM) formalisms including states, events, guards, and transition tables. / Implement non-blocking, multi-rate embedded execution loops using C++ enum, switch statements, and Arduino millis() timer arithmetic. / Analyze industrial automation state standards including IEC 61131-3 Sequential Function Charts (SFC) and OMAC PackML. / Differentiate ROS 2 managed lifecycle node states and contrast FSM scalability limits against Nav2 Behavior Tree architectures.
 - Key terms: finite state machine, state transition table, guard condition, cooperative multitasking, millis(), IEC 61131-3 SFC, PackML, lifecycle node, behavior tree
 - Sections: Why robots require state machines · Core components of a state machine · Worked example: line follower with obstacle avoidance · Non-blocking timing: why delay() is fatal in robotics · Embedded C++ implementation · State machine anti-patterns and pitfalls · Industrial automation standards: IEC 61131-3 SFC and PackML · ROS 2 managed nodes: the rclcpp_lifecycle state machine · Beyond state machines: Behavior Trees in ROS 2 Nav2
@@ -280,7 +280,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: forward kinematics, inverse kinematics, workspace (work envelope), law of cosines, atan2, elbow-up / elbow-down, Jacobian, singularity, spherical wrist, numerical inverse kinematics
 - Sections: From the idea to the full math · Forward kinematics: adding two rotating vectors · The workspace is a ring · Closed-form inverse kinematics · Worked example: two answers for one target · Why atan2, and not atan or acos · Edge cases: rounding at the boundary · Robust IK in Python · The Jacobian and singularities · From two links to a six-axis robot
 
-## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 68 min)
+## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 67 min)
 
 ### 7.1 Industrial Cameras and Optics
 `robotics-7-1.html` · 11 min · 9 refs (verified 9) · 1 figures · 0 Try it
@@ -307,7 +307,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Direct 3D sensing versus 2D inference · Stereo vision principles and disparity calculation · Point cloud filtering: pass-through, voxel grids, and outlier removal · Planar segmentation and table surface extraction · Euclidean cluster extraction for object segmentation · Industrial bin picking and piece picking requirements · The complete 3D vision guidance workflow · Check your understanding
 
 ### 7.5 Inspection and Measurement
-`robotics-7-5.html` · 10 min · 13 refs (verified 13) · 1 figures · 0 Try it
+`robotics-7-5.html` · 9 min · 13 refs (verified 13) · 1 figures · 0 Try it
 - Objectives: Explain the two kinds of inspection error, missed defects and false alarms, and what each costs a production line. / Apply spatial resolution metrics and the Nyquist sampling limit to determine the optical tolerance limits of a camera sensor. / Explain how optical distortion is classified into barrel and pincushion types and corrected through camera calibration. / Name the ISO/IEC 15416 and 15415 print quality standards for 1D and 2D codes, and explain how Reed-Solomon error correction lets a damaged Data Matrix ECC 200 symbol still be read.
 - Key terms: Nyquist limit, dimensional gauging, barrel distortion, pincushion distortion, presence verification, Data Matrix ECC 200
 - Sections: Quality assurance and automated inspection · Spatial resolution and the Nyquist limit · Dimensional gauging and telecentric optics · Optical distortion and software calibration · Presence verification and flaw detection · Barcode verification and 2D symbol reading · Check your understanding
@@ -394,7 +394,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: Dashboard Server, robotmode, safetystatus, programState, protective stop, unlock protective stop
 - Sections: The Dashboard Server interface and remote control · Querying controller modes and execution state · Protective stops and emergency stops · The stop recovery workflow and the five-second rule · Lab: Querying robot state with Python · Lab: Clearing stops and resuming program execution · Check your understanding
 
-## Chapter 10: Capstone Projects (`robotics-capstone.html`, 4 lessons, 68 min)
+## Chapter 10: Capstone Projects (`robotics-capstone.html`, 4 lessons, 67 min)
 
 ### 10.1 Capstone: Build a Simulated Work Cell
 `robotics-10-1.html` · 20 min · 23 refs (fixed 6, partial 1, unreachable 2, verified 14) · 1 figures · 1 Try it
@@ -403,7 +403,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: What you will build and why · Prerequisites · Software and equipment (free options first) · Milestones and what to hand in · Build guidance: M0 plan and M1 cell up · Build guidance: M2 integrated pick-and-place · Build guidance: M3 safety configuration · Testing and verification: M4 FAT-style test sheet · Common problems · Grading rubric · Reflection questions and stretch goals
 
 ### 10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
-`robotics-10-2.html` · 20 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
+`robotics-10-2.html` · 19 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
 - Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Bring up a UR5e on ros2_control mock hardware with MoveIt, add a table and a part as collision objects, and know the limits of mock hardware. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach in the planning scene when the arm has no gripper. / Test the task over randomised object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
 - Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene
 - Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals

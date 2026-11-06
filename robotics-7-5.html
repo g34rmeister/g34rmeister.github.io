@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT10M",
+            "timeRequired": "PT9M",
             "teaches": [
                 "Nyquist limit",
                 "dimensional gauging",
@@ -195,13 +195,7 @@
                             Every visual measurement begins with optical sampling. When an engineer selects a camera and lens for a gauging station, they must determine whether the system can physically resolve the smallest required tolerance. A simple measure of sensor resolution is the number of pixels per millimeter.<sup><a href="#ref-2">[2]</a></sup> For example, if a camera sensor has 2,400 pixels along its horizontal axis and images an inspection field of view that is 120 mm wide, the optical system delivers exactly 20 pixels per millimeter in object space.
                         </p>
                         <p>
-                            However, sensor pixel count alone does not guarantee that fine edges or small defects can be resolved clearly. Optical resolution is fundamentally defined as a spatial frequency measured in line pairs per millimeter, where one line pair represents alternating black and white bars in object space.<sup><a href="#ref-3">[3]</a></sup>
-                        </p>
-                        <p>
-                            As the alternating bars become narrower and closer together, the spatial frequency increases. No lens passes fine detail perfectly, and the measure of how well it separates the bars is contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-4">[4]</a></sup> When contrast drops to zero, adjacent bars blend into an indistinguishable solid gray field.
-                        </p>
-                        <p>
-                            Even if a lens can transmit high spatial frequencies, the electronic image sensor must sample that pattern without aliasing. The Nyquist limit represents the highest spatial frequency a sensor can sample and equals two pixels per line pair.<sup><a href="#ref-3">[3]</a></sup> Sampling requires at least one pixel on the bright bar and one pixel on the dark bar. If the physical detail in object space is smaller than two sensor pixels, the vision system cannot reliably detect it or establish its boundary location.
+                            However, sensor pixel count alone does not guarantee that fine edges or small defects can be resolved clearly. As <a href="robotics-7-1.html">7.1</a> explained, optical resolution is measured in line pairs per millimeter and the Nyquist limit is two pixels per line pair,<sup><a href="#ref-3">[3]</a></sup> and the lens must also keep enough contrast between the bars.<sup><a href="#ref-4">[4]</a></sup> For gauging, this means that if the physical detail in object space is smaller than two sensor pixels, the vision system cannot reliably detect it or establish its boundary location.
                         </p>
                         <figure class="lesson-diagram">
                             <svg viewBox="0 0 400 185" role="img" aria-label="Diagram showing the Nyquist sampling limit of two sensor pixels per optical line pair" xmlns="http://www.w3.org/2000/svg">
@@ -277,13 +271,7 @@
 
                         <h2 class="article-section-title">04. Optical distortion and software calibration</h2>
                         <p>
-                            Even when high-grade optics are selected, real-world lenses deviate from ideal mathematical pinhole models. These deviations are known as optical aberrations. One specific aberration that directly affects dimensional measurement is geometric distortion.
-                        </p>
-                        <p>
-                            Distortion is an optical aberration that misplaces image information geometrically without blurring or discarding information, allowing it to be calibrated and corrected in software.<sup><a href="#ref-8">[8]</a></sup> Every physical point in object space maps to a crisp point on the sensor matrix, but its spatial coordinate is displaced from its expected collinear projection.
-                        </p>
-                        <p>
-                            Optical distortion is classified into negative barrel distortion where points appear displaced toward the optical center, and positive pincushion distortion where points appear displaced away from the center.<sup><a href="#ref-8">[8]</a></sup> Barrel distortion makes the sides of a square bow outward; pincushion distortion pinches them inward.
+                            One optical aberration directly affects dimensional measurement: geometric distortion. As <a href="robotics-7-1.html">7.1</a> section 04 explained, distortion misplaces points without blurring them, toward the center (barrel) or away from it (pincushion), so it can be calibrated and corrected in software.<sup><a href="#ref-8">[8]</a></sup>
                         </p>
                         <p>
                             To measure and correct this aberration, vision engineers use precision calibration targets. Geometric distortion percentage is calculated using a dot target by comparing the actual distance AD of an imaged point from center to its predicted distance PD.<sup><a href="#ref-8">[8]</a></sup> As introduced in <a href="robotics-2-8.html">Lesson 2.8</a>, intrinsic camera calibration models this distortion using calibration targets. Software maps each distorted image pixel back to its true rectilinear position. Once the distortion coefficients are computed, vision algorithms undistort the image stream before calculating distances, ensuring that straight mechanical edges remain straight in pixel coordinates.
@@ -405,7 +393,7 @@ if not inspection_passed:
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=a6012c12" defer></script>
+        <script src="assets/js/course-data.js?v=7cd88141" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

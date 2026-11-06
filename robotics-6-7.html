@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT20M",
+            "timeRequired": "PT19M",
             "teaches": [
                 "finite state machine",
                 "state transition table",
@@ -279,10 +279,7 @@
 
                             <h2 class="article-section-title">04. Non-blocking timing: why delay() is fatal in robotics</h2>
                             <p>
-                                In introductory microcontroller tutorials, pauses are commonly implemented using the built-in Arduino <code>delay()</code> function. However, using <code>delay()</code> inside autonomous robot code is dangerous.
-                            </p>
-                            <p>
-                                The <code>delay()</code> function is a <strong>blocking call</strong>: the Arduino reference warns that "no other reading of sensors, mathematical calculations, or pin manipulation can occur during the delay function." Interrupts and PWM outputs keep working, but the main program does nothing else until the pause ends.<sup><a href="#ref-4">[4]</a></sup> If the robot enters <code>AVOID_OBSTACLE</code> and commands a spin using <code>delay(600)</code>, the CPU is completely frozen for 600 milliseconds. During this freeze:
+                                As <a href="robotics-6-1.html">6.1</a> showed, <code>delay()</code> is a <strong>blocking call</strong>: interrupts and PWM outputs keep working, but the main program does nothing else until the pause ends.<sup><a href="#ref-4">[4]</a></sup> If the robot enters <code>AVOID_OBSTACLE</code> and commands a spin using <code>delay(600)</code>, the CPU is completely frozen for 600 milliseconds. During this freeze:
                             </p>
                             <ul class="article-spec-list">
                                 <li>The robot cannot read its ultrasonic range finder or bumper switches to detect an oncoming wall or sudden drop-off.</li>
@@ -290,7 +287,7 @@
                                 <li>Sensory feedback is cut off, while PWM outputs stay at their last values, so the motors keep driving at their previously set speed.<sup><a href="#ref-4">[4]</a></sup></li>
                             </ul>
                             <p>
-                                Robot software avoids this with <strong>cooperative multitasking</strong>: each task checks the clock and returns immediately instead of waiting. Arduino's official Blink Without Delay example shows the pattern, because "Arduino pauses your program during the delay()."<sup><a href="#ref-5">[5]</a></sup> The <code>millis()</code> function returns the number of milliseconds since the program started, as an <code>unsigned long</code>, without halting program execution.<sup><a href="#ref-6">[6]</a></sup>
+                                Robot software avoids this with <strong>cooperative multitasking</strong>: each task checks the clock and returns immediately instead of waiting, the non-blocking <code>millis()</code> pattern from Arduino's Blink Without Delay example that 6.1 introduced.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
                                 To time a 600 ms turning maneuver without blocking, software records the timestamp when the state is entered (<code>stateStart = millis()</code>). On every subsequent pass of the main <code>loop()</code>, the code evaluates elapsed time using unsigned modular subtraction:
@@ -594,7 +591,7 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
+            <script src="assets/js/course-data.js?v=7cd88141" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>

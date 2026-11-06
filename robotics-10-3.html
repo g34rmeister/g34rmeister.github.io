@@ -211,7 +211,7 @@
 
                             <h2 class="article-section-title">03. Equipment and software</h2>
                             <p>
-                                The software is free: the Arduino IDE, the PJRC Encoder library and Brett Beauregard's Arduino PID Library (MIT license).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> You can also rehearse tuning in the interactive PID simulation in <a href="robotics-6-4.html">6.4</a> before you touch hardware. The hardware below is one tested-on-paper combination; any similar parts work if you redo the numbers.
+                                The software is free: the Arduino IDE, the PJRC Encoder library and Brett Beauregard's Arduino PID Library (MIT license).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> You can also rehearse tuning in the interactive PID simulation in <a href="robotics-6-4.html">6.4</a> before you touch hardware. The parts below are one combination whose numbers were checked on paper; similar parts work if you redo the numbers.
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -408,7 +408,7 @@ void setup() {
   Serial.begin(115200);
 }</code></pre>
                             <p>
-                                <strong>Tuning.</strong> Start with proportional gain only and a fixed setpoint such as 150 RPM. You will see a steady-state error: the wheel settles below the target, because a pure P controller needs some error to produce any output. Add integral gain slowly until the error disappears without large overshoot, as described in <a href="robotics-6-4.html">6.4</a>. The library pre-scales Ki and Kd by the sample time, and <code>SetSampleTime()</code> rescales them when you change the period, so your gains keep their meaning.<sup><a href="#ref-3">[3]</a></sup> A shorter period still makes the speed reading coarser (Section 06), so check the response again after changing it. A speed loop usually needs little or no derivative gain, and the quantized speed reading from Section 06—which changes in discrete integer steps rather than continuous values due to digital encoder resolution—makes the derivative term noisy.
+                                <strong>Tuning.</strong> Start with proportional gain only and a fixed setpoint such as 150 RPM. You will see a steady-state error: the wheel settles below the target, because a pure P controller needs some error to produce any output. Add integral gain slowly until the error disappears without large overshoot, as described in <a href="robotics-6-4.html">6.4</a>. The library pre-scales Ki and Kd by the sample time, and <code>SetSampleTime()</code> rescales them when you change the period, so your gains keep their meaning.<sup><a href="#ref-3">[3]</a></sup> A shorter period still makes the speed reading coarser (Section 06), so check the response again after changing it. A speed loop usually needs little or no derivative gain. The speed reading from Section 06 changes in whole steps rather than smoothly, because of the encoder&rsquo;s resolution, and that makes the derivative term noisy.
                             </p>
 
                             <h2 class="article-section-title">08. Milestone 3: the state machine, ramps and FAULT</h2>
@@ -666,7 +666,7 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
+            <script src="assets/js/course-data.js?v=7cd88141" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

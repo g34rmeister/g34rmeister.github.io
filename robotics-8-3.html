@@ -192,10 +192,7 @@
 
                         <h2 class="article-section-title">02. Modbus TCP server architecture</h2>
                         <p>
-                            Modbus TCP messages include a 7-byte MBAP header and transmit over TCP on registered port 502.<sup><a href="#ref-3">[3]</a></sup> The MBAP header (covered in <a href="robotics-8-2.html">8.2</a>) lets the client match each response to its request.
-                        </p>
-                        <p>
-                            The Modbus data model provides four primary tables comprising discrete inputs, coils, input registers, and holding registers.<sup><a href="#ref-4">[4]</a></sup> Discrete inputs and coils store 1-bit boolean values, corresponding to digital inputs and outputs. Input registers and holding registers store 16-bit numerical values, where input registers are read-only and holding registers permit both read and write operations. Across all data tables, Modbus transmits numerical values and addresses in big-endian representation with the most significant byte transmitted first.<sup><a href="#ref-4">[4]</a></sup>
+                            As <a href="robotics-8-2.html">8.2</a> covered, Modbus TCP messages carry a 7-byte MBAP header over TCP port 502,<sup><a href="#ref-3">[3]</a></sup> and the data model has four tables (discrete inputs, coils, input registers and holding registers), with values sent big-endian.<sup><a href="#ref-4">[4]</a></sup> The function codes below work on the two 16-bit register tables: input registers are read-only, while holding registers can be read and written.
                         </p>
                         <p>
                             The Universal Robots controller acts as a Modbus TCP server on port 502 to receive standard Modbus requests from clients.<sup><a href="#ref-5">[5]</a></sup> Several clients can connect to the robot Modbus server at the same time.<sup><a href="#ref-5">[5]</a></sup> This architecture allows a cell PLC, an operator touch panel, and an engineering workstation to communicate with the robot simultaneously over an Ethernet switch.
@@ -401,7 +398,7 @@ Exception code: 2</code></pre>
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=a6012c12" defer></script>
+        <script src="assets/js/course-data.js?v=7cd88141" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

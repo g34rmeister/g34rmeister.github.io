@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT14M",
+            "timeRequired": "PT13M",
             "teaches": [
                 "proprioceptive sensor",
                 "exteroceptive sensor",
@@ -207,17 +207,8 @@
 
                             <h2 class="article-section-title">03. Acoustic ranging: HC-SR04 ultrasonic sensor</h2>
                             <p>
-                                The classic entry-level distance sensor in mobile robotics is the <strong>HC-SR04 ultrasonic rangefinder</strong>.<sup><a href="#ref-2">[2]</a></sup> The module has two ultrasonic transducers: a transmitter and a receiver.<sup><a href="#ref-2">[2]</a></sup>
+                                As <a href="robotics-6-1.html">6.1</a> showed, the <strong>HC-SR04 ultrasonic rangefinder</strong> is the classic entry-level distance sensor: a 10-microsecond pulse on its Trigger pin makes it send an 8-cycle, 40 kHz ultrasonic burst, and its Echo pin stays HIGH for the sound's round trip.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
-                            <p>
-                                The sensor operates on the acoustic Time-of-Flight principle:<sup><a href="#ref-2">[2]</a></sup>
-                            </p>
-                            <ol class="article-spec-list">
-                                <li>The microcontroller sends a 10-microsecond digital HIGH pulse to the sensor's Trigger pin.</li>
-                                <li>The onboard controller automatically commands the transmitter to emit an 8-cycle ultrasonic burst at a frequency of <strong>40 kHz</strong> (well beyond the human hearing limit of 20 kHz).</li>
-                                <li>Simultaneously, the sensor pulls its Echo output pin HIGH.</li>
-                                <li>When the reflected sound waves strike the receiver transducer, the sensor pulls the Echo pin LOW. The duration of the HIGH pulse represents the round-trip transit time of the acoustic wave.</li>
-                            </ol>
                             <p>
                                 The microcontroller converts the echo time to distance with \(d = (v_{sound} \times t_{echo})/2\), halving because the pulse travels out and back; at about 340 m/s that is roughly 29 &micro;s per centimetre each way.<sup><a href="#ref-3">[3]</a></sup> On Arduino the echo is usually timed with <code>pulseIn()</code>, which returns 0 if no echo arrives before its timeout (one second by default), so code should treat 0 as &ldquo;no reading&rdquo;, not &ldquo;distance zero&rdquo;.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
@@ -233,7 +224,7 @@
 
                             <h2 class="article-section-title">04. Optical distance sensing: triangulation versus laser Time-of-Flight</h2>
                             <p>
-                                Optical rangefinding overcomes the wide-beam limitations of acoustics by utilizing focused infrared light:<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup>
+                                Optical rangefinding overcomes the wide-beam limitations of acoustics by using focused infrared light:<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Optical Triangulation (Sharp GP2Y0A21YK0F):</span> An infrared emitting diode (about 870 nm) projects a spot onto the target, and the reflected light is focused onto a Position Sensitive Detector (PSD).<sup><a href="#ref-5">[5]</a></sup> Where the light lands on the PSD depends on the target's distance, so the datasheet notes that reflectivity has little influence on the reading because of the triangulation method, although colour boundaries on the target and mirror-like surfaces can still cause errors. The sensor operates across a range of <strong>10 cm to 80 cm</strong>. However, its analog voltage output is non-linear (roughly inversely proportional to distance, \(V_{out} \propto 1/d\)), requiring multi-point calibration tables in software. Readings outside the 10 cm to 80 cm range are not specified and should not be trusted.<sup><a href="#ref-5">[5]</a></sup></li>
@@ -442,7 +433,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
+            <script src="assets/js/course-data.js?v=7cd88141" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
