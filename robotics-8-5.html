@@ -270,7 +270,7 @@
                             While OPC UA defines how to build information models, it does not specify how particular industrial machines must structure their nodes. Without coordination, two robot makers would organize their address spaces differently. One controller might store joint angles under <code>Axis_1/Pos</code>, while another uses <code>Joint_A/ActualAngle</code>. An integrator connecting both robots to one supervisory system would still need custom software for each manufacturer.
                         </p>
                         <p>
-                            To standardize domain models, industry working groups create companion specifications. The OPC UA Companion Specification for Robotics provides a standardized information model capable of presenting robot-related data in a uniform manner regardless of manufacturer.<sup><a href="#ref-3">[3]</a></sup>
+                            To standardize these models, industry working groups create companion specifications. The OPC UA Companion Specification for Robotics provides a standardized information model capable of presenting robot-related data in a uniform manner regardless of manufacturer.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
                             Part 1 of the OPC UA Robotics specification permits asset management, condition monitoring, preventive maintenance, and vertical integration independent of robot brand or type.<sup><a href="#ref-3">[3]</a></sup>
@@ -296,11 +296,11 @@
                             TCP ports 1883 and 8883 are registered with IANA for non-TLS and TLS MQTT communication respectively.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            MQTT defines three qualities of service for message delivery consisting of At most once, At least once, and Exactly once.<sup><a href="#ref-4">[4]</a></sup>
+                            MQTT defines three qualities of service for message delivery: At most once, At least once, and Exactly once.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">At most once (QoS 0):</span> Messages transmit once with best-effort delivery and no acknowledgment. Packets can be lost if connections drop. This mode minimizes traffic and fits high-frequency sensor readings.</li>
-                            <li class="article-spec-item"><span class="spec-label">At least once (QoS 1):</span> The recipient acknowledges message delivery. If an acknowledgment fails to return within a set duration, the sender retransmits. Packets arrive reliably, though duplicates can occur.</li>
+                            <li class="article-spec-item"><span class="spec-label">At most once (QoS 0):</span> Each message is sent once, with best-effort delivery and no acknowledgment. Packets can be lost if connections drop. This mode minimizes traffic and fits high-frequency sensor readings.</li>
+                            <li class="article-spec-item"><span class="spec-label">At least once (QoS 1):</span> The recipient acknowledges message delivery. If no acknowledgment returns within a set time, the sender retransmits. Packets arrive reliably, though duplicates can occur.</li>
                             <li class="article-spec-item"><span class="spec-label">Exactly once (QoS 2):</span> The sender and receiver exchange a four-step handshake to ensure each message arrives without loss or duplication. This level suits high-priority alarms, batch completion flags, and production counts.</li>
                         </ul>
                         <p>
@@ -315,7 +315,7 @@
                             In this course, ROS 2 is treated as robot software that connects to the plant networks, not as a fieldbus or a safety system. Safety signals stay on the safety protocols from <a href="robotics-8-4.html">8.4</a>.
                         </p>
                         <p>
-                            To interface ROS 2 motion planning with industrial robot controllers, the robotics community uses the <code>ros2_control</code> framework. In the ros2_control framework, the Controller Manager connects the controllers and hardware-abstraction sides of the framework.<sup><a href="#ref-5">[5]</a></sup>
+                            To connect ROS 2 motion planning to industrial robot controllers, the robotics community uses the <code>ros2_control</code> framework. In the ros2_control framework, the Controller Manager connects the controllers and hardware-abstraction sides of the framework.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
                         <p>
                             The control loop runs in the Controller Manager's <code>update()</code> method.<sup><a href="#ref-5">[5]</a></sup> The Resource Manager stands for the hardware, and its <code>read()</code> and <code>write()</code> methods talk to the hardware components during each loop.<sup><a href="#ref-5">[5]</a></sup>
@@ -324,7 +324,7 @@
                             For example, in a vision-guided sorting cell, a ROS 2 computer can plan the arm's motions through ros2_control, while a separate node on the same computer reads part pick counts and publishes those metrics to factory dashboards over MQTT or OPC UA.
                         </p>
                         <p>
-                            In short: deterministic fieldbuses handle motion, IO-Link connects sensors, OPC UA standardizes machine-to-machine modeling, MQTT streams enterprise telemetry, and ROS 2 delivers advanced perception and path planning.
+                            In short: deterministic fieldbuses handle motion, IO-Link connects sensors, OPC UA standardizes machine-to-machine modeling, MQTT streams enterprise telemetry, and ROS 2 handles advanced perception and path planning.
                         </p>
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
@@ -378,7 +378,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+        <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

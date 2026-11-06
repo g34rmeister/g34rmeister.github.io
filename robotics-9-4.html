@@ -221,7 +221,7 @@
                             Sensors are a common fault point. <a href="robotics-8-1.html">8.1 From Wires to Networks</a> explains sinking (NPN) and sourcing (PNP) sensors and why the input module has to match.
                         </p>
                         <p>
-                            Most industrial sensor failures stem from improper wiring installation where the sensor output is connected directly to the power supply or AC line.<sup><a href="#ref-4">[4]</a></sup>
+                            Most industrial sensor failures come from incorrect wiring, in which the sensor output is connected directly to the power supply or AC line.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
                             Fuses will not save a sensor from a wiring mistake: fast-acting fuses and electronic current-limiting circuits operate too slowly to protect solid-state sensors from short circuits or reverse polarity wiring.<sup><a href="#ref-4">[4]</a></sup>
@@ -238,10 +238,10 @@
                             A switched-off TRIAC still lets a little current through. High off-state leakage current exceeding 1 mA makes TRIAC outputs unsuitable as inputs for programmable logic controllers.<sup><a href="#ref-4">[4]</a></sup> The input may then never see the sensor turn off.
                         </p>
                         <p>
-                            Two-wire sensors take their power through the load circuit, which limits how they can be combined. Higher voltage drops and operating power requirements typically limit the number of series-connected two-wire sensors to two devices.<sup><a href="#ref-4">[4]</a></sup>
+                            Two-wire sensors take their power through the load circuit, which limits how they can be combined. Their higher voltage drops and operating power requirements typically limit a series connection to two two-wire sensors.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            A very short sensor pulse can also be missed if it starts and ends between two PLC scans. High-speed sensors often incorporate an off-delay pulse stretcher to ensure fast signals persist long enough for slower PLC scan cycles to detect them.<sup><a href="#ref-4">[4]</a></sup>
+                            A very short sensor pulse can also be missed if it starts and ends between two PLC scans. High-speed sensors often include an off-delay pulse stretcher, which keeps a fast signal on long enough for the slower PLC scan cycle to detect it.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">05. Controller I/O capacity, isolation, and noise mitigation</h2>
@@ -249,13 +249,13 @@
                             The robot controller's own I/O has limits too.
                         </p>
                         <p>
-                            When adding devices, check the current budget. The controller internal 24V supply supports up to 2A of total I/O current consumption, whereas an external power supply can deliver up to 6A.<sup><a href="#ref-5">[5]</a></sup> If the internal supply is not enough, UR says an external supply can be connected; the user manual gives the details.<sup><a href="#ref-5">[5]</a></sup>
+                            When adding devices, check the current budget. The controller's internal 24V supply supports up to 2A of total I/O current consumption, whereas an external power supply can deliver up to 6A.<sup><a href="#ref-5">[5]</a></sup> If the internal supply is not enough, UR says an external supply can be connected; the user manual gives the details.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
                         <p>
                             Noise from other equipment can also cause false signals.
                         </p>
                         <p>
-                            Electrical noise interference from external equipment can be mitigated by establishing galvanic isolation using an intermediate relay.<sup><a href="#ref-5">[5]</a></sup> Galvanic isolation means there is no direct electrical connection between the two circuits. In UR's example, a robot digital output drives a relay, and the relay's contact switches a signal from an external power supply to a frequency converter.<sup><a href="#ref-5">[5]</a></sup>
+                            Electrical noise from external equipment can be reduced with galvanic isolation through an intermediate relay.<sup><a href="#ref-5">[5]</a></sup> Galvanic isolation means there is no direct electrical connection between the two circuits. In UR's example, a robot digital output drives a relay, and the relay's contact switches a signal from an external power supply to a frequency converter.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">06. Diagnosing network and fieldbus faults</h2>
@@ -266,13 +266,13 @@
                             A watchdog is a timer that raises an error when expected messages stop arriving. Modbus TCP communication watchdogs time out when program execution stops on signals configured with zero hertz update frequency.<sup><a href="#ref-6">[6]</a></sup>
                         </p>
                         <p>
-                            For EtherCAT, the ETG's diagnosis guide starts with the status lights. A visual inspection showing an unlit Link/Activity LED indicates a permanent interruption of the physical network link to an industrial Ethernet device.<sup><a href="#ref-7">[7]</a></sup> Check the cable, connector and the power to the neighboring device.
+                            For EtherCAT, the ETG's diagnosis guide starts with the status lights. An unlit Link/Activity LED indicates a permanent interruption of the physical network link to an industrial Ethernet device.<sup><a href="#ref-7">[7]</a></sup> Check the cable, connector and the power to the neighboring device.
                         </p>
                         <p>
-                            Intermittent drops are harder to see. EtherCAT slave hardware registers provide dedicated Lost Link Counters that increment whenever physical communication link is interrupted.<sup><a href="#ref-7">[7]</a></sup> They are registers <code>0x0310</code> to <code>0x0313</code>, one per port, so reading them shows which port lost its link.<sup><a href="#ref-7">[7]</a></sup>
+                            Intermittent drops are harder to see. EtherCAT slave hardware has dedicated Lost Link Counter registers that increment whenever the physical link is interrupted.<sup><a href="#ref-7">[7]</a></sup> They are registers <code>0x0310</code> to <code>0x0313</code>, one per port, so reading them shows which port lost its link.<sup><a href="#ref-7">[7]</a></sup>
                         </p>
                         <p>
-                            In EtherCAT networks, an unexpected Working Counter in a returned frame indicates slave communication failure and causes the master to discard input data.<sup><a href="#ref-7">[7]</a></sup>
+                            In EtherCAT networks, an unexpected Working Counter in a returned frame indicates a slave communication failure, and the master discards the input data.<sup><a href="#ref-7">[7]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
@@ -328,7 +328,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+        <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

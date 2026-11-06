@@ -186,7 +186,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: ROS-Industrial, ROS driver, ros2_control, hardware interface, FollowJointTrajectory, External Control URCap, speed scaling, Externally Guided Motion (EGM), MotoROS2, real-time kernel
 - Sections: Why ROS needs a driver for every robot brand · ROS-Industrial: a community, not a single program · The common pattern: three layers · Universal Robots: the official driver · ABB: a community driver built on EGM · FANUC and KUKA: drivers from the robot makers · Yaskawa MotoROS2 and a side-by-side comparison · Real time and safety: the controller stays in charge · ROS or the vendor language? · Hands-on: one move, two languages
 
-## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 77 min)
+## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 76 min)
 
 ### 5.1 Ethics in Engineering
 `robotics-5-1.html` · 14 min · 20 refs (partial 1, unreachable 1, verified 18) · 1 figures · 1 Try it
@@ -201,7 +201,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Physical safety as an ethical obligation · Hardware safeguards and emergency stops · Safeguards while teaching: the enabling device · Functional safety architectures and safety PLCs · Software safety layers: watchdogs and geofencing · Sensor privacy and data harvesting · Algorithmic bias in robotics perception · Autonomous weapons and meaningful human control · Governance frameworks: IEEE 7000 and the EU AI Act
 
 ### 5.3 Robots and Society
-`robotics-5-3.html` · 12 min · 16 refs (fixed 2, unreachable 1, verified 13) · 1 figures · 1 Try it
+`robotics-5-3.html` · 11 min · 16 refs (fixed 2, unreachable 1, verified 13) · 1 figures · 1 Try it
 - Objectives: Analyze empirical labor economics research on industrial robotics, including Acemoglu and Restrepo's local labor market findings and task framework. / Evaluate global robot density metrics from the International Federation of Robotics (IFR) and OECD workforce transformation data. / Apply data minimization and privacy engineering principles to autonomous mobile robots equipped with ambient perception sensors. / Examine moral crumple zones, human-in-the-loop governance, and legal accountability architectures for autonomous robotic systems.
 - Key terms: robot density, displacement effect, reinstatement effect, data minimization, edge computing, moral crumple zone, human-in-the-loop, IFR World Robotics
 - Sections: Expanding our perspective: robots in society · Empirical evidence on jobs and automation · The task framework: displacement, productivity, and reinstatement · Global robot density and industrial trends · Job polarization and workforce transition · Privacy: robots as mobile surveillance platforms · Data minimization and edge privacy architectures · Accountability and the moral crumple zone · Questions to ask before you build
@@ -318,10 +318,10 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: sensor_msgs/Image, sensor_msgs/CameraInfo, plumb_bob, image_transport, TimeSynchronizer, cv_bridge
 - Sections: Cameras in the ROS 2 architecture · Image data representation: sensor_msgs/Image · Calibration metadata: sensor_msgs/CameraInfo · Streaming transport and message synchronization · Bridging ROS 2 and OpenCV with cv_bridge · Lab: Implementing an OpenCV vision node · Running and testing the node · Check your understanding
 
-## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 53 min)
+## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 52 min)
 
 ### 8.1 From Wires to Networks
-`robotics-8-1.html` · 10 min · 5 refs (verified 5) · 1 figures · 0 Try it
+`robotics-8-1.html` · 9 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Compare sinking and sourcing DC circuits, evaluating how NPN and PNP 3-wire field devices interface with PLC I/O modules. / Explain how fieldbuses replaced point-to-point wiring and analyze how industrial Ethernet supports multiple protocols on shared media. / Differentiate cyclic I/O data exchange from acyclic diagnostic messaging between controllers and field devices. / Evaluate line, star, and ring physical topologies, examining recovery times and node limits in Device Level Ring networks.
 - Key terms: sinking, sourcing, fieldbus, cyclic communication, acyclic communication, Device Level Ring
 - Sections: Discrete DC I/O: sinking and sourcing · Three-wire sensors: NPN and PNP field devices · Point-to-point wiring and fieldbus technology · The shift to industrial Ethernet · Cyclic and acyclic communication · Network topologies and Device Level Ring resilience · Check your understanding

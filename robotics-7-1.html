@@ -178,7 +178,7 @@
 
                         <h2 class="article-section-title">01. The machine vision camera: from photons to pixels</h2>
                         <p>
-                            In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use vision systems to locate parts that do not arrive in fixed fixtures. That lesson examined the robotic side of the work cell: mounting options such as eye-in-hand versus eye-to-hand, intrinsic and hand-eye calibration, and shifting taught points using vision results. In Chapter 7, we step back to examine the vision pipeline itself. Before any software algorithm can compute a part centroid or extract an edge, an industrial camera must capture incoming optical photons and turn them into discrete digital data.
+                            In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use vision systems to locate parts that do not arrive in fixed fixtures. That lesson examined the robotic side of the work cell: mounting options such as eye-in-hand versus eye-to-hand, intrinsic and hand-eye calibration, and shifting taught points using vision results. In Chapter 7, we step back to examine the vision pipeline itself. Before any software algorithm can compute a part centroid or extract an edge, an industrial camera must capture incoming light and turn it into digital data.
                         </p>
                         <p>
                             At the core of every industrial camera sits an electronic image sensor. Almost all machine vision sensors are one of two types: a charge-coupled device (CCD) or a complementary metal oxide semiconductor (CMOS) imager.<sup><a href="#ref-1">[1]</a></sup> A CCD moves each pixel's charge packet across the chip through shift registers to an output where the packets are converted one after another. Because every packet sees the same conversion, a CCD is very uniform from pixel to pixel, but the charge transfer limits its speed.<sup><a href="#ref-1">[1]</a></sup> CMOS sensors enable higher frame rates because pixel readout occurs more quickly than charge transfer in a CCD shift register.<sup><a href="#ref-1">[1]</a></sup></p>
@@ -188,19 +188,19 @@
 
                         <h2 class="article-section-title">02. Pixel size, resolution, and sensor performance</h2>
                         <p>
-                            When selecting a camera for a robotic application, sensor resolution is typically the first specification considered. A simple measure of sensor resolution is the number of pixels per millimeter.<sup><a href="#ref-1">[1]</a></sup> For example, dividing the total pixel count along a sensor axis by the physical length of the active sensor area gives the spatial sampling density of the detector array.
+                            When selecting a camera for a robotic application, sensor resolution is typically the first specification considered. A simple measure of sensor resolution is the number of pixels per millimeter.<sup><a href="#ref-1">[1]</a></sup> For example, dividing the number of pixels along one sensor axis by the length of the active sensor area along that axis gives this sampling density.
                         </p>
                         <p>
-                            Resolution is tied to the size of each pixel, and pixel size sets trade-offs in noise and dynamic range. Larger sensor pixels generally feature higher charge saturation capacities and superior signal-to-noise ratios.<sup><a href="#ref-1">[1]</a></sup>
+                            Resolution is tied to the size of each pixel, and pixel size sets trade-offs in noise and dynamic range. Larger pixels generally hold more charge before they saturate and have better signal-to-noise ratios.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
                             In contrast, small pixels allow camera manufacturers to pack millions of pixels into compact sensor formats. Small pixels make it easier to achieve high resolution for a given sensor size, but pixel crosstalk can lower contrast at high spatial frequencies.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
-                            To understand how pixel resolution interacts with optical lenses, engineers rely on spatial frequency metrics. Optical resolution is defined as a spatial frequency measured in line pairs per millimeter, where one line pair represents alternating black and white bars in object space.<sup><a href="#ref-2">[2]</a></sup>
+                            To relate pixel resolution to the lens, engineers measure spatial frequency. Optical resolution is defined as a spatial frequency measured in line pairs per millimeter, where one line pair represents alternating black and white bars in object space.<sup><a href="#ref-2">[2]</a></sup>
                         </p>
                         <p>
-                            When an image sensor samples these alternating optical bars, it is subject to the fundamental limits of discrete digital sampling. The highest spatial frequency resolvable by an electronic camera sensor is the Nyquist limit, which requires at least two pixels per line pair.<sup><a href="#ref-2">[2]</a></sup> To distinguish an alternating bar pattern, the sensor must place at least one pixel on the bright bar and at least one pixel on the dark bar.
+                            Sampling these bars with discrete pixels sets a hard limit. The highest spatial frequency a camera sensor can resolve is the Nyquist limit, which requires at least two pixels per line pair.<sup><a href="#ref-2">[2]</a></sup> To distinguish an alternating bar pattern, the sensor must place at least one pixel on the bright bar and at least one pixel on the dark bar.
                         </p>
                         <p>
                             Sampling frequency alone does not guarantee a usable image; the system must also preserve contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-3">[3]</a></sup> If contrast drops below the threshold needed by vision algorithms, edge detection and part inspection fail even when theoretical pixel counts appear sufficient.
@@ -208,7 +208,7 @@
 
                         <h2 class="article-section-title">03. Shutter mechanisms: global shutter versus rolling shutter</h2>
                         <p>
-                            An electronic shutter regulates the duration and sequence in which pixel rows accumulate light. Machine vision sensors use one of two shutter architectures: global shutter or rolling shutter.
+                            An electronic shutter controls when, and for how long, the pixel rows collect light. Machine vision sensors use one of two shutter architectures: global shutter or rolling shutter.
                         </p>
                         <p>
                             During image acquisition with a global shutter, all sensor pixels start and stop exposing at the same time.<sup><a href="#ref-4">[4]</a></sup>
@@ -217,7 +217,7 @@
                             Because every pixel captures the scene during the same time window, global shutter cameras are particularly useful for capturing fast-moving objects or when the camera is moving rapidly during capture.<sup><a href="#ref-4">[4]</a></sup> For example, when an eye-in-hand camera mounted on a robot wrist takes a snapshot while the arm is moving (see <a href="robotics-2-8.html">2.8</a>), a global shutter captures the moving part without spatial distortion.
                         </p>
                         <p>
-                            In a rolling shutter sensor, exposure does not occur at a single instant across the array. A rolling shutter exposes the sensor's pixel rows one after another with a temporal offset from one row to the next.<sup><a href="#ref-4">[4]</a></sup> The camera begins exposing the top row; after a brief offset it begins exposing the second row, and so on down the sensor. Readout follows each row's exposure with the identical temporal shift.
+                            In a rolling shutter sensor, exposure does not occur at a single instant across the array. A rolling shutter exposes the sensor's pixel rows one after another with a temporal offset from one row to the next.<sup><a href="#ref-4">[4]</a></sup> The camera begins exposing the top row; after a brief offset it begins exposing the second row, and so on down the sensor. Each row is then read out after its exposure, with the same time shift.
                         </p>
                         <figure class="lesson-diagram">
                             <svg viewBox="0 0 400 220" role="img" aria-label="Comparison of global shutter and rolling shutter row exposure timing over time" xmlns="http://www.w3.org/2000/svg">
@@ -264,7 +264,7 @@
                             However, when relative motion exists during acquisition, the time offset between rows distorts the image. Fast relative motion between the camera and object during rolling shutter acquisition causes geometric image distortion known as the rolling shutter effect.<sup><a href="#ref-4">[4]</a></sup> For example, if an object moves horizontally across the field of view while rows are exposed from top to bottom, lower rows capture the object further along its path than upper rows. In robot guidance, this shear makes the vision system report wrong positions and orientations.
                         </p>
                         <p>
-                            When a rolling shutter camera must be deployed in an environment with moving components, lighting techniques can overcome this distortion. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href="#ref-4">[4]</a></sup> The effective exposure is defined by the brief flash duration rather than the row-by-row sensor scan, preventing rolling shutter geometric distortion.
+                            When a rolling shutter camera has to image moving parts, lighting can work around this distortion. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href="#ref-4">[4]</a></sup> The brief flash, rather than the row-by-row scan, then sets the effective exposure, so the image is not distorted.
                         </p>
 
                         <h2 class="article-section-title">04. Lens optics: focal length and field of view</h2>
@@ -272,7 +272,7 @@
                             An imaging lens collects diverging light rays originating from each object point and focuses them onto a corresponding conjugate point on the sensor plane. The most fundamental property of any imaging lens is its focal length, which describes how strongly it focuses or diverges light.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
                         <p>
-                            Focal length directly governs how sharply optical rays are bent by the glass elements. A lens with a large focal length bends light gradually, while a short focal length bends light at sharp angles.<sup><a href="#ref-5">[5]</a></sup> Because a short focal length lens bends rays steeply, it produces a wide angular field of view (AFOV). A long focal length lens bends rays gently over a longer distance, resulting in a narrow viewing angle and higher optical magnification.
+                            Focal length sets how sharply the lens bends light. A lens with a large focal length bends light gradually, while a short focal length bends light at sharp angles.<sup><a href="#ref-5">[5]</a></sup> Because a short focal length lens bends rays steeply, it produces a wide angular field of view (AFOV). A long focal length lens bends rays gently over a longer distance, resulting in a narrow viewing angle and higher optical magnification.
                         </p>
                         <p>
                             In robotic work cell integration, two physical dimensions determine the required lens focal length: field of view (FOV) and working distance (WD). The field of view is the physical inspection area that must fill the camera sensor, while working distance is the physical clearance between the front of the lens and the inspected object. For example, for a given sensor format, increasing the working distance enlarges the field of view, whereas shortening the focal length captures a broad field of view within a compact space.
@@ -289,10 +289,10 @@
                             Inside an imaging lens, an adjustable mechanical diaphragm—the iris aperture—regulates the cone of light rays permitted to pass through the optical elements to the sensor. The aperture setting trades light intensity against image sharpness.
                         </p>
                         <p>
-                            The optical setting of the iris is quantified by its f-number. The f-number of a lens is defined as the ratio of its focal length to the effective aperture diameter.<sup><a href="#ref-7">[7]</a></sup> Designated as f/# or N, the f-number provides a standardized measure of optical throughput that remains comparable across lenses of completely different focal lengths.
+                            The optical setting of the iris is quantified by its f-number. The f-number of a lens is defined as the ratio of its focal length to the effective aperture diameter.<sup><a href="#ref-7">[7]</a></sup> Written f/# or N, the f-number is a standard measure of light throughput that can be compared across lenses of very different focal lengths.
                         </p>
                         <p>
-                            Standard lens iris markings follow from how aperture diameter sets aperture area, and area sets light throughput. Increasing the f-number by a factor of the square root of two halves the aperture area and reduces lens light throughput by a factor of two.<sup><a href="#ref-7">[7]</a></sup> For example, each full stop increases the f-number by approximately 1.414 (the square root of two), cutting the circular aperture area in half.
+                            The standard iris markings follow from two links: diameter sets aperture area, and area sets light throughput. Increasing the f-number by a factor of the square root of two halves the aperture area and reduces lens light throughput by a factor of two.<sup><a href="#ref-7">[7]</a></sup> For example, each full stop increases the f-number by approximately 1.414 (the square root of two), cutting the circular aperture area in half.
                         </p>
 
                         <div data-widget="f-number-aperture">
@@ -307,10 +307,10 @@
 
                         <h2 class="article-section-title">06. Telecentric lenses for precision gauging</h2>
                         <p>
-                            Ordinary lenses, called entocentric lenses, change magnification with distance. Conventional lenses possess an angular field of view that introduces parallax error where perceived magnification changes with object distance.<sup><a href="#ref-8">[8]</a></sup> Because the angular field of view expands with distance, an object placed closer to the lens appears larger on the sensor, while an identical object placed farther away appears smaller. For example, if a robotic gripper picks parts from a stack where height varies, an entocentric camera will perceive parts at the top of the stack as larger than parts at the bottom.
+                            Ordinary lenses, called entocentric lenses, change magnification with distance. Conventional lenses have an angular field of view, which introduces parallax error: perceived magnification changes with object distance.<sup><a href="#ref-8">[8]</a></sup> Because the angular field of view expands with distance, an object placed closer to the lens appears larger on the sensor, while an identical object placed farther away appears smaller. For example, if a robotic gripper picks parts from a stack where height varies, an entocentric camera will perceive parts at the top of the stack as larger than parts at the bottom.
                         </p>
                         <p>
-                            Furthermore, angular perspective distorts three-dimensional features located away from the optical axis. For example, when an entocentric lens views cylindrical holes or vertical pins near the edge of its field of view, it views them at an oblique angle.
+                            Angular perspective also distorts three-dimensional features away from the optical axis. For example, when an entocentric lens views cylindrical holes or vertical pins near the edge of its field of view, it views them at an oblique angle.
                         </p>
                         <p>
                             To eliminate perspective error, precision inspection systems employ telecentric optics. Telecentric lenses eliminate parallax and perspective error by keeping magnification constant across working distance variations.<sup><a href="#ref-8">[8]</a></sup>
@@ -319,21 +319,21 @@
                             Because the chief rays of a telecentric lens run parallel to the optical axis, an object's imaged dimensions remain constant even if the object moves closer to or farther from the lens within its telecentric depth of field. For example, a 20 mm shaft keeps the same image size whether it sits at the nominal working distance or shifts several millimeters along the optical axis.
                         </p>
                         <p>
-                            Telecentric lenses also help when features drift slightly out of focus. Telecentric lenses blur symmetrically across focus variations because they have no angular field of view component, allowing edges to retain their centroid location.<sup><a href="#ref-8">[8]</a></sup> Because the blur spreads evenly on both sides of an edge, sub-pixel edge detection still finds the true edge position.
+                            Telecentric lenses also help when features drift slightly out of focus. Because telecentric lenses have no angular field of view component, they blur symmetrically as focus varies, so edges keep their centroid location.<sup><a href="#ref-8">[8]</a></sup> Because the blur spreads evenly on both sides of an edge, sub-pixel edge detection still finds the true edge position.
                         </p>
 
                         <h2 class="article-section-title">07. Industrial camera interfaces and GenICam</h2>
                         <p>
-                            Once an image sensor captures photons and converts them to digital pixels, that raster data must be transmitted across a physical interface to a host computing platform, such as an industrial PC, a vision controller, or a robot controller.
+                            Once an image sensor captures photons and converts them to digital pixels, the image must be sent over a physical interface to a host computer, such as an industrial PC, a vision controller, or a robot controller.
                         </p>
                         <p>
-                            Historically, each camera manufacturer developed proprietary communication protocols and device drivers. A vision application written for one brand could not talk to a camera from another manufacturer without a complete rewrite of low-level software. To eliminate vendor lock-in and foster hardware interoperability, the machine vision industry established the GenICam standard.
+                            Historically, each camera manufacturer developed proprietary communication protocols and device drivers. A vision application written for one brand could not talk to a camera from another manufacturer without a complete rewrite of low-level software. To end this vendor lock-in and let hardware from different makers work together, the machine vision industry created the GenICam standard.
                         </p>
                         <p>
                             The GenICam standard provides a generic programming interface for all camera types regardless of interface hardware.<sup><a href="#ref-9">[9]</a></sup> Hosted by the European Machine Vision Association (EMVA), GenICam separates vision application software from the hardware interface underneath it.
                         </p>
                         <p>
-                            This standardized architecture enables automation engineers to swap camera models, sensor resolutions, or interface standards without altering high-level robot vision and guidance software.
+                            Engineers can then swap camera models, sensor resolutions, or interface standards without changing the robot's vision and guidance software.
                         </p>
 
                         <h2 class="article-section-title">08. Check your understanding</h2>
@@ -391,7 +391,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+        <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

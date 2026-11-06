@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT10M",
+            "timeRequired": "PT9M",
             "teaches": [
                 "sinking",
                 "sourcing",
@@ -178,24 +178,24 @@
 
                         <h2 class="article-section-title">01. Discrete DC I/O: sinking and sourcing</h2>
                         <p>
-                            In <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a>, we examined how a robotic manipulator functions within an automated work cell. In that lesson, we saw that a cell controller coordinates equipment using handshake signals, while safety signals are kept separate. In <a href="robotics-2-5.html">Lesson 2.5 End-of-Arm Tooling and I/O</a>, we configured the digital inputs and digital outputs on the controller and tool flange that detect part presence and trigger pneumatic actuators. Before digital communication networks connected automated machines, every sensor and actuator communicated through dedicated electrical circuits. This lesson starts with those circuits: the direct current (DC) circuits that interface field devices to programmable logic controllers (PLCs).
+                            In <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a>, we examined how a robotic manipulator functions within an automated work cell. In that lesson, we saw that a cell controller coordinates equipment using handshake signals, while safety signals are kept separate. In <a href="robotics-2-5.html">Lesson 2.5 End-of-Arm Tooling and I/O</a>, we configured the digital inputs and digital outputs on the controller and tool flange that detect part presence and trigger pneumatic actuators. Before digital communication networks connected automated machines, every sensor and actuator communicated through dedicated electrical circuits. This lesson starts with those circuits: the direct current (DC) circuits that connect field devices to programmable logic controllers (PLCs).
                         </p>
                         <p>
-                            In industrial automation, discrete input and output signals operate primarily on direct current. Sinking and sourcing terminology applies only to DC input and output circuits.<sup><a href="#ref-1">[1]</a></sup> Alternating current (AC) circuits reverse polarity continuously, so sinking and sourcing concepts do not apply to them. Direct current circuits maintain fixed positive and negative polarities. Sinking or sourcing input and output points can conduct current in one direction only.<sup><a href="#ref-1">[1]</a></sup> Wiring devices to a PLC or robot controller therefore requires knowing how current enters and exits each terminal, since current flows in one direction through solid-state switches and optical isolators.
+                            In industrial automation, discrete input and output signals operate primarily on direct current. Sinking and sourcing terminology applies only to DC input and output circuits.<sup><a href="#ref-1">[1]</a></sup> Alternating current (AC) circuits reverse polarity continuously, so sinking and sourcing concepts do not apply to them. Direct current circuits maintain fixed positive and negative polarities. Sinking or sourcing input and output points can conduct current in one direction only.<sup><a href="#ref-1">[1]</a></sup> Wiring devices to a PLC or robot controller therefore means knowing which way current enters and leaves each terminal, because it flows in one direction through solid-state switches and optical isolators.
                         </p>
                         <p>
                             The terms sinking and sourcing define how an electrical circuit provides a path relative to the power supply rails. Sinking provides a path to supply common (-).<sup><a href="#ref-1">[1]</a></sup> Sourcing provides a path to supply source (+).<sup><a href="#ref-1">[1]</a></sup> A sourcing circuit connects the positive supply rail to the load, driving conventional current out through the terminal. A sinking circuit connects the load down to the negative supply rail, pulling current into the terminal toward electrical common.
                         </p>
                         <p>
-                            To reduce wiring complexity and physical module size, PLC I/O cards do not provide isolated pairs of positive and negative terminals for each individual point. Most PLC input or output points are grouped together to share a return path called a common.<sup><a href="#ref-1">[1]</a></sup> For example, a card might have eight signal terminals and one common terminal for all eight. This arrangement saves space in electrical enclosures by minimizing the number of return conductors routed through wire ducts.
+                            To keep wiring simple and modules small, PLC I/O cards do not give each point its own isolated pair of positive and negative terminals. Most PLC input or output points are grouped together to share a return path called a common.<sup><a href="#ref-1">[1]</a></sup> For example, a card might have eight signal terminals and one common terminal for all eight. This saves enclosure space, because fewer return conductors run through the wire ducts.
                         </p>
                         <p>
-                            However, grouping return lines concentrates current across the shared conductor. In output circuits sharing a common return path, the current flowing through the common terminal can reach several amperes.<sup><a href="#ref-1">[1]</a></sup> For example, when eight output actuators on a card energize simultaneously to power pneumatic solenoid valves, the individual return currents combine at the single common terminal before returning to the power supply. Panel builders must size common wiring conductors to handle this combined current without overheating or causing voltage drops across the return rail.
+                            However, grouping the return lines concentrates current in the shared conductor. In output circuits sharing a common return path, the current flowing through the common terminal can reach several amperes.<sup><a href="#ref-1">[1]</a></sup> For example, when eight output actuators on a card energize simultaneously to power pneumatic solenoid valves, the individual return currents combine at the single common terminal before returning to the power supply. Panel builders must size the common conductors to carry this combined current without overheating or dropping voltage along the return rail.
                         </p>
 
                         <h2 class="article-section-title">02. Three-wire sensors: NPN and PNP field devices</h2>
                         <p>
-                            Discrete sensors on automated machinery include inductive proximity switches, photoelectric sensors, and capacitive level detectors. While mechanical limit switches use two conductors to open or close a contact, electronic sensors require a three-wire interface. A three-wire field device has connections for a supply source (+), a supply common (-), and an output signal.<sup><a href="#ref-2">[2]</a></sup> The supply source wire connects to positive DC potential, and the supply common wire connects to DC negative common. These two conductors supply continuous operating power to the internal sensing circuitry. The third conductor carries the switched digital output signal to the controller.
+                            Discrete sensors on automated machinery include inductive proximity switches, photoelectric sensors, and capacitive level detectors. While mechanical limit switches use two conductors to open or close a contact, electronic sensors require a three-wire interface. A three-wire field device has connections for a supply source (+), a supply common (-), and an output signal.<sup><a href="#ref-2">[2]</a></sup> The supply source wire connects to positive DC potential, and the supply common wire connects to DC negative common. Together they power the internal sensing circuitry continuously. The third conductor carries the switched digital output signal to the controller.
                         </p>
                         <p>
                             The internal transistor configuration determines how the sensor switches this signal line. Sinking field devices use NPN transistor outputs and sourcing field devices use PNP outputs.<sup><a href="#ref-2">[2]</a></sup> An NPN sensor contains an internal transistor that switches the output signal line down to supply common (-). When the sensor detects a target, it sinks current from the signal line to common. A PNP sensor contains an internal transistor that switches the output signal line up to supply source (+). When active, it sources current from the positive supply rail out into the signal line.
@@ -210,21 +210,21 @@
                             <figcaption>Three-wire sensor wiring: NPN sensors switch the signal line to supply common (-), requiring a sourcing input; PNP sensors switch the signal line to supply source (+), requiring a sinking input.<sup><a href="#ref-2">[2]</a></sup></figcaption>
                         </figure>
                         <p>
-                            Many PLC input modules allow the shared common terminal to connect to either positive or negative voltage, accommodating either sensor type. However, internal grouping imposes a strict constraint. All I/O points sharing a common terminal on a sink/source module must be wired as only sinking or only sourcing.<sup><a href="#ref-2">[2]</a></sup> If an engineer connects a group's common terminal to positive supply potential to support NPN sinking sensors, every point in that group must be an NPN sensor. Mixing NPN and PNP sensors on the same shared common terminal prevents current from circulating through the opposing circuits.
+                            Many PLC input modules allow the shared common terminal to connect to either positive or negative voltage, accommodating either sensor type. Grouping still imposes a strict constraint. All I/O points sharing a common terminal on a sink/source module must be wired as only sinking or only sourcing.<sup><a href="#ref-2">[2]</a></sup> If an engineer connects a group's common terminal to positive supply potential to support NPN sinking sensors, every point in that group must be an NPN sensor. Mixing NPN and PNP sensors on the same shared common terminal prevents current from circulating through the opposing circuits.
                         </p>
 
                         <h2 class="article-section-title">03. Point-to-point wiring and fieldbus technology</h2>
                         <p>
-                            In early automated facilities, point-to-point wiring was the standard method for connecting machinery to control enclosures. Every proximity sensor, push button, valve solenoid, and interlock switch required dedicated copper conductors routed directly back to input and output terminals in the PLC cabinet. In complex manufacturing cells, this created thick wiring bundles containing hundreds of individual conductors. Installing these bundles through conduit and routing them through robot dress packs required substantial labor. Furthermore, diagnosing broken wires under repetitive mechanical flexing was difficult.
+                            In early automated facilities, point-to-point wiring was the standard method for connecting machinery to control enclosures. Every proximity sensor, push button, valve solenoid, and interlock switch required dedicated copper conductors routed directly back to input and output terminals in the PLC cabinet. In complex manufacturing cells, this created thick wiring bundles containing hundreds of individual conductors. Pulling these bundles through conduit and robot dress packs took substantial labor, and wires that broke under repeated flexing were hard to diagnose.
                         </p>
                         <p>
-                            To solve the physical limitations of point-to-point wiring, automation manufacturers developed digital networking architectures. Fieldbus technology served as a replacement for point-to-point wiring when connecting sensors and field devices to PLCs.<sup><a href="#ref-3">[3]</a></sup> Rather than running individual wires from every device back to the main cabinet, fieldbus networks connect multiple field devices using a single shared digital cable. Remote I/O blocks mounted directly on the machine gather local sensor signals, digitize them, and transmit them to the central controller across this shared communication bus.
+                            To get past these limits, automation manufacturers developed digital networks. Fieldbus technology replaced point-to-point wiring for connecting sensors and field devices to PLCs.<sup><a href="#ref-3">[3]</a></sup> Rather than running individual wires from every device back to the main cabinet, fieldbus networks connect multiple field devices using a single shared digital cable. Remote I/O blocks mounted directly on the machine gather local sensor signals, digitize them, and transmit them to the central controller across this shared communication bus.
                         </p>
                         <p>
                             The first fieldbuses used simple serial links. Serial fieldbus networks originally dominated because early Ethernet was expensive and non-deterministic.<sup><a href="#ref-3">[3]</a></sup> Non-deterministic means the network cannot guarantee how long a message takes to arrive.
                         </p>
                         <p>
-                            In industrial automation, unpredictable delivery times cannot be tolerated. If a robot arm moves at high speed, input signals from limit switches or interlocks must arrive within a guaranteed time window. Several of those early serial protocols became the DeviceNet, PROFIBUS DP and CANopen protocols still used today.<sup><a href="#ref-3">[3]</a></sup>
+                            Industrial automation cannot tolerate unpredictable delivery times. If a robot arm moves at high speed, input signals from limit switches or interlocks must arrive within a guaranteed time window. Several of those early serial protocols became the DeviceNet, PROFIBUS DP and CANopen protocols still used today.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">04. The shift to industrial Ethernet</h2>
@@ -235,23 +235,23 @@
                             Industrial Ethernet allows multiple distinct protocols to operate simultaneously across the same physical cable.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
-                            This multi-protocol capability allows a single industrial network cable to serve multiple plant functions. For example, a single Ethernet cable connected to a robot controller can carry real-time cyclic control data to the PLC, deliver supervisory production statistics through OPC UA, and transmit configuration commands from an engineering workstation. By running multiple protocols over standard cabling, manufacturing plants simplified their network architecture and linked machine controllers directly to plant information systems.
+                            This lets one network cable serve multiple plant functions. For example, a single Ethernet cable connected to a robot controller can carry real-time cyclic control data to the PLC, deliver supervisory production statistics through OPC UA, and transmit configuration commands from an engineering workstation. By running multiple protocols over standard cabling, manufacturing plants simplified their network architecture and linked machine controllers directly to plant information systems.
                         </p>
 
                         <h2 class="article-section-title">05. Cyclic and acyclic communication</h2>
                         <p>
-                            To support both real-time machine control and background data collection, industrial communication protocols divide data transmission into two distinct modes: cyclic data exchange and acyclic data exchange. This division ensures that administrative tasks do not delay time-sensitive machine operations.
+                            To support both real-time machine control and background data collection, industrial communication protocols split data exchange into two modes: cyclic and acyclic. The split ensures that administrative tasks do not delay time-sensitive machine operations.
                         </p>
                         <p>
                             In manufacturing automation, controllers require regular, predictable updates to coordinate moving machinery. Inputs and outputs are transferred between a controller and I/O devices cyclically at a defined update cycle time.<sup><a href="#ref-4">[4]</a></sup> At each update interval, the controller transmits output commands to actuators and reads input states from field sensors. 
                         </p>
                         <p>
-                            In contrast, other types of operational information are exchanged only occasionally. Acyclic communication transmits diagnostic data on an as-needed basis rather than adhering to a fixed cyclic update schedule.<sup><a href="#ref-4">[4]</a></sup> For example, uploading an error log from a motor drive, modifying a controller parameter, or reading temperature trends occurs only when requested by an operator or triggered by a fault event. These requests are answered when they arrive instead of on a fixed schedule.
+                            In contrast, other types of operational information are exchanged only occasionally. Acyclic communication transmits diagnostic data on an as-needed basis rather than adhering to a fixed cyclic update schedule.<sup><a href="#ref-4">[4]</a></sup> For example, uploading an error log from a motor drive, modifying a controller parameter, or reading temperature trends happens only when an operator requests it or a fault event triggers it. These requests are answered when they arrive instead of on a fixed schedule.
                         </p>
 
                         <h2 class="article-section-title">06. Network topologies and Device Level Ring resilience</h2>
                         <p>
-                            The arrangement of physical cables and network nodes in an industrial facility forms the network topology. Industrial networks support multiple physical topologies including line, ring, and star configurations.<sup><a href="#ref-4">[4]</a></sup> Each topology offers specific characteristics for installation and fault tolerance:
+                            The way cables and network nodes are arranged in a facility is the network topology. Industrial networks support multiple physical topologies including line, ring, and star configurations.<sup><a href="#ref-4">[4]</a></sup> Each one balances installation effort and fault tolerance differently:
                         </p>
                         <ul class="article-spec-list">
                             <li class="article-spec-item"><span class="spec-label">Star topology:</span> Every node connects via an individual cable directly to a central switch. If one cable is damaged, only that single node loses communication. However, star topologies require extensive cabling runs converging on central enclosures.</li>
@@ -259,20 +259,20 @@
                             <li class="article-spec-item"><span class="spec-label">Ring topology:</span> The last device in a line topology connects back to the start, closing the loop. This configuration provides a redundant physical path while keeping cabling runs shorter than a star configuration.</li>
                         </ul>
                         <p>
-                            In standard Ethernet, looping cables creates broadcast storms as broadcast packets circulate endlessly, disabling the network. To use ring topologies safely, industrial protocols implement media redundancy management. Device Level Ring (DLR) is an EtherNet/IP protocol defined by ODVA.<sup><a href="#ref-5">[5]</a></sup> In a DLR network, one device is configured as the active ring supervisor, while the remaining devices act as ring nodes. The active ring supervisor transmits beacon frames through both of its ring ports to monitor network health.<sup><a href="#ref-5">[5]</a></sup>
+                            In standard Ethernet, a cable loop creates a broadcast storm: broadcast packets circulate endlessly and disable the network. To use ring topologies safely, industrial protocols implement media redundancy management. Device Level Ring (DLR) is an EtherNet/IP protocol defined by ODVA.<sup><a href="#ref-5">[5]</a></sup> In a DLR network, one device is configured as the active ring supervisor, while the remaining devices act as ring nodes. The active ring supervisor transmits beacon frames through both of its ring ports to monitor network health.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
                         <p>
-                            During normal operation, one of the supervisor's ring ports is blocked, so the ring behaves like a line with no loop.<sup><a href="#ref-5">[5]</a></sup> It continuously sends beacon frames out of both ports to confirm ring continuity. If a cable breaks or a node loses power, beacon frames cease arriving at the opposite supervisor port. The supervisor then unblocks its blocked port so traffic can reach every node through the remaining path.
+                            During normal operation, one of the supervisor's ring ports is blocked, so the ring behaves like a line with no loop.<sup><a href="#ref-5">[5]</a></sup> It continuously sends beacon frames out of both ports to confirm ring continuity. If a cable breaks or a node loses power, beacon frames stop arriving at the opposite supervisor port. The supervisor then unblocks its blocked port so traffic can reach every node through the remaining path.
                         </p>
                         <p>
-                            Fast network recovery is necessary to prevent automated processes from stopping when a cable is damaged. A copper Device Level Ring network achieves a worst-case recovery time of 2890 µs using default beacon settings.<sup><a href="#ref-5">[5]</a></sup>
+                            Recovery must be fast so that a damaged cable does not stop the automated process. A copper Device Level Ring network achieves a worst-case recovery time of 2890 µs using default beacon settings.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
 
                         <div data-widget="dlr-ring-recovery">
                             <p class="widget-note">The Device Level Ring recovery simulator needs JavaScript. With it on, you can break a ring segment to observe beacon loss and automatic unblocking restoring network path.</p>
                         </div>
                         <p>
-                            To maintain this recovery speed, network size must be controlled. Rockwell Automation recommends limiting a Device Level Ring network to 50 or fewer nodes to avoid degraded recovery time and network performance.<sup><a href="#ref-5">[5]</a></sup> Too many ring nodes make multiple faults more likely and slow down fault detection and recovery, so larger installations are split into separate rings.<sup><a href="#ref-5">[5]</a></sup>
+                            Keeping that recovery speed means limiting network size. Rockwell Automation recommends limiting a Device Level Ring network to 50 or fewer nodes to avoid degraded recovery time and network performance.<sup><a href="#ref-5">[5]</a></sup> Too many ring nodes make multiple faults more likely and slow down fault detection and recovery, so larger installations are split into separate rings.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
@@ -326,7 +326,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+        <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

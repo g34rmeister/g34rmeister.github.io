@@ -184,7 +184,7 @@
                                 High-level robotic architectures such as ROS 2 often run on single-board computers or PCs with a general-purpose operating system like Linux. A standard Linux kernel is not set up as a real-time operating system: the mainline kernel offers several preemption models, and only the "Fully Preemptible Kernel" model turns Linux into a real-time OS. Without it, a time-critical thread can be held up by other work, so its timing is not guaranteed.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                At the physical hardware frontier, robots need tight, predictable timing. Motor switching, quadrature encoder counting and ultrasonic echo measurements cannot tolerate long scheduling delays. For this low-level control, roboticists use microcontrollers: single chips that combine a processor core, program memory, working memory and input/output pins. The ATmega328P, for example, packs 32 KB of flash, 2 KB of SRAM, 1 KB of EEPROM and 23 general-purpose I/O lines into one device.<sup><a href="#ref-2">[2]</a></sup> The Arduino Uno, built around this chip, is a common starting point for prototyping robot control electronics.<sup><a href="#ref-3">[3]</a></sup>
+                                Closer to the hardware, robots need tight, predictable timing. Motor switching, quadrature encoder counting and ultrasonic echo measurements cannot tolerate long scheduling delays. For this low-level control, roboticists use microcontrollers: single chips that combine a processor core, program memory, working memory and input/output pins. The ATmega328P, for example, packs 32 KB of flash, 2 KB of SRAM, 1 KB of EEPROM and 23 general-purpose I/O lines into one device.<sup><a href="#ref-2">[2]</a></sup> The Arduino Uno, built around this chip, is a common starting point for prototyping robot control electronics.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">02. Hardware architecture: Arduino Uno R3 versus Uno R4</h2>
@@ -286,7 +286,7 @@
 
                             <h2 class="article-section-title">05. H-bridge motor drivers: L298N versus TB6612FNG</h2>
                             <p>
-                                To protect the microcontroller while supplying the high currents motors need, roboticists use an intermediate power stage known as an <strong>H-bridge motor driver</strong>: a power stage that takes low-current control signals from the microcontroller and switches the much larger motor current from a separate supply.<sup><a href="#ref-12">[12]</a></sup> An H-bridge consists of four electronic switches arranged in an "H" shape around the motor. Closing diagonal pairs of switches sends current forward or backward through the motor, which gives two directions of rotation, and switching them rapidly with a PWM signal sets the speed.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup>
+                                To protect the microcontroller while supplying the high currents motors need, roboticists use an <strong>H-bridge motor driver</strong>: an intermediate power stage that takes low-current control signals from the microcontroller and switches the much larger motor current from a separate supply.<sup><a href="#ref-12">[12]</a></sup> An H-bridge consists of four electronic switches arranged in an "H" shape around the motor. Closing diagonal pairs of switches sends current forward or backward through the motor, which gives two directions of rotation, and switching them rapidly with a PWM signal sets the speed.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <p>
                                 Two popular driver chips (often sold on breakout modules such as the "L298N" board) show how much driver technology has improved:
@@ -298,7 +298,7 @@
 
                             <h2 class="article-section-title">06. Power architecture: the common ground rule</h2>
                             <p>
-                                How should you power a DC motor in an Arduino robot? <strong>From a separate battery through a motor driver, with grounds connected</strong>. Arduino's Servo library documentation gives the same advice for servos, which draw considerable power: use a separate supply and be sure to connect the grounds of the Arduino and the external supply together.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-14">[14]</a></sup>
+                                Power a DC motor in an Arduino robot <strong>from a separate battery through a motor driver, with grounds connected</strong>. Arduino's Servo library documentation gives the same advice for servos, which draw considerable power: use a separate supply and be sure to connect the grounds of the Arduino and the external supply together.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
                                 Operating a robot therefore uses two power domains:
@@ -308,7 +308,7 @@
                                 <li><strong>The Motor Power Domain:</strong> A battery pack (for example a 2S or 3S lithium polymer pack) connected to the motor-supply terminal of the driver (VS on the L298, VM on the TB6612FNG).<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-13">[13]</a></sup></li>
                             </ol>
                             <p>
-                                Crucially, the Ground (GND) wire from the motor battery and the Ground (GND) pin on the Arduino <strong>must be connected together</strong>.<sup><a href="#ref-14">[14]</a></sup> What happens if you do not connect the Arduino ground to the motor battery ground? The logic signals float without a shared 0 V reference, causing erratic motor behavior or complete failure to switch.
+                                Crucially, the Ground (GND) wire from the motor battery and the Ground (GND) pin on the Arduino <strong>must be connected together</strong>.<sup><a href="#ref-14">[14]</a></sup> If they are not connected, the logic signals float without a shared 0 V reference, causing erratic motor behavior or complete failure to switch.
                             </p>
                             <p>
                                 The reason is that voltage is not an absolute quantity: it is a difference in electrical potential between two points. When the Arduino sets digital pin 9 HIGH (5 V), that 5 V is measured relative to the Arduino's own Ground pin. If the motor driver's logic does not share that same Ground, it has no reference for deciding whether pin 9 is at 5 V or 0 V. Its control inputs effectively float, pick up noise and can switch unpredictably, just like the floating inputs described in Section 03.<sup><a href="#ref-11">[11]</a></sup>
@@ -387,7 +387,7 @@ void loop() {
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Wire an active-low bumper switch to digital pin 2 using <code>pinMode(2, INPUT_PULLUP)</code>. Connect the other terminal of the switch to GND. Verify using the Serial Monitor that the pin reads 1 when open and 0 when pressed, with zero electrical floating.</li>
+                                    <li>Wire an active-low bumper switch to digital pin 2 using <code>pinMode(2, INPUT_PULLUP)</code>. Connect the other terminal of the switch to GND. Use the Serial Monitor to verify that the pin reads 1 when open and 0 when pressed, with no floating.</li>
                                     <li>Connect an HC-SR04 ultrasonic sensor to an Arduino, trigger a measurement pulse, and print the resulting distance in centimeters to the Serial Monitor at 115,200 baud. Test against flat cardboard targets at 10, 30, and 100 cm.</li>
                                     <li>Wire a dual H-bridge driver (such as a TB6612FNG or L298N) to a separate battery and motor, ensuring the battery Ground and Arduino Ground pins are securely bridged. Test bidirectional motor rotation by toggling the direction pins.</li>
                                 </ol>
@@ -454,7 +454,7 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

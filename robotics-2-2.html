@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. The role of dedicated programming environments</h2>
                             <p>
-                                Programming an industrial robot requires tools that connect high-level task logic with real-time mechanical motion. General software developers write source code in text editors, compile it, and test it on a computer. In robotics, the software must also coordinate physical arms, grippers, safety interlocks, and programmable logic controllers (PLCs); in a modern robotic cell, PLCs and robot controllers must be coordinated and integrated.<sup><a href="#ref-1">[1]</a></sup>
+                                Programming an industrial robot requires tools that connect high-level task logic with real-time mechanical motion. General software developers write source code in text editors, compile it, and test it on a computer. In robotics, the software must also coordinate physical arms, grippers, safety interlocks, and programmable logic controllers (PLCs), and in a modern robotic cell the PLCs and robot controllers must be integrated with each other.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 Robot programming environments have therefore split into two main kinds. First, 3D offline simulation suites let engineers build a virtual copy of a work cell on a PC and test real robot programs in it.<sup><a href="#ref-2">[2]</a></sup> Second, graphical teach pendant environments running on the robot controller let shop-floor staff teach positions and build programs without traditional coding.<sup><a href="#ref-3">[3]</a></sup>
@@ -211,7 +211,7 @@
 
                             <h2 class="article-section-title">03. Motion fidelity: TrueMove and QuickMove</h2>
                             <p>
-                                Two motion control features of ABB's RobotWare controller software shape how ABB robots move, and because the Virtual Controller is a copy of the real controller software, they are also present in simulation:<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                                Two motion control features of ABB's RobotWare controller software shape how ABB robots move. Because the Virtual Controller is a copy of the real controller software, both are also present in simulation:<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">TrueMove:</span> ABB states that TrueMove &ldquo;ensures that the motion path followed by the robot is the same as the programmed path,&rdquo; and describes the result as a speed-independent path that does not require tuning.<sup><a href="#ref-6">[6]</a></sup> If an operator lowers program speed during testing, the tool should trace the same geometric path.</li>
@@ -223,7 +223,7 @@
 
                             <h2 class="article-section-title">04. 3D CAD integration and PowerPac extensions</h2>
                             <p>
-                                RobotStudio uses the ACIS 3D geometry kernel from Spatial, which has been part of RobotStudio since the beginning, and Spatial's InterOp translators let it import major CAD formats.<sup><a href="#ref-7">[7]</a></sup> An early ABB product specification lists IGES and STEP import as standard, with VDAFS, CATIA, STL, and VRML available as options.<sup><a href="#ref-4">[4]</a></sup>
+                                RobotStudio has used Spatial's ACIS 3D geometry kernel since the beginning, and Spatial's InterOp translators let it import major CAD formats.<sup><a href="#ref-7">[7]</a></sup> An early ABB product specification lists IGES and STEP import as standard, with VDAFS, CATIA, STL, and VRML available as options.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
                                 Once a part model is imported, engineers can generate robot paths automatically. Instead of jogging a robot to teach hundreds of discrete points, the programmer selects curves on the part model, such as the edge of a sheet metal part, and RobotStudio creates robot targets and paths along them. The user controls how closely the path follows the geometry and whether segments are linear or circular.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
@@ -276,7 +276,7 @@
 
                             <h2 class="article-section-title">06. Universal Robots PolyScope: a touch-first paradigm</h2>
                             <p>
-                                While RobotStudio is a desktop engineering suite, Universal Robots took a different approach with <strong>PolyScope</strong> for its collaborative robots (cobots). PolyScope runs on the robot's teach pendant and offers a graphical interface intended to work &ldquo;without requiring program expertise,&rdquo; and it is compatible with all UR cobots.<sup><a href="#ref-3">[3]</a></sup>
+                                While RobotStudio is a desktop engineering suite, Universal Robots took a different approach with <strong>PolyScope</strong> for its collaborative robots (cobots). PolyScope runs on the robot's teach pendant and offers a graphical interface intended to work &ldquo;without requiring program expertise.&rdquo; It is compatible with all UR cobots.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
                                 In PolyScope 5 on e-Series robots, the screen header gives access to four main tabs:<sup><a href="#ref-11">[11]</a></sup>
@@ -335,7 +335,7 @@
 
                             <h2 class="article-section-title">09. The URCaps plugin ecosystem</h2>
                             <p>
-                                Integrating a new electric gripper, screw feeder, or camera with a robot has traditionally meant writing custom communication code and then integrating it by hand into the robot program.
+                                Integrating a new electric gripper, screw feeder, or camera with a robot has traditionally meant writing custom communication code and then wiring it by hand into the robot program.
                             </p>
                             <p>
                                 Universal Robots addresses this with <strong>URCaps</strong>. In PolyScope 5, &ldquo;a URCap is a Java-based plugin, that integrates in to PolyScope.&rdquo; A URCap can add installation nodes, which configure general settings and the application environment, and program nodes, which carry out particular commands in the program sequence. A URCap can also install a daemon (a background process that runs continuously without user intervention to provide services), such as a Python script that runs on the UR controller in the background.<sup><a href="#ref-16">[16]</a></sup> For PolyScope X, URCaps are packaged as single .urcapx files. The SDK supports custom program nodes, application nodes, and Docker container contributions, with web contributions written against a TypeScript API.<sup><a href="#ref-13">[13]</a></sup>
@@ -356,7 +356,7 @@
 
                             <h2 class="article-section-title">11. Selecting an environment: cost and complexity</h2>
                             <p>
-                                Choosing a robot programming environment depends on operational constraints:
+                                The choice of environment depends on operational constraints:
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -475,7 +475,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. Why robots require sensor fusion</h2>
                             <p>
-                                In mobile robotics, state estimation is governed by a fundamental physical trade-off between two classes of sensors: proprioceptive motion sensors and exteroceptive environmental sensors.<sup><a href="#ref-1">[1]</a></sup>
+                                State estimation in mobile robotics rests on a basic trade-off between two classes of sensors: proprioceptive motion sensors and exteroceptive environmental sensors.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 As demonstrated in Lesson 6.6, <strong>wheel odometry</strong> is smooth and responsive; Borenstein and Feng describe it as "simple, inexpensive, and easy to accomplish in real-time." However, odometry is an integration process: small mechanical errors, floor irregularities such as bumps and cracks, and wheel slip accumulate into the robot's pose estimate. In their words, "the disadvantage of odometry is its unbounded accumulation of errors."<sup><a href="#ref-1">[1]</a></sup>
@@ -191,7 +191,7 @@
                                 Conversely, <strong>exteroceptive sensors</strong> (such as ultrasonic distance sensors measuring a known wall, LiDAR scan matchers, or outdoor GPS receivers) do not accumulate integration drift. Their measurements are directly referenced to landmarks in the physical environment. However, such absolute measurements are usually noisier, slower or more costly to obtain, which is why mobile robots typically use odometry "in-between periodic absolute position measurements."<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                Neither sensor modality is sufficient on its own. <strong>Sensor fusion</strong> combines measurements from several sensors so that the resulting state estimate has lower uncertainty than either source alone.<sup><a href="#ref-2">[2]</a></sup> Section 04 shows this with numbers.
+                                Neither kind of sensor is enough on its own. <strong>Sensor fusion</strong> combines measurements from several sensors so that the resulting state estimate has lower uncertainty than either source alone.<sup><a href="#ref-2">[2]</a></sup> Section 04 shows this with numbers.
                             </p>
                             <p>
                                 The classic algorithm for sensor fusion in robotics is the <strong>Kalman filter</strong>. Published in 1960 by Rudolf E. K&aacute;lm&aacute;n in the <em>Transactions of the ASME, Journal of Basic Engineering</em>,<sup><a href="#ref-3">[3]</a></sup> the filter is a recursive algorithm that keeps an estimate of a dynamic system's state together with an explicit measure of its uncertainty (the error covariance). Each new estimate is computed from the previous one and the newest measurement, rather than by reprocessing all past data.<sup><a href="#ref-2">[2]</a></sup>
@@ -210,7 +210,7 @@
 
                             <h2 class="article-section-title">03. The recursive Predict-Update architecture</h2>
                             <p>
-                                The Kalman filter operates as a continuous, two-stage recursive loop: the <strong>Predict (Time Update)</strong> step and the <strong>Update (Measurement Update)</strong> step. Welch and Bishop call these the "predictor" and "corrector" equations.<sup><a href="#ref-2">[2]</a></sup>
+                                The Kalman filter runs as a recursive loop of two steps: the <strong>Predict (Time Update)</strong> step and the <strong>Update (Measurement Update)</strong> step. Welch and Bishop call these the "predictor" and "corrector" equations.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
                                 Consider a linear discrete-time physical system modeled in state space:
@@ -226,19 +226,19 @@
                                 The two operational stages execute sequentially:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Predict Step (Time Update):</span> The filter projects the state estimate forward in time using the mathematical motion model:
+                                <li class="article-spec-item"><span class="spec-label">Predict Step (Time Update):</span> The filter projects the state estimate forward in time using the motion model:
                                     <p>\[\hat{\mathbf{x}}_k^- = \mathbf{A}\hat{\mathbf{x}}_{k-1} + \mathbf{B}\mathbf{u}_k\]</p>
                                     <p>\[\mathbf{P}_k^- = \mathbf{A}\mathbf{P}_{k-1}\mathbf{A}^T + \mathbf{Q}\]</p>
-                                    Because real physical motion is inherently imperfect (tires slip, terrain varies), adding the process noise covariance \(\mathbf{Q}\) causes estimation uncertainty \(\mathbf{P}_k^-\) to <em>grow</em> during prediction.<sup><a href="#ref-2">[2]</a></sup>
+                                    Real motion is imperfect (tires slip, terrain varies), so adding the process noise covariance \(\mathbf{Q}\) makes the estimation uncertainty \(\mathbf{P}_k^-\) to <em>grow</em> during prediction.<sup><a href="#ref-2">[2]</a></sup>
                                 </li>
                                 <li class="article-spec-item"><span class="spec-label">Update Step (Measurement Update):</span> When a sensor reading arrives, the filter computes the difference between the physical measurement \(\mathbf{z}_k\) and what the state model expected:
                                     <p>\[\tilde{\mathbf{y}}_k = \mathbf{z}_k - \mathbf{H}\hat{\mathbf{x}}_k^-\]</p>
-                                    This residual difference \(\tilde{\mathbf{y}}_k\) is termed the <strong>innovation</strong> (or measurement residual).<sup><a href="#ref-2">[2]</a></sup> Labbe's open textbook calls it simply the residual.<sup><a href="#ref-6">[6]</a></sup> The filter computes the optimal <strong>Kalman Gain</strong> \(\mathbf{K}_k\), which balances trust between prediction and measurement:
+                                    This difference \(\tilde{\mathbf{y}}_k\) is called the <strong>innovation</strong> (or measurement residual).<sup><a href="#ref-2">[2]</a></sup> Labbe's open textbook calls it simply the residual.<sup><a href="#ref-6">[6]</a></sup> The filter computes the optimal <strong>Kalman Gain</strong> \(\mathbf{K}_k\), which balances trust between prediction and measurement:
                                     <p>\[\mathbf{K}_k = \mathbf{P}_k^-\mathbf{H}^T (\mathbf{H}\mathbf{P}_k^-\mathbf{H}^T + \mathbf{R})^{-1}\]</p>
                                     The state estimate and its error covariance matrix are updated:
                                     <p>\[\hat{\mathbf{x}}_k = \hat{\mathbf{x}}_k^- + \mathbf{K}_k \tilde{\mathbf{y}}_k\]</p>
                                     <p>\[\mathbf{P}_k = (\mathbf{I} - \mathbf{K}_k \mathbf{H})\mathbf{P}_k^-\]</p><sup><a href="#ref-2">[2]</a></sup>
-                                    Because new observational data was incorporated, the updated error covariance \(\mathbf{P}_k\) <em>shrinks</em>, indicating greater certainty.
+                                    Because a new measurement has been folded in, the updated error covariance \(\mathbf{P}_k\) <em>shrinks</em>, showing greater certainty.
                                 </li>
                             </ul>
 
@@ -354,16 +354,16 @@ void handleSensors() {
 
                             <h2 class="article-section-title">06. Tuning process noise Q and measurement noise R</h2>
                             <p>
-                                In practical engineering, the performance of a Kalman filter depends critically on properly selecting the noise covariances \(Q\) and \(R\):
+                                In practice, a Kalman filter's performance depends critically on choosing the noise covariances \(Q\) and \(R\) well:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Measurement Noise Covariance \(R\):</span> Can usually be measured before the filter runs, because sample measurements can be taken off-line.<sup><a href="#ref-2">[2]</a></sup> Park the robot stationary on the floor, collect several thousand static readings from the range sensor, and compute the mathematical variance of the sample set:
+                                <li class="article-spec-item"><span class="spec-label">Measurement Noise Covariance \(R\):</span> Can usually be measured before the filter runs, because sample measurements can be taken off-line.<sup><a href="#ref-2">[2]</a></sup> Park the robot stationary on the floor, collect several thousand static readings from the range sensor, and compute the variance of the samples:
                                     \[R = \sigma_z^2 = \frac{1}{N-1} \sum_{i=1}^N (z_i - \bar{z})^2\]
                                 </li>
-                                <li class="article-spec-item"><span class="spec-label">Process Noise Covariance \(Q\):</span> Represents physical disturbances not captured in the kinematic model. It is harder to determine than \(R\) because the process usually cannot be observed directly, so \(Q\) is normally tuned, often off-line.<sup><a href="#ref-2">[2]</a></sup> Setting \(Q\) too large signals that the motion model is untrustworthy, forcing the filter to track noisy sensor readings aggressively (producing jitter).<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup> Setting \(Q\) too small causes the filter to over-trust its kinematic model, responding sluggishly to genuine sensor corrections. Such a filter can become &ldquo;smug&rdquo;: its covariance \(P\) keeps shrinking, reporting ever-better accuracy, while the estimate actually drifts away from the truth.<sup><a href="#ref-10">[10]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Process Noise Covariance \(Q\):</span> Represents physical disturbances not captured in the kinematic model. It is harder to determine than \(R\) because the process usually cannot be observed directly, so \(Q\) is normally tuned, often off-line.<sup><a href="#ref-2">[2]</a></sup> Setting \(Q\) too large tells the filter the motion model is untrustworthy, so it tracks noisy sensor readings aggressively (producing jitter).<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup> Setting \(Q\) too small makes the filter over-trust its kinematic model and respond sluggishly to genuine sensor corrections. Such a filter can become &ldquo;smug&rdquo;: its covariance \(P\) keeps shrinking, reporting ever-better accuracy, while the estimate actually drifts away from the truth.<sup><a href="#ref-10">[10]</a></sup></li>
                             </ul>
                             <p>
-                                The mathematical behavior of the Kalman gain \(K = \frac{P_{pred}}{P_{pred} + R}\) demonstrates two limiting regimes: as \(R\) approaches zero the gain weights the residual more heavily, and as the predicted covariance approaches zero it weights the residual less heavily.<sup><a href="#ref-2">[2]</a></sup>
+                                The Kalman gain \(K = \frac{P_{pred}}{P_{pred} + R}\) has two limiting cases: as \(R\) approaches zero the gain weights the residual more heavily, and as the predicted covariance approaches zero it weights the residual less heavily.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Small Sensor Noise (\(R \ll P_{pred}\)):</span> When sensor noise \(R\) is small compared to predicted uncertainty \(P_{pred}\), the ratio approaches 1:
@@ -381,10 +381,10 @@ void handleSensors() {
                                 The standard Kalman filter assumes that the system dynamics and observation models are linear; the extended Kalman filter exists for the non-linear case.<sup><a href="#ref-2">[2]</a></sup> However, mobile robot kinematics are non-linear because of the trigonometric terms in the motion equations (such as \(\dot{x} = v \cos\theta\) and \(\dot{y} = v \sin\theta\)).
                             </p>
                             <p>
-                                When a Gaussian probability distribution passes through a non-linear transformation, the output distribution is distorted and is no longer Gaussian.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-11">[11]</a></sup> Two non-linear algorithms address this challenge:
+                                When a Gaussian probability distribution passes through a non-linear transformation, the output distribution is distorted and is no longer Gaussian.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-11">[11]</a></sup> Two non-linear algorithms address this:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Extended Kalman Filter (EKF):</span> Linearizes non-linear functions around the current state estimate, "in something akin to a Taylor series," using matrices of partial derivatives (Jacobians).<sup><a href="#ref-2">[2]</a></sup> It was one of the first techniques used for non-linear problems, and it remains the most common one.<sup><a href="#ref-11">[11]</a></sup> This requires computing Jacobian matrices of partial derivatives at each time step:
+                                <li class="article-spec-item"><span class="spec-label">Extended Kalman Filter (EKF):</span> Linearizes non-linear functions around the current state estimate, "in something akin to a Taylor series," using matrices of partial derivatives (Jacobians).<sup><a href="#ref-2">[2]</a></sup> It was one of the first techniques used for non-linear problems, and it remains the most common one.<sup><a href="#ref-11">[11]</a></sup> The Jacobians must be recomputed at each time step:
                                     \[\mathbf{F}_k = \left. \frac{\partial \mathbf{f}}{\partial \mathbf{x}} \right|_{\hat{\mathbf{x}}_{k-1}}, \quad \mathbf{H}_k = \left. \frac{\partial \mathbf{h}}{\partial \mathbf{x}} \right|_{\hat{\mathbf{x}}_k^-}\]
                                     For the differential-drive model, the heading column of the Jacobian \(\mathbf{F}\) holds \(-v\,\Delta t \sin\theta\) in the \(x\) row and \(v\,\Delta t \cos\theta\) in the \(y\) row, which come from differentiating the cosine and sine terms of the motion model.<sup><a href="#ref-12">[12]</a></sup>
                                     The EKF is only an approximation. Julier and Uhlmann note that linearization "can produce highly unstable filters" when the assumption of local linearity is violated, that deriving the Jacobians can be difficult, and that the filter can underestimate its covariance, "raising the possibility that the filter will diverge."<sup><a href="#ref-13">[13]</a></sup>
@@ -433,7 +433,7 @@ void handleSensors() {
                                 The matrix operations of a full EKF can be a burden on a small microcontroller. For orientation estimation (such as measuring the tilt angle of a self-balancing robot from a 6-axis IMU), a common lightweight alternative is the <strong>complementary filter</strong>.<sup><a href="#ref-17">[17]</a></sup>
                             </p>
                             <p>
-                                A complementary filter exploits the complementary frequency characteristics of the IMU: the gyroscope responds quickly but drifts over time, whereas the accelerometer gives a drift-free tilt from gravity, but only on average, because vibration and linear accelerations corrupt each sample. Its tilt reading is therefore trustworthy only at low frequencies.<sup><a href="#ref-18">[18]</a></sup> The filter therefore takes the high-frequency part of its estimate from the gyroscope and the low-frequency part from the accelerometer, using fixed weights.<sup><a href="#ref-17">[17]</a></sup> The Fusion AHRS (Attitude and Heading Reference System, which computes three-dimensional orientation from sensors) library describes its own algorithm in the same terms, as a complementary filter that combines high-pass filtered gyroscope measurements with low-pass filtered measurements from other sensors.<sup><a href="#ref-18">[18]</a></sup> The update is:
+                                A complementary filter exploits the complementary frequency characteristics of the IMU: the gyroscope responds quickly but drifts over time, whereas the accelerometer gives a drift-free tilt from gravity, but only on average, because vibration and linear accelerations corrupt each sample. Its tilt reading is therefore trustworthy only at low frequencies.<sup><a href="#ref-18">[18]</a></sup> The filter takes the high-frequency part of its estimate from the gyroscope and the low-frequency part from the accelerometer, using fixed weights.<sup><a href="#ref-17">[17]</a></sup> The Fusion AHRS (Attitude and Heading Reference System, which computes three-dimensional orientation from sensors) library describes its own algorithm in the same terms, as a complementary filter that combines high-pass filtered gyroscope measurements with low-pass filtered measurements from other sensors.<sup><a href="#ref-18">[18]</a></sup> The update is:
                             </p>
                             <div class="article-callout">
                                 <p>\[\theta_k = \alpha \times (\theta_{k-1} + \omega \Delta t) + (1 - \alpha) \times \theta_{accel}\]</p>
@@ -508,7 +508,7 @@ void handleSensors() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>

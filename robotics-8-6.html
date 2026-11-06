@@ -201,10 +201,10 @@
                             Industrial defense-in-depth strategies implement zones and conduits to secure communication pathways between trusted environments.<sup><a href="#ref-2">[2]</a></sup> In simple terms, a zone is a group of devices with the same security needs, and a conduit is the controlled path that connects two zones.
                         </p>
                         <p>
-                            Plant layouts group devices into hierarchical tiers based on their function. The Cell Security Zone contains Level 2 area control, Level 1 controller LANs, and Level 0 field basic input/output devices such as sensors and actuators.<sup><a href="#ref-2">[2]</a></sup> A robot cell, with its PLC, robot controller and I/O, is one such zone.
+                            Plant layouts group devices into hierarchical tiers by function. The Cell Security Zone contains Level 2 area control, Level 1 controller LANs, and Level 0 field basic input/output devices such as sensors and actuators.<sup><a href="#ref-2">[2]</a></sup> A robot cell, with its PLC, robot controller and I/O, is one such zone.
                         </p>
                         <p>
-                            A demilitarized zone is a physical and logical subnet that acts as an intermediary so connected devices avoid direct exposure to untrusted networks.<sup><a href="#ref-2">[2]</a></sup> Often abbreviated as DMZ, this buffer subnet sits between the industrial control network and the enterprise corporate network.
+                            A demilitarized zone is a physical and logical subnet that acts as an intermediary so connected devices avoid direct exposure to untrusted networks.<sup><a href="#ref-2">[2]</a></sup> This buffer subnet, often abbreviated DMZ, sits between the industrial control network and the enterprise corporate network.
                         </p>
                         <p>
                             With corporate-accessible components placed in a DMZ, the corporate network needs no direct communication path to the control network.<sup><a href="#ref-2">[2]</a></sup> If an enterprise accounting application requires production data, it connects only to a database or reporting server located inside the DMZ. The corporate application never touches a robot controller or safety PLC directly.
@@ -256,16 +256,16 @@
 
                         <h2 class="article-section-title">05. Network diagnostics and Wireshark packet analysis</h2>
                         <p>
-                            When an industrial network experiences communication failures, dropped packets, or unexpected register values, technicians need diagnostic tools to inspect traffic directly on the wire. Wireshark is a packet analyzer: it records network traffic and decodes each protocol layer.
+                            When an industrial network has communication failures, dropped packets or unexpected register values, technicians need tools that inspect traffic directly on the wire. Wireshark is a packet analyzer: it records network traffic and decodes each protocol layer.
                         </p>
                         <p>
                             Loopback traffic can be captured on Linux and macOS, but on Windows only with Npcap, which adds an adapter for loopback traffic capture.<sup><a href="#ref-4">[4]</a></sup> The 8.3 lab sends its traffic to <code>127.0.0.1</code>, the computer itself, so it never reaches a real network card and must be captured on the loopback interface.
                         </p>
                         <p>
-                            Wireshark picks a decoder (a dissector) mostly from the port number. Modbus TCP normally uses port 502, but the 8.3 lab server uses port 5020, so Wireshark shows its packets as plain TCP. Wireshark's Decode As, opened from the Analyze menu, overrides Wireshark's choice of dissector, for example for traffic on a non-standard port.<sup><a href="#ref-5">[5]</a></sup> This feature lets the user instruct Wireshark to interpret raw TCP data on port 5020 as Modbus TCP frames.
+                            Wireshark picks a decoder (a dissector) mostly from the port number. Modbus TCP normally uses port 502, but the 8.3 lab server uses port 5020, so Wireshark shows its packets as plain TCP. Wireshark's Decode As, opened from the Analyze menu, overrides Wireshark's choice of dissector, for example for traffic on a non-standard port.<sup><a href="#ref-5">[5]</a></sup> Here it tells Wireshark to read the raw TCP data on port 5020 as Modbus TCP frames.
                         </p>
                         <p>
-                            Capturing traffic on an active network can produce thousands of packets in a few seconds. To locate specific transactions, technicians apply display filters in Wireshark. Wireshark display filters check for protocol presence or field values and can be combined with logical operators into complex expressions.<sup><a href="#ref-6">[6]</a></sup>
+                            Capturing traffic on an active network can produce thousands of packets in a few seconds. To find specific transactions, technicians apply display filters. Wireshark display filters check for protocol presence or field values and can be combined with logical operators into complex expressions.<sup><a href="#ref-6">[6]</a></sup>
                         </p>
                         <p>
                             In Wireshark, the Modbus/TCP display filter protocol name is mbtcp, which defines fields including Transaction Identifier, Protocol Identifier, and Length.<sup><a href="#ref-7">[7]</a></sup> Typing <code>mbtcp</code> into the filter bar restricts the packet list to Modbus TCP frames. Technicians can also filter by header values, such as matching a specific transaction identifier.
@@ -276,10 +276,10 @@
 
                         <h2 class="article-section-title">06. Lab: Watching Modbus traffic on the wire</h2>
                         <p>
-                            In <a href="robotics-8-3.html">Lesson 8.3 Lab: Connecting a Robot to a PLC</a>, you wrote and read registers on a stand-in Modbus server with <code>pymodbus</code>. In this hands-on lab, you will run the stand-in robot server and client scripts while capturing the interaction in Wireshark to inspect the underlying protocol frames.
+                            In <a href="robotics-8-3.html">Lesson 8.3 Lab: Connecting a Robot to a PLC</a>, you wrote and read registers on a stand-in Modbus server with <code>pymodbus</code>. In this lab, you will run the same server and client scripts while Wireshark captures the exchange, then inspect the protocol frames.
                         </p>
                         <p>
-                            Modbus TCP messages include a 7-byte MBAP header and transmit over TCP on registered port 502.<sup><a href="#ref-9">[9]</a></sup> The MBAP header contains four fields: the Transaction Identifier (2 bytes), the Protocol Identifier (2 bytes, set to 0 for Modbus), the Length field (2 bytes indicating remaining bytes), and the Unit Identifier (1 byte). Because our developmental test server runs on port 5020 rather than the registered port 502, you will configure Wireshark to decode the custom port.
+                            Modbus TCP messages include a 7-byte MBAP header and transmit over TCP on registered port 502.<sup><a href="#ref-9">[9]</a></sup> The MBAP header contains four fields: the Transaction Identifier (2 bytes), the Protocol Identifier (2 bytes, set to 0 for Modbus), the Length field (2 bytes indicating remaining bytes), and the Unit Identifier (1 byte). Because the test server runs on port 5020 rather than the registered port 502, you will configure Wireshark to decode that port.
                         </p>
                         <p>
                             Follow these six steps to capture and analyze the transaction:
@@ -297,7 +297,7 @@
                             <li><span class="spec-label">Stop capture and configure protocol decoding:</span> In Wireshark, click the red square icon on the toolbar to stop capturing packets. Locate a packet sent to or from port 5020. Because port 5020 is not the registered Modbus port, Wireshark initially displays these frames as generic TCP packets. Select a packet on port 5020, click the <strong>Analyze</strong> menu at the top of the window, and choose <strong>Decode As...</strong>. In the dialog that appears, click the <strong>+</strong> button to add a rule, ensure the field is set to <code>TCP port</code> with value <code>5020</code>, change the current protocol column to <strong>Modbus/TCP</strong>, and click <strong>OK</strong>. Wireshark immediately re-dissects all packets on port 5020 as Modbus frames.</li>
                             <li><span class="spec-label">Filter for write-multiple transactions:</span> The Modbus server responds to function code 0x06 to write a single register and 0x10 to write multiple registers.<sup><a href="#ref-10">[10]</a></sup> Function code 0x10 in hexadecimal equals 16 in decimal. In the Wireshark display filter bar, enter the filter expression:
                                 <pre class="article-code"><code>mbtcp && modbus.func_code == 16</code></pre>
-                                Press Enter to apply the filter. The packet list now isolates the write-multiple request sent by the client and the acknowledgment response returned by the server.
+                                Press Enter to apply the filter. The packet list now shows only the write-multiple request sent by the client and the acknowledgment response returned by the server.
                             </li>
                             <li><span class="spec-label">Inspect the MBAP header and Modbus payload:</span> Select the write-multiple request packet in the top pane, then inspect the lower details panes:
                                 <ul>
@@ -364,7 +364,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+        <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

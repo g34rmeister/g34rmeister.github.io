@@ -232,8 +232,8 @@
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Straight-Line Driving:</span> When both wheels travel the exact same distance (\(d_R = d_L\)), the numerator is zero: \(d\theta = 0\). The heading remains unchanged, and the robot drives in a straight line.</li>
-                                <li class="article-spec-item"><span class="spec-label">Leftward Counter-Clockwise Turn:</span> When the right wheel travels farther than the left wheel (\(d_R &gt; d_L\)), \(d\theta\) is positive, causing the robot to turn toward its left.</li>
-                                <li class="article-spec-item"><span class="spec-label">Rightward Clockwise Turn:</span> When the left wheel travels farther than the right wheel (\(d_L &gt; d_R\)), \(d\theta\) is negative, causing the robot to turn toward its right.</li>
+                                <li class="article-spec-item"><span class="spec-label">Leftward Counter-Clockwise Turn:</span> When the right wheel travels farther than the left wheel (\(d_R &gt; d_L\)), \(d\theta\) is positive, so the robot turns to its left.</li>
+                                <li class="article-spec-item"><span class="spec-label">Rightward Clockwise Turn:</span> When the left wheel travels farther than the right wheel (\(d_L &gt; d_R\)), \(d\theta\) is negative, so the robot turns to its right.</li>
                                 <li class="article-spec-item"><span class="spec-label">Spinning in Place:</span> When the wheels spin in equal and opposite directions (\(d_R = -d_L\)), the center displacement is zero (\(d_{center} = 0\)). The robot rotates in place about its midpoint with zero net translation.</li>
                             </ul>
                             <p>
@@ -343,7 +343,7 @@ void loop() {
                                 The main weakness of dead reckoning is <strong>cumulative error growth</strong>. Each step updates the pose relative to the previous estimate, so any error made in one step is carried into every later position. With nothing outside the robot to pull the estimate back to the truth, the position error of odometry grows without bound.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup> ROS describes the same behavior: a robot's pose in the odom frame, which is built from odometry, can drift over time without any bounds, although it changes smoothly with no sudden jumps.<sup><a href="#ref-9">[9]</a></sup> WPILib's documentation gives the same warning to student robot teams, adding that the drift is worse when the robot is bumped by other robots.<sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <p>
-                                Heading errors are especially harmful. Why does a 1-degree heading error cause far more position drift than a 1-centimeter wheel diameter calibration error over a 50-meter trip? Because <strong>heading errors rotate the entire subsequent coordinate frame, causing lateral position error to grow proportionally to total distance traveled</strong>. Borenstein and Feng describe orientation errors as the main concern because, once incurred, they grow without bound into lateral position errors; the &ldquo;Where am I?&rdquo; report says the same.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-11">[11]</a></sup> Course notes make the same point: errors perpendicular to the direction of travel grow much larger.<sup><a href="#ref-5">[5]</a></sup>
+                                Heading errors are especially harmful. Over a 50-meter trip, a 1-degree heading error causes far more position drift than a 1-centimeter wheel diameter calibration error, because <strong>heading errors rotate the entire subsequent coordinate frame, so lateral position error grows in proportion to the total distance traveled</strong>. Borenstein and Feng describe orientation errors as the main concern because, once incurred, they grow without bound into lateral position errors; the &ldquo;Where am I?&rdquo; report says the same.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-11">[11]</a></sup> Course notes make the same point: errors perpendicular to the direction of travel grow much larger.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
                                 Worked example (this lesson's own numbers): if a calibration error makes the computed wheel distance 1% too large, the resulting error along the direction of travel is simply 1% of the distance (0.50 m after 50 m). Now suppose instead that an early turn leaves the heading estimate off by \(\epsilon_\theta = 1.0^\circ\) (0.0175 radians). Every later forward step is then projected along the wrong angle:
@@ -352,7 +352,7 @@ void loop() {
                                 <p>\[\Delta y_{lateral}(s) \approx s \times \sin(\epsilon_\theta) \approx s \times \epsilon_\theta\]</p>
                             </div>
                             <p>
-                                After \(s = 50\text{ meters}\), that 1-degree offset produces a sideways (cross-track) error of about \(50 \times 0.0175 = 0.875\text{ meters}\), nearly a full meter, even if every wheel distance after the turn was measured perfectly. And unlike the 1% distance error, a heading error usually keeps growing, because each later turn can add a little more.
+                                After \(s = 50\text{ meters}\), that 1-degree offset produces a sideways (cross-track) error of about \(50 \times 0.0175 = 0.875\text{ meters}\), nearly a full meter, even if every wheel distance after the turn was measured perfectly. Unlike the 1% distance error, a heading error usually keeps growing, because each later turn can add a little more.
                             </p>
 
                             <h2 class="article-section-title">07. Borenstein and Feng's error taxonomy</h2>
@@ -484,7 +484,7 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>

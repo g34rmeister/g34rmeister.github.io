@@ -184,7 +184,7 @@
                             Robot controllers also offer network interfaces. Once a cell needs to exchange numbers (recipe numbers, part counts, error codes) as well as on/off signals, separate wires for each signal stop being practical.
                         </p>
                         <p>
-                            Universal Robots controllers support common industrial Ethernet protocols to link directly into plant networks. On EtherNet/IP networks, Universal Robots controllers only support EtherNet/IP Class 1 implicit I/O messaging and do not support Class 3 explicit messaging.<sup><a href="#ref-1">[1]</a></sup> Class 1 implicit messaging provides time-scheduled, cyclic transport tailored for real-time I/O updates between a scanner and an adapter. The robot reserves the lower range of its general-purpose boolean, integer, and float registers for the PLC fieldbus interface.<sup><a href="#ref-1">[1]</a></sup>
+                            Universal Robots controllers support common industrial Ethernet protocols to link directly into plant networks. On EtherNet/IP networks, Universal Robots controllers only support EtherNet/IP Class 1 implicit I/O messaging and do not support Class 3 explicit messaging.<sup><a href="#ref-1">[1]</a></sup> Class 1 implicit messaging provides time-scheduled, cyclic transport for real-time I/O updates between a scanner and an adapter. The robot reserves the lower range of its general-purpose boolean, integer, and float registers for the PLC fieldbus interface.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
                             The Universal Robots PROFINET interface provides 10 pluggable modules, with seven modules to read data and three modules to set data.<sup><a href="#ref-2">[2]</a></sup> The PLC reads robot data through the read modules and sends commands through the set modules.
@@ -195,7 +195,7 @@
                             As <a href="robotics-8-2.html">8.2</a> covered, Modbus TCP messages carry a 7-byte MBAP header over TCP port 502,<sup><a href="#ref-3">[3]</a></sup> and the data model has four tables (discrete inputs, coils, input registers and holding registers), with values sent big-endian.<sup><a href="#ref-4">[4]</a></sup> The function codes below work on the two 16-bit register tables: input registers are read-only, while holding registers can be read and written.
                         </p>
                         <p>
-                            The Universal Robots controller acts as a Modbus TCP server on port 502 to receive standard Modbus requests from clients.<sup><a href="#ref-5">[5]</a></sup> Several clients can connect to the robot Modbus server at the same time.<sup><a href="#ref-5">[5]</a></sup> This architecture allows a cell PLC, an operator touch panel, and an engineering workstation to communicate with the robot simultaneously over an Ethernet switch.
+                            The Universal Robots controller acts as a Modbus TCP server on port 502 to receive standard Modbus requests from clients.<sup><a href="#ref-5">[5]</a></sup> Several clients can connect to the robot Modbus server at the same time.<sup><a href="#ref-5">[5]</a></sup> So a cell PLC, an operator touch panel and an engineering workstation can all communicate with the robot at once through an Ethernet switch.
                         </p>
                         <p>
                             The Universal Robots Modbus server uses 0-based addressing.<sup><a href="#ref-5">[5]</a></sup> The Unit Identifier and Slave ID value is ignored in the robot Modbus server.<sup><a href="#ref-5">[5]</a></sup> External clients interact with the robot using standard Modbus function codes:
@@ -208,17 +208,17 @@
 
                         <h2 class="article-section-title">03. Register mapping and bit packing</h2>
                         <p>
-                            The Universal Robots Modbus TCP server provides 128 general-purpose 16-bit registers at addresses 128 to 255.<sup><a href="#ref-6">[6]</a></sup> These general-purpose holding registers provide space to exchange recipe numbers, part counters, and handshaking flags.
+                            The Universal Robots Modbus TCP server provides 128 general-purpose 16-bit registers at addresses 128 to 255.<sup><a href="#ref-6">[6]</a></sup> These registers can carry recipe numbers, part counters and handshaking flags.
                         </p>
 
                         <div data-widget="modbus">
                             <p class="widget-note">The Modbus request explorer needs JavaScript. With it on, you can explore function codes, register addresses and Python pymodbus calls.</p>
                         </div>
                         <p>
-                            In many automation cells, the primary information exchanged consists of simple binary status flags. Up to 16 binary on/off signals can be consolidated into a single 16-bit register instead of using a separate address for each.<sup><a href="#ref-6">[6]</a></sup>
+                            In many automation cells, the main information exchanged is simple binary status flags. Up to 16 binary on/off signals can be consolidated into a single 16-bit register instead of using a separate address for each.<sup><a href="#ref-6">[6]</a></sup>
                         </p>
                         <p>
-                            For example, an integrator can map the discrete handshake signals from <a href="robotics-1-7.html">Lesson 1.7</a> directly into the 16 bits of register 128. Bit 0 represents "Robot Ready", bit 1 represents "Cycle Start", bit 2 confirms "Part Clamped", and bit 3 indicates "Robot Working". The remaining upper bits can indicate task completion flags or error codes. Instead of issuing multiple distinct network requests, the supervisory PLC can read or write the entire cell handshake state in a single 16-bit transaction.
+                            For example, an integrator can map the discrete handshake signals from <a href="robotics-1-7.html">Lesson 1.7</a> directly into the 16 bits of register 128. Bit 0 represents "Robot Ready", bit 1 represents "Cycle Start", bit 2 confirms "Part Clamped", and bit 3 indicates "Robot Working". The remaining upper bits can indicate task completion flags or error codes. Instead of sending several separate requests, the supervisory PLC can read or write the whole cell handshake state in a single 16-bit transaction.
                         </p>
                         <p>
                             Within a running robot program, local scripts can access these registers directly. Registers can be read from a robot program using <code>read_port_register</code>, which returns an integer value between 0 and 65535.<sup><a href="#ref-6">[6]</a></sup> The URScript command <code>integer_to_binary_list</code> converts an integer into a list of True and False values.<sup><a href="#ref-6">[6]</a></sup> The converted binary list uses little-endian notation so the first element represents the least significant bit.<sup><a href="#ref-6">[6]</a></sup>
@@ -238,15 +238,15 @@
                             The client library offers dedicated methods for reading and writing data tables. The pymodbus client provides <code>write_register</code> to write one register, <code>write_registers</code> to write several, and <code>read_holding_registers</code> to read holding registers.<sup><a href="#ref-8">[8]</a></sup> The library builds the MBAP header and function code for each call.
                         </p>
                         <p>
-                            Each communication call returns a response object that the client script checks. In pymodbus client responses, <code>isError</code> indicates device problems, <code>rr.registers</code> provides register data, and <code>rr.bits</code> provides coil data.<sup><a href="#ref-7">[7]</a></sup> Calling <code>rr.isError()</code> allows an application to detect network errors or device rejections before attempting to parse response data.
+                            Each communication call returns a response object that the client script checks. In pymodbus client responses, <code>isError</code> indicates device problems, <code>rr.registers</code> provides register data, and <code>rr.bits</code> provides coil data.<sup><a href="#ref-7">[7]</a></sup> Calling <code>rr.isError()</code> lets an application catch network errors or device rejections before it parses the response data.
                         </p>
                         <p>
-                            In multi-threaded programs, note that the pymodbus client is not thread safe, requiring applications to ensure all calls are serialized.<sup><a href="#ref-7">[7]</a></sup> If background threads log robot data while an operator interface sends setpoints, access to the client instance must be serialized with thread locks or command queues.
+                            The pymodbus client is not thread safe, so multi-threaded applications must ensure all calls are serialized.<sup><a href="#ref-7">[7]</a></sup> If background threads log robot data while an operator interface sends setpoints, access to the client instance must be serialized with thread locks or command queues.
                         </p>
 
                         <h2 class="article-section-title">05. Lab: Talk to a Modbus server from Python</h2>
                         <p>
-                            In this hands-on lab exercise, you will connect a Python client to a local Modbus TCP server. On a physical manufacturing line, an actual Universal Robots controller runs a Modbus TCP server on port 502, exposing general-purpose registers 128 to 255. Because no physical hardware is assumed for this course, you will run <code>fake_ur_server.py</code>, a stand-in server on port 5020 with holding registers 0 to 255, then execute <code>client.py</code>.
+                            In this lab, you will connect a Python client to a local Modbus TCP server. On a physical manufacturing line, an actual Universal Robots controller runs a Modbus TCP server on port 502, exposing general-purpose registers 128 to 255. Because no physical hardware is assumed for this course, you will run <code>fake_ur_server.py</code>, a stand-in server on port 5020 with holding registers 0 to 255, then run <code>client.py</code>.
                         </p>
                         <p>
                             To begin, install the required library version in your Python environment:
@@ -291,7 +291,7 @@ else:
 
 client.close()</code></pre>
                         <p>
-                            To execute the lab, follow these operational steps:
+                            To run the lab:
                         </p>
                         <ol class="article-spec-list">
                             <li><span class="spec-label">Start the server:</span> In your first terminal window, start the stand-in server:
@@ -311,13 +311,13 @@ client.close()</code></pre>
 
                         <h2 class="article-section-title">06. Modbus exceptions and offline simulation</h2>
                         <p>
-                            When communicating across industrial networks, applications must recognize and handle protocol rejections. When a Modbus server cannot carry out a request, its exception response uses the request function code plus 0x80.<sup><a href="#ref-4">[4]</a></sup> For example, if a client submits a read holding registers request using function code 0x03, an exception response carries function code 0x83 (calculated as 0x03 + 0x80 = 131 in decimal notation).
+                            Applications on industrial networks must recognize and handle rejected requests. When a Modbus server cannot carry out a request, its exception response uses the request function code plus 0x80.<sup><a href="#ref-4">[4]</a></sup> For example, if a client submits a read holding registers request using function code 0x03, an exception response carries function code 0x83 (calculated as 0x03 + 0x80 = 131 in decimal notation).
                         </p>
                         <p>
                             Modbus exception code 02 is ILLEGAL DATA ADDRESS: the address in the request is not allowed for the server.<sup><a href="#ref-4">[4]</a></sup> In our stand-in server script, the holding register block is defined for addresses 0 to 255. Register 256 is outside this valid range.
                         </p>
                         <p>
-                            To observe exception handling in practice, conduct a short exercise by attempting to write or read register address 256. For example, test an out-of-range read operation using the following script snippet:
+                            To see exception handling in practice, try to read or write register address 256. For example, this snippet tests an out-of-range read:
                         </p>
                         <pre class="article-code"><code>from pymodbus.client import ModbusTcpClient
 
@@ -337,10 +337,10 @@ client.close()</code></pre>
 Function code: 131
 Exception code: 2</code></pre>
                         <p>
-                            When executed against the active stand-in server, the server rejects the request with exception code 2 (ILLEGAL DATA ADDRESS). In pymodbus, this result appears as an <code>ExceptionResponse</code> with <code>function_code=131</code> (0x03 + 0x80) and <code>exception_code=2</code>. Similarly, attempting to write to register 256 triggers an <code>ExceptionResponse</code> with exception code 2, confirming that the server rejected the unmapped address.
+                            Run against the stand-in server, the request is rejected with exception code 2 (ILLEGAL DATA ADDRESS). In pymodbus, this result appears as an <code>ExceptionResponse</code> with <code>function_code=131</code> (0x03 + 0x80) and <code>exception_code=2</code>. Similarly, attempting to write to register 256 triggers an <code>ExceptionResponse</code> with exception code 2, confirming that the server rejected the unmapped address.
                         </p>
                         <p>
-                            As a further idea for advanced exploration, students can test fieldbus communications against a virtual robot controller. Universal Robots provides its offline simulator as Docker images, and the simulator includes Modbus client functionality.<sup><a href="#ref-9">[9]</a></sup>
+                            To go further, you can test fieldbus communication against a virtual robot controller. Universal Robots provides its offline simulator as Docker images, and the simulator includes Modbus client functionality.<sup><a href="#ref-9">[9]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
@@ -398,7 +398,7 @@ Exception code: 2</code></pre>
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+        <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

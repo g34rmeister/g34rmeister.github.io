@@ -232,7 +232,7 @@ ENDMODULE</code></pre>
                                 The keyword <code>LOCAL</code> limits a name to its own module.<sup><a href="#ref-1">[1]</a></sup> Inside <code>main</code>, the driver first declares its routine-local data (<code>VAR num current_index; VAR speeddata move_speed := v10;</code> and so on). It then wires the interrupt to its TRAP with <code>IDelete intr_new_trajectory;</code>, <code>CONNECT intr_new_trajectory WITH new_trajectory_handler;</code> and <code>IPers ROS_new_trajectory, intr_new_trajectory;</code>, so a change in the persistent variable <code>ROS_new_trajectory</code> runs the TRAP. Finally it enters an endless loop, <code>WHILE true DO ... WaitTime 0.05; ENDWHILE</code>.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                The <code>IDelete</code> line deserves attention. Its comment in the source reads "clear interrupt handler, in case restarted with ExitCycle".<sup><a href="#ref-1">[1]</a></sup> Because <code>main</code> can be entered again while the old interrupt still exists, the start-up code removes it before connecting a new one. Start-up code that also works the second time it runs is a habit worth copying.
+                                The <code>IDelete</code> line deserves attention. Its comment in the source reads "clear interrupt handler, in case restarted with ExitCycle".<sup><a href="#ref-1">[1]</a></sup> Because <code>main</code> can be entered again while the old interrupt still exists, the start-up code removes it before connecting a new one. Writing start-up code that also works the second time it runs is a habit worth copying.
                             </p>
 
                             <h2 class="article-section-title">03. Three kinds of RAPID data: CONST, VAR and PERS</h2>
@@ -352,7 +352,7 @@ ENDPROC</code></pre>
   end
 end</code></pre>
                             <p>
-                                The choice of function matters. As a general explanation, <code>pose_trans(corner, offset)</code> applies the offset along the corner pose's own axes, while <code>pose_add</code> applies it along the robot base axes. If the corner was taught square to a tilted pallet, <code>pose_trans</code> makes the grid follow the pallet; but for a tool pointing down those axes may not match the base axes, so watch which way the first row grows in the simulator, and confirm both functions in the URScript manual. In RAPID the same benefit comes from teaching <code>pPalletCorner</code> in a work object on the pallet, as in <a href="robotics-2-6.html">2.6</a>: re-teach that one frame and the whole grid moves with it.
+                                The choice of function matters. In general terms, <code>pose_trans(corner, offset)</code> applies the offset along the corner pose's own axes, while <code>pose_add</code> applies it along the robot base axes. If the corner was taught square to a tilted pallet, <code>pose_trans</code> makes the grid follow the pallet; but for a tool pointing down those axes may not match the base axes, so watch which way the first row grows in the simulator, and confirm both functions in the URScript manual. In RAPID the same benefit comes from teaching <code>pPalletCorner</code> in a work object on the pallet, as in <a href="robotics-2-6.html">2.6</a>: re-teach that one frame and the whole grid moves with it.
                             </p>
                             <p>
                                 For production palletizing, vendors sell or bundle tools that generate this kind of code. PolyScope has a Palletizing program node.<sup><a href="#ref-8">[8]</a></sup> One user on PolyScope 5.12 reported on UR's forum that the node ran only the first item until an outer loop was added.<sup><a href="#ref-15">[15]</a></sup> ABB merged its PickMaster 5 palletizing software into RobotStudio as the Palletizing PowerPac, and its newer Palletizing Template is a free RobotStudio add-in that ABB describes as a starting point rather than a turnkey product.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-17">[17]</a></sup> FANUC's PalletTool lets operators create and compare pallet patterns from the product dimensions, with the space efficiency of each,<sup><a href="#ref-18">[18]</a></sup> and FANUC's PalletPRO is offline simulation software for palletizing applications.<sup><a href="#ref-19">[19]</a></sup> Write the loop by hand first, so you can tell whether a wizard did what you meant.
@@ -632,7 +632,7 @@ ENDMODULE</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

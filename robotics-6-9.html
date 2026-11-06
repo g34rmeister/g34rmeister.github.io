@@ -185,7 +185,7 @@
                                 In lessons 1.6 and 2.3 you wrote motion commands such as MoveJ, MoveL and MoveC and chose a speed and a zone for each one. In this chapter you met the hardware underneath: PWM drives the motor, the encoder measures the shaft, and a PID loop pushes the measured position toward a setpoint. This lesson connects the two. Between "move to this target at 250 mm/s" and the PID loop sits a <strong>motion profile</strong> generator, which turns one target into a smooth stream of setpoints, a new one every control cycle.
                             </p>
                             <p>
-                                The WPILib robot library describes its trapezoidal profile in exactly these terms: it generates "a sequence of setpoints that smoothly interpolate" between the current state and the goal state, while respecting a maximum velocity and a maximum acceleration.<sup><a href="#ref-1">[1]</a></sup> Sent the final target in one step, the PID error would jump to its largest value at once. A profile asks for the motion a little at a time, so the controller only corrects small errors.
+                                The WPILib robot library describes its trapezoidal profile in exactly these terms: it generates "a sequence of setpoints that smoothly interpolate" between the current state and the goal state, while respecting a maximum velocity and a maximum acceleration.<sup><a href="#ref-1">[1]</a></sup> If the final target were sent in one step, the PID error would jump to its largest value at once. A profile asks for the motion a little at a time, so the controller only corrects small errors.
                             </p>
                             <p>
                                 It helps to split every move into two separate questions:
@@ -310,7 +310,7 @@ QuinticTimeScaling(T, t) = 10 (t/T)^3 - 15 (t/T)^4 + 6 (t/T)^5</code></pre>
                                 The library's documentation says the cubic is "for a third-order polynomial motion that begins and ends at zero velocity", and the quintic "begins and ends at zero velocity and zero acceleration". Its worked examples use T = 2 s and t = 0.6 s, which give 0.216 (cubic) and 0.16308 (quintic).<sup><a href="#ref-2">[2]</a></sup> You can check both by hand: t/T = 0.3, so the cubic gives 3(0.09) &minus; 2(0.027) = 0.216.
                             </p>
                             <p>
-                                Where do the coefficients come from? A cubic q(t) = a<sub>0</sub> + a<sub>1</sub>t + a<sub>2</sub>t&sup2; + a<sub>3</sub>t&sup3; has four unknown coefficients, and a rest-to-rest move gives four conditions: start position, end position, zero start velocity and zero end velocity. Solving them gives a<sub>0</sub> = q<sub>0</sub>, a<sub>1</sub> = 0, a<sub>2</sub> = 3(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup2; and a<sub>3</sub> = &minus;2(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup3;, which is the normalized cubic above. A quintic has six coefficients, so it can also meet zero start and end acceleration. Those six conditions lead to the 10, &minus;15, 6 form. Differentiating gives these peak values for a move of distance D in time T (this lesson's own calculation, checked numerically):
+                                To see where the coefficients come from, note that a cubic q(t) = a<sub>0</sub> + a<sub>1</sub>t + a<sub>2</sub>t&sup2; + a<sub>3</sub>t&sup3; has four unknown coefficients, and a rest-to-rest move gives four conditions: start position, end position, zero start velocity and zero end velocity. Solving them gives a<sub>0</sub> = q<sub>0</sub>, a<sub>1</sub> = 0, a<sub>2</sub> = 3(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup2; and a<sub>3</sub> = &minus;2(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup3;, which is the normalized cubic above. A quintic has six coefficients, so it can also meet zero start and end acceleration. Those six conditions lead to the 10, &minus;15, 6 form. Differentiating gives these peak values for a move of distance D in time T (this lesson's own calculation, checked numerically):
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -519,7 +519,7 @@ QuinticTimeScaling(T, t) = 10 (t/T)^3 - 15 (t/T)^4 + 6 (t/T)^5</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
+            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
