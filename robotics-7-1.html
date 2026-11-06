@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT11M",
+            "timeRequired": "PT12M",
             "teaches": [
                 "CMOS sensor",
                 "global shutter",
@@ -278,6 +278,12 @@
                             In robotic work cell integration, two physical dimensions determine the required lens focal length: field of view (FOV) and working distance (WD). The field of view is the physical inspection area that must fill the camera sensor, while working distance is the physical clearance between the front of the lens and the inspected object. For example, for a given sensor format, increasing the working distance enlarges the field of view, whereas shortening the focal length captures a broad field of view within a compact space.
                         </p>
                         <p>
+                            For a fixed focal length lens, three formulas tie these numbers together. With sensor width <em>H</em> and focal length <em>f</em>, the angular field of view is AFOV = 2 &times; arctan(<em>H</em> / 2<em>f</em>). At a working distance WD, the field of view is FOV = 2 &times; WD &times; tan(AFOV / 2), and solving for the lens gives <em>f</em> = <em>H</em> &times; WD / FOV.<sup><a href="#ref-5">[5]</a></sup> These are approximations: focal length is measured from the lens&rsquo;s rear principal plane, which is rarely at its mechanical back, so treat the result as a starting point and pick the real lens from its specification table.<sup><a href="#ref-5">[5]</a></sup> As an example, a 35 mm lens on a 2/3&Prime; sensor (8.8 mm wide) gives an AFOV of roughly 14.5&deg;.<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <div data-widget="fov">
+                            <p class="widget-note">The field-of-view calculator needs JavaScript. With it on, you can set the sensor width, focal length and working distance and see the angular and linear field of view.</p>
+                        </div>
+                        <p>
                             However, real optical lenses do not project perfectly linear geometry. In <a href="robotics-2-8.html">2.8</a>, we observed that lenses introduce geometric distortions that must be modeled during intrinsic calibration. Distortion is an optical aberration that misplaces image information geometrically without blurring or discarding information, allowing it to be calibrated and corrected in software.<sup><a href="#ref-6">[6]</a></sup> Unlike chromatic or spherical aberrations that degrade optical resolution and blur sharp transitions, distortion alters only the spatial coordinates of imaged points.
                         </p>
                         <p>
@@ -344,7 +350,7 @@
                         </ol>
 
                         <h2 class="article-section-title">09. References</h2>
-                        <p class="references-note">Source check (October 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-7-1.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <p class="references-note">Source check (November 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-7-1.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                         <ol class="article-spec-list">
                             <li id="ref-1">Edmund Optics, &ldquo;Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications</a>.</li>
                             <li id="ref-2">Edmund Optics, &ldquo;Resolution | Edmund Optics.&rdquo; <a href="https://www.edmundoptics.com/knowledge-center/application-notes/imaging/resolution/" target="_blank" rel="noopener noreferrer">edmundoptics.com/knowledge-center/application-notes/imaging/resolution</a>.</li>
@@ -391,10 +397,10 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=a456f1fb" defer></script>
+        <script src="assets/js/course-data.js?v=72f75746" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
-        <script src="assets/js/widgets.js?v=9c704200" defer></script>
+        <script src="assets/js/widgets.js?v=c8391bb7" defer></script>
 
     </body>
 </html>

@@ -8,7 +8,7 @@
 	"stereo-disparity" | "pinhole-projection" | "dlr-ring-recovery" |
 	"edge-case-classifier" | "ultrasonic-distance" | "gyro-drift" |
 	"jacobian-singularity" | "f-number-aperture" |
-	"presence-area-check" | "ethernet-ip-messaging" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"presence-area-check" | "ethernet-ip-messaging" | "fov" | "vlan" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -4424,6 +4424,120 @@
 		draw();
 	}
 
+	/* ---------- Field-of-view calculator from lesson 7.1 ---------- */
+
+	function initFov(root) {
+		var sw = slider('Sensor width H', 'fov-h', 3, 36, 0.1, 8.8, ' mm');
+		var fl = slider('Focal length f', 'fov-f', 4, 100, 1, 35, ' mm');
+		var wd = slider('Working distance WD', 'fov-wd', 50, 2000, 10, 500, ' mm');
+		var svg = plotFrame(380, 190, 'Field of view sketch');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+		function draw() {
+			var H = Number(sw.input.value), f = Number(fl.input.value), D = Number(wd.input.value);
+			sw.out.textContent = H + ' mm';
+			fl.out.textContent = f + ' mm';
+			wd.out.textContent = D + ' mm';
+			var afov = 2 * Math.atan(H / (2 * f)) * 180 / Math.PI;
+			var fov = 2 * D * Math.tan(afov * Math.PI / 360);
+			var a = afov.toFixed(1), fv = Math.round(fov);
+			svg.setAttribute('aria-label', 'Field of view sketch, not to scale: sensor width ' + H + ' mm, focal length ' + f +
+				' mm, working distance ' + D + ' mm give an angular field of view of ' + a + ' degrees and a field of view of ' + fv + ' mm.');
+			svg.replaceChildren();
+			var cy = 90, lx = 120, ox = 330;
+			// object plane and FOV extent (schematic)
+			svg.appendChild(s('line', { 'class': 'd-line', x1: ox, y1: cy - 62, x2: ox, y2: cy + 62 }));
+			svg.appendChild(s('line', { 'class': 'd-strong', x1: ox + 14, y1: cy - 60, x2: ox + 14, y2: cy + 60 }));
+			// rays through the lens centre to the object plane edges
+			svg.appendChild(s('line', { 'class': 'd-line', x1: lx, y1: cy, x2: ox, y2: cy - 60 }));
+			svg.appendChild(s('line', { 'class': 'd-line', x1: lx, y1: cy, x2: ox, y2: cy + 60 }));
+			svg.appendChild(s('line', { 'class': 'd-line', x1: 50, y1: cy - 18, x2: lx, y2: cy, 'stroke-dasharray': '3 3' }));
+			svg.appendChild(s('line', { 'class': 'd-line', x1: 50, y1: cy + 18, x2: lx, y2: cy, 'stroke-dasharray': '3 3' }));
+			// sensor
+			svg.appendChild(s('rect', { 'class': 'd-box-gold', x: 42, y: cy - 18, width: 8, height: 36 }));
+			// lens
+			svg.appendChild(s('ellipse', { 'class': 'd-box', cx: lx, cy: cy, rx: 7, ry: 28 }));
+			// AFOV arc
+			svg.appendChild(s('path', { 'class': 'd-strong', d: 'M ' + (lx + 38) + ' ' + (cy - 12) + ' A 40 40 0 0 1 ' + (lx + 38) + ' ' + (cy + 12) }));
+			var t;
+			t = s('text', { 'class': 'd-title', x: lx + 46, y: cy + 4, 'font-size': '13' }); t.textContent = 'AFOV ' + a + '°'; svg.appendChild(t);
+			t = s('text', { 'class': 'd-title', x: ox + 8, y: cy - 66, 'text-anchor': 'end', 'font-size': '13' }); t.textContent = 'FOV ' + fv + ' mm'; svg.appendChild(t);
+			t = s('text', { 'class': 'd-muted', x: 46, y: cy + 36, 'text-anchor': 'middle' }); t.textContent = 'Sensor H'; svg.appendChild(t);
+			t = s('text', { 'class': 'd-muted', x: lx, y: cy - 36, 'text-anchor': 'middle' }); t.textContent = 'Lens f'; svg.appendChild(t);
+			svg.appendChild(s('line', { 'class': 'd-line', x1: lx, y1: cy + 74, x2: ox, y2: cy + 74 }));
+			t = s('text', { 'class': 'd-muted', x: (lx + ox) / 2, y: cy + 90, 'text-anchor': 'middle' }); t.textContent = 'WD ' + D + ' mm (not to scale)'; svg.appendChild(t);
+			readout.textContent = 'AFOV = 2·atan(H / 2f) = 2·atan(' + H + ' / ' + (2 * f) + ') = ' + a + '°. FOV = 2·WD·tan(AFOV / 2) = ' +
+				fv + ' mm (the same as H·WD / f).';
+		}
+		[sw, fl, wd].forEach(function (c) { c.input.addEventListener('input', draw); });
+		root.replaceChildren(frame('field of view', [
+			sw.row, fl.row, wd.row, svg, readout,
+			h('p', { 'class': 'widget-note', text: 'Paraxial approximation: confirm with the lens datasheet.' })
+		]));
+		draw();
+	}
+
+	/* ---------- VLANs: access ports and a trunk port from lesson 8.6 ---------- */
+
+	function initVlan(root) {
+		var trunk = false;
+		var svg = plotFrame(380, 262, 'VLAN diagram');
+		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+		var bAcc = button('Access ports', function () { trunk = false; draw(); });
+		var bTrk = button('Trunk port', function () { trunk = true; draw(); });
+
+		function txt(cls, x, y, str, anchor, size) {
+			var t = s('text', { 'class': cls, x: x, y: y });
+			if (anchor) t.setAttribute('text-anchor', anchor);
+			if (size) t.setAttribute('font-size', size);
+			t.textContent = str;
+			svg.appendChild(t);
+		}
+		function draw() {
+			bAcc.setAttribute('aria-pressed', String(!trunk));
+			bTrk.setAttribute('aria-pressed', String(trunk));
+			svg.replaceChildren();
+			// devices
+			svg.appendChild(s('rect', { 'class': 'd-box', x: 10, y: 8, width: 130, height: 40, rx: 4 }));
+			txt('d-title', 75, 24, 'Robot controller', 'middle', '12');
+			txt('d-muted', 75, 40, 'motion traffic', 'middle');
+			svg.appendChild(s('rect', { 'class': 'd-box-gold', x: 240, y: 8, width: 130, height: 40, rx: 4 }));
+			txt('d-title', 305, 24, 'HMI', 'middle', '12');
+			txt('d-muted', 305, 40, 'display traffic', 'middle');
+			// managed switch with two VLANs inside
+			svg.appendChild(s('rect', { 'class': 'd-box', x: 40, y: 90, width: 300, height: 80, rx: 4 }));
+			txt('d-muted', 190, 105, 'Managed switch', 'middle');
+			svg.appendChild(s('rect', { 'class': 'd-box', x: 55, y: 115, width: 130, height: 45, rx: 4 }));
+			txt('d-title', 120, 142, 'VLAN 20', 'middle', '13');
+			svg.appendChild(s('rect', { 'class': 'd-box-gold', x: 195, y: 115, width: 130, height: 45, rx: 4 }));
+			txt('d-title', 260, 142, 'VLAN 30', 'middle', '13');
+			// access ports
+			svg.appendChild(s('line', { 'class': 'd-strong', x1: 75, y1: 48, x2: 75, y2: 115 }));
+			svg.appendChild(s('line', { stroke: 'var(--wp-gold-text)', 'stroke-width': 2.5, fill: 'none', x1: 305, y1: 48, x2: 305, y2: 115 }));
+			txt('d-muted', 82, 72, 'access: VLAN 20');
+			txt('d-muted', 298, 72, 'access: VLAN 30', 'end');
+			if (trunk) {
+				svg.appendChild(s('rect', { 'class': 'd-box', x: 110, y: 214, width: 160, height: 38, rx: 4 }));
+				txt('d-title', 190, 237, 'Other switch', 'middle', '12');
+				svg.appendChild(s('line', { 'class': 'd-strong', x1: 180, y1: 170, x2: 180, y2: 214 }));
+				svg.appendChild(s('line', { stroke: 'var(--wp-gold-text)', 'stroke-width': 2.5, fill: 'none', x1: 200, y1: 170, x2: 200, y2: 214 }));
+				txt('d-title', 212, 188, 'Trunk port (uplink)', 'start', '12');
+				txt('d-muted', 212, 204, 'VLAN 20 + VLAN 30, tagged');
+			}
+			var label = trunk
+				? 'Trunk view. The robot controller is on an access port in VLAN 20 and the HMI on an access port in VLAN 30. An uplink port to another switch is a trunk that carries both VLAN 20 and VLAN 30, tagged.'
+				: 'Access ports view. The robot controller is on an access port that carries only VLAN 20 and the HMI on an access port that carries only VLAN 30. The two VLANs are separate broadcast domains on the same switch.';
+			svg.setAttribute('aria-label', label);
+			readout.textContent = trunk
+				? 'A trunk carries several VLANs. If a device can talk a port into becoming a trunk, it can reach VLANs it should not see, so device ports stay static access ports.'
+				: 'Each device’s access port carries only its own VLAN. VLAN 20 and VLAN 30 are separate broadcast domains on the same switch.';
+		}
+		root.replaceChildren(frame('VLANs on one switch', [
+			h('div', { 'class': 'widget-buttons' }, [bAcc, bTrk]), svg, readout
+		]));
+		draw();
+	}
+
 	var INIT = {
 		pwm: initPwm,
 		encoder: initEncoder,
@@ -4459,7 +4573,9 @@
 		'jacobian-singularity': initJacobianSingularity,
 		'f-number-aperture': initFNumberAperture,
 		'presence-area-check': initPresenceAreaCheck,
-		'ethernet-ip-messaging': initEthernetIpMessaging
+		'ethernet-ip-messaging': initEthernetIpMessaging,
+		fov: initFov,
+		vlan: initVlan
 	};
 
 	function boot() {

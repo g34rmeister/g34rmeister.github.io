@@ -15,8 +15,12 @@ For each, check whether the same page loads over `https://`. If it does, change 
 ## 5. Field-of-view calculator for lesson 7.1 [widget, needs a source]
 Lesson 7.1 explains focal length, field of view and working distance in words but has no formula, so it has no calculator yet. First step: find a formula in a source the lesson already cites (Edmund Optics, "Understanding Focal Length and Field of View") and propose a sentence plus citation for the lesson in the issue. A maintainer checks the source; only then is the widget built.
 
+**Done 2026-11-06:** 7.1 now gives the three Edmund Optics formulas with their approximation caveat (ref 5, checked) and the `fov` calculator.
+
 ## 6. VLAN example widget for lesson 8.6 [widget]
 Section 03 of lesson 8.6 gives an example: robot motion traffic on VLAN 20 and HMI traffic on VLAN 30. A small diagram that shows the two VLANs sharing one switch, and what changes when a port is a trunk vs an access port, would help. Show only what the lesson says. Follow the style of the existing widgets in `assets/js/widgets.js`.
+
+**Done 2026-11-06:** `vlan` widget (access ports vs trunk view), lesson text only.
 
 ## How to work on any of these
 Read `CONTRIBUTING.md`. Before opening a PR run:

@@ -280,10 +280,10 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1055
 - Key terms: forward kinematics, inverse kinematics, workspace (work envelope), law of cosines, atan2, elbow-up / elbow-down, Jacobian, singularity, spherical wrist, numerical inverse kinematics
 - Sections: From the idea to the full math · Forward kinematics: adding two rotating vectors · The workspace is a ring · Closed-form inverse kinematics · Worked example: two answers for one target · Why atan2, and not atan or acos · Edge cases: rounding at the boundary · Robust IK in Python · The Jacobian and singularities · From two links to a six-axis robot
 
-## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 67 min)
+## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 68 min)
 
 ### 7.1 Industrial Cameras and Optics
-`robotics-7-1.html` · 11 min · 9 refs (verified 9) · 1 figures · 0 Try it
+`robotics-7-1.html` · 12 min · 9 refs (verified 9) · 1 figures · 0 Try it
 - Objectives: Compare CMOS and CCD image sensor architectures, evaluating readout speed, blooming resistance, and pixel saturation capacity. / Distinguish global shutter from rolling shutter mechanisms, explaining how exposure timing affects moving parts and how strobe lighting prevents rolling shutter distortion. / Calculate lens aperture stops and optical throughput using f-numbers, and analyze the trade-off between depth of field and light throughput. / Explain how telecentric lenses eliminate parallax error in precision dimensional gauging and describe how the GenICam standard provides hardware-independent camera control.
 - Key terms: CMOS sensor, global shutter, rolling shutter, f-number, telecentric lens, GenICam
 - Sections: The machine vision camera: from photons to pixels · Pixel size, resolution, and sensor performance · Shutter mechanisms: global shutter versus rolling shutter · Lens optics: focal length and field of view · Aperture and f-number: light throughput and depth of field · Telecentric lenses for precision gauging · Industrial camera interfaces and GenICam · Check your understanding
