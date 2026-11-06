@@ -130,7 +130,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: Nav2, costmap, planner, behavior tree, tf2, Developer Certificate of Origin, Open Navigation
 - Sections: What Nav2 is · How a mobile robot navigates · How the project is organised · Licensing and sign-off · How to get involved · A first contribution path · Check your understanding
 
-## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 151 min)
+## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 150 min)
 
 ### 4.1 Definition and Introduction
 `robotics-4-1.html` · 13 min · 30 refs (partial 2, unreachable 1, verified 27) · 1 figures · 1 Try it
@@ -139,7 +139,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Deconstructing the Robot Operating System · Historical roots: Stanford and Willow Garage · The node-based computational graph · Topics and the publish-subscribe pattern · The lidar, SLAM, and path planning pipeline · Services: request-response transactions · Actions: preemptible goals with feedback · Local parameters in ROS 2 · Network isolation: ROS_DOMAIN_ID · Global adoption and metrics · Governance and the Open Source Robotics Alliance
 
 ### 4.2 ROS 1 vs. ROS 2
-`robotics-4-2.html` · 13 min · 30 refs (partial 2, verified 28) · 1 figures · 1 Try it
+`robotics-4-2.html` · 12 min · 30 refs (partial 2, verified 28) · 1 figures · 1 Try it
 - Objectives: Contrast the centralized master architecture of ROS 1 (roscore) with the distributed peer-to-peer DDS discovery of ROS 2. / Explain the ROS Middleware (RMW) abstraction layer and how to switch implementations (Fast DDS, Cyclone DDS, Zenoh) via environment variables. / Evaluate Quality of Service (QoS) policies (Reliability, Durability, History, Depth) and explain why mismatched QoS settings prevent communication. / Describe the lifecycle states of a ROS 2 managed node and the programmatic flexibility of Python-based launch files.
 - Key terms: DDS, RMW, Quality of Service (QoS), Reliable, Best Effort, Transient Local, Volatile, Zenoh, lifecycle node, launch file
 - Sections: Why the robotics community rebuilt ROS from scratch · Master versus decentralized discovery · The ROS Middleware (RMW) abstraction layer · Quality of Service (QoS) in practice · The QoS compatibility rule · Managed lifecycle nodes · Programmable Python launch files · Multi-platform and security enhancements · Migration timeline: from Noetic to Lyrical Luth

@@ -185,7 +185,7 @@
                                 You installed ROS 2 in <a href="robotics-4-3.html">lesson 4.3</a>. Jumping straight onto real hardware is risky for a beginner: a wrong motor command can tip over a rover or damage a gearbox, so it pays to practise somewhere harmless first.
                             </p>
                             <p>
-                                The official ROS 2 documentation uses <strong>Turtlesim</strong> for exactly this purpose: it is a lightweight simulator that demonstrates core ROS concepts without any hardware, representing the robot as a turtle you can drive around a 2D window.<sup><a href="#ref-1">[1]</a></sup> Behind its friendly appearance it is a real ROS 2 program.
+                                The official ROS 2 documentation uses <strong>Turtlesim</strong> for exactly this: a lightweight simulator that demonstrates core ROS concepts without any hardware, with the robot shown as a turtle you drive around a 2D window.<sup><a href="#ref-1">[1]</a></sup> Behind its friendly appearance it is a real ROS 2 program.
                             </p>
                             <p>
                                 The Turtlesim node creates topics (velocity commands in, pose and colour readings out), offers services (such as spawning, clearing and teleporting turtles) and serves an action that rotates the turtle to an absolute heading.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> The command-line tools, message types and Python patterns you practise here are the same ones you will use with real robots later in the course.
@@ -216,7 +216,7 @@ sudo apt install ros-lyrical-turtlesim</code></pre>
 
                             <h2 class="article-section-title">03. Topic introspection and the Twist message</h2>
                             <p>
-                                What is happening behind the window? Open a <strong>third terminal</strong> and inspect the running ROS graph with the command-line tools.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                                To see what is happening behind the window, open a <strong>third terminal</strong> and inspect the running ROS graph with the command-line tools.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
                                 First, list the running nodes:
@@ -235,7 +235,7 @@ sudo apt install ros-lyrical-turtlesim</code></pre>
 /turtle1/color_sensor [turtlesim_msgs/msg/Color]
 /turtle1/pose [turtlesim_msgs/msg/Pose]</code></pre>
                             <p>
-                                In Turtlesim, which topic carries the velocity commands from the teleop node? The answer is <code>/turtle1/cmd_vel</code>. The <code>/teleop_turtle</code> node publishes your keystrokes as velocity commands on <code>/turtle1/cmd_vel</code>, and the <code>/turtlesim</code> node subscribes to it to move the simulated turtle.<sup><a href="#ref-4">[4]</a></sup> (On Lyrical, Turtlesim's own message types live in the <code>turtlesim_msgs</code> package; on Jazzy they are still in <code>turtlesim</code>, so you will see <code>turtlesim/msg/Pose</code> there.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>)
+                                The velocity commands from the teleop node travel on <code>/turtle1/cmd_vel</code>: the <code>/teleop_turtle</code> node publishes your keystrokes there, and the <code>/turtlesim</code> node subscribes to it to move the simulated turtle.<sup><a href="#ref-4">[4]</a></sup> (On Lyrical, Turtlesim's own message types live in the <code>turtlesim_msgs</code> package; on Jazzy they are still in <code>turtlesim</code>, so you will see <code>turtlesim/msg/Pose</code> there.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>)
                             </p>
 
                             <div data-widget="rosgraph">
@@ -258,11 +258,11 @@ angular:
   z: 0.0
 ---</code></pre>
                             <p>
-                                The value 2.0 comes from the teleop node's default <code>scale_linear</code> parameter; turning uses a default <code>scale_angular</code> of 2.0 as well.<sup><a href="#ref-2">[2]</a></sup> To see how many nodes publish and subscribe to the topic, and its type, query it with <code>info</code>:<sup><a href="#ref-4">[4]</a></sup>
+                                The value 2.0 comes from the teleop node's default <code>scale_linear</code> parameter; turning uses a default <code>scale_angular</code> of 2.0 as well.<sup><a href="#ref-2">[2]</a></sup> To see the topic's type and how many nodes publish and subscribe to it, query it with <code>info</code>:<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 topic info /turtle1/cmd_vel</code></pre>
                             <p>
-                                The first line of the output is <code>Type: geometry_msgs/msg/Twist</code>.<sup><a href="#ref-4">[4]</a></sup> You can print the structure of that type with <code>ros2 interface show geometry_msgs/msg/Twist</code>: a <code>Twist</code> "expresses velocity in free space broken into its linear and angular parts", each part a three-element vector (x, y, z).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-6">[6]</a></sup> By ROS convention, distances are in meters, angles in radians and time in seconds, and a robot's body frame has x pointing forward and z pointing up.<sup><a href="#ref-7">[7]</a></sup> Turtlesim only reads <code>linear.x</code> (forward speed) and <code>angular.z</code> (turning rate about the vertical axis), plus <code>linear.y</code> if its optional <code>holonomic</code> parameter (allowing the robot to translate in any direction immediately without first rotating its chassis) is turned on.<sup><a href="#ref-2">[2]</a></sup>
+                                The first line of the output is <code>Type: geometry_msgs/msg/Twist</code>.<sup><a href="#ref-4">[4]</a></sup> You can print the structure of that type with <code>ros2 interface show geometry_msgs/msg/Twist</code>: a <code>Twist</code> "expresses velocity in free space broken into its linear and angular parts", each part a three-element vector (x, y, z).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-6">[6]</a></sup> By ROS convention, distances are in meters, angles in radians and time in seconds, and a robot's body frame has x pointing forward and z pointing up.<sup><a href="#ref-7">[7]</a></sup> Turtlesim only reads <code>linear.x</code> (forward speed) and <code>angular.z</code> (turning rate about the vertical axis), plus <code>linear.y</code> if its optional <code>holonomic</code> parameter is turned on (a holonomic robot can move in any direction immediately, without first rotating its chassis).<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
                                 You can also command the turtle directly from the command line, without the teleop node:<sup><a href="#ref-4">[4]</a></sup>
@@ -278,7 +278,7 @@ angular:
                             </p>
                             <pre class="article-code"><code>ros2 service list</code></pre>
                             <p>
-                                Besides the parameter services that almost every node has, you will see the Turtlesim services <code>/clear</code>, <code>/kill</code>, <code>/reset</code>, <code>/spawn</code>, <code>/turtle1/set_pen</code>, <code>/turtle1/teleport_absolute</code> and <code>/turtle1/teleport_relative</code>.<sup><a href="#ref-5">[5]</a></sup> Let us call <code>/spawn</code> to add a second turtle to the arena:<sup><a href="#ref-5">[5]</a></sup>
+                                Besides the parameter services that almost every node has, you will see the Turtlesim services <code>/clear</code>, <code>/kill</code>, <code>/reset</code>, <code>/spawn</code>, <code>/turtle1/set_pen</code>, <code>/turtle1/teleport_absolute</code> and <code>/turtle1/teleport_relative</code>.<sup><a href="#ref-5">[5]</a></sup> Call <code>/spawn</code> to add a second turtle to the arena:<sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 service call /spawn turtlesim_msgs/srv/Spawn "{x: 2.0, y: 2.0, theta: 0.0, name: 'turtle2'}"</code></pre>
                             <p>
@@ -297,11 +297,11 @@ turtlesim_msgs.srv.Spawn_Response(name='turtle2')</code></pre>
                                 If you go back to your teleop terminal and press the arrow keys, only <code>turtle1</code> moves, because <code>turtle_teleop_key</code> sends its commands to topics and actions under the <code>turtle1</code> namespace.<sup><a href="#ref-1">[1]</a></sup> How can we drive <code>turtle2</code> without changing or recompiling any code?
                             </p>
                             <p>
-                                In ROS 2, topic and service names inside a node can be redirected when the node starts by passing <strong>remapping arguments</strong> after the <code>--ros-args</code> flag, using the syntax <code>--remap old_name:=new_name</code> (or the short form <code>-r</code>).<sup><a href="#ref-8">[8]</a></sup> Open a fourth terminal and start a second teleop node pointed at <code>turtle2</code>:<sup><a href="#ref-1">[1]</a></sup>
+                                In ROS 2, you can redirect a node's topic and service names when it starts by passing <strong>remapping arguments</strong> after the <code>--ros-args</code> flag, with the syntax <code>--remap old_name:=new_name</code> (or the short form <code>-r</code>).<sup><a href="#ref-8">[8]</a></sup> Open a fourth terminal and start a second teleop node pointed at <code>turtle2</code>:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <pre class="article-code"><code>ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel --remap turtle1/rotate_absolute:=turtle2/rotate_absolute</code></pre>
                             <p>
-                                The second remap redirects the rotation action as well, so the teleop node's absolute-rotation keys also control <code>turtle2</code>. Now you have two teleop terminals: one drives <code>turtle1</code> and the other drives <code>turtle2</code>.<sup><a href="#ref-1">[1]</a></sup> These remappings are "static": they apply for the whole lifetime of the node, and changing names after a node has started is not supported.<sup><a href="#ref-8">[8]</a></sup> Remapping is what lets you reuse the same executable for a different robot or topic name without changing its code.<sup><a href="#ref-1">[1]</a></sup>
+                                The second remap redirects the rotation action as well, so the teleop node's absolute-rotation keys also control <code>turtle2</code>. Now you have two teleop terminals: one drives <code>turtle1</code> and the other drives <code>turtle2</code>.<sup><a href="#ref-1">[1]</a></sup> These remappings are "static": they apply for the whole lifetime of the node, and changing names after a node has started is not supported.<sup><a href="#ref-8">[8]</a></sup> Remapping lets you reuse the same executable for a different robot or topic name without changing its code.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">06. ROS 2 workspace architecture</h2>
@@ -342,7 +342,7 @@ cd ~/ros2_ws/src</code></pre>
 
                             <h2 class="article-section-title">08. Writing a custom rclpy velocity publisher</h2>
                             <p>
-                                Let us write a Python node that drives the turtle in a continuous circle by publishing velocity commands twice a second (2 Hz). It follows the structure of the official "simple publisher" tutorial, which uses a timer that fires every 0.5 seconds.<sup><a href="#ref-13">[13]</a></sup>
+                                Now write a Python node that drives the turtle in a continuous circle by publishing velocity commands twice a second (2 Hz). It follows the structure of the official "simple publisher" tutorial, which uses a timer that fires every 0.5 seconds.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <p>
                                 Create a new file named <code>~/ros2_ws/src/my_robot_controller/my_robot_controller/draw_circle.py</code>:
@@ -390,7 +390,7 @@ if __name__ == '__main__':
 
                             <h2 class="article-section-title">09. Writing a custom rclpy pose subscriber</h2>
                             <p>
-                                Next, let us write a subscriber node that listens to the turtle's pose and logs it to the console, following the official "simple subscriber" tutorial.<sup><a href="#ref-13">[13]</a></sup> The <code>turtlesim_msgs/msg/Pose</code> message holds <code>x</code>, <code>y</code>, <code>theta</code>, <code>linear_velocity</code> and <code>angular_velocity</code>.<sup><a href="#ref-2">[2]</a></sup>
+                                Next, write a subscriber node that listens to the turtle's pose and logs it to the console, following the official "simple subscriber" tutorial.<sup><a href="#ref-13">[13]</a></sup> The <code>turtlesim_msgs/msg/Pose</code> message holds <code>x</code>, <code>y</code>, <code>theta</code>, <code>linear_velocity</code> and <code>angular_velocity</code>.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
                                 Create a new file named <code>~/ros2_ws/src/my_robot_controller/my_robot_controller/pose_subscriber.py</code>:
@@ -554,7 +554,7 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=7fe8603b" defer></script>
+            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

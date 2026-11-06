@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT13M",
+            "timeRequired": "PT12M",
             "teaches": [
                 "DDS",
                 "RMW",
@@ -185,18 +185,18 @@
                                 ROS began life as the development environment for Willow Garage's PR2 robot, and that use case shaped its design: a single robot, workstation-class computers on board, no real-time requirements, excellent network connectivity (wired or close-range, high-bandwidth wireless), and mostly academic research applications.<sup><a href="#ref-1">[1]</a></sup> Work on ROS started in November 2007.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                ROS 1 ended up used far beyond those first assumptions. By the time ROS 2 was planned, ROS was running on wheeled robots of all sizes, legged humanoids, industrial arms, self-driving cars, aerial and surface vehicles, and ROS-based products were reaching the market in manufacturing, agriculture and commercial cleaning.<sup><a href="#ref-1">[1]</a></sup> The ROS team listed new use cases it had not planned for: teams of multiple robots, small embedded platforms, real-time systems, poor or lossy networks, and production environments.<sup><a href="#ref-1">[1]</a></sup>
+                                In practice, ROS 1 was used far beyond those first assumptions. By the time ROS 2 was planned, ROS was running on wheeled robots of all sizes, legged humanoids, industrial arms, self-driving cars, aerial and surface vehicles. ROS-based products were also reaching the market in manufacturing, agriculture and commercial cleaning.<sup><a href="#ref-1">[1]</a></sup> The ROS team listed new use cases it had not planned for: teams of multiple robots, small embedded platforms, real-time systems, poor or lossy networks, and production environments.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                Meeting those needs required deep changes to discovery, transport and the APIs. The team considered building them into ROS 1 but concluded that changing a system so many people relied on was too risky, so <strong>ROS 2</strong> was built as a new, parallel set of packages that is not API-compatible with ROS 1 but can interoperate with it through bridges.<sup><a href="#ref-1">[1]</a></sup>
+                                Meeting those needs required deep changes to discovery, transport and the APIs. The team considered building them into ROS 1 but concluded that changing a system so many people relied on was too risky. Instead, <strong>ROS 2</strong> was built as a new, parallel set of packages that is not API-compatible with ROS 1 but can interoperate with it through bridges.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">02. Master versus decentralized discovery</h2>
                             <p>
-                                One of the biggest differences between ROS 1 and ROS 2 lies in how nodes find each other on the network.<sup><a href="#ref-2">[2]</a></sup>
+                                One of the biggest differences between ROS 1 and ROS 2 is how nodes find each other on the network.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                ROS 1 relied on a central coordinator, the ROS master, started with <code>roscore</code>.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> Nodes used this master-based discovery system to find each other, and their data was carried by ROS 1's own TCPROS and UDPROS wire protocols.<sup><a href="#ref-2">[2]</a></sup> The same <code>roscore</code> also held the global parameter store.<sup><a href="#ref-3">[3]</a></sup>
+                                ROS 1 relied on a central coordinator, the ROS master, started with <code>roscore</code>.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> Nodes found each other through the master, and their data travelled over ROS 1's own TCPROS and UDPROS wire protocols.<sup><a href="#ref-2">[2]</a></sup> The same <code>roscore</code> also held the global parameter store.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
                                 This central master design brought two well-known problems:
@@ -206,7 +206,7 @@
                                 <li class="article-spec-item"><span class="spec-label">Multi-Robot Headaches:</span> Multi-robot systems were possible in ROS 1, but there was no standard approach, and the ROS team described them as &ldquo;all somewhat of a hack on top of the single-master structure of ROS.&rdquo;<sup><a href="#ref-1">[1]</a></sup></li>
                             </ul>
                             <p>
-                                How do ROS 2 nodes find each other? They discover each other automatically through DDS, with no master.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-2">[2]</a></sup> ROS 2 has no <code>roscore</code>.<sup><a href="#ref-3">[3]</a></sup> Instead, it is built on the <strong>Data Distribution Service (DDS)</strong>, an industry standard created by the Object Management Group (OMG) and implemented by several vendors.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                                ROS 2 nodes instead discover each other automatically through DDS, with no master.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-2">[2]</a></sup> ROS 2 has no <code>roscore</code>.<sup><a href="#ref-3">[3]</a></sup> Instead, it is built on the <strong>Data Distribution Service (DDS)</strong>, an industry standard created by the Object Management Group (OMG) and implemented by several vendors.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
                                 DDS implementations talk to each other with the RTPS (Real-Time Publish-Subscribe) wire protocol, which specifies the format of messages sent across the network.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> When a node starts, it advertises its presence to other nodes in the same ROS domain, and they reply with information about themselves so connections can be made. Nodes keep advertising periodically, so late arrivals are found, and they announce when they go offline.<sup><a href="#ref-4">[4]</a></sup> This discovery traffic uses multicast,<sup><a href="#ref-7">[7]</a></sup> and there is no central server to crash and no master that must be started first.<sup><a href="#ref-2">[2]</a></sup>
@@ -229,7 +229,7 @@
                                 <li class="article-spec-item"><span class="spec-label">rmw_zenoh_cpp:</span> Built on Eclipse Zenoh, a non-DDS protocol. It became Tier 1 in Kilted Kaiju (2025) and remains Tier 1 in Lyrical Luth.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-10">[10]</a></sup> The documentation describes Zenoh as a more lightweight alternative to DDS whose low wire overhead and flexible routing suit challenging network conditions; a Zenoh router is used to help nodes find each other.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-12">[12]</a></sup></li>
                             </ul>
                             <p>
-                                To switch middleware implementations on a machine, an engineer installs the corresponding RMW package and sets the environment variable in the terminal:<sup><a href="#ref-13">[13]</a></sup>
+                                To switch middleware on a machine, install the matching RMW package and set the environment variable in the terminal:<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <pre class="article-code"><code>sudo apt install ros-lyrical-rmw-cyclonedds-cpp
 export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp</code></pre>
@@ -325,7 +325,7 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp</code></pre>
 
                             <div data-widget="qos"><p class="widget-note">The QoS compatibility calculator needs JavaScript. With it on, you can test publisher and subscriber QoS policy combinations to check compatibility.</p></div>
                             <p>
-                                If your subscriber is not receiving data, you can diagnose the issue on the command line using:
+                                If your subscriber is not receiving data, check the topic from the command line:
                             </p>
                             <pre class="article-code"><code>ros2 topic info /my_topic --verbose</code></pre>
                             <p>
@@ -346,7 +346,7 @@ export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp</code></pre>
                                 <li class="article-spec-item"><span class="spec-label">Finalized:</span> The terminal state just before the node is destroyed; it remains visible to introspection and debugging tools.<sup><a href="#ref-17">[17]</a></sup></li>
                             </ul>
                             <p>
-                                Moving out of a primary state (except after an error in Active) requires an action from an external supervisory process, through transitions such as <code>configure</code>, <code>activate</code>, <code>deactivate</code>, <code>cleanup</code> and <code>shutdown</code>.<sup><a href="#ref-17">[17]</a></sup> A supervisor can therefore bring every sensor driver to <em>Inactive</em> first and only <code>activate</code> the cell once each driver reports that its hardware is ready, so hardware is only used when it is ready and is released safely on shutdown.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-17">[17]</a></sup>
+                                Moving out of a primary state (except after an error in Active) requires an action from an external supervisory process, through transitions such as <code>configure</code>, <code>activate</code>, <code>deactivate</code>, <code>cleanup</code> and <code>shutdown</code>.<sup><a href="#ref-17">[17]</a></sup> A supervisor can therefore bring every sensor driver to <em>Inactive</em> first and <code>activate</code> the cell only once each driver reports its hardware ready. That way, hardware is used only when it is ready and is released safely on shutdown.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-17">[17]</a></sup>
                             </p>
 
                             <figure class="lesson-diagram">
@@ -390,7 +390,7 @@ def generate_launch_description():
         )
     ])</code></pre>
                             <p>
-                                Launch files also support event handlers, which react to process events while the system runs (for example, shutting everything down when one important node exits), as well as launch arguments, substitutions and starting composable nodes in a container (a shared OS process hosting multiple composable nodes, distinct from a Docker container).<sup><a href="#ref-20">[20]</a></sup><sup><a href="#ref-18">[18]</a></sup>
+                                Launch files also support event handlers, which react to process events while the system runs (for example, shutting everything down when one important node exits). They also support launch arguments, substitutions and starting composable nodes in a container: a shared OS process that hosts several composable nodes, not a Docker container.<sup><a href="#ref-20">[20]</a></sup><sup><a href="#ref-18">[18]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">08. Multi-platform and security enhancements</h2>
@@ -492,7 +492,7 @@ def generate_launch_description():
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=7fe8603b" defer></script>
+            <script src="assets/js/course-data.js?v=2dcfc32f" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
