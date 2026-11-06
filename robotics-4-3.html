@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT17M",
+            "timeRequired": "PT16M",
             "teaches": [
                 "Ubuntu 26.04",
                 "Lyrical Luth",
@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. Choosing your installation strategy</h2>
                             <p>
-                                Setting up a robotics development environment is an important first milestone. ROS 2 is not a stand-alone operating system: it is a set of tools and libraries that runs on top of a host operating system, and each ROS 2 distribution requires a specific Ubuntu LTS release (other platforms may need a source build or containers).<sup><a href="#ref-1">[1]</a></sup> Getting the host right is therefore the first step.
+                                ROS 2 is not a stand-alone operating system: it is a set of tools and libraries that runs on top of a host operating system, and each ROS 2 distribution requires a specific Ubuntu LTS release (other platforms may need a source build or containers).<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 New engineers often run into installation problems because they do not know which platforms a release officially supports. Depending on whether your computer runs Ubuntu Linux, Microsoft Windows, or Apple macOS, your path to a working ROS 2 environment will look different: binary packages are only built for the Tier 1 platforms, and everything else means building from source or using a container.<sup><a href="#ref-2">[2]</a></sup>
@@ -300,7 +300,7 @@ sudo apt upgrade</code></pre>
                                 Once Ubuntu finishes installing, open the Ubuntu terminal and follow the native Ubuntu installation steps above.<sup><a href="#ref-11">[11]</a></sup> If RViz crashes under WSL 2, forcing software rendering with <code>export LIBGL_ALWAYS_SOFTWARE=true</code> is a documented workaround.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
-                                <strong>Option B: Native Windows 11 binary archive.</strong> For engineers who need tight integration with Windows software or Visual Studio C++ development, ROS 2 provides a pre-built Windows archive; only Windows 11 is supported.<sup><a href="#ref-15">[15]</a></sup> It includes all ROS base packages but only some desktop packages. Dependencies come from conda-forge, managed with the <code>pixi</code> package manager (a fast tool built on the conda-forge ecosystem to handle binary dependencies on Windows), and compiling C++ packages needs Visual Studio Build Tools 2022.<sup><a href="#ref-15">[15]</a></sup> The documented steps are to create a short folder such as <code>C:\dev</code>, install pixi, download the Windows archive from the ROS 2 GitHub releases page, unpack it, install the dependencies, and source the environment in every new Command Prompt.<sup><a href="#ref-15">[15]</a></sup> The documentation gives the file name pattern as <code>windows-release-amd64.zip</code>, but on the releases page the file is actually named like <code>ros2-lyrical-2026-08-07-windows-AMD64.zip</code>, so look for a name ending in <code>-windows-AMD64.zip</code>:<sup><a href="#ref-16">[16]</a></sup>
+                                <strong>Option B: Native Windows 11 binary archive.</strong> For engineers who need tight integration with Windows software or Visual Studio C++ development, ROS 2 provides a pre-built Windows archive; only Windows 11 is supported.<sup><a href="#ref-15">[15]</a></sup> It includes all ROS base packages but only some desktop packages. Dependencies come from conda-forge, managed with the <code>pixi</code> package manager (a tool built on the conda-forge ecosystem that handles binary dependencies on Windows), and compiling C++ packages needs Visual Studio Build Tools 2022.<sup><a href="#ref-15">[15]</a></sup> The documented steps are to create a short folder such as <code>C:\dev</code>, install pixi, download the Windows archive from the ROS 2 GitHub releases page, unpack it, install the dependencies, and source the environment in every new Command Prompt.<sup><a href="#ref-15">[15]</a></sup> The documentation gives the file name pattern as <code>windows-release-amd64.zip</code>, but on the releases page the file is actually named like <code>ros2-lyrical-2026-08-07-windows-AMD64.zip</code>, so look for a name ending in <code>-windows-AMD64.zip</code>:<sup><a href="#ref-16">[16]</a></sup>
                             </p>
                             <pre class="article-code"><code>cd C:\dev\lyrical
 pixi install
@@ -310,7 +310,7 @@ call C:\dev\lyrical\local_setup.bat</code></pre>
 
                             <h2 class="article-section-title">08. Windows on ARM (Snapdragon laptops)</h2>
                             <p>
-                                Some newer Windows laptops, such as those with Qualcomm Snapdragon processors, use an Arm64 CPU instead of an Intel or AMD (x64) CPU. To check yours, open Settings, then System, then About, and look at the &ldquo;System type&rdquo; line. This matters because the official ROS 2 Windows builds are made for amd64 only. The Lyrical platform table lists Windows 11 on amd64 as Tier 1 and has no Windows arm64 entry at all,<sup><a href="#ref-7">[7]</a></sup> and the Lyrical release downloads include a Windows AMD64 archive and an Ubuntu aarch64 archive, but nothing for Windows on Arm.<sup><a href="#ref-16">[16]</a></sup> Earlier releases such as Jazzy are the same: REP 2000 lists Windows on amd64 only.<sup><a href="#ref-6">[6]</a></sup>
+                                Some newer Windows laptops, such as those with Qualcomm Snapdragon processors, use an Arm64 CPU instead of an Intel or AMD (x64) CPU. To check yours, open Settings, then System, then About, and look at the &ldquo;System type&rdquo; line. This matters because the official ROS 2 Windows builds are made for amd64 only. The Lyrical platform table lists Windows 11 on amd64 as Tier 1 and has no Windows arm64 entry at all.<sup><a href="#ref-7">[7]</a></sup> The Lyrical release downloads include a Windows AMD64 archive and an Ubuntu aarch64 archive, but nothing for Windows on Arm.<sup><a href="#ref-16">[16]</a></sup> Earlier releases such as Jazzy are the same: REP 2000 lists Windows on amd64 only.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <p>
                                 <strong>What does not work.</strong> There is no official native ROS 2 build for Windows on Arm, so Option B from section 07 is not available.<sup><a href="#ref-7">[7]</a></sup> Windows 11 on Arm can run many x64 apps through an emulator called Prism,<sup><a href="#ref-17">[17]</a></sup> so the x64 ROS 2 archive might run under emulation. We have not found any report that tests this, and it is not a supported setup, so we do not recommend it. Emulation also does not cover drivers, which must be native Arm64.<sup><a href="#ref-18">[18]</a></sup> Two vendor tools are affected too. The e-series URSim simulator from Universal Robots is distributed as a Docker image,<sup><a href="#ref-19">[19]</a></sup> and users who ran it under amd64 emulation on Arm-based Macs report that it starts but shows &ldquo;No Controller&rdquo;.<sup><a href="#ref-20">[20]</a></sup> ABB RobotStudio is a Windows desktop application, and we could not find an official statement that it supports Windows on Arm. In a 2013 community thread about running it in a virtual machine on a Mac, a reply calls that an unsupported hardware configuration.<sup><a href="#ref-21">[21]</a></sup>
@@ -532,7 +532,7 @@ sudo ufw allow in proto udp from 224.0.0.0/4</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

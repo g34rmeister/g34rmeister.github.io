@@ -179,13 +179,13 @@
 
                             <h2 class="article-section-title">01. Direct 3D sensing versus 2D inference</h2>
                             <p>
-                                In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we compared 2D and 3D guidance. Planar 2D vision works effectively when workpieces lie flat on a known, flat surface at a constant height. However, modern factory automation increasingly demands handling parts jumbled inside deep storage totes, overlapping boxes on pallets, or unoriented castings in shipping containers. In these unstructured environments, cameras must measure not only horizontal and vertical position, but also true physical depth and three-dimensional spatial orientation.
+                                In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we compared 2D and 3D guidance. Planar 2D vision works effectively when workpieces lie flat on a known, flat surface at a constant height. However, modern factory automation increasingly demands handling parts jumbled inside deep storage totes, overlapping boxes on pallets, or unoriented castings in shipping containers. In these unstructured environments, cameras must measure depth and 3D orientation as well as horizontal and vertical position.
                             </p>
                             <p>
                                 Industrial automation divides three-dimensional perception into two distinct technological approaches: direct physical sensing and learned visual inference. Direct 3D sensing resolves range in hardware, using LiDAR pulses for optical precision or radar waves to penetrate dust, rain, and fog.<sup><a href="#ref-1">[1]</a></sup> These sensors measure distance directly, either by timing an emitted signal or by triangulation.
                             </p>
                             <p>
-                                Structured light and stereo vision qualify as 3D sensing because they calculate depth through deterministic geometry from a calibrated physical baseline, whereas neural network inference predicts 3D structure from 2D images without geometric anchors.<sup><a href="#ref-1">[1]</a></sup> When an algorithm infers depth from a single 2D image, it guesses distance based on learned patterns like shading and perspective cues. That can work well on scenes like the ones it was trained on, but an unfamiliar object or lighting change can throw the estimate off. Direct sensing computes distance from a known, calibrated geometry instead.
+                                Structured light and stereo vision qualify as 3D sensing because they calculate depth through deterministic geometry from a calibrated physical baseline. Neural network inference, by contrast, predicts 3D structure from 2D images without geometric anchors.<sup><a href="#ref-1">[1]</a></sup> When an algorithm infers depth from a single 2D image, it guesses distance based on learned patterns like shading and perspective cues. That can work well on scenes like the ones it was trained on, but an unfamiliar object or lighting change can throw the estimate off.
                             </p>
 
                             <h2 class="article-section-title">02. Stereo vision principles and disparity calculation</h2>
@@ -270,7 +270,7 @@ seg.segment(*inliers, *coefficients);</code></pre>
                                 In picking, the goal of 3D vision is a pick pose the robot can reach without collisions. Vision guidance systems use 3D point clouds for object segmentation and robot picking pose estimation via CAD model matching or geometry matching.<sup><a href="#ref-8">[8]</a></sup> By aligning a pre-loaded CAD model against an extracted cluster or analyzing local surface geometry, the vision software chooses a grasp point and reports the target's 6-DoF pose <code>(X, Y, Z, Roll, Pitch, Yaw)</code> to the robot controller.
                             </p>
                             <p>
-                                Production demands impose strict timing constraints on 3D perception pipelines. In industrial random bin picking, robot cycles generally range from 10 to 15 seconds, allowing camera time budgets between 700 ms and 1500 ms.<sup><a href="#ref-8">[8]</a></sup> The longer cycle, with the arm reaching into a deep bin and clearing its walls, gives the 3D vision system up to 1.5 seconds to capture high-density scans and compute collision-free grasp trajectories.
+                                In industrial random bin picking, robot cycles generally range from 10 to 15 seconds, allowing camera time budgets between 700 ms and 1500 ms.<sup><a href="#ref-8">[8]</a></sup> The longer cycle, with the arm reaching into a deep bin and clearing its walls, gives the 3D vision system up to 1.5 seconds to capture high-density scans and compute collision-free grasp trajectories.
                             </p>
                             <p>
                                 Warehouse piece picking runs much faster. In robotic piece picking applications, robot cycles typically range between 3 and 4 seconds, achieving throughput rates exceeding 1,000 items per hour per robot.<sup><a href="#ref-9">[9]</a></sup> To sustain this rapid picking pace, the camera and vision computer must acquire and process point cloud data while the robot arm is returning from its previous drop-off location.
@@ -284,7 +284,7 @@ seg.segment(*inliers, *coefficients);</code></pre>
 
                             <h2 class="article-section-title">07. The complete 3D vision guidance workflow</h2>
                             <p>
-                                Deploying 3D sensing in a robotic workstation requires integrating hardware acquisition, point cloud filtering, and robot kinematics into an automated pipeline. The diagram below illustrates the end-to-end processing sequence from raw physical sensing to robot trajectory execution.
+                                The diagram below illustrates the end-to-end processing sequence from raw physical sensing to robot trajectory execution.
                             </p>
 
                             <figure class="lesson-diagram">
@@ -394,7 +394,7 @@ seg.segment(*inliers, *coefficients);</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

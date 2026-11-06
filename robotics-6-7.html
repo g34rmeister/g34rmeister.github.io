@@ -184,7 +184,7 @@
                                 An autonomous robot rarely performs a single uninterrupted task. A warehouse mobile robot must follow a guide line, navigate around obstacles, search for missing paths, and halt immediately if a safety button is pressed. Novice programmers often attempt to coordinate these behaviors by nesting <code>if</code> and <code>else if</code> conditional statements inside the main control loop.
                             </p>
                             <p>
-                                As robot capabilities grow, this ad hoc approach rapidly degenerates into fragile "spaghetti code." Adding a single new behavior requires modifying multiple nested conditional branches. Hidden side effects emerge, two branches can fight over the same motor command, and it becomes hard to predict what the robot will do when a sensor reading is unexpected. Behavior-tree researchers Colledanchise and &Ouml;gren make the same point about poorly structured controllers: every new behavior means re-checking a large number of existing decisions, which makes the code error-prone to change.<sup><a href="#ref-1">[1]</a></sup>
+                                As robot capabilities grow, this ad hoc approach turns into fragile "spaghetti code." Adding a single new behavior requires modifying multiple nested conditional branches. Hidden side effects emerge, two branches can fight over the same motor command, and it becomes hard to predict what the robot will do when a sensor reading is unexpected. Behavior-tree researchers Colledanchise and &Ouml;gren make the same point about poorly structured controllers: every new behavior means re-checking a large number of existing decisions, which makes the code error-prone to change.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 To bring formal structure to robot behavior, engineers use a <strong>Finite State Machine (FSM)</strong>.<sup><a href="#ref-2">[2]</a></sup> An FSM is a mathematical model of computation consisting of a predetermined set of states, incoming events, and guarded transitions between states. At any given instant, the robot resides in exactly one state. By decoupling what the robot does (the state action) from when it switches behaviors (the state transition), state machines organize the "think" stage of the sense-think-act cycle into modular software components that are easier to check.
@@ -302,7 +302,7 @@
                                 Because <code>loop()</code> keeps running instead of waiting, the robot reads its ultrasonic sensor and emergency stop button on every pass throughout the turn.
                             </p>
                             <p>
-                                Crucially, embedded software must always write the check as <code>(now - stateStart &gt;= duration)</code> rather than <code>(now &gt;= stateStart + duration)</code>. The Arduino reference notes that <code>millis()</code> overflows (goes back to zero) after approximately 50 days.<sup><a href="#ref-6">[6]</a></sup> On boards where <code>unsigned long</code> is 32 bits, that is \(2^{32}\) ms, about 49.7 days. In C and C++, unsigned integer arithmetic is always performed modulo \(2^n\), where \(n\) is the number of bits.<sup><a href="#ref-7">[7]</a></sup> When <code>now</code> rolls over, the unsigned subtraction <code>(now - stateStart)</code> correctly computes elapsed duration across the rollover boundary. The addition form can fail near rollover: if <code>stateStart + duration</code> wraps past zero, the comparison becomes true too early (or, in other layouts of the test, never), so the state ends at the wrong time.
+                                Crucially, embedded software must always write the check as <code>(now - stateStart &gt;= duration)</code> rather than <code>(now &gt;= stateStart + duration)</code>. The Arduino reference notes that <code>millis()</code> overflows (goes back to zero) after approximately 50 days.<sup><a href="#ref-6">[6]</a></sup> On boards where <code>unsigned long</code> is 32 bits, that is \(2^{32}\) ms, about 49.7 days. In C and C++, unsigned integer arithmetic is always performed modulo \(2^n\), where \(n\) is the number of bits.<sup><a href="#ref-7">[7]</a></sup> When <code>now</code> rolls over, the unsigned subtraction <code>(now - stateStart)</code> correctly computes elapsed duration across the rollover boundary. The addition form can fail near rollover: if <code>stateStart + duration</code> wraps past zero, the comparison becomes true too early, so the state ends at the wrong time.
                             </p>
 
                             <h2 class="article-section-title">05. Embedded C++ implementation</h2>
@@ -594,7 +594,7 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>

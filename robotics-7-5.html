@@ -178,10 +178,10 @@
 
                         <h2 class="article-section-title">01. Quality assurance and automated inspection</h2>
                         <p>
-                            In industrial automation, manufacturing lines rely heavily on machine vision to verify product quality at production speed. Before an automated system is introduced, manual visual inspection by human operators is often the standard method. However, human visual fatigue and shifting attention create inconsistent quality checks over long shifts. Automated inspection reduces manufacturing visual inspection errors, which comprise missing existing defects and false alarms that trigger unnecessary scrap and production waste.<sup><a href="#ref-1">[1]</a></sup>
+                            In industrial automation, manufacturing lines rely heavily on machine vision to verify product quality at production speed. Before an automated system is introduced, manual visual inspection by human operators is often the standard method. However, human visual fatigue and shifting attention create inconsistent quality checks over long shifts. Automated inspection reduces both kinds of visual inspection error in manufacturing: missed defects, and false alarms that trigger unnecessary scrap and production waste.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
-                            Both types of inspection errors carry substantial industrial costs. A missed defect allows an incomplete, misaligned, or fractured component to move downstream into final assembly or ship to a customer. When that happens, the failure can cause costly recalls or halt an assembly line. Conversely, a false alarm incorrectly flags an acceptable part as defective. Rejecting good parts wastes raw materials, discards already completed machining labor, and lowers cell throughput.
+                            A missed defect allows an incomplete, misaligned, or fractured component to move downstream into final assembly or ship to a customer. When that happens, the failure can cause costly recalls or halt an assembly line. Conversely, a false alarm incorrectly flags an acceptable part as defective. Rejecting good parts wastes raw materials, discards already completed machining labor, and lowers cell throughput.
                         </p>
                         <p>
                             Robotic cells frequently combine part handling with automated visual inspection. In <a href="robotics-2-8.html">Lesson 2.8 Vision-Guided Picking</a>, we explored how cameras guide robot end-effectors by locating parts on tables or conveyors. Inspection builds upon those same physical setups. A camera mounted above a fixture (eye-to-hand) or on the robot wrist (eye-in-hand) captures an image of the part before or after manipulation. The robot program then checks dimensions or presence. Based on the vision verdict, the arm sorts the part into an accept bin, places it on an outbound conveyor, or routes it into a quarantine station for human review.
@@ -198,7 +198,7 @@
                             However, sensor pixel count alone does not guarantee that fine edges or small defects can be resolved clearly. Optical resolution is fundamentally defined as a spatial frequency measured in line pairs per millimeter, where one line pair represents alternating black and white bars in object space.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
-                            As the alternating bars become narrower and closer together, the spatial frequency increases. No lens passes fine detail perfectly, and how well it keeps the bars apart is measured as contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-4">[4]</a></sup> When contrast drops to zero, adjacent bars blend into an indistinguishable solid gray field.
+                            As the alternating bars become narrower and closer together, the spatial frequency increases. No lens passes fine detail perfectly, and the measure of how well it separates the bars is contrast. Contrast is defined as how well black can be distinguished from white at a given resolution, quantified by the difference between maximum and minimum intensities divided by their sum.<sup><a href="#ref-4">[4]</a></sup> When contrast drops to zero, adjacent bars blend into an indistinguishable solid gray field.
                         </p>
                         <p>
                             Even if a lens can transmit high spatial frequencies, the electronic image sensor must sample that pattern without aliasing. The Nyquist limit represents the highest spatial frequency a sensor can sample and equals two pixels per line pair.<sup><a href="#ref-3">[3]</a></sup> Sampling requires at least one pixel on the bright bar and one pixel on the dark bar. If the physical detail in object space is smaller than two sensor pixels, the vision system cannot reliably detect it or establish its boundary location.
@@ -272,7 +272,7 @@
                             As 7.1 explained, they also help when a part drifts slightly out of focus: Telecentric lenses blur symmetrically across focus variations because they have no angular field of view component, allowing edges to retain their centroid location.<sup><a href="#ref-5">[5]</a></sup> Sub-pixel edge detection therefore still finds the true edge.
                         </p>
                         <p>
-                            Lighting matters as much as the lens (see 7.2). With a telecentric lens, in-line illumination is the only method to achieve reflected brightfield illumination across the entire field of view.<sup><a href="#ref-6">[6]</a></sup> And shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href="#ref-7">[7]</a></sup>
+                            Lighting also affects measurement (see 7.2). With a telecentric lens, in-line illumination is the only method to achieve reflected brightfield illumination across the entire field of view.<sup><a href="#ref-6">[6]</a></sup> And shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href="#ref-7">[7]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">04. Optical distortion and software calibration</h2>
@@ -405,7 +405,7 @@ if not inspection_passed:
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+        <script src="assets/js/course-data.js?v=a6012c12" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

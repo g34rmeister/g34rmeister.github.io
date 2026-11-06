@@ -182,13 +182,13 @@
                         <article class="robotics-article-body">
                             <h2 class="article-section-title">01. Why proprietary vendor languages persist</h2>
                             <p>
-                                When software engineers first encounter industrial robotics, their immediate question is almost always: why does every robot manufacturer invent its own programming language? In web, cloud, and embedded systems, developers converge around general-purpose languages like Python, C++, Rust, and Java. In the industrial robot sector, however, ABB robots are programmed in RAPID, Universal Robots arms in URScript, KUKA arms in KRL, and FANUC arms in TP (teach pendant) programs or KAREL.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                                If you come to industrial robotics from software engineering, your first question may be: why does every robot manufacturer invent its own programming language? In web, cloud, and embedded systems, developers converge around general-purpose languages like Python, C++, Rust, and Java. In the industrial robot sector, however, ABB robots are programmed in RAPID, Universal Robots arms in URScript, KUKA arms in KRL, and FANUC arms in TP (teach pendant) programs or KAREL.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
                                 Part of the reason is timing. A robot controller is not a desktop computer running ordinary programs whenever it gets around to them. It runs a real-time motion system that must send fresh commands to the arm on a fixed, very short cycle. Universal Robots' e-Series manual, for example, states that the robot must be controlled at 500 Hz, which means the controller has to tell the arm what to do every 0.002 seconds, and that URScript programs are executed in real time in the controller's RuntimeMachine.<sup><a href="#ref-2">[2]</a></sup> A vendor language lets the manufacturer run user programs inside that tightly controlled loop.
                             </p>
                             <p>
-                                Vendor languages are also built around the physics of robot arms. Their basic building blocks are not just strings and integers but target positions, tool definitions, speeds, and corner-blending zones: a single RAPID motion instruction names its target, its speed, its zone, and its tool.<sup><a href="#ref-6">[6]</a></sup> Graphical tools such as ABB's RobotStudio and UR's PolyScope sit on top of these languages: RobotStudio converts the targets you place in its 3D view into RAPID <code>robtarget</code> data when it synchronizes them to the controller, and PolyScope connects to the UR controller as a client.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-2">[2]</a></sup> Writing the language directly gives you access to everything the controller offers.
+                                Vendor languages are also built around the physics of robot arms. Their basic building blocks are not just strings and integers but target positions, tool definitions, speeds, and corner-blending zones: a single RAPID motion instruction names its target, its speed, its zone, and its tool.<sup><a href="#ref-6">[6]</a></sup> Graphical tools such as ABB's RobotStudio and UR's PolyScope sit on top of these languages: RobotStudio converts the targets you place in its 3D view into RAPID <code>robtarget</code> data when it synchronizes them to the controller.<sup><a href="#ref-7">[7]</a></sup> PolyScope connects to the UR controller as a client.<sup><a href="#ref-2">[2]</a></sup> Writing the language directly gives you access to most of what the controller offers.
                             </p>
 
                             <h2 class="article-section-title">02. ABB RAPID: architecture and routines</h2>
@@ -288,7 +288,7 @@ ENDMODULE</code></pre>
 
                             <h2 class="article-section-title">05. Universal Robots URScript: syntax and execution</h2>
                             <p>
-                                Universal Robots' script language, <strong>URScript</strong>, looks friendlier than RAPID.<sup><a href="#ref-2">[2]</a></sup> Functions are defined with <code>def</code> and closed with <code>end</code>, the lines inside a block must be indented, and variables do not need type declarations: the manual states that a variable's type is deduced from its first assignment. If you know Python, the syntax will feel familiar.
+                                Universal Robots' script language, <strong>URScript</strong>, has a simpler syntax than RAPID.<sup><a href="#ref-2">[2]</a></sup> Functions are defined with <code>def</code> and closed with <code>end</code>, the lines inside a block must be indented, and variables do not need type declarations: the manual states that a variable's type is deduced from its first assignment. If you know Python, the syntax will feel familiar.
                             </p>
                             <p>
                                 URScript programs are executed in real time by the URControl RuntimeMachine, the low-level controller software that runs on the embedded PC in the control box.<sup><a href="#ref-2">[2]</a></sup> On the e-Series, the RuntimeMachine communicates with the robot at 500 Hz, a 2 ms frame.<sup><a href="#ref-2">[2]</a></sup> The older CB-series manual gives 125 Hz, a frame of 0.008 seconds.<sup><a href="#ref-11">[11]</a></sup>
@@ -529,7 +529,7 @@ end</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

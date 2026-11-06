@@ -187,7 +187,7 @@
                             However, standard commercial Ethernet was not designed for industrial machinery. A late message on a machine network can make moving equipment act on old data. Factory automation requires determinism, meaning that data packets must arrive within a defined, predictable time interval.
                         </p>
                         <p>
-                            To achieve deterministic performance across Ethernet media, automation manufacturers developed specialized industrial Ethernet protocols. This lesson covers four of them: EtherNet/IP, PROFINET, EtherCAT and Modbus TCP. They differ in how they structure process data, bypass protocol overhead, and achieve real-time response.
+                            To achieve deterministic performance across Ethernet media, automation manufacturers developed specialized industrial Ethernet protocols. This lesson covers four of them: EtherNet/IP, PROFINET, EtherCAT and Modbus TCP. They differ in how they structure process data and how they cut protocol overhead to respond in real time.
                         </p>
 
                         <h2 class="article-section-title">02. EtherNet/IP and the Common Industrial Protocol</h2>
@@ -204,13 +204,13 @@
                             Data production in a CIP network is managed to optimize network bandwidth. Digital input modules on CIP networks produce data either upon a change of state or at a requested packet interval.<sup><a href="#ref-2">[2]</a></sup> Change-of-state (COS) transmission allows a sensor module to transmit immediately when an input transitions from off to on, eliminating the latency of waiting for a polling cycle. The requested packet interval (RPI) defines the cyclic rate at which data is regularly produced regardless of state changes.
                         </p>
                         <p>
-                            EtherNet/IP separates communications into two primary message categories: implicit messaging and explicit messaging. Each category uses a different transport-layer protocol to match its functional requirements.
+                            EtherNet/IP separates communications into two primary message categories: implicit messaging and explicit messaging. Implicit messages use UDP for cyclic I/O, and explicit messages use TCP for as-needed requests.
                         </p>
                         <p>
                             Implicit messages in EtherNet/IP are time-critical connected communications that transport I/O data using UDP without embedded protocol headers.<sup><a href="#ref-2">[2]</a></sup> In implicit communications, an association called a connection is established between the scanner (the controlling PLC) and the adapter (such as a robot controller) during startup. Both endpoints already know the meaning, length, and internal offset of every byte in the data exchange. Because the data structure is understood beforehand, the message carries no protocol decoding headers. By transmitting pure I/O payload over lightweight User Datagram Protocol (UDP), implicit messaging delivers the speed required for cyclic real-time control.
                         </p>
                         <p>
-                            Explicit messages in EtherNet/IP use TCP for request-reply client-server transactions addressed to the Message Router object.<sup><a href="#ref-2">[2]</a></sup> Unlike cyclic I/O, explicit messages are acyclic, meaning they occur on an as-needed basis. Explicit messages contain explicit descriptions of the requested service, the object class, the instance number, and the attribute identifier. By transmitting over Transmission Control Protocol (TCP), explicit messaging ensures reliable delivery through point-to-point connections with error checking and retries. Integrators use explicit messaging for tasks that do not require cycle-by-cycle deterministic delivery, such as reading fault logs, reconfiguring drive parameters, or querying firmware versions.
+                            Explicit messages in EtherNet/IP use TCP for request-reply client-server transactions addressed to the Message Router object.<sup><a href="#ref-2">[2]</a></sup> Unlike cyclic I/O, explicit messages are acyclic, meaning they occur on an as-needed basis. Each explicit message names the requested service, the object class, the instance number, and the attribute identifier. By transmitting over Transmission Control Protocol (TCP), explicit messaging ensures reliable delivery through point-to-point connections with error checking and retries. Integrators use explicit messaging for tasks that do not require cycle-by-cycle deterministic delivery, such as reading fault logs, reconfiguring drive parameters, or querying firmware versions.
                         </p>
 
                         <div data-widget="ethernet-ip-messaging">
@@ -239,7 +239,7 @@
                             <li class="article-spec-item"><span class="spec-label">Channel:</span> The individual signal point within a module (such as one digital input wired to one sensor).</li>
                         </ul>
                         <p>
-                            Modern manufacturing facilities require supervisory IT systems, diagnostic web pages, and engineering tools to connect to production machinery without disrupting production. PROFINET bandwidth reservation ensures that at least 50 percent of each I/O cycle remains available for standard TCP/IP communications.<sup><a href="#ref-4">[4]</a></sup>
+                            Supervisory IT systems, diagnostic web pages, and engineering tools must be able to reach production machinery without disrupting it. PROFINET bandwidth reservation ensures that at least 50 percent of each I/O cycle remains available for standard TCP/IP communications.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">04. EtherCAT: processing on the fly</h2>
@@ -404,7 +404,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+        <script src="assets/js/course-data.js?v=a6012c12" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

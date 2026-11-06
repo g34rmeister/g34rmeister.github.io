@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. Why ROS needs a driver for every robot brand</h2>
                             <p>
-                                In <a href="robotics-2-3.html">lesson 2.3</a> you met four vendor languages: RAPID for ABB, URScript for Universal Robots, KRL for KUKA and TP for FANUC. Each one runs inside the maker's own robot controller, the cabinet that drives the motors, reads the encoders and runs the certified safety functions. In <a href="robotics-4-8.html">lesson 4.8</a> you planned arm motions with MoveIt 2 on an ordinary Linux PC. This lesson connects the two worlds. How does a trajectory computed on a PC reach a real industrial controller that only understands its own language?
+                                In <a href="robotics-2-3.html">lesson 2.3</a> you met four vendor languages: RAPID for ABB, URScript for Universal Robots, KRL for KUKA and TP for FANUC. Each one runs inside the maker's own robot controller, the cabinet that drives the motors, reads the encoders and runs the certified safety functions. In <a href="robotics-4-8.html">lesson 4.8</a> you planned arm motions with MoveIt 2 on an ordinary Linux PC. How does a trajectory computed on a PC reach a real industrial controller that only understands its own language?
                             </p>
                             <p>
                                 The answer is a <strong>vendor driver</strong>: a pair of programs, one on the robot controller and one on the ROS 2 PC, that pass motion commands and robot state between them. Drivers differ a lot in who maintains them, which ROS 2 distributions they support and what they can do. This lesson looks at the community behind industrial ROS, the pattern all drivers share, five brands in turn, and when a factory should use ROS at all.
@@ -273,7 +273,7 @@
                             </p>
                             <pre class="article-code"><code>ros2 launch ur_robot_driver ur_control.launch.py ur_type:=ur5e robot_ip:=192.168.56.101</code></pre>
                             <p>
-                                The robot side is URScript. In the default <strong>teach pendant mode</strong>, you install the <strong>External Control URCap</strong> on the robot, enter the ROS PC's IP address and a port matching <code>script_sender_port</code> (default 50002), add the External Control node to a pendant program and press play.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-19">[19]</a></sup> When the program reaches that node, "the URCap will request script code from the ROS driver and execute it".<sup><a href="#ref-12">[12]</a></sup> On the PC, a component called the ScriptSender listens on a TCP socket for this request and replies with the predefined URScript program; PolyScope X uses a URCapX instead.<sup><a href="#ref-20">[20]</a></sup> That program, <code>external_control.urscript</code>, runs threads that call <code>servoj</code> or <code>speedj</code> once every control step, so the "driver" on the robot is itself just URScript.<sup><a href="#ref-21">[21]</a></sup>
+                                The robot side is URScript. In the default <strong>teach pendant mode</strong>, you install the <strong>External Control URCap</strong> on the robot. Then you enter the ROS PC's IP address and a port matching <code>script_sender_port</code> (default 50002). Finally, you add the External Control node to a pendant program and press play.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-19">[19]</a></sup> When the program reaches that node, "the URCap will request script code from the ROS driver and execute it".<sup><a href="#ref-12">[12]</a></sup> On the PC, a component called the ScriptSender listens on a TCP socket for this request and replies with the predefined URScript program; PolyScope X uses a URCapX instead.<sup><a href="#ref-20">[20]</a></sup> That program, <code>external_control.urscript</code>, runs threads that call <code>servoj</code> or <code>speedj</code> once every control step, so the "driver" on the robot is itself just URScript.<sup><a href="#ref-21">[21]</a></sup>
                             </p>
                             <p>
                                 Commands flow over a <strong>reverse interface</strong>, a TCP connection with a small custom protocol. Each message holds eight 32-bit integers: a read timeout, six motion-target values and a control mode. The modes include SERVOJ (high-rate joint positions), SPEEDJ (joint velocities), FORWARD (a whole trajectory interpolated on the robot), FREEDRIVE and, since PolyScope 5.23.0 and 10.10.0, TORQUE.<sup><a href="#ref-22">[22]</a></sup> Robot state comes back through UR's Real-Time Data Exchange (RTDE) interface.<sup><a href="#ref-23">[23]</a></sup>
@@ -424,7 +424,7 @@ ENDWHILE</code></pre>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Use the vendor language</span> when the path is fixed, cycle time and uptime matter most, the cell must be validated, and the plant's staff support that brand.</li>
                                 <li class="article-spec-item"><span class="spec-label">Use ROS 2</span> when the motion depends on sensing (scan-then-plan, bin picking), the cell mixes brands or mobile bases, you need planners such as MoveIt 2 or Tesseract, or you are prototyping and researching.</li>
-                                <li class="article-spec-item"><span class="spec-label">Use both</span> (the most common case): the vendor program owns safety, I/O and the process sequence, and calls into ROS only for the "smart" segment.</li>
+                                <li class="article-spec-item"><span class="spec-label">Use both</span>: the vendor program owns safety, I/O and the process sequence, and calls into ROS only for the "smart" segment.</li>
                             </ul>
 
                             <h2 class="article-section-title">10. Hands-on: one move, two languages</h2>
@@ -557,7 +557,7 @@ end</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

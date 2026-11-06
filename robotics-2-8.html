@@ -185,7 +185,7 @@
                                 Every program in this chapter so far has assumed that the part is always in the same place. In <a href="robotics-2-6.html">2.6</a> you taught a pick point inside a fixture frame, and the robot returned to exactly that point on every cycle. That works when a fixture or tray holds the part precisely. It fails when parts arrive loose on a conveyor, lie at random angles on a table, or sit in a pile in a bin. A taught point cannot know that today's part landed 15 mm to one side and turned by 30 degrees.
                             </p>
                             <p>
-                                <strong>Vision-guided robotics</strong> closes that gap. A camera takes a picture, vision software finds the part and reports where it is, and the robot program adjusts its taught points to match. The motion instructions stay the same as in 2.6. What changes is the frame the points are expressed in: it now moves with the part.
+                                <strong>Vision-guided robotics</strong> handles these cases. A camera takes a picture, vision software finds the part and reports where it is, and the robot program adjusts its taught points to match. The motion instructions stay the same as in 2.6. What changes is the frame the points are expressed in: it now moves with the part.
                             </p>
                             <p>
                                 How a camera works as a sensor is covered in <a href="robotics-6-5.html">6.5 Sensors for Robots</a>, so it is not repeated here. This lesson covers the robot side: which kind of vision the job needs, where the camera goes, how to calibrate it so that a pixel becomes a millimetre in the robot's world, and how the vision result becomes a correct robot move.
@@ -377,7 +377,7 @@ print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
 
                             <h2 class="article-section-title">09. How accurate can it be? Pixels, calibration and light</h2>
                             <p>
-                                Vision guidance is only as accurate as its weakest link, so estimate the error before you buy a camera. Start with resolution: the size of one pixel on the part is the field of view (FOV) divided by the number of pixels across it. The Imaging Source gives the example of a 1920-pixel sensor viewing 200 mm, which is 9.6 pixels per millimetre, and a rule of thumb of 2 to 3 pixels across a feature.<sup><a href="#ref-19">[19]</a></sup> Machine-vision supplier 1stVision says at least 2 pixels are needed to find an edge when contrast is excellent, and 3 to 4 pixels is more robust. Its example: to resolve a 0.25 mm feature with 4 pixels, you need 0.0625 mm per pixel, so a 40 mm FOV needs 640 pixels. Those figures assume the lens is not the limit, and they depend on lighting, optics and algorithm.<sup><a href="#ref-20">[20]</a></sup>
+                                Estimate the error before you buy a camera. Start with resolution: the size of one pixel on the part is the field of view (FOV) divided by the number of pixels across it. The Imaging Source gives the example of a 1920-pixel sensor viewing 200 mm, which is 9.6 pixels per millimetre, and a rule of thumb of 2 to 3 pixels across a feature.<sup><a href="#ref-19">[19]</a></sup> Machine-vision supplier 1stVision says at least 2 pixels are needed to find an edge when contrast is excellent, and 3 to 4 pixels is more robust. Its example: to resolve a 0.25 mm feature with 4 pixels, you need 0.0625 mm per pixel, so a 40 mm FOV needs 640 pixels. Those figures assume the lens is not the limit, and they depend on lighting, optics and algorithm.<sup><a href="#ref-20">[20]</a></sup>
                             </p>
                             <p>
                                 Apply that to a typical cell. A camera 1280 pixels wide viewing a 320 mm field gives 4 pixels per millimetre, or 0.25 mm per pixel, so with the 2 to 4 pixel rule the smallest feature it can locate reliably is about 0.5 to 1 mm. Halve the FOV to 160 mm and each pixel covers half as much. That is why a wrist camera that moves closer can see finer detail than a fixed camera that must see the whole table.
@@ -476,7 +476,7 @@ print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

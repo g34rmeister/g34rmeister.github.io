@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. From one cycle to a program that keeps running</h2>
                             <p>
-                                In <a href="robotics-2-6.html">2.6</a> you wrote one pick-and-place cycle as a straight list of moves. A production program has to repeat the cycle, put each part in a different place, survive a restart halfway through, and react sensibly when something goes wrong, such as a gripper closing on nothing. This lesson covers how robot programs are organized (modules, routines, data and loops) and how they recover from errors. The main examples are ABB RAPID and Universal Robots (UR) URScript and PolyScope, with a short look at the FANUC teach-pendant language.
+                                In <a href="robotics-2-6.html">2.6</a> you wrote one pick-and-place cycle as a straight list of moves. A production program has to repeat the cycle, put each part in a different place, survive a restart halfway through, and handle failures, such as a gripper closing on nothing. The main examples are ABB RAPID and Universal Robots (UR) URScript and PolyScope, with a short look at the FANUC teach-pendant language.
                             </p>
                             <p>
                                 The short code excerpts in this lesson are copied from three open-source programs that run on real controllers: the ROS-Industrial driver for ABB robots,<sup><a href="#ref-1">[1]</a></sup> the motion-program executor maintained by Rensselaer Polytechnic Institute (RPI),<sup><a href="#ref-2">[2]</a></sup> and the External Control script in UR's own client library.<sup><a href="#ref-3">[3]</a></sup> The longer examples are this course's own, built from the same syntax: test them in RobotStudio or URSim (see 2.6) before using them on a real robot.
@@ -379,7 +379,7 @@ BookErrNo ERR_INVALID_MP_FILE;</code></pre>
                                 After booking, the program can raise the error like a system error, usually after writing a message to the event log: <code>ErrWrite "Invalid Motion Program","Invalid motion program file version"; RAISE ERR_INVALID_MP_VERSION;</code>. System errors are raised the same way, as in <code>RAISE ERR_FILESIZE;</code>.<sup><a href="#ref-2">[2]</a></sup> ABB's reference manual includes an example of this kind, in which a custom error booked with <code>BookErrNo</code> is raised and then caught in an <code>ERROR</code> handler.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
                             <p>
-                                Real handlers in the same code show the common patterns. A handler that checks which error occurred and skips the failing instruction only for that error:<sup><a href="#ref-2">[2]</a></sup>
+                                A handler that checks which error occurred and skips the failing instruction only for that error:<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <pre class="article-code"><code>ERROR
     IF ERRNO=ERR_RANYBIN_EOF THEN
@@ -453,7 +453,7 @@ ENDPROC</code></pre>
 
                             <h2 class="article-section-title">09. Without exceptions: URScript and FANUC TP</h2>
                             <p>
-                                URScript has no exception mechanism like RAPID's <code>ERROR</code> handler, and no try/catch. A third-party article states that an unhandled runtime error stops the whole program, whichever thread raised it; that source is of low quality and no official UR statement was found, so treat it as a reasonable working assumption rather than a documented rule.<sup><a href="#ref-23">[23]</a></sup> Either way, in URScript you check for failure yourself with an <code>if</code> and branch.
+                                URScript has no exception mechanism like RAPID's <code>ERROR</code> handler, and no try/catch. A third-party article states that an unhandled runtime error stops the whole program, whichever thread raised it.<sup><a href="#ref-23">[23]</a></sup> That source is of low quality and no official UR statement was found, so treat this as a working assumption, not a documented rule. Either way, in URScript you check for failure yourself with an <code>if</code> and branch.
                             </p>
                             <p>
                                 UR's External Control script works this way. When a target breaks a limit, it shows a non-blocking operator message, <code>popup(str, title="External Control speed limit", blocking=False, warning=True)</code>, writes to the log with <code>textmsg(...)</code>, and uses a counter, <code>violation_popup_counter</code>, so the popup does not repeat endlessly. When it has to give up, it calls a short routine that slows the robot down before ending the program:<sup><a href="#ref-3">[3]</a></sup>
@@ -632,7 +632,7 @@ ENDMODULE</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

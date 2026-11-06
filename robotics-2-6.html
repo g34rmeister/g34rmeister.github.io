@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. The job: one part, two places</h2>
                             <p>
-                                Pick-and-place is the first program most robot programmers write, and it is still one of the most common jobs in a factory: take a part from one place and put it down somewhere else. The earlier lessons in this chapter gave you the pieces. You have seen motion types (<code>MoveJ</code> and <code>MoveL</code>), the RAPID and URScript languages (<a href="robotics-2-3.html">2.3</a>), and how a gripper is switched by a digital output (<a href="robotics-2-5.html">2.5</a>). This lesson puts them together into one working cycle in a simulator, and then shows the trick that makes a program survive a real shop floor: teaching targets relative to the fixture instead of relative to the robot.
+                                Pick-and-place is the first program most robot programmers write, and it is still one of the most common jobs in a factory: take a part from one place and put it down somewhere else. The earlier lessons in this chapter gave you the pieces. You have seen motion types (<code>MoveJ</code> and <code>MoveL</code>), the RAPID and URScript languages (<a href="robotics-2-3.html">2.3</a>), and how a gripper is switched by a digital output (<a href="robotics-2-5.html">2.5</a>). This lesson puts them together into one working cycle in a simulator, and then shows how to keep it working when the fixture moves: teaching targets relative to the fixture instead of relative to the robot.
                             </p>
                             <p>
                                 Real robot programs that move parts follow the same basic shape. Looking at RAPID modules from university labs and industrial projects, the pick side almost always reads: move quickly to a point above the part, move straight down slowly, stop exactly, close the gripper, then move back up.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> The place side mirrors it. Written out as steps, one cycle is:
@@ -202,9 +202,6 @@
                                 </svg>
                                 <figcaption>The six steps of section 01 seen from the side. Joint moves (dashed) cross free space and may blend; the straight moves (solid) go down and up, and the robot stops exactly (<code>fine</code> or <code>r=0</code>) wherever the gripper changes state. The approach points are computed 100 mm above the grip points, as in section 05.</figcaption>
                             </figure>
-                            <p>
-                                The rest of this lesson builds that cycle step by step: getting a simulator, telling the robot what tool it holds, defining a frame for the fixture, computing the approach points, choosing speeds and blends, and finally writing the program for a Universal Robots (UR) arm and for an ABB arm.
-                            </p>
 
                             <h2 class="article-section-title">02. Getting a simulator</h2>
                             <p>
@@ -368,7 +365,7 @@ ENDMODULE</code></pre>
 
                             <h2 class="article-section-title">09. The payoff: move the fixture, re-teach three points</h2>
                             <p>
-                                Now the reason for all the frame work. Suppose the fixture is bumped 50 mm in X and rotated 10&deg; about Z. Because the pick and place targets are stored in the fixture frame, they have not changed at all relative to the fixture. Only the frame has moved. So the fix is to re-teach the three frame points (X1, X2 and Y1 on ABB, or the three plane points in PolyScope) on the fixture's new position, and run the program unchanged.
+                                Suppose the fixture is bumped 50 mm in X and rotated 10&deg; about Z. Because the pick and place targets are stored in the fixture frame, they have not changed at all relative to the fixture. Only the frame has moved. So the fix is to re-teach the three frame points (X1, X2 and Y1 on ABB, or the three plane points in PolyScope) on the fixture's new position, and run the program unchanged.
                             </p>
                             <p>
                                 In a simulator you can also see the effect by editing the frame directly. In the URScript example, change the fixture pose to <code>p[0.45, -0.30, 0.0, 0, 0, 0.1745]</code> (0.1745 rad is 10&deg;). In the RAPID example, change the user frame of <code>wobjFixture</code> to <code>[[550,-200,0],[0.996195,0,0,0.087156]]</code>, which is a 10&deg; rotation about Z written as a quaternion. Run the cycle again: the robot picks and places at the new positions, and not one target was edited. Compare that with a program taught in the base frame, where every waypoint (grip, approach and release points for both sides) would need re-teaching. In a real cell with dozens of points, this is the difference between a five-minute fix and an afternoon.
@@ -470,7 +467,7 @@ ENDMODULE</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

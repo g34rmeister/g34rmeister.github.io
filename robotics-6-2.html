@@ -184,7 +184,7 @@
                                 Digital microcontroller pins are binary: an output is either fully on (the board's supply voltage, such as 5 V on an Uno or 3.3 V on boards like the MKR family) or fully off (0 V).<sup><a href="#ref-1">[1]</a></sup> However, the physical world inhabited by robots is analog and continuous. A mobile robot rarely drives its motors at only 0% or 100% speed. To turn smoothly, track a line or hold a steady speed down a slope, the controller must command intermediate power levels.
                             </p>
                             <p>
-                                Producing a true intermediate voltage at motor currents would need extra analog circuitry, such as a Digital-to-Analog Converter (DAC) followed by a power amplifier, and a linear amplifier turns the voltage it drops into heat. In battery-powered robots, that wasted heat means shorter run time, so designers avoid it.
+                                Producing a true intermediate voltage at motor currents would need extra analog circuitry, such as a Digital-to-Analog Converter (DAC) followed by a power amplifier. A linear amplifier turns the voltage it drops into heat. In battery-powered robots, that wasted heat means shorter run time, so designers avoid it.
                             </p>
                             <p>
                                 The standard solution is <strong>Pulse Width Modulation (PWM)</strong>, "a technique for getting analog results with digital means".<sup><a href="#ref-1">[1]</a></sup> Instead of outputting a steady partial voltage, a pin switches rapidly between 0 V and the full supply voltage. Changing the fraction of time the signal stays on simulates voltages between 0 V and the supply.<sup><a href="#ref-1">[1]</a></sup> Because the switches are either fully on or fully off most of the time, little power is lost in them, apart from the switching losses discussed in Section 07.<sup><a href="#ref-2">[2]</a></sup>
@@ -210,7 +210,7 @@
                                 <p>\[V_{avg} = D \times V_{cc}\]</p>
                             </div>
                             <p>
-                                Worked example: a motor driver runs at a 25% duty cycle from a 12 V battery. What is the average voltage delivered to the motor? The calculation is straightforward:
+                                Worked example: a motor driver runs at a 25% duty cycle from a 12 V battery. What is the average voltage delivered to the motor? Multiply the duty cycle by the supply voltage:
                             </p>
                             <div class="article-callout">
                                 <p>\[V_{avg} = 0.25 \times 12\text{ V} = 3.0\text{ V}\]</p>
@@ -416,7 +416,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

@@ -185,7 +185,7 @@
                                 In <a href="robotics-2-6.html">lesson 2.6</a> you programmed a pick-and-place by hand: a joint move (MoveJ) to get near the part, then a linear move (MoveL) straight down to it. You chose every waypoint and checked by eye that the arm would not hit anything. That gets hard when the target changes every cycle or the cell is crowded.
                             </p>
                             <p>
-                                <strong>MoveIt 2</strong> is the standard ROS 2 framework for this problem. You give it a goal for the arm (a joint configuration, a named pose, or a pose for the tool), and it works out the joint angles, checks the motion against a model of the robot and its surroundings for collisions, produces a timed trajectory, and sends that trajectory to the robot's controllers.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> In this lesson you will see what MoveIt needs to know about a robot and how it plans, then run a Universal Robots UR5e on <em>mock hardware</em>, a software stand-in for the robot, and plan motions in RViz with no robot attached.
+                                In ROS 2, <strong>MoveIt 2</strong> is the framework that handles this problem. You give it a goal for the arm (a joint configuration, a named pose, or a pose for the tool), and it works out the joint angles, checks the motion against a model of the robot and its surroundings for collisions, produces a timed trajectory, and sends that trajectory to the robot's controllers.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> In this lesson you will see what MoveIt needs to know about a robot and how it plans, then run a Universal Robots UR5e on <em>mock hardware</em>, a software stand-in for the robot, and plan motions in RViz with no robot attached.
                             </p>
                             <p>
                                 The course targets ROS 2 <strong>Lyrical Luth</strong>, the long-term support release from May 2026, supported until May 2031, with Ubuntu 26.04 "Resolute" as its Tier 1 platform.<sup><a href="#ref-3">[3]</a></sup> All three pieces used here are released for Lyrical. The UR driver has its own <code>lyrical</code> branch, released as version 6.2.0.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> The UR robot description is built for Lyrical from its <code>rolling</code> branch (version 4.3.1).<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> MoveIt itself is released into Lyrical as version 2.15.2 from its <code>main</code> branch; as of October 2026 there is no separate <code>lyrical</code> branch in the MoveIt repository.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-7">[7]</a></sup> The MoveIt tutorials site still calls Jazzy "the latest stable version," so its docs lag behind the released code.<sup><a href="#ref-8">[8]</a></sup>
@@ -250,7 +250,7 @@
                                 Two controllers matter for MoveIt. The <strong>joint_trajectory_controller</strong> (JTC) executes "joint-space trajectories on a group of joints," interpolating in time between waypoints that hold positions and optional velocities and accelerations. It accepts goals on the action <code>&lt;controller_name&gt;/follow_joint_trajectory</code> of type <code>control_msgs::action::FollowJointTrajectory</code>.<sup><a href="#ref-24">[24]</a></sup> On the UR <code>lyrical</code> branch it is configured as <code>joint_trajectory_controller/JointTrajectoryController</code> over the six UR joints, and it is the driver's default <code>initial_joint_controller</code>.<sup><a href="#ref-25">[25]</a></sup><sup><a href="#ref-20">[20]</a></sup> The <strong>joint_state_broadcaster</strong> "reads all state interfaces and reports them on <code>/joint_states</code>." It is not a real controller and takes no commands.<sup><a href="#ref-26">[26]</a></sup>
                             </p>
                             <p>
-                                Put together, the data flows in a loop: MoveIt sends a goal to the JTC, the JTC commands the mock hardware, the mock copies commands into states, and the joint_state_broadcaster publishes them on <code>/joint_states</code> for MoveIt and <code>robot_state_publisher</code>. Swapping the mock for a real UR changes only the hardware plugin.
+                                Put together, the data flows in a loop: MoveIt sends a goal to the JTC, the JTC commands the mock hardware, the mock copies commands into states, and the joint_state_broadcaster publishes them on <code>/joint_states</code> for MoveIt and <code>robot_state_publisher</code>.
                             </p>
 
                             <h2 class="article-section-title">05. Inside move_group</h2>
@@ -490,7 +490,7 @@ ros2 control list_controllers</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

@@ -283,7 +283,7 @@ tool error &asymp; arm length &times; angle
                                 </tbody>
                             </table>
                             <p>
-                                Every UR5e joint turns &plusmn;360&deg;, while the industrial arms have different limits and faster speeds axis by axis.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup> The UR5e carries about 24% of its own mass (5 &divide; 20.7), the IRB 1200 about 13% (7 &divide; 52).
+                                Every UR5e joint turns &plusmn;360&deg;; the industrial arms have different limits and faster speeds on each axis, as the table shows.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-8">[8]</a></sup> The UR5e carries about 24% of its own mass (5 &divide; 20.7), the IRB 1200 about 13% (7 &divide; 52).
                             </p>
 
                             <h2 class="article-section-title">06. Accuracy versus repeatability (ISO 9283)</h2>
@@ -369,7 +369,7 @@ subtract pairs:  (R1 &minus; R2)&middot;t = p2 &minus; p1</code></pre>
                                 <li class="article-spec-item"><span class="spec-label">Inverse kinematics:</span> from a desired tool pose, calculate the joint angles that achieve it. This is harder: there may be several solutions (for example elbow up or elbow down) or none at all if the pose is out of reach.<sup><a href="#ref-20">[20]</a></sup></li>
                             </ul>
                             <p>
-                                The controller does this for you: given a pose, a Universal Robots <code>movej</code> uses inverse kinematics to find the joint positions.<sup><a href="#ref-21">[21]</a></sup> A small example shows what it is doing.
+                                The controller does this for you: given a pose, a Universal Robots <code>movej</code> uses inverse kinematics to find the joint positions.<sup><a href="#ref-21">[21]</a></sup>
                             </p>
                             <p>
                                 <span class="spec-label">Worked example: a two-link arm.</span> Take a planar arm with two revolute joints, link lengths L<sub>1</sub> = 0.4 m and L<sub>2</sub> = 0.3 m. These are the standard planar two-link equations found in <em>Modern Robotics</em> (chapters 4 and 6); the numbers were worked for this lesson.<sup><a href="#ref-20">[20]</a></sup>
@@ -446,7 +446,7 @@ Solution B (&theta;2 = &minus;45&deg;): &theta;1 = 49.11&deg; + 19.11&deg; = 68.
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fas fa-lightbulb"></i> Connecting to lesson 2.3</div>
                                 <p>
-                                    The RAPID example in <a href="robotics-2-3.html">2.3 Common Programming Languages</a> uses all of these ideas. <code>pHome</code> is a <code>robtarget</code>, a Cartesian position and orientation. <code>MoveJ pHome, v1000, z50, tool0</code> is a joint move that blends within 50 mm, and <code>MoveL ... fine, tool0</code> is a straight-line move that stops exactly. Both use <code>tool0</code>, so the TCP is the bare mounting flange, and because no work object is given, the targets are measured in <code>wobj0</code>, the base frame.<sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-25">[25]</a></sup>
+                                    The RAPID example in <a href="robotics-2-3.html">2.3 Common Programming Languages</a> uses all of these ideas. <code>pHome</code> is a <code>robtarget</code>, a Cartesian position and orientation. <code>MoveJ pHome, v1000, z50, tool0</code> is a joint move that blends within 50 mm, and <code>MoveL ... fine, tool0</code> is a straight-line move that stops exactly. Both use <code>tool0</code>, so the TCP is the bare mounting flange. No work object is given, so the targets are measured in <code>wobj0</code>, the base frame.<sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-25">[25]</a></sup>
                                 </p>
                             </div>
 
@@ -524,7 +524,7 @@ Solution B (&theta;2 = &minus;45&deg;): &theta;1 = 49.11&deg; + 19.11&deg; = 68.
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>

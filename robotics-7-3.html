@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT10M",
+            "timeRequired": "PT9M",
             "teaches": [
                 "HSV color space",
                 "histogram equalization",
@@ -179,7 +179,7 @@
 
                             <h2 class="article-section-title">01. Color spaces and grayscale conversion</h2>
                             <p>
-                                In industrial robotics, vision systems capture camera frames to recognize workpieces, verify assembly, and guide end-effector motion. In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use camera images to calculate coordinate offsets for picking unfixed parts. Before any coordinate shift or pose calculation can occur, the raw image stream must be processed to reveal recognizable geometric features.
+                                In industrial robotics, vision systems capture camera frames to recognize workpieces, verify assembly, and guide end-effector motion. In <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, we explored how robots use camera images to calculate coordinate offsets for picking unfixed parts. The raw image stream must first be processed to extract geometric features, such as edges and blobs, that coordinate and pose calculations can use.
                             </p>
                             <p>
                                 Image processing pipelines begin by converting raw frames into suitable color representations. OpenCV converts color images using <code>cv.cvtColor</code> with flags such as <code>cv.COLOR_BGR2GRAY</code> for grayscale and <code>cv.COLOR_BGR2HSV</code> for hue-saturation-value representation.<sup><a href="#ref-1">[1]</a></sup> Grayscale keeps one brightness value per pixel, which is all most edge and threshold steps need.
@@ -214,12 +214,12 @@ color_mask = cv.inRange(hsv, lower_bound, upper_bound)</code></pre>
                                 When an image's brightness values are bunched into a narrow range, histogram equalization spreads them out. OpenCV provides the <code>equalizeHist</code> function to normalize brightness and enhance contrast on 8-bit single-channel grayscale images.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                Illumination directly dictates the quality of the raw histogram before software equalization is even applied. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-5">[5]</a></sup> Software cannot fully undo shadows and hot spots, which is why 7.2 treats lighting as the first fix.
+                                Lighting sets the quality of the raw histogram before any software equalization. Non-uniform lighting harms signal-to-noise ratios and makes image thresholding tasks more difficult.<sup><a href="#ref-5">[5]</a></sup> Software cannot fully undo shadows and hot spots, which is why 7.2 treats lighting as the first fix.
                             </p>
 
                             <h2 class="article-section-title">03. Image thresholding: binary, adaptive, and Otsu</h2>
                             <p>
-                                Binarization is the foundation of many industrial vision tasks. Converting an 8-bit grayscale image into a 1-bit binary image separates foreground workpieces from the background fixture or conveyor. In simple thresholding with <code>cv.threshold</code> and <code>cv.THRESH_BINARY</code>, pixels smaller than or equal to the threshold are set to 0 while all others are set to a maximum value.<sup><a href="#ref-6">[6]</a></sup>
+                                Binarization converts an 8-bit grayscale image into a 1-bit binary image, separating foreground workpieces from the background fixture or conveyor. In simple thresholding with <code>cv.threshold</code> and <code>cv.THRESH_BINARY</code>, pixels smaller than or equal to the threshold are set to 0 while all others are set to a maximum value.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
 
                             <div data-widget="threshold">
@@ -250,7 +250,7 @@ thresh_adapt = cv.adaptiveThreshold(
                                 After binarization, an image consists of white and black pixels. The vision processor must now organize these grouped pixels into discrete geometric entities representing individual parts. The <code>cv::connectedComponentsWithStats</code> function segments a binary image into labeled connected foreground components and computes bounding box geometry and pixel area for each label.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <p>
-                                The statistics matrix returned by connected component labeling gives physical parameters for every contiguous island of pixels in the image. The <code>CC_STAT_AREA</code> statistic output in OpenCV connected components represents the total area in pixels of the labeled component.<sup><a href="#ref-7">[7]</a></sup> For example, vision software can filter out dust flecks or small reflection specks by rejecting components whose <code>CC_STAT_AREA</code> falls below a minimum pixel threshold.
+                                The statistics matrix returned by connected component labeling gives pixel measurements, such as area, for every contiguous island of pixels in the image. The <code>CC_STAT_AREA</code> statistic output in OpenCV connected components represents the total area in pixels of the labeled component.<sup><a href="#ref-7">[7]</a></sup> For example, vision software can filter out dust flecks or small reflection specks by rejecting components whose <code>CC_STAT_AREA</code> falls below a minimum pixel threshold.
                             </p>
                             <p>
                                 Along with connected components, contour extraction traces object boundaries. In OpenCV contour detection, the object of interest must be represented as white foreground against a black background.<sup><a href="#ref-8">[8]</a></sup> For example, if an inspection image contains dark parts against a white background, the image is inverted before finding contours.
@@ -292,7 +292,7 @@ keypoints = detector.detect(gray)</code></pre>
 
                             <h2 class="article-section-title">06. Edge detection: the Canny algorithm</h2>
                             <p>
-                                When parts must be gauged or aligned with high dimensional precision, boundary edge detection is preferred over regional thresholding. Edges correspond to sharp discontinuities in surface reflectance, material boundaries, or surface geometry. The most widely used edge detection pipeline in industrial computer vision is the multi-stage Canny edge detector.
+                                When parts must be gauged or aligned with high dimensional precision, boundary edge detection is preferred over regional thresholding. Edges correspond to sharp discontinuities in surface reflectance, material boundaries, or surface geometry. A common edge detection pipeline in industrial computer vision is the multi-stage Canny edge detector.
                             </p>
                             <p>
                                 Every camera image contains some noise, and noise can create false edges. The initial step of the Canny edge detector removes image noise using a 5x5 Gaussian smoothing filter.<sup><a href="#ref-12">[12]</a></sup>
@@ -312,7 +312,7 @@ keypoints = detector.detect(gray)</code></pre>
                                 When a part features complex surface geometry, logos, or printed artwork that cannot be isolated with simple thresholding or edge filters, template matching provides direct pattern localization. Template matching slides a smaller reference patch (the template) across a larger search image to find the region of highest visual correlation.
                             </p>
                             <p>
-                                Understanding output dimensions is essential for memory allocation and coordinate mapping. In template matching, comparing an image of size WxH with a template of size wxh produces an output match matrix of size (W-w+1, H-h+1).<sup><a href="#ref-14">[14]</a></sup> Each entry in the resulting matrix contains a metric score indicating the degree of visual match between the template patch and that specific sub-window of the primary image.
+                                In template matching, comparing an image of size WxH with a template of size wxh produces an output match matrix of size (W-w+1, H-h+1).<sup><a href="#ref-14">[14]</a></sup> Each entry in the resulting matrix contains a metric score indicating the degree of visual match between the template patch and that specific sub-window of the primary image.
                             </p>
                             <p>
                                 After computing the correlation matrix with <code>cv.matchTemplate</code>, the software identifies the best matching location. The function <code>cv.minMaxLoc</code> finds the smallest and largest scores in the result and where they are. Which one marks the best match depends on the comparison method: with <code>TM_SQDIFF</code>, the minimum is the best match.<sup><a href="#ref-14">[14]</a></sup>
@@ -425,7 +425,7 @@ keypoints = detector.detect(gray)</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

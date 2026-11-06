@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT6M",
+            "timeRequired": "PT5M",
             "teaches": [
                 "Nav2",
                 "costmap",
@@ -179,10 +179,10 @@
 
                         <h2 class="article-section-title">01. What Nav2 is</h2>
                         <p>
-                            Nav2 is the navigation project for mobile robots in ROS 2. The project works to make autonomous navigation accessible to everyone in robotics.<sup><a href="#ref-1">[1]</a></sup> Alongside MoveIt, Nav2 serves as a flagship application framework for the ROS ecosystem.<sup><a href="#ref-1">[1]</a></sup> <!-- F1 F2 -->
+                            Nav2 is the navigation project for mobile robots in ROS 2. The project aims to make autonomous navigation broadly accessible.<sup><a href="#ref-1">[1]</a></sup> Alongside MoveIt, Nav2 serves as a flagship application framework for the ROS ecosystem.<sup><a href="#ref-1">[1]</a></sup> <!-- F1 F2 -->
                         </p>
                         <p>
-                            Before ROS 2, mobile robots relied on the ROS 1 Navigation Stack.<sup><a href="#ref-1">[1]</a></sup> Nav2 redesigns that earlier system to be more flexible, incorporating a decade of community experience and feedback.<sup><a href="#ref-1">[1]</a></sup> Like all open-source projects, Nav2 thrives through the collective effort of developers, maintainers, users, and collaborators.<sup><a href="#ref-1">[1]</a></sup> <!-- F3 F4 F5 -->
+                            Before ROS 2, mobile robots relied on the ROS 1 Navigation Stack.<sup><a href="#ref-1">[1]</a></sup> Nav2 redesigns that earlier system to be more flexible, incorporating a decade of community experience and feedback.<sup><a href="#ref-1">[1]</a></sup> Nav2 is built by its developers, maintainers, users, and collaborators.<sup><a href="#ref-1">[1]</a></sup> <!-- F3 F4 F5 -->
                         </p>
                         <p>
                             Open Navigation LLC provides professional stewardship, leading project maintenance, development, and support services across the Nav2 and ROS community.<sup><a href="#ref-2">[2]</a></sup> <!-- F6 -->
@@ -193,7 +193,7 @@
                             Nav2 relies on ROS 2 middleware for communication and lifecycle management.<sup><a href="#ref-3">[3]</a></sup> Before exploring code, newcomers should understand how coordinates, maps, and algorithms interact to steer a robot. <!-- F7 -->
                         </p>
                         <p>
-                            Autonomous movement requires tracking coordinate frames. Standards call for two primary transformations: global positioning links <code>map</code> to <code>odom</code>, while odometry calculates <code>odom</code> to <code>base_link</code>.<sup><a href="#ref-4">[4]</a></sup> Nav2 manages these changing relationships using TF2, ROS 2's time-variant transform library.<sup><a href="#ref-4">[4]</a></sup> <!-- F8 F9 F10 -->
+                            Autonomous movement requires tracking coordinate frames. Community standards call for two primary transformations: global positioning links <code>map</code> to <code>odom</code>, while odometry calculates <code>odom</code> to <code>base_link</code>.<sup><a href="#ref-4">[4]</a></sup> Nav2 manages these changing relationships using TF2, ROS 2's time-variant transform library.<sup><a href="#ref-4">[4]</a></sup> <!-- F8 F9 F10 -->
                         </p>
                         <p>
                             Global positioning estimates robot coordinates on a map. Nav2 includes <code>amcl</code>, which implements Adaptive Monte-Carlo Localization via particle filtering.<sup><a href="#ref-4">[4]</a></sup> For mapping while driving, Nav2 supplies SLAM Toolbox as the default algorithm to position the vehicle and build static maps.<sup><a href="#ref-4">[4]</a></sup> <!-- F11 F12 -->
@@ -205,13 +205,13 @@
                             Robots perceive obstacles through an environmental representation, which Nav2 implements as a costmap.<sup><a href="#ref-5">[5]</a></sup> In Nav2, a costmap is a regular two-dimensional cell grid, assigning values that represent unknown, free, occupied, or inflated obstacle regions.<sup><a href="#ref-5">[5]</a></sup> Planners search this grid to compute a global plan, and controllers sample it to compute local control efforts.<sup><a href="#ref-5">[5]</a></sup> Costmap layers, written as plugins, feed information into the costmap.<sup><a href="#ref-5">[5]</a></sup> <!-- F16 F17 F18 F19 F20 -->
                         </p>
                         <p>
-                            Planning and control algorithms drive navigation tasks.<sup><a href="#ref-6">[6]</a></sup> Nav2 groups algorithms into action servers, including the planner, controller, behavior, smoother, and route servers, each hosting swappable algorithm plugins.<sup><a href="#ref-6">[6]</a></sup> The planner calculates a path to satisfy an objective function, usually a valid, and potentially optimal, path from the current pose to a goal pose.<sup><a href="#ref-6">[6]</a></sup> <!-- F21 F22 F23 F24 F25 -->
+                            Planning and control algorithms drive navigation tasks.<sup><a href="#ref-6">[6]</a></sup> Nav2 groups algorithms into action servers, including the planner, controller, behavior, smoother, and route servers, each hosting swappable algorithm plugins.<sup><a href="#ref-6">[6]</a></sup> The planner computes a path that satisfies an objective function. Usually that is a valid, and potentially optimal, path from the current pose to a goal pose.<sup><a href="#ref-6">[6]</a></sup> <!-- F21 F22 F23 F24 F25 -->
                         </p>
                         <p>
                             Controllers (local planners in ROS 1) compute control efforts to follow the global plan or execute local maneuvers.<sup><a href="#ref-6">[6]</a></sup> Recovery behaviors make the system fault tolerant: they handle unknown or failure conditions on their own.<sup><a href="#ref-6">[6]</a></sup> <!-- F26 F27 F28 F29 -->
                         </p>
                         <p>
-                            Nav2 coordinates these planning, control, and recovery steps through behavior trees.<sup><a href="#ref-7">[7]</a></sup> Behavior trees arrange tasks into a hierarchy, creating a scalable, human-understandable framework for multi-step applications.<sup><a href="#ref-7">[7]</a></sup> This formal structure organizes navigation logic so it can be formally verified and validated as correct.<sup><a href="#ref-7">[7]</a></sup> Inside the <code>BT Navigator</code>, custom node plugins assemble into complete trees.<sup><a href="#ref-7">[7]</a></sup> <!-- F30 F31 F32 F33 F34 -->
+                            Nav2 coordinates these planning, control, and recovery steps through behavior trees.<sup><a href="#ref-7">[7]</a></sup> Behavior trees arrange tasks into a hierarchy that people can read and that scales to multi-step applications.<sup><a href="#ref-7">[7]</a></sup> This formal structure makes the navigation logic easier to verify and validate.<sup><a href="#ref-7">[7]</a></sup> Inside the <code>BT Navigator</code>, custom node plugins assemble into complete trees.<sup><a href="#ref-7">[7]</a></sup> <!-- F30 F31 F32 F33 F34 -->
                         </p>
 
                         <h2 class="article-section-title">03. How the project is organised</h2>
@@ -315,7 +315,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+        <script src="assets/js/course-data.js?v=a6012c12" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
 

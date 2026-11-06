@@ -182,7 +182,7 @@
 
                             <h2 class="article-section-title">01. Hands-on robotics with Turtlesim</h2>
                             <p>
-                                Having configured our ROS 2 installation in <a href="robotics-4-3.html">lesson 4.3</a>, it is time to move from theory to practice. Jumping straight onto real hardware is risky for a beginner: a wrong motor command can tip over a rover or damage a gearbox, so it pays to practise somewhere harmless first.
+                                You installed ROS 2 in <a href="robotics-4-3.html">lesson 4.3</a>. Jumping straight onto real hardware is risky for a beginner: a wrong motor command can tip over a rover or damage a gearbox, so it pays to practise somewhere harmless first.
                             </p>
                             <p>
                                 The official ROS 2 documentation uses <strong>Turtlesim</strong> for exactly this purpose: it is a lightweight simulator that demonstrates core ROS concepts without any hardware, representing the robot as a turtle you can drive around a 2D window.<sup><a href="#ref-1">[1]</a></sup> Behind its friendly appearance it is a real ROS 2 program.
@@ -306,7 +306,7 @@ turtlesim_msgs.srv.Spawn_Response(name='turtle2')</code></pre>
 
                             <h2 class="article-section-title">06. ROS 2 workspace architecture</h2>
                             <p>
-                                Driving demo nodes from the terminal is a good start, but real robotics work means writing your own nodes. In ROS 2 you develop them in a <strong>workspace</strong>: a directory that you build as an "overlay" on top of your main ROS 2 installation (the "underlay"), so new packages can be added without disturbing the installation you are extending.<sup><a href="#ref-9">[9]</a></sup>
+                                In ROS 2 you develop your own nodes in a <strong>workspace</strong>: a directory that you build as an "overlay" on top of your main ROS 2 installation (the "underlay"), so new packages can be added without disturbing the installation you are extending.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
                                 After a build, a typical workspace contains four directories side by side:<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup>
@@ -485,7 +485,7 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item">Velocity commands: Turtlesim reads a <code>Twist</code>; a real wheeled robot running <code>diff_drive_controller</code> reads the stamped version, with the same <code>linear</code> and <code>angular</code> fields.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-15">[15]</a></sup></li>
                                 <li class="article-spec-item">Position feedback: Turtlesim publishes a simple <code>Pose</code>; a real robot's controller publishes <code>Odometry</code> estimated from its wheels.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-15">[15]</a></sup></li>
-                                <li class="article-spec-item">Code structure: the <code>rclpy.node.Node</code> class, timer callbacks and <code>create_publisher</code> / <code>create_subscription</code> calls are the same whatever robot you are programming.<sup><a href="#ref-13">[13]</a></sup></li>
+                                <li class="article-spec-item">Code structure: the <code>rclpy.node.Node</code> class, timer callbacks and <code>create_publisher</code> / <code>create_subscription</code> calls stay the same when you move from Turtlesim to a real robot.<sup><a href="#ref-13">[13]</a></sup></li>
                             </ul>
                             <p>
                                 In <a href="robotics-4-5.html">lesson 4.5</a>, we look at the wider ROS toolset: visualising data in RViz2, inspecting node connections with rqt_graph, recording and replaying data with ros2 bag, and simulating robots in Gazebo.
@@ -554,7 +554,7 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

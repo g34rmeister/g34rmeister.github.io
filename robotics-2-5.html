@@ -186,7 +186,7 @@
                                 On its own, a robot arm only carries a flange through space. The work is done by the <strong>end-of-arm tooling</strong> (EOAT), also called the end effector: a gripper, suction cups, a torch or a screwdriver. In <a href="robotics-2-3.html">lesson 2.3</a> you wrote pick-and-place programs in which a single line set a digital output to close a gripper and another line read an input to check for a part. This lesson looks at what sits behind those lines.
                             </p>
                             <p>
-                                Three questions run through the lesson. What can physically hold this part? What does the controller need to know about the tool that is bolted to it? And how does the program find out whether the tool actually did its job? The answers involve some mechanics, some configuration and a good deal of input/output (I/O) programming in URScript and ABB RAPID.
+                                Three questions run through the lesson. What can physically hold this part? What does the controller need to know about the tool that is bolted to it? And how does the program find out whether the tool actually did its job? The answers involve mechanics, tool configuration and input/output (I/O) programming in URScript and ABB RAPID.
                             </p>
 
                             <h2 class="article-section-title">02. Choosing a gripper family</h2>
@@ -206,7 +206,7 @@
 
                             <h2 class="article-section-title">03. Vacuum grippers: sizing the cups</h2>
                             <p>
-                                A suction cup holds a part because the air pressure outside the cup is higher than the partial vacuum inside it. The holding force is the pressure difference multiplied by the effective suction area of the cup, before any safety factor is applied.<sup><a href="#ref-3">[3]</a></sup> For a round cup of diameter D, the area is A = &pi;(D/2)&sup2;.<sup><a href="#ref-4">[4]</a></sup> Schmalz's sizing method runs this backwards: from the part's mass, a safety factor, the vacuum level and the number of cups, it gives the cup diameter needed, with a friction coefficient added when the cup face is vertical and the part hangs on friction alone.<sup><a href="#ref-3">[3]</a></sup>
+                                A suction cup holds a part because the air pressure outside the cup is higher than the partial vacuum inside it. The holding force is the pressure difference multiplied by the effective suction area of the cup, before any safety factor is applied.<sup><a href="#ref-3">[3]</a></sup> For a round cup of diameter D, the area is A = &pi;(D/2)&sup2;.<sup><a href="#ref-4">[4]</a></sup> Schmalz's sizing method runs this backwards and gives the cup diameter needed. Its inputs are the part's mass, a safety factor, the vacuum level and the number of cups. When the cup face is vertical and the part hangs on friction alone, a friction coefficient is added.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
                                 The force a cup must supply is larger than the part's weight, because the robot accelerates. Robotiq gives the required holding force as F<sub>H</sub> = m &times; (g + a) &times; S for a horizontal cup lifting straight up (the part is picked from above), F<sub>H</sub> = m &times; (g + a/&mu;) &times; S for a horizontal cup when the force is horizontal (the part is moved sideways and held by friction), and F<sub>H</sub> = (m/&mu;) &times; (g + a) &times; S for a vertical cup. Here m is the part mass, g is gravitational acceleration, a is the robot's acceleration, &mu; is the friction coefficient between cup and part, and S is the safety factor.<sup><a href="#ref-5">[5]</a></sup> Robotiq recommends a safety factor of at least 1.5 for smooth parts, 2.0 for porous or oily parts, up to 4.0 when the cup face is vertical, and 2.5 or more for fast swinging or swivelling moves.<sup><a href="#ref-5">[5]</a></sup>
@@ -239,7 +239,7 @@
                                 A pneumatic finger gripper is driven by a solenoid valve: the robot switches a digital output, the valve sends air to one side of the gripper's piston, and the fingers move. Grip force is set mechanically, by the air pressure, rather than in the program. That makes them cheap and robust, but they tell the controller little unless sensors are added.
                             </p>
                             <p>
-                                Soft grippers use flexible materials that conform to the item. The OnRobot Soft Gripper, for example, has three interchangeable silicone cups, handles small items under 2.2 kg with a grip size of 10 to 118 mm depending on the cup, needs no external air supply, and is certified for food contact (FDA 21 CFR for non-fatty foods and EC 1935/2004).<sup><a href="#ref-13">[13]</a></sup> Its capacity depends on the item's shape, softness and friction.<sup><a href="#ref-13">[13]</a></sup> Inflatable soft grippers can handle varied food shapes with forces that do not bruise, although one patent notes that few industrial soft-robotics designs suit washdown or food-contact environments.<sup><a href="#ref-14">[14]</a></sup>
+                                Soft grippers use flexible materials that conform to the item. The OnRobot Soft Gripper, for example, has three interchangeable silicone cups and handles small items under 2.2 kg, with a grip size of 10 to 118 mm depending on the cup. It needs no external air supply and is certified for food contact (FDA 21 CFR for non-fatty foods and EC 1935/2004).<sup><a href="#ref-13">[13]</a></sup> Its capacity depends on the item's shape, softness and friction.<sup><a href="#ref-13">[13]</a></sup> Inflatable soft grippers can handle varied food shapes with forces that do not bruise, although one patent notes that few industrial soft-robotics designs suit washdown or food-contact environments.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">05. Mounting: the ISO 9409-1 flange</h2>
@@ -374,7 +374,7 @@ end</code></pre>
                                 Electric grippers can report more. With the Robotiq URCap installed on a UR, <code>rq_is_object_detected()</code> returns True if an object was picked and False otherwise.<sup><a href="#ref-38">[38]</a></sup> Underneath, Robotiq grippers report object detection through a status register called gOBJ, but sources disagree about what some of its values mean, so read the manual for your exact gripper and firmware before relying on a particular code.<sup><a href="#ref-39">[39]</a></sup><sup><a href="#ref-40">[40]</a></sup> The Zimmer GEP2000 can report jaw position as a 0-10 V signal or over IO-Link, and its -B variant reports a lost workpiece.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <p>
-                                One trap is worth remembering. For a finger gripper, "fully closed" often means the part was missed: the fingers travelled their whole stroke because nothing was between them. Treat a jaw position at full close as a failure, not a success. Also know what your tool does on power loss: the RG2, for example, keeps holding the workpiece.<sup><a href="#ref-9">[9]</a></sup>
+                                For a finger gripper, "fully closed" often means the part was missed: the fingers travelled their whole stroke because nothing was between them. Treat a jaw position at full close as a failure, not a success. Also know what your tool does on power loss: the RG2, for example, keeps holding the workpiece.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
                                 The error-handling pattern to use in every pick is:
@@ -584,7 +584,7 @@ ENDPROC</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

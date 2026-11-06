@@ -193,7 +193,7 @@
 
                             <h2 class="article-section-title">02. Workspaces, underlays and overlays</h2>
                             <p>
-                                The documentation defines a workspace simply: "A workspace is a directory containing ROS 2 packages."<sup><a href="#ref-3">[3]</a></sup> The idea that matters is <em>layering</em>. Your ROS 2 installation in <code>/opt/ros/lyrical</code> is the <strong>underlay</strong>. Your own workspace is an <strong>overlay</strong>, "a secondary workspace where you can add new packages without interfering with the existing ROS 2 workspace that you're extending." The underlay must contain the dependencies of every package in the overlay, and packages in the overlay override packages with the same name in the underlay. Layers can be stacked more than two deep.<sup><a href="#ref-3">[3]</a></sup>
+                                The documentation defines a workspace simply: "A workspace is a directory containing ROS 2 packages."<sup><a href="#ref-3">[3]</a></sup> Workspaces are built in <em>layers</em>. Your ROS 2 installation in <code>/opt/ros/lyrical</code> is the <strong>underlay</strong>. Your own workspace is an <strong>overlay</strong>, "a secondary workspace where you can add new packages without interfering with the existing ROS 2 workspace that you're extending." The underlay must contain the dependencies of every package in the overlay, and packages in the overlay override packages with the same name in the underlay. Layers can be stacked more than two deep.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
                                 On Ubuntu, first install the build tools with <code>sudo apt update &amp;&amp; sudo apt install ros-dev-tools</code>.<sup><a href="#ref-4">[4]</a></sup> Then create the workspace. The documented best practice is a new directory for every workspace, with all packages inside its <code>src</code> folder:<sup><a href="#ref-3">[3]</a></sup>
@@ -441,10 +441,10 @@ def main(args=None):
 if __name__ == '__main__':
     main()</code></pre>
                             <p>
-                                Notice how each piece maps to the tutorial pattern: the publisher and timer are created in <code>__init__</code>, all the behaviour lives in the timer callback, and <code>main</code> uses the <code>with rclpy.init(...)</code> block.<sup><a href="#ref-10">[10]</a></sup> The callback first checks for a state change and then builds the message, so the command sent on each tick always matches the current state.
+                                Each piece follows the tutorial pattern: the publisher and timer are created in <code>__init__</code>, all the behaviour lives in the timer callback, and <code>main</code> uses the <code>with rclpy.init(...)</code> block.<sup><a href="#ref-10">[10]</a></sup> The callback first checks for a state change and then builds the message, so the command sent on each tick always matches the current state.
                             </p>
                             <p>
-                                Do not expect a perfect square. The timer only checks the clock every 0.1 s, so a turn that should last 1.57 s actually lasts until the next tick after that, and Turtlesim integrates the motion in its own small time steps.<sup><a href="#ref-14">[14]</a></sup> These small errors add up from corner to corner, and the last side will not land exactly on the start point. That drift is the real lesson of open-loop control, and it motivates the feedback version in Section 10.
+                                Do not expect a perfect square. The timer only checks the clock every 0.1 s, so a turn that should last 1.57 s actually lasts until the next tick after that, and Turtlesim integrates the motion in its own small time steps.<sup><a href="#ref-14">[14]</a></sup> These small errors add up from corner to corner, and the last side will not land exactly on the start point. That drift shows the limit of open-loop control, and it is why Section 10 adds feedback.
                             </p>
 
                             <div data-widget="square-fsm">
@@ -613,7 +613,7 @@ ros2 run turtle_square square_driver</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+            <script src="assets/js/course-data.js?v=a6012c12" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
             <script src="assets/js/widgets.js?v=9c704200" defer></script>

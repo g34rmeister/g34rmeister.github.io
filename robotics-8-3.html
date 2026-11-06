@@ -181,10 +181,10 @@
                             A robot arm usually works inside a cell run by a programmable logic controller (PLC). <a href="robotics-1-7.html">Lesson 1.7 The Industrial Robot Cell</a> showed how the PLC and the robot coordinate through handshake signals, and why safety signals travel on a separate, safety-rated path. <a href="robotics-2-5.html">Lesson 2.5 End-of-Arm Tooling and I/O</a> showed the digital I/O on the controller and tool flange. This lab moves those signals onto a network.
                         </p>
                         <p>
-                            When a cell needs to exchange numbers as well as on/off signals (recipe numbers, part counts, error codes), separate wires for each signal stop being practical, so robot controllers also offer network interfaces.
+                            Robot controllers also offer network interfaces. Once a cell needs to exchange numbers (recipe numbers, part counts, error codes) as well as on/off signals, separate wires for each signal stop being practical.
                         </p>
                         <p>
-                            Universal Robots controllers support common industrial Ethernet protocols to link directly into plant networks. On EtherNet/IP networks, Universal Robots controllers only support EtherNet/IP Class 1 implicit I/O messaging and do not support Class 3 explicit messaging.<sup><a href="#ref-1">[1]</a></sup> Class 1 implicit messaging provides time-scheduled, cyclic transport tailored for real-time I/O updates between a scanner and an adapter. Inside the controller memory space, the lower range of general-purpose boolean, integer, and float registers on the robot is reserved for PLC fieldbus interface usage.<sup><a href="#ref-1">[1]</a></sup>
+                            Universal Robots controllers support common industrial Ethernet protocols to link directly into plant networks. On EtherNet/IP networks, Universal Robots controllers only support EtherNet/IP Class 1 implicit I/O messaging and do not support Class 3 explicit messaging.<sup><a href="#ref-1">[1]</a></sup> Class 1 implicit messaging provides time-scheduled, cyclic transport tailored for real-time I/O updates between a scanner and an adapter. The robot reserves the lower range of its general-purpose boolean, integer, and float registers for the PLC fieldbus interface.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
                             The Universal Robots PROFINET interface provides 10 pluggable modules, with seven modules to read data and three modules to set data.<sup><a href="#ref-2">[2]</a></sup> The PLC reads robot data through the read modules and sends commands through the set modules.
@@ -244,7 +244,7 @@
                             Each communication call returns a response object that the client script checks. In pymodbus client responses, <code>isError</code> indicates device problems, <code>rr.registers</code> provides register data, and <code>rr.bits</code> provides coil data.<sup><a href="#ref-7">[7]</a></sup> Calling <code>rr.isError()</code> allows an application to detect network errors or device rejections before attempting to parse response data.
                         </p>
                         <p>
-                            When developing multi-threaded programs, developers must take precautions with shared network resources. The pymodbus client is not thread safe, requiring applications to ensure all calls are serialized.<sup><a href="#ref-7">[7]</a></sup> If background threads log robot data while an operator interface sends setpoints, access to the client instance must be serialized with thread locks or command queues.
+                            In multi-threaded programs, note that the pymodbus client is not thread safe, requiring applications to ensure all calls are serialized.<sup><a href="#ref-7">[7]</a></sup> If background threads log robot data while an operator interface sends setpoints, access to the client instance must be serialized with thread locks or command queues.
                         </p>
 
                         <h2 class="article-section-title">05. Lab: Talk to a Modbus server from Python</h2>
@@ -401,7 +401,7 @@ Exception code: 2</code></pre>
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=ca319bab" defer></script>
+        <script src="assets/js/course-data.js?v=a6012c12" defer></script>
         <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
         <script src="assets/js/learning.js?v=61d112d9" defer></script>
         <script src="assets/js/widgets.js?v=9c704200" defer></script>

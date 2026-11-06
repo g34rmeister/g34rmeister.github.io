@@ -98,7 +98,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: vision-guided robotics, eye-in-hand, eye-to-hand, snapshot position, intrinsic calibration, camera matrix, lens distortion, re-projection error, hand-eye calibration, work object (user frame)
 - Sections: Why a taught point is not enough · 2D, 2.5D and 3D guidance · Where the camera goes: eye-to-hand or eye-in-hand · Camera calibration, part 1: the lens · Camera calibration, part 2: hand-eye and AX = XB · The industrial shortcut for 2D: calibrate to a user frame · From vision result to robot move: shifting the frame · The math of a frame shift, worked through · How accurate can it be? Pixels, calibration and light
 
-## Chapter 3: How to Contribute to Open Source (`robotics-oss.html`, 5 lessons, 31 min)
+## Chapter 3: How to Contribute to Open Source (`robotics-oss.html`, 5 lessons, 30 min)
 
 ### 3.1 What Open Source Is
 `robotics-3-1.html` · 5 min · 4 refs (verified 4) · 1 figures · 0 Try it
@@ -125,12 +125,12 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Choosing a first contribution to robOSStics · Lab Path A: Editing directly in your browser · Lab Path B: Working locally with Git and running checks · The source rule and repository constraints · Opening the pull request with the repository template · Responding to review and getting help · Check your understanding
 
 ### 3.5 Case Study: Contributing to Nav2
-`robotics-3-5.html` · 6 min · 11 refs (verified 11) · 0 figures · 0 Try it
+`robotics-3-5.html` · 5 min · 11 refs (verified 11) · 0 figures · 0 Try it
 - Objectives: Describe what Nav2 does for a mobile robot and how localization, costmaps, planners, controllers and behavior trees fit together. / Find your way around the Nav2 project: packages, plugin interfaces and the separate documentation repository. / Tell the LICENSE wording apart from the CONTRIBUTING wording, and sign off commits for the DCO. / Follow the Nav2 contribution steps: open or claim an issue, then open a pull request with the template filled in.
 - Key terms: Nav2, costmap, planner, behavior tree, tf2, Developer Certificate of Origin, Open Navigation
 - Sections: What Nav2 is · How a mobile robot navigates · How the project is organised · Licensing and sign-off · How to get involved · A first contribution path · Check your understanding
 
-## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 152 min)
+## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 151 min)
 
 ### 4.1 Definition and Introduction
 `robotics-4-1.html` · 13 min · 30 refs (partial 2, unreachable 1, verified 27) · 1 figures · 1 Try it
@@ -145,7 +145,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Why the robotics community rebuilt ROS from scratch · Master versus decentralized discovery · The ROS Middleware (RMW) abstraction layer · Quality of Service (QoS) in practice · The QoS compatibility rule · Managed lifecycle nodes · Programmable Python launch files · Multi-platform and security enhancements · Migration timeline: from Noetic to Lyrical Luth
 
 ### 4.3 Installing ROS on Your Local Environment
-`robotics-4-3.html` · 17 min · 33 refs (fixed 2, verified 31) · 1 figures · 1 Try it
+`robotics-4-3.html` · 16 min · 33 refs (fixed 2, verified 31) · 1 figures · 1 Try it
 - Objectives: Navigate the platform support tiers for ROS 2 Lyrical Luth (Lyrical supported-platforms page; REP 2000 for earlier releases) across Ubuntu 26.04, Windows 11 and macOS. / Execute the complete Debian package installation pipeline on Ubuntu, including UTF-8 locale generation, adding the ROS 2 apt source (ros2-apt-source package), and desktop package selection. / Configure shell environment variables (PATH, AMENT_PREFIX_PATH, ROS_DISTRO) via setup.bash and automate startup via .bashrc. / Troubleshoot common post-installation errors: missing environment sourcing, UDP multicast firewall blocks, and a missing UTF-8 locale.
 - Key terms: Ubuntu 26.04, Lyrical Luth, Tier 1, WSL 2, setup.bash, colcon, rosdep, signing key, DDS discovery, REP 2000
 - Sections: Choosing your installation strategy · Platform support tiers and REP 2000 · Native Ubuntu 26.04 installation step by step · Setting up the UTF-8 locale and the ROS 2 apt repository · Desktop versus base installations · Sourcing the environment: setup.bash · Windows installation: WSL 2 versus native · Windows on ARM (Snapdragon laptops) · macOS strategies: Docker and virtual machines · Post-installation verification: talker and listener · Essential developer utilities: rosdep and colcon · Troubleshooting common setup errors
@@ -280,7 +280,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Key terms: forward kinematics, inverse kinematics, workspace (work envelope), law of cosines, atan2, elbow-up / elbow-down, Jacobian, singularity, spherical wrist, numerical inverse kinematics
 - Sections: From the idea to the full math · Forward kinematics: adding two rotating vectors · The workspace is a ring · Closed-form inverse kinematics · Worked example: two answers for one target · Why atan2, and not atan or acos · Edge cases: rounding at the boundary · Robust IK in Python · The Jacobian and singularities · From two links to a six-axis robot
 
-## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 69 min)
+## Chapter 7: Machine Vision (`robotics-vision.html`, 6 lessons, 68 min)
 
 ### 7.1 Industrial Cameras and Optics
 `robotics-7-1.html` · 11 min · 9 refs (verified 9) · 1 figures · 0 Try it
@@ -295,7 +295,7 @@ Source checks, all lessons: fixed 131, partial 34, unreachable 63, verified 1054
 - Sections: Why illumination comes first in machine vision · Backlighting: silhouetting and edge contrast · Directional, glancing, and darkfield illumination · Diffuse dome lights for curved specular objects · Coaxial and in-line illumination · Optical filters, wavelength selection, and cross-polarization · Strobing, overdriving, and timing control · Check your understanding
 
 ### 7.3 Image Processing Basics
-`robotics-7-3.html` · 10 min · 14 refs (verified 14) · 1 figures · 0 Try it
+`robotics-7-3.html` · 9 min · 14 refs (verified 14) · 1 figures · 0 Try it
 - Objectives: Convert raw camera frames across color spaces (BGR, Grayscale, HSV) and isolate chromatic targets using color segmentation masks. / Analyze intensity distributions with grayscale histograms and apply global, Otsu, and adaptive thresholding to segment foreground objects. / Extract object contours, calculate centroid coordinates from spatial image moments, and filter connected components by area. / Detect and characterize circular objects using SimpleBlobDetector, trace boundaries with Canny edge detection, and locate parts with template matching.
 - Key terms: HSV color space, histogram equalization, adaptive thresholding, Otsu binarization, image moments, Canny edge detector, template matching
 - Sections: Color spaces and grayscale conversion · Grayscale histograms, contrast, and equalization · Image thresholding: binary, adaptive, and Otsu · Connected components and contour geometry · Blob analysis with SimpleBlobDetector · Edge detection: the Canny algorithm · Template matching and pattern localization · Check your understanding
