@@ -242,10 +242,10 @@
                                 Above the hardware safety circuits sits a software layer. Robot software stacks are large: middleware such as ROS 2, neural networks for pose estimation, inverse kinematics solvers. None of this application code is proven free of bugs, so a sound architecture keeps it separate from the safety-rated functions that can stop the robot.
                             </p>
                             <p>
-                                One of the most important protections is the <strong>watchdog timer</strong>. What does a watchdog timer do? It <strong>triggers a safe stop if the main program stops responding</strong>.
+                                A <strong>watchdog timer</strong> <strong>triggers a safe stop if the main program stops responding</strong>.
                             </p>
                             <p>
-                                A watchdog is a hardware counter that counts down from a starting value to zero. The software must restart it regularly ("kick the dog") before it reaches zero. If the software hangs, it stops kicking, the counter reaches zero and the watchdog acts: in a simple embedded system it resets the processor.<sup><a href="#ref-16">[16]</a></sup> In a robot, the watchdog output is wired into the safety circuit, so that a hung control program also removes the robot's permission to move and brings it to a Category 0 or Category 1 stop.
+                                A watchdog is a hardware counter that counts down from a starting value to zero. The software must restart it regularly ("kick the dog") before it reaches zero. If the software hangs, it stops kicking, the counter reaches zero and the watchdog acts: in a simple embedded system it resets the processor.<sup><a href="#ref-16">[16]</a></sup> In a robot, the watchdog output can be wired into the safety circuit, so that a hung control program also removes the robot's permission to move and brings it to a Category 0 or Category 1 stop.
                             </p>
                             <p>
                                 Safety software also enforces <strong>geofencing</strong>: virtual safety zones that limit where the robot and its tool may go and how fast. Rather than trusting a path planner not to send the arm through a fence or into an operator's workstation, a safety-rated controller checks position and speed independently. Leading manufacturers offer this as safety-rated software:
@@ -442,7 +442,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=ae62a1aa" defer></script>
+            <script src="assets/js/course-data.js?v=a456f1fb" defer></script>
             <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
             <script src="assets/js/learning.js?v=61d112d9" defer></script>
 
