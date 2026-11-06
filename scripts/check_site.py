@@ -125,6 +125,16 @@ def check_course(lesson_pages):
                 fail(f'{where}: answer index out of range')
 
 
+def check_stray_backrefs(all_pages):
+    """A regex backreference such as \\1 left in page text by a scripted edit (it once hid a hub sentence)."""
+    for page in all_pages:
+        text = page.read_text(encoding='utf-8')
+        text = re.sub(r'<(pre|code|script|style)[^>]*>.*?</\1>', ' ', text, flags=re.S)
+        m = re.search(r'\\[1-9]', text)
+        if m:
+            fail(f'{page.name}: stray backreference {m.group(0)!r} in page text: ...{text[max(0, m.start() - 40):m.end() + 40]!r}')
+
+
 def main():
     all_pages = pages()
     lesson_pages = [p for p in all_pages if re.fullmatch(r'robotics-\d+-\d+\.html', p.name)]
@@ -132,6 +142,7 @@ def main():
         check_citations(page, page.read_text(encoding='utf-8'))
     check_ids_and_links(all_pages)
     check_course(lesson_pages)
+    check_stray_backrefs(all_pages)
     if failures:
         print(f'{len(failures)} problems:')
         for f in failures:
