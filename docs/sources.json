@@ -79,40 +79,6 @@
    },
    "title": "Improving the Beginner’s PID – Introduction | Project Blog"
   },
-  "http://rovart.cimr.pub.ro/docs/OpIntroRAPID.pdf": {
-   "citedBy": [
-    "2-3#ref-6"
-   ],
-   "refText": "ABB Robotics, Operating manual: Introduction to RAPID, RobotWare 5.60, Document ID 3HAC029364-001, Revision B, ABB AB, 2007. University-hosted copy: rovart.cimr.pub.ro (PDF).",
-   "http": 0,
-   "linkChecked": "2026-10-27",
-   "checks": {
-    "2-3": {
-     "status": "unreachable",
-     "claim": "ABB Introduction to RAPID manual",
-     "evidence": "Playwright error",
-     "note": "RAPID syntax claims corroborated by ref 1/8",
-     "checked": "2026-10-22"
-    }
-   }
-  },
-  "http://www.robotics.stanford.edu/~ang/papers/icraoss09-ROS.pdf": {
-   "citedBy": [
-    "4-1#ref-8"
-   ],
-   "refText": "M. Quigley, K. Conley, B. Gerkey, J. Faust, T. Foote, J. Leibs, R. Wheeler and A. Y. Ng, “ROS: an open-source Robot Operating System,” in ICRA Workshop on Open Source Software, Kobe, Japan, 2009. Repository: robotics.stanford.edu/~ang/papers/icraoss09-ROS.pdf.",
-   "http": 0,
-   "linkChecked": "2026-10-27",
-   "checks": {
-    "4-1": {
-     "status": "unreachable",
-     "claim": "ICRA-OSS 2009 paper, Kobe",
-     "evidence": "Stanford PDF returned HTTP 503 via curl and Chromium",
-     "note": "Paper title/venue unchecked",
-     "checked": "2026-10-22"
-    }
-   }
-  },
   "https://1.ieee802.org/tsn/": {
    "citedBy": [
     "8-6#ref-3"
@@ -252,10 +218,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "6-5": {
-     "status": "unreachable",
-     "claim": "MPU-6050 spec",
-     "evidence": "upstream request failed",
-     "checked": "2026-10-22"
+     "status": "partial",
+     "claim": "MPU-6050 datasheet: IMU/MEMS definitions, 3-axis gyro and accel with DMP, I2C 400 kHz, full-scale ranges, noise densities, zero-rate tolerance; plus pitch/roll tilt and gyro heading-drift sentences.",
+     "evidence": "\"Communication with all registers of the device is performed using either I2C at 400kHz\"; \"user-programmable gyroscope full-scale range of ±250, ±500, ±1000, and ±2000°/sec (dps)\"; \"user-programmable accelerometer full-scale range of ±2g, ±4g, ±8g, and ±16g\"; \"Rate Noise Spectral Density At 10Hz 0.005 º/s/√Hz\"; \"Initial ZRO Tolerance 25°C ±20 º/s\"; \"ZRO Variation Over Temperature -40°C to +85°C ±20 º/s\"; \"the Coriolis Effect causes a vibration that is detected by a capacitive pickoff\"; \"Digital Motion Processor™ (DMP™) hardware accelerator engine\"; \"Release Date: 11/16/2011\", \"Revision: 3.2\".",
+     "note": "Rechecked 2026-11-08. Datasheet values check out exactly (I2C 400 kHz, ranges, 0.005 º/s/√Hz, ZRO ±20 º/s at 25°C and over -40 to +85°C, Rev 3.2). Not in the datasheet: the IMU definition, pitch/roll tilt from the accelerometer, the gyro heading-drift explanation, and the claim that the DMP 'computes orientation angles on-chip' (datasheet calls it a hardware accelerator engine). The accel noise figure is extracted without its µ glyph ('400 g/√Hz'), so the µg unit is read from the lesson, not the extracted text. Lesson text 'computes orientation angles' needs a source or rewording.",
+     "checked": "2026-11-08"
     }
    }
   },
@@ -805,12 +772,12 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-7": {
-     "status": "unreachable",
-     "claim": "ANSI blog: ISO 10218 Part 1 robot (partly completed machinery), Part 2:2025 covers robot applications/cells across life cycle; OEM/integrator/end-user roles",
-     "evidence": "blog.ansi.org returns a Cloudflare challenge (403) even in headless Chromium",
-     "note": "Not checked at source. Genorma's ISO 10218-2:2025 scope confirms cells/applications and phases from design through decommissioning and disposal. 'Partly completed machinery' is not corroborated (EVS [19] only mentions the robot's 'declaration of incorporation').",
+     "status": "partial",
+     "claim": "ISO 10218 scope: Part 1 covers the robot as partly completed machinery; ISO 10218-2:2025 covers applications and cells across their life; roles of OEM, system integrator and end user.",
+     "evidence": "\"ISO 10218-2:2025 addresses the following: The design, integration, commissioning, operation, maintenance, decommissioning and disposal\"; \"specifies requirements for the integration of industrial robot applications and industrial robot cells\"; \"reasonably foreseeable by the integrator\".",
+     "note": "Rechecked 2026-11-08. ANSI blog opened (full text, 74 KB). Part 2 scope (integration through decommissioning) is supported. Not in the page: 'partly completed machinery' (for Part 1 or the robot), the OEM examples (FANUC, ABB, KUKA, Yaskawa, Universal Robots), the 'system integrator' and 'end user' roles, and the claim that end users keep safeguards working. Those sentences need a different source or a rewrite. Earlier note: Not checked at source. Genorma's ISO 10218-2:2025 scope confirms cells/applications and phases from design through decommissioning and disposal. 'Partly completed machinery' is not corroborated (EVS [19] only mentions the robot's 'declaration of incorporation').",
      "corroboratedBy": "https://genorma.com/en/standards/iso-10218-2-2025",
-     "checked": "2026-10-22"
+     "checked": "2026-11-08"
     }
    },
    "title": "Just a moment...",
@@ -5082,10 +5049,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "5-2": {
-     "status": "unreachable",
-     "claim": "Reg 2024/1689",
-     "evidence": "EUR-Lex HTTP 202 empty",
-     "checked": "2026-10-22"
+     "status": "partial",
+     "claim": "EU AI Act (Regulation (EU) 2024/1689), 13 June 2024, horizontal framework; AI safety components of Annex I products (such as machinery) are high risk, with risk management, data governance, logging and human-oversight requirements.",
+     "evidence": "\"Regulation (EU) 2024/1689 of the European Parliament and of the Council of 13 June 2024 laying down harmonised rules on artificial intelligence\"; \"(47) AI systems could have an adverse impact on the health and safety of persons, in particular when such systems operate as safety components of products\"; \"Requirements should apply to high-risk AI systems as regards risk management, the quality and relevance of data sets used, technical documentation and record-keeping, transparency and the provision of information to deployers, human oversight\".",
+     "note": "Rechecked 2026-11-08. Citation, date and title verified; recital 47 and recital on requirements support the risk-management, record-keeping and human-oversight points. The fetched text (first 400 KB) did not reach Article 6 or Annex I, so the classification sentence ('a safety component of a product covered by EU product-safety law listed in Annex I, such as machinery, is classified as high risk') is not verified. Also 'data governance' is not confirmed as a listed requirement in the recital read. Recheck Article 6(1) and Annex I directly.",
+     "checked": "2026-11-08"
     },
     "5-3": {
      "status": "verified",
@@ -8284,11 +8252,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "4-5": {
-     "status": "unreachable",
-     "claim": "rqt_graph source (package.xml)",
-     "evidence": "GitHub URL not fetchable as raw (404 via mapper)",
-     "note": "Claims are covered by refs 2 and 3",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "rqt_graph is a GUI plugin for visualising the ROS computation graph; nodes drawn as ovals, topics as boxes; recent versions flag QoS and type incompatibilities",
+     "evidence": "lyrical branch: package.xml 'rqt_graph provides a GUI plugin for visualizing the ROS computation graph'; src/rqt_graph/dotcode.py draws nodes with shape='ellipse' and topics with shape='box', and adds 'Found qos incompatibilities' / 'Found type incompatibilities' tooltips.",
+     "note": "Read via raw.githubusercontent.com on 2026-11-08; fetch_text cannot map github tree URLs, the page itself returns 200.",
+     "checked": "2026-11-08"
     }
    },
    "title": "GitHub - ros-visualization/rqt_graph at lyrical · GitHub"
@@ -9866,10 +9834,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-3": {
-     "status": "unreachable",
-     "claim": "GXO Agility Robotics agreement June 2024",
-     "evidence": "Access denied",
-     "checked": "2026-10-22"
+     "status": "partial",
+     "claim": "GXO and Agility Robotics multi-year Robots-as-a-Service deal, June 2024, billed as first formal commercial humanoid deployment; Digit moves totes onto conveyors alongside AMRs; humanoids defined as roughly human-shaped and moving from pilots to early production.",
+     "evidence": "\"GREENWICH, Conn., June 27, 2024\"; \"the industry’s first formal commercial deployment of humanoid robots\"; \"Digit robots are assisting with repetitive tasks such as moving totes from cobots and placing them onto conveyors\"; \"Agility’s solutions integrate with existing automation, including Autonomous Mobile Robots (AMRs)\".",
+     "note": "Rechecked 2026-11-08. Deal, date, RaaS, 'first formal commercial deployment' and the tote-to-conveyor task are supported. The release does not define humanoids as roughly human-shaped and does not say the sector is 'moving from pilots to early production'. The totes move 'from cobots' (not 'alongside AMRs'); AMRs appear only as existing automation Digit integrates with. Rewrite the lead sentences or cite a source for them.",
+     "checked": "2026-11-08"
     }
    },
    "title": "Access Denied"
@@ -11215,12 +11184,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-7": {
-     "status": "unreachable",
-     "claim": "EtherCAT is master/slave on a logical ring processing frames on the fly (low delay); EtherNet/IP uses producer/consumer",
-     "evidence": "NTNU wiki attachment redirects to an Atlassian login page",
-     "note": "Student report not reachable. Hilscher: single frame through all nodes 'in a logical ring topology, allowing \"on-the-fly\" processing' that reduces latency; Design World: EtherNet/IP implicit messaging uses 'the producer-consumer transmission model'. Prefer those over a student report.",
-     "corroboratedBy": "https://www.hilscher.com/service-support/glossary/ethercat",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "EtherCAT is a master/slave protocol on a logical ring, processing frames on the fly with low delay; EtherNet/IP uses a producer/consumer model.",
+     "evidence": "\"master-slave protocol that uses logical ring topology\"; \"Low latency and Lower jitter due to processing on the fly\"; \"Ethernet/IP: A communication protocol for industrial ethernet network that uses a producer-consumer model to exchange data.\"",
+     "note": "Rechecked 2026-11-08. Fieldbus - EtherCAT student report (Oct 2023) PDF opened; all cited claims are supported. Source is a student report, which the lesson already labels as such.",
+     "checked": "2026-11-08"
     }
    },
    "finalUrl": "https://www.ntnu.no/wiki/login.action?os_destination=%2Fdownload%2Fattachments%2F316860568%2FFieldbus___EtherCAT.pdf%3Fapi%3Dv2&permissionViolation=true",
@@ -13999,6 +13967,36 @@
    "http": 429,
    "linkChecked": "2026-10-27"
   },
+  "https://web.archive.org/web/20250725232000/http://rovart.cimr.pub.ro/docs/OpIntroRAPID.pdf": {
+   "citedBy": [
+    "2-3#ref-6"
+   ],
+   "refText": "ABB Robotics, Operating manual: Introduction to RAPID, RobotWare 5.60, Document ID 3HAC029364-001, Revision B, ABB AB, 2007. Archived university-hosted copy: rovart.cimr.pub.ro via the Wayback Machine (PDF).",
+   "checks": {
+    "2-3": {
+     "status": "verified",
+     "claim": "RAPID structure (MODULE/PROC, .mod/.sys, one module with main), CONST/PERS/VAR behaviour, robtarget four parts with up to 6 additional axes set to 9E9, speeds v100/v1000/vmax, zones fine/z50, Offs, MoveJ/MoveL, SetDO, WaitTime, tooldata",
+     "evidence": "Archived PDF (Wayback 2025-07-25), 3HAC029364-001 Rev B: 'only one of the modules can contain a procedure named main'; system module .sys keeps tooldata after a new program is loaded; variable reset 'if the program pointer is moved to main'; extax 'up to 6 additional axes. The value is set to 9E9'; v100 100 mm/s; vmax maximum speed; fine 'go exactly to the specified position'; z50 'can cut corners when it is less than' 50 mm.",
+     "note": "WaitDI and Stop are not in this manual; they rest on the lesson's other ABB refs. Original rovart link is dead; link swapped to the Wayback copy 2026-11-08.",
+     "checked": "2026-11-08"
+    }
+   }
+  },
+  "https://web.archive.org/web/20261017235615/http://www.robotics.stanford.edu/~ang/papers/icraoss09-ROS.pdf": {
+   "citedBy": [
+    "4-1#ref-8"
+   ],
+   "refText": "M. Quigley, K. Conley, B. Gerkey, J. Faust, T. Foote, J. Leibs, R. Wheeler and A. Y. Ng, “ROS: an open-source Robot Operating System,” in ICRA Workshop on Open Source Software, Kobe, Japan, 2009. Archived copy: robotics.stanford.edu/~ang/papers/icraoss09-ROS.pdf via the Wayback Machine.",
+   "checks": {
+    "4-1": {
+     "status": "partial",
+     "claim": "2009 paper 'ROS: an open-source Robot Operating System' by Quigley, Gerkey and colleagues at the ICRA Workshop on Open Source Software, Kobe",
+     "evidence": "Archived PDF (Wayback 2026-10-17): title 'ROS: an open-source Robot Operating System', authors Quigley, Gerkey, Conley, Faust, Foote, Leibs, Berger, Wheeler, Ng; filename icraoss09.",
+     "note": "Title and authors verified. The PDF does not state the venue or Kobe; wiki.ros.org (Anubis) and Semantic Scholar (429) blocked a venue check on 2026-11-08. The PDF also lists Eric Berger, whom the conventional citation omits. Stanford link dead; swapped to the Wayback copy.",
+     "checked": "2026-11-08"
+    }
+   }
+  },
   "https://web.iitd.ac.in/~ddz198403/assignment%205/datasheet.pdf": {
    "citedBy": [
     "6-7#ref-3"
@@ -14388,10 +14386,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-5": {
-     "status": "unreachable",
-     "claim": "Lely Astronaut 50,000th",
-     "evidence": "Agriland 403",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "Lely introduced the Astronaut milking robot commercially in 1995, installed its 50,000th in June 2024, and says it milks more than 2.5 million cows a day in more than 50 countries.",
+     "evidence": "\"since its commercial introduction in 1995, its Astronaut milking robot\"; \"celebrated the launch of its 50,000th Astronaut milking robot\"; \"the robots milking over 2,500,000 cows daily in over 50 countries\"; \"June 28, 2024\".",
+     "note": "Rechecked 2026-11-08. All details match the Agriland report dated June 28, 2024. The lesson's 'more than 2.5 million cows a day' is a fair paraphrase of 'over 2,500,000 cows daily'.",
+     "checked": "2026-11-08"
     }
    },
    "title": "Photos: Lely celebrates installation of 50,000th Astronaut worldwide - Agriland.ie"
@@ -14405,12 +14404,12 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-7": {
-     "status": "unreachable",
-     "claim": "AJG summary of OSHA OTM: safeguard options (limiting devices, presence-sensing, fixed barriers, interlocked guards); safeguards active in automatic operation",
-     "evidence": "ajg.com serves an Incapsula bot wall (empty body) to curl, Chromium and WebFetch",
-     "note": "Not checked at source. Same claims are supported by HSI [9] and by the OSHA OTM itself ([2], Sec. IV Ch. 4: fixed barrier, interlocked barrier guards, mechanical/non-mechanical limiting devices; 'all safeguarding devices should be activated').",
+     "status": "partial",
+     "claim": "Gallagher 'Automation Safety: Robotic Systems': OSHA Technical Manual safeguard options (mechanical limiting, nonmechanical limiting, presence-sensing, fixed barriers, interlocked guards); all safeguards active in automatic operation and no body part inside the safeguarded area.",
+     "evidence": "\"In September of 2021, OSHA issued a new technical manual chapter titled, Industrial Robot Systems and Industrial Robot System Safety.\"; \"choosing and installing barrier guards, interlocks, light curtains or other sensors\"; \"If an operator is using a non-collaborative robotic arm in automatic mode and proper interlocked barrier guards are in place, then when the outside gate is opened the arm should stop immediately\".",
+     "note": "Rechecked 2026-11-08. Page opened (Jina fallback), titled 'Automation, Safety and Robotic Systems' (citation says 'Automation Safety: Robotic Systems'; update the title). Not supported as written: the four-option list of OSHA safeguards (no 'mechanical limiting', 'nonmechanical limiting', 'presence-sensing' or 'fixed barrier' wording) and the sentence 'During automatic operation all safeguards should be active, and no part of the operator's body should be inside the safeguarded area' (the page only discusses interlocked guards in automatic mode). The OSHA-manual sentence is partly supported. Rewrite the claim to what the page says, or cite the OSHA manual directly. Earlier note: Not checked at source. Same claims are supported by HSI [9] and by the OSHA OTM itself ([2], Sec. IV Ch. 4: fixed barrier, interlocked barrier guards, mechanical/non-mechanical limiting devices; 'all safeguarding devices should be activated').",
      "corroboratedBy": "https://www.osha.gov/otm/section-4-safety-hazards/chapter-4",
-     "checked": "2026-10-22"
+     "checked": "2026-11-08"
     }
    }
   },
@@ -14423,10 +14422,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "6-2": {
-     "status": "unreachable",
-     "claim": "All About Circuits MOSFET switching losses",
-     "evidence": "bot wall",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "Keim, 'Introduction to MOSFET Switching Losses' (Apr 2024): switch-mode MOSFETs are fully on or fully off; the transition passes through a linear-mode state; switching loss formula P_SW proportional to V_IN, I_D, (t_R+t_F) and f_SW.",
+     "evidence": "\"In the simplified model of switch-mode operation, a MOSFET is either fully on or fully off\"; \"the FET operates briefly in the high-power-dissipation linear mode every time it switches\"; Equation 3 as rendered: P_SW = ½ × V_IN × I_D × (t_R + t_F) × f_SW; \"The switching frequency (f SW).\"; \"Published Time: 2024-04-28\".",
+     "note": "Rechecked 2026-11-08. All cited claims supported, and the lesson's formula matches Equation 3. 'Section 07' in the lesson is the lesson's own cross-reference, not a section of the article. The '50 times' comparison is the lesson's own arithmetic from the proportionality in the formula.",
+     "checked": "2026-11-08"
     }
    },
    "title": "Just a moment...",
@@ -14441,10 +14441,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-4": {
-     "status": "unreachable",
-     "claim": "All About Circuits: Is assembly still relevant",
-     "evidence": "bot wall",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "2022 All About Circuits article: assembly ranked 30th in IEEE Spectrum's 2022 job-posting ranking, C and C++ 6th and 7th; argues the strongest reason to learn assembly is to understand what the processor does; 'no one-size-fits-all answer'.",
+     "evidence": "\"This year, 2022, when listed according to job postings, assembly language ranked 30th on the list\"; \"while C and C++ ranked 6th and 7th, respectively\"; \"Assembly Language Helps Programmers Understand Processors\"; \"Conclusion—There is No One-size-fits-all Answer\"; \"Published Time: 2022-11-06\".",
+     "note": "Rechecked 2026-11-08. All claims supported. The quote 'no one-size-fits-all answer' is from the conclusion heading ('There is No One-size-fits-all Answer'), so quote it in that form if it is kept verbatim.",
+     "checked": "2026-11-08"
     }
    },
    "title": "Just a moment...",
@@ -14659,10 +14660,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-6": {
-     "status": "unreachable",
-     "claim": "A3 Six-Axis Robot glossary",
-     "evidence": "A3 bot wall",
-     "checked": "2026-10-22"
+     "status": "partial",
+     "claim": "A3 glossary: six-axis robot definition; DOF counts for helical, cylindrical, universal and spherical joints; axes numbered from base outward; at least six joints needed; first three axes place the wrist, last three orient the tool; SCARA can only rotate about the vertical axis.",
+     "evidence": "\"A six-axis robot is an industrial robotic arm with six rotary joints (also called axes) that provide complete freedom of movement in three-dimensional space.\"; \"Each axis represents a degree of freedom\"; \"Axis 1 (Base)\"; \"Three wrist axes, unlimited tool orientation\"; \"Single vertical rotation, no tilting\".",
+     "note": "Rechecked 2026-11-08. Supported: six rotary joints, each axis a degree of freedom, three wrist axes, and the SCARA vertical-rotation point. Not in the page: the 1-DOF helical / 2-DOF cylindrical and universal / 3-DOF spherical counts (the page only uses 'cylindrical' and 'spherical' in a table without DOF numbers), 'data sheets call the joints axes, numbered from the base outward', 'at least six joints' being needed, and 'the first three axes decide where the wrist is'. Those sentences need a different source or should be cut back.",
+     "checked": "2026-11-08"
     }
    },
    "title": "What is a Six-Axis Robot? | A3 Glossary"
@@ -14717,11 +14719,11 @@
      "checked": "2026-10-22"
     },
     "1-3": {
-     "status": "unreachable",
-     "claim": "A3 Updated ISO 10218 FAQ",
-     "evidence": "Bot wall this pass (opened in 4-1)",
-     "note": "Verified there: terms dropped, TS 15066 folded in",
-     "checked": "2026-10-22"
+     "status": "partial",
+     "claim": "A3 FAQ on the 2025 ISO 10218 revision: publication in March 2025 replacing the 2011 versions; the term 'collaborative robot' dropped in favour of 'collaborative application'; ISO/TS 15066 content folded in with force and pressure limits; two robot classes; four types of collaborative operation in the earlier edition.",
+     "evidence": "\"The terms “collaborative robot” and “collaborative operation” will not be found in the revised ISO 10218. “Collaborative application” is used instead\"; \"To better understand this standard and the key changes from the 2011 version\"; \"Where appropriate, ISO/TS 15066:2016 on the safety of collaborative robot applications was added to the ISO 10218 series.\"; \"published the highly anticipated revised ISO 10218 earlier this month\" (dated 03/20/2025).",
+     "note": "Rechecked 2026-11-08. First sentence supported (March 2025 publication, 2011 version, terminology change). Second sentence partly supported: the FAQ says ISO/TS 15066 content was incorporated, but says nothing about 'forces and pressures' or 'two classes'. Third sentence not found: the FAQ does not mention four types of collaborative operation in the earlier edition. Remove or rewrite those two clauses, or cite the standard. Earlier note: Verified there: terms dropped, TS 15066 folded in",
+     "checked": "2026-11-08"
     },
     "1-7": {
      "status": "verified",
@@ -15088,10 +15090,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-4": {
-     "status": "unreachable",
-     "claim": "BLS industrial machinery mechanics",
-     "evidence": "Access denied",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "BLS Occupational Outlook Handbook for industrial machinery mechanics, maintenance workers and millwrights covers job counts, median pay and a ten-year growth projection.",
+     "evidence": "\"2025 Median Pay $64,100 per year $30.82 per hour\"; \"Employment Change, 2025–35 78,900\"; \"14% (Much faster than average)\" (projected growth, in the Quick Facts table).",
+     "note": "Rechecked 2026-11-08. The page covers the three items named (employment, median pay, 10-year projection). The lesson gives no figures and says to check the page, so it fits. The citation's 'Accessed October 2026' cannot be checked from the page.",
+     "checked": "2026-11-08"
     }
    },
    "title": "Access Denied"

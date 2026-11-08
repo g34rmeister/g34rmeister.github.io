@@ -204,7 +204,7 @@ def report(reg, lesson=None):
                 status = check['status'] if check else 'unchecked'
                 print(f"{','.join(refs)} {status}: {key}\n    {check.get('note', '') if check else ''}")
         return
-    for lesson, row in sorted(lesson_status(reg).items(), key=lambda kv: [int(x) for x in kv[0].split('-')]):
+    for lesson, row in sorted(lesson_status(reg).items(), key=lambda kv: [(0, int(x)) if x.isdigit() else (1, x) for x in kv[0].split('-')]):
         print(lesson, row)
 
 

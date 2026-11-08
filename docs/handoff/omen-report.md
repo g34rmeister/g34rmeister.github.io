@@ -22,7 +22,9 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 - Books (Siegwart, Gat, R.U.R.) are optional. If used, keep them outside the repo and only use them to check claims.
 
 ## Known loose ends (safe to do without asking)
-- Two unreachable refs: 2.3 ref 6 (rovart copy of ABB "Introduction to RAPID") and 4.1 ref 8 (Stanford copy of the 2009 ROS paper). No live mirror was found, and Wayback rate-limited on 2026-11-06. If a Wayback copy exists, swap the link and record the check. ABB's official RAPID Overview (3HAC050947-001) loads but lacks the data-type details 2.3 cites.
+- Partial refs worth a look (from the 2026-11-08 recheck; `sources.py report <lesson>` shows the notes). Each sentence names something its source does not show; check whether another ref in the same sentence covers it, else soften the wording or add a source: 1.3 ref 16 ("two classes", "four types of collaborative operation"), 1.3 ref 28 (humanoids "moving from pilots to early production"), 1.6 ref 4 (joint DOF counts, "numbered from the base"), 1.7 ref 3 (Part 1 "partly completed machinery") and ref 12 (OSHA four options; "no part of the operator's body"; safety text, so ask Gerald before editing), 5.2 ref 28 (Article 6/Annex I not reached in the fetch), 6.5 ref 8 (DMP "computes orientation angles on-chip"; the datasheet says "hardware accelerator engine").
+- 4.1 ref 8 venue (ICRA workshop, Kobe) is still unconfirmed; wiki.ros.org/Papers/ICRA2009_Quigley is behind Anubis.
+- About 35 refs are still unreachable behind bot walls (Britannica, ABB library, iso.org, analog.com, st.com, scribd, doi.org). Wayback rate-limited again on 2026-11-08; retry `archive.org/wayback/available` lookups slowly (one every few seconds).
 - Two brettbeauregard.com links in 6.4 are http only (the site has no https). Leave them.
 - About 50 audit findings were kept on purpose (judgement calls or QA restorations). Do not re-apply them from `docs/handoff/step-45-slop-*.md` without reading the changelog first.
 
