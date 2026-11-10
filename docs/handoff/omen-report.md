@@ -4,7 +4,7 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 
 ## State
 - `main` is at `10d52ec`, clean. Everything is merged: PR #23 (`site-architecture-tools`: agent tools, Chapter 11, quizzes split into `assets/js/quiz/ch<N>.js`, KaTeX, chapters menu and navbar search, show-answer blocks, accessibility fixes) and PR #24 (issue #22 source links). CI passed on both.
-- 70 lessons in 11 chapters, 95 pages, 240 quiz questions; Chapter 11 (Mobile Robots and Navigation, 11.1-11.4) has no lab yet. Every cited ref has a recorded claim check (`sources.py check` passes, 1111 sources).
+- 70 lessons in 11 chapters, 95 pages, 240 quiz questions; Chapter 10 (Mobile Robots and Navigation, 10.1-10.4; it was Chapter 11 until the 2026-11-10 swap) has no lab yet, and the capstones are Chapter 11. Every cited ref has a recorded claim check (`sources.py check` passes, 1111 sources).
 - No open PRs, no open issues (#22 closed 2026-11-10 by #24).
 - The repo's GitHub account is `g34rmeister`. This machine's `gh` also has `johnbachspec` logged in and it may be the active one; run `gh auth switch -u g34rmeister` before pushing or touching issues.
 
@@ -22,14 +22,14 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 - Contribution path for outsiders is now a "Suggest an edit" link in the top meta bar of every course page (`addEditLink` in `learning.js`), plus the existing one under each lesson's References.
 
 ## Open decisions (ask Gerald; do not decide)
-- Chapter 11 for AMR material: decided 2026-11-09, Gerald asked for it; 11.1 to 11.4 exist (see the changelog). Still open: a Nav2 simulation lab (must be run first) and whether to cover AMR safety (ask Gerald; safety content).
+- AMR chapter (now Chapter 10): decided 2026-11-09, Gerald asked for it; 10.1 to 10.4 exist (see the changelog). Still open: a Nav2 simulation lab (must be run first) and whether to cover AMR safety (ask Gerald; safety content).
 - Chapter 3 overview (`robotics-oss.html`) has audit findings (roadmap sentences, a seven-step workflow in one sentence). It is Gerald's prose: propose edits, do not apply them.
 - Teaching page wording is Gerald's. Its sentence about the edit link ("under its references") is still accurate.
 - Books (Siegwart, Gat, R.U.R.) are optional. If used, keep them outside the repo and only use them to check claims.
 
 ## Known loose ends (safe to do without asking)
 - 2.8 ref 18 cites an unreadable Scribd copy of the UR script manual; UR's own script manual confirms the same signatures, so swap the citation to it (record the check). 2.8 ref 12 is partial but ref 11 covers the rest of the sentence; no change needed.
-- 10.3 ref 10 (NUS copy of the L298 datasheet) answered nothing from GitHub's runners once while loading fine locally. If the Monday link check flags it again, the runners are probably blocked there; st.com does not answer scripts either, so there is no better host yet.
+- 11.3 ref 10 (capstone wheel project, 10.3 before the 2026-11-10 swap; NUS copy of the L298 datasheet) answered nothing from GitHub's runners once while loading fine locally. If the Monday link check flags it again, the runners are probably blocked there; st.com does not answer scripts either, so there is no better host yet.
 - axe left 105 "incomplete" nodes on 6.4 (formulas) uninspected. Not tested at all: Safari, Firefox, touch use of the search.
 - Update 2026-11-09: of the partial refs in the next item, all are resolved, including 1.7 and 5.2 (fixed 2026-11-10 with Gerald's approval; see the changelog).
 - Partial refs worth a look (from the 2026-11-08 recheck; `sources.py report <lesson>` shows the notes). Each sentence names something its source does not show; check whether another ref in the same sentence covers it, else soften the wording or add a source: 1.3 ref 16 ("two classes", "four types of collaborative operation"), 1.3 ref 28 (humanoids "moving from pilots to early production"), 1.6 ref 4 (joint DOF counts, "numbered from the base"), 1.7 ref 3 (Part 1 "partly completed machinery") and ref 12 (OSHA four options; "no part of the operator's body"; safety text, so ask Gerald before editing), 5.2 ref 28 (Article 6/Annex I not reached in the fetch), 6.5 ref 8 (DMP "computes orientation angles on-chip"; the datasheet says "hardware accelerator engine").

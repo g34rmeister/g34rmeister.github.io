@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <!--
     Gerald Lê | Personal Developer Portfolio
-    robOSStics: 6.1 Capstone: Build a Simulated Work Cell
+    robOSStics: 10.4 Behavior Trees, Actions and Lifecycle Nodes
 -->
 <html lang="en">
     <head>
-        <title>10.4 Capstone: An Open-Source Cell Monitor — Gerald Lê | robOSStics @ LSU</title>
+        <title>10.4 Behavior Trees, Actions and Lifecycle Nodes — Gerald Lê | robOSStics @ LSU</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Build a ROS 2 cell monitor that tracks robot state, cell I/O, and camera checks from stand-in servers, logs maintenance, and ends with a pull request." />
+        <meta name="description" content="How Nav2 is orchestrated: the NavigateToPose action, the behavior tree in the BT Navigator, and lifecycle nodes for orderly startup and shutdown." />
         <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta name="color-scheme" content="dark light" />
         <meta name="theme-color" content="#ffffff" />
@@ -16,20 +16,20 @@
         <link rel="canonical" href="https://g34rmeister.github.io/robotics-10-4.html" />
         <meta property="og:type" content="article" />
         <meta property="og:site_name" content="Gerald Lê — Portfolio" />
-        <meta property="og:title" content="10.4 Capstone: An Open-Source Cell Monitor — Gerald Lê | robOSStics @ LSU" />
-        <meta property="og:description" content="Build a ROS 2 cell monitor that tracks robot state, cell I/O, and camera checks from stand-in servers, logs maintenance, and ends with a pull request." />
+        <meta property="og:title" content="10.4 Behavior Trees, Actions and Lifecycle Nodes — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="How Nav2 is orchestrated: the NavigateToPose action, the behavior tree in the BT Navigator, and lifecycle nodes for orderly startup and shutdown." />
         <meta property="og:url" content="https://g34rmeister.github.io/robotics-10-4.html" />
         <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
-        <meta property="og:image:alt" content="10.4 Capstone: An Open-Source Cell Monitor, part of robOSStics by Gerald Lê" />
+        <meta property="og:image:alt" content="10.4 Behavior Trees, Actions and Lifecycle Nodes, part of robOSStics by Gerald Lê" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="10.4 Capstone: An Open-Source Cell Monitor — Gerald Lê | robOSStics @ LSU" />
-        <meta name="twitter:description" content="Build a ROS 2 cell monitor that tracks robot state, cell I/O, and camera checks from stand-in servers, logs maintenance, and ends with a pull request." />
+        <meta name="twitter:title" content="10.4 Behavior Trees, Actions and Lifecycle Nodes — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="How Nav2 is orchestrated: the NavigateToPose action, the behavior tree in the BT Navigator, and lifecycle nodes for orderly startup and shutdown." />
         <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
         <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=3f61826b" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -46,17 +46,19 @@
 {
             "@context": "https://schema.org",
             "@type": "LearningResource",
-            "name": "10.4 Capstone: An Open-Source Cell Monitor",
+            "name": "10.4 Behavior Trees, Actions and Lifecycle Nodes",
             "url": "https://g34rmeister.github.io/robotics-10-4.html",
-            "description": "Build a ROS 2 cell monitor that tracks robot state, cell I/O, and camera checks from stand-in servers, logs maintenance, and ends with a pull request.",
+            "description": "How Nav2 is orchestrated: the NavigateToPose action, the behavior tree in the BT Navigator, and lifecycle nodes for orderly startup and shutdown.",
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT6M",
+            "timeRequired": "PT3M",
             "teaches": [
-                "cell monitor",
-                "maintenance log",
-                "draft pull request"
+                "action server",
+                "NavigateToPose",
+                "behavior tree",
+                "BT Navigator",
+                "lifecycle node"
             ],
             "isPartOf": {
                 "@type": "Course",
@@ -100,8 +102,8 @@
                                     <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
                                     <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
                                     <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
-                                    <li><a href="robotics-capstone.html" aria-current="page"><span class="nav-menu-num">10</span> Capstone</a></li>
-                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                    <li><a href="robotics-mobile.html" aria-current="page"><span class="nav-menu-num">10</span> Mobile</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">11</span> Capstone</a></li>
                                 </ul>
                             </details>
                         </li>
@@ -165,8 +167,8 @@
                     <a href="robotics-vision.html"><i class="fas fa-eye" aria-hidden="true"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired" aria-hidden="true"></i> Networks</a>
                     <a href="robotics-maintenance.html"><i class="fas fa-tools" aria-hidden="true"></i> Maintenance</a>
-                    <a href="robotics-capstone.html" class="active" aria-current="page"><i class="fas fa-flag-checkered" aria-hidden="true"></i> Capstone</a>
-                    <a href="robotics-mobile.html"><i class="fas fa-route" aria-hidden="true"></i> Mobile</a>
+                    <a href="robotics-mobile.html" class="active" aria-current="page"><i class="fas fa-route" aria-hidden="true"></i> Mobile</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered" aria-hidden="true"></i> Capstone</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle" aria-hidden="true"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right" aria-hidden="true"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left" aria-hidden="true"></i> Return to Main Portfolio</a>
@@ -181,216 +183,146 @@
             <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
 
             <!-- Main -->
-                <main id="main">
-                    <div class="robotics-article-container">
+            <main id="main">
+                <div class="robotics-article-container">
 
-                        <header class="robotics-article-masthead">
-                            <nav class="article-breadcrumb-bar" aria-label="Breadcrumb">
+                    <header class="robotics-article-masthead">
+                        <nav class="article-breadcrumb-bar" aria-label="Breadcrumb">
                                 <a href="robotics.html" class="article-breadcrumb-link">Course Home</a>
                                 <span class="article-breadcrumb-divider" aria-hidden="true">/</span>
-                                <a href="robotics-capstone.html">Chapter 10 &middot; Capstone Projects</a>
+                                <a href="robotics-mobile.html">Chapter 10 &middot; Mobile Robots and Navigation</a>
                                 <span class="article-breadcrumb-divider" aria-hidden="true">/</span>
                                 <span aria-current="page">10.4</span>
                             </nav>
 
-                            <h1 class="robotics-article-headline">10.4 Capstone: An Open-Source Cell Monitor</h1>
+                        <h1 class="robotics-article-headline">10.4 Behavior Trees, Actions and Lifecycle Nodes</h1>
 
-                            <div class="robotics-article-meta-bar">
-                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
-                            </div>
-                            <nav class="lesson-quicknav" aria-label="Lesson position and previous or next lesson">
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                        <nav class="lesson-quicknav" aria-label="Lesson position and previous or next lesson">
                                 <span class="lesson-quicknav-pos">Chapter 10, lesson 4 of 4</span>
-                                <a class="lesson-quicknav-prev" href="robotics-10-3.html"><span aria-hidden="true">&larr;</span> Previous<span class="sr-only">: 10.3 Capstone: Speed-Controlled Wheel</span></a>
-                                <a class="lesson-quicknav-next" href="robotics-mobile.html">Next<span class="sr-only">: Chapter 11: Mobile Robots and Navigation</span> <span aria-hidden="true">&rarr;</span></a>
+                                <a class="lesson-quicknav-prev" href="robotics-10-3.html"><span aria-hidden="true">&larr;</span> Previous<span class="sr-only">: 10.3 Planners, Controllers and Recoveries</span></a>
+                                <a class="lesson-quicknav-next" href="robotics-capstone.html">Next<span class="sr-only">: Chapter 11: Capstone Projects</span> <span aria-hidden="true">&rarr;</span></a>
                             </nav>
-                        </header>
+                    </header>
 
-                        <article class="robotics-article-body">
+                    <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. What you will build and why</h2>
-                            <p>
-                                The first three capstones each go deep in one area. This one uses a little of everything. You will build a small open-source program that watches a robot cell. It reads the robot's state, the cell's handshake signals and a camera check, and it writes a maintenance log. Finally, you will publish it so that someone else could use it and contribute to it.
-                            </p>
-                            <p>
-                                Everything runs on your own computer. The robot and the cell I/O are the stand-in servers from the labs in <a href="robotics-8-3.html">8.3</a> and <a href="robotics-9-6.html">9.6</a>, and the camera is the test image publisher from <a href="robotics-7-6.html">7.6</a>. On a real cell you would point the same program at the robot's IP address.
-                            </p>
-                            <p>
-                                It is a monitor, not a controller. It reads and reports, and it never clears a stop on its own. UR's service manual says robot stops must never be acknowledged and reset automatically; resuming must be a deliberate action by a person.<sup><a href="#ref-1">[1]</a></sup> Safety functions stay on the safety-rated paths from <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a> and <a href="robotics-8-4.html">8.4 Safety over the Network</a>.
-                            </p>
-                            <figure class="lesson-diagram">
-                                <svg viewBox="0 0 400 305" role="img" aria-label="Architecture diagram of the capstone cell monitor: stand-in servers feed the ROS 2 monitor node, which records a maintenance log and is published in a public repository with a pull request." xmlns="http://www.w3.org/2000/svg">
-                                    <defs>
-                                        <marker id="arrow-10-4-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                                            <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
-                                        </marker>
-                                    </defs>
-                                    <rect class="d-box" x="15" y="20" width="165" height="44" rx="5"/>
-                                    <text class="d-title" x="97" y="38" text-anchor="middle">Dashboard stand-in</text>
-                                    <text class="d-muted" x="97" y="54" text-anchor="middle">port 29999: robot state</text>
-                                    <rect class="d-box" x="15" y="74" width="165" height="44" rx="5"/>
-                                    <text class="d-title" x="97" y="92" text-anchor="middle">Modbus stand-in</text>
-                                    <text class="d-muted" x="97" y="108" text-anchor="middle">fake_ur_server: cell I/O</text>
-                                    <rect class="d-box" x="15" y="128" width="165" height="44" rx="5"/>
-                                    <text class="d-title" x="97" y="146" text-anchor="middle">cam2image publisher</text>
-                                    <text class="d-muted" x="97" y="162" text-anchor="middle">camera check images</text>
-                                    <rect class="d-box-gold" x="220" y="20" width="165" height="152" rx="6"/>
-                                    <text class="d-title" x="302" y="44" text-anchor="middle">ROS 2 Cell Monitor</text>
-                                    <text class="d-muted" x="302" y="66" text-anchor="middle">reads robotmode state</text>
-                                    <text class="d-muted" x="302" y="84" text-anchor="middle">reads cell handshake I/O</text>
-                                    <text class="d-muted" x="302" y="102" text-anchor="middle">runs camera part check</text>
-                                    <text class="d-muted" x="302" y="124" text-anchor="middle">publishes topic status</text>
-                                    <text class="d-muted" x="302" y="146" text-anchor="middle">never resets a stop</text>
-                                    <line class="d-line" x1="180" y1="42" x2="218" y2="42" marker-end="url(#arrow-10-4-1)"/>
-                                    <line class="d-line" x1="180" y1="96" x2="218" y2="96" marker-end="url(#arrow-10-4-1)"/>
-                                    <line class="d-line" x1="180" y1="150" x2="218" y2="150" marker-end="url(#arrow-10-4-1)"/>
-                                    <rect class="d-box" x="15" y="215" width="165" height="72" rx="5"/>
-                                    <text class="d-title" x="97" y="236" text-anchor="middle">Maintenance Log</text>
-                                    <text class="d-muted" x="97" y="256" text-anchor="middle">state changes with time</text>
-                                    <text class="d-muted" x="97" y="274" text-anchor="middle">repeating-stop warning</text>
-                                    <rect class="d-box" x="220" y="215" width="165" height="72" rx="5"/>
-                                    <text class="d-title" x="302" y="236" text-anchor="middle">Public Repository</text>
-                                    <text class="d-muted" x="302" y="256" text-anchor="middle">README &amp; LICENSE</text>
-                                    <text class="d-muted" x="302" y="274" text-anchor="middle">CONTRIBUTING &amp; PR</text>
-                                    <path class="d-line" d="M255,172 C255,195 97,192 97,213" marker-end="url(#arrow-10-4-1)"/>
-                                    <line class="d-line" x1="302" y1="172" x2="302" y2="213" marker-end="url(#arrow-10-4-1)"/>
-                                </svg>
-                                <figcaption>Architecture of what the capstone builds: stand-in servers feeding the ROS 2 monitor node, which records a maintenance log and is published in a public repository.</figcaption>
-                            </figure>
+                        <h2 class="article-section-title">01. Actions: asking for a long task</h2>
+                        <p>
+                            Driving across a building takes time, so Nav2 is built on ROS 2 actions. Action servers are a common way to control long-running tasks: a client requests a task, the server provides feedback while it runs, and a result comes back at the end.<sup><a href="#ref-1">[1]</a></sup> For navigation, the request may be a position. The feedback may be the time spent navigating and the distance to the goal, and the result is a boolean for success.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            A client application reaches Nav2 through a <code>NavigateToPose</code> action, which goes to the BT Navigator. The BT Navigator in turn uses actions to ask the smaller servers for plans, control efforts and recoveries.<sup><a href="#ref-1">[1]</a></sup> Each server has its own <code>.action</code> type in <code>nav2_msgs</code>.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
 
-                            <h2 class="article-section-title">02. Prerequisites</h2>
-                            <ul class="article-spec-list">
-                                <li><a href="robotics-3-2.html">3.2</a> to <a href="robotics-3-4.html">3.4</a>: how open-source contributions and pull requests work.</li>
-                                <li><a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a>: a Python ROS 2 package with a node and a topic.</li>
-                                <li><a href="robotics-7-6.html">7.6 Lab: A ROS 2 Camera Pipeline</a>: <code>cv_bridge</code>, thresholds and the <code>cam2image</code> test source.</li>
-                                <li><a href="robotics-8-3.html">8.3 Lab: Connecting a Robot to a PLC</a>: Modbus registers with <code>pymodbus</code>.</li>
-                                <li><a href="robotics-9-2.html">9.2 A Troubleshooting Method</a> and <a href="robotics-9-6.html">9.6 Lab: Check a Robot's State from Python</a>: logs, stops and the Dashboard Server.</li>
-                            </ul>
+                        <h2 class="article-section-title">02. Behavior trees decide what happens next</h2>
+                        <p>
+                            A behavior tree is a tree structure of tasks to be completed.<sup><a href="#ref-2">[2]</a></sup> Nav2&rsquo;s documentation contrasts it with a finite state machine (<a href="robotics-6-7.html">6.7 State Machines</a>), which may have dozens of states and hundreds of transitions.<sup><a href="#ref-2">[2]</a></sup> With a tree, basic primitives can be created once and reused for many behaviors.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Nav2 uses BehaviorTree.CPP V4 as its library. Node plugins are assembled into a tree inside the BT Navigator, and the tree itself is read from an XML file.<sup><a href="#ref-2">[2]</a></sup> When the tree ticks one of those nodes, the node calls the matching action server from <a href="robotics-10-3.html">10.3</a>.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            The library can load subtrees, so the whole Nav2 tree can be used as a single node in a higher-level tree.<sup><a href="#ref-2">[2]</a></sup> The documentation also points out that keeping the application logic in the tree, with independent task servers, allows formal analysis.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
 
-                            <h2 class="article-section-title">03. Software (all free)</h2>
-                            <ul class="article-spec-list">
-                                <li>ROS 2 as installed in <a href="robotics-4-3.html">4.3</a>, Python 3, and <code>pymodbus==3.16.1</code>.</li>
-                                <li>The stand-in servers <code>fake_ur_server.py</code> (8.3) and <code>fake_dashboard_server.py</code> (9.6).</li>
-                                <li>The <code>image_tools</code> demo: with <code>burger_mode</code> turned on, <code>cam2image</code> publishes a generated test image instead of a camera feed.<sup><a href="#ref-2">[2]</a></sup></li>
-                                <li>A GitHub account.</li>
-                            </ul>
+                        <h2 class="article-section-title">03. Lifecycle nodes: starting and stopping in order</h2>
+                        <p>
+                            All of Nav2&rsquo;s servers are lifecycle (managed) nodes: nodes with state machine transitions for bringup and teardown.<sup><a href="#ref-1">[1]</a></sup> This helps a ROS system behave deterministically at startup and shutdown.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 168" role="img" aria-label="Lifecycle states in a row: unconfigured, inactive and active. Configure moves a node from unconfigured to inactive and activate moves it to active; deactivate and clean up go back the other way. From unconfigured, shutting down leads to the finalized state" xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-11-4-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="8" y="34" width="104" height="40" rx="4"/><text class="d-text" x="60" y="59" text-anchor="middle">Unconfigured</text><rect class="d-box" x="148" y="34" width="104" height="40" rx="4"/><text class="d-text" x="200" y="59" text-anchor="middle">Inactive</text><rect class="d-box-gold" x="288" y="34" width="104" height="40" rx="4"/><text class="d-text" x="340" y="59" text-anchor="middle">Active</text><line class="d-line" x1="112" y1="46" x2="146" y2="46" marker-end="url(#arrow-11-4-1)"/><line class="d-line" x1="252" y1="46" x2="286" y2="46" marker-end="url(#arrow-11-4-1)"/><line class="d-line" x1="148" y1="62" x2="114" y2="62" marker-end="url(#arrow-11-4-1)"/><line class="d-line" x1="288" y1="62" x2="254" y2="62" marker-end="url(#arrow-11-4-1)"/><text class="d-muted" x="130" y="24" text-anchor="middle">configure</text><text class="d-muted" x="270" y="24" text-anchor="middle">activate</text><text class="d-muted" x="130" y="92" text-anchor="middle">clean up</text><text class="d-muted" x="270" y="92" text-anchor="middle">deactivate</text><rect class="d-box" x="8" y="124" width="104" height="36" rx="4"/><text class="d-text" x="60" y="147" text-anchor="middle">Finalized</text><line class="d-line" x1="60" y1="74" x2="60" y2="122" marker-end="url(#arrow-11-4-1)"/><text class="d-muted" x="68" y="112" text-anchor="start">shut down</text>
+                            </svg>
+                            <figcaption>The lifecycle states Nav2&rsquo;s servers move through at startup and shutdown.<sup><a href="#ref-1">[1]</a></sup></figcaption>
+                        </figure>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">A node starts in the <strong>unconfigured</strong> state. Only its constructor has run, and that should not set up ROS networking or read parameters.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item">Configuring moves it to <strong>inactive</strong>. The <code>on_configure()</code> method sets up the parameters and the ROS networking interfaces.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item">Activating, through <code>on_activate()</code>, switches the networking interfaces on, and the node starts processing information.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item">To shut down, the node goes through deactivating, cleaning up and shutting down, and ends in the <strong>finalized</strong> state.<sup><a href="#ref-1">[1]</a></sup></li>
+                        </ul>
+                        <p>
+                            The transitions are driven by the launch system or by Nav2&rsquo;s lifecycle manager.<sup><a href="#ref-1">[1]</a></sup> <a href="robotics-4-7.html">4.7 Launch Files and Parameters</a> covers launch files.
+                        </p>
 
-                            <h2 class="article-section-title">04. Milestones and what to hand in</h2>
-                            <ol class="article-spec-list">
-                                <li><span class="spec-label">M0 Plan and repository:</span> a public repository with a README that says what the monitor does and how to run it, and a LICENSE file. ROS 2's developer guide asks every package to have a LICENSE file, typically Apache 2.0, and a README with a description, usage examples, and build and test instructions.<sup><a href="#ref-3">[3]</a></sup> Hand in: the repository link.</li>
-                                <li><span class="spec-label">M1 Robot state:</span> a ROS 2 node that connects to the Dashboard Server stand-in on port 29999, asks <code>robotmode</code> and <code>safetystatus</code> once a second, and publishes the answers on a topic.<sup><a href="#ref-4">[4]</a></sup> Hand in: <code>ros2 topic echo</code> output while you trigger and clear the stand-in's protective stop by hand.</li>
-                                <li><span class="spec-label">M2 Cell handshake:</span> read and write the handshake signals on the Modbus stand-in. Put up to 16 on/off signals in one general-purpose register (UR's general-purpose registers are 128 to 255).<sup><a href="#ref-5">[5]</a></sup> Hand in: a table of which bit means what, and a short run log.</li>
-                                <li><span class="spec-label">M3 Camera check:</span> subscribe to the <code>cam2image</code> images and publish a simple "part present" flag from a threshold or contour count, as in 7.3 and 7.6. Hand in: the threshold you chose and why.</li>
-                                <li><span class="spec-label">M4 Maintenance log:</span> write every state change to a log file with a time stamp, and raise a warning, not a reset, when protective stops repeat. Hand in: a log excerpt and the checklist from <a href="robotics-9-3.html">9.3</a> you would follow next.</li>
-                                <li><span class="spec-label">M5 Open it up:</span> add a CONTRIBUTING file and open one issue that a newcomer could take. Then open one real pull request: to your classmates' monitor, to robOSStics, or to a robotics project from Chapter 3. Pull requests do not have to be finished; you can open one early as a draft pull request to get feedback.<sup><a href="#ref-6">[6]</a></sup> Hand in: the links.</li>
+                        <h2 class="article-section-title">04. Where to go next</h2>
+                        <p>
+                            This chapter has no lab yet: robOSStics only publishes lab code that has been run, and a Nav2 simulation lab is still to be written and tested. Until then, Nav2&rsquo;s own concept pages, which this chapter follows, are grouped under the same five headings: ROS 2, behavior trees, navigation servers, state estimation and environmental representation.<sup><a href="#ref-4">[4]</a></sup> To contribute to Nav2 itself, start from <a href="robotics-3-5.html">3.5 Case Study: Contributing to Nav2</a>.
+                        </p>
+
+                        <h2 class="article-section-title">05. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What three things pass between an action client and an action server during a navigation task?<details class="check-answer"><summary>Show answer</summary><p>A request (for navigation, a position), feedback while the task runs (for navigation, the time spent navigating and the distance to the goal), and a result at the end (for navigation, a boolean for success). <span class="check-answer-src">(Section 01)</span></p></details></li>
+                            <li class="article-spec-item">Why does Nav2 use a behavior tree in place of one large finite state machine?<details class="check-answer"><summary>Show answer</summary><p>Nav2&rsquo;s documentation contrasts a behavior tree with a finite state machine, which may have dozens of states and hundreds of transitions. With a tree, basic primitives can be created once and reused for many behaviors. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">In which lifecycle state is a node right after its constructor runs, and which two transitions bring it to the state where it processes information?<details class="check-answer"><summary>Show answer</summary><p>It is in the unconfigured state. Configuring (which runs <code>on_configure()</code>) moves it to inactive, and activating (through <code>on_activate()</code>) switches the networking interfaces on so the node starts processing information. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                        </ul>
+
+                        <div class="article-callout try-it">
+                            <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                            <ol>
+                                <li>A navigation goal is sent, the planner finds a path, and the controller starts to follow it. List every action involved, from the client application down to the task servers.</li>
+                                <li>Sketch a small behavior tree for &ldquo;go to the charger&rdquo; that uses the whole Nav2 tree as one of its nodes. Which feature of the library makes that possible?</li>
+                                <li>A server&rsquo;s parameters are read in its constructor. Which rule from this lesson does that break, and in which method should that work be done?</li>
                             </ol>
+                        </div>
 
-                        <p>
-                            One way to lay out the repository is shown below. It is the Python package layout from <a href="robotics-4-6.html">4.6</a> with the capstone&rsquo;s documents added; the names are suggestions, not requirements.
-                        </p>
-                        <pre class="article-code"><code>cell_monitor/                 the repository
-├── README.md                 what it does, how to run it (M0)
-├── LICENSE                   M0
-├── CONTRIBUTING.md           M5
-├── docs/
-│   ├── handshake-bits.md     which bit means what (M2)
-│   └── test-results.md       pass conditions and results (section 05)
-├── package.xml               ROS 2 package, as in 4.6
-├── setup.py                  entry point for the monitor node
-└── cell_monitor/
-    ├── __init__.py
-    ├── monitor_node.py       M1 to M4
-    └── maintenance_log.py    M4</code></pre>
-                        <p>
-                            For M4, one line per state change is enough. The format below is only an example; what matters is a time stamp, the old and new state, and a warning in place of a reset.
-                        </p>
-                        <pre class="article-code"><code>2026-11-09T14:02:11  robotmode     RUNNING
-2026-11-09T14:02:11  safetystatus  NORMAL
-2026-11-09T14:07:43  safetystatus  NORMAL -&gt; PROTECTIVE_STOP
-2026-11-09T14:08:20  safetystatus  PROTECTIVE_STOP -&gt; NORMAL   (cleared by a person)
-2026-11-09T14:15:02  safetystatus  NORMAL -&gt; PROTECTIVE_STOP
-2026-11-09T14:15:02  WARNING       2 protective stops in 10 minutes; not resetting, see the 9.3 checklist</code></pre>
+                            <!-- oss-note -->
+                            <div class="article-callout oss-note">
+                                <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>
+                                <p>Projects used or discussed here: <a href="robotics-oss-map.html#ros-2">ROS 2</a> and <a href="robotics-oss-map.html#nav2">Nav2</a>. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows each project&rsquo;s licence, where the code lives and how to make a first contribution.</p>
+                            </div>
+                            <!-- /oss-note -->
 
-                            <h2 class="article-section-title">05. Testing and verification</h2>
-                            <p>
-                                Write the pass conditions before you test. For example: M1 reports <code>PROTECTIVE_STOP</code> within two seconds of the stand-in entering it; M2 reads back exactly the bits you wrote; M4 never sends <code>unlock protective stop</code>. Run each test, record the result, and keep the record in the repository.
-                            </p>
+                        <h2 class="article-section-title">06. References</h2>
+                        <p class="references-note">Source check (November 2026): 4 of 4 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Nav2, &ldquo;ROS 2&rdquo; (navigation concepts). <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/ros2.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/ros2.md</a>.</li>
+                            <li id="ref-2">Nav2, &ldquo;Behavior Trees.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md</a>.</li>
+                            <li id="ref-3">Nav2, &ldquo;Navigation Servers.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md</a>.</li>
+                            <li id="ref-4">Nav2, &ldquo;Navigation Concepts.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md</a>.</li>
+                        </ol>
 
-                        <p>
-                            A small table is enough for the record. Fill in the last two columns when you run each test:
-                        </p>
-                        <table class="article-table" style="width: 100%;">
-                            <thead>
-                                <tr><th scope="col">Milestone</th><th scope="col">Pass condition</th><th scope="col">How to test it</th><th scope="col">Result</th><th scope="col">Date</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>M1</td><td>Reports <code>PROTECTIVE_STOP</code> within two seconds of the stand-in entering it</td><td>Trigger the stop on the stand-in and time the topic output</td><td></td><td></td></tr>
-                                <tr><td>M2</td><td>Reads back exactly the bits that were written</td><td>Write a known pattern to the register, read it, compare</td><td></td><td></td></tr>
-                                <tr><td>M4</td><td>Never sends <code>unlock protective stop</code></td><td>Search the code and the stand-in&rsquo;s received commands</td><td></td><td></td></tr>
-                            </tbody>
-                        </table>
 
-                            <h2 class="article-section-title">06. Grading rubric</h2>
-                            <p>
-                                Use the same four-level rubric format as <a href="robotics-10-1.html">10.1</a>, with one row per milestone (M0 to M5) and two more rows: "the monitor never resets a stop" (pass/fail) and "someone else could run it from your README".
-                            </p>
-
-                            <h2 class="article-section-title">07. Reflection questions and stretch goals</h2>
-                            <ul class="article-spec-list">
-                                <li>Which signal in your monitor would you trust least on a real cell, and why?</li>
-                                <li>What would a maintainer of your repository need to know before accepting a pull request?</li>
-                                <li>Stretch: show the robot state and the "part present" flag in RViz2 or a small web page.</li>
-                                <li>Stretch: watch your own monitor's Modbus traffic in Wireshark, as in <a href="robotics-8-6.html">8.6</a>.</li>
-                            </ul>
-
-                            <h2 class="article-section-title">08. References</h2>
-                            <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
-                            <ol class="article-spec-list">
-                                <li id="ref-1">Universal Robots, &ldquo;Service Handbook UR Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf</a>.</li>
-                                <li id="ref-2">ROS 2 demos, &ldquo;image_tools README.&rdquo; <a href="https://github.com/ros2/demos/blob/rolling/image_tools/README.md" target="_blank" rel="noopener noreferrer">github.com/ros2/demos/blob/rolling/image_tools/README.md</a>.</li>
-                                <li id="ref-3">ROS 2 Documentation, &ldquo;ROS 2 developer guide.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation (Developer-Guide.rst)</a>.</li>
-                                <li id="ref-4">Universal Robots, &ldquo;Dashboard Server Remote Control Interface e-Series.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-dashboard/Dashboard_table.htm</a>.</li>
-                                <li id="ref-5">Universal Robots, &ldquo;Modbus server bit access.&rdquo; <a href="https://www.universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/" target="_blank" rel="noopener noreferrer">universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access</a>.</li>
-                                <li id="ref-6">Open Source Guides, &ldquo;How to Contribute to Open Source.&rdquo; <a href="https://opensource.guide/how-to-contribute/" target="_blank" rel="noopener noreferrer">opensource.guide/how-to-contribute</a>.</li>
-                            </ol>
-
-                            <!-- Footer Navigation -->
-                            <div class="article-footer-nav">
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
                                 <a href="robotics-10-3.html" class="article-nav-card">
                                     <span class="article-nav-dir">&larr; Previous</span>
-                                    <span class="article-nav-target">10.3 Capstone: Speed-Controlled Wheel</span>
+                                    <span class="article-nav-target">10.3 Planners, Controllers and Recoveries</span>
                                 </a>
-                                <a href="robotics-mobile.html" class="article-nav-card" style="text-align: right;">
+                                <a href="robotics-capstone.html" class="article-nav-card" style="text-align: right;">
                                     <span class="article-nav-dir">Next chapter &rarr;</span>
-                                    <span class="article-nav-target">Chapter 11: Mobile Robots and Navigation</span>
+                                    <span class="article-nav-target">Chapter 11: Capstone Projects</span>
                                 </a>
                             </div>
 
+                    </article>
 
-                        </article>
-
-                    </div>
-                </main>
+                </div>
+            </main>
 
             <!-- Footer -->
-                <footer id="footer">
-                    <div class="container">
-                        <div id="copyright">
-                            <ul class="menu">
-                                <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
-                                <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
-                                <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
-                            </ul>
-                        </div>
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
+                            <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
+                            <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
+                        </ul>
                     </div>
-                </footer>
+                </div>
+            </footer>
 
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
-            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
-            <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
+        <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
+        <script src="assets/js/course-data.js?v=d856948c" defer></script>
+        <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
+        <script src="assets/js/learning.js?v=e1757e02" defer></script>
 
     </body>
 </html>

@@ -103,11 +103,25 @@
 						data.migrated = 2;
 						saveProgress(data);
 					}
+					if (Number(data.migrated) < 3) {
+						// On 2026-11-10 the capstones (old chapter 10) and mobile robots (old chapter 11) swapped numbers.
+						var swap = { '10': '11', '11': '10' };
+						var c3 = {}, q3 = {};
+						Object.keys(data.completed).forEach(function (id) {
+							var parts = id.split('-');
+							c3[(swap[parts[0]] || parts[0]) + '-' + parts.slice(1).join('-')] = data.completed[id];
+						});
+						Object.keys(data.quizzes).forEach(function (ch) { q3[swap[String(ch)] || ch] = data.quizzes[ch]; });
+						data.completed = c3;
+						data.quizzes = q3;
+						data.migrated = 3;
+						saveProgress(data);
+					}
 					return data;
 				}
 			}
 		} catch (e) { /* storage blocked or corrupt: start fresh */ }
-		return { completed: {}, quizzes: {}, migrated: 2 };
+		return { completed: {}, quizzes: {}, migrated: 3 };
 	}
 
 	function saveProgress(p) {

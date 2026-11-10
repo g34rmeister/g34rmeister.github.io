@@ -394,54 +394,54 @@ Source checks, all lessons: fixed 131, partial 36, unreachable 48, verified 1083
 - Key terms: Dashboard Server, robotmode, safetystatus, programState, protective stop, unlock protective stop
 - Sections: The Dashboard Server interface and remote control · Querying controller modes and execution state · Protective stops and emergency stops · The stop recovery workflow and the five-second rule · Lab: Querying robot state with Python · Lab: Clearing stops and resuming program execution · Check your understanding
 
-## Chapter 10: Capstone Projects (`robotics-capstone.html`, 4 lessons, 70 min)
+## Chapter 10: Mobile Robots and Navigation (`robotics-mobile.html`, 4 lessons, 13 min)
 
-### 10.1 Capstone: Build a Simulated Work Cell
-`robotics-10-1.html` · 20 min · 23 refs (fixed 6, partial 1, unreachable 2, verified 14) · 1 figures · 1 Try it
-- Objectives: Plan a robot work cell on paper with a layout sketch, an I/O list and a sequence chart before programming it. / Run a complete pick-and-place cell in URSim (Docker) or ABB RobotStudio with simulated gripper outputs and a part-present input. / Set up and test a simulated safety configuration (UR safety plane and reduced limits, or an ABB stand-in) and explain why it does not carry over to a real cell. / Verify the cell with a FAT-style test sheet and reflect on the results against a four-level rubric.
-- Key terms: URSim, factory acceptance test (FAT), safety planes, safety configuration, SafeMove, sequence chart, I/O list, analytic rubric
-- Sections: What you will build and why · Prerequisites · Software and equipment (free options first) · Milestones and what to hand in · Build guidance: M0 plan and M1 cell up · Build guidance: M2 integrated pick-and-place · Build guidance: M3 safety configuration · Testing and verification: M4 FAT-style test sheet · Common problems · Grading rubric · Reflection questions and stretch goals
-
-### 10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
-`robotics-10-2.html` · 20 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
-- Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Run a UR5e on ros2_control mock hardware with MoveIt, add table and part collision objects, and describe mock hardware limits. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach when the arm has no gripper. / Test the task over randomized object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
-- Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene
-- Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals
-
-### 10.3 Capstone: Speed-Controlled Wheel
-`robotics-10-3.html` · 24 min · 18 refs (fixed 8, verified 10) · 1 figures · 1 Try it
-- Objectives: Wire an Arduino, quadrature-encoder gearmotor and TB6612FNG H-bridge with separate supplies, a common ground, a fuse and pins that avoid interrupt/PWM conflicts. / Convert encoder counts per sample period into RPM using CPR times gear ratio, and explain how the sample time sets speed resolution. / Close a PID speed loop with the Arduino PID Library and integrate it into a state machine with ramps and a manually reset FAULT state for stalls and encoder loss. / Plan milestones, test the system against pass conditions set in advance, and assess the result with a four-level rubric and written reflection.
-- Key terms: H-bridge, TB6612FNG, CPR, interrupt, setpoint, integral windup, state machine, stall current, sample time
-- Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals
-
-### 10.4 Capstone: An Open-Source Cell Monitor
-`robotics-10-4.html` · 6 min · 6 refs (verified 6) · 1 figures · 0 Try it
-- Objectives: Build a ROS 2 node that reports a robot's mode and safety status from the Dashboard Server. / Read and write packed handshake bits on a Modbus server and add a simple camera check. / Keep a time-stamped maintenance log that warns about repeated stops without ever resetting them. / Publish the project with a README, LICENSE and CONTRIBUTING file and open a real pull request.
-- Key terms: cell monitor, maintenance log, draft pull request
-- Sections: What you will build and why · Prerequisites · Software (all free) · Milestones and what to hand in · Testing and verification · Grading rubric · Reflection questions and stretch goals
-
-## Chapter 11: Mobile Robots and Navigation (`robotics-mobile.html`, 4 lessons, 13 min)
-
-### 11.1 Where Is the Robot? Frames, Odometry and Localization
-`robotics-11-1.html` · 4 min · 2 refs (verified 2) · 1 figures · 1 Try it
+### 10.1 Where Is the Robot? Frames, Odometry and Localization
+`robotics-10-1.html` · 4 min · 2 refs (verified 2) · 1 figures · 1 Try it
 - Objectives: Explain what the map, odom and base_link frames are for and how they differ in drift and continuity. / Describe the transform chain Nav2 needs and which system provides each link. / Say what odometry, AMCL and SLAM Toolbox each contribute to knowing where the robot is.
 - Key terms: base_link, odom frame, map frame, REP 105, TF2, odometry, robot_localization, AMCL, SLAM
 - Sections: From a fixed arm to a moving base · Three coordinate frames · The transform chain Nav2 needs · Odometry: smooth, but it drifts · Global positioning: correcting the drift · Check your understanding
 
-### 11.2 Costmaps: How the Robot Sees Its Surroundings
-`robotics-11-2.html` · 3 min · 3 refs (verified 3) · 1 figures · 1 Try it
+### 10.2 Costmaps: How the Robot Sees Its Surroundings
+`robotics-10-2.html` · 3 min · 3 refs (verified 3) · 1 figures · 1 Try it
 - Objectives: Describe a costmap and the four kinds of cost a cell can hold. / Explain what costmap layers and the inflation layer add. / Give examples of what costmap filters and the robot footprint are used for.
 - Key terms: costmap, costmap layer, inflation layer, robot footprint, costmap filter, filter mask
 - Sections: One shared picture of the world · The costmap · Layers and inflation · Two costmaps and one robot shape · Costmap filters: rules painted on the map · Other representations · Check your understanding
 
-### 11.3 Planners, Controllers and Recoveries
-`robotics-11-3.html` · 3 min · 1 refs (verified 1) · 1 figures · 1 Try it
+### 10.3 Planners, Controllers and Recoveries
+`robotics-10-3.html` · 3 min · 1 refs (verified 1) · 1 figures · 1 Try it
 - Objectives: Name the Nav2 task servers and say what each one computes. / Tell a planner from a controller by the job it does and the costmap it uses. / Describe what recovery behaviors and the waypoint follower are for.
 - Key terms: planner, controller, smoother, route server, recovery behavior, waypoint following
 - Sections: Servers that host plugins · Planners · Smoothers and the route server · Controllers · Behaviors and recovery · Waypoints and fleets · Check your understanding
 
-### 11.4 Behavior Trees, Actions and Lifecycle Nodes
-`robotics-11-4.html` · 3 min · 4 refs (verified 4) · 1 figures · 1 Try it
+### 10.4 Behavior Trees, Actions and Lifecycle Nodes
+`robotics-10-4.html` · 3 min · 4 refs (verified 4) · 1 figures · 1 Try it
 - Objectives: Describe how a NavigateToPose action request reaches the task servers. / Explain what a behavior tree is and why Nav2 uses one. / List the lifecycle states a Nav2 server passes through at startup and shutdown.
 - Key terms: action server, NavigateToPose, behavior tree, BT Navigator, lifecycle node
 - Sections: Actions: asking for a long task · Behavior trees decide what happens next · Lifecycle nodes: starting and stopping in order · Where to go next · Check your understanding
+
+## Chapter 11: Capstone Projects (`robotics-capstone.html`, 4 lessons, 70 min)
+
+### 11.1 Capstone: Build a Simulated Work Cell
+`robotics-11-1.html` · 20 min · 23 refs (fixed 6, partial 1, unreachable 2, verified 14) · 1 figures · 1 Try it
+- Objectives: Plan a robot work cell on paper with a layout sketch, an I/O list and a sequence chart before programming it. / Run a complete pick-and-place cell in URSim (Docker) or ABB RobotStudio with simulated gripper outputs and a part-present input. / Set up and test a simulated safety configuration (UR safety plane and reduced limits, or an ABB stand-in) and explain why it does not carry over to a real cell. / Verify the cell with a FAT-style test sheet and reflect on the results against a four-level rubric.
+- Key terms: URSim, factory acceptance test (FAT), safety planes, safety configuration, SafeMove, sequence chart, I/O list, analytic rubric
+- Sections: What you will build and why · Prerequisites · Software and equipment (free options first) · Milestones and what to hand in · Build guidance: M0 plan and M1 cell up · Build guidance: M2 integrated pick-and-place · Build guidance: M3 safety configuration · Testing and verification: M4 FAT-style test sheet · Common problems · Grading rubric · Reflection questions and stretch goals
+
+### 11.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
+`robotics-11-2.html` · 20 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
+- Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Run a UR5e on ros2_control mock hardware with MoveIt, add table and part collision objects, and describe mock hardware limits. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach when the arm has no gripper. / Test the task over randomized object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
+- Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene
+- Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals
+
+### 11.3 Capstone: Speed-Controlled Wheel
+`robotics-11-3.html` · 24 min · 18 refs (fixed 8, verified 10) · 1 figures · 1 Try it
+- Objectives: Wire an Arduino, quadrature-encoder gearmotor and TB6612FNG H-bridge with separate supplies, a common ground, a fuse and pins that avoid interrupt/PWM conflicts. / Convert encoder counts per sample period into RPM using CPR times gear ratio, and explain how the sample time sets speed resolution. / Close a PID speed loop with the Arduino PID Library and integrate it into a state machine with ramps and a manually reset FAULT state for stalls and encoder loss. / Plan milestones, test the system against pass conditions set in advance, and assess the result with a four-level rubric and written reflection.
+- Key terms: H-bridge, TB6612FNG, CPR, interrupt, setpoint, integral windup, state machine, stall current, sample time
+- Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals
+
+### 11.4 Capstone: An Open-Source Cell Monitor
+`robotics-11-4.html` · 6 min · 6 refs (verified 6) · 1 figures · 0 Try it
+- Objectives: Build a ROS 2 node that reports a robot's mode and safety status from the Dashboard Server. / Read and write packed handshake bits on a Modbus server and add a simple camera check. / Keep a time-stamped maintenance log that warns about repeated stops without ever resetting them. / Publish the project with a README, LICENSE and CONTRIBUTING file and open a real pull request.
+- Key terms: cell monitor, maintenance log, draft pull request
+- Sections: What you will build and why · Prerequisites · Software (all free) · Milestones and what to hand in · Testing and verification · Grading rubric · Reflection questions and stretch goals
