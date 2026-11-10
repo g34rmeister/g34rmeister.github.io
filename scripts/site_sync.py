@@ -6,16 +6,21 @@ Sources:
 
 Generated (only these regions are touched; everything else in a page is left alone):
   sitemap.xml                         one <url> per page (keeps existing lastmod/priority)
-  .github/workflows/site-hygiene.yml  the (chapter, lesson count) tuple in the page-set check
-  robotics.html                       lesson rows in each chapter's feed
+  .github/workflows/site-hygiene.yml  the chapter page names and the (chapter, lesson count) tuple in the page-set check
+  robotics.html                       lesson rows in each chapter's feed; a whole chapter block (header, featured
+                                      card from the manifest, rows, quiz row) when a chapter has none
   chapter pages                       "Articles in this chapter" list and footer nav
   lesson pages                        prev/next footer nav, source-check line under References
                                       (counts from docs/sources.json)
   every robotics-* page               navbar and drawer links; ?v= on assets/ links set to a
                                       hash of the file, so caches refresh exactly when it changes
-  assets/js/course-data.js            each lesson's "minutes" (reading time computed from the page)
+  assets/js/course-data.js            each lesson's "minutes" (reading time computed from the page) and
+                                      "quizCounts" (questions per chapter, counted in assets/js/quiz/ch<N>.js)
   lesson pages                        a schema.org LearningResource JSON-LD block in <head>
   robotics-teaching.html              the per-chapter table (lessons, minutes, quiz questions)
+  robotics-quiz.html                  the list of chapter quizzes
+  lesson pages, robotics-oss-map.html the 'Open source in this lesson' box, and the map's anchors and
+                                      'Used in these lessons' lines (from ossProjects in the manifest)
   footer "last updated" fallback      the page's last commit month (written locally only, never
                                       checked in CI, because CI checkouts are shallow)
 
@@ -53,6 +58,10 @@ def load_course():
     for ch in chapters:
         extra = manifest[str(ch['id'])]
         ch['nav'], ch['icon'] = extra['nav'], extra['icon']
+        for key in ('featuredTitle', 'featuredDesc'):
+            if key not in extra:
+                sys.exit(f'scripts/site_manifest.json: chapter {ch["id"]} needs "{key}" (the featured card on robotics.html)')
+        ch['featuredTitle'], ch['featuredDesc'] = extra['featuredTitle'], extra['featuredDesc']
         for lesson in ch['lessons']:
             lesson['url'] = f'robotics-{lesson["id"]}.html'
             lesson['label'] = f'{lesson["id"].replace("-", ".")} {lesson["title"]}'
@@ -63,10 +72,12 @@ def load_course():
 
 
 def load_quiz_counts():
-    js = ("global.window={};require(process.argv[1]);"
-          "const q=window.RISE_COURSE.quizzes,o={};for(const k in q)o[k]=(q[k].questions||q[k]).length;"
+    """Questions per chapter, counted in assets/js/quiz/ch<N>.js (course-data.js holds only quizCounts)."""
+    js = ("global.window={};const fs=require('fs'),path=require('path');require(process.argv[1]);"
+          "const d=process.argv[2];for(const f of fs.readdirSync(d).sort())if(/^ch\\d+\\.js$/.test(f))require(path.join(d,f));"
+          "const q=window.RISE_COURSE.quizzes,o={};for(const k in q)o[k]=q[k].length;"
           "process.stdout.write(JSON.stringify(o))")
-    out = subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js')],
+    out = subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js'), str(ROOT / 'assets/js/quiz')],
                          capture_output=True, check=True, text=True, encoding="utf-8").stdout
     return json.loads(out)
 
@@ -77,6 +88,8 @@ def reading_minutes(lesson_url):
     body = text[text.find('robotics-article-body'):]
     end = body.find('References</h2>')
     body = body[:end] if end > 0 else body
+    body = re.sub(r'<!-- oss-note -->.*?<!-- /oss-note -->', ' ', body, flags=re.S)  # generated box, not lesson text
+    body = re.sub(r'<details class="check-answer">.*?</details>', ' ', body, flags=re.S)  # self-check answers, not reading time
     code = sum(len(re.sub(r'<[^>]+>', ' ', c).split()) for c in re.findall(r'<pre[^>]*>(.*?)</pre>', body, re.S))
     prose = re.sub(r'<(pre|script|style|svg)[^>]*>.*?</\1>', ' ', body, flags=re.S)
     words = len(re.sub(r'<[^>]+>', ' ', prose).split())
@@ -84,6 +97,10 @@ def reading_minutes(lesson_url):
 
 
 def course_data(text):
+    counts = ', '.join(f'{k}: {QUIZ_COUNTS[k]}' for k in sorted(QUIZ_COUNTS, key=int))
+    if not re.search(r'quizCounts: \{[^}]*\}', text):
+        sys.exit('assets/js/course-data.js: cannot find "quizCounts"')
+    text = re.sub(r'quizCounts: \{[^}]*\}', lambda _: f'quizCounts: {{{counts}}}', text, count=1)
     for ch in CHAPTERS:
         for lesson in ch['lessons']:
             pat = r'(\{"id": "%s", "minutes": )\d+' % re.escape(lesson['id'])
@@ -176,23 +193,77 @@ def chapter_title(ch):
 
 
 def nav_links(chapters, active, drawer):
-    items = [('robotics.html', 'fa-home', 'Course Home')]
-    items += [(ch['url'], ch['icon'], ch['nav']) for ch in chapters]
-    items += [('robotics-quiz.html', 'fa-question-circle', 'Quizzes'),
-              ('robotics.html#thesis-cite', 'fa-quote-right', 'Citation (BibTeX)' if drawer else 'Cite')]
-    lines = []
-    for href, icon, label in items:
+    """Drawer: the full flat list. Desktop row: Course Home, one 'Chapters' <details> menu, Quizzes, Cite."""
+    def link(href, icon, label, extra=''):
         cls = ' class="active"' if href == active else ''
-        link = f'<a href="{href}"{cls}><i class="fas {icon}"></i> {label}</a>'
-        lines.append(' ' * 20 + link if drawer else ' ' * 24 + f'<li>{link}</li>')
+        return f'<a href="{href}"{cls}{extra}><i class="fas {icon}"></i> {label}</a>'
+    tail = [('robotics-quiz.html', 'fa-question-circle', 'Quizzes'),
+            ('robotics.html#thesis-cite', 'fa-quote-right', 'Citation (BibTeX)' if drawer else 'Cite')]
+    lines = []
     if drawer:
+        items = [('robotics.html', 'fa-home', 'Course Home')]
+        items += [(ch['url'], ch['icon'], ch['nav']) for ch in chapters]
+        for href, icon, label in items + tail:
+            lines.append(' ' * 20 + link(href, icon, label))
         lines.append(' ' * 20 + '<a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>')
-    return '\n' + '\n'.join(lines) + '\n' + ' ' * (16 if drawer else 20)
+        return '\n' + '\n'.join(lines) + '\n' + ' ' * 16
+    pad = ' ' * 24
+    lines.append(f'{pad}<li>{link("robotics.html", "fa-home", "Course Home")}</li>')
+    in_chapter = any(ch['url'] == active for ch in chapters)
+    cls = ' class="active"' if in_chapter else ''
+    lines.append(f'{pad}<li class="nav-chapters">')
+    lines.append(f'{pad}    <details class="nav-menu">')
+    lines.append(f'{pad}        <summary{cls}>Chapters</summary>')
+    lines.append(f'{pad}        <ul class="nav-menu-list">')
+    for ch in chapters:
+        cur = ' aria-current="page"' if ch['url'] == active else ''
+        lines.append(f'{pad}            <li><a href="{ch["url"]}"{cur}><span class="nav-menu-num">{ch["id"]}</span> {ch["nav"]}</a></li>')
+    lines.append(f'{pad}        </ul>')
+    lines.append(f'{pad}    </details>')
+    lines.append(f'{pad}</li>')
+    for href, icon, label in tail:
+        lines.append(f'{pad}<li>{link(href, icon, label)}</li>')
+    return '\n' + '\n'.join(lines) + '\n' + ' ' * 20
+
+
+def nav_search(kind):
+    """The search control: 'nav' sits in the desktop navbar, 'drawer' at the top of the mobile drawer.
+    Hidden until learning.js has the course data to search; it fills the list and announces the count."""
+    pad = ' ' * (24 if kind == 'nav' else 16)
+    cls = 'nav-search' + (' nav-search-drawer' if kind == 'drawer' else '')
+    lines = [f'<!-- {kind}-search -->',
+             f'<div class="{cls}" role="search" hidden>',
+             f'    <label class="sr-only" for="{kind}-search-input">Search lessons and glossary terms (press / to focus)</label>',
+             '    <i class="fas fa-search" aria-hidden="true"></i>',
+             f'    <input type="search" id="{kind}-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" '
+             f'role="combobox" aria-expanded="false" aria-controls="{kind}-search-list" aria-autocomplete="list" aria-keyshortcuts="/">',
+             f'    <ul class="nav-search-results" id="{kind}-search-list" role="listbox" aria-label="Search results" hidden></ul>',
+             '    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>',
+             '</div>',
+             f'<!-- /{kind}-search -->']
+    return '\n'.join((pad + l) if i else l for i, l in enumerate(lines))
+
+
+def sync_block(text, kind, anchor, where):
+    """Replace the marked search block, or insert it directly after (nav) / before (drawer) its anchor line."""
+    block = nav_search(kind)
+    pat = re.compile(rf'<!-- {kind}-search -->.*?<!-- /{kind}-search -->', re.S)
+    if pat.search(text):
+        return pat.sub(lambda _: block, text, count=1)
+    m = list(re.finditer(anchor, text))
+    if len(m) != 1:
+        sys.exit(f'{where}: expected one anchor {anchor!r} for the {kind} search, found {len(m)}')
+    pad = ' ' * (24 if kind == 'nav' else 16)
+    if kind == 'nav':
+        return text[:m[0].end()] + '\n' + pad + block + text[m[0].end():]
+    return text[:m[0].start()] + block + '\n' + pad + text[m[0].start():]
 
 
 def sync_navbars(text, active, where):
-    text = replace_once(text, r'<ul class="thesis-nav-links">(.*?)</ul>', nav_links(CHAPTERS, active, False), where)
-    return replace_once(text, r'<div class="thesis-drawer-links">(.*?)</div>', nav_links(CHAPTERS, active, True), where)
+    text = replace_once(text, r'<ul class="thesis-nav-links">(.*?)</ul>(?=\s*<div class="thesis-nav-actions">)', nav_links(CHAPTERS, active, False), where)
+    text = replace_once(text, r'<div class="thesis-drawer-links">(.*?)</div>', nav_links(CHAPTERS, active, True), where)
+    text = sync_block(text, 'nav', r'<div class="thesis-nav-actions">', where)
+    return sync_block(text, 'drawer', r'<div class="thesis-drawer-links">', where)
 
 
 def load_source_status():
@@ -227,8 +298,62 @@ def references_note(lesson_id, url=None):
                 'rel="noopener noreferrer">Suggest an edit on GitHub</a>.' if url else ''))
 
 
+def join_words(items):
+    return items[0] if len(items) == 1 else ', '.join(items[:-1]) + ' and ' + items[-1]
+
+
+OSS_NOTE = re.compile(r'[ \t]*<!-- oss-note -->.*?<!-- /oss-note -->\n\n', re.S)
+OSS_NOTE_SKIP_CHAPTERS = {3}  # Chapter 3 is the contribution chapter itself (Gerald's prose)
+
+
+def oss_note(text, lesson, where):
+    """The 'Open source in this lesson' box before the References heading, from ossProjects in the manifest."""
+    text = OSS_NOTE.sub('', text)
+    used = [p for p in OSS_PROJECTS if lesson['id'] in p['lessons']]
+    if not used or int(lesson['id'].split('-')[0]) in OSS_NOTE_SKIP_CHAPTERS:
+        return text
+    links = join_words([f'<a href="robotics-oss-map.html#{p["id"]}">{p["name"]}</a>' for p in used])
+    pad = ' ' * 28
+    box = (f'{pad}<!-- oss-note -->\n{pad}<div class="article-callout oss-note">\n'
+           f'{pad}    <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>\n'
+           f'{pad}    <p>Projects used or discussed here: {links}. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows '
+           f'{"its" if len(used) == 1 else "each project&rsquo;s"} licence, where the code lives and how to make a first contribution.</p>\n'
+           f'{pad}</div>\n{pad}<!-- /oss-note -->\n\n')
+    matches = list(re.finditer(r'[ \t]*<h2 class="article-section-title">\d+\. References</h2>', text))
+    if len(matches) != 1:
+        sys.exit(f'{where}: expected one References heading, found {len(matches)}')
+    return text[:matches[0].start()] + box + text[matches[0].start():]
+
+
+def quiz_page(text, where):
+    """The chapter list on robotics-quiz.html: one link per chapter that has questions, in reading order."""
+    items = ''.join(f'\n{" " * 36}<li><a href="robotics-quiz.html?chapter={ch["id"]}">Chapter {ch["id"]} quiz: {ch["title"]}</a></li>'
+                    for ch in CHAPTERS if QUIZ_COUNTS.get(str(ch['id'])))
+    text = replace_once(text, r'<ul class="quiz-chapter-list">(.*?)</ul>', items + '\n' + ' ' * 32, where)
+    return sync_navbars(text, 'robotics-quiz.html', where)
+
+
+def oss_map_page(text, where):
+    """Anchors and 'Used in these lessons' lines on the Open-Source Map, from ossProjects in the manifest."""
+    labels = {l['id']: l for ch in CHAPTERS for l in ch['lessons']}
+    for p in OSS_PROJECTS:
+        used = join_words([f'<a href="{labels[i]["url"]}">{labels[i]["label"]}</a>' for i in p['lessons']])
+        pattern = (r'(<h2 class="article-section-title"(?: id="[^"]*")?>(?=\d+\. ' + re.escape(p['name']) + r'</h2>)'
+                   r'.*?<strong>Used in these lessons:</strong> .*?)</p>')
+        matches = list(re.finditer(pattern, text, re.S))
+        if len(matches) != 1:
+            sys.exit(f'{where}: expected one section for {p["name"]!r}, found {len(matches)}')
+        m = matches[0]
+        block = re.sub(r'^<h2 class="article-section-title"(?: id="[^"]*")?>',
+                       f'<h2 class="article-section-title" id="{p["id"]}">', m.group(1))
+        block = block[:block.index('<strong>Used in these lessons:</strong> ')] + f'<strong>Used in these lessons:</strong> {used}.'
+        text = text[:m.start(1)] + block + text[m.end(1):]
+    return sync_navbars(text, None, where)
+
+
 def lesson_page(text, ch, i, where):
     text = lesson_jsonld(text, ch['lessons'][i], where)
+    text = oss_note(text, ch['lessons'][i], where)
     text = replace_once(text, r'<p class="references-note">(.*?)</p>', references_note(ch['lessons'][i]['id'], ch['lessons'][i]['url']), where)
     lessons = ch['lessons']
     if i == 0:
@@ -259,39 +384,100 @@ def chapter_page(text, ch, where):
     return sync_navbars(text, ch['url'], where)
 
 
+def hub_block(ch):
+    """A whole chapter block of the hub (header button, featured card, lesson rows, quiz row), for a chapter that has none yet."""
+    n = ch['id']
+    out = [f'<!-- Chapter {n}: {ch["title"]} -->',
+           '<div class="hltv-chapter-block reveal-on-scroll">',
+           f'    <button type="button" class="hltv-chapter-header" aria-expanded="true" aria-controls="chapter-{n}-feed" id="chapter-{n}-header">',
+           f'        <h3 class="hltv-chapter-title"><i class="fas fa-chevron-down hltv-chapter-chevron" aria-hidden="true"></i> Chapter {n}</h3>',
+           f'        <span class="hltv-chapter-kicker">{ch["title"]}</span>',
+           '    </button>',
+           f'    <div class="hltv-feed-list" id="chapter-{n}-feed" role="region" aria-labelledby="chapter-{n}-header">',
+           f'        <a href="{ch["url"]}" class="hltv-featured-card">',
+           '            <div class="hltv-featured-body">',
+           f'                <h4 class="hltv-featured-title">{ch["featuredTitle"]}</h4>',
+           f'                <p class="hltv-featured-desc">{ch["featuredDesc"]}</p>',
+           '            </div>',
+           '        </a>',
+           ] + [l.rstrip() for l in hub_rows(ch, 8).split('\n') if l.strip()]
+    if QUIZ_COUNTS.get(str(n)):
+        out += [f'        <a href="robotics-quiz.html?chapter={n}" class="hltv-feed-row">',
+                '            <span class="hltv-row-title">Chapter %d quiz</span>' % n,
+                '            <div class="hltv-row-meta">',
+                '                <span class="hltv-row-time">check your understanding</span>',
+                '            </div>',
+                '        </a>']
+    out += ['    </div>', '</div>']
+    return '\n'.join(('' if i == 0 else ' ' * 28) + l for i, l in enumerate(out))
+
+
+def hub_add_missing_blocks(text, where):
+    """Create the hub block of every chapter that has none, after the previous chapter's block (or the last one)."""
+    for k, ch in enumerate(CHAPTERS):
+        if f'id="chapter-{ch["id"]}-feed"' in text:
+            continue
+        if k == 0:
+            sys.exit(f'{where}: Chapter {ch["id"]} has no block and no earlier chapter to place it after; add it by hand once')
+        prev = CHAPTERS[k - 1]['id']
+        m = re.search(rf'id="chapter-{prev}-feed".*?\n {{32}}</div>\n {{28}}</div>\n', text, re.S)
+        if not m:
+            sys.exit(f'{where}: cannot find the end of the Chapter {prev} block to place Chapter {ch["id"]} after')
+        text = text[:m.end()] + '\n' + ' ' * 28 + hub_block(ch) + '\n' + text[m.end():]
+    return text
+
+
+def hub_rows(ch, indent=36):
+    pad = ' ' * indent
+    return ''.join(
+        f'{pad}<a href="{l["url"]}" class="hltv-feed-row">\n'
+        f'{pad}    <span class="hltv-row-title">{l["label"]}</span>\n'
+        f'{pad}    <div class="hltv-row-meta">\n'
+        f'{pad}        <span class="hltv-row-time">{l["minutes"]} min</span>\n'
+        f'{pad}    </div>\n'
+        f'{pad}</a>\n' for l in ch['lessons'])
+
+
 def hub_page(text, where):
+    text = hub_add_missing_blocks(text, where)
     for ch in CHAPTERS:
-        rows = ''.join(
-            f'{" " * 36}<a href="{l["url"]}" class="hltv-feed-row">\n'
-            f'{" " * 40}<span class="hltv-row-title">{l["label"]}</span>\n'
-            f'{" " * 40}<div class="hltv-row-meta">\n'
-            f'{" " * 44}<span class="hltv-row-time">{l["minutes"]} min</span>\n'
-            f'{" " * 40}</div>\n'
-            f'{" " * 36}</a>\n' for l in ch['lessons'])
         pattern = (rf'id="chapter-{ch["id"]}-feed"[^>]*>.*?</a>\n'
                    rf'((?:\s*<a href="robotics-\d+-\d+\.html" class="hltv-feed-row">.*?</a>\n)+)')
-        text = replace_once(text, pattern, rows, where)
+        text = replace_once(text, pattern, hub_rows(ch), where)
     return sync_navbars(text, 'robotics.html', where)
 
 
 def sitemap(text):
+    """Pages in reading order: the portfolio, the course hub, each chapter page followed by its lessons, then the extras."""
     old = {}
     for block in re.findall(r'<url>(.*?)</url>', text, re.S):
         loc = re.search(r'<loc>(.*?)</loc>', block).group(1)
         old[loc] = block
-    pages = SITE_PAGES + ['robotics.html'] + [ch['url'] for ch in CHAPTERS] + EXTRA_COURSE_PAGES
-    pages += [l['url'] for ch in CHAPTERS for l in ch['lessons']] + TRAILING_COURSE_PAGES
+    groups = [('Portfolio', SITE_PAGES, None), ('robOSStics: course home', ['robotics.html'], None)]
+    for ch in CHAPTERS:  # a chapter page ranks above its lessons
+        groups.append((f'Chapter {ch["id"]}: {ch["title"]}', [ch['url']], '0.7'))
+        groups.append((None, [l['url'] for l in ch['lessons']], '0.6'))
+    groups.append(('Quizzes and reference pages', EXTRA_COURSE_PAGES + TRAILING_COURSE_PAGES, '0.6'))
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
-    for page in pages:
-        loc = SITE if page == 'index.html' else SITE + page
-        block = old.get(loc) or (f'\n        <loc>{loc}</loc>\n        <lastmod>{date.today().isoformat()}</lastmod>\n'
-                                 f'        <changefreq>monthly</changefreq>\n        <priority>0.6</priority>\n    ')
-        out.append(f'    <url>{block}</url>')
+    for title, pages, priority in groups:
+        if title:
+            out.append(f'    <!-- {title} -->')
+        for page in pages:
+            loc = SITE if page == 'index.html' else SITE + page
+            block = old.get(loc) or (f'\n        <loc>{loc}</loc>\n        <lastmod>{date.today().isoformat()}</lastmod>\n'
+                                     f'        <changefreq>monthly</changefreq>\n        <priority>{priority or "0.6"}</priority>\n    ')
+            if priority:
+                block = re.sub(r'<priority>[^<]*</priority>', f'<priority>{priority}</priority>', block)
+            out.append(f'    <url>{block}</url>')
     return '\n'.join(out) + '\n</urlset>\n'
 
 
 def hygiene_workflow(text, where):
+    """The expected page set: the chapter page names, then the (chapter, lesson count) tuple, both from the course data."""
+    names = [f"'{ch['url']}'," for ch in CHAPTERS]
+    lines = [' '.join(names[i:i + 4]) for i in range(0, len(names), 4)]
+    text = replace_once(text, r"'robotics\.html',\n {14}(.*?)(?=\s?'robotics-quiz\.html')", ('\n' + ' ' * 14).join(lines), where)
     counts = ', '.join(f'({ch["id"]}, {len(ch["lessons"])})' for ch in CHAPTERS)
     return replace_once(text, r'for c, count in \((.*?)\) for n in', counts, where)
 
@@ -305,10 +491,11 @@ def page_jobs():
         jobs[ch['url']] = lambda t, ch=ch: chapter_page(t, ch, ch['url'])
         for i, lesson in enumerate(ch['lessons']):
             jobs[lesson['url']] = lambda t, ch=ch, i=i, u=lesson['url']: lesson_page(t, ch, i, u)
-    jobs['robotics-quiz.html'] = lambda t: sync_navbars(t, 'robotics-quiz.html', 'robotics-quiz.html')
+    jobs['robotics-quiz.html'] = lambda t: quiz_page(t, 'robotics-quiz.html')
     for page in TRAILING_COURSE_PAGES:
         jobs[page] = lambda t, p=page: sync_navbars(t, None, p)
     jobs['robotics-teaching.html'] = lambda t: teaching_page(t, 'robotics-teaching.html')
+    jobs['robotics-oss-map.html'] = lambda t: oss_map_page(t, 'robotics-oss-map.html')
     return jobs
 
 
@@ -342,6 +529,7 @@ def main(check):
 
 
 CHAPTERS = load_course()
+OSS_PROJECTS = json.loads((ROOT / 'scripts/site_manifest.json').read_text(encoding='utf-8')).get('ossProjects', [])
 SOURCE_STATUS = load_source_status()
 QUIZ_COUNTS = load_quiz_counts()
 MINUTES = {l['id']: reading_minutes(l['url']) for ch in CHAPTERS for l in ch['lessons']}

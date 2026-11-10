@@ -92,7 +92,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Time-Sensitive Networking (TSN) Task Group |",
+   "linkChecked": "2026-11-09"
   },
   "https://abb-motion-program-exec.readthedocs.io/en/stable/readme.html": {
    "citedBy": [
@@ -219,16 +222,16 @@
    "checks": {
     "6-5": {
      "status": "partial",
-     "claim": "MPU-6050 datasheet: IMU/MEMS definitions, 3-axis gyro and accel with DMP, I2C 400 kHz, full-scale ranges, noise densities, zero-rate tolerance; plus pitch/roll tilt and gyro heading-drift sentences.",
-     "evidence": "\"Communication with all registers of the device is performed using either I2C at 400kHz\"; \"user-programmable gyroscope full-scale range of ±250, ±500, ±1000, and ±2000°/sec (dps)\"; \"user-programmable accelerometer full-scale range of ±2g, ±4g, ±8g, and ±16g\"; \"Rate Noise Spectral Density At 10Hz 0.005 º/s/√Hz\"; \"Initial ZRO Tolerance 25°C ±20 º/s\"; \"ZRO Variation Over Temperature -40°C to +85°C ±20 º/s\"; \"the Coriolis Effect causes a vibration that is detected by a capacitive pickoff\"; \"Digital Motion Processor™ (DMP™) hardware accelerator engine\"; \"Release Date: 11/16/2011\", \"Revision: 3.2\".",
-     "note": "Rechecked 2026-11-08. Datasheet values check out exactly (I2C 400 kHz, ranges, 0.005 º/s/√Hz, ZRO ±20 º/s at 25°C and over -40 to +85°C, Rev 3.2). Not in the datasheet: the IMU definition, pitch/roll tilt from the accelerometer, the gyro heading-drift explanation, and the claim that the DMP 'computes orientation angles on-chip' (datasheet calls it a hardware accelerator engine). The accel noise figure is extracted without its µ glyph ('400 g/√Hz'), so the µg unit is read from the lesson, not the extracted text. Lesson text 'computes orientation angles' needs a source or rewording.",
-     "checked": "2026-11-08"
+     "claim": "MPU-6050 datasheet: 3-axis gyro and accelerometer with on-chip DMP, I2C 400 kHz, full-scale ranges, noise densities, zero-rate tolerance, Coriolis vibration picked up capacitively; plus the IMU definition and the gyro heading-drift sentence.",
+     "evidence": "\"Communication with all registers of the device is performed using either I2C at 400kHz\"; \"user-programmable gyroscope full-scale range of ±250, ±500, ±1000, and ±2000°/sec (dps)\"; \"user-programmable accelerometer full-scale range of ±2g, ±4g, ±8g, and ±16g\"; \"Rate Noise Spectral Density At 10Hz 0.005 º/s/√Hz\"; \"Initial ZRO Tolerance 25°C ±20 º/s\"; \"ZRO Variation Over Temperature -40°C to +85°C ±20 º/s\"; \"the Coriolis Effect causes a vibration that is detected by a capacitive pickoff\"; \"The embedded Digital Motion Processor (DMP) is located within the MPU-60X0 and offloads computation of motion processing algorithms from the host processor\"; \"Revision: 3.2\".",
+     "note": "Rechecked 2026-11-09. Fixed: the DMP gloss now follows the datasheet ('offloads computation ... from the host processor') and the tilt formulas moved to ref 11 (AN3461). Still not in this datasheet: the general IMU definition (co-cited ref 9) and the explanation that an integrated gyro bias makes heading drift (co-cited ref 12, unreachable). Datasheet numbers all match.",
+     "checked": "2026-11-09"
     }
    }
   },
   "https://ams-osram.com/products/sensor-solutions/ambient-light-color-spectral-proximity-sensors/ams-tcs34725-color-sensor": {
    "citedBy": [
-    "6-5#ref-16"
+    "6-5#ref-17"
    ],
    "refText": "ams-OSRAM AG, TCS3472 Color Light-to-Digital Converter with IR Filter (datasheet covering the TCS34725), DS000390, v1-04, Apr. 2020. ams-osram.com/.../ams-tcs34725-color-sensor.",
    "http": 200,
@@ -765,19 +768,18 @@
   },
   "https://blog.ansi.org/ansi/iso-10218-2-2025-industrial-robot-applications/": {
    "citedBy": [
-    "1-7#ref-3"
+    "1-7#ref-4"
    ],
    "refText": "ANSI, “ISO 10218-2:2025: Industrial Robot Applications,” ANSI Blog, 2025. blog.ansi.org/ansi/iso-10218-2-2025-industrial-robot-applications.",
    "http": 403,
    "linkChecked": "2026-10-27",
    "checks": {
     "1-7": {
-     "status": "partial",
-     "claim": "ISO 10218 scope: Part 1 covers the robot as partly completed machinery; ISO 10218-2:2025 covers applications and cells across their life; roles of OEM, system integrator and end user.",
+     "status": "fixed",
+     "claim": "ISO 10218-2:2025 covers robot applications and cells across integration, commissioning, operation, maintenance and decommissioning.",
      "evidence": "\"ISO 10218-2:2025 addresses the following: The design, integration, commissioning, operation, maintenance, decommissioning and disposal\"; \"specifies requirements for the integration of industrial robot applications and industrial robot cells\"; \"reasonably foreseeable by the integrator\".",
-     "note": "Rechecked 2026-11-08. ANSI blog opened (full text, 74 KB). Part 2 scope (integration through decommissioning) is supported. Not in the page: 'partly completed machinery' (for Part 1 or the robot), the OEM examples (FANUC, ABB, KUKA, Yaskawa, Universal Robots), the 'system integrator' and 'end user' roles, and the claim that end users keep safeguards working. Those sentences need a different source or a rewrite. Earlier note: Not checked at source. Genorma's ISO 10218-2:2025 scope confirms cells/applications and phases from design through decommissioning and disposal. 'Partly completed machinery' is not corroborated (EVS [19] only mentions the robot's 'declaration of incorporation').",
-     "corroboratedBy": "https://genorma.com/en/standards/iso-10218-2-2025",
-     "checked": "2026-11-08"
+     "note": "Fixed 2026-11-10 (Gerald approved): this blog is now cited only for the Part 2 scope. The statements it did not contain were re-cited or rewritten: 'partly completed machinery' now cites the ISO 10218-1 page (ref 3) and a UR manual (ref 21); the integrator and end-user duties follow the OSHA Technical Manual (ref 2); the unsourced 'end user keeps the safeguards working for the life of the cell' was replaced.",
+     "checked": "2026-11-09"
     }
    },
    "title": "Just a moment...",
@@ -950,7 +952,9 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://cdn.craft.cloud/6166486b-1eb4-43d5-990c-ea573de4e750/assets/files/data-sheets/lr-mate-200id-datasheet.pdf": {
    "citedBy": [
@@ -1095,9 +1099,27 @@
    },
    "title": "EN ISO 13849-1:2023 Allegato A - Guida per la determinazione del PL richiesto"
   },
+  "https://colcon.readthedocs.io/en/released/developer/contribution.html": {
+   "citedBy": [
+    "oss-map#ref-24"
+   ],
+   "refText": "colcon, “Contributions,” colcon documentation. colcon.readthedocs.io/en/released/developer/contribution.html.",
+   "checks": {
+    "oss-map": {
+     "status": "verified",
+     "claim": "colcon contribution rules: focused PRs, tests, linters, feature request for larger patches, extensions via entry points hosted under the colcon organization, docs changed through PRs.",
+     "evidence": "\"Keep each pull request focused on one aspect\"; \"For larger patches consider to create a feature request ticket to discuss the proposal ahead of time.\"; \"Ensure that new code is covered by tests\"; \"Make sure that the code changes pass the existing tests including the linters.\"; \"Since documentation is stored in a git repository any changes are made through pull requests\"; \"Using Python entry points it is easy to contribute extensions in separate packages.\"; \"it is encouraged to host the code in a repository under the colcon organization unit on GitHub\".",
+     "note": "Read 2026-11-09 in full.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 200,
+   "title": "Contributions — colcon documentation",
+   "linkChecked": "2026-11-09"
+  },
   "https://committee.iso.org/sites/tc299/home/projects/ongoing/iso-10218-2.html": {
    "citedBy": [
-    "1-7#ref-4"
+    "1-7#ref-5"
    ],
    "refText": "ISO/TC 299 Robotics, “ISO 10218-2” project page, International Organization for Standardization. committee.iso.org/sites/tc299/home/projects/ongoing/iso-10218-2.html.",
    "http": 400,
@@ -1303,7 +1325,10 @@
      "evidence": "Contributing page lists ros2_control, ros2_controllers, ros2_control_demos; Apache 2 Section 5, Contributing Board and two-approval rule recorded in facts.md.",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Contributing — ROS2_Control: Rolling Nov 2026 documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://control.ros.org/master/doc/getting_started/getting_started.html": {
    "citedBy": [
@@ -1318,7 +1343,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Getting Started — ROS2_Control: Rolling Nov 2026 documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://control.ros.org/rolling/doc/ros2_control/controller_manager/doc/userdoc.html": {
    "citedBy": [
@@ -2184,7 +2212,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Electronic Shutter Types | Basler Product Documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.baslerweb.com/light-control": {
    "citedBy": [
@@ -2199,7 +2230,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Light Control | Basler Product Documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.blockly.com/": {
    "citedBy": [
@@ -2415,7 +2449,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "MQTT Version 3.1.1",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d0/d7a/classcv_1_1SimpleBlobDetector.html": {
    "citedBy": [
@@ -2430,7 +2467,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d0/d7a/classcv_1_1SimpleBlobDetector.html",
+   "title": "OpenCV: cv::SimpleBlobDetector Class Reference",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d3/dc0/group__imgproc__shape.html": {
    "citedBy": [
@@ -2453,7 +2494,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d3/dc0/group__imgproc__shape.html",
+   "title": "OpenCV: Structural Analysis and Shape Descriptors",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d4/d1b/tutorial_histogram_equalization.html": {
    "citedBy": [
@@ -2468,7 +2513,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d4/d1b/tutorial_histogram_equalization.html",
+   "title": "OpenCV: Histogram Equalization",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d4/d73/tutorial_py_contours_begin.html": {
    "citedBy": [
@@ -2483,7 +2532,11 @@
      "note": "Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d4/d73/tutorial_py_contours_begin.html",
+   "title": "OpenCV: Contours : Getting Started",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d4/dc6/tutorial_py_template_matching.html": {
    "citedBy": [
@@ -2498,7 +2551,11 @@
      "note": "Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d4/dc6/tutorial_py_template_matching.html",
+   "title": "OpenCV: Template Matching",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d7/d4d/tutorial_py_thresholding.html": {
    "citedBy": [
@@ -2521,7 +2578,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d7/d4d/tutorial_py_thresholding.html",
+   "title": "OpenCV: Image Thresholding",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d8/da7/structcv_1_1SimpleBlobDetector_1_1Params.html": {
    "citedBy": [
@@ -2536,7 +2597,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d8/da7/structcv_1_1SimpleBlobDetector_1_1Params.html",
+   "title": "OpenCV: cv::SimpleBlobDetector::Params Struct Reference",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/d8/dbc/tutorial_histogram_calculation.html": {
    "citedBy": [
@@ -2551,7 +2616,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/d8/dbc/tutorial_histogram_calculation.html",
+   "title": "OpenCV: Histogram Calculation",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/da/d22/tutorial_py_canny.html": {
    "citedBy": [
@@ -2574,7 +2643,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/da/d22/tutorial_py_canny.html",
+   "title": "OpenCV: Canny Edge Detection",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/da/d5c/tutorial_canny_detector.html": {
    "citedBy": [
@@ -2589,7 +2662,11 @@
      "note": "Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/da/d5c/tutorial_canny_detector.html",
+   "title": "OpenCV: Canny Edge Detector",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/dc/df7/classcv_1_1barcode_1_1BarcodeDetector.html": {
    "citedBy": [
@@ -2604,7 +2681,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/dc/df7/classcv_1_1barcode_1_1BarcodeDetector.html",
+   "title": "OpenCV: cv::barcode::BarcodeDetector Class Reference",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/dd/d49/tutorial_py_contour_features.html": {
    "citedBy": [
@@ -2619,7 +2700,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/dd/d49/tutorial_py_contour_features.html",
+   "title": "OpenCV: Contour Features",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/dd/d53/tutorial_py_depthmap.html": {
    "citedBy": [
@@ -2634,7 +2719,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/dd/d53/tutorial_py_depthmap.html",
+   "title": "OpenCV: Depth Map from Stereo Images",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/de/dc3/classcv_1_1QRCodeDetector.html": {
    "citedBy": [
@@ -2649,7 +2738,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/de/dc3/classcv_1_1QRCodeDetector.html",
+   "title": "OpenCV: cv::QRCodeDetector Class Reference",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.opencv.org/4.x/df/d9d/tutorial_py_colorspaces.html": {
    "citedBy": [
@@ -2672,7 +2765,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://docs.opencv.org/4.13.0/df/d9d/tutorial_py_colorspaces.html",
+   "title": "OpenCV: Changing Colorspaces",
+   "linkChecked": "2026-11-09"
   },
   "https://docs.pickit3d.com/en/2.1/examples/universal_robots_example_program.html": {
    "citedBy": [
@@ -4416,7 +4513,10 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Stop recovery — PolyScope Tutorials documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://dof.robotiq.com/discussion/1957": {
    "citedBy": [
@@ -4605,7 +4705,11 @@
      "note": "2026-10-28: ResearchGate link replaced with the open-access DOI (fetched by Claude). That the 1967 European robot was a Unimate and Famulus's 'six electromechanically driven axes' are carried by other refs (IFR ref 13, KUKA).",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://www.scirp.org/journal/paperinformation?paperid=90517",
+   "title": "A Brief History of Industrial Robotics in the 20th Century",
+   "linkChecked": "2026-11-09"
   },
   "https://download.epson.biz/robots/ww/data/html/Hand/en/100/100-010/100-010-010.html": {
    "citedBy": [
@@ -4655,7 +4759,10 @@
      "note": "2026-10-28: official PDF (Commission direct download) checked by Claude; HOTL line reworded (the guidelines do not say the person can stop the system).",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://ec.europa.eu/newsroom/dae/redirection/document/60419",
+   "linkChecked": "2026-11-09"
   },
   "https://economics.mit.edu/sites/default/files/publications/Robots%20and%20Jobs%20-%20Evidence%20from%20US%20Labor%20Markets.p.pdf": {
    "citedBy": [
@@ -4670,7 +4777,9 @@
      "note": "2026-10-28: open copy of the published version on economics.mit.edu added and checked by Claude (journal page was bot-walled).",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://elec3004.uqcloud.net/2015/assignments/PS4-Z_N_Original.pdf": {
    "citedBy": [
@@ -5049,11 +5158,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "5-2": {
-     "status": "partial",
-     "claim": "EU AI Act (Regulation (EU) 2024/1689), 13 June 2024, horizontal framework; AI safety components of Annex I products (such as machinery) are high risk, with risk management, data governance, logging and human-oversight requirements.",
-     "evidence": "\"Regulation (EU) 2024/1689 of the European Parliament and of the Council of 13 June 2024 laying down harmonised rules on artificial intelligence\"; \"(47) AI systems could have an adverse impact on the health and safety of persons, in particular when such systems operate as safety components of products\"; \"Requirements should apply to high-risk AI systems as regards risk management, the quality and relevance of data sets used, technical documentation and record-keeping, transparency and the provision of information to deployers, human oversight\".",
-     "note": "Rechecked 2026-11-08. Citation, date and title verified; recital 47 and recital on requirements support the risk-management, record-keeping and human-oversight points. The fetched text (first 400 KB) did not reach Article 6 or Annex I, so the classification sentence ('a safety component of a product covered by EU product-safety law listed in Annex I, such as machinery, is classified as high risk') is not verified. Also 'data governance' is not confirmed as a listed requirement in the recital read. Recheck Article 6(1) and Annex I directly.",
-     "checked": "2026-11-08"
+     "status": "fixed",
+     "claim": "EU AI Act (Regulation (EU) 2024/1689): AI that is a safety component of an Annex I product such as machinery is high risk, with requirements for risk management, data governance, logging and human oversight.",
+     "evidence": "Article 6(1): \"(a) the AI system is intended to be used as a safety component of a product, or the AI system is itself a product, covered by the Union harmonisation legislation listed in Annex I; (b) the product whose safety component pursuant to point (a) is the AI system, or the AI system itself as a product, is required to undergo a third-party conformity assessment\"; Annex I lists \"Directive 2006/42/EC ... on machinery\"; Article 10 is titled \"Data and data governance\"; recital: \"risk management, the quality and relevance of data sets used, technical documentation and record-keeping, transparency ..., human oversight, and robustness, accuracy and cybersecurity\".",
+     "note": "Fixed 2026-11-10 (Gerald approved): the lesson now gives both Article 6(1) conditions ('... is classified as high risk when that product must undergo a third-party conformity assessment under that law').",
+     "checked": "2026-11-09"
     },
     "5-3": {
      "status": "verified",
@@ -5592,7 +5701,11 @@
      "evidence": "\"gz-sim : A high-fidelity 3D rigid-body dynamic simulator.\" \"Organization on GitHub\"; help wanted and merge criteria in facts.md.",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://gazebosim.org/docs/latest/contributing/",
+   "title": "Contributing to Gazebo — Gazebo jetty documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://gazebosim.org/docs/latest/migration_from_ignition/": {
    "citedBy": [
@@ -6045,7 +6158,10 @@
      "evidence": "README: \"standalone, large scale, open project for 2D/3D image and point cloud processing.\" \"released under the terms of the BSD license\" \"non-profit organization, Open Perception\" \"Please read CONTRIBUTING.md\"",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - PointCloudLibrary/pcl: Point Cloud Library (PCL) · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ROBOTIS-GIT/turtlebot3/blob/main/turtlebot3_node/src/odometry.cpp": {
    "citedBy": [
@@ -6128,7 +6244,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - UniversalRobots/ModbusExamples: Example programs, and URScript snippets for Modbus communication, · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/UniversalRobots/Universal_Robots_Client_Library": {
    "citedBy": [
@@ -6142,7 +6261,10 @@
      "evidence": "README: \"A C++ library for accessing Universal Robots interfaces.\" \"The majority of this library is licensed under the Apache-2.0\" \"This repo supports pre-commit e.g. for automatic code formatting.\" FZI logo/acknowledgement.",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - UniversalRobots/Universal_Robots_Client_Library: A C++ library for accessing the UR interfaces that facilitate the use of UR robotic manipulators by ex",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/UniversalRobots/Universal_Robots_Client_Library/blob/master/README.md": {
    "citedBy": [
@@ -6302,7 +6424,10 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Universal_Robots_Client_Library/src/ur/dashboard_client_implementation_g5.cpp at master · UniversalRobots/Universal_Robots_Client_Library · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/UniversalRobots/Universal_Robots_ExternalControl_URCap/blob/master/README.md": {
    "citedBy": [
@@ -6532,7 +6657,10 @@
      "note": "2026-10-28: fetched by Claude.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/README.md": {
    "citedBy": [
@@ -6981,6 +7109,42 @@
    },
    "title": "Arduino-PID-Library/PID_v1.h at master · br3ttb/Arduino-PID-Library · GitHub"
   },
+  "https://github.com/colcon/colcon-core/blob/master/README.rst": {
+   "citedBy": [
+    "oss-map#ref-22"
+   ],
+   "refText": "colcon, “colcon - collective construction” (colcon-core README). github.com/colcon/colcon-core/blob/master/README.rst.",
+   "checks": {
+    "oss-map": {
+     "status": "verified",
+     "claim": "What colcon is.",
+     "evidence": "\"colcon is a command line tool to improve the workflow of building, testing and using multiple software packages. It automates the process, handles the ordering and sets up the environment to use the packages.\"",
+     "note": "Read 2026-11-09 from the raw README on master.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "title": "colcon-core/README.rst at master · colcon/colcon-core · GitHub",
+   "linkChecked": "2026-11-09"
+  },
+  "https://github.com/colcon/colcon-core/blob/master/setup.cfg": {
+   "citedBy": [
+    "oss-map#ref-23"
+   ],
+   "refText": "colcon, “setup.cfg” (colcon-core package metadata). github.com/colcon/colcon-core/blob/master/setup.cfg.",
+   "checks": {
+    "oss-map": {
+     "status": "verified",
+     "claim": "colcon-core licence.",
+     "evidence": "setup.cfg: \"license = Apache-2.0\"",
+     "note": "Read 2026-11-09. The repository has no LICENSE file at the usual paths, so the package metadata is cited.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "title": "colcon-core/setup.cfg at master · colcon/colcon-core · GitHub",
+   "linkChecked": "2026-11-09"
+  },
   "https://github.com/cra-ros-pkg/robot_localization/blob/ros2/doc/integrating_gps.rst": {
    "citedBy": [
     "6-8#ref-15"
@@ -7037,7 +7201,7 @@
   },
   "https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model": {
    "citedBy": [
-    "6-5#ref-14"
+    "6-5#ref-15"
    ],
    "refText": "ETH Zurich Autonomous Systems Lab, “IMU Noise Model,” Kalibr Wiki, GitHub, accessed 21 Oct. 2026. github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model.",
    "http": 206,
@@ -7066,7 +7230,10 @@
      "note": "Ch3, Claude review",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "g34rmeister.github.io/CONTRIBUTING.md at main · g34rmeister/g34rmeister.github.io · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/gazebosim/docs/blob/master/jetty/install.md": {
    "citedBy": [
@@ -7098,7 +7265,10 @@
      "note": "2026-10-28: fetched by Claude.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/google-research/google-research/tree/master/code_as_policies": {
    "citedBy": [
@@ -7385,7 +7555,10 @@
      "note": "2026-10-28: fetched by Claude.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "moveit2/LICENSE.txt at main · moveit/moveit2 · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/moveit/moveit2/blob/main/moveit_core/trajectory_processing/include/moveit/trajectory_processing/time_optimal_trajectory_generation.hpp": {
    "citedBy": [
@@ -7519,7 +7692,10 @@
      "evidence": "README heading \"OpenCV: Open Source Computer Vision Library\"; \"Please read the contribution guidelines before starting work on a pull request.\"",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - opencv/opencv: Open Source Computer Vision Library · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/opencv/opencv/blob/4.x/doc/opencv.bib": {
    "citedBy": [
@@ -7585,7 +7761,10 @@
      "evidence": "\"Make sure you agree to contribute your code under OpenCV (Apache 2.0) license.\" \"All new algorithms should go into opencv_contrib repository by default.\" \"As soon as the reviewer is fine with the pull request and BuildBot likes your code, the special approval comment ... signals OpenCV maintainers that they can merge\"",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "How_to_contribute · opencv/opencv Wiki · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/openvla/openvla": {
    "citedBy": [
@@ -7672,6 +7851,24 @@
     }
    },
    "title": "GitHub - pololu/vl53l1x-arduino: Pololu Arduino library for VL53L1X time-of-flight distance sensor · GitHub"
+  },
+  "https://github.com/pymodbus-dev/pymodbus/blob/dev/README.rst": {
+   "citedBy": [
+    "oss-map#ref-21"
+   ],
+   "refText": "PyModbus, “PyModbus - A Python Modbus Stack” (README). github.com/pymodbus-dev/pymodbus/blob/dev/README.rst.",
+   "checks": {
+    "oss-map": {
+     "status": "verified",
+     "claim": "pymodbus map entry: what it is, BSD licence, GitHub repository, fork and PR against dev (never work on dev), open a discussion or issue, volunteers, check_ci.sh mirrors CI, wait for review once CI is green.",
+     "evidence": "\"Pymodbus is a full Modbus protocol implementation offering a client, server and simulator with synchronous/asynchronous API.\"; \"Released under the BSD License\"; \"Source code is available on github\" (github.com/pymodbus-dev/pymodbus); \"Just fork the repo and raise your Pull Request against dev branch, but please never make your changes on the dev branch\"; \"feel free to open a discussion / issue on a theme you want to solve\"; \"A big thanks to all the volunteers that helps make pymodbus a great project\"; \"./check_ci.sh <-- run the same checks as CI runs on a pull request\"; \"on github open a pull request, check that CI turns green and then wait for review comments\".",
+     "note": "Read 2026-11-09 from the README on the dev branch (raw text, full file). The repository has no top-level LICENSE at the path the README links from raw fetch, so the licence wording is the README's own ('BSD License', no clause count stated).",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/rlabbe/Kalman-and-Bayesian-Filters-in-Python/blob/master/04-One-Dimensional-Kalman-Filters.ipynb": {
    "citedBy": [
@@ -7822,7 +8019,10 @@
      "evidence": "README: \"This package is a part of the ros2_control framework.\"",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - ros-controls/ros2_control: Generic and simple controls framework for ROS 2 · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-controls/ros2_controllers/blob/master/diff_drive_controller/src/odometry.cpp": {
    "citedBy": [
@@ -7963,7 +8163,8 @@
   "https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst": {
    "citedBy": [
     "6-6#ref-9",
-    "6-8#ref-16"
+    "6-8#ref-16",
+    "11-1#ref-2"
    ],
    "refText": "W. Meeussen, “REP 105: Coordinate Frames for Mobile Platforms,” ROS Enhancement Proposal, Oct. 2010. github.com/.../rep-0105.rst.",
    "http": 206,
@@ -7980,6 +8181,13 @@
      "claim": "REP 105: odom frame can drift without bounds but is smooth; map frame jumps",
      "evidence": "REP 105: 'The coordinate frame called odom is a world-fixed frame. The pose of a mobile platform in the odom frame can drift over time'",
      "checked": "2026-10-22"
+    },
+    "11-1": {
+     "status": "verified",
+     "claim": "All sentences in 11-1 that cite this page.",
+     "evidence": "\"The coordinate frame called base_link is rigidly attached to the mobile robot base.\"; \"The coordinate frame called odom is a world-fixed frame. The pose of a mobile platform in the odom frame can drift over time, without any bounds.\"; \"the pose of a robot in the odom frame is guaranteed to be continuous ... without discrete jumps\"; \"The odom frame is useful as an accurate, short-term local reference\"; \"The pose of a mobile platform, relative to the map frame, should not significantly drift over time. The map frame is not continuous, meaning the pose ... can change in discrete jumps at any time.\"; \"a localization component constantly re-computes the robot pose in the map frame based on sensor observations, therefore eliminating drift, but causing discrete jumps when new sensor information arrives\"; \"The map frame is useful as a long-term global reference, but discrete jumps in position estimators make it a poor reference frame for local sensing and acting.\"",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
     }
    },
    "title": "rep/rep-0105.rst at master · ros-infrastructure/rep · GitHub"
@@ -8014,7 +8222,10 @@
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/about_and_contact/index.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/community/getting_involved.md": {
    "citedBy": [
@@ -8029,7 +8240,28 @@
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/community/getting_involved.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
+  },
+  "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md": {
+   "citedBy": [
+    "11-2#ref-2"
+   ],
+   "refText": "Nav2, “Inflation Layer Parameters.” github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md.",
+   "checks": {
+    "11-2": {
+     "status": "verified",
+     "claim": "All sentences in 11-2 that cite this page.",
+     "evidence": "\"This layer places an exponential decay functions around obstacles to increase cost to traverse near collision.\"; \"inflation_radius ... Radius to inflate costmap around lethal obstacles.\"",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md at rolling · ros-navigation/docs.nav2.",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/navigation_plugins.md": {
    "citedBy": [
@@ -8044,11 +8276,15 @@
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/configuration_and_development/navigation_plugins.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md": {
    "citedBy": [
-    "3-5#ref-7"
+    "3-5#ref-7",
+    "11-4#ref-2"
    ],
    "refText": "Nav2, “Behavior Trees.” github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md.",
    "checks": {
@@ -8058,12 +8294,23 @@
      "evidence": "Behavior trees (BT) are becoming increasingly common in complex robotics tasks. / They are a tree structure of tasks to be completed. / It creates a more scalable and human-understandable framework for defining multi-step or many state applications.",
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
+    },
+    "11-4": {
+     "status": "verified",
+     "claim": "All sentences in 11-4 that cite this page.",
+     "evidence": "\"They are a tree structure of tasks to be completed.\"; \"This is opposed to a finite state machine (FSM) which may have dozens of states and hundreds of transitions.\"; \"basic primitives, like \\\"kick\\\", \\\"walk\\\", \\\"go to ball\\\", can be created and reused for many behaviors\"; \"we use BehaviorTree CPP V4 as the behavior tree library. We create node plugins which can be constructed into a tree, inside the BT Navigator. ... when the XML file of the tree is parsed\"; \"its ability to load subtrees. This means that the Nav2 behavior tree can be loaded into another higher-level BT\"; \"Having the application logic centralized in the behavior tree and with independent task servers ... allows for formal analysis.\"",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/getting_started/navigation_concepts/behavior_trees.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/environmental_representation.md": {
    "citedBy": [
-    "3-5#ref-5"
+    "3-5#ref-5",
+    "11-2#ref-1"
    ],
    "refText": "Nav2, “Environmental Representation.” github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/environmental_representation.md.",
    "checks": {
@@ -8073,12 +8320,23 @@
      "evidence": "The environmental representation is the way the robot perceives its environment. / The current environmental representation is a costmap. / A costmap is a regular 2D grid of cells containing a cost from unknown, free, occupied, or inflated cost.",
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
+    },
+    "11-2": {
+     "status": "verified",
+     "claim": "All sentences in 11-2 that cite this page.",
+     "evidence": "\"The environmental representation is the way the robot perceives its environment.\"; \"central localization for various algorithms and data sources to combine their information into a single space\"; \"used by the controllers, planners, and recoveries to compute their tasks\"; \"A costmap is a regular 2D grid of cells containing a cost from unknown, free, occupied, or inflated cost.\"; \"This costmap is then searched to compute a global plan or sampled to compute local control efforts.\"; \"Various costmap layers are implemented as pluginlib plugins to buffer information into the costmap. This includes information from LIDAR, RADAR, sonar, depth images, etc.\"; \"Costmap layers can be created to detect and track obstacles in the scene for collision avoidance using camera or depth sensors.\"; \"layers can be created to algorithmically change the underlying costmap based on some rule or heuristic\"; \"This annotated map is called \\\"filter mask\\\".\"; \"Costmap filters are implemented as costmap plugins.\"; \"change a robot's behavior in annotated areas\"; \"Keep-out/safety zones where robots will never enter. Speed restriction areas. ... Preferred lanes for robots moving in industrial environments and warehouses.\"; \"Gradient maps ... 3D costmaps, which represent the space in 3D, but then also requires 3D planning and collision checking ... Mesh maps\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/getting_started/navigation_concepts/environmental_representation.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md": {
    "citedBy": [
-    "3-5#ref-3"
+    "3-5#ref-3",
+    "11-4#ref-4"
    ],
    "refText": "Nav2, “Navigation Concepts.” github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md.",
    "checks": {
@@ -8088,12 +8346,25 @@
      "evidence": "Foundation middleware for Nav2's communication and lifecycle management.",
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
+    },
+    "11-4": {
+     "status": "verified",
+     "claim": "All sentences in 11-4 that cite this page.",
+     "evidence": "Cards on the page: \"ROS 2\", \"Behavior Trees\", \"Navigation Servers\", \"State Estimation\", \"Environmental Representation\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md": {
    "citedBy": [
-    "3-5#ref-6"
+    "3-5#ref-6",
+    "11-2#ref-3",
+    "11-3#ref-1",
+    "11-4#ref-3"
    ],
    "refText": "Nav2, “Navigation Servers.” github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md.",
    "checks": {
@@ -8103,12 +8374,55 @@
      "evidence": "Planners and controllers are at the heart of a navigation task. / Five of the action servers in this project are the planner, behavior, smoother, route, and controller servers. / These action servers are used to host a map of algorithm plugins to complete various tasks.",
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
+    },
+    "11-2": {
+     "status": "verified",
+     "claim": "All sentences in 11-2 that cite this page.",
+     "evidence": "\"Planners and controllers are at the heart of a navigation task.\"; \"Five of the action servers in this project are the planner, behavior, smoother, route, and controller servers. These action servers are used to host a map of algorithm plugins\"; \"The planner, smoother and controller servers will be configured at runtime with the names (aliases) and types of algorithms to use.\"; \"the DWB controller used with name FollowPath ... all parameters for DWB would be placed in that namespace, e.g. FollowPath.<param>\"; \"When the behavior tree ticks the corresponding BT node, it will call the action server to process its task.\"; \"The behavior server also contains a costmap subscriber to the local costmap ... to avoid having multiple instances of the local costmap which are computationally expensive to duplicate.\"; \"The task of a planner is to compute a path to complete some objective function.\"; \"The planner will have access to a global environmental representation\"; \"Compute shortest path; Compute complete coverage path; Compute paths along sparse or predefined routes\"; \"compute a valid, and potentially optimal, path from the current pose to a goal pose\"; \"Controllers, also known as local planners in ROS 1, are the way we follow the globally computed path or complete a local task. The controller will have access to a local environment representation to attempt to compute feasible control efforts for the base to follow. Many controller will project the robot forward in space\"; \"Dock with a charging station ...; Board an elevator\"; \"The goal of recoveries are to deal with unknown or failure conditions of the system and autonomously handle them.\"; \"the environmental representation being full of fake obstacles. The clear costmap recovery would then be triggered\"; \"Backing up or spinning in place, if permissible, allow the robot to move from a poor location into free space\"; \"a recovery may be implemented to call an operator's attention for help\"; \"typically responsible for reducing path raggedness and smoothing abrupt rotations, but also for increasing distance from obstacles and high-cost areas\"; \"The general task in Nav2 for a smoother is to receive a path and return its improved version.\"; \"The route server is a specialized planner that computes a route using a navigation graph, rather than the freespace costmap.\"; \"lanes, areas the robot is allowed to navigate, a teach-and-repeat route\"; \"a circle of radius robot_radius or as a vector of points footprint representing an arbitrary polygon if the robot is non-circular ... picking up a pallet ... That polygon will then automatically be used by the planners and controllers.\"; \"The nav2_waypoint_follower contains a waypoint following program with a plugin interface for specific task executors ... take a picture, pick up a box, or wait for user input\"; \"Dumb robot; smart centralized dispatcher / Smart robot; dumb centralized dispatcher\"; \"1 unit of work (e.g. 1 pick in a warehouse ...) ... and then return to the dispatcher for the next task\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
+    },
+    "11-3": {
+     "status": "verified",
+     "claim": "All sentences in 11-3 that cite this page.",
+     "evidence": "\"Planners and controllers are at the heart of a navigation task.\"; \"Five of the action servers in this project are the planner, behavior, smoother, route, and controller servers. These action servers are used to host a map of algorithm plugins\"; \"The planner, smoother and controller servers will be configured at runtime with the names (aliases) and types of algorithms to use.\"; \"the DWB controller used with name FollowPath ... all parameters for DWB would be placed in that namespace, e.g. FollowPath.<param>\"; \"When the behavior tree ticks the corresponding BT node, it will call the action server to process its task.\"; \"The behavior server also contains a costmap subscriber to the local costmap ... to avoid having multiple instances of the local costmap which are computationally expensive to duplicate.\"; \"The task of a planner is to compute a path to complete some objective function.\"; \"The planner will have access to a global environmental representation\"; \"Compute shortest path; Compute complete coverage path; Compute paths along sparse or predefined routes\"; \"compute a valid, and potentially optimal, path from the current pose to a goal pose\"; \"Controllers, also known as local planners in ROS 1, are the way we follow the globally computed path or complete a local task. The controller will have access to a local environment representation to attempt to compute feasible control efforts for the base to follow. Many controller will project the robot forward in space\"; \"Dock with a charging station ...; Board an elevator\"; \"The goal of recoveries are to deal with unknown or failure conditions of the system and autonomously handle them.\"; \"the environmental representation being full of fake obstacles. The clear costmap recovery would then be triggered\"; \"Backing up or spinning in place, if permissible, allow the robot to move from a poor location into free space\"; \"a recovery may be implemented to call an operator's attention for help\"; \"typically responsible for reducing path raggedness and smoothing abrupt rotations, but also for increasing distance from obstacles and high-cost areas\"; \"The general task in Nav2 for a smoother is to receive a path and return its improved version.\"; \"The route server is a specialized planner that computes a route using a navigation graph, rather than the freespace costmap.\"; \"lanes, areas the robot is allowed to navigate, a teach-and-repeat route\"; \"a circle of radius robot_radius or as a vector of points footprint representing an arbitrary polygon if the robot is non-circular ... picking up a pallet ... That polygon will then automatically be used by the planners and controllers.\"; \"The nav2_waypoint_follower contains a waypoint following program with a plugin interface for specific task executors ... take a picture, pick up a box, or wait for user input\"; \"Dumb robot; smart centralized dispatcher / Smart robot; dumb centralized dispatcher\"; \"1 unit of work (e.g. 1 pick in a warehouse ...) ... and then return to the dispatcher for the next task\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
+    },
+    "11-4": {
+     "status": "verified",
+     "claim": "All sentences in 11-4 that cite this page.",
+     "evidence": "\"Planners and controllers are at the heart of a navigation task.\"; \"Five of the action servers in this project are the planner, behavior, smoother, route, and controller servers. These action servers are used to host a map of algorithm plugins\"; \"The planner, smoother and controller servers will be configured at runtime with the names (aliases) and types of algorithms to use.\"; \"the DWB controller used with name FollowPath ... all parameters for DWB would be placed in that namespace, e.g. FollowPath.<param>\"; \"When the behavior tree ticks the corresponding BT node, it will call the action server to process its task.\"; \"The behavior server also contains a costmap subscriber to the local costmap ... to avoid having multiple instances of the local costmap which are computationally expensive to duplicate.\"; \"The task of a planner is to compute a path to complete some objective function.\"; \"The planner will have access to a global environmental representation\"; \"Compute shortest path; Compute complete coverage path; Compute paths along sparse or predefined routes\"; \"compute a valid, and potentially optimal, path from the current pose to a goal pose\"; \"Controllers, also known as local planners in ROS 1, are the way we follow the globally computed path or complete a local task. The controller will have access to a local environment representation to attempt to compute feasible control efforts for the base to follow. Many controller will project the robot forward in space\"; \"Dock with a charging station ...; Board an elevator\"; \"The goal of recoveries are to deal with unknown or failure conditions of the system and autonomously handle them.\"; \"the environmental representation being full of fake obstacles. The clear costmap recovery would then be triggered\"; \"Backing up or spinning in place, if permissible, allow the robot to move from a poor location into free space\"; \"a recovery may be implemented to call an operator's attention for help\"; \"typically responsible for reducing path raggedness and smoothing abrupt rotations, but also for increasing distance from obstacles and high-cost areas\"; \"The general task in Nav2 for a smoother is to receive a path and return its improved version.\"; \"The route server is a specialized planner that computes a route using a navigation graph, rather than the freespace costmap.\"; \"lanes, areas the robot is allowed to navigate, a teach-and-repeat route\"; \"a circle of radius robot_radius or as a vector of points footprint representing an arbitrary polygon if the robot is non-circular ... picking up a pallet ... That polygon will then automatically be used by the planners and controllers.\"; \"The nav2_waypoint_follower contains a waypoint following program with a plugin interface for specific task executors ... take a picture, pick up a box, or wait for user input\"; \"Dumb robot; smart centralized dispatcher / Smart robot; dumb centralized dispatcher\"; \"1 unit of work (e.g. 1 pick in a warehouse ...) ... and then return to the dispatcher for the next task\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/getting_started/navigation_concepts/navigation_servers.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
+  },
+  "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/ros2.md": {
+   "citedBy": [
+    "11-4#ref-1"
+   ],
+   "refText": "Nav2, “ROS 2” (navigation concepts). github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/ros2.md.",
+   "checks": {
+    "11-4": {
+     "status": "verified",
+     "claim": "All sentences in 11-4 that cite this page.",
+     "evidence": "\"action servers are a common way to control long running tasks like navigation\"; \"A client will request some task to be completed\"; \"action servers will also provide feedback to their clients\"; \"In the navigation example, a request may be a position, a feedback may be the time its been navigating for and the distance to the goal, and the result a boolean for success.\"; \"communicate with the highest level Behavior Tree (BT) navigator through a NavigateToPose action message. They are also used for the BT navigator to communicate with the subsequent smaller action servers to compute plans, control efforts, and recoveries. Each will have their own unique .action type in nav2_msgs\"; \"They are nodes that contain state machine transitions for bringup and teardown of ROS 2 servers. This helps in deterministic behavior of ROS systems in startup and shutdown.\"; \"When a node is started, it is in the unconfigured state, only processing the node's constructor which should not contain any ROS networking setup or parameter reading. By the launch system, or the supplied lifecycle manager, the nodes need to be transitioned to inactive by configuring.\"; \"on_configure() method, will setup all parameters, ROS networking interfaces\"; \"on_activate() method, will activate the ROS networking interfaces and set any states in the program to start processing information\"; \"To shutdown, we transition into deactivating, cleaning up, shutting down and end in the finalized state.\"; \"all servers utilize it\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/getting_started/navigation_concepts/ros2.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/state_estimation.md": {
    "citedBy": [
-    "3-5#ref-4"
+    "3-5#ref-4",
+    "11-1#ref-1"
    ],
    "refText": "Nav2, “State Estimation.” github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/state_estimation.md.",
    "checks": {
@@ -8118,8 +8432,18 @@
      "evidence": "Within the navigation project, there are 2 major transformations that need to be provided, according to community standards. / The `map` to `odom` transform is provided by a positioning system (localization, mapping, SLAM) and `odom` to `base_link` by an odometry system. / TF2 is the time-variant transformation library in ROS 2 we use to represent and obtain time synchronized transformations.",
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
+    },
+    "11-1": {
+     "status": "verified",
+     "claim": "All sentences in 11-1 that cite this page.",
+     "evidence": "\"There is no requirement on using a LIDAR on your robot ... You can be equally as successful using a vision or depth based positioning system\"; \"REP 105 defines the frames and conventions required for navigation and the larger ROS ecosystem.\"; \"there are 2 major transformations that need to be provided\"; \"The map to odom transform is provided by a positioning system (localization, mapping, SLAM) and odom to base_link by an odometry system.\"; \"you must, at minimum, build a TF tree that contains a full map -> odom -> base_link -> [sensor frames]\"; \"TF2 is the time-variant transformation library in ROS 2\"; \"The remainder of the transformations relative to base_link should be static and defined in your URDF.\"; \"It is the job of the global positioning system (GPS, SLAM, Motion Capture) to, at minimum, provide the map -> odom transformation.\"; \"We provide amcl which is an Adaptive Monte-Carlo Localization technique based on a particle filter for localization in a static map.\"; \"We also provide SLAM Toolbox as the default SLAM algorithm for use to position and generate a static map.\"; \"Odometry can come from many sources including LIDAR, RADAR, wheel encoders, VIO, and IMUs.\"; \"The goal of the odometry is to provide a smooth and continuous local frame based on robot motion.\"; \"The global positioning system will update the transformation relative to the global frame to account for the odometric drift.\"; \"Robot Localization is typically used for this fusion. It will take in N sensors of various types and provide a continuous and smooth odometry\"; \"A typical mobile robotics setup may have odometry from wheel encoders, IMUs, and vision fused in this manner.\"; \"used then for dead-reckoning ... between global position updates\".",
+     "note": "Lesson written 2026-11-09 from the fetched page text (raw source read in full), sentence by sentence.",
+     "checked": "2026-11-09"
     }
-   }
+   },
+   "http": 206,
+   "title": "docs.nav2.org/docs/getting_started/navigation_concepts/state_estimation.md at rolling · ros-navigation/docs.nav2.org · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/navigation2": {
    "citedBy": [
@@ -8141,7 +8465,10 @@
      "evidence": "README links: Navigation Plugins, General Tutorials, Algorithm Developer Tutorials, Contribute (development_guides/involvement_docs); Open Navigation LLC leadership line (facts.md).",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - ros-navigation/navigation2: ROS 2 Navigation Framework and System · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/navigation2/blob/main/CONTRIBUTING.md": {
    "citedBy": [
@@ -8156,7 +8483,10 @@
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/navigation2/blob/main/LICENSE": {
    "citedBy": [
@@ -8179,7 +8509,10 @@
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "navigation2/LICENSE at main · ros-navigation/navigation2 · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/navigation2/blob/main/README.md": {
    "citedBy": [
@@ -8194,7 +8527,10 @@
      "note": "2026-10-28: Gemini extracted verbatim facts from the cached page; a script confirmed each quote is in the cache and each paragraph cites the source of its facts; Claude reviewed the prose against the facts.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "navigation2/README.md at main · ros-navigation/navigation2 · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-navigation/navigation2/blob/main/nav2_msgs/action/NavigateToPose.action": {
    "citedBy": [
@@ -8226,7 +8562,10 @@
      "note": "Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "image_transport_tutorials/README.md at rolling · ros-perception/image_transport_tutorials · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-perception/vision_opencv/blob/rolling/cv_bridge/python/cv_bridge/core.py": {
    "citedBy": [
@@ -8241,7 +8580,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "vision_opencv/cv_bridge/python/cv_bridge/core.py at rolling · ros-perception/vision_opencv · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros-visualization/rqt_graph/tree/lyrical": {
    "citedBy": [
@@ -8311,6 +8653,24 @@
     }
    },
    "title": "Rate limit · GitHub"
+  },
+  "https://github.com/ros/ros_tutorials/blob/rolling/README.md": {
+   "citedBy": [
+    "oss-map#ref-25"
+   ],
+   "refText": "Open Robotics, “ros_tutorials” (README, rolling branch). github.com/ros/ros_tutorials/blob/rolling/README.md.",
+   "checks": {
+    "oss-map": {
+     "status": "verified",
+     "claim": "turtlesim map entry: what it is, BSD licence, ros/ros_tutorials with per-distribution branches, where issues and questions go, supports the official ROS 2 docs.",
+     "evidence": "\"`turtlesim` is a tool made for teaching ROS and ROS packages. It draws one or more turtles in a window and lets you drive them around, spawn new ones, change pen colors and more, all through ROS 2 topics, services and actions.\"; \"Both packages are released under the **BSD** license.\"; \"This branch (`rolling`) targets **ROS 2 Rolling Ridley**. For other ROS distributions, check out the matching branch of this repository.\"; \"Source & issues: https://github.com/ros/ros_tutorials\", \"ROS community forum: https://discourse.ros.org/\", \"Ask questions: https://robotics.stackexchange.com/\"; \"a collection of packages that support the official ROS 2 documentation and are used throughout the beginner tutorials\".",
+     "note": "Read 2026-11-09 from the raw README on rolling. The README does not name the author organisation; 'Open Robotics' in the reference comes from the maintainer address in turtlesim/package.xml.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "title": "ros_tutorials/README.md at rolling · ros/ros_tutorials · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros/ros_tutorials/blob/rolling/turtlesim/tutorials/mimic.cpp": {
    "citedBy": [
@@ -8459,7 +8819,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "common_interfaces/sensor_msgs/msg/CameraInfo.msg at rolling · ros2/common_interfaces · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/Image.msg": {
    "citedBy": [
@@ -8474,11 +8837,14 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/common_interfaces/blob/rolling/sensor_msgs/msg/Imu.msg": {
    "citedBy": [
-    "6-5#ref-19"
+    "6-5#ref-20"
    ],
    "refText": "ROS 2, “sensor_msgs/msg/Imu.msg,” ros2/common_interfaces, GitHub, accessed 21 Oct. 2026. github.com/ros2/common_interfaces/.../Imu.msg.",
    "http": 429,
@@ -8531,7 +8897,10 @@
      "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "demos/image_tools/README.md at rolling · ros2/demos · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/message_filters/blob/rolling/doc/index.rst": {
    "citedBy": [
@@ -8546,7 +8915,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/ros2": {
    "citedBy": [
@@ -8560,7 +8932,10 @@
      "evidence": "README: \"The Robot Operating System (ROS) is a set of software libraries and tools that help you build robot applications.\"",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "GitHub - ros2/ros2: The Robot Operating System, is a meta operating system for robots. · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/ros2/releases/tag/release-lyrical-20260807": {
    "citedBy": [
@@ -8600,7 +8975,10 @@
      "evidence": "\"Each repository in the ros2 and ament organizations has a separate set of maintainers.\" \"Becoming a maintainer ... is an invitation-only process\" \"Approximately every 3 months, the ROS 2 team will review the contributions\"; good first issue search link.",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 429,
+   "title": "Rate limit · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst": {
    "citedBy": [
@@ -8638,7 +9016,10 @@
      "evidence": "Developer Guide licensing section (also recorded in research_notes/oss-map/facts.md).",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "ros2_documentation/source/The-ROS2-Project/Contributing/Developer-Guide.rst at rolling · ros2/ros2_documentation · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/ros2/ros2cli/blob/lyrical/ros2pkg/ros2pkg/resource/ament_python/setup.py.em": {
    "citedBy": [
@@ -8757,7 +9138,10 @@
      "note": "2026-10-28: fetched by Claude.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "wireshark/COPYING at master · wireshark/wireshark · GitHub",
+   "linkChecked": "2026-11-09"
   },
   "https://github.com/wpilibsuite/allwpilib/blob/v2025.3.2/wpimath/src/main/java/edu/wpi/first/math/geometry/Pose2d.java": {
    "citedBy": [
@@ -8936,7 +9320,7 @@
   },
   "https://github.com/xioTechnologies/Fusion": {
    "citedBy": [
-    "6-5#ref-12",
+    "6-5#ref-13",
     "6-8#ref-18"
    ],
    "refText": "x-io Technologies, “Fusion,” AHRS library README, GitHub, accessed 21 Oct. 2026. github.com/xioTechnologies/Fusion.",
@@ -9024,22 +9408,25 @@
      "note": "2026-10-28: replaced the bot-walled MAD Museum page (checked by Claude); 'more than 6,000' changed to 'about 6,000'.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "title": "History of Information",
+   "linkChecked": "2026-11-09"
   },
   "https://hsi.com/blog/robots-and-workplace-safety": {
    "citedBy": [
-    "1-7#ref-11"
+    "1-7#ref-12"
    ],
    "refText": "HSI, “Robots and Workplace Safety,” HSI Blog (summary of the OSHA Technical Manual). hsi.com/blog/robots-and-workplace-safety.",
    "http": 200,
    "linkChecked": "2026-10-27",
    "checks": {
     "1-7": {
-     "status": "fixed",
-     "claim": "HSI summary of OSHA OTM: teach-mode selector often not locked out (pinning hazard); list of five safeguarding devices; safeguards active in auto, no body...",
-     "evidence": "HSI lists mechanical/nonmechanical limiting, presence-sensing, fixed barriers, interlocked barrier guards; 'all safeguarding devices should be activated, and at no time should any part of the...",
-     "note": "HSI page says nothing about teach-mode selector controls not being locked out or pinning hazards. Drop that sentence's citation to [9] or cite a source that states it; the safeguard list and auto-mode sentence are supported.",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "HSI summary of the OSHA manual: the five safeguarding options; in automatic operation all safeguards active and no part of the operator's body in the safeguarded area.",
+     "evidence": "\"Mechanical limiting devices\", \"Nonmechanical limiting devices\" (list); \"When the robot is operating automatically, all safeguarding devices should be activated, and at no time should any part of the operator's body be within the robot's safeguarded area.\"",
+     "note": "Re-opened 2026-11-10. These two sentences were also cited to a Gallagher article that did not contain them; that reference was removed. The lesson wording is unchanged.",
+     "checked": "2026-11-09"
     }
    },
    "title": "Robots and Workplace Safety - HSI"
@@ -9504,7 +9891,7 @@
   },
   "https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11054804": {
    "citedBy": [
-    "1-7#ref-8"
+    "1-7#ref-9"
    ],
    "refText": "U.S. Patent No. 11,054,804 (enabling device for a robot teach pendant), United States Patent and Trademark Office. image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/11054804.",
    "http": 200,
@@ -9834,11 +10221,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-3": {
-     "status": "partial",
-     "claim": "GXO and Agility Robotics multi-year Robots-as-a-Service deal, June 2024, billed as first formal commercial humanoid deployment; Digit moves totes onto conveyors alongside AMRs; humanoids defined as roughly human-shaped and moving from pilots to early production.",
-     "evidence": "\"GREENWICH, Conn., June 27, 2024\"; \"the industry’s first formal commercial deployment of humanoid robots\"; \"Digit robots are assisting with repetitive tasks such as moving totes from cobots and placing them onto conveyors\"; \"Agility’s solutions integrate with existing automation, including Autonomous Mobile Robots (AMRs)\".",
-     "note": "Rechecked 2026-11-08. Deal, date, RaaS, 'first formal commercial deployment' and the tote-to-conveyor task are supported. The release does not define humanoids as roughly human-shaped and does not say the sector is 'moving from pilots to early production'. The totes move 'from cobots' (not 'alongside AMRs'); AMRs appear only as existing automation Digit integrates with. Rewrite the lead sentences or cite a source for them.",
-     "checked": "2026-11-08"
+     "status": "fixed",
+     "claim": "GXO and Agility Robotics multi-year Robots-as-a-Service deal, June 2024, billed as the first formal commercial humanoid deployment; Digit takes totes from cobots and places them onto conveyors.",
+     "evidence": "\"GREENWICH, Conn., June 27, 2024\"; \"the industry’s first formal commercial deployment of humanoid robots\"; \"Digit robots are assisting with repetitive tasks such as moving totes from cobots and placing them onto conveyors\".",
+     "note": "Fixed 2026-11-09: 'moving from pilots to early production' became 'The first commercial deployments have begun' and 'alongside AMRs' became 'takes totes from cobots and places them onto conveyors', both from the release. The one-line description of a humanoid's shape is the lesson's own.",
+     "checked": "2026-11-09"
     }
    },
    "title": "Access Denied"
@@ -9856,7 +10243,10 @@
      "note": "Ch8, Claude review pass (sentences rewritten from the cached page)",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "IO-Link Technology - Everything You Need To Know",
+   "linkChecked": "2026-11-09"
   },
   "https://johnloomis.org/ece445/topics/odometry/borenstein/paper58.pdf": {
    "citedBy": [
@@ -10114,7 +10504,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "PLC Input Modules: Connecting 3-wire Sinking & Sourcing Devices",
+   "linkChecked": "2026-11-09"
   },
   "https://library.automationdirect.com/ethernet-machine-automation/": {
    "citedBy": [
@@ -10129,7 +10522,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Ethernet in Machine Automation | Library.AutomationDirect.com",
+   "linkChecked": "2026-11-09"
   },
   "https://library.e.abb.com/public/00b5570f24722096c1257b5900507c49/PalletizingPowerPacUserManual.pdf": {
    "citedBy": [
@@ -10160,7 +10556,9 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://library.e.abb.com/public/44ef07ec2d252e1fc1256b6b005b93f6/25%20years%20of%20ABB%20robots.pdf": {
    "citedBy": [
@@ -10469,7 +10867,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 403,
+   "title": "Access Denied",
+   "linkChecked": "2026-11-09"
   },
   "https://literature.rockwellautomation.com/idc/groups/literature/documents/rm/c117-rm001_-en-p.pdf": {
    "citedBy": [
@@ -10492,7 +10893,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 403,
+   "title": "Access Denied",
+   "linkChecked": "2026-11-09"
   },
   "https://literature.rockwellautomation.com/idc/groups/literature/documents/um/enet-um006_-en-p.pdf": {
    "citedBy": [
@@ -10507,7 +10911,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 403,
+   "title": "Access Denied",
+   "linkChecked": "2026-11-09"
   },
   "https://lup.lub.lu.se/record/535630": {
    "citedBy": [
@@ -10795,7 +11202,10 @@
      "evidence": "Contributing page section on tackling a first issue (recorded in research_notes/oss-map/facts.md).",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Contributing | MoveIt",
+   "linkChecked": "2026-11-09"
   },
   "https://moveit.picknik.ai/main/doc/concepts/concepts.html": {
    "citedBy": [
@@ -11029,7 +11439,10 @@
      "note": "2026-10-28: new source added by Claude; sentence reworded (dropped 'between 1204 and 1206' and 'now eastern Turkey', which the open sources do not state). The Met page, previously cited here, supports only the 1315-copy sentence.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 200,
+   "title": "800 Years Later: In Memory of Al-Jazari, A Genius Mechanical Engineer - Muslim HeritageMuslim Heritage",
+   "linkChecked": "2026-11-09"
   },
   "https://muslimheritage.com/?p=3879": {
    "citedBy": [
@@ -11232,7 +11645,9 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://occupli.com/?p=103946": {
    "citedBy": [
@@ -11272,7 +11687,7 @@
   },
   "https://oem.msu.edu/images/MIFACE_Constr_Div/Case135.pdf": {
    "citedBy": [
-    "1-7#ref-10"
+    "1-7#ref-11"
    ],
    "refText": "Michigan Fatality Assessment and Control Evaluation (MIFACE), “Case 135: 46-year-old foreman died when a robot arm activated and he was pinned between the upper and lower die of a press,” Michigan State University. oem.msu.edu/images/MIFACE_Constr_Div/Case135.pdf.",
    "http": 206,
@@ -11395,7 +11810,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "VDMA releases OPC UA Companion Specifications for Robotics and Machine Vision - OPC Foundation",
+   "linkChecked": "2026-11-09"
   },
   "https://opcfoundation.org/wp-content/uploads/pdfs/OPCF-FS-UA-OPCUA-Overview-EN.pdf": {
    "citedBy": [
@@ -11410,7 +11828,9 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://openlab.citytech.cuny.edu/robot/assignment2/": {
    "citedBy": [
@@ -11484,7 +11904,10 @@
      "note": "Ch3 draft, step 25",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "How to Contribute to Open Source | Open Source Guides",
+   "linkChecked": "2026-11-09"
   },
   "https://openstax.org/books/college-physics-2e/pages/17-6-hearing": {
    "citedBy": [
@@ -11633,7 +12056,9 @@
      "note": "2026-10-28: new open source added by Claude; 'handles surprises' dropped from the sentence (not on the slide).",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://people.eecs.berkeley.edu/~pabbeel/cs287-fa19/optreadings/JulierUhlmann-UKF.pdf": {
    "citedBy": [
@@ -11717,7 +12142,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Euclidean Cluster Extraction — Point Cloud Library 1.15.1-dev documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://pointclouds.org/documentation/tutorials/passthrough.html": {
    "citedBy": [
@@ -11732,7 +12160,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Filtering a PointCloud using a PassThrough filter — Point Cloud Library 1.15.1-dev documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://pointclouds.org/documentation/tutorials/planar_segmentation.html": {
    "citedBy": [
@@ -11747,7 +12178,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Plane model segmentation — Point Cloud Library 1.15.1-dev documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://pointclouds.org/documentation/tutorials/statistical_outlier.html": {
    "citedBy": [
@@ -11762,7 +12196,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Removing outliers using a StatisticalOutlierRemoval filter — Point Cloud Library 1.15.1-dev documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://pointclouds.org/documentation/tutorials/voxel_grid.html": {
    "citedBy": [
@@ -11777,7 +12214,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Downsampling a PointCloud using a VoxelGrid filter — Point Cloud Library 1.15.1-dev documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://pololu.com/product/4750/specs": {
    "citedBy": [
@@ -11880,7 +12320,11 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://www.profibus.com/technologies/profinet/profiles/profisafe",
+   "title": "PROFIsafe | www.profibus.com",
+   "linkChecked": "2026-11-09"
   },
   "https://pymodbus.readthedocs.io/en/latest/source/client.html": {
    "citedBy": [
@@ -11895,7 +12339,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Client — PyModbus 4.0.0dev17 documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://pymodbus.readthedocs.io/en/stable/source/client.html": {
    "citedBy": [
@@ -11910,7 +12357,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Client — PyModbus 3.16.2 documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://r6.ieee.org/scv-pses/wp-content/uploads/sites/17/2023/11/Safety-of-Machinery-Does-ISO-13849-1-2023-work-for-you-DNix-2023-rev2.pdf": {
    "citedBy": [
@@ -12063,7 +12513,9 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://reference.opcfoundation.org/specs/OPC-30050/6.3.8": {
    "citedBy": [
@@ -12610,7 +13062,7 @@
   },
   "https://simplecore.intel.com/realsensehub/wp-content/uploads/sites/63/D435_Series_ProductBrief_111207.pdf": {
    "citedBy": [
-    "6-5#ref-18"
+    "6-5#ref-19"
    ],
    "refText": "Intel Corporation, Intel RealSense Depth Camera D435 Series Product Brief. simplecore.intel.com/.../D435_Series_ProductBrief_111207.pdf; specifications: intel.com/.../intel-realsense-depth-camera-d435/specifications.html.",
    "http": 206,
@@ -12930,7 +13382,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 403,
+   "title": "Access Denied",
+   "linkChecked": "2026-11-09"
   },
   "https://support.zivid.com/en/latest/academy/applications/bin-picking/application-requirements.html": {
    "citedBy": [
@@ -12945,7 +13400,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://support.zivid.com/en/latest/camera/academy/applications/bin-picking/application-requirements.html",
+   "title": "Application Requirements — ZIVID KNOWLEDGE BASE documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://support.zivid.com/en/latest/academy/applications/piece-picking/application-requirements.html": {
    "citedBy": [
@@ -12960,7 +13419,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://support.zivid.com/en/latest/camera/academy/applications/piece-picking/application-requirements.html",
+   "title": "Application Requirements — ZIVID KNOWLEDGE BASE documentation",
+   "linkChecked": "2026-11-09"
   },
   "https://swcarpentry.github.io/shell-novice/": {
    "citedBy": [
@@ -13967,6 +14430,23 @@
    "http": 429,
    "linkChecked": "2026-10-27"
   },
+  "https://web.archive.org/web/20240208175013/https://www.nxp.com/docs/en/application-note/AN3461.pdf": {
+   "citedBy": [
+    "6-5#ref-11"
+   ],
+   "refText": "M. Pedley, Tilt Sensing Using a Three-Axis Accelerometer, Application Note AN3461, Rev. 6, Freescale Semiconductor, Mar. 2013. Archived copy: nxp.com/docs/en/application-note/AN3461.pdf via the Wayback Machine.",
+   "checks": {
+    "6-5": {
+     "status": "verified",
+     "claim": "Static roll and pitch from a three-axis accelerometer: roll = atan2(ay, az), pitch = atan2(-ax, sqrt(ay^2 + az^2)).",
+     "evidence": "AN3461 Rev. 6, 03/2013, by Mark Pedley: accelerometers are sensitive to the \"gravitational field vector and can be used to determine the accelerometer pitch and roll orientation\"; Eqn. 25: tan φxyz = Gpy / Gpz; Eqn. 26: tan θxyz = −Gpx / sqrt(Gpy² + Gpz²).",
+     "note": "Added 2026-11-09 for the tilt formulas, which the MPU-6050 datasheet (ref 8) does not contain. nxp.com returns 404 to scripts, so the link is the Wayback copy of 2024-02-08, read in full as PDF text.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
+  },
   "https://web.archive.org/web/20250725232000/http://rovart.cimr.pub.ro/docs/OpIntroRAPID.pdf": {
    "citedBy": [
     "2-3#ref-6"
@@ -13980,7 +14460,9 @@
      "note": "WaitDI and Stop are not in this manual; they rest on the lesson's other ABB refs. Original rovart link is dead; link swapped to the Wayback copy 2026-11-08.",
      "checked": "2026-11-08"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://web.archive.org/web/20261017235615/http://www.robotics.stanford.edu/~ang/papers/icraoss09-ROS.pdf": {
    "citedBy": [
@@ -13995,7 +14477,9 @@
      "note": "Title and authors verified. The PDF does not state the venue or Kobe; wiki.ros.org (Anubis) and Semantic Scholar (429) blocked a venue check on 2026-11-08. The PDF also lists Eric Berger, whom the conventional citation omits. Stanford link dead; swapped to the Wayback copy.",
      "checked": "2026-11-08"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://web.iitd.ac.in/~ddz198403/assignment%205/datasheet.pdf": {
    "citedBy": [
@@ -14115,7 +14599,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "CaptureSetup/Loopback - Wireshark Wiki",
+   "linkChecked": "2026-11-09"
   },
   "https://wnn.world-nuclear.org/articles/tepco-study-of-unit-3-containment-vessel-under-way": {
    "citedBy": [
@@ -14323,7 +14810,10 @@
      "note": "2026-10-28: AEA open-access page replaced the DSpace link; full abstract checked by Claude.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 200,
+   "title": "Why Are There Still So Many Jobs? The History and Future of Workplace Automation - American Economic Association",
+   "linkChecked": "2026-11-09"
   },
   "https://www.aeaweb.org/doi/10.1257/jep.33.2.3": {
    "citedBy": [
@@ -14394,24 +14884,6 @@
     }
    },
    "title": "Photos: Lely celebrates installation of 50,000th Astronaut worldwide - Agriland.ie"
-  },
-  "https://www.ajg.com/news-and-insights/automation-safety-robotic-systems/": {
-   "citedBy": [
-    "1-7#ref-12"
-   ],
-   "refText": "Arthur J. Gallagher & Co., “Automation Safety: Robotic Systems,” News and Insights. ajg.com/news-and-insights/automation-safety-robotic-systems.",
-   "http": 200,
-   "linkChecked": "2026-10-27",
-   "checks": {
-    "1-7": {
-     "status": "partial",
-     "claim": "Gallagher 'Automation Safety: Robotic Systems': OSHA Technical Manual safeguard options (mechanical limiting, nonmechanical limiting, presence-sensing, fixed barriers, interlocked guards); all safeguards active in automatic operation and no body part inside the safeguarded area.",
-     "evidence": "\"In September of 2021, OSHA issued a new technical manual chapter titled, Industrial Robot Systems and Industrial Robot System Safety.\"; \"choosing and installing barrier guards, interlocks, light curtains or other sensors\"; \"If an operator is using a non-collaborative robotic arm in automatic mode and proper interlocked barrier guards are in place, then when the outside gate is opened the arm should stop immediately\".",
-     "note": "Rechecked 2026-11-08. Page opened (Jina fallback), titled 'Automation, Safety and Robotic Systems' (citation says 'Automation Safety: Robotic Systems'; update the title). Not supported as written: the four-option list of OSHA safeguards (no 'mechanical limiting', 'nonmechanical limiting', 'presence-sensing' or 'fixed barrier' wording) and the sentence 'During automatic operation all safeguards should be active, and no part of the operator's body should be inside the safeguarded area' (the page only discusses interlocked guards in automatic mode). The OSHA-manual sentence is partly supported. Rewrite the claim to what the page says, or cite the OSHA manual directly. Earlier note: Not checked at source. Same claims are supported by HSI [9] and by the OSHA OTM itself ([2], Sec. IV Ch. 4: fixed barrier, interlocked barrier guards, mechanical/non-mechanical limiting devices; 'all safeguarding devices should be activated').",
-     "corroboratedBy": "https://www.osha.gov/otm/section-4-safety-hazards/chapter-4",
-     "checked": "2026-11-08"
-    }
-   }
   },
   "https://www.allaboutcircuits.com/technical-articles/introduction-to-mosfet-switching-losses": {
    "citedBy": [
@@ -14504,7 +14976,7 @@
   },
   "https://www.analog.com/en/resources/analog-dialogue/raqs/raq-issue-139.html": {
    "citedBy": [
-    "6-5#ref-11"
+    "6-5#ref-12"
    ],
    "refText": "I. Beavers, “The Case of the Misguided Gyro,” Analog Dialogue, Rarely Asked Questions, Issue 139, Analog Devices, Mar. 2017. analog.com/.../raq-issue-139.html.",
    "http": 0,
@@ -14583,7 +15055,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Machine Vision & AI: Improving Automated Inspection in Manufacturing | A3",
+   "linkChecked": "2026-11-09"
   },
   "https://www.automate.org/blogs/sense-it-or-infer-it-two-approaches-to-3d-machine-vision": {
    "citedBy": [
@@ -14598,7 +15073,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://www.automate.org/vision/blogs/sense-it-or-infer-it-two-approaches-to-3d-machine-vision",
+   "title": "Sense It or Infer It? Two Approaches to 3D Machine Vision | A3",
+   "linkChecked": "2026-11-09"
   },
   "https://www.automate.org/blogs/the-future-of-led-illumination-in-machine-vision": {
    "citedBy": [
@@ -14613,7 +15092,11 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://www.automate.org/vision/blogs/the-future-of-led-illumination-in-machine-vision",
+   "title": "The Future of LED Illumination in Machine Vision | A3",
+   "linkChecked": "2026-11-09"
   },
   "https://www.automate.org/case-studies/automotive-stamping-study-at-daimlerchrysler-finds-new-vacuum-technology-elicits-potential-annual-savings-of-400-000-plant": {
    "citedBy": [
@@ -14660,11 +15143,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-6": {
-     "status": "partial",
-     "claim": "A3 glossary: six-axis robot definition; DOF counts for helical, cylindrical, universal and spherical joints; axes numbered from base outward; at least six joints needed; first three axes place the wrist, last three orient the tool; SCARA can only rotate about the vertical axis.",
-     "evidence": "\"A six-axis robot is an industrial robotic arm with six rotary joints (also called axes) that provide complete freedom of movement in three-dimensional space.\"; \"Each axis represents a degree of freedom\"; \"Axis 1 (Base)\"; \"Three wrist axes, unlimited tool orientation\"; \"Single vertical rotation, no tilting\".",
-     "note": "Rechecked 2026-11-08. Supported: six rotary joints, each axis a degree of freedom, three wrist axes, and the SCARA vertical-rotation point. Not in the page: the 1-DOF helical / 2-DOF cylindrical and universal / 3-DOF spherical counts (the page only uses 'cylindrical' and 'spherical' in a table without DOF numbers), 'data sheets call the joints axes, numbered from the base outward', 'at least six joints' being needed, and 'the first three axes decide where the wrist is'. Those sentences need a different source or should be cut back.",
-     "checked": "2026-11-08"
+     "status": "verified",
+     "claim": "A3 glossary: six rotary joints called axes, each a degree of freedom, numbered from the base; six needed for full position and orientation; axes 1-3 place the wrist, axes 4-6 are the wrist; SCARA only rotates about the vertical axis.",
+     "evidence": "\"six rotary joints (also called axes) that provide complete freedom of movement in three-dimensional space. Each axis represents a degree of freedom\"; \"Axis 1 (Base)\", \"Axis 2 (Shoulder)\", \"Axis 3 (Elbow) : Raises and lowers the forearm, adding vertical positioning capability\", \"Axis 4 (Wrist Roll)\", \"Axis 5 (Wrist Pitch)\", \"Axis 6 (Wrist Yaw)\"; \"Six degrees of freedom provide unrestricted positioning and orientation capability within the robot's work envelope, enabling complex tasks that simpler robot configurations cannot accomplish.\"; \"Single vertical rotation, no tilting\".",
+     "note": "Rechecked 2026-11-09 against the full page. The axis list (1 Base to 6 Wrist Yaw) supports the numbering and the arm/wrist split. The helical, cylindrical, universal and spherical DOF counts in the first sentence are not from this page; they come from the co-cited ref 2 (Modern Robotics, section 2.2).",
+     "checked": "2026-11-09"
     }
    },
    "title": "What is a Six-Axis Robot? | A3 Glossary"
@@ -14690,7 +15173,7 @@
   "https://www.automate.org/robotics/blogs/updated-iso-10218-faq": {
    "citedBy": [
     "1-3#ref-16",
-    "1-7#ref-6",
+    "1-7#ref-7",
     "5-1#ref-8",
     "5-2#ref-5",
     "5-4#ref-41"
@@ -14719,11 +15202,11 @@
      "checked": "2026-10-22"
     },
     "1-3": {
-     "status": "partial",
-     "claim": "A3 FAQ on the 2025 ISO 10218 revision: publication in March 2025 replacing the 2011 versions; the term 'collaborative robot' dropped in favour of 'collaborative application'; ISO/TS 15066 content folded in with force and pressure limits; two robot classes; four types of collaborative operation in the earlier edition.",
-     "evidence": "\"The terms “collaborative robot” and “collaborative operation” will not be found in the revised ISO 10218. “Collaborative application” is used instead\"; \"To better understand this standard and the key changes from the 2011 version\"; \"Where appropriate, ISO/TS 15066:2016 on the safety of collaborative robot applications was added to the ISO 10218 series.\"; \"published the highly anticipated revised ISO 10218 earlier this month\" (dated 03/20/2025).",
-     "note": "Rechecked 2026-11-08. First sentence supported (March 2025 publication, 2011 version, terminology change). Second sentence partly supported: the FAQ says ISO/TS 15066 content was incorporated, but says nothing about 'forces and pressures' or 'two classes'. Third sentence not found: the FAQ does not mention four types of collaborative operation in the earlier edition. Remove or rewrite those two clauses, or cite the standard. Earlier note: Verified there: terms dropped, TS 15066 folded in",
-     "checked": "2026-11-08"
+     "status": "verified",
+     "claim": "ISO 10218:2025 published March 2025 replacing the 2011 versions; 'collaborative robot'/'collaborative operation' dropped for 'collaborative application'; ISO/TS 15066 content folded in; requirements for the collaborative types revised.",
+     "evidence": "\"The terms “collaborative robot” and “collaborative operation” will not be found in the revised ISO 10218. “Collaborative application” is used instead, as only the actual use of the robot can be designed, tested, and confirmed as a collaborative application.\"; \"Safety requirements for collaborative applications (formerly, the content of ISO/TS 15066) have also been incorporated.\"; \"“Safety rated-monitored stop” has been renamed “monitored standstill”\".",
+     "note": "Rechecked 2026-11-09 together with the co-cited refs. The clauses this FAQ lacks are in the other ref on the same sentence: 'permissible forces and pressure loads' and 'two robot classes' are in ref 17 (SICK), and 'ISO 10218-1 ... classifying the four types of collaborative robot operation' is in ref 14 (Plant Engineering). No lesson change needed.",
+     "checked": "2026-11-09"
     },
     "1-7": {
      "status": "verified",
@@ -15079,7 +15562,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "EtherCAT | Beckhoff Worldwide",
+   "linkChecked": "2026-11-09"
   },
   "https://www.bls.gov/ooh/installation-maintenance-and-repair/industrial-machinery-mechanics-and-maintenance-workers-and-millwrights.htm": {
    "citedBy": [
@@ -15411,7 +15897,7 @@
   },
   "https://www.certifico.com/id/2554": {
    "citedBy": [
-    "1-7#ref-5"
+    "1-7#ref-6"
    ],
    "refText": "Certifico, technical summary of ISO 10218-2, certifico.com. certifico.com/id/2554.",
    "http": 200,
@@ -15440,11 +15926,13 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-696.pdf": {
    "citedBy": [
-    "6-5#ref-13"
+    "6-5#ref-14"
    ],
    "refText": "O. J. Woodman, An introduction to inertial navigation, Technical Report UCAM-CL-TR-696, University of Cambridge Computer Laboratory, August 2007. cl.cam.ac.uk (PDF).",
    "checks": {
@@ -15750,7 +16238,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Backlight Illumination for Machine Vision | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/illumination/brightfield-illumination-with-dome-lights-for-machine-vision/": {
    "citedBy": [
@@ -15765,7 +16256,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Brightfield Illumination with Dome Lights for Machine Vision",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/illumination/choose-the-correct-illumination/": {
    "citedBy": [
@@ -15796,7 +16290,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Common Illumination Types | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/illumination/in-line-illumination-considerations/": {
    "citedBy": [
@@ -15819,7 +16316,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "In-line Illumination | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/advantages-of-telecentricity/": {
    "citedBy": [
@@ -15842,7 +16342,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "The Advantages of Telecentricity | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/contrast/": {
    "citedBy": [
@@ -15873,7 +16376,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Contrast | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/distortion/": {
    "citedBy": [
@@ -15896,7 +16402,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Distortion | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/lens-iris-aperture-setting/": {
    "citedBy": [
@@ -15911,7 +16420,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "System Throughput, f/#, and Numerical Aperture | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/machine-vision-filter-technology/": {
    "citedBy": [
@@ -15926,7 +16438,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Machine Vision Filter Technology | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/resolution/": {
    "citedBy": [
@@ -15949,7 +16464,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Resolution | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-camera-sensors-for-machine-vision-applications/": {
    "citedBy": [
@@ -15972,7 +16490,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Imaging Electronics 101: Understanding Camera Sensors for Machine Vision Applications",
+   "linkChecked": "2026-11-09"
   },
   "https://www.edmundoptics.com/knowledge-center/application-notes/imaging/understanding-focal-length-and-field-of-view/": {
    "citedBy": [
@@ -15987,7 +16508,10 @@
      "note": "Fetched 2026-11-06 with fetch_text.py.",
      "checked": "2026-11-06"
     }
-   }
+   },
+   "http": 200,
+   "title": "Understanding Focal Length and Field of View | Edmund Optics",
+   "linkChecked": "2026-11-09"
   },
   "https://www.ehsinsight.com/blog/lockout-tagout-standards": {
    "citedBy": [
@@ -16064,7 +16588,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "GenICam – EMVA",
+   "linkChecked": "2026-11-09"
   },
   "https://www.encoder.com/hubfs/Noise%20and%20Signal%20Distortion%20Considerations_white%20paper_final%20(1).pdf": {
    "citedBy": [
@@ -16131,7 +16658,9 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.ethercat.org/en/safety.html": {
    "citedBy": [
@@ -16146,7 +16675,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "EtherCAT Technology Group | Safety",
+   "linkChecked": "2026-11-09"
   },
   "https://www.ethercat.org/en/technology.html": {
    "citedBy": [
@@ -16161,7 +16693,10 @@
      "note": "Ch8, Claude review pass (sentences rewritten from the cached page)",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "EtherCAT Technology Group | EtherCAT",
+   "linkChecked": "2026-11-09"
   },
   "https://www.everycrsreport.com/files/2021-12-21_IF11294_9ab38c030a8c794b91ee69150e2554714a644ddc.html": {
    "citedBy": [
@@ -16441,7 +16976,7 @@
   },
   "https://www.farnell.com/datasheets/1758998.pdf": {
    "citedBy": [
-    "1-7#ref-7"
+    "1-7#ref-8"
    ],
    "refText": "Banner Engineering, enabling device datasheet, hosted by Farnell. farnell.com/datasheets/1758998.pdf.",
    "http": 206,
@@ -16485,7 +17020,10 @@
      "note": "Ch3 draft, step 25",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "First Timers Only - Get involved in Open Source and commit code to your first project!",
+   "linkChecked": "2026-11-09"
   },
   "https://www.fluke.com/en-us/learn/blog/digital-multimeters/how-to-measure-dc-voltage-with-a-digital-multimeter": {
    "citedBy": [
@@ -16500,7 +17038,10 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "How to Measure DC Voltage with a Digital Multimeter | Fluke",
+   "linkChecked": "2026-11-09"
   },
   "https://www.fluke.com/en-us/learn/blog/digital-multimeters/how-to-test-for-continuity": {
    "citedBy": [
@@ -16515,7 +17056,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "A Guide to Continuity Testing with a Multimeter | Fluke",
+   "linkChecked": "2026-11-09"
   },
   "https://www.fluke.com/en-us/learn/blog/predictive-maintenance/troubleshooting-dc-power-supply-with-digital-multimeter": {
    "citedBy": [
@@ -16530,7 +17074,10 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Troubleshooting DC Power Supplies Using a Digital Multimeter | Fluke",
+   "linkChecked": "2026-11-09"
   },
   "https://www.foldoc.org/Industrial+Robot+Language": {
    "citedBy": [
@@ -16579,7 +17126,10 @@
      "note": "Ch7 draft, step 16",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "10 steps to barcode your product - English | GS1",
+   "linkChecked": "2026-11-09"
   },
   "https://www.gutenberg.org/cache/epub/77400/pg77400-images.html": {
    "citedBy": [
@@ -16818,7 +17368,11 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://www.igus.com/robot-dress-pack/retraction-systems",
+   "title": "Robot Dresspack Retraction Systems for triflex® R | igus®",
+   "linkChecked": "2026-11-09"
   },
   "https://www.iict.bas.bg/pecr/1997/46/99-105.pdf": {
    "citedBy": [
@@ -16875,7 +17429,7 @@
   },
   "https://www.intel.com/content/www/us/en/products/sku/128255/intel-realsense-depth-camera-d435/specifications.html": {
    "citedBy": [
-    "6-5#ref-18"
+    "6-5#ref-19"
    ],
    "refText": "Intel Corporation, Intel RealSense Depth Camera D435 Series Product Brief. simplecore.intel.com/.../D435_Series_ProductBrief_111207.pdf; specifications: intel.com/.../intel-realsense-depth-camera-d435/specifications.html.",
    "http": 403,
@@ -16938,7 +17492,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "ISA/IEC 62443 Series of Standards - ISA",
+   "linkChecked": "2026-11-09"
   },
   "https://www.iso.org/news/2016/03/Ref2057.html": {
    "citedBy": [
@@ -17068,7 +17625,7 @@
   },
   "https://www.iso.org/standard/73933.html": {
    "citedBy": [
-    "1-7#ref-21",
+    "1-7#ref-3",
     "2-1#ref-11",
     "5-1#ref-5",
     "5-2#ref-2"
@@ -17475,7 +18032,10 @@
      "note": "2026-10-28: artistproject subdomain replaced with the main metmuseum.org page (checked by Claude). The 1204-1206 / Artuqid sentence is not on this page; it is carried by the lesson's other refs.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 429,
+   "title": "Vercel Security Checkpoint",
+   "linkChecked": "2026-11-09"
   },
   "https://www.mhlnews.com/blog/agvs-follow-paths-undreamed-inventor": {
    "citedBy": [
@@ -17561,7 +18121,9 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.modbus.org/file/secure/modbusprotocolspecification.pdf": {
    "citedBy": [
@@ -17584,7 +18146,9 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.motioncontroltips.com/absolute-encoder-intefaces-differences-between-ssi-biss-hiperface-endat/": {
    "citedBy": [
@@ -17828,7 +18392,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Manufacturing Machinery Maintenance | NIST",
+   "linkChecked": "2026-11-09"
   },
   "https://www.nspe.org/career-growth/nspe-code-ethics-engineers": {
    "citedBy": [
@@ -17877,7 +18444,10 @@
      "note": "Ch8, Claude review pass (sentences rewritten from the cached page)",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "CIP Safety™ | Common Industrial Protocol | ODVA Technologies",
+   "linkChecked": "2026-11-09"
   },
   "https://www.odva.org/technology-standards/key-technologies/ethernet-ip/": {
    "citedBy": [
@@ -17917,7 +18487,9 @@
      "note": "Ch8, Claude review pass (sentences rewritten from the cached page)",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.oecd.org/en/publications/putting-a-face-behind-the-jobs-at-risk-of-automation_5ded25f0-en.html": {
    "citedBy": [
@@ -18005,7 +18577,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "1910.147 - The control of hazardous energy (lockout/tagout). | Occupational Safety and Health Administration",
+   "linkChecked": "2026-11-09"
   },
   "https://www.osha.gov/laws-regs/standardinterpretations/2005-07-07": {
    "citedBy": [
@@ -18037,11 +18612,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "1-7": {
-     "status": "fixed",
-     "claim": "OSHA OTM: robot system = robot + end-effector + control computers, power, sensors, I/O; four major components; cell component list and sensor examples",
-     "evidence": "OTM IV-4: system includes end-effector; 'computers, processors, and programs (i.e., the control system); power sources; sensors; and, sequencing or monitoring communication interfaces (i.e....",
-     "note": "The quoted phrase 'control computers, power sources, sensors, and I/O interfaces' is not verbatim in OTM; paraphrase it or quote the actual wording. OTM sensor list is generic (contact, optical/camera, proximity); part-present/door switches are not named.",
-     "checked": "2026-10-22"
+     "status": "verified",
+     "claim": "OSHA OTM: robot system = robot + end-effector + control computers, power, sensors, I/O; four major components; cell component list and sensor examples Added 2026-11-10: the list of safeguarding and limiting devices; the integrator designs and implements the application and is responsible for its risk assessment before commissioning; the employer makes sure the integrator delivered a safe application and keeps it reliable through timely maintenance.",
+     "evidence": "OTM IV-4: system includes end-effector; 'computers, processors, and programs (i.e., the control system); power sources; sensors; and, sequencing or monitoring communication interfaces (i.e.... Added 2026-11-10: \"safeguarding devices such as: Presence-sensing safeguarding devices; Fixed barrier/perimeter guards; Interlocked barrier guards ... Mechanical limiting devices; Non-mechanical limiting devices\"; \"Employers should ensure that the integrator has designed and implemented a safe robot application.\"; \"It is the responsibility of integrator to ensure that an RA is completed and documented prior to commissioning.\"; \"The completed robot application should include any end-effectors, sensors, safeguarding, control equipment\"; \"Reliable systems and timely maintenance, performed to industry standards and manufacturer recommendations, are especially important\".",
+     "note": "Re-read in full 2026-11-10 (104 KB) for the added citations. The automatic-mode sentence in the lesson follows HSI's wording (ref 12); the current OTM text says 'all safeguarding devices should be activated, and at no time should the operator have access to or be exposed to hazards'.",
+     "checked": "2026-11-09"
     },
     "5-1": {
      "status": "verified",
@@ -18083,7 +18658,9 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.pharmaceutical-tech.com/products/nvenia-llc/arpac-brand-lt-robotic-palletizer-model": {
    "citedBy": [
@@ -18282,7 +18859,7 @@
   },
   "https://www.pololu.com/product/961": {
    "citedBy": [
-    "6-5#ref-15"
+    "6-5#ref-16"
    ],
    "refText": "Pololu Corporation, QTR-8RC Reflectance Sensor Array (product page, item #961). pololu.com/product/961.",
    "http": 200,
@@ -18328,7 +18905,10 @@
      "note": "2026-10-28: new source added by Claude after the step 35 audit found the sentence uncited; 'open standard maintained by' reworded to what PI says.",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 200,
+   "title": "Organization | www.profibus.com",
+   "linkChecked": "2026-11-09"
   },
   "https://www.profibus.com/profinet-technology": {
    "citedBy": [
@@ -18368,7 +18948,11 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "finalUrl": "https://www.profinet.com/profinet-explained/technology-description",
+   "title": "PROFINET Technology Description: PROFINET",
+   "linkChecked": "2026-11-09"
   },
   "https://www.prosource.org/article/roadmap-for-a-successful-factory-acceptance-test": {
    "citedBy": [
@@ -18719,11 +19303,13 @@
      "note": "2026-10-28: replaced the dead Stanford student page with the University of Ottawa lecture slide (fetched and checked by Claude).",
      "checked": "2026-10-28"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.slamtec.com/en/lidar/a3spec": {
    "citedBy": [
-    "6-5#ref-17"
+    "6-5#ref-18"
    ],
    "refText": "Slamtec, RPLIDAR A3 Laser Range Scanner: Parameters. slamtec.com/en/lidar/a3spec.",
    "http": 200,
@@ -19081,7 +19667,11 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "finalUrl": "https://www.universal-robots.com/articles/ur/interface-communication/connecting-internal-inputs-and-outputs-io-on-the-robots-controller/",
+   "title": "Universal Robots - Connecting Internal Inputs and Outputs (I/O) on the robot's controller",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/connecting-internal-inputs-and-outputs-io-on-the-robots-controller/": {
    "citedBy": [
@@ -19113,7 +19703,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Ethernet IP guide - 18712 - collaborative robots support",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/modbus-client-troubleshooting/": {
    "citedBy": [
@@ -19128,7 +19721,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Modbus client troubleshooting - 16374",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/modbus-server-bit-access/": {
    "citedBy": [
@@ -19151,7 +19747,10 @@
      "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Modbus server bit access - 54280",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/modbus-server/": {
    "citedBy": [
@@ -19174,7 +19773,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Modbus Server - 16377 | Universal Robots Support",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/profinet-how-to-guide-e-series/": {
    "citedBy": [
@@ -19189,7 +19791,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Profinet Guide - 20596",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/interface-communication/profisafe-technical-guide-for-e-series/": {
    "citedBy": [
@@ -19204,7 +19809,10 @@
      "note": "Ch8, Claude review pass (sentences rewritten from the cached page)",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Universal Robots - ProfiSafe Technical Guide for e-Series",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/programming/moving-to-a-position-calculated-from-user-input/": {
    "citedBy": [
@@ -19272,7 +19880,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "How to replace flashcard in CB3 robots 15375 - UR Support",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/robot-care-maintenance/inspection-and-maintenance-plan/": {
    "citedBy": [
@@ -19295,7 +19906,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Universal Robots - Inspection And Maintenance Plan",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/robot-care-maintenance/preventive-actions-for-error-code-c153-protective-stop-joint-positions-deviates-from-path/": {
    "citedBy": [
@@ -19310,7 +19924,10 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Preventive actions for error code C153",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/robot-care-maintenance/ur-log-viewer-manual/": {
    "citedBy": [
@@ -19325,7 +19942,10 @@
      "note": "Ch9, Claude review pass",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Universal Robots - UR Log Viewer - Manual",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/articles/ur/safety/safety-faq": {
    "citedBy": [
@@ -19394,7 +20014,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 200,
+   "title": "Dashboard Server",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/developer/communication-protocol/ros-and-ros2-driver/": {
    "citedBy": [
@@ -19570,6 +20193,24 @@
    },
    "title": "Singularity"
   },
+  "https://www.universal-robots.com/manuals/EN/HTML/SW10_9/Content/prod-usr-man/complianceUR20/comp-introduction/comp-preface.htm": {
+   "citedBy": [
+    "1-7#ref-21"
+   ],
+   "refText": "Universal Robots, “Your Robot” (introduction), User Manual, UR20, PolyScope X, software 10.9. universal-robots.com/manuals/EN/HTML/SW10_9/Content/prod-usr-man/complianceUR20/comp-introduction/comp-preface.htm.",
+   "checks": {
+    "1-7": {
+     "status": "verified",
+     "claim": "UR says its robot is partly completed machinery and that a risk assessment is required for each robot application.",
+     "evidence": "\"The robot is partly completed machinery, as such a Declaration of Incorporation is provided. A risk assessment is required for each robot application.\"",
+     "note": "Opened 2026-11-10 (HTTP 200). UR's certifications page for the OEM control box says the same and adds that the integrator provides the Declaration of Conformity for the completed machine.",
+     "checked": "2026-11-09"
+    }
+   },
+   "http": 206,
+   "title": "Your Robot",
+   "linkChecked": "2026-11-09"
+  },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_20/Content/prod-scriptmanual/G5/movel_posea12v025t.htm": {
    "citedBy": [
     "1-6#ref-21"
@@ -19677,7 +20318,10 @@
      "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Dashboard Server Remote Control Interface e-Series",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-serv-man/UR20/serv-man-validation-joint.htm": {
    "citedBy": [
@@ -19692,7 +20336,10 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Validation after Joint Replacement",
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_26/Content/prod-usr-man/complianceUR15/safetyFunctionsAndinterfaces/safety_functions_table1a.htm": {
    "citedBy": [
@@ -19713,7 +20360,7 @@
   },
   "https://www.universal-robots.com/manuals/EN/HTML/SW5_26/Content/prod-usr-man/complianceUR18/3petp_UR30/3petp-UR30-description.htm": {
    "citedBy": [
-    "1-7#ref-9"
+    "1-7#ref-10"
    ],
    "refText": "Universal Robots, “3PE Teach Pendant” description, User Manual, software 5.26. universal-robots.com/manuals/EN/HTML/SW5_26/Content/prod-usr-man/complianceUR18/3petp_UR30/3petp-UR30-description.htm.",
    "http": 206,
@@ -19801,7 +20448,9 @@
      "note": "Ch9 draft, step 22",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/manuals/EN/PDF/Shared/service-manual_ur-series/Service_Manual_UR-Series_en.pdf": {
    "citedBy": [
@@ -19836,10 +20485,10 @@
     },
     "9-5": {
      "status": "verified",
-     "claim": "Dual Robot Calibration calibrates the robot across its full workspace so it can resume production after joint replacement without modifying program waypoints.; Program Correction by Key Waypoints adjusts waypoints when transferring programs between robots or making programs work following joint replacements.; Program Correction by Key Waypoints supports only fixed waypoints and does not support Mo",
-     "evidence": "Matches research_notes/ch9/facts.md, whose lines were checked word-for-word against the cached page in step 21 (Ch9).",
-     "note": "Ch9 draft, step 22",
-     "checked": "2026-10-27"
+     "claim": "Dual Robot Calibration calibrates the robot across its full workspace so it can resume production after joint replacement without modifying program waypoints.; Program Correction by Key Waypoints adjusts waypoints when transferring programs between robots or making programs work following joint replacements.; Program Correction by Key Waypoints supports only fixed waypoints and does not support Mo Added 2026-11-09: Dual Robot Calibration at final assembly and its requirements; the magic-file steps, serial-number folder, two-minute note, the 5.11 security setting, and backing up before software updates.",
+     "evidence": "Matches research_notes/ch9/facts.md, whose lines were checked word-for-word against the cached page in step 21 (Ch9). Added 2026-11-09: \"Each new robot is Dual Robot Calibrated as part of final assembly.\"; \"To perform a Dual Robot Calibration, you need: 2 robots (same size and same generation); Dual Robot Calibration Tooling Complete\"; \"Download and save magic files to the root folder on a USB stick. If more than one magic file is on the USB stick, they run in sequence.\"; \"Insert the USB stick into the USB slot in the Control Box.\"; \"A red !USB!-sign appears on the screen. Do not remove the USB stick.\"; \"Wait for a green <-USB-sign to appear.\"; \"Large files (e.g., history log) may take up to two minutes to download.\"; \"After the last magic file is completed, the USB stick can be safely removed.\"; \"The magic file creates a folder on the USB stick named with the serial number of the robot.\"; \"Multiple folders are created and named with serial number as well as a sequence number\"; \"starting with version 5.11, execution of magic files could be disabled in general security settings\"; \"Always perform program and installation files backup before updating the software.\"",
+     "note": "Re-read 2026-11-09 (full PDF text, sections 5.2.10, 5.2.11 and 6.4) for the added sentences.",
+     "checked": "2026-11-09"
     },
     "10-4": {
      "status": "verified",
@@ -19848,7 +20497,9 @@
      "note": "10-4, Claude",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "linkChecked": "2026-11-09"
   },
   "https://www.universal-robots.com/manuals/latest/en/datasheets/comp_e-serie/": {
    "citedBy": [
@@ -20151,7 +20802,10 @@
      "evidence": "\"world's most popular network analyzer\" \"https://gitlab.com/wireshark/wireshark\" \"create a merge request on Gitlab\" \"The non-profit Wireshark Foundation supports the development of Wireshark, a free, open-source tool\"",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Wireshark • Go Deep | Develop",
+   "linkChecked": "2026-11-09"
   },
   "https://www.wireshark.org/docs/dfref/m/mbtcp.html": {
    "citedBy": [
@@ -20166,7 +20820,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Wireshark • Go Deep | Display Filter Reference: Modbus/TCP",
+   "linkChecked": "2026-11-09"
   },
   "https://www.wireshark.org/docs/dfref/m/modbus.html": {
    "citedBy": [
@@ -20181,7 +20838,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "Wireshark • Go Deep | Display Filter Reference: Modbus",
+   "linkChecked": "2026-11-09"
   },
   "https://www.wireshark.org/docs/wsug_html_chunked/ChCustProtocolDissectionSection.html": {
    "citedBy": [
@@ -20196,7 +20856,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "11.5. Control Protocol Dissection",
+   "linkChecked": "2026-11-09"
   },
   "https://www.wireshark.org/docs/wsug_html_chunked/ChWorkBuildDisplayFilterSection.html": {
    "citedBy": [
@@ -20211,7 +20874,10 @@
      "note": "Ch8 draft, step 19",
      "checked": "2026-10-27"
     }
-   }
+   },
+   "http": 206,
+   "title": "6.4. Building Display Filter Expressions",
+   "linkChecked": "2026-11-09"
   },
   "https://www.yodify.com/Products/nxOPBZ/Robotic-Palletizer-LT": {
    "citedBy": [

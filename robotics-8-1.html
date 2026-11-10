@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT9M",
+            "timeRequired": "PT10M",
             "teaches": [
                 "sinking",
                 "sourcing",
@@ -90,20 +90,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html" aria-current="page"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -131,6 +148,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -141,8 +167,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -277,10 +304,19 @@
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">In direct current I/O circuits, what electrical paths do sinking and sourcing provide, and what type of PLC input module is required for an NPN field device?</li>
-                            <li class="article-spec-item">What is the functional difference between cyclic and acyclic communication on an industrial network, and what types of data does each mode carry?</li>
-                            <li class="article-spec-item">How does the active ring supervisor in a Device Level Ring detect network faults, what is the worst-case recovery time for a copper DLR network using default settings, and what node limit is recommended?</li>
+                            <li class="article-spec-item">In direct current I/O circuits, what electrical paths do sinking and sourcing provide, and what type of PLC input module is required for an NPN field device?<details class="check-answer"><summary>Show answer</summary><p>Sinking provides a path to supply common (-), and sourcing provides a path to supply source (+). An NPN field device requires a PLC I/O module with a sourcing input. <span class="check-answer-src">(Sections 01 and 02)</span></p></details></li>
+                            <li class="article-spec-item">What is the functional difference between cyclic and acyclic communication on an industrial network, and what types of data does each mode carry?<details class="check-answer"><summary>Show answer</summary><p>Cyclic communication transfers inputs and outputs between a controller and I/O devices at a defined update cycle time: at each interval the controller sends output commands to actuators and reads input states from field sensors. Acyclic communication transmits diagnostic data on an as-needed basis rather than on a fixed schedule, for example uploading an error log from a motor drive, modifying a controller parameter or reading temperature trends. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                            <li class="article-spec-item">How does the active ring supervisor in a Device Level Ring detect network faults, what is the worst-case recovery time for a copper DLR network using default settings, and what node limit is recommended?<details class="check-answer"><summary>Show answer</summary><p>The active ring supervisor sends beacon frames through both of its ring ports. If a cable breaks or a node loses power, the beacon frames stop arriving at the opposite supervisor port, and the supervisor then unblocks its blocked port. A copper DLR network has a worst-case recovery time of 2890 &micro;s with default beacon settings, and a limit of 50 or fewer nodes is recommended. <span class="check-answer-src">(Section 06)</span></p></details></li>
                         </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>You have two proximity sensors, one NPN and one PNP. For each, say whether its output switches the signal line to supply common or to positive supply, and whether it needs a sinking or a sourcing PLC input.</li>
+                                    <li>An input module has eight inputs that share one common terminal. Can you wire four NPN and four PNP sensors to it? Use the grouping rule from section 02.</li>
+                                    <li>A cell has 40 sensors, each wired back to the PLC with its own cable. In one sentence, say what a fieldbus changes, then give one piece of data that suits cyclic exchange and one that suits acyclic exchange.</li>
+                                </ol>
+                            </div>
 
                         <h2 class="article-section-title">08. References</h2>
                         <p class="references-note">Source check (October 2026): 5 of 5 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-8-1.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
@@ -325,11 +361,11 @@
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=72f75746" defer></script>
-        <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-        <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
-        <script src="assets/js/widgets.js?v=c8391bb7" defer></script>
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
+        <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 
     </body>
 </html>

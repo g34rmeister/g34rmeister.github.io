@@ -15,7 +15,7 @@ const pages = fs.readdirSync(root).filter(f => /^robotics-\d+-\d+\.html$/.test(f
     const res = await p.evaluate(() => [...document.querySelectorAll('[data-widget]')].map(el => {
       const svgs = [...el.querySelectorAll('svg')];
       return { name: el.dataset.widget, built: !el.querySelector(':scope > p.widget-note') && el.children.length > 0,
-        wide: el.scrollWidth > el.clientWidth + 1, svgOk: svgs.every(s => s.getAttribute('role') === 'img' && s.getAttribute('aria-label')),
+        wide: el.scrollWidth > el.clientWidth + 1, svgOk: svgs.every(s => ['img', 'group'].includes(s.getAttribute('role')) && s.getAttribute('aria-label')),
         buttons: el.querySelectorAll('button').length };
     }).concat([{ pageOverflow: document.documentElement.scrollWidth > innerWidth }]));
     const po = res.pop().pageOverflow;

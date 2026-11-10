@@ -8,7 +8,7 @@ Runs in CI (.github/workflows/site-sync.yml). Checks:
   anchors     every href="#id" and href="page.html#id" points to an id that exists
   assets      every local src/href (images, css, js) points to a file that exists
   externals   links in References open in a new tab with rel="noopener noreferrer"
-  course      course-data.js: quiz answers in range, quiz lessons exist, every key term
+  course      course-data.js + assets/js/quiz/ch<N>.js: quiz answers in range, quiz lessons exist, quizCounts, every key term
               has a glossary definition, every lesson page is listed and vice versa
 Exit code 1 lists every failure.
 """
@@ -96,10 +96,11 @@ def check_ids_and_links(all_pages):
 
 
 def check_course(lesson_pages):
-    js = ("global.window={};require(process.argv[1]);require(process.argv[2]);"
+    js = ("global.window={};const fs=require('fs'),path=require('path');require(process.argv[1]);require(process.argv[2]);"
+          "const d=process.argv[3];for(const f of fs.readdirSync(d).sort())if(/^ch\\d+\\.js$/.test(f))require(path.join(d,f));"
           "process.stdout.write(JSON.stringify({c: window.RISE_COURSE, g: Object.keys(window.RISE_GLOSSARY)}))")
     data = json.loads(subprocess.run(['node', '-e', js, str(ROOT / 'assets/js/course-data.js'),
-                                      str(ROOT / 'assets/js/glossary-data.js')],
+                                      str(ROOT / 'assets/js/glossary-data.js'), str(ROOT / 'assets/js/quiz')],
                                      capture_output=True, check=True, text=True, encoding="utf-8").stdout)
     course, glossary = data['c'], set(data['g'])
     lessons = {l['id']: l for ch in course['chapters'] for l in ch['lessons']}
@@ -114,9 +115,15 @@ def check_course(lesson_pages):
                 fail(f'glossary-data.js: no definition for key term "{term}" (lesson {lid})')
         if not lesson.get('objectives'):
             fail(f'course-data.js: lesson {lid} has no objectives')
+    counts = {str(k): v for k, v in course.get('quizCounts', {}).items()}
+    actual = {k: len(v) for k, v in course['quizzes'].items()}
+    if counts != actual:
+        fail(f'course-data.js quizCounts {counts} does not match the questions in assets/js/quiz/ch<N>.js {actual}; run site_sync.py')
     for chapter, questions in course['quizzes'].items():
+        if not any(str(ch['id']) == chapter for ch in course['chapters']):
+            fail(f'assets/js/quiz/ch{chapter}.js: no chapter {chapter} in course-data.js')
         for i, q in enumerate(questions):
-            where = f'course-data.js quiz {chapter} question {i + 1}'
+            where = f'assets/js/quiz/ch{chapter}.js question {i + 1}'
             if q['lesson'] not in lessons:
                 fail(f'{where}: unknown lesson {q["lesson"]}')
             elif not q['lesson'].startswith(f'{chapter}-'):
@@ -135,11 +142,20 @@ def check_stray_backrefs(all_pages):
             fail(f'{page.name}: stray backreference {m.group(0)!r} in page text: ...{text[max(0, m.start() - 40):m.end() + 40]!r}')
 
 
+def check_answers(page, text):
+    """Every self-check answer (details.check-answer) is non-empty and names its lesson section."""
+    for m in re.finditer(r'<details class="check-answer">(.*?)</details>', text, re.S):
+        a = re.search(r'<p>(.*?)<span class="check-answer-src">\(Sections? \d', m.group(1), re.S)
+        if not a or len(re.sub(r'<[^>]+>', '', a.group(1)).strip()) < 10:
+            fail(f'{page.name}: check-answer without an answer or a "(Section NN)" marker: {m.group(1)[:60]!r}')
+
+
 def main():
     all_pages = pages()
     lesson_pages = [p for p in all_pages if re.fullmatch(r'robotics-\d+-\d+\.html', p.name)]
     for page in lesson_pages:
         check_citations(page, page.read_text(encoding='utf-8'))
+        check_answers(page, page.read_text(encoding='utf-8'))
     check_ids_and_links(all_pages)
     check_course(lesson_pages)
     check_stray_backrefs(all_pages)

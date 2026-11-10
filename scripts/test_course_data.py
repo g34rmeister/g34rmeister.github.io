@@ -49,9 +49,25 @@ if missing_glossary:
 else:
     print("OK: All keyTerms are defined in glossary-data.js")
 
-# Check all quiz questions
-# Parse quiz blocks
-quizzes_match = re.search(r'quizzes:\s*\{(.*)\}\s*\}\s*;?\s*$', course_js, re.DOTALL)
-if quizzes_match:
-    quiz_str = quizzes_match.group(1)
-    print("Found quizzes block.")
+# Check all quiz questions: they live in assets/js/quiz/ch<N>.js, with only quizCounts in course-data.js
+import subprocess
+js = ("global.window={};const fs=require('fs'),path=require('path');require(path.resolve('assets/js/course-data.js'));"
+      "const d=path.resolve('assets/js/quiz');for(const f of fs.readdirSync(d).sort())if(/^ch\\d+\\.js$/.test(f))require(path.join(d,f));"
+      "process.stdout.write(JSON.stringify(window.RISE_COURSE))")
+course = json.loads(subprocess.run(['node', '-e', js], capture_output=True, check=True, text=True, encoding='utf-8').stdout)
+errors = 0
+counts = {str(k): v for k, v in course.get('quizCounts', {}).items()}
+if counts != {k: len(v) for k, v in course['quizzes'].items()}:
+    print("ERROR: quizCounts in course-data.js does not match the quiz files (run scripts/site_sync.py)")
+    errors += 1
+for ch, questions in course['quizzes'].items():
+    for i, q in enumerate(questions):
+        if q['lesson'] not in lessons or not q['lesson'].startswith(f'{ch}-'):
+            print(f"ERROR: quiz {ch} question {i + 1}: lesson {q['lesson']} is not in chapter {ch}")
+            errors += 1
+        if not 0 <= q['answer'] < len(q['choices']):
+            print(f"ERROR: quiz {ch} question {i + 1}: answer index out of range")
+            errors += 1
+print(f"OK: {sum(counts.values())} quiz questions in {len(counts)} chapter files" if not errors else f"{errors} quiz errors")
+if errors:
+    sys.exit(1)

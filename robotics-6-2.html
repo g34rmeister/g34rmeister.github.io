@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -93,20 +93,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html" aria-current="page"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -134,6 +151,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -144,8 +170,9 @@
                     <a href="robotics-control.html" class="active"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -221,6 +248,13 @@
                             <div class="article-callout">
                                 <p>\[\text{value} = \text{round}\left(\frac{3.0\text{ V}}{5.0\text{ V}} \times 255\right) = \text{round}(0.60 \times 255) = 153\]</p>
                             </div>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 400 250" role="img" aria-label="Three PWM waveforms from a 12 volt supply at 25, 50 and 75 percent duty cycle, each with a dashed line at its average voltage of 3, 6 and 9 volts" xmlns="http://www.w3.org/2000/svg">
+                                    <text class="d-title" x="8" y="40" text-anchor="start">25%</text><text class="d-muted" x="8" y="58" text-anchor="start">avg 3 V</text><path class="d-strong" d="M 90,62 L 90,22 L 108,22 L 108,62 L 162,62 L 162,22 L 180,22 L 180,62 L 234,62 L 234,22 L 252,22 L 252,62 L 306,62 L 306,22 L 324,22 L 324,62 L 378,62"/><line class="d-line" stroke-dasharray="5 4" x1="90" y1="52" x2="378" y2="52"/><text class="d-muted" x="384" y="26" text-anchor="start">12 V</text><text class="d-muted" x="384" y="66" text-anchor="start">0</text><text class="d-title" x="8" y="118" text-anchor="start">50%</text><text class="d-muted" x="8" y="136" text-anchor="start">avg 6 V</text><path class="d-strong" d="M 90,140 L 90,100 L 126,100 L 126,140 L 162,140 L 162,100 L 198,100 L 198,140 L 234,140 L 234,100 L 270,100 L 270,140 L 306,140 L 306,100 L 342,100 L 342,140 L 378,140"/><line class="d-line" stroke-dasharray="5 4" x1="90" y1="120" x2="378" y2="120"/><text class="d-muted" x="384" y="104" text-anchor="start">12 V</text><text class="d-muted" x="384" y="144" text-anchor="start">0</text><text class="d-title" x="8" y="196" text-anchor="start">75%</text><text class="d-muted" x="8" y="214" text-anchor="start">avg 9 V</text><path class="d-strong" d="M 90,218 L 90,178 L 144,178 L 144,218 L 162,218 L 162,178 L 216,178 L 216,218 L 234,218 L 234,178 L 288,178 L 288,218 L 306,218 L 306,178 L 360,178 L 360,218 L 378,218"/><line class="d-line" stroke-dasharray="5 4" x1="90" y1="188" x2="378" y2="188"/><text class="d-muted" x="384" y="182" text-anchor="start">12 V</text><text class="d-muted" x="384" y="222" text-anchor="start">0</text>
+                                </svg>
+                                <figcaption>The same 12 V supply at three duty cycles. The longer the signal stays HIGH in each period, the higher the average voltage (dashed line) the motor responds to.<sup><a href="#ref-1">[1]</a></sup></figcaption>
+                            </figure>
 
                             <h2 class="article-section-title">03. Interactive PWM simulation</h2>
                             <p>
@@ -415,11 +449,11 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=72f75746" defer></script>
-            <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-            <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
-            <script src="assets/js/widgets.js?v=c8391bb7" defer></script>
+            <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+            <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
+            <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 
     </body>
 </html>

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -59,20 +59,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary>Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -100,6 +117,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -110,8 +136,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -151,7 +178,7 @@
 
                             <h2 class="article-section-title">01. Chapters and time</h2>
                             <p>
-                                The chapters are meant to be taken in order. Each lesson page shows an estimated time; the table adds them up per chapter. All ten chapters come to about 896 minutes (roughly 15 hours) of reading and exercises, or about 734 minutes (roughly 12 hours) without the optional Chapter 6. Labs and capstones take longer than their reading time.
+                                The chapters are meant to be taken in order. Each lesson page shows an estimated time; the table adds them up per chapter. All eleven chapters come to about 920 minutes (roughly 15 hours) of reading and exercises, or about 758 minutes (roughly 13 hours) without the optional Chapter 6. Labs and capstones take longer than their reading time.
                             </p>
                             <table class="article-table" style="width: 100%;">
                                 <thead>
@@ -160,14 +187,15 @@
                                 <tbody>
                                     <tr><td>1</td><td><a href="robotics-intro.html">Intro to Robotics</a></td><td>7</td><td>105</td><td>28</td><td></td></tr>
                                     <tr><td>2</td><td><a href="robotics-programming.html">Robot Programming</a></td><td>8</td><td>143</td><td>24</td><td></td></tr>
-                                    <tr><td>3</td><td><a href="robotics-oss.html">How to Contribute to Open Source</a></td><td>5</td><td>30</td><td>20</td><td></td></tr>
+                                    <tr><td>3</td><td><a href="robotics-oss.html">How to Contribute to Open Source</a></td><td>5</td><td>31</td><td>20</td><td></td></tr>
                                     <tr><td>4</td><td><a href="robotics-ros.html">Robot Operating System (ROS)</a></td><td>9</td><td>150</td><td>27</td><td></td></tr>
                                     <tr><td>5</td><td><a href="robotics-ethics.html">Ethics</a></td><td>5</td><td>77</td><td>15</td><td></td></tr>
                                     <tr><td>6</td><td><a href="robotics-control.html">Extra: Electronics and Control Basics</a></td><td>10</td><td>162</td><td>30</td><td>Optional</td></tr>
-                                    <tr><td>7</td><td><a href="robotics-vision.html">Machine Vision</a></td><td>6</td><td>68</td><td>24</td><td></td></tr>
-                                    <tr><td>8</td><td><a href="robotics-networks.html">Industrial Networks</a></td><td>6</td><td>52</td><td>24</td><td></td></tr>
-                                    <tr><td>9</td><td><a href="robotics-maintenance.html">Maintenance and Troubleshooting</a></td><td>6</td><td>41</td><td>24</td><td></td></tr>
-                                    <tr><td>10</td><td><a href="robotics-capstone.html">Capstone Projects</a></td><td>4</td><td>68</td><td>16</td><td></td></tr>
+                                    <tr><td>7</td><td><a href="robotics-vision.html">Machine Vision</a></td><td>6</td><td>70</td><td>24</td><td></td></tr>
+                                    <tr><td>8</td><td><a href="robotics-networks.html">Industrial Networks</a></td><td>6</td><td>54</td><td>24</td><td></td></tr>
+                                    <tr><td>9</td><td><a href="robotics-maintenance.html">Maintenance and Troubleshooting</a></td><td>6</td><td>45</td><td>24</td><td></td></tr>
+                                    <tr><td>10</td><td><a href="robotics-capstone.html">Capstone Projects</a></td><td>4</td><td>70</td><td>16</td><td></td></tr>
+                                    <tr><td>11</td><td><a href="robotics-mobile.html">Mobile Robots and Navigation</a></td><td>4</td><td>13</td><td>8</td><td></td></tr>
                                 </tbody>
                             </table>
 
@@ -230,10 +258,10 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=72f75746" defer></script>
-            <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-            <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+            <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+            <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>

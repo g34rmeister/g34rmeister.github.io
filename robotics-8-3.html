@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -90,20 +90,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html" aria-current="page"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -131,6 +148,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -141,8 +167,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html" class="active"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -226,6 +253,13 @@
                         <p>
                             For example, if register 128 contains integer value 5, <code>integer_to_binary_list(5)</code> returns a 16-element boolean list where index 0 is True (representing value 1), index 1 is False (value 2), index 2 is True (value 4), and all higher elements are False. The robot script can inspect or change any signal by accessing list indices, such as setting <code>sample_list[3] = True</code>. Before updating a server register, the binary list must be converted back to an integer using <code>binary_list_to_integer</code>.<sup><a href="#ref-6">[6]</a></sup> The script then passes the calculated integer back to the register port.
                         </p>
+
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 400 160" role="img" aria-label="A 16-bit register drawn as 16 cells numbered 15 down to 0. Bits 0 to 3 are highlighted and labelled Robot Ready, Cycle Start, Part Clamped and Robot Working. Bits 0 and 2 hold 1, so the register value is 5" xmlns="http://www.w3.org/2000/svg">
+                                    <text class="d-title" x="200" y="18" text-anchor="middle">Holding register 128</text><rect class="d-box" x="24" y="42" width="22" height="28"/><text class="d-muted" x="35" y="37" text-anchor="middle">15</text><text class="d-text" x="35" y="61" text-anchor="middle">0</text><rect class="d-box" x="46" y="42" width="22" height="28"/><text class="d-muted" x="57" y="37" text-anchor="middle">14</text><text class="d-text" x="57" y="61" text-anchor="middle">0</text><rect class="d-box" x="68" y="42" width="22" height="28"/><text class="d-muted" x="79" y="37" text-anchor="middle">13</text><text class="d-text" x="79" y="61" text-anchor="middle">0</text><rect class="d-box" x="90" y="42" width="22" height="28"/><text class="d-muted" x="101" y="37" text-anchor="middle">12</text><text class="d-text" x="101" y="61" text-anchor="middle">0</text><rect class="d-box" x="112" y="42" width="22" height="28"/><text class="d-muted" x="123" y="37" text-anchor="middle">11</text><text class="d-text" x="123" y="61" text-anchor="middle">0</text><rect class="d-box" x="134" y="42" width="22" height="28"/><text class="d-muted" x="145" y="37" text-anchor="middle">10</text><text class="d-text" x="145" y="61" text-anchor="middle">0</text><rect class="d-box" x="156" y="42" width="22" height="28"/><text class="d-muted" x="167" y="37" text-anchor="middle">9</text><text class="d-text" x="167" y="61" text-anchor="middle">0</text><rect class="d-box" x="178" y="42" width="22" height="28"/><text class="d-muted" x="189" y="37" text-anchor="middle">8</text><text class="d-text" x="189" y="61" text-anchor="middle">0</text><rect class="d-box" x="200" y="42" width="22" height="28"/><text class="d-muted" x="211" y="37" text-anchor="middle">7</text><text class="d-text" x="211" y="61" text-anchor="middle">0</text><rect class="d-box" x="222" y="42" width="22" height="28"/><text class="d-muted" x="233" y="37" text-anchor="middle">6</text><text class="d-text" x="233" y="61" text-anchor="middle">0</text><rect class="d-box" x="244" y="42" width="22" height="28"/><text class="d-muted" x="255" y="37" text-anchor="middle">5</text><text class="d-text" x="255" y="61" text-anchor="middle">0</text><rect class="d-box" x="266" y="42" width="22" height="28"/><text class="d-muted" x="277" y="37" text-anchor="middle">4</text><text class="d-text" x="277" y="61" text-anchor="middle">0</text><rect class="d-box-gold" x="288" y="42" width="22" height="28"/><text class="d-muted" x="299" y="37" text-anchor="middle">3</text><text class="d-text" x="299" y="61" text-anchor="middle">0</text><rect class="d-box-gold" x="310" y="42" width="22" height="28"/><text class="d-muted" x="321" y="37" text-anchor="middle">2</text><text class="d-text" x="321" y="61" text-anchor="middle">1</text><rect class="d-box-gold" x="332" y="42" width="22" height="28"/><text class="d-muted" x="343" y="37" text-anchor="middle">1</text><text class="d-text" x="343" y="61" text-anchor="middle">0</text><rect class="d-box-gold" x="354" y="42" width="22" height="28"/><text class="d-muted" x="365" y="37" text-anchor="middle">0</text><text class="d-text" x="365" y="61" text-anchor="middle">1</text><text class="d-text" x="376" y="92" text-anchor="end">bit 0: Robot Ready</text><text class="d-text" x="376" y="111" text-anchor="end">bit 1: Cycle Start</text><text class="d-text" x="376" y="130" text-anchor="end">bit 2: Part Clamped</text><text class="d-text" x="376" y="149" text-anchor="end">bit 3: Robot Working</text><text class="d-muted" x="24" y="92" text-anchor="start">bits 4 to 15: completion</text><text class="d-muted" x="24" y="108" text-anchor="start">flags or error codes</text><text class="d-title" x="24" y="150" text-anchor="start">value = 1 + 4 = 5</text>
+                                </svg>
+                                <figcaption>This lesson&rsquo;s example layout for register 128. With &ldquo;Robot Ready&rdquo; and &ldquo;Part Clamped&rdquo; on, the register holds 1 + 4 = 5; up to 16 on/off signals fit in one 16-bit register.<sup><a href="#ref-6">[6]</a></sup></figcaption>
+                            </figure>
 
                         <h2 class="article-section-title">04. Python communication with pymodbus</h2>
                         <p>
@@ -345,10 +379,27 @@ Exception code: 2</code></pre>
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">What type of EtherNet/IP messaging is supported on Universal Robots controllers, and which register range is reserved for the PLC fieldbus interface?</li>
-                            <li class="article-spec-item">Which Modbus function codes are used to read holding registers and to write multiple registers, and how does a Modbus server indicate an exception in its response?</li>
-                            <li class="article-spec-item">How can multiple binary handshake signals be consolidated into a single 16-bit Modbus register, and which endian format is used when converting that register into a boolean list in URScript?</li>
+                            <li class="article-spec-item">What type of EtherNet/IP messaging is supported on Universal Robots controllers, and which register range is reserved for the PLC fieldbus interface?<details class="check-answer"><summary>Show answer</summary><p>Universal Robots controllers support only EtherNet/IP Class 1 implicit I/O messaging, not Class 3 explicit messaging. The robot reserves the lower range of its general-purpose boolean, integer and float registers for the PLC fieldbus interface. <span class="check-answer-src">(Section 01)</span></p></details></li>
+                            <li class="article-spec-item">Which Modbus function codes are used to read holding registers and to write multiple registers, and how does a Modbus server indicate an exception in its response?<details class="check-answer"><summary>Show answer</summary><p>Function code 0x03 reads holding registers and 0x10 writes multiple registers. When a Modbus server cannot carry out a request, its exception response uses the request function code plus 0x80. <span class="check-answer-src">(Sections 02 and 06)</span></p></details></li>
+                            <li class="article-spec-item">How can multiple binary handshake signals be consolidated into a single 16-bit Modbus register, and which endian format is used when converting that register into a boolean list in URScript?<details class="check-answer"><summary>Show answer</summary><p>Up to 16 binary on/off signals can be consolidated into a single 16-bit register instead of using a separate address for each. When the register is converted to a boolean list in URScript, little-endian notation is used, so the first element is the least significant bit. <span class="check-answer-src">(Section 03)</span></p></details></li>
                         </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Using the bit layout from section 03, what number is in register 128 when only &ldquo;Robot Ready&rdquo; and &ldquo;Part Clamped&rdquo; are on? You should get 5.</li>
+                                    <li>The PLC reads 10 from the same register. Which two signals are on?</li>
+                                    <li>With the stand-in server running, write your answer from step 1 to register 128 with <code>write_register</code> and read it back with <code>read_holding_registers</code>.</li>
+                                    <li>A read of input registers (function code 0x04) is rejected. Which function code does the exception response carry, in hex and in decimal?</li>
+                                </ol>
+                            </div>
+
+                            <!-- oss-note -->
+                            <div class="article-callout oss-note">
+                                <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>
+                                <p>Projects used or discussed here: <a href="robotics-oss-map.html#pymodbus">pymodbus</a>. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows its licence, where the code lives and how to make a first contribution.</p>
+                            </div>
+                            <!-- /oss-note -->
 
                         <h2 class="article-section-title">08. References</h2>
                         <p class="references-note">Source check (October 2026): 9 of 9 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-8-3.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
@@ -397,11 +448,11 @@ Exception code: 2</code></pre>
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=72f75746" defer></script>
-        <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-        <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
-        <script src="assets/js/widgets.js?v=c8391bb7" defer></script>
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
+        <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 
     </body>
 </html>

@@ -45,8 +45,10 @@ def describe(path, titles):
         return 'new-lesson', f'A new lesson file ({m.group(1)}.{m.group(2)}) not yet in course-data.js'
     if re.fullmatch(r'robotics[-a-z]*\.html', path):
         return 'page', 'A course page (hub, chapter overview or extra page)'
+    if path.startswith('assets/js/quiz/'):
+        return 'data', 'Quiz questions for one chapter'
     if path == 'assets/js/course-data.js':
-        return 'data', 'Course data: objectives, key terms, minutes and quizzes'
+        return 'data', 'Course data: objectives, key terms and minutes'
     if path == 'assets/js/glossary-data.js':
         return 'data', 'Glossary definitions'
     if path == 'assets/js/widgets.js':
@@ -72,7 +74,7 @@ CHECKS = {
     'new-lesson': ['New lessons are appended, never renumbered; they need an entry in `course-data.js`, '
                    '`scripts/site_manifest.json` and glossary terms, then `python3 scripts/site_sync.py`.'],
     'page': ['Pages keep exactly one `<h1>`, the shared head tags, the skip link and the footer credit.'],
-    'data': ['Quiz answers and glossary definitions match the lesson text; bump `version` in course-data.js when quiz data changes.'],
+    'data': ['Quiz answers and glossary definitions match the lesson text; bump `version` in course-data.js when questions in assets/js/quiz/ change (it busts the cache).'],
     'widget': ['The widget shows only what its lesson says, fits a 320 px screen in light and dark mode, and works with the keyboard.',
                'Pages that load `widgets.js` get a bumped `?v=` number.'],
     'sources': ['Each recorded check names the evidence from the source, not only a verdict.'],

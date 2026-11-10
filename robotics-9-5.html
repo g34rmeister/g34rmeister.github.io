@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT4M",
+            "timeRequired": "PT6M",
             "teaches": [
                 "revolution counter",
                 "fine calibration",
@@ -90,20 +90,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html" aria-current="page"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -131,6 +148,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -141,8 +167,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -240,7 +267,10 @@
                             Dual Robot Calibration calibrates the robot across its full workspace so it can resume production after joint replacement without modifying program waypoints.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
-                            The other option is to correct the program. Program Correction by Key Waypoints adjusts waypoints when transferring programs between robots or making programs work following joint replacements.<sup><a href="#ref-3">[3]</a></sup>
+                            Each new UR robot is Dual Robot Calibrated as part of final assembly. Repeating it after a repair needs two robots of the same size and generation, plus UR&rsquo;s Dual Robot Calibration tooling.<sup><a href="#ref-3">[3]</a></sup> If you do not have a second matching robot, that leaves the other option: correcting the program.
+                        </p>
+                        <p>
+                            Program Correction by Key Waypoints adjusts waypoints when transferring programs between robots or making programs work following joint replacements.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
                             Program Correction by Key Waypoints supports only fixed waypoints and does not support Move nodes configured with <code>Use Joint Angles</code>.<sup><a href="#ref-3">[3]</a></sup> Those moves have to be checked and re-taught by hand.
@@ -286,6 +316,18 @@
                             Universal Robots magic files automatically back up data to a USB stick, copying programs, installation files, and configuration files.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
+                            Running a magic file takes four steps:<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <ol class="article-spec-list">
+                            <li>Download the magic file from UR&rsquo;s support site and save it to the root folder of a USB stick.</li>
+                            <li>Insert the stick into the USB slot in the control box. A red <code>!USB!</code> sign appears on the screen; do not remove the stick.</li>
+                            <li>Wait for the green USB sign. Large files, such as the history log, can take up to two minutes.</li>
+                            <li>When the last magic file has finished, remove the stick. The backup is in a folder named with the robot&rsquo;s serial number.</li>
+                        </ol>
+                        <p>
+                            If several magic files are on the stick, they run one after another, and each gets its own numbered folder. If nothing happens when you insert the stick, check the security settings: from PolyScope 5.11 on, running magic files can be turned off there.<sup><a href="#ref-3">[3]</a></sup> Whatever method you use, back up the program and installation files before every software update.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
                             Manual backup of the SD card <code>datafs</code> partition requires copying the programs directory, root serial and log files, and the urcontrol calibration files.<sup><a href="#ref-3">[3]</a></sup> The <code>datafs</code> partition contains the <code>programs/</code> directory (holding all application and installation scripts), <code>root/ur-serial</code>, <code>root/log_history.txt</code>, and the <code>.urcontrol/</code> configuration directory containing <code>calibration.conf</code> and <code>calibration.log</code>.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
@@ -297,13 +339,22 @@
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">What is the difference between a 4-point and a 5-point method when defining a tool center point (TCP), and why is accurate tool load data required for collision detection?</li>
-                            <li class="article-spec-item">What error code appears when a UR joint from a different robot model is fitted, and why must the storage card be backed up before it is replaced or reflashed?</li>
-                            <li class="article-spec-item">What data must be copied during a manual backup of the SD card <code>datafs</code> partition, and why must storage media never be removed while controller power is on?</li>
+                            <li class="article-spec-item">What is the difference between a 4-point and a 5-point method when defining a tool center point (TCP), and when does a correct tool load matter most?<details class="check-answer"><summary>Show answer</summary><p>A 5-point method is used when the robot weaves during welding; without weaving, a 4-point method is sufficient. A correct tool load in the tool data matters most when collision detection is used. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">What error code appears when a UR joint from a different robot model is fitted, and why must the storage card be backed up before it is replaced or reflashed?<details class="check-answer"><summary>Show answer</summary><p>Error C364A1 appears; it indicates a robot type disagreement in the joints when the brakes are released. The storage card must be backed up first because all files, including joint calibration data, can be permanently lost, and reflashing deletes all robot programs and calibration files. <span class="check-answer-src">(Sections 04 and 06)</span></p></details></li>
+                            <li class="article-spec-item">What data must be copied during a manual backup of the SD card <code>datafs</code> partition, and why must storage media never be removed while controller power is on?<details class="check-answer"><summary>Show answer</summary><p>A manual backup of the datafs partition requires copying the programs directory, the root serial and log files, and the urcontrol calibration files. The media must never be removed while power is on because the flashcard, USB drive or SD card is the robot&rsquo;s hard drive, and removing it could corrupt the operating system. <span class="check-answer-src">(Section 06)</span></p></details></li>
                         </ul>
 
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>Write a short checklist for the day a joint is replaced on a UR arm: which error tells you the new part does not match the robot, and which calibration lets the robot return to production without re-teaching waypoints?</li>
+                                    <li>You need to copy the SD card. What must you do to the controller first, and what can go wrong if you skip that step?</li>
+                                    <li>In your own words, explain what updating the revolution counters on an ABB robot does, and where the axes must be before you start.</li>
+                                </ol>
+                            </div>
+
                         <h2 class="article-section-title">08. References</h2>
-                        <p class="references-note">Source check (October 2026): 4 of 4 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-9-5.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <p class="references-note">Source check (November 2026): 4 of 4 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-9-5.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                         <ol class="article-spec-list">
                             <li id="ref-1">ABB, &ldquo;System Settings: Welding Robot Station M2004, IRC5.&rdquo; <a href="https://library.e.abb.com/public/0dd781963d32811dc125766d003a238c/3HEA802352-001_revA_en.pdf" target="_blank" rel="noopener noreferrer">library.e.abb.com/.../3HEA802352-001_revA_en.pdf</a>.</li>
                             <li id="ref-2">Universal Robots, &ldquo;Validation after Joint Replacement.&rdquo; <a href="https://www.universal-robots.com/manuals/EN/HTML/SW5_25/Content/prod-serv-man/UR20/serv-man-validation-joint.htm" target="_blank" rel="noopener noreferrer">universal-robots.com/.../serv-man-validation-joint.htm</a>.</li>
@@ -344,10 +395,10 @@
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=72f75746" defer></script>
-        <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-        <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>

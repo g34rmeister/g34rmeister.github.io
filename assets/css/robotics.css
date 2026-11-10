@@ -22,7 +22,7 @@
 	--wp-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 	--wp-serif: 'Linux Libertine', 'Georgia', 'Times', serif;
 	--wp-mono: Menlo, Consolas, 'Liberation Mono', 'Courier New', monospace;
-	--wp-content: 960px;
+	--wp-content: 720px;
 
 	--lsu-purple: #461d7c;
 	--lsu-gold: #fdd023;
@@ -112,6 +112,14 @@ a:hover {
 	color: var(--wp-link);
 	text-decoration: underline;
 }
+/* Links inside running text: not told apart from the text by colour alone (WCAG 1.4.1) */
+main :is(p, li, td, th, dd, figcaption) a:not([class]),
+.article-breadcrumb-link,
+.glossary-pop a,
+.quiz-feedback a {
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
 
 p { margin: 0.5em 0 1em; }
 ul, ol { margin-bottom: 1em; }
@@ -134,6 +142,7 @@ button:focus-visible,
 	transition: none;
 }
 
+#main:focus { outline: none; } /* focus lands here from the skip link */
 #main {
 	background: none;
 	backdrop-filter: none;
@@ -227,6 +236,68 @@ button:focus-visible,
 	font-weight: 700;
 	border-bottom-color: var(--wp-gold);
 }
+
+/* "Chapters" menu: <details> in the navbar row */
+.thesis-nav-links .nav-chapters { position: relative; }
+.nav-menu { display: flex; }
+.nav-menu > summary {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 10px;
+	font-size: 14px;
+	color: var(--wp-link);
+	cursor: pointer;
+	list-style: none;
+	border-bottom: 3px solid transparent;
+	margin-bottom: -1px;
+}
+.nav-menu > summary::-webkit-details-marker { display: none; }
+.nav-menu > summary::after {
+	content: "";
+	width: 0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid currentColor;
+}
+.nav-menu[open] > summary::after { border-top: 0; border-bottom: 5px solid currentColor; }
+.nav-menu > summary:hover { border-bottom-color: var(--wp-border-light); }
+.nav-menu > summary.active { color: var(--wp-text); font-weight: 700; border-bottom-color: var(--wp-gold); }
+.nav-menu > summary:focus-visible,
+.nav-menu-list a:focus-visible { outline: 2px solid var(--wp-link); outline-offset: -2px; }
+.nav-menu-list {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 110;
+	min-width: 190px;
+	margin: 0;
+	padding: 4px 0;
+	list-style: none;
+	background: var(--wp-bg);
+	border: 1px solid var(--wp-border);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.thesis-nav-links .nav-menu-list li { display: block; }
+.thesis-nav-links .nav-menu-list a {
+	display: flex;
+	gap: 8px;
+	padding: 6px 14px 6px 11px;
+	font-size: 14px;
+	border-bottom: 0;
+	margin-bottom: 0;
+	border-left: 3px solid transparent;
+}
+.thesis-nav-links .nav-menu-list a:hover { background: var(--wp-bg-subtle); }
+.thesis-nav-links .nav-menu-list a[aria-current="page"] {
+	color: var(--wp-text);
+	font-weight: 700;
+	border-left-color: var(--wp-gold);
+	background: var(--wp-bg-subtle);
+}
+.thesis-nav-links .nav-menu-list a[aria-current="page"]::after { content: "\2713"; margin-left: auto; }
+.nav-menu-num { min-width: 1.3em; color: var(--wp-text-muted); font-variant-numeric: tabular-nums; }
 
 .thesis-nav-actions {
 	display: flex;
@@ -340,6 +411,85 @@ body.thesis-drawer-open .thesis-drawer-backdrop {
 	margin-top: auto;
 	padding: 12px 16px;
 	border-top: 1px solid var(--wp-border-light);
+}
+
+/* Search in the navbar and the drawer (markup from scripts/site_sync.py, behaviour in learning.js) */
+.nav-search { position: relative; display: flex; align-items: center; }
+.nav-search[hidden] { display: none; }
+.nav-search > i {
+	position: absolute;
+	left: 9px;
+	color: var(--wp-text-muted);
+	font-size: 12px;
+	pointer-events: none;
+}
+.nav-search-input {
+	box-sizing: border-box;
+	width: 140px;
+	height: 32px;
+	padding: 4px 6px 4px 27px;
+	font: inherit;
+	font-size: 14px;
+	color: var(--wp-text);
+	background: var(--wp-bg);
+	border: 1px solid var(--wp-border);
+	border-radius: 2px;
+}
+.nav-search-input:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 1px; }
+.nav-search-results {
+	position: absolute;
+	top: calc(100% + 4px);
+	right: 0;
+	z-index: 120;
+	box-sizing: border-box;
+	width: min(380px, calc(100vw - 28px));
+	max-height: min(70vh, 460px);
+	overflow-y: auto;
+	margin: 0;
+	padding: 4px 0;
+	list-style: none;
+	background: var(--wp-bg);
+	border: 1px solid var(--wp-border);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+.nav-search-results[hidden] { display: none; }
+.nav-search-results li { margin: 0; }
+.nav-search-results a {
+	display: flex;
+	align-items: baseline;
+	gap: 10px;
+	padding: 6px 12px 6px 9px;
+	font-size: 14px;
+	line-height: 1.35;
+	color: var(--wp-link);
+	border-left: 3px solid transparent;
+}
+.nav-search-results a:hover { text-decoration: none; background: var(--wp-bg-subtle); }
+.nav-search-results a.is-active {
+	background: var(--wp-bg-subtle);
+	color: var(--wp-text);
+	border-left-color: var(--wp-gold);
+	outline: 2px solid var(--wp-link);
+	outline-offset: -2px;
+}
+.nav-search-kind {
+	flex: none;
+	min-width: 4.8em;
+	font-size: 11px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--wp-text-muted);
+}
+.nav-search-empty { padding: 8px 12px; font-size: 14px; color: var(--wp-text-muted); }
+.nav-search-drawer { display: block; margin: 10px 16px 2px; }
+.nav-search-drawer > i { top: 12px; }
+.nav-search-drawer .nav-search-input { width: 100%; height: 36px; font-size: 15px; }
+.nav-search-drawer .nav-search-results {
+	position: static;
+	width: auto;
+	margin-top: 6px;
+	box-shadow: none;
+	max-height: 50vh;
 }
 
 /* ==========================================================================
@@ -457,6 +607,16 @@ body.thesis-drawer-open .thesis-drawer-backdrop {
 	flex-wrap: wrap;
 	gap: 8px;
 }
+
+.hub-quicklinks {
+	order: 5;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 18px;
+	font-size: 14px;
+}
+.hub-quicklinks a { padding: 2px 0; }
+.hub-note { margin: 14px 0 0; font-size: 13px; color: var(--wp-text-muted); }
 
 .robotics-container {
 	max-width: var(--wp-content);
@@ -754,6 +914,100 @@ body.thesis-drawer-open .thesis-drawer-backdrop {
 }
 .wp-toc li { margin: 2px 0; }
 
+/* Side contents: only where it fits in the left margin without touching the 720px column
+   (50vw - 360px column half - 24px gap - 200px panel = 16px page margin at 1200px). */
+.wp-toc-side { display: none; }
+@media screen and (min-width: 1200px) {
+	.wp-toc-side {
+		display: block;
+		position: fixed;
+		top: 72px;
+		left: calc(50% - var(--wp-content) / 2 - 24px - 200px);
+		z-index: 5;
+		box-sizing: border-box;
+		width: 200px;
+		max-height: calc(100vh - 72px - 16px);
+		overflow-y: auto;
+		padding: 4px 0 6px;
+		font-size: 13px;
+		line-height: 1.35;
+		overscroll-behavior: contain;
+	}
+	.wp-toc-side .wp-toc-title { text-align: left; padding-left: 10px; color: var(--wp-text-muted); }
+	.wp-toc-side ol { margin: 0; padding: 0; list-style: none; }
+	.wp-toc-side li { margin: 0; }
+	.wp-toc-side a {
+		display: block;
+		padding: 4px 6px 4px 8px;
+		border-left: 2px solid var(--wp-border-light);
+	}
+	.wp-toc-side a:focus-visible { outline: 2px solid var(--wp-link); outline-offset: -2px; }
+	.wp-toc-side a[aria-current="location"] {
+		border-left-color: var(--wp-gold);
+		border-left-width: 4px;
+		padding-left: 6px;
+		font-weight: 700;
+		color: var(--wp-text);
+		background: var(--wp-bg-subtle);
+	}
+}
+/* ---------- Print: lessons print as a plain black-on-white article ---------- */
+@media print {
+	@page { margin: 16mm 15mm; }
+	/* Light tokens whatever theme is on screen */
+	:root,
+	:root[data-theme="dark"],
+	:root:not([data-theme="light"]) {
+		--wp-bg: #ffffff;
+		--wp-bg-subtle: #ffffff;
+		--wp-bg-muted: #eeeeee;
+		--wp-border: #777777;
+		--wp-border-light: #bbbbbb;
+		--wp-text: #000000;
+		--wp-text-muted: #333333;
+		--wp-link: #000000;
+		--wp-link-hover: #000000;
+		--wp-gold-soft: #ffffff;
+		--wp-gold-text: #000000;
+		--wp-bib-key: #000000;
+	}
+	html, body, #page-wrapper, #main { background: #fff !important; color: #000 !important; }
+	body { font-size: 11pt; line-height: 1.45; }
+
+	/* Controls and chrome that mean nothing on paper */
+	.skip-link, .thesis-navbar, .thesis-mobile-drawer, .thesis-drawer-backdrop, .wp-toc-side,
+	.nav-search, .thesis-theme-toggle, .thesis-mobile-toggle, .edit-link,
+	.lesson-complete-panel, .rise-tutor-slot, .self-check, .lesson-search,
+	.article-footer-nav, .widget-control, .widget-buttons, .widget-load-btn,
+	[data-widget-load], .widget-note { display: none !important; }
+
+	.robotics-article-container { max-width: none; padding: 0; margin: 0; }
+	.robotics-article-body { max-width: 100%; }
+	a { color: #000; text-decoration: underline; }
+
+	/* Self-check answers print open: ::details-content where supported, plus a beforeprint handler in learning.js that sets [open]. */
+	details.check-answer > summary { display: none; }
+	details.check-answer::details-content { content-visibility: visible; display: block; }
+	details.check-answer > :not(summary) { display: block !important; }
+
+	/* Keep figures, formulas, code and callouts whole where the browser can */
+	figure, .lesson-diagram, .rise-widget, pre, table, .katex-display, .article-callout, .wp-toc,
+	.check-answer, .article-spec-list > li { break-inside: avoid; page-break-inside: avoid; }
+	.katex-display { overflow: visible; }
+	pre, pre code { white-space: pre-wrap !important; overflow: visible !important; overflow-wrap: anywhere; }
+	pre { border: 1px solid #999; }
+	h2, h3, h4 { break-after: avoid; page-break-after: avoid; }
+	.article-callout, .wp-toc, .check-answer > p { background: #fff; border-color: #777; }
+
+	/* Full address after external links in the References list only */
+	.article-spec-list li[id^="ref-"] a[href^="http"]::after {
+		content: " <" attr(href) ">";
+		font-size: 0.85em;
+		word-break: break-all;
+		overflow-wrap: anywhere;
+	}
+}
+
 .article-section-title {
 	overflow: hidden;
 	margin: 1.1em 0 0.4em;
@@ -1012,6 +1266,15 @@ ol.article-spec-list { list-style: decimal; }
 }
 .learning-objectives ul { margin: 4px 0 0 1.4em; padding: 0; list-style: disc; font-size: 14px; }
 .learning-objectives li { margin: 2px 0; }
+/* Plainer than the other callouts: just rules, so that "Try it" stands out as the thing to do */
+.article-callout.key-points {
+	background: none;
+	border: 0;
+	border-top: 1px solid var(--wp-border);
+	border-bottom: 1px solid var(--wp-border);
+	padding: 8px 2px;
+}
+.key-points .article-callout-header i { color: var(--wp-text-muted); }
 .key-points ul { margin: 4px 0 0 1.4em; padding: 0; list-style: disc; font-size: 14px; }
 .key-points li { margin: 2px 0; }
 
@@ -1054,6 +1317,8 @@ ol.article-spec-list { list-style: decimal; }
 
 .quiz-form { margin: 12px 0; }
 .quiz-question {
+	min-width: 0;
+	overflow-wrap: anywhere;
 	margin: 0 0 14px;
 	padding: 10px 14px 12px;
 	background: var(--wp-bg-subtle);
@@ -1066,6 +1331,10 @@ ol.article-spec-list { list-style: decimal; }
 .quiz-choice { display: flex; align-items: baseline; gap: 6px; margin: 4px 0; cursor: pointer; font-weight: 400; }
 .quiz-choice input { margin: 0; }
 .quiz-feedback { margin-top: 8px; font-size: 14px; }
+.quiz-feedback:focus { outline: none; }
+/* Sticks to the bottom of the window: the navbar is sticky at the top and would cover it there. */
+.quiz-progress { position: sticky; bottom: 0; z-index: 2; margin: 8px 0; padding: 6px 10px; font-weight: 700; background: var(--wp-bg); border-top: 1px solid var(--wp-border-light); }
+.quiz-choice input:disabled + span { color: var(--wp-text); }
 .quiz-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 8px 0; }
 .quiz-result { font-weight: 700; }
 .quiz-chapter-list { margin: 0.4em 0 1em 1.6em; list-style: disc; }
@@ -1095,6 +1364,7 @@ ol.article-spec-list { list-style: decimal; }
 .widget-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
 .widget-plot,
 .lesson-diagram svg { display: block; width: 100%; height: auto; margin: 8px 0; overflow: visible; }
+.robotics-article-body figure.lesson-diagram:not([style]) > svg:not(.widget-plot) { max-width: 560px; margin-left: auto; margin-right: auto; }
 .widget-readout { margin: 4px 0 0; font-family: var(--wp-mono); font-size: 13px; }
 .widget-note { margin: 4px 0 8px; font-size: 13px; color: var(--wp-text-muted); }
 .plot-axis { stroke: var(--wp-border); stroke-width: 1; }
@@ -1139,7 +1409,7 @@ ol.article-spec-list { list-style: decimal; }
 .try-it ul { list-style: disc; }
 .try-it li { margin: 3px 0; }
 .reading-time { color: var(--wp-text-muted); }
-.course-resume { margin: 12px 0 0; }
+.course-resume { margin: 0; }
 .glossary-list dt { margin-top: 12px; font-weight: 700; }
 .glossary-list dd { margin: 2px 0 0 0; }
 .glossary-list dd a { font-size: 13px; }
@@ -1152,13 +1422,17 @@ ol.article-spec-list { list-style: decimal; }
 /* ==========================================================================
    9. Responsive
    ========================================================================== */
-@media screen and (max-width: 1080px) {
-	.thesis-nav-links a { padding: 0 7px; font-size: 13.5px; }
+/* Navbar row (brand + Course Home + Chapters menu + Quizzes + Cite + search + actions), measured 2026-11-09
+   with the 140px search box: it needs 871px with the "Main Portfolio" text and 782px without it (padding 40,
+   brand 170, links 323, actions 298 or 209, two 20px gaps). So the text is hidden below 900px and the drawer
+   takes over below 800px (18px spare at 800px; checked at 799/800 and 899/900; no horizontal scroll at any width). */
+@media screen and (max-width: 899px) {
 	.thesis-return-text { display: none; }
 }
 
-@media screen and (max-width: 980px) {
+@media screen and (max-width: 799px) {
 	.thesis-nav-links,
+	.thesis-nav-actions > .nav-search,
 	.thesis-return-btn { display: none; }
 	.thesis-mobile-toggle { display: inline-grid; }
 }
@@ -1192,3 +1466,73 @@ ol.article-spec-list { list-style: decimal; }
 .lesson-search-results { margin: 6px 0 0 1.4em; padding: 0; }
 .lesson-search-results li { margin: 2px 0; }
 .self-check .quiz-question { margin-top: 10px; }
+
+/* Key terms at first use (learning.js): dotted underline, definition pop-up on click, Enter or Space */
+.glossary-term { border-bottom: 1px dotted currentColor; cursor: help; }
+.glossary-term:hover { background: var(--wp-gold-soft); }
+.glossary-term:focus-visible,
+.glossary-pop a:focus-visible,
+.glossary-pop:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
+.glossary-term[aria-expanded="true"] { background: var(--wp-gold-soft); border-bottom-style: solid; }
+.glossary-pop {
+	position: absolute;
+	z-index: 120;
+	box-sizing: border-box;
+	padding: 8px 12px 9px;
+	background: var(--wp-bg);
+	color: var(--wp-text);
+	border: 1px solid var(--wp-border);
+	border-left: 4px solid var(--wp-gold);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+	font-family: var(--wp-sans);
+	font-size: 13.5px;
+	line-height: 1.45;
+}
+.glossary-pop[hidden] { display: none; }
+.glossary-pop p { margin: 2px 0 6px; }
+.glossary-pop a { font-weight: 700; }
+
+/* "Load these values" button in a Try it step, and the widget it focuses */
+.widget-load-btn { margin-left: 6px; padding: 2px 10px; font-size: 13px; }
+.widget-load-btn[hidden] { display: none; }
+.rise-widget:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
+
+/* ---------- Math (KaTeX, loaded by learning.js only on pages with formulas) ---------- */
+.robotics-article-body .katex { color: inherit; font-size: 1.1em; line-height: 1.2; }
+.robotics-article-body .katex-display {
+	margin: 8px 0;
+	max-width: 100%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	padding: 2px 0;
+}
+.robotics-article-body .katex-display > .katex { max-width: none; }
+.article-callout .katex-display { margin: 6px 0; }
+.robotics-article-body .katex-error { color: var(--wp-text); border-bottom: 1px dotted var(--wp-border); }
+
+/* Self-check answers: native <details>, so keyboard and screen readers work without script. */
+.check-answer { margin: 0.4em 0 0.6em; }
+.check-answer > summary {
+	display: inline-block; cursor: pointer; list-style: none;
+	font-family: var(--wp-sans); font-size: 0.85rem; color: var(--wp-link);
+	border: 1px solid var(--wp-border-light); border-radius: 3px; padding: 0.1em 0.6em;
+}
+.check-answer > summary::-webkit-details-marker { display: none; }
+.check-answer > summary:hover { background: var(--wp-bg-subtle); color: var(--wp-link-hover); }
+.check-answer > summary:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
+.check-answer[open] > summary { background: var(--wp-bg-muted); }
+.check-answer > p {
+	margin: 0.4em 0 0; padding: 0.5em 0.8em; background: var(--wp-bg-subtle);
+	border-left: 3px solid var(--wp-border); font-size: 0.95em; color: var(--wp-text);
+}
+.check-answer-src { color: var(--wp-text-muted); font-size: 0.8em; white-space: nowrap; }
+
+/* Reduced motion: no smooth scrolling and no transitions or animations */
+@media (prefers-reduced-motion: reduce) {
+	html { scroll-behavior: auto; }
+	*, *::before, *::after {
+		transition: none !important;
+		animation: none !important;
+		scroll-behavior: auto !important;
+	}
+}

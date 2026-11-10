@@ -4578,15 +4578,73 @@
 		vlan: initVlan
 	};
 
+	/* "Load these values" buttons in lessons: <button data-widget-load="fov" data-values='{"fov-h": 8.8}'>.
+	   Each key is the id of one of the widget's inputs (the first argument after the label in slider()).
+	   Sets the inputs, fires 'input' so the widget redraws, scrolls the widget into view and focuses it. */
+	function loadWidgetValues(btn) {
+		var root = document.querySelector('[data-widget="' + btn.getAttribute('data-widget-load') + '"]');
+		var values;
+		try { values = JSON.parse(btn.getAttribute('data-values') || '{}'); } catch (e) { return; }
+		if (!root) return;
+		Object.keys(values).forEach(function (id) {
+			var input = root.querySelector('[id="' + id + '"]');
+			if (!input) return;
+			input.value = values[id];
+			input.dispatchEvent(new Event('input', { bubbles: true }));
+			input.dispatchEvent(new Event('change', { bubbles: true }));
+		});
+		var target = root.querySelector('figure') || root;
+		if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+		var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		target.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'center' });
+		target.focus({ preventScroll: true });
+	}
+
+	function bootLoadButtons() {
+		Array.prototype.forEach.call(document.querySelectorAll('[data-widget-load]'), function (btn) {
+			var root = document.querySelector('[data-widget="' + btn.getAttribute('data-widget-load') + '"]');
+			if (!root || !root.querySelector('input')) return; // keep it hidden when the widget did not start
+			btn.hidden = false;
+			btn.addEventListener('click', function () { loadWidgetValues(btn); });
+		});
+	}
+
+	/* One "Reset controls" button for every widget with sliders, choices or checkboxes: it puts each
+	   control back to the value it had when the widget started and fires 'input'/'change' so the widget
+	   redraws. It does not rewind a running simulation's own state, which is why the widgets that
+	   already have their own Reset button are left alone. */
+	function addResetControls(root) {
+		var fig = root.querySelector('figure');
+		if (!fig) return;
+		var controls = Array.prototype.slice.call(fig.querySelectorAll('input[type="range"], input[type="checkbox"], input[type="radio"], select'));
+		if (!controls.length) return;
+		var hasReset = Array.prototype.some.call(fig.querySelectorAll('button'), function (b) { return /^(reset|default)/i.test(b.textContent.trim()); });
+		if (hasReset) return;
+		var initial = controls.map(function (c) { return c.type === 'checkbox' || c.type === 'radio' ? c.checked : c.value; });
+		var btn = button('Reset controls', function () {
+			controls.forEach(function (c, i) {
+				if (c.type === 'checkbox' || c.type === 'radio') { if (c.checked === initial[i]) return; c.checked = initial[i]; }
+				else { if (c.value === initial[i]) return; c.value = initial[i]; }
+				c.dispatchEvent(new Event('input', { bubbles: true }));
+				c.dispatchEvent(new Event('change', { bubbles: true }));
+			});
+		});
+		btn.setAttribute('aria-label', 'Reset the controls of this widget to their starting values');
+		fig.appendChild(h('div', { 'class': 'widget-buttons widget-reset-row' }, [btn]));
+	}
+
 	function boot() {
 		Array.prototype.forEach.call(document.querySelectorAll('[data-widget]'), function (el) {
 			var fn = INIT[el.getAttribute('data-widget')];
-			if (fn) { try { fn(el); } catch (e) { /* keep the static fallback */ } }
+			if (fn) { try { fn(el); addResetControls(el); } catch (e) { /* keep the static fallback */ } }
 			// The d-* shape and text classes are styled under .lesson-diagram; make sure every widget SVG has it.
 			Array.prototype.forEach.call(el.querySelectorAll('svg'), function (svg) {
 				if (svg.classList && !svg.classList.contains('lesson-diagram')) svg.classList.add('lesson-diagram');
+				// An image must not contain controls: a plot with focusable parts is a labelled group instead.
+				if (svg.getAttribute('role') === 'img' && svg.querySelector('[tabindex]')) svg.setAttribute('role', 'group');
 			});
 		});
+		bootLoadButtons();
 	}
 
 	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

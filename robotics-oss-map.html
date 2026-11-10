@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -59,20 +59,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary>Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -100,6 +117,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -110,8 +136,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -150,7 +177,7 @@
                                 This page is a map of the open-source projects used across robOSStics. It summarizes what each project does, its license, where its source code is hosted, and how to make a first contribution. To learn the full contribution workflow, including licensing basics, issue labels, and pull requests, see <a href="robotics-oss.html">Chapter 3: How to Contribute to Open Source</a>.
                             </p>
 
-                            <h2 class="article-section-title">02. ROS 2</h2>
+                            <h2 class="article-section-title" id="ros-2">02. ROS 2</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -175,9 +202,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-1.html">4.1 Definition and Introduction</a> and <a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-2-4.html">2.4 Intro to ROS (Vendor-Agnostic)</a>, <a href="robotics-4-1.html">4.1 Definition and Introduction</a>, <a href="robotics-4-2.html">4.2 ROS 1 vs. ROS 2</a>, <a href="robotics-4-3.html">4.3 Installing ROS on Your Local Environment</a>, <a href="robotics-4-4.html">4.4 Running Your First Example (Turtlesim)</a>, <a href="robotics-4-5.html">4.5 ROS Tools</a>, <a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a>, <a href="robotics-4-7.html">4.7 Launch Files and Parameters</a>, <a href="robotics-7-6.html">7.6 Lab: A ROS 2 Camera Pipeline</a> and <a href="robotics-11-4.html">11.4 Behavior Trees, Actions and Lifecycle Nodes</a>.</p>
 
-                            <h2 class="article-section-title">03. MoveIt 2</h2>
+                            <h2 class="article-section-title" id="moveit-2">03. MoveIt 2</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -202,9 +229,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-2-4.html">2.4 Intro to ROS (Vendor-Agnostic)</a>, <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>, <a href="robotics-4-9.html">4.9 ROS-Industrial and Vendor Drivers</a> and <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
 
-                            <h2 class="article-section-title">04. Nav2</h2>
+                            <h2 class="article-section-title" id="nav2">04. Nav2</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -229,9 +256,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-3-3.html">3.3 How Robotics Projects Work</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-2-4.html">2.4 Intro to ROS (Vendor-Agnostic)</a>, <a href="robotics-3-3.html">3.3 How Robotics Projects Work</a>, <a href="robotics-3-5.html">3.5 Case Study: Contributing to Nav2</a>, <a href="robotics-6-7.html">6.7 State Machines</a>, <a href="robotics-11-1.html">11.1 Where Is the Robot? Frames, Odometry and Localization</a>, <a href="robotics-11-2.html">11.2 Costmaps: How the Robot Sees Its Surroundings</a>, <a href="robotics-11-3.html">11.3 Planners, Controllers and Recoveries</a> and <a href="robotics-11-4.html">11.4 Behavior Trees, Actions and Lifecycle Nodes</a>.</p>
 
-                            <h2 class="article-section-title">05. ros2_control</h2>
+                            <h2 class="article-section-title" id="ros2-control">05. ros2_control</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -256,9 +283,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a> and <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>, <a href="robotics-4-9.html">4.9 ROS-Industrial and Vendor Drivers</a>, <a href="robotics-8-5.html">8.5 From the Plant Floor to IT</a> and <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
 
-                            <h2 class="article-section-title">06. Gazebo</h2>
+                            <h2 class="article-section-title" id="gazebo">06. Gazebo</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -283,9 +310,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-1-4.html">1.4 Preliminary Requirements</a>, <a href="robotics-4-5.html">4.5 ROS Tools</a> and <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
 
-                            <h2 class="article-section-title">07. OpenCV</h2>
+                            <h2 class="article-section-title" id="opencv">07. OpenCV</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -310,9 +337,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-7-3.html">7.3 Image Processing Basics</a> and <a href="robotics-7-6.html">7.6 Lab: A ROS 2 Camera Pipeline</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-2-8.html">2.8 Vision-Guided Picking</a>, <a href="robotics-7-3.html">7.3 Image Processing Basics</a>, <a href="robotics-7-5.html">7.5 Inspection and Measurement</a> and <a href="robotics-7-6.html">7.6 Lab: A ROS 2 Camera Pipeline</a>.</p>
 
-                            <h2 class="article-section-title">08. PCL</h2>
+                            <h2 class="article-section-title" id="pcl">08. PCL</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -339,7 +366,7 @@
                             </table>
                             <p><strong>Used in these lessons:</strong> <a href="robotics-7-4.html">7.4 3D Sensing</a>.</p>
 
-                            <h2 class="article-section-title">09. Universal Robots Client Library</h2>
+                            <h2 class="article-section-title" id="ur-client-library">09. Universal Robots Client Library</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -366,7 +393,7 @@
                             </table>
                             <p><strong>Used in these lessons:</strong> <a href="robotics-9-6.html">9.6 Lab: Check a Robot's State from Python</a>.</p>
 
-                            <h2 class="article-section-title">10. Universal Robots ROS 2 driver</h2>
+                            <h2 class="article-section-title" id="ur-ros2-driver">10. Universal Robots ROS 2 driver</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -391,9 +418,9 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-9.html">4.9 ROS-Industrial and Vendor Drivers</a>.</p>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-8.html">4.8 Moving an Arm with MoveIt 2</a>, <a href="robotics-4-9.html">4.9 ROS-Industrial and Vendor Drivers</a> and <a href="robotics-10-2.html">10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2</a>.</p>
 
-                            <h2 class="article-section-title">11. Wireshark</h2>
+                            <h2 class="article-section-title" id="wireshark">11. Wireshark</h2>
                             <table class="article-table" style="width: 100%;">
                                 <tbody>
                                     <tr>
@@ -420,12 +447,93 @@
                             </table>
                             <p><strong>Used in these lessons:</strong> <a href="robotics-8-6.html">8.6 Network Design, Security and Diagnostics</a>.</p>
 
-                            <h2 class="article-section-title">12. Contributing to robOSStics</h2>
+                            <h2 class="article-section-title" id="pymodbus">12. pymodbus</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>Pymodbus is a full Modbus protocol implementation offering a client, a server and a simulator, with synchronous and asynchronous APIs.<sup><a href="#ref-21">[21]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>Pymodbus is released under the BSD License.<sup><a href="#ref-21">[21]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>The source code is on GitHub in the pymodbus-dev/pymodbus repository.<sup><a href="#ref-21">[21]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Fork the repository, make your changes in a branch of your own (never on <code>dev</code>) and raise the pull request against the <code>dev</code> branch. The README also invites you to open a discussion or an issue on a theme you want to solve.<sup><a href="#ref-21">[21]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>Volunteers build pymodbus. The repository&rsquo;s <code>check_ci.sh</code> script runs the same checks as CI runs on a pull request; once CI is green, you wait for review comments.<sup><a href="#ref-21">[21]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-8-3.html">8.3 Lab: Connecting a Robot to a PLC</a>.</p>
+
+                            <h2 class="article-section-title" id="colcon">13. colcon</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>colcon is a command line tool to improve the workflow of building, testing and using multiple software packages.<sup><a href="#ref-22">[22]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>colcon-core declares the Apache-2.0 license in its package metadata.<sup><a href="#ref-23">[23]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>The core is in the colcon/colcon-core repository on GitHub, and extension authors are encouraged to host their packages in repositories under the same colcon organization.<sup><a href="#ref-24">[24]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>Keep each pull request focused on one aspect, cover new code with tests and make sure the existing tests and linters pass. For a larger patch, open a feature request ticket first to discuss it.<sup><a href="#ref-24">[24]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>colcon grows through extensions: Python entry points let anyone contribute an extension as a separate package. The documentation is also kept in a git repository, so documentation changes go through pull requests too.<sup><a href="#ref-24">[24]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-3.html">4.3 Installing ROS on Your Local Environment</a>, <a href="robotics-4-4.html">4.4 Running Your First Example (Turtlesim)</a> and <a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a>.</p>
+
+                            <h2 class="article-section-title" id="turtlesim">14. turtlesim</h2>
+                            <table class="article-table" style="width: 100%;">
+                                <tbody>
+                                    <tr>
+                                        <th scope="row" style="width: 25%;">What it is</th>
+                                        <td>turtlesim is a tool made for teaching ROS and ROS packages: it draws one or more turtles in a window and lets you drive them around through ROS 2 topics, services and actions.<sup><a href="#ref-25">[25]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">License</th>
+                                        <td>turtlesim and its message package turtlesim_msgs are released under the BSD license.<sup><a href="#ref-25">[25]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Where the code lives</th>
+                                        <td>The code is in the ros/ros_tutorials repository on GitHub, which has a branch for each ROS distribution; the <code>rolling</code> branch targets ROS 2 Rolling Ridley.<sup><a href="#ref-25">[25]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How to start contributing</th>
+                                        <td>The README names the GitHub repository as the place for source and issues, and points questions to the ROS community forum and Robotics Stack Exchange.<sup><a href="#ref-25">[25]</a></sup></td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">How it is run</th>
+                                        <td>The ros_tutorials packages support the official ROS 2 documentation and are used throughout its beginner tutorials.<sup><a href="#ref-25">[25]</a></sup></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><strong>Used in these lessons:</strong> <a href="robotics-4-4.html">4.4 Running Your First Example (Turtlesim)</a>, <a href="robotics-4-5.html">4.5 ROS Tools</a>, <a href="robotics-4-6.html">4.6 Writing Your First ROS 2 Package</a> and <a href="robotics-4-7.html">4.7 Launch Files and Parameters</a>.</p>
+
+                            <h2 class="article-section-title">15. Contributing to robOSStics</h2>
                             <p>
                                 To contribute directly to the robOSStics course platform itself, see <a href="CONTRIBUTING.md">CONTRIBUTING.md</a> for instructions on fixing typos, suggesting new sources, and submitting pull requests.
                             </p>
 
-                            <h2 class="article-section-title">13. References</h2>
+                            <h2 class="article-section-title">16. References</h2>
                             <ol class="article-spec-list">
                                 <li id="ref-1">ROS 2, &ldquo;About.&rdquo; <a href="https://github.com/ros2/ros2" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2</a>.</li>
                                 <li id="ref-2">ROS 2, &ldquo;Contributing to code.&rdquo; <a href="https://github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst" target="_blank" rel="noopener noreferrer">github.com/ros2/ros2_documentation/blob/rolling/source/The-ROS2-Project/Contributing/Developer-Guide.rst</a>.</li>
@@ -447,6 +555,11 @@
                                 <li id="ref-18">Universal Robots ROS2 Driver, &ldquo;LICENSE.&rdquo; <a href="https://github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">github.com/UniversalRobots/Universal_Robots_ROS2_Driver/blob/main/LICENSE</a>.</li>
                                 <li id="ref-19">Wireshark, &ldquo;Contribute to Wireshark's Development.&rdquo; <a href="https://www.wireshark.org/develop.html" target="_blank" rel="noopener noreferrer">www.wireshark.org/develop.html</a>.</li>
                                 <li id="ref-20">Wireshark, &ldquo;COPYING.&rdquo; <a href="https://github.com/wireshark/wireshark/blob/master/COPYING" target="_blank" rel="noopener noreferrer">github.com/wireshark/wireshark/blob/master/COPYING</a>.</li>
+                                <li id="ref-21">PyModbus, &ldquo;PyModbus - A Python Modbus Stack&rdquo; (README). <a href="https://github.com/pymodbus-dev/pymodbus/blob/dev/README.rst" target="_blank" rel="noopener noreferrer">github.com/pymodbus-dev/pymodbus/blob/dev/README.rst</a>.</li>
+                                <li id="ref-22">colcon, &ldquo;colcon - collective construction&rdquo; (colcon-core README). <a href="https://github.com/colcon/colcon-core/blob/master/README.rst" target="_blank" rel="noopener noreferrer">github.com/colcon/colcon-core/blob/master/README.rst</a>.</li>
+                                <li id="ref-23">colcon, &ldquo;setup.cfg&rdquo; (colcon-core package metadata). <a href="https://github.com/colcon/colcon-core/blob/master/setup.cfg" target="_blank" rel="noopener noreferrer">github.com/colcon/colcon-core/blob/master/setup.cfg</a>.</li>
+                                <li id="ref-24">colcon, &ldquo;Contributions,&rdquo; colcon documentation. <a href="https://colcon.readthedocs.io/en/released/developer/contribution.html" target="_blank" rel="noopener noreferrer">colcon.readthedocs.io/en/released/developer/contribution.html</a>.</li>
+                                <li id="ref-25">Open Robotics, &ldquo;ros_tutorials&rdquo; (README, <code>rolling</code> branch). <a href="https://github.com/ros/ros_tutorials/blob/rolling/README.md" target="_blank" rel="noopener noreferrer">github.com/ros/ros_tutorials/blob/rolling/README.md</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -482,10 +595,10 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=72f75746" defer></script>
-            <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-            <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+            <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+            <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>
