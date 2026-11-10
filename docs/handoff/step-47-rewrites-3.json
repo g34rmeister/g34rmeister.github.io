@@ -1,0 +1,462 @@
+[
+  {
+    "id": "4-8#1",
+    "html": "In ROS 2, <strong>MoveIt 2</strong> is the framework that handles this problem. You give it a goal for the arm (a joint configuration, a named pose, or a pose for the tool). It works out the joint angles and checks the motion against a model of the robot and its surroundings for collisions. Then it produces a timed trajectory and sends that trajectory to the robot's controllers.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup> In this lesson you will see what MoveIt needs to know about a robot and how it plans. Then you will run a Universal Robots UR5e on <em>mock hardware</em>, a software stand-in for the robot, and plan motions in RViz with no robot attached."
+  },
+  {
+    "id": "4-8#2",
+    "html": "The same tutorial shows how a URDF reaches the screen. A joint state publisher reads the movable joints and their limits and publishes <code>sensor_msgs/msg/JointState</code> messages. Next, <code>robot_state_publisher</code> turns the joint values into the tf2 transform tree. Finally, RViz draws the result.<sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "4-8#3",
+    "html": "Writing a full URDF by hand for every robot model would mean a lot of repeated XML. Universal Robots avoids this with <strong>xacro</strong>, the XML macro language used in ROS. Their documentation explains that all UR models have roughly the same kinematics. They differ only in meshes, DH parameters and physical parameters, so \"the description uses xacro macros in order to make it reuse as much as possible.\"<sup><a href=\"#ref-12\">[12]</a></sup> The file <code>urdf/ur_macro.xacro</code> is the macro that other projects include, and <code>urdf/ur.urdf.xacro</code> is an example scene with the robot standing alone.<sup><a href=\"#ref-12\">[12]</a></sup> Each model is configured by four YAML files in <code>config/urXX/</code>. The file <code>default_kinematics.yaml</code> holds calibration values, which you can replace with values extracted from a real robot so the model matches it exactly at <code>tool0</code>. The other three files are <code>joint_limits.yaml</code>, <code>physical_parameters.yaml</code> (inertias) and <code>visual_parameters.yaml</code> (meshes).<sup><a href=\"#ref-12\">[12]</a></sup>"
+  },
+  {
+    "id": "4-8#4",
+    "html": "The URDF says what the robot <em>is</em>: its geometry, kinematics and hard limits. MoveIt also needs to know how to <em>think</em> about the robot. That information lives in a second file, the <strong>SRDF</strong> (Semantic Robot Description Format). The header comment in UR's SRDF puts it plainly: \"This does not replace URDF, and is not an extension of URDF. This is a format for representing semantic information about the robot structure.\"<sup><a href=\"#ref-14\">[14]</a></sup> An SRDF can define planning groups, named group states, and end effectors. It can also define a virtual joint that fixes the robot to the world, and pairs of links whose collisions can be ignored.<sup><a href=\"#ref-14\">[14]</a></sup>"
+  },
+  {
+    "id": "4-8#5",
+    "html": "MoveIt does not talk to motors. It hands a trajectory to a controller, and in ROS 2 the controllers live in the <strong>ros2_control</strong> framework. The main component of ros2_control is the <strong>controller manager</strong>, which \"manages lifecycle of controllers, access to the hardware interfaces and offers services to the ROS-world.\"<sup><a href=\"#ref-17\">[17]</a></sup> It connects <em>hardware interfaces</em> (plugins that read and write the joints) to <em>controllers</em> (plugins that turn goals into commands). The hardware plugin is declared in a <code>&lt;ros2_control&gt;</code> tag inside the URDF. Inside this tag, each joint lists its <code>&lt;command_interface&gt;</code> and <code>&lt;state_interface&gt;</code> entries (position, velocity, acceleration).<sup><a href=\"#ref-18\">[18]</a></sup>"
+  },
+  {
+    "id": "4-8#6",
+    "html": "ros2_control also provides <strong>mock components</strong>, which the documentation describes as \"trivial 'simulations' of the hardware components\". They \"provide ideal behavior by mirroring commands to their states\". If a controller commands a joint to 0.5 rad, the mock reports that the joint is now at 0.5 rad.<sup><a href=\"#ref-18\">[18]</a></sup> This lets you test the \"piping,\" \"and even integrations with, e.g., MoveIt,\" without a robot.<sup><a href=\"#ref-18\">[18]</a></sup> The mock system plugin is selected with <code>&lt;plugin&gt;mock_components/GenericSystem&lt;/plugin&gt;</code>.<sup><a href=\"#ref-18\">[18]</a></sup>"
+  },
+  {
+    "id": "4-8#7",
+    "html": "The UR driver uses this directly. In its <code>ur.ros2_control.xacro</code>, an <code>xacro:if</code> on the argument <code>use_mock_hardware</code> selects <code>mock_components/GenericSystem</code>. The matching <code>xacro:unless</code> branch selects the real UR hardware plugin.<sup><a href=\"#ref-19\">[19]</a></sup> The argument defaults to <code>false</code>. The URDF also passes in initial joint positions \"for simulations (Mock Hardware, Gazebo, Ignition).\"<sup><a href=\"#ref-19\">[19]</a></sup> The driver's launch file <code>ur_control.launch.py</code> exposes the same switch, described as \"Start robot with mock hardware mirroring command to its states.\"<sup><a href=\"#ref-20\">[20]</a></sup> UR's startup guide adds that it is \"Useful for testing launch files, descriptions, etc.\"<sup><a href=\"#ref-21\">[21]</a></sup>"
+  },
+  {
+    "id": "4-8#8",
+    "html": "Mock hardware is not a physics simulator. Commands simply become states, so the arm can jump to positions instead of accelerating like a real one. UR's simulation page also lists driver features that do not work on mock hardware. These include the TCP pose broadcaster, the passthrough trajectory controller, force mode, and GPIO verification (setting an I/O pin reports a failure).<sup><a href=\"#ref-22\">[22]</a></sup> That is fine for seeing MoveIt plan and send trajectories. However, timing, contact and I/O need Gazebo, URSim or a real arm."
+  },
+  {
+    "id": "4-8#9",
+    "html": "Put together, the data flows in a loop. MoveIt sends a goal to the JTC, and the JTC commands the mock hardware. Next, the mock copies commands into states. Finally, the joint_state_broadcaster publishes them on <code>/joint_states</code> for MoveIt and <code>robot_state_publisher</code>."
+  },
+  {
+    "id": "4-8#10",
+    "html": "MoveIt's central node is <strong>move_group</strong>. The documentation describes it as \"an integrator: pulling all the individual components together to provide a set of ROS actions and services.\" You reach it from the RViz Motion Planning plugin or from code.<sup><a href=\"#ref-1\">[1]</a></sup> It reads three kinds of configuration: the URDF, the SRDF, and the MoveIt configuration files from a <code>*_moveit_config</code> package. These files set joint limits, kinematics, planning and perception.<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "4-8#11",
+    "html": "To avoid collisions, move_group keeps a <strong>planning scene</strong>: \"the representation of the world around the robot and also the state of the robot itself.\" A Planning Scene Monitor keeps it up to date. move_group's monitor listens on <code>/planning_scene</code> and republishes on <code>monitored_planning_scene</code>. The RViz plugin displays this topic.<sup><a href=\"#ref-27\">[27]</a></sup> Objects in the world can come from sensors (point clouds and depth images turned into an Octomap) or be added by the user.<sup><a href=\"#ref-27\">[27]</a></sup> From code, the \"Planning Around Objects\" tutorial adds a collision box through the <code>PlanningSceneInterface</code> with the operation <code>ADD</code>.<sup><a href=\"#ref-28\">[28]</a></sup>"
+  },
+  {
+    "id": "4-8#12",
+    "html": "Collision checks are done with the FCL library. It handles meshes (<code>.stl</code>, <code>.dae</code>), primitive shapes (box, cylinder, cone, sphere, plane) and Octomaps. The ACM from the SRDF turns off checks for listed pairs.<sup><a href=\"#ref-15\">[15]</a></sup> By default, every motion plan request is checked for collisions \"(including self-collisions and attached objects).\" A request can also add position, orientation, visibility and joint constraints.<sup><a href=\"#ref-2\">[2]</a></sup>"
+  },
+  {
+    "id": "4-8#13",
+    "html": "The other half of planning is <strong>kinematics</strong>. Forward kinematics (joint angles to tool pose) and Jacobians are computed by MoveIt's <code>RobotState</code>. Inverse kinematics (tool pose to joint angles, see <a href=\"robotics-1-6.html\">1.6</a>) is a plugin. The default is \"the KDL numerical Jacobian-based solver.\"<sup><a href=\"#ref-15\">[15]</a></sup> UR's config uses exactly that for the <code>ur_manipulator</code> group. It uses <code>kdl_kinematics_plugin/KDLKinematicsPlugin</code> with a search resolution of 0.005 and a timeout of 0.005 s.<sup><a href=\"#ref-29\">[29]</a></sup> A pose outside the arm's reach simply has no solution, which you will try in RViz."
+  },
+  {
+    "id": "4-8#14",
+    "html": "Planners plug into MoveIt through a common interface. The Setup Assistant configures <strong>OMPL</strong> (the Open Motion Planning Library) as the default. The documentation notes that \"other planners that are available by default are the Pilz industrial motion planner and CHOMP.\" You pick one with the <code>planning_pipeline</code> and <code>planner_id</code> parameters.<sup><a href=\"#ref-2\">[2]</a></sup> UR's config package ships settings for all three.<sup><a href=\"#ref-29\">[29]</a></sup>"
+  },
+  {
+    "id": "4-8#15",
+    "html": "A planner first finds a <em>path</em>, a list of joint configurations. A robot needs a <em>trajectory</em>, which adds timing, velocity and acceleration to every point. MoveIt's output \"is a trajectory and not just a path.\"<sup><a href=\"#ref-2\">[2]</a></sup> <strong>Planning request adapters</strong> do the work around the planner. Before planning, they move a start state that is slightly outside the joint limits back onto the limit (<code>CheckStartStateBounds</code>). They fill in a default 10 m cube as the workspace when the request does not give one (<code>ValidateWorkspaceBounds</code>). They also find a nearby collision-free start state if the given one is in collision (<code>CheckStartStateCollision</code>) and resolve constraint frames (<code>ResolveConstraintFrames</code>). After planning, time parameterization turns the path into a trajectory that respects velocity and acceleration limits.<sup><a href=\"#ref-2\">[2]</a></sup> UR's OMPL pipeline uses those four request adapters plus the response adapters <code>AddTimeOptimalParameterization</code>, <code>ValidateSolution</code> and <code>DisplayMotionPath</code>.<sup><a href=\"#ref-29\">[29]</a></sup>"
+  },
+  {
+    "id": "4-8#16",
+    "html": "Execution is set in <code>moveit_controllers.yaml</code>. UR's file uses <code>moveit_simple_controller_manager/MoveItSimpleControllerManager</code> with one controller, <code>joint_trajectory_controller</code>. It reaches this controller through the action namespace <code>follow_joint_trajectory</code> with type <code>FollowJointTrajectory</code> over the six joints.<sup><a href=\"#ref-29\">[29]</a></sup> It also sets <code>allowed_start_tolerance: 0.01</code> and turns <code>execution_duration_monitoring</code> off.<sup><a href=\"#ref-29\">[29]</a></sup> The UR docs explain that a real UR can run slower than planned because of speed scaling. Because of this, monitoring \"will in most cases unnecessarily (and unexpectedly) abort goals.\"<sup><a href=\"#ref-16\">[16]</a></sup> They also make a useful distinction about limits: \"the URDF describes the hardware's limits, while the moveit_config provides limits on an application / planning level.\"<sup><a href=\"#ref-16\">[16]</a></sup>"
+  },
+  {
+    "id": "4-8#17",
+    "html": "Where do the SRDF and all these YAML files come from for a new robot? The <strong>MoveIt Setup Assistant</strong> is a graphical wizard that reads a URDF and generates a <code>*_moveit_config</code> package. You start it with <code>ros2 launch moveit_setup_assistant setup_assistant.launch.py</code>.<sup><a href=\"#ref-31\">[31]</a></sup> Its panes step through the self-collision matrix, virtual joints, and planning groups (with the KDL kinematics plugin). You then configure named poses, end effectors (needed to attach objects for pick and place), ros2_control and MoveIt controllers, and launch files before generating the package.<sup><a href=\"#ref-31\">[31]</a></sup> You do not need it for the bare UR, but you would after adding a gripper or table to your workcell description.<sup><a href=\"#ref-16\">[16]</a></sup>"
+  },
+  {
+    "id": "4-8#18",
+    "html": "Everything you do in RViz can also be done from code. C++ programs use <code>MoveGroupInterface</code>, for example <code>setPoseTarget(target_pose)</code>, with <code>PlanningSceneInterface</code> for collision objects.<sup><a href=\"#ref-28\">[28]</a></sup> Python programs use <strong>MoveItPy</strong>. The documented pattern begins by creating a <code>MoveItPy</code> object and getting a planning component for a group. Next, set the start state to the current state and set a goal (a named configuration, a robot state, or a pose for a link). Finally, call <code>plan()</code>, and pass the resulting trajectory to <code>execute()</code>.<sup><a href=\"#ref-32\">[32]</a></sup> Planning parameters can select a pipeline and planner per request, for example <code>planning_pipeline: pilz_industrial_motion_planner</code> with <code>planner_id: \"PTP\"</code>.<sup><a href=\"#ref-32\">[32]</a></sup> Adapted to the UR group names, the core looks like this. It is an untested example. Running it needs a MoveItPy parameter file and launch file that UR does not ship, so treat it as an extension and test it in simulation first."
+  },
+  {
+    "id": "4-8#19",
+    "html": "These commands were put together from the UR and MoveIt documentation for this lesson and were <strong>not run</strong> while researching it, so test them on your own Lyrical install before class. Use the same <code>ur_type</code> in both terminals. If MoveIt cannot execute, check the controllers first. The command <code>ros2 control list_controllers</code> should list <code>joint_trajectory_controller</code> as active. In addition, UR's smoke test <code>ros2 launch ur_robot_driver test_joint_trajectory_controller.launch.py</code> moves the arm without MoveIt. UR warns that \"the robot should move (or jump when using emulation).\"<sup><a href=\"#ref-33\">[33]</a></sup>"
+  },
+  {
+    "id": "4-8#20",
+    "html": "In RViz, the Motion Planning panel is the tool UR points to for using MoveIt with its arms.<sup><a href=\"#ref-33\">[33]</a></sup> The robot model shows the start state in green and the goal state in orange. You drag the goal with an interactive marker. If no marker appears, press <strong>Interact</strong> in the toolbar.<sup><a href=\"#ref-35\">[35]</a></sup> Links in collision turn red. With \"Use Collision-Aware IK\" checked, the IK solver keeps searching for a collision-free solution as you drag.<sup><a href=\"#ref-35\">[35]</a></sup> In the Planning tab, <strong>Plan</strong> computes a trajectory, \"Show Trail\" draws it, and <strong>Execute</strong> (or <strong>Plan &amp; Execute</strong>) sends it to the robot. \"Use Cartesian Path\" makes the tool move in a straight line. Velocity and acceleration scaling both default to 10% (0.1).<sup><a href=\"#ref-35\">[35]</a></sup> The \"Trajectory - Trajectory Slider\" panel (Panels menu) steps through the waypoints.<sup><a href=\"#ref-35\">[35]</a></sup>"
+  },
+  {
+    "id": "4-9#1",
+    "html": "The answer is a <strong>vendor driver</strong>: a pair of programs, one on the robot controller and one on the ROS 2 PC, that pass motion commands and robot state between them. Drivers differ a lot in who maintains them, which ROS 2 distributions they support and what they can do. This lesson looks at the community behind industrial ROS and the pattern all drivers share. It then examines five brands in turn, and discusses when a factory should use ROS at all."
+  },
+  {
+    "id": "4-9#2",
+    "html": "<strong>ROS-Industrial</strong> (ROS-I) is an open-source project that applies ROS to manufacturing automation. Its repositories include interfaces for common industrial manipulators, grippers, sensors and device networks.<sup><a href=\"#ref-1\">[1]</a></sup> The project grew out of a partnership between Yaskawa Motoman, Southwest Research Institute (SwRI) and Willow Garage.<sup><a href=\"#ref-2\">[2]</a></sup> It is supported by regional consortia whose members share the cost of applied research. SwRI leads the Americas, Fraunhofer IPA in Stuttgart leads Europe, and ARTC (A*STAR) with Nanyang Technological University leads Asia-Pacific.<sup><a href=\"#ref-3\">[3]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup> Its community today includes robot manufacturers, system integrators, researchers and industrial end users.<sup><a href=\"#ref-2\">[2]</a></sup>"
+  },
+  {
+    "id": "4-9#4",
+    "html": "<span class=\"spec-label\">Scan-N-Plan:</span> a suite of tools that plans robot paths from 3D scan data. It is aimed at high-mix parts, parts without a CAD model and flexible parts, for processes such as painting, sanding, deburring and inspection.<sup><a href=\"#ref-5\">[5]</a></sup>"
+  },
+  {
+    "id": "4-9#5",
+    "html": "<strong>Support level</strong> is the first thing to check on any ROS-I package. The ROS 1 core communication packages, <code>industrial_core</code>, are labelled \"community supported\". They get no support from a robot maker or from the consortia directly, and volunteers maintain them on a best-effort basis.<sup><a href=\"#ref-8\">[8]</a></sup> The older ROS 1 driver repositories <code>abb_driver</code> and <code>kuka_experimental</code> carry the same \"community\" badge. The <code>kuka_experimental</code> repository warns that its APIs \"are to be considered unstable and are not guaranteed to be complete and / or functional\".<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup> By contrast, Yaskawa's MotoROS2 carries a \"consortium / vendor\" badge.<sup><a href=\"#ref-11\">[11]</a></sup> In ROS 2, drivers have broadly moved out of community repositories and into repositories owned by the robot makers themselves. Universal Robots, KUKA, Yaskawa and FANUC all publish their own. For a factory this matters: a vendor-owned driver comes with someone to call when it breaks."
+  },
+  {
+    "id": "4-9#6",
+    "html": "<span class=\"spec-label\">1. A small program on the controller, written in the vendor's language.</span> Examples include a URScript program started by a URCap, or a RAPID module with EGM instructions. Other examples are a KUKA program using RSI, a FANUC TP program using Stream Motion, or a MotoPlus application on a Yaskawa controller. It opens a network channel (TCP or UDP), accepts setpoints or whole trajectories, and sends back joint positions and status.<sup><a href=\"#ref-12\">[12]</a></sup><sup><a href=\"#ref-13\">[13]</a></sup><sup><a href=\"#ref-14\">[14]</a></sup><sup><a href=\"#ref-15\">[15]</a></sup><sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "4-9#7",
+    "html": "Speed scaling also explains a surprising setting: UR's MoveIt configuration ships with MoveIt's Trajectory Execution Monitoring turned off. A scaled trajectory may run slower than planned, and the monitor \"will in most cases unnecessarily (and unexpectedly) abort goals\".<sup><a href=\"#ref-16\">[16]</a></sup> Finally, the <strong>passthrough trajectory controller</strong> uses FORWARD mode to hand the whole trajectory to the robot for interpolation. UR's documentation says this means \"the realtime requirements for the control PC can be massively decreased\". However, it cannot replace a trajectory that is already running.<sup><a href=\"#ref-27\">[27]</a></sup>"
+  },
+  {
+    "id": "4-9#8",
+    "html": "No official ABB ROS 2 driver was found for this lesson. The main option is <code>abb_ros2</code>, maintained by PickNik Robotics. It contains a ros2_control hardware interface built on <code>abb_libegm</code>, a client for ABB's Robot Web Services (RWS), bringup files, robot descriptions and RobotStudio resources.<sup><a href=\"#ref-30\">[30]</a></sup> Its default branch is <code>rolling</code>, though older <code>humble</code>, <code>iron</code> and <code>foxy</code> branches also exist. Because it is not released into Humble, Jazzy, Kilted or Lyrical, you build it from source.<sup><a href=\"#ref-30\">[30]</a></sup><sup><a href=\"#ref-7\">[7]</a></sup>"
+  },
+  {
+    "id": "4-9#9",
+    "html": "It uses two ABB channels. <strong>RWS</strong> lets software talk to the controller over HTTP, and the driver uses it to read information about the robot. Only RWS 1.0 is supported: \"RobotWare 7.0 and higher use RWS 2.0 and are not currently supported\".<sup><a href=\"#ref-31\">[31]</a></sup> Motion goes through <strong>Externally Guided Motion (EGM)</strong>, a paid RobotWare option (689-1) that needs RobotWare 6.07.01 or later. The library uses EGM's UDP variant in joint and pose modes. In this setup, \"the robot controller requests new references over a UDP channel, at the rate specified with RAPID <code>EGMAct</code> instructions\".<sup><a href=\"#ref-13\">[13]</a></sup> EGM commonly runs at about 250 Hz (a 4 ms cycle).<sup><a href=\"#ref-32\">[32]</a></sup>"
+  },
+  {
+    "id": "4-9#10",
+    "html": "In RobotStudio you add the EGM option, configure a <code>UDPUC</code> transmission protocol and load this module into task T_ROB1.<sup><a href=\"#ref-34\">[34]</a></sup> By default, EGM uses UDP port 6511 and RWS uses port 80. Simulating with RobotStudio needs two computers, one running Windows and one running Linux.<sup><a href=\"#ref-31\">[31]</a></sup> The <code>abb_libegm</code> library itself \"has not been productized\" and is provided as-is. Its README advises testing in RobotStudio before using a real robot. It also advises thinking about cyber security before connecting robot controllers to networks.<sup><a href=\"#ref-13\">[13]</a></sup>"
+  },
+  {
+    "id": "4-9#11",
+    "html": "Every driver above runs at a rate set by the robot controller. This rate is 500 Hz for UR e-Series and for FANUC, about 4 ms for ABB EGM, 4 or 12 ms for KUKA RSI, and 1 to 10 ms for KUKA FRI.<sup><a href=\"#ref-25\">[25]</a></sup><sup><a href=\"#ref-37\">[37]</a></sup><sup><a href=\"#ref-32\">[32]</a></sup><sup><a href=\"#ref-44\">[44]</a></sup><sup><a href=\"#ref-43\">[43]</a></sup><sup><a href=\"#ref-45\">[45]</a></sup> If the PC misses its deadlines, the controller drops the link.<sup><a href=\"#ref-44\">[44]</a></sup> UR's client library notes that \"it is quite critical that arriving RTDE messages are read before the next message arrives\". It runs its receive thread at real-time priority, and warns that the robot will shut down RTDE communication if data is not read fast enough.<sup><a href=\"#ref-23\">[23]</a></sup><sup><a href=\"#ref-46\">[46]</a></sup> UR recommends a PREEMPT_RT kernel (a real-time Linux kernel patch designed to guarantee predictable task execution deadlines for hardware control loops). It notes that a low-latency kernel (<code>sudo apt install linux-lowlatency</code>) \"has shown to be sufficient in many situations\". It also warns that e-Series robots may move unevenly without a real-time-enabled system.<sup><a href=\"#ref-47\">[47]</a></sup> Trajectory-forwarding modes, such as UR's passthrough controller and MotoROS2, avoid much of this problem because the controller does the fine-grained interpolation.<sup><a href=\"#ref-27\">[27]</a></sup>"
+  },
+  {
+    "id": "4-9#12",
+    "html": "Vendor robot languages are still the most widespread way to program industrial robots. Each maker developed its own language, incompatible with the others. Programmers tend to specialize in a few brands, which makes them slow to adopt new tools.<sup><a href=\"#ref-49\">[49]</a></sup> For a fixed path in a validated cell, the vendor language is usually the practical choice. It is what the maker supports and what plant staff and integrators already know. ROS-I's own representatives describe its focus as tasks with no off-the-shelf vendor solution, such as perception-driven work where the path is not known in advance. They also describe it as running alongside vendor software rather than replacing it.<sup><a href=\"#ref-50\">[50]</a></sup>"
+  },
+  {
+    "id": "4-9#13",
+    "html": "The drivers are built for that kind of cooperation. A UR pendant program can do its normal work and reach the External Control node to let ROS take over. It can then continue with the rest of the program once the driver calls <code>hand_back_control</code>.<sup><a href=\"#ref-12\">[12]</a></sup><sup><a href=\"#ref-27\">[27]</a></sup> ABB's RAPID template likewise moves the robot home with a normal RAPID instruction before handing motion to EGM.<sup><a href=\"#ref-33\">[33]</a></sup> The projects also state their limits. For instance, <code>abb_libegm</code> offers \"only limited support\", MotoROS2 has no Cartesian motion, and the legacy <code>abb_driver</code> supports joint motion only, with no I/O.<sup><a href=\"#ref-13\">[13]</a></sup><sup><a href=\"#ref-11\">[11]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup>"
+  },
+  {
+    "id": "4-9#14",
+    "html": "<span class=\"spec-label\">Use ROS 2</span> when motion depends on sensing (scan-then-plan, bin picking), or when the cell mixes brands or mobile bases. It is also a good fit when you need planners such as MoveIt 2 or Tesseract, or when you are prototyping and researching."
+  },
+  {
+    "id": "4-9#15",
+    "html": "To see the difference concretely, here is the same two-pose move written both ways for a UR arm. The first pose is the home pose used by UR's own test client: <code>[0, -1.57, 0, -1.57, 0, 0]</code> radians. The joints are named <code>shoulder_pan_joint</code>, <code>shoulder_lift_joint</code>, <code>elbow_joint</code>, <code>wrist_1_joint</code>, <code>wrist_2_joint</code> and <code>wrist_3_joint</code>.<sup><a href=\"#ref-16\">[16]</a></sup> Both examples are this lesson's own and have not been run on a robot, so test them in URSim first."
+  },
+  {
+    "id": "6-1#1",
+    "html": "<span class=\"spec-label\">PWM Output Pins (~):</span> On both the Uno R3 and the Uno R4, pins 3, 5, 6, 9, 10 and 11 support Pulse Width Modulation. These are the officially supported pins for <code>analogWrite()</code>.<sup><a href=\"#ref-9\">[9]</a></sup>"
+  },
+  {
+    "id": "6-1#2",
+    "html": "A beginner mistake in robotics is wiring a DC motor or large hobby servo directly to an Arduino GPIO pin. Arduino's own documentation notes that a pin's current is not enough to run most relays, solenoids or motors. Short circuits or high-current loads on a pin can damage or destroy the pin or even the whole chip.<sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "6-1#3",
+    "html": "To protect the microcontroller while supplying high current to motors, roboticists use an <strong>H-bridge motor driver</strong>. This is an intermediate power stage that takes low-current control signals from the microcontroller and switches the much larger motor current from a separate supply.<sup><a href=\"#ref-12\">[12]</a></sup> An H-bridge consists of four electronic switches arranged in an \"H\" shape around the motor. Closing diagonal pairs of switches sends current forward or backward through the motor, giving two directions of rotation. Switching them rapidly with a PWM signal sets the speed.<sup><a href=\"#ref-12\">[12]</a></sup><sup><a href=\"#ref-13\">[13]</a></sup>"
+  },
+  {
+    "id": "6-1#4",
+    "html": "Power a DC motor in an Arduino robot <strong>from a separate battery through a motor driver, with grounds connected</strong>. Arduino's Servo library documentation gives the same advice for servos, which draw considerable power. It advises using a separate supply and connecting the grounds of the Arduino and the external supply together.<sup><a href=\"#ref-11\">[11]</a></sup><sup><a href=\"#ref-14\">[14]</a></sup>"
+  },
+  {
+    "id": "6-1#5",
+    "html": "<strong>The Motor Power Domain:</strong> A battery pack (such as a 2S or 3S lithium polymer pack) powers the motors. It connects to the motor-supply terminal of the driver (VS on the L298, VM on the TB6612FNG).<sup><a href=\"#ref-12\">[12]</a></sup><sup><a href=\"#ref-13\">[13]</a></sup>"
+  },
+  {
+    "id": "6-1#6",
+    "html": "An Arduino program (called a \"sketch\") is written in C++ and compiled into machine code for the board's microcontroller. Every sketch has two core functions. First, <code>setup()</code> runs once after each power-up or reset; use it to set pin modes and start libraries. Then, <code>loop()</code> runs over and over so the program can respond to its inputs.<sup><a href=\"#ref-18\">[18]</a></sup>"
+  },
+  {
+    "id": "6-1#7",
+    "html": "The alternative, shown in Arduino's \"Blink Without Delay\" example, is <strong>non-blocking timing</strong>: the loop keeps running and checks <code>millis()</code> on every pass until enough time has elapsed.<sup><a href=\"#ref-19\">[19]</a></sup> <code>millis()</code> returns the number of milliseconds since the program started as an <code>unsigned long</code>, and it wraps back to zero after about 49 days. For short intervals, <code>micros()</code> gives finer timing.<sup><a href=\"#ref-20\">[20]</a></sup>"
+  },
+  {
+    "id": "6-1#8",
+    "html": "A common first distance sensor for mobile robots is the <strong>HC-SR04 ultrasonic ranging module</strong>, which measures from about 2 cm to 4 m on a 5 V supply.<sup><a href=\"#ref-21\">[21]</a></sup> To take a measurement, the microcontroller sends a 10-microsecond pulse on the Trigger pin. The module then sends eight cycles of 40 kHz ultrasound and holds its Echo pin HIGH for the time the sound takes to travel out and back.<sup><a href=\"#ref-21\">[21]</a></sup>"
+  },
+  {
+    "id": "6-2#1",
+    "html": "As a percentage, a 0% duty cycle is always off, a 50% duty cycle is on for half of each period, and a 100% duty cycle is always on.<sup><a href=\"#ref-1\">[1]</a></sup> A DC motor responds to the average of these fast pulses because its rotor's inertia and its winding's inductance smooth them out. These pulses are much faster than the motor can react to."
+  },
+  {
+    "id": "6-2#2",
+    "html": "On the 32-bit <strong>Arduino Uno R4 (Renesas RA4M1)</strong>, <code>analogWrite()</code> uses the same six pins (3, 5, 6, 9, 10 and 11) and runs at 490 Hz by default.<sup><a href=\"#ref-3\">[3]</a></sup> Underneath, the RA4M1 contains a General PWM Timer (GPT) block with two 32-bit channels and six 16-bit channels that can count up, down, or up and down. In addition, its CPU runs at up to 48 MHz.<sup><a href=\"#ref-7\">[7]</a></sup> Higher PWM frequencies on the R4 require configuring these timers beyond the default <code>analogWrite()</code> settings."
+  },
+  {
+    "id": "6-2#3",
+    "html": "Robots that combine DC motors and hobby servos run into a timer conflict on the Arduino Uno R3. The Servo library documentation states that on boards other than the Mega, using the library disables <code>analogWrite()</code> PWM on pins 9 and 10. This happens whether or not a servo is attached to those pins.<sup><a href=\"#ref-12\">[12]</a></sup>"
+  },
+  {
+    "id": "6-2#4",
+    "html": "The reason is the timer. On the ATmega328P the library uses the 16-bit <strong>Timer1</strong> to time its servo pulses.<sup><a href=\"#ref-12\">[12]</a></sup> Why does calling <code>myServo.attach()</code> on an Arduino Uno R3 disable <code>analogWrite()</code> PWM on pins 9 and 10? Because the Servo library takes over Timer1. It switches the timer to normal counting mode with a prescaler of 8 and uses its output-compare interrupt to end each servo pulse. As a result, Timer1 can no longer produce the PWM outputs on pins 9 and 10.<sup><a href=\"#ref-12\">[12]</a></sup><sup><a href=\"#ref-4\">[4]</a></sup>"
+  },
+  {
+    "id": "6-2#5",
+    "html": "<span class=\"spec-label\">Mechanical Dead Zone (Stiction):</span> Real gearboxes have static friction, or \"stiction.\" At low duty cycles the motor's torque is too small to overcome the friction of the gears and bearings. Current flows and heats the windings, but the shaft does not turn. The threshold differs from motor to motor, so measure it for your own motor (see the Try it box). Robot controllers add a <strong>dead zone compensation offset</strong>, mapping commands so that the smallest non-zero command jumps straight to the measured breakaway value."
+  },
+  {
+    "id": "6-3#1",
+    "html": "To control motion precisely, robots use <strong>closed-loop feedback control</strong>. The most common motion sensor for this feedback is the <strong>rotary encoder</strong> (also called a shaft encoder). Mounted on a motor shaft or wheel axle, an encoder turns rotation into digital electrical signals that the controller can count.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup> Encoders give mobile robots the wheel-rotation data used to estimate distance travelled (odometry). They also let robot arms hold joint positions, and help speed controllers keep a steady velocity under changing loads.<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "6-3#2",
+    "html": "If an incremental encoder had only one pulse channel (Channel A), the controller could work out speed from the pulse rate. However, it could not tell the direction of rotation. Clockwise and counter-clockwise rotation would produce identical pulse trains."
+  },
+  {
+    "id": "6-3#3",
+    "html": "To solve this, <strong>quadrature encoders</strong> have two output channels, <strong>Channel A</strong> and <strong>Channel B</strong>. For most encoders these two square waves are <strong>90 degrees out of phase</strong> (offset by a quarter of a cycle). Watching their state changes reveals the direction of rotation.<sup><a href=\"#ref-2\">[2]</a></sup><sup><a href=\"#ref-4\">[4]</a></sup>"
+  },
+  {
+    "id": "6-3#4",
+    "html": "<span class=\"spec-label\">X4 Decoding (Full Quadrature):</span> The counter counts every edge of both Channel A and Channel B. Each cycle contains four state changes (00 &rarr; 10 &rarr; 11 &rarr; 01 &rarr; 00), so X4 decoding gives four counts per pulse.<sup><a href=\"#ref-5\">[5]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup><sup><a href=\"#ref-8\">[8]</a></sup> X4 decoding gives the finest position resolution. However, because the four edges are not perfectly evenly spaced, speed computed from the count can be jumpier (\"jitter\").<sup><a href=\"#ref-3\">[3]</a></sup>"
+  },
+  {
+    "id": "6-3#5",
+    "html": "Read datasheet terminology carefully. Same Sky uses <strong>PPR</strong> (pulses per revolution) for the number of high pulses on output A or B in one turn. It uses <strong>CPR</strong> (counts per revolution) for the number of quadrature-decoded state changes, which is PPR multiplied by 4. However, some manufacturers use \"CPR\" to mean <em>cycles</em> per revolution, which equals PPR. Across the industry, the terms PPR, CPR, LPR (lines per revolution on an optical disk) and \"resolution\" are not used consistently.<sup><a href=\"#ref-2\">[2]</a></sup><sup><a href=\"#ref-4\">[4]</a></sup> Mixing up the two meanings of CPR makes a robot's computed travel distance wrong by a factor of four. A good habit is to turn a newly mounted wheel exactly one full turn by hand while logging the raw count, to confirm the true multiplier. As a rule of thumb, choose an encoder whose resolution in edges per revolution is finer than the smallest positioning error you can accept. For example, to know a joint to &plusmn;1&deg;, you need more than 360 edges per revolution.<sup><a href=\"#ref-4\">[4]</a></sup>"
+  },
+  {
+    "id": "6-3#6",
+    "html": "Use the simulator below to turn the encoder wheel step by step. Watch how the 90-degree phase shift between Channel A and Channel B decides whether counts increment or decrement:"
+  },
+  {
+    "id": "6-3#7",
+    "html": "On both the <strong>Arduino Uno R3</strong> and the <strong>Uno R4 (Minima and WiFi)</strong>, <code>attachInterrupt()</code> works only on <strong>pins 2 and 3</strong>.<sup><a href=\"#ref-11\">[11]</a></sup> On a two-wheeled differential-drive robot, that leaves room for only one channel from each wheel's encoder on these interrupts. This limits an Uno to X1 or X2 decoding through <code>attachInterrupt()</code>. The Uno R3's ATmega328P also has a separate pin-change interrupt feature, which can be set up at register level to watch more encoder channels.<sup><a href=\"#ref-13\">[13]</a></sup> Other boards, such as the Nano 33 BLE or the Nano ESP32, allow interrupts on all pins.<sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "6-3#8",
+    "html": "<span class=\"spec-label\">EnDat 2.2 (HEIDENHAIN):</span> A digital, bidirectional interface that transmits absolute (and incremental) position values. It lets stored parameters, such as the encoder's electronic ID label, be read and updated. It also reports diagnostics, error messages and additional data such as temperature.<sup><a href=\"#ref-16\">[16]</a></sup> It is the only serial absolute-encoder interface on this list that remains proprietary.<sup><a href=\"#ref-6\">[6]</a></sup>"
+  },
+  {
+    "id": "6-3#9",
+    "html": "<span class=\"spec-label\">Gearbox Backlash:</span> Mounting an encoder on the fast motor shaft of a gearmotor gives excellent resolution, but the encoder cannot see the mechanical play (\"backlash\") between gear teeth. When the motor reverses, the motor shaft turns a little before the gear teeth re-engage and move the output. Because of this, the controller sees motion that the wheel or joint did not make. A controller with only a motor encoder cannot see what is happening on the load side.<sup><a href=\"#ref-17\">[17]</a></sup> When high precision is needed, add a second encoder on the output (load) shaft, as dual-loop servo systems do. The motor encoder helps keep the loop stable, while the load encoder gives the accuracy. Industry sources warn that using only the output encoder for feedback can make the loop harder to stabilise, because the backlash then sits inside the loop.<sup><a href=\"#ref-17\">[17]</a></sup>"
+  },
+  {
+    "id": "6-3#10",
+    "html": "<span class=\"spec-label\">Processor Interrupt Saturation:</span> Only one ISR runs at a time, and other interrupts wait until it finishes.<sup><a href=\"#ref-11\">[11]</a></sup> An encoder with very high PPR on a fast shaft can request interrupts very often. A small microcontroller may then spend nearly all its time in the ISR, starving the main loop. Use the worked example in Section 07 to estimate your interrupt rate before choosing an encoder."
+  },
+  {
+    "id": "6-4#1",
+    "html": "Minorsky started from the way a skilled helmsman keeps a ship on course. The helmsman does not only react to how far the ship is off course, but times the rudder to meet and oppose the ship's swing.<sup><a href=\"#ref-4\">[4]</a></sup> Read in today's terms, that behaviour maps onto the three PID actions:"
+  },
+  {
+    "id": "6-4#2",
+    "html": "<span class=\"spec-label\">Past error:</span> Suppose a steady crosswind or current keeps pushing the ship to one side. The helmsman holds a small extra rudder offset, which builds up until the persistent drift is gone."
+  },
+  {
+    "id": "6-4#3",
+    "html": "Minorsky's electrical steering controller (built from potentiometers, a differential gear and a motor-generator set) was tested aboard the battleship <em>USS New Mexico</em> in 1923. The trials kept the ship close to its course. However, the equipment was removed afterwards, and the US Navy set automatic steering aside until the 1930s. This was largely because the ship's operating crews opposed it.<sup><a href=\"#ref-4\">[4]</a></sup>"
+  },
+  {
+    "id": "6-4#4",
+    "html": "The &ldquo;past, present and future&rdquo; reading is a helpful picture. However, modern control texts often describe the terms differently. P drives the position error to zero, D drives the velocity error to zero, and I drives the accumulated error to zero.<sup><a href=\"#ref-5\">[5]</a></sup>"
+  },
+  {
+    "id": "6-4#5",
+    "html": "Servo-drive makers often give their own practical tuning recipes. ODrive's recipe is: set the integrator to zero, then raise the velocity gain about 30% at a time until the motor vibrates. Back it off to 50% of that value, then tune the position gain until overshoot just disappears.<sup><a href=\"#ref-14\">[14]</a></sup>"
+  },
+  {
+    "id": "6-4#6",
+    "html": "<span class=\"spec-label\">1. Inner Torque/Current Loop (16 kHz):</span> The fastest loop. It turns the torque command into PWM signals for the motor phases using Field-Oriented Control (FOC), an efficient technique that separates torque and magnetic flux in brushless motors.<sup><a href=\"#ref-17\">[17]</a></sup>"
+  },
+  {
+    "id": "6-4#7",
+    "html": "Exact loop rates differ between products, so treat these numbers as one real example rather than a universal rule. The ODrive motor controller, for instance, also cascades position, velocity and current loops. However, it uses a P position loop and a PI velocity loop, which is the reverse of Synapticon's recommended setting.<sup><a href=\"#ref-14\">[14]</a></sup> The PX4 drone autopilot uses the same cascaded idea, with a mix of P and PID controllers.<sup><a href=\"#ref-18\">[18]</a></sup> Robot arm controllers can also add <strong>model-based feed-forward</strong> computed from the rigid-body equations of motion, a technique covered in robotics textbooks under motion control:<sup><a href=\"#ref-19\">[19]</a></sup>"
+  },
+  {
+    "id": "6-5#1",
+    "html": "A robotic system runs a loop of three steps: <strong>Sense, Think, Act</strong>. An autonomous robot's algorithms are only as good as the sensor data feeding them. Sensor inputs can be corrupted by electrical noise, delayed by communication latency, or distorted by physical blind spots. When that happens, even the most sophisticated trajectory planners and artificial intelligence models will command the wrong motor actions.<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "6-5#2",
+    "html": "As <a href=\"robotics-6-1.html\">6.1</a> showed, the <strong>HC-SR04 ultrasonic rangefinder</strong> is the classic entry-level distance sensor. A 10-microsecond pulse on its Trigger pin makes it send an 8-cycle, 40 kHz ultrasonic burst. Its Echo pin then stays HIGH for the sound's round trip.<sup><a href=\"#ref-2\">[2]</a></sup>"
+  },
+  {
+    "id": "6-5#3",
+    "html": "In mobile robotics, the heading from a gyroscope slowly wanders even when the robot's motion is measured correctly. This happens because <strong>its small bias is integrated along with the rotation rate, so the error keeps growing</strong>.<sup><a href=\"#ref-8\">[8]</a></sup><sup><a href=\"#ref-12\">[12]</a></sup>"
+  },
+  {
+    "id": "6-5#4",
+    "html": "<span class=\"spec-label\">2D LiDAR (Light Detection and Ranging):</span> Spins a laser rangefinder to measure distances around a single horizontal plane. As one real example, the Slamtec RPLIDAR A3 scans at a typical 10 Hz (adjustable from 5 Hz to 15 Hz). It takes up to 16,000 samples per second (about 1,600 points per revolution at 10 Hz). It reaches up to 25 m on white targets (10 m on dark ones), with an accuracy of about 1% to 2.5% of the range.<sup><a href=\"#ref-18\">[18]</a></sup> 2D LiDAR is a common sensor for Simultaneous Localization and Mapping (SLAM). However, it is &ldquo;blind&rdquo; to obstacles above or below its scan plane, such as table overhangs or descending staircases.<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "6-5#5",
+    "html": "<span class=\"spec-label\">Vision Cameras (Monocular, Stereo, RGB-D):</span> Monocular cameras capture rich 2D color and texture information but lack direct depth perception. Stereo cameras combine two calibrated lenses to calculate depth via stereoscopic disparity matching. RGB-D cameras add a depth image to the colour image. The Intel RealSense D435, for example, uses active infrared stereo depth sensing. It delivers depth at up to 1280 &times; 720 resolution and up to 90 frames per second. Its working range spans from about 0.3 m to roughly 10 m, depending on the scene and lighting.<sup><a href=\"#ref-19\">[19]</a></sup> Processing camera streams takes considerable computing power, and passive cameras struggle in low light.<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "6-5#6",
+    "html": "Because no single sensor is free from error, robots commonly use <strong>multi-sensor data fusion</strong>. Robots pair sensors with complementary strengths. For example, fast, smooth wheel encoders drift during wheel slip, while an IMU gyroscope resists slip but drifts over time. Algorithms like the <strong>Kalman filter</strong> combine these sources into a better state estimate than either sensor gives alone.<sup><a href=\"#ref-1\">[1]</a></sup> To fuse sensors, software needs each reading's uncertainty as well as its value. For this reason, ROS IMU messages carry a covariance matrix with every reading.<sup><a href=\"#ref-20\">[20]</a></sup>"
+  },
+  {
+    "id": "6-5#7",
+    "html": "Compare the distance reported by an optical triangulation sensor (Sharp GP2Y0A21YK0F) and a laser Time-of-Flight sensor (VL53L1X). Point each sensor at a white target and then a black matte target at a distance of 30 cm."
+  },
+  {
+    "id": "6-6#1",
+    "html": "Indoor mobile robots therefore rely heavily on <strong>odometry</strong>. This means estimating the current position and orientation by adding up the motion of the wheels over time, as counted by wheel encoders.<sup><a href=\"#ref-2\">[2]</a></sup> Odometry is a form of <strong>dead reckoning</strong>. Borenstein and colleagues trace this term to the &ldquo;deduced reckoning&rdquo; of sailing days. In sailing, that was a simple procedure for working out a vessel's present location from a known starting point, its speed, heading and elapsed time.<sup><a href=\"#ref-2\">[2]</a></sup> Their survey notes that most land-based mobile robots rely on dead reckoning as the backbone of their navigation. This is because odometry is self-contained and needs no outside signals.<sup><a href=\"#ref-2\">[2]</a></sup>"
+  },
+  {
+    "id": "6-6#2",
+    "html": "Heading errors are especially harmful. Over a 50-meter trip, a 1-degree heading error causes far more position drift than a 1-centimeter wheel diameter calibration error. This is because <strong>heading errors rotate the entire subsequent coordinate frame, so lateral position error grows in proportion to the total distance traveled</strong>. Borenstein and Feng describe orientation errors as the main concern because, once incurred, they grow without bound into lateral position errors. The &ldquo;Where am I?&rdquo; report says the same.<sup><a href=\"#ref-2\">[2]</a></sup><sup><a href=\"#ref-11\">[11]</a></sup> Course notes make the same point: errors perpendicular to the direction of travel grow much larger.<sup><a href=\"#ref-5\">[5]</a></sup>"
+  },
+  {
+    "id": "6-6#3",
+    "html": "Running in both directions separates the two dominant errors. Borenstein and Feng call a wheelbase error a <em>Type A</em> error. It reduces (or increases) the total amount of rotation in <em>both</em> the CW and CCW runs. Unequal wheel diameters cause a <em>Type B</em> error. The robot's slight curve adds to its turns in one direction and subtracts from them in the other.<sup><a href=\"#ref-11\">[11]</a></sup> Comparing the CW and CCW results therefore lets each error be estimated and corrected with scaling factors. In their experiments, the correction improved odometric accuracy with respect to systematic errors by at least one order of magnitude. In the main example, the largest systematic error fell from 317 mm to 21 mm, about 15 times smaller.<sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "6-6#4",
+    "html": "Systematic errors can be calibrated away, but non-systematic errors such as wheel slip on smooth floors cannot.<sup><a href=\"#ref-11\">[11]</a></sup> Encoders count wheel rotation, not chassis motion. When a wheel slips, such as during hard acceleration or a fast turn, the encoders still register rotation. Odometry then records motion that did not fully happen. Because the error is locked into every later pose, one bad slip during a turn can spoil the estimate for the rest of the run.<sup><a href=\"#ref-2\">[2]</a></sup><sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "6-6#5",
+    "html": "In simple embedded firmware, the heading change from the wheel difference can be replaced by integrating the gyroscope rate over the step. WPILib's odometry is built this way. It takes the heading from the gyroscope and the distances from the left and right encoders. Its update then uses the gyro angle instead of the turn rate worked out from the wheels.<sup><a href=\"#ref-8\">[8]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup> The TurtleBot3 driver does the same when its <code>use_imu</code> option is on: it takes the heading change from the IMU and only the forward distance from the wheels.<sup><a href=\"#ref-7\">[7]</a></sup> The step is:"
+  },
+  {
+    "id": "6-6#6",
+    "html": "If the wheels spin on a slick patch but the chassis does not turn, the gyroscope reports (close to) zero rotation, while the wheel-based estimate would report a turn. In practice the gyroscope is combined with wheel odometry rather than used alone. Borenstein and Feng proposed one early way to do this, a method they called gyrodometry for combining data from gyros and odometry.<sup><a href=\"#ref-14\">[14]</a></sup> In ROS 2 systems, the <code>robot_localization</code> package can fuse wheel odometry and IMU data with an <strong>Extended Kalman Filter (EKF)</strong> (<code>ekf_node</code>) or an Unscented Kalman Filter. The Nav2 setup guide notes that a usual robot has at least wheel encoders and an IMU as odometry sources.<sup><a href=\"#ref-15\">[15]</a></sup> ROS names the trade-off directly. Odometry defines the odom frame, which is smooth but drifts. Meanwhile, localization against a map defines the map frame, which does not drift but can jump.<sup><a href=\"#ref-9\">[9]</a></sup> Sensor fusion is explored further in Lesson 6.8."
+  },
+  {
+    "id": "6-7#1",
+    "html": "As robot capabilities grow, this ad hoc approach turns into fragile \"spaghetti code.\" Adding a single new behavior requires modifying multiple nested conditional branches. Hidden side effects emerge, and two branches can fight over the same motor command. It also becomes hard to predict what the robot will do when a sensor reading is unexpected. Behavior-tree researchers Colledanchise and &Ouml;gren make the same point about poorly structured controllers. Every new behavior means re-checking a large number of existing decisions, which makes the code error-prone to change.<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "6-7#2",
+    "html": "The listing below is the lesson's own implementation of the example. In embedded C++, the state machine is implemented cleanly. It uses an <code>enum</code> to name the states, and an <code>enterState()</code> helper function that changes the state and records the timestamp in one place. Finally, a <code>switch</code> statement handles the states inside <code>loop()</code>:"
+  },
+  {
+    "id": "6-7#3",
+    "html": "The HC-SR04 datasheet asks for a 10 &micro;s trigger pulse and gives range as echo time &times; speed of sound (340 m/s) &divide; 2. It also recommends a measurement cycle of over 60 ms so that one ping's echo does not interfere with the next. The code follows all three.<sup><a href=\"#ref-3\">[3]</a></sup> Notice also that <code>pulseIn()</code> is given an explicit timeout of 12,000 &micro;s (12 ms). The timeout argument is in microseconds and defaults to one second.<sup><a href=\"#ref-8\">[8]</a></sup> Without it, a missing echo (for example, ultrasound scattering into an open room) could stall the loop for up to a second. With the short timeout, a failed ping costs only a few milliseconds. A 12 ms round-trip travel time at about 343 m/s corresponds to a maximum range of about 2 m."
+  },
+  {
+    "id": "6-7#4",
+    "html": "<span class=\"spec-label\">Chattering and State Flapping:</span> A sensor value may hover directly on a decision boundary, such as distance oscillating between 19.9 cm and 20.1 cm. When that happens, the FSM can oscillate between <code>FOLLOW_LINE</code> and <code>AVOID_OBSTACLE</code> on successive loop passes. This is resolved by adding <strong>hysteresis</strong>: trigger obstacle avoidance at 20 cm, but require the path to clear 25 cm before exiting."
+  },
+  {
+    "id": "6-7#5",
+    "html": "For packaging machinery, the <strong>PackML</strong> state model associated with the Organization for Machine Automation and Control (OMAC) is published by ISA as technical report <strong>ISA-TR88.00.02</strong> (current version 2022).<sup><a href=\"#ref-9\">[9]</a></sup> A PackML unit mode can contain up to 17 machine states, among them <code>Idle</code>, <code>Starting</code>, <code>Execute</code>, <code>Holding</code>, <code>Held</code>, <code>Suspended</code> and <code>Aborted</code>.<sup><a href=\"#ref-13\">[13]</a></sup> The OPC UA companion specification for PackML defines <code>Execute</code> as the machine actively carrying out the behavior of the selected mode. It defines <code>Held</code> as paused \"waiting for internal process conditions to clear.\" In addition, <code>Suspended</code> means paused \"waiting for external process conditions to clear\" (for example, an upstream machine starving it of product). Finally, <code>Idle</code> means error-free and waiting to start.<sup><a href=\"#ref-14\">[14]</a></sup>"
+  },
+  {
+    "id": "6-7#6",
+    "html": "Because PackML machines share this vocabulary, plant supervisory software can read the state of machines from different vendors in the same way. This achieves the interoperability goal ISA states for the report.<sup><a href=\"#ref-9\">[9]</a></sup>"
+  },
+  {
+    "id": "6-7#7",
+    "html": "<span class=\"spec-label\">Decorator Nodes:</span> Control nodes with a single child that change how the child is run or what it returns. Examples include an inverter, or Nav2's <code>RateController</code>, which ticks its child at a fixed frequency.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-18\">[18]</a></sup>"
+  },
+  {
+    "id": "6-7#8",
+    "html": "The tree below is the lesson's simplified sketch of the idea. Nav2's real default tree is more elaborate. Its recovery subtree runs only when the navigation subtree returns <code>FAILURE</code>. A <code>RoundRobin</code> node then cycles through clearing the costmaps, <code>Spin</code> (1.57 rad), <code>Wait</code> (5 s) and <code>BackUp</code> (0.15 m), retrying navigation after each.<sup><a href=\"#ref-20\">[20]</a></sup>"
+  },
+  {
+    "id": "6-7#9",
+    "html": "In this sketch, if a human blocks the hallway, <code>FollowPath</code> returns <code>FAILURE</code>. The <code>PrimaryNavigate</code> Sequence halts and returns <code>FAILURE</code>. The parent Fallback catches the failure and immediately ticks <code>RecoveryBehaviors</code>. The robot clears its obstacle costmap, spins in place, and backs away before re-attempting path tracking. Because each behavior is a modular leaf node, new recovery strategies can be inserted without altering existing navigation code. Nav2's documentation notes that its clear-costmap, spin and back-up recoveries exist to move the robot out of a poor location.<sup><a href=\"#ref-16\">[16]</a></sup>"
+  },
+  {
+    "id": "6-8#1",
+    "html": "As shown in Lesson 6.6, <strong>wheel odometry</strong> is smooth and responsive. Borenstein and Feng describe it as \"simple, inexpensive, and easy to accomplish in real-time.\" However, odometry is an integration process. Small mechanical errors, floor irregularities such as bumps and cracks, and wheel slip accumulate into the robot's pose estimate. In their words, \"the disadvantage of odometry is its unbounded accumulation of errors.\"<sup><a href=\"#ref-1\">[1]</a></sup>"
+  },
+  {
+    "id": "6-8#2",
+    "html": "The classic algorithm for sensor fusion in robotics is the <strong>Kalman filter</strong>. Rudolf E. K&aacute;lm&aacute;n published the filter in 1960 in the <em>Transactions of the ASME, Journal of Basic Engineering</em>.<sup><a href=\"#ref-3\">[3]</a></sup> It is a recursive algorithm that keeps an estimate of a dynamic system's state together with an explicit measure of its uncertainty (the error covariance). Each new estimate is computed from the previous one and the newest measurement, rather than by reprocessing all past data.<sup><a href=\"#ref-2\">[2]</a></sup>"
+  },
+  {
+    "id": "6-8#3",
+    "html": "Before 1960, optimal filtering was built on Norbert Wiener's theory. In his paper, K&aacute;lm&aacute;n notes that Wiener's solution of the underlying integral equation covered only \"the practically important special case of stationary statistics and rational spectra.\" He also noted that the optimal filter was specified by its impulse response, and that computing it was \"often quite involved and poorly suited to machine computation.\"<sup><a href=\"#ref-3\">[3]</a></sup>"
+  },
+  {
+    "id": "6-8#4",
+    "html": "Onboard computers of the time were tiny. The Apollo Guidance Computer had 36,864 words of fixed (read-only rope) memory and 2,048 words of erasable core memory, with a word length of 15 bits plus parity.<sup><a href=\"#ref-5\">[5]</a></sup> A recursive filter suits such a machine because it needs only the latest estimate and its covariance, not a stored history of measurements.<sup><a href=\"#ref-2\">[2]</a></sup> The Ames group's key change was to relinearize the non-linear navigation equations about the current estimated state. This modification \"has come to be known as the 'extended Kalman filter'\" (the <strong>Extended Kalman Filter, EKF</strong>). Potter then devised the first square-root implementation of the filter. It was used for the Apollo system because it worked well on small-word-size onboard computers.<sup><a href=\"#ref-4\">[4]</a></sup>"
+  },
+  {
+    "id": "6-8#5",
+    "html": "A complementary filter exploits the complementary frequency characteristics of the IMU. The gyroscope responds quickly but drifts over time. Meanwhile, the accelerometer gives a drift-free tilt from gravity, but only on average, because vibration and linear accelerations corrupt each sample. Its tilt reading is therefore trustworthy only at low frequencies.<sup><a href=\"#ref-18\">[18]</a></sup> The filter takes the high-frequency part of its estimate from the gyroscope and the low-frequency part from the accelerometer, using fixed weights.<sup><a href=\"#ref-17\">[17]</a></sup> The Fusion AHRS (Attitude and Heading Reference System, which computes three-dimensional orientation from sensors) library describes its own algorithm in the same terms. It operates as a complementary filter that combines high-pass filtered gyroscope measurements with low-pass filtered measurements from other sensors.<sup><a href=\"#ref-18\">[18]</a></sup> The update is:"
+  },
+  {
+    "id": "6-9#1",
+    "html": "In lessons 1.6 and 2.3 you wrote motion commands such as MoveJ, MoveL and MoveC and chose a speed and a zone for each one. In this chapter you met the hardware underneath. PWM drives the motor, the encoder measures the shaft, and a PID loop pushes the measured position toward a setpoint. This lesson connects the two. Between \"move to this target at 250 mm/s\" and the PID loop sits a <strong>motion profile</strong> generator. It turns one target into a smooth stream of setpoints, creating a new one every control cycle."
+  },
+  {
+    "id": "6-9#2",
+    "html": "The WPILib robot library describes its trapezoidal profile in exactly these terms. It generates \"a sequence of setpoints that smoothly interpolate\" between the current state and the goal state, while respecting a maximum velocity and a maximum acceleration.<sup><a href=\"#ref-1\">[1]</a></sup> If the final target were sent in one step, the PID error would jump to its largest value at once. A profile asks for the motion a little at a time, so the controller only corrects small errors."
+  },
+  {
+    "id": "6-9#3",
+    "html": "Production code uses the same three phases. WPILib's <code>TrapezoidProfile</code> class works out the acceleration time as <code>maxVelocity / maxAcceleration</code> and then computes how much distance is left for the cruise phase.<sup><a href=\"#ref-4\">[4]</a></sup> Peter Corke's Robotics Toolbox for Python describes its <code>trapezoidal()</code> function as \"a linear motion segment with parabolic blends\". In the position plot, this is a parabola, a straight line, then a parabola.<sup><a href=\"#ref-5\">[5]</a></sup>"
+  },
+  {
+    "id": "6-9#4",
+    "html": "<strong>Worked example.</strong> Keep v<sub>max</sub> = 0.25 m/s and a<sub>max</sub> = 0.5 m/s&sup2; but shorten the move to D = 0.05 m. Since 0.05 m &lt; 0.125 m, the profile is triangular. This gives t<sub>a</sub> = &radic;(0.05 / 0.5) = &radic;0.1 = 0.316 s, v<sub>peak</sub> = 0.5 &times; 0.316 = 0.158 m/s and T = 0.632 s. The area check is &frac12; &times; 0.632 &times; 0.158 = 0.05 m. For short moves, cycle time is set by acceleration, not by the programmed speed."
+  },
+  {
+    "id": "6-9#5",
+    "html": "The price is more algebra. The seven segment durations depend on whether the move is long enough to reach a<sub>max</sub> and v<sub>max</sub>, so there are several cases. In practice, engineers use a library. <strong>Ruckig</strong> is an open-source example. It generates trajectories \"limited by velocity, acceleration, and jerk constraints\", and its README says it \"guarantees a time-optimal solution\" for moves from one state to another.<sup><a href=\"#ref-10\">[10]</a></sup> The README also points out a subtle feasibility rule. If an axis is already near its velocity limit, any remaining positive acceleration will carry it past the limit. This happens because the jerk limit means acceleration cannot drop to zero instantly. Ruckig's check is |a| &le; &radic;(2 &middot; j<sub>max</sub> &middot; (v<sub>max</sub> &minus; |v|)).<sup><a href=\"#ref-10\">[10]</a></sup>"
+  },
+  {
+    "id": "6-9#6",
+    "html": "Another way to time a move is to choose a smooth function s(t) that rises from 0 at the start to 1 at the end. You then place the robot at the fraction s of the way along its path. This function is called a <strong>time scaling</strong>. The Modern Robotics library offers two polynomial time scalings, where T is the move duration:<sup><a href=\"#ref-2\">[2]</a></sup>"
+  },
+  {
+    "id": "6-9#7",
+    "html": "The library's documentation says the cubic is \"for a third-order polynomial motion that begins and ends at zero velocity\". It adds that the quintic \"begins and ends at zero velocity and zero acceleration\". Its worked examples use T = 2 s and t = 0.6 s, which give 0.216 (cubic) and 0.16308 (quintic).<sup><a href=\"#ref-2\">[2]</a></sup> You can check both by hand: t/T = 0.3, so the cubic gives 3(0.09) &minus; 2(0.027) = 0.216."
+  },
+  {
+    "id": "6-9#8",
+    "html": "To see where the coefficients come from, note that a cubic q(t) = a<sub>0</sub> + a<sub>1</sub>t + a<sub>2</sub>t&sup2; + a<sub>3</sub>t&sup3; has four unknown coefficients. A rest-to-rest move gives four conditions: start position, end position, zero start velocity and zero end velocity. Solving them gives a<sub>0</sub> = q<sub>0</sub>, a<sub>1</sub> = 0, a<sub>2</sub> = 3(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup2; and a<sub>3</sub> = &minus;2(q<sub>f</sub> &minus; q<sub>0</sub>)/T&sup3;. This matches the normalized cubic above. A quintic has six coefficients, so it can also meet zero start and end acceleration. Those six conditions lead to the 10, &minus;15, 6 form. Differentiating gives these peak values for a move of distance D in time T (this lesson's own calculation, checked numerically):"
+  },
+  {
+    "id": "6-9#9",
+    "html": "Now for the path. In <strong>joint interpolation</strong> (MoveJ) each joint moves along a straight line in joint space, from its start angle to its end angle. The Modern Robotics function <code>JointTrajectory(thetastart, thetaend, Tf, N, method)</code> \"computes a straight-line trajectory in joint space\". It applies one time scaling (method 3 for cubic, 5 for quintic) to every joint.<sup><a href=\"#ref-2\">[2]</a></sup> Because all joints share the same s(t), they start together, reach the halfway point together, and finish together. The tool, however, traces a curve in space. This happens because the forward kinematics that map joint angles to tool position are not linear."
+  },
+  {
+    "id": "6-9#10",
+    "html": "In <strong>linear interpolation (MoveL)</strong> the tool center point (TCP) follows a straight line in Cartesian space. The Modern Robotics <code>CartesianTrajectory</code> function makes \"the origin of the end-effector frame follow a straight line, decoupled from the rotational motion\". It interpolates position as s&middot;p<sub>end</sub> + (1 &minus; s)&middot;p<sub>start</sub>. Orientation is interpolated as a rotation about one fixed axis from the start orientation to the end orientation.<sup><a href=\"#ref-2\">[2]</a></sup> Corke's <code>ctraj</code> does the same job with a trapezoidal velocity profile along the path. Its documentation says \"orientation interpolation is performed using unit-quaternion interpolation\" (using unit quaternions, four-component mathematical representations of three-dimensional rotation that avoid gimbal lock).<sup><a href=\"#ref-5\">[5]</a></sup> This quaternion method is often called SLERP (spherical linear interpolation). For UR's <code>moveL</code>, <code>moveP</code> and <code>moveC</code>, the units change to \"Tool speed [m/s]\" and \"Tool acceleration [m/s&sup2;]\", because these moves are planned in Cartesian space. The client library's default values are a = 1.4 and v = 1.04.<sup><a href=\"#ref-11\">[11]</a></sup>"
+  },
+  {
+    "id": "6-9#11",
+    "html": "The textbook version of a blended corner is the <strong>LSPB</strong> (linear segments with parabolic blends) trajectory. Corke's <code>trapezoidal()</code> function is literally \"a linear motion segment with parabolic blends\", and the toolbox keeps the old name <code>lspb()</code> as an alias.<sup><a href=\"#ref-5\">[5]</a></sup> A parabolic blend in position is a ramp in velocity, so a trapezoid and an LSPB are two views of one motion. MoveIt applies the same idea to whole paths. Its time-optimal planner states that \"the intermediate waypoints of the input path need to be blended so that the entire path is differentiable\". Its default path tolerance of 0.1 (rad or m) sets how far the blended path may stray from a waypoint.<sup><a href=\"#ref-21\">[21]</a></sup> That tolerance plays the same role as a zone size."
+  },
+  {
+    "id": "6-9#12",
+    "html": "In ROS 2 these steps are visible. The MoveIt tutorial states: \"MoveIt is currently primarily a kinematic motion planning framework &ndash; it plans for joint or end effector positions but not velocity or acceleration.\"<sup><a href=\"#ref-22\">[22]</a></sup> A planner first returns a geometric path, a list of joint positions with no timing. A post-processing step called <strong>time parameterization</strong> then adds a timestamp, velocity and acceleration to every waypoint.<sup><a href=\"#ref-22\">[22]</a></sup>"
+  },
+  {
+    "id": "6-9#13",
+    "html": "Here is one way to remember the pair in rough terms. TOTG finds the fastest trapezoid-like timing along the whole path, and Ruckig rounds off the acceleration corners into an S-curve. That is the same trapezoid versus S-curve contrast as in section 04. Ruckig itself is described as \"Instantaneous Motion Generation for Robots and Machines\". It works from any initial state (position, velocity and acceleration) to a target state. In addition, it runs inside a real-time control loop, is used by MoveIt 2 and CoppeliaSim, and installs with <code>pip install ruckig</code>.<sup><a href=\"#ref-10\">[10]</a></sup>"
+  },
+  {
+    "id": "6-10#1",
+    "html": "Lesson <a href=\"robotics-1-6.html\">1.6</a> introduced forward and inverse kinematics with a small planar arm. That arm had two revolute joints, a first link L<sub>1</sub> = 0.4 m long, and a second link L<sub>2</sub> = 0.3 m long. This lesson works through the complete math for the same arm. It covers where the formulas come from and which targets the arm can reach. It also shows how to write inverse kinematics code that does not break at the edges, and how the Jacobian predicts poses where the arm loses a direction of motion."
+  },
+  {
+    "id": "6-10#2",
+    "html": "Every number here uses the 1.6 arm, so you can check each answer in the <a href=\"robotics-1-6.html\">lesson 1.6 simulator</a>. Its sliders set &theta;<sub>1</sub> and &theta;<sub>2</sub>, and tapping inside its ring places the tool and solves inverse kinematics."
+  },
+  {
+    "id": "6-10#3",
+    "html": "Two practical notes. First, the hole exists only because the links have different lengths. If L<sub>1</sub> = L<sub>2</sub>, the hole shrinks to the single point r = 0. At that point there are infinitely many solutions (&theta;<sub>2</sub> = 180&deg; with any &theta;<sub>1</sub>), which no IK function can list. Unequal links, like 0.4 m and 0.3 m, make the inner boundary visible. Second, this ring is the ideal workspace. A real arm has joint limits, cables and its own body in the way, so it reaches only part of the ring."
+  },
+  {
+    "id": "6-10#4",
+    "html": "<span class=\"spec-label\">Step 1: the elbow angle.</span> Square both FK equations and add them. The cross terms combine into cos &theta;<sub>1</sub> cos(&theta;<sub>1</sub> + &theta;<sub>2</sub>) + sin &theta;<sub>1</sub> sin(&theta;<sub>1</sub> + &theta;<sub>2</sub>) = cos &theta;<sub>2</sub>. The squared terms collapse because cos&sup2; + sin&sup2; = 1. &theta;<sub>1</sub> drops out completely:"
+  },
+  {
+    "id": "6-10#5",
+    "html": "Which solution should a controller use? A common rule is to pick the branch closest to the current joint angles, within the joint limits. PythonRobotics uses a simpler rule: if &theta;<sub>1</sub> comes out negative, it flips the sign of &theta;<sub>2</sub> to take the other branch.<sup><a href=\"#ref-1\">[1]</a></sup> Whatever the rule, a controller should not switch branches in the middle of a straight-line move. To get from one elbow posture to the other, link 2 has to swing through the straight (&theta;<sub>2</sub> = 0) or folded (&theta;<sub>2</sub> = 180&deg;) pose. Section 09 shows that this pose is a singularity. This is one reason industrial controllers store a configuration with each taught point (see ABB's <code>robconf</code> in lesson <a href=\"robotics-2-3.html\">2.3</a>)."
+  },
+  {
+    "id": "6-10#6",
+    "html": "Writing &theta;<sub>2</sub> = atan2(sin &theta;<sub>2</sub>, cos &theta;<sub>2</sub>) uses both pieces of information. It gives either branch by the sign you choose for sin &theta;<sub>2</sub>, and is well behaved everywhere except at (0, 0)."
+  },
+  {
+    "id": "6-10#7",
+    "html": "The code below uses tol = 10<sup>&minus;9</sup>. Points within that tolerance of a boundary are snapped to the single boundary solution, which moves the tip by a tiny amount. In a round-trip test over 100,000 random joint pairs (FK, then IK, then FK again), the largest tip error with this snapping was 5 &times; 10<sup>&minus;12</sup> m. That is far below anything a real robot can resolve."
+  },
+  {
+    "id": "6-10#8",
+    "html": "The PythonRobotics demo only checks the outer boundary. If the target is farther than l1 + l2, it sets &theta;<sub>2</sub> = 0 and points the arm straight at the target. It has no check for the inner hole, because its two links are equal (l1 = l2 = 1), and it catches <code>ValueError</code> as &ldquo;Unreachable goal&rdquo;.<sup><a href=\"#ref-1\">[1]</a></sup> Since <code>np.arccos</code> returns <code>nan</code> instead of raising <code>ValueError</code>, that handler would not catch an out-of-range value. The file is a good visual demo, but not reliable IK to copy."
+  },
+  {
+    "id": "6-10#9",
+    "html": "The joint speeds grow like 1/&theta;<sub>2</sub>. The condition number of J, a measure of how much it amplifies errors, grows the same way. It is about 4.4 at &theta;<sub>2</sub> = 1 rad, 48 at 0.1 rad, 483 at 0.01 rad, and 4,830 at 0.001 rad. This is the outer-workspace singularity from lesson 1.6, now with the formula behind it. A straight-line tool move near the edge of the ring asks for joint speeds that grow without limit."
+  },
+  {
+    "id": "6-10#10",
+    "html": "An industrial arm uses the same ideas in 3D. Each joint adds a rotation and an offset. Forward kinematics therefore becomes a product of 4 &times; 4 homogeneous transforms, one per joint. These are written either with Denavit&ndash;Hartenberg parameters (see 1.6) or as a <em>product of exponentials</em>. The Modern Robotics code library implements product-of-exponentials FK (which represents joint motions using matrix exponentials of screw axes) as <code>FKinSpace(M, Slist, thetalist)</code> and <code>FKinBody</code>. It also computes the full 6 &times; n Jacobian with <code>JacobianSpace</code> and <code>JacobianBody</code>, the general version of the 2 &times; 2 matrix in section 09.<sup><a href=\"#ref-4\">[4]</a></sup><sup><a href=\"#ref-5\">[5]</a></sup>"
+  },
+  {
+    "id": "6-10#11",
+    "html": "Solve IK by hand for the target (0.5, 0.2) with L<sub>1</sub> = 0.4 m and L<sub>2</sub> = 0.3 m. You should get Solution A (&minus;11.5&deg;, +80.4&deg;) and Solution B (55.1&deg;, &minus;80.4&deg;). In the <a href=\"robotics-1-6.html\">lesson 1.6 simulator</a>, set &theta;<sub>1</sub> = &minus;12&deg; and &theta;<sub>2</sub> = 80&deg;. The readout should show the tool near (0.504, 0.195), off slightly because the sliders move in whole degrees. Then press &ldquo;Solution B (&theta;2 &lt; 0)&rdquo; and check that the arm jumps to about (54&deg;, &minus;80&deg;) with the tool in the same place. The simulator solves from the rounded tool position, which is why it shows 54&deg; rather than the exact 55.1&deg;."
+  }
+]

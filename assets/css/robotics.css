@@ -1465,6 +1465,8 @@ ol.article-spec-list { list-style: decimal; }
 .lesson-search-input { width: 100%; max-width: 520px; box-sizing: border-box; padding: 6px 8px; font: inherit; color: var(--wp-text); background: var(--wp-bg); border: 1px solid var(--wp-border); border-radius: 2px; }
 .lesson-search-results { margin: 6px 0 0 1.4em; padding: 0; }
 .lesson-search-results li { margin: 2px 0; }
+.self-check { scroll-margin-top: 70px; }
+.self-check h2.article-callout-header { margin-top: 0; padding: 0; border: 0; font-family: inherit; }
 .self-check .quiz-question { margin-top: 10px; }
 
 /* Key terms at first use (learning.js): dotted underline, definition pop-up on click, Enter or Space */
@@ -1536,3 +1538,51 @@ ol.article-spec-list { list-style: decimal; }
 		scroll-behavior: auto !important;
 	}
 }
+
+/* Wayfinding and focus (accessibility round, 2026-11-10) */
+html { scroll-padding-top: 70px; scroll-padding-bottom: 56px; }
+.article-breadcrumb-bar a, .lesson-quicknav a { display: inline-block; min-height: 24px; line-height: 24px; padding: 0 2px; }
+.lesson-quicknav { order: 4; display: flex; flex-wrap: wrap; align-items: center; gap: 2px 16px; margin-top: 4px; font-size: 13px; color: var(--wp-text-muted); }
+.lesson-quicknav-pos { font-weight: 700; }
+li[id^="ref-"], sup[id^="cite-"] { scroll-margin-top: 80px; }
+li[id^="ref-"]:target { background: var(--wp-gold-soft); outline: 2px solid var(--wp-gold); outline-offset: 2px; }
+.ref-backlinks { margin-left: 6px; white-space: nowrap; }
+.ref-backlinks a { display: inline-block; min-width: 24px; min-height: 24px; line-height: 24px; text-align: center; font-weight: 700; }
+@media print { .lesson-bottom-bar, .lesson-quicknav { display: none !important; } }
+.edit-link a { display: inline-block; min-height: 24px; line-height: 24px; }
+input[type="range"] { min-height: 24px; }
+
+/* Hub start cards, resume line, filled Next card and the small-screen lesson bar (layout round, 2026-11-10) */
+.hub-start { order: 4; width: 100%; margin-top: 6px; }
+.hub-start[hidden] { display: none; }
+.hub-start-title { margin: 0 0 8px; font-family: var(--wp-serif); font-weight: 400; font-size: 20px; border: 0; padding: 0; }
+.hub-start-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.hub-start-card { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--wp-bg); border: 1px solid var(--wp-border); color: var(--wp-text); text-decoration: none; }
+.hub-start-card:hover { border-color: var(--wp-link); text-decoration: none; }
+.hub-start-card:hover .hub-start-go { text-decoration: underline; }
+.hub-start-card:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
+.hub-start-kicker { font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wp-gold-text); }
+.hub-start-name { font-family: var(--wp-serif); font-size: 19px; line-height: 1.25; }
+.hub-start-desc { font-size: 14px; color: var(--wp-text-muted); }
+.hub-start-go { margin-top: auto; padding-top: 4px; font-size: 14px; font-weight: 700; color: var(--wp-link); }
+.hub-resume-meta { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--wp-text-muted); }
+
+.article-footer-nav .article-nav-card:last-child { background: var(--wp-link); border-left-color: var(--wp-link); }
+.article-footer-nav .article-nav-card:last-child .article-nav-dir,
+.article-footer-nav .article-nav-card:last-child .article-nav-target { color: var(--wp-on-link); }
+.article-footer-nav .article-nav-card:last-child:hover { background: var(--wp-link-hover); }
+.article-footer-nav .article-nav-card:focus-visible { outline: 2px solid var(--wp-text); outline-offset: 2px; }
+@media (forced-colors: active) { .article-footer-nav .article-nav-card:last-child { border: 2px solid LinkText; } }
+
+.lesson-bottom-bar { display: none; }
+@media (max-width: 1199px) {
+	.lesson-bottom-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--wp-bg); border-top: 1px solid var(--wp-border); }
+	.lesson-bottom-link { flex: none; display: inline-flex; align-items: center; gap: 4px; min-height: 44px; padding: 0 10px; font-size: 15px; white-space: nowrap; }
+	.lesson-bottom-next { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; background: var(--wp-link); color: var(--wp-on-link); font-weight: 700; font-size: 15px; text-decoration: none; border-radius: 2px; }
+	.lesson-bottom-next:hover { background: var(--wp-link-hover); color: var(--wp-on-link); text-decoration: none; }
+	.lesson-bottom-next-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.lesson-bottom-bar a:focus-visible { outline: 2px solid var(--wp-text); outline-offset: 2px; }
+	body.has-bottom-bar { padding-bottom: 58px; }
+	html { scroll-padding-bottom: 70px; }
+}
+@media (forced-colors: active) { .lesson-bottom-next { border: 2px solid LinkText; } }

@@ -1,0 +1,857 @@
+[
+ {
+  "id": "7-1#1",
+  "lesson": "7-1",
+  "why": {
+   "longest_sentence": 41,
+   "stiff": []
+  },
+  "html": "The two designs also behave differently under bright light. In a CCD, charge from an overfilled pixel can spill into its neighbors, an effect called blooming that shows up as bright spots smearing across the image.<sup><a href=\"#ref-1\">[1]</a></sup> A CMOS sensor can handle high light levels without blooming and uses less power than an equivalent CCD; Edmund Optics' comparison also notes that CMOS has traditionally had a lower fill factor and more pixel-to-pixel variation, which lowers its signal-to-noise ratio.<sup><a href=\"#ref-1\">[1]</a></sup> On either sensor, blooming from over-exposure can be reduced by lowering the illumination or shortening the exposure.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "7-1#2",
+  "lesson": "7-1",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "Because every pixel captures the scene during the same time window, global shutter cameras are particularly useful for capturing fast-moving objects or when the camera is moving rapidly during capture.<sup><a href=\"#ref-4\">[4]</a></sup> For example, when an eye-in-hand camera mounted on a robot wrist takes a snapshot while the arm is moving (see <a href=\"robotics-2-8.html\">2.8</a>), a global shutter captures the moving part without spatial distortion."
+ },
+ {
+  "id": "7-1#3",
+  "lesson": "7-1",
+  "why": {
+   "longest_sentence": 32,
+   "stiff": []
+  },
+  "html": "However, when relative motion exists during acquisition, the time offset between rows distorts the image. Fast relative motion between the camera and object during rolling shutter acquisition causes geometric image distortion known as the rolling shutter effect.<sup><a href=\"#ref-4\">[4]</a></sup> For example, if an object moves horizontally across the field of view while rows are exposed from top to bottom, lower rows capture the object further along its path than upper rows. In robot guidance, this shear makes the vision system report wrong positions and orientations."
+ },
+ {
+  "id": "7-1#4",
+  "lesson": "7-1",
+  "why": {
+   "longest_sentence": 37,
+   "stiff": []
+  },
+  "html": "For a fixed focal length lens, three formulas tie these numbers together. With sensor width <em>H</em> and focal length <em>f</em>, the angular field of view is AFOV = 2 &times; arctan(<em>H</em> / 2<em>f</em>). At a working distance WD, the field of view is FOV = 2 &times; WD &times; tan(AFOV / 2), and solving for the lens gives <em>f</em> = <em>H</em> &times; WD / FOV.<sup><a href=\"#ref-5\">[5]</a></sup> These are approximations: focal length is measured from the lens&rsquo;s rear principal plane, which is rarely at its mechanical back, so treat the result as a starting point and pick the real lens from its specification table.<sup><a href=\"#ref-5\">[5]</a></sup> As an example, a 35 mm lens on a 2/3&Prime; sensor (8.8 mm wide) gives an AFOV of roughly 14.5&deg;.<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "7-1#5",
+  "lesson": "7-1",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "Ordinary lenses, called entocentric lenses, change magnification with distance. Conventional lenses have an angular field of view, which introduces parallax error: perceived magnification changes with object distance.<sup><a href=\"#ref-8\">[8]</a></sup> Because the angular field of view expands with distance, an object placed closer to the lens appears larger on the sensor, while an identical object placed farther away appears smaller. For example, if a robotic gripper picks parts from a stack where height varies, an entocentric camera will perceive parts at the top of the stack as larger than parts at the bottom."
+ },
+ {
+  "id": "7-1#6",
+  "lesson": "7-1",
+  "why": {
+   "longest_sentence": 38,
+   "stiff": []
+  },
+  "html": "Because the chief rays of a telecentric lens run parallel to the optical axis, an object's imaged dimensions remain constant even if the object moves closer to or farther from the lens within its telecentric depth of field. For example, a 20 mm shaft keeps the same image size whether it sits at the nominal working distance or shifts several millimeters along the optical axis."
+ },
+ {
+  "id": "7-2#1",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "Improper lighting geometry also corrupts physical measurements. Shadowing caused by improper lighting can create false edge calculations that degrade measurement accuracy.<sup><a href=\"#ref-1\">[1]</a></sup> For example, if an overhead light source casts an asymmetric shadow along the edge of a machined part, an edge filter can register the shadow boundary instead of the physical edge. In pick-and-place, this false edge can shift grasping coordinates and cause gripper collisions."
+ },
+ {
+  "id": "7-2#2",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "Backlighting has a trade-off. While backlighting maximizes edge detection contrast, it intentionally eliminates internal surface details.<sup><a href=\"#ref-1\">[1]</a></sup> Because the front face of an opaque part receives no direct light, features such as surface engraving, stamped serial numbers, barcode labels, and surface scratches are cast into uniform shadow."
+ },
+ {
+  "id": "7-2#3",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 34,
+   "stiff": []
+  },
+  "html": "When directional or ring lights strike curved reflective surfaces, the surface acts like a curved mirror: it reflects the light source as small, saturated hot spots and leaves the rest of the part dark."
+ },
+ {
+  "id": "7-2#4",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 36,
+   "stiff": []
+  },
+  "html": "Interference filters, which pass a narrow band of wavelengths using thin dielectric layers, have an angle-dependent artifact. Increasing the angle of incidence on an optical interference filter increases optical path length through the dielectric layers and shifts transmission toward shorter wavelengths in an effect known as blue shift.<sup><a href=\"#ref-6\">[6]</a></sup> For example, if an interference filter is attached to a wide-angle lens, light at the edges of the field arrives at steep angles, which can shift the filter passband and create uneven illumination across the field."
+ },
+ {
+  "id": "7-2#5",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "To remove intense glare from semi-specular parts without changing lighting geometry, engineers employ polarization. Cross-polarization uses a polarizer on the illumination source and an analyzer on the camera lens oriented at 90 degrees to achieve maximum rejection of unwanted glare.<sup><a href=\"#ref-6\">[6]</a></sup> The polarizer on the light source transmits light linearly polarized in one orientation. When this polarized light strikes a shiny surface, direct specular reflections maintain their polarization orientation and are absorbed by the analyzer filter on the lens, which is rotated 90 degrees. In contrast, light that penetrates the part surface and scatters diffusely is depolarized, allowing a portion of it to pass through the analyzer to form a clear, glare-free image."
+ },
+ {
+  "id": "7-2#6",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 32,
+   "stiff": []
+  },
+  "html": "Strobing also helps cameras with rolling shutters. As discussed in <a href=\"robotics-7-1.html\">7.1</a>, rolling shutters expose sensor rows sequentially, creating geometric distortion when imaging moving objects. Using flash lighting is recommended on rolling shutter cameras to prevent the rolling shutter distortion effect.<sup><a href=\"#ref-8\">[8]</a></sup> In a darkened environment, an overdriven LED strobe can be timed to flash only during the brief window when all sensor rows are exposing at once, so the flash sets the exposure. The camera captures an instantaneous, undistorted snapshot of the moving object, enabling accurate robot picking and dimensional measurement."
+ },
+ {
+  "id": "7-2#7",
+  "lesson": "7-2",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "Pick a lighting technique from this lesson for each job, and say what the camera would see: measuring the outer diameter of a washer; reading a label on a curved, shiny can; finding scratches on a flat polished plate."
+ },
+ {
+  "id": "7-3#1",
+  "lesson": "7-3",
+  "why": {
+   "longest_sentence": 40,
+   "stiff": []
+  },
+  "html": "Choose a method from this lesson for each image, and give your reason: dark parts on a bright, evenly lit conveyor; the same parts with a shadow across half the image; red caps and blue caps that are equally bright."
+ },
+ {
+  "id": "7-4#1",
+  "lesson": "7-4",
+  "why": {
+   "longest_sentence": 25,
+   "stiff": [
+    "deterministic"
+   ]
+  },
+  "html": "Structured light and stereo vision qualify as 3D sensing because they calculate depth through deterministic geometry from a calibrated physical baseline. Neural network inference, by contrast, predicts 3D structure from 2D images without geometric anchors.<sup><a href=\"#ref-1\">[1]</a></sup> When an algorithm infers depth from a single 2D image, it guesses distance based on learned patterns like shading and perspective cues. That can work well on scenes like the ones it was trained on, but an unfamiliar object or lighting change can throw the estimate off."
+ },
+ {
+  "id": "7-4#2",
+  "lesson": "7-4",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "The first conditioning stage removes points outside the robot work volume. Cameras in a cell also see fences, the floor and other equipment. The PCL <code>PassThrough</code> filter discards point cloud data whose coordinates along a specified axis fall outside user-defined minimum and maximum limits.<sup><a href=\"#ref-3\">[3]</a></sup> By specifying strict spatial bounds along the X, Y, and Z axes, the vision software trims away irrelevant background structures and isolates only the bin or conveyor zone where parts arrive."
+ },
+ {
+  "id": "7-4#3",
+  "lesson": "7-4",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "A 3D camera can return a point for nearly every pixel, so one frame can hold hundreds of thousands of points, and every later step slows down with that many. The PCL <code>VoxelGrid</code> filter downsamples point clouds by partitioning 3D space into voxel boxes and replacing all points inside each box with their centroid.<sup><a href=\"#ref-4\">[4]</a></sup> A voxel represents a volumetric cube in 3D space. By calculating the center of mass of all points inside each voxel cube, the filter preserves the underlying physical shape of the object while cutting the number of points."
+ },
+ {
+  "id": "7-4#4",
+  "lesson": "7-4",
+  "why": {
+   "longest_sentence": 38,
+   "stiff": []
+  },
+  "html": "In picking, the goal of 3D vision is a pick pose the robot can reach without collisions. Vision guidance systems use 3D point clouds for object segmentation and robot picking pose estimation via CAD model matching or geometry matching.<sup><a href=\"#ref-8\">[8]</a></sup> By aligning a pre-loaded CAD model against an extracted cluster or analyzing local surface geometry, the vision software chooses a grasp point and reports the target's 6-DoF pose <code>(X, Y, Z, Roll, Pitch, Yaw)</code> to the robot controller."
+ },
+ {
+  "id": "7-4#5",
+  "lesson": "7-4",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "In industrial random bin picking, robot cycles generally range from 10 to 15 seconds, allowing camera time budgets between 700 ms and 1500 ms.<sup><a href=\"#ref-8\">[8]</a></sup> The longer cycle, with the arm reaching into a deep bin and clearing its walls, gives the 3D vision system up to 1.5 seconds to capture high-density scans and compute collision-free grasp trajectories."
+ },
+ {
+  "id": "7-5#1",
+  "lesson": "7-5",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "Robotic cells frequently combine part handling with automated visual inspection. In <a href=\"robotics-2-8.html\">Lesson 2.8 Vision-Guided Picking</a>, we explored how cameras guide robot end-effectors by locating parts on tables or conveyors. Inspection builds upon those same physical setups. A camera mounted above a fixture (eye-to-hand) or on the robot wrist (eye-in-hand) captures an image of the part before or after manipulation. The robot program then checks dimensions or presence. Based on the vision verdict, the arm sorts the part into an accept bin, places it on an outbound conveyor, or routes it into a quarantine station for human review."
+ },
+ {
+  "id": "7-5#2",
+  "lesson": "7-5",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "To eliminate perspective error, precision gauging systems employ telecentric lenses. Telecentric lenses eliminate parallax error in precision dimensional gauging because their non-angular field of view keeps magnification constant across changes in object distance.<sup><a href=\"#ref-5\">[5]</a></sup> As a result, moving an object toward or away from the lens within its depth of field changes neither its apparent size nor its measured dimensions on the image sensor."
+ },
+ {
+  "id": "7-5#3",
+  "lesson": "7-5",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "As 7.1 explained, they also help when a part drifts slightly out of focus: with no angular field of view component, they blur symmetrically as focus varies, so edges keep their centroid location.<sup><a href=\"#ref-5\">[5]</a></sup> Sub-pixel edge detection therefore still finds the true edge."
+ },
+ {
+  "id": "7-5#4",
+  "lesson": "7-5",
+  "why": {
+   "longest_sentence": 32,
+   "stiff": []
+  },
+  "html": "The <code>CC_STAT_AREA</code> statistic output in OpenCV connected components represents the total area in pixels of the labeled component.<sup><a href=\"#ref-9\">[9]</a></sup> In a presence inspection application, software compares <code>CC_STAT_AREA</code> with upper and lower limits set during process qualification. If a required gasket has an expected area of 4,500 pixels, an observed component with an area under 3,000 pixels indicates a torn or missing gasket, triggering an immediate robot reject routine."
+ },
+ {
+  "id": "7-6#1",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "For example, consider an uncompressed color camera streaming at a resolution of 1,920 columns by 1,080 rows with an encoding of &ldquo;bgr8&rdquo;. Each color pixel requires 3 bytes (one byte each for blue, green, and red), yielding a full row step of 1,920 &times; 3 = 5,760 bytes. The complete image data payload in the <code>data</code> byte array evaluates to 5,760 &times; 1,080 = 6,220,800 bytes per frame. Suppose the camera instead streams a single-channel 8-bit monochrome stream (&ldquo;mono8&rdquo;) at a resolution of 640 columns by 480 rows; here each row requires exactly 640 bytes, producing a message data array of 640 &times; 480 = 307,200 bytes."
+ },
+ {
+  "id": "7-6#2",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 27,
+   "stiff": [
+    "optimize"
+   ]
+  },
+  "html": "Understanding the distinction between <code>width &times; bytes_per_pixel</code> and the <code>step</code> field matters when rows are padded. In some hardware drivers and image processing pipelines, memory buffers are padded to 32-byte or 64-byte boundaries to optimize memory alignment on host processors. For example, imagine a monochrome image with a width of 642 pixels; a hardware driver might pad each row to 672 bytes to satisfy memory alignment requirements. In that scenario, reading only <code>width</code> bytes per row would cause subsequent scanlines to drift diagonally across the raster buffer. Relying on the <code>step</code> field guarantees that subscriber nodes calculate row offsets accurately regardless of internal memory padding."
+ },
+ {
+  "id": "7-6#3",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 34,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">Intrinsic camera matrix K:</span> The 3x3 intrinsic camera matrix K projects 3D camera frame coordinates to 2D pixel coordinates using focal lengths and principal point offsets.<sup><a href=\"#ref-3\">[3]</a></sup> Stored as a 9-element row-major array <code>[fx, 0, cx, 0, fy, cy, 0, 0, 1]</code>, it defines horizontal and vertical focal lengths <code>fx, fy</code> in pixel units and optical principal point coordinates <code>cx, cy</code>."
+ },
+ {
+  "id": "7-6#4",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "For example, imagine a calibrated monocular camera whose intrinsic matrix <code>K</code> has focal lengths <code>fx = 800.0</code>, <code>fy = 800.0</code> pixels and principal point offsets <code>cx = 320.0</code>, <code>cy = 240.0</code> pixels. Suppose a workpiece corner is located at physical 3D camera coordinates <code>[X, Y, Z] = [0.10 m, 0.05 m, 1.00 m]</code>. Under ideal pinhole projection, the normalized coordinates evaluate to <code>x' = X / Z = 0.10</code> and <code>y' = Y / Z = 0.05</code>. Multiplying by the focal lengths and adding the principal point offsets yields horizontal pixel coordinate <code>u = 800.0 &times; 0.10 + 320.0 = 400.0</code> pixels and vertical pixel coordinate <code>v = 800.0 &times; 0.05 + 240.0 = 280.0</code> pixels. When lens distortion is present, downstream rectification nodes use the coefficients in <code>D</code> alongside matrix <code>K</code> to remap raw distorted pixels into ideal rectilinear coordinates described by matrix <code>P</code>."
+ },
+ {
+  "id": "7-6#5",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "A single 1080p uncompressed color stream at 30 frames per second generates over 180 megabytes per second of raw data. If multiple perception nodes subscribe to an uncompressed camera topic across an industrial Ethernet switch or wireless network, the physical bus can become saturated, resulting in dropped packets and processing jitter."
+ },
+ {
+  "id": "7-6#6",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 41,
+   "stiff": []
+  },
+  "html": "The <code>cv_bridge</code> package converts in both directions, handling memory buffers, channel order, and color conversion. In cv_bridge, imgmsg_to_cv2 converts a ROS Image message into an OpenCV NumPy image with an optional desired_encoding format.<sup><a href=\"#ref-6\">[6]</a></sup> Specifying the <code>desired_encoding</code> parameter (such as <code>\"bgr8\"</code> or <code>\"mono8\"</code>) ensures that regardless of whether the camera hardware transmits data in RGB, BGR, or Bayer formats, the output NumPy array is converted into the exact memory layout expected by your OpenCV algorithms."
+ },
+ {
+  "id": "7-6#7",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "After an OpenCV pipeline analyzes or annotates an image matrix, the resulting NumPy array often needs to be re-published onto the ROS 2 network for visualization in RViz2 or logging with ros2 bag. In cv_bridge, cv2_to_imgmsg converts an OpenCV image array into a ROS Image message with a specified pixel encoding string.<sup><a href=\"#ref-6\">[6]</a></sup> This function formats the NumPy array into a compliant <code>sensor_msgs/msg/Image</code> message with calculated row step bytes and matching encoding metadata ready for immediate publication."
+ },
+ {
+  "id": "7-6#8",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 41,
+   "stiff": []
+  },
+  "html": "In this hands-on lab exercise, you will implement an end-to-end Python ROS 2 node that subscribes to an incoming camera stream, converts image messages with <code>cv_bridge</code>, applies OpenCV color conversion, binary thresholding, and Canny edge detection, and publishes the processed results."
+ },
+ {
+  "id": "7-6#9",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 35,
+   "stiff": []
+  },
+  "html": "Once an image is converted to single-channel intensity, binarization isolates candidate foreground workpieces from the background fixture or conveyor. Simple binary thresholding with cv.threshold assigns pixels above a threshold value to maxval and all other pixels to zero.<sup><a href=\"#ref-8\">[8]</a></sup> For example, setting a threshold parameter of 128 with a maximum value of 255 assigns all bright workpiece pixels exceeding 128 to 255 (pure white), while darker background pixels are assigned to 0 (pure black)."
+ },
+ {
+  "id": "7-6#10",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 37,
+   "stiff": []
+  },
+  "html": "Put the script in an <code>ament_python</code> package the same way as in <a href=\"robotics-4-6.html\">4.6</a>, add <code>rclpy</code>, <code>sensor_msgs</code> and <code>cv_bridge</code> as dependencies in <code>package.xml</code>, register the script as an entry point, then build with colcon and source the workspace. If <code>cv_bridge</code> is missing, install <code>ros-lyrical-cv-bridge</code>."
+ },
+ {
+  "id": "7-6#11",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 32,
+   "stiff": []
+  },
+  "html": "You do not need a camera to test the node. The <code>image_tools</code> demo package has a <code>cam2image</code> executable that publishes images from the computer's default camera on the <code>/image</code> topic, and with <code>burger_mode</code> turned on it publishes a generated test image instead.<sup><a href=\"#ref-10\">[10]</a></sup> Remap its topic to the one your node subscribes to:"
+ },
+ {
+  "id": "7-6#12",
+  "lesson": "7-6",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">Verify calibration metadata (real camera driver only; cam2image does not publish it):</span> Execute <code>ros2 topic echo /camera/camera_info --once</code> to confirm that the camera driver publishes valid calibration parameters. Check that the distortion model specifies <code>plumb_bob</code>, that the distortion parameters array <code>d</code> contains the five coefficients <code>[k1, k2, t1, t2, k3]</code>, and that intrinsic matrix <code>k</code> and projection matrix <code>p</code> contain non-zero focal lengths and principal point values."
+ },
+ {
+  "id": "8-1#1",
+  "lesson": "8-1",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "In industrial automation, discrete input and output signals operate primarily on direct current. Sinking and sourcing terminology applies only to DC input and output circuits.<sup><a href=\"#ref-1\">[1]</a></sup> Alternating current (AC) circuits reverse polarity continuously, so sinking and sourcing concepts do not apply to them. Direct current circuits maintain fixed positive and negative polarities. Sinking or sourcing input and output points can conduct current in one direction only.<sup><a href=\"#ref-1\">[1]</a></sup> Wiring devices to a PLC or robot controller therefore means knowing which way current enters and leaves each terminal, because it flows in one direction through solid-state switches and optical isolators."
+ },
+ {
+  "id": "8-1#2",
+  "lesson": "8-1",
+  "why": {
+   "longest_sentence": 13,
+   "stiff": [
+    "deterministic"
+   ]
+  },
+  "html": "The first fieldbuses used simple serial links. Serial fieldbus networks originally dominated because early Ethernet was expensive and non-deterministic.<sup><a href=\"#ref-3\">[3]</a></sup> Non-deterministic means the network cannot guarantee how long a message takes to arrive."
+ },
+ {
+  "id": "8-1#3",
+  "lesson": "8-1",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "In contrast, other types of operational information are exchanged only occasionally. Acyclic communication transmits diagnostic data on an as-needed basis rather than adhering to a fixed cyclic update schedule.<sup><a href=\"#ref-4\">[4]</a></sup> For example, uploading an error log from a motor drive, modifying a controller parameter, or reading temperature trends happens only when an operator requests it or a fault event triggers it. These requests are answered when they arrive instead of on a fixed schedule."
+ },
+ {
+  "id": "8-2#1",
+  "lesson": "8-2",
+  "why": {
+   "longest_sentence": 19,
+   "stiff": [
+    "deterministic"
+   ]
+  },
+  "html": "To make Ethernet deterministic, automation manufacturers developed specialized industrial Ethernet protocols. This lesson covers four of them: EtherNet/IP, PROFINET, EtherCAT and Modbus TCP. They differ in how they structure process data and how they cut protocol overhead to respond in real time."
+ },
+ {
+  "id": "8-2#2",
+  "lesson": "8-2",
+  "why": {
+   "longest_sentence": 24,
+   "stiff": [
+    "optimize"
+   ]
+  },
+  "html": "Data production in a CIP network is managed to optimize network bandwidth. Digital input modules on CIP networks produce data either upon a change of state or at a requested packet interval.<sup><a href=\"#ref-2\">[2]</a></sup> Change-of-state (COS) transmission lets a sensor module transmit as soon as an input turns from off to on, without waiting for a polling cycle. The requested packet interval (RPI) defines the cyclic rate at which data is regularly produced regardless of state changes."
+ },
+ {
+  "id": "8-2#3",
+  "lesson": "8-2",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "PROFINET (Process Field Network) is an industrial Ethernet technology from PROFIBUS &amp; PROFINET International (PI), a global network of vendors, developers, system integrators and users that promotes and advances it.<sup><a href=\"#ref-3\">[3]</a></sup>"
+ },
+ {
+  "id": "8-2#4",
+  "lesson": "8-2",
+  "why": {
+   "longest_sentence": 36,
+   "stiff": []
+  },
+  "html": "In <a href=\"robotics-8-3.html\">Lesson 8.3 Lab: Connecting a Robot to a PLC</a>, you will put these principles into practice by writing and reading holding registers from a Python client, using a stand-in for a robot's Modbus TCP server."
+ },
+ {
+  "id": "8-2#5",
+  "lesson": "8-2",
+  "why": {
+   "longest_sentence": 41,
+   "stiff": []
+  },
+  "html": "Match each description to a protocol from this lesson: a single frame passes through every device, which reads and inserts data on the fly; implicit I/O data travels over UDP and explicit requests over TCP; big-endian registers on TCP port 502."
+ },
+ {
+  "id": "8-3#1",
+  "lesson": "8-3",
+  "why": {
+   "longest_sentence": 34,
+   "stiff": []
+  },
+  "html": "As <a href=\"robotics-8-2.html\">8.2</a> covered, Modbus TCP messages carry a 7-byte MBAP header over TCP port 502,<sup><a href=\"#ref-3\">[3]</a></sup> and the data model has four tables (discrete inputs, coils, input registers and holding registers), with values sent big-endian.<sup><a href=\"#ref-4\">[4]</a></sup> The function codes below work on the two 16-bit register tables: input registers are read-only, while holding registers can be read and written."
+ },
+ {
+  "id": "8-3#2",
+  "lesson": "8-3",
+  "why": {
+   "longest_sentence": 21,
+   "stiff": [
+    "instantiation"
+   ]
+  },
+  "html": "In pymodbus, a client object is created with <code>ModbusTcpClient</code> and connects to the target device using the <code>connect</code> method.<sup><a href=\"#ref-7\">[7]</a></sup> By default, the pymodbus <code>ModbusTcpClient</code> connects using socket framing on default port 502.<sup><a href=\"#ref-7\">[7]</a></sup> During instantiation, the client accepts the target host IP address and network port, then opens a TCP socket to the server."
+ },
+ {
+  "id": "8-3#3",
+  "lesson": "8-3",
+  "why": {
+   "longest_sentence": 40,
+   "stiff": []
+  },
+  "html": "The client wrote value 1 to register 128 with function code 0x06, wrote values 250 and 7 to registers 129 and 130 with function code 0x10, and verified the writes by reading all three registers back with function code 0x03."
+ },
+ {
+  "id": "8-5#1",
+  "lesson": "8-5",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "This lesson covers four technologies that sit at different levels: IO-Link at the sensor, OPC UA and MQTT for getting machine data to IT systems, and ROS 2 as a robot software framework that connects to all of them."
+ },
+ {
+  "id": "8-5#2",
+  "lesson": "8-5",
+  "why": {
+   "longest_sentence": 18,
+   "stiff": [
+    "optimized"
+   ]
+  },
+  "html": "OPC UA Client-Server communications use an optimized TCP-based binary protocol for data exchange over IANA registered port 4840.<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "8-5#3",
+  "lesson": "8-5",
+  "why": {
+   "longest_sentence": 49,
+   "stiff": []
+  },
+  "html": "Nodes represent objects, variables, and executable methods. References connect nodes into an address space graph. For example, a robot controller's OPC UA server could model an arm as a parent Object node named <code>RobotArm</code> containing child Object nodes for each axis (<code>Joint1</code> through <code>Joint6</code>), where each joint provides Variable nodes for position and velocity with engineering units, alongside Method nodes to trigger calibration routines."
+ },
+ {
+  "id": "8-5#4",
+  "lesson": "8-5",
+  "why": {
+   "longest_sentence": 17,
+   "stiff": [
+    "abstraction"
+   ]
+  },
+  "html": "To connect ROS 2 motion planning to industrial robot controllers, the robotics community uses the <code>ros2_control</code> framework. In the ros2_control framework, the Controller Manager connects the controllers and hardware-abstraction sides of the framework.<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "8-5#5",
+  "lesson": "8-5",
+  "why": {
+   "longest_sentence": 42,
+   "stiff": []
+  },
+  "html": "For example, in a vision-guided sorting cell, a ROS 2 computer can plan the arm's motions through ros2_control, while a separate node on the same computer reads part pick counts and publishes those metrics to factory dashboards over MQTT or OPC UA."
+ },
+ {
+  "id": "8-6#1",
+  "lesson": "8-6",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "Secure DMZ communication models require control zones to push data to the DMZ and enterprise users to pull data from DMZ application servers.<sup><a href=\"#ref-2\">[2]</a></sup> For example, the cell sends its production records to a server in the DMZ, and an office application reads them from that server, so nothing in the office ever connects to the robot."
+ },
+ {
+  "id": "8-6#2",
+  "lesson": "8-6",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "A virtual LAN divides physical networks into smaller logical broadcast domains that isolate traffic from other VLANs.<sup><a href=\"#ref-2\">[2]</a></sup> For example, assigning robot motion traffic to VLAN 20 and human-machine interface (HMI) traffic to VLAN 30 keeps high-volume display graphics from interfering with motion control packets on the same physical switch hardware."
+ },
+ {
+  "id": "8-6#3",
+  "lesson": "8-6",
+  "why": {
+   "longest_sentence": 35,
+   "stiff": []
+  },
+  "html": "Modbus TCP messages include a 7-byte MBAP header and transmit over TCP on registered port 502.<sup><a href=\"#ref-9\">[9]</a></sup> The MBAP header contains four fields: the Transaction Identifier (2 bytes), the Protocol Identifier (2 bytes, set to 0 for Modbus), the Length field (2 bytes indicating remaining bytes), and the Unit Identifier (1 byte). Because the test server runs on port 5020 rather than the registered port 502, you will configure Wireshark to decode that port."
+ },
+ {
+  "id": "9-1#1",
+  "lesson": "9-1",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "Manufacturers generate maintenance records documenting equipment faults, failures, root causes, and repairs to speed up troubleshooting and improve failure prediction.<sup><a href=\"#ref-2\">[2]</a></sup> A maintenance log for each robot (what was seen, what was done, what the cause turned out to be) lets the next technician check whether the same symptom has happened before."
+ },
+ {
+  "id": "9-1#2",
+  "lesson": "9-1",
+  "why": {
+   "longest_sentence": 35,
+   "stiff": []
+  },
+  "html": "Universal Robots recommends a service check at one of its regional service centers &ldquo;at least bi-annually&rdquo;<sup><a href=\"#ref-3\">[3]</a></sup>; its page does not say whether that means twice a year or every two years, so ask your distributor."
+ },
+ {
+  "id": "9-1#3",
+  "lesson": "9-1",
+  "why": {
+   "longest_sentence": 34,
+   "stiff": []
+  },
+  "html": "Freedrive: (pulling the arm into position by hand, see <a href=\"robotics-2-1.html\">2.1</a>): set the correct TCP, payload and center of gravity, move the arm to a stretched-out horizontal position, and check that it holds its position."
+ },
+ {
+  "id": "9-1#4",
+  "lesson": "9-1",
+  "why": {
+   "longest_sentence": 43,
+   "stiff": []
+  },
+  "html": "Label each case reactive, preventive or predictive: a gripper is replaced after it fails in the middle of a shift; grease is changed every 12 months whatever the condition; a joint is serviced because its motor current has been rising for a month."
+ },
+ {
+  "id": "9-2#1",
+  "lesson": "9-2",
+  "why": {
+   "longest_sentence": 34,
+   "stiff": []
+  },
+  "html": "Once the cell is properly secured and ready for diagnostic inspection, troubleshooting begins by gathering facts. In <a href=\"robotics-1-7.html\">Lesson 1.7 The Industrial Robot Cell</a>, we saw that a robot arm works within a larger system made up of the manipulator, controller, end effector, part fixtures, and supervisory programmable logic controllers (PLCs)."
+ },
+ {
+  "id": "9-2#2",
+  "lesson": "9-2",
+  "why": {
+   "longest_sentence": 35,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">2. Formulate a single hypothesis:</span> Propose one clear, testable explanation that accounts for all observed evidence. For example, if joint 3 shows an unexpected torque spike during high-acceleration moves while carrying a new workpiece, hypothesize that the configured tool center point (TCP) payload mass is lower than the actual physical payload."
+ },
+ {
+  "id": "9-3#1",
+  "lesson": "9-3",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "When the robot detects that a joint brake system failed to engage, motor power is maintained to keep the arm at a standstill until an operator performs a controlled shutdown.<sup><a href=\"#ref-3\">[3]</a></sup>"
+ },
+ {
+  "id": "9-4#1",
+  "lesson": "9-4",
+  "why": {
+   "longest_sentence": 19,
+   "stiff": [
+    "prior to"
+   ]
+  },
+  "html": "The main tool is a digital multimeter (DMM). Technicians should ohm out multimeter test leads prior to testing to verify the resistance measurement is close to zero.<sup><a href=\"#ref-1\">[1]</a></sup> To do this, set the meter to resistance and touch the probe tips together."
+ },
+ {
+  "id": "9-4#2",
+  "lesson": "9-4",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "Fuses will not save a sensor from a wiring mistake: fast-acting fuses and electronic current-limiting circuits operate too slowly to protect solid-state sensors from short circuits or reverse polarity wiring.<sup><a href=\"#ref-4\">[4]</a></sup>"
+ },
+ {
+  "id": "9-5#1",
+  "lesson": "9-5",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "A robot only knows where its joints are if its position sensors and its stored calibration data agree with the real arm (<a href=\"robotics-1-6.html\">1.6 Robot Anatomy and Coordinate Frames</a> covers the joints). After some repairs that agreement is lost and has to be restored. This lesson uses ABB's and Universal Robots' procedures as examples; always follow the manual for your own robot."
+ },
+ {
+  "id": "9-5#2",
+  "lesson": "9-5",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "Write a short checklist for the day a joint is replaced on a UR arm: which error tells you the new part does not match the robot, and which calibration lets the robot return to production without re-teaching waypoints?"
+ },
+ {
+  "id": "10-1#1",
+  "lesson": "10-1",
+  "why": {
+   "longest_sentence": 37,
+   "stiff": []
+  },
+  "html": "Whichever path you choose, keep a project folder with three subfolders from day one: <code>plan/</code> (sketches, I/O list, sequence chart), <code>program/</code> (exported programs and installation or station files) and <code>evidence/</code> (screenshots and logs named by test ID). You will hand in that folder at the end."
+ },
+ {
+  "id": "10-1#2",
+  "lesson": "10-1",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "<strong>M1 on Path B: build a RobotStudio station.</strong> Create a station with a robot and a virtual controller, add a simple table and two part positions, attach a tool, and create a work object for the infeed fixture. Teach the same targets as in Path A. Save the station and make a backup copy in your <code>program/</code> folder."
+ },
+ {
+  "id": "10-2#1",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 32,
+   "stiff": []
+  },
+  "html": "Pick and place is the \"hello world\" of industrial manipulation. It pulls together most of the ROS chapter (workspaces, launch files, robot descriptions, ros2_control, MoveIt and RViz), and it has a clear pass or fail result that you can test and measure."
+ },
+ {
+  "id": "10-2#2",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 37,
+   "stiff": []
+  },
+  "html": "This page is a project brief, not a lecture. Read all of it, including the rubric, before you write any code. Virginia Tech&rsquo;s guidance on assessing project work recommends sharing the criteria and rubric when the project starts, not at the end, so you know what \"good\" looks like while you still have time to aim for it.<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "10-2#3",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 32,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">2.8 Vision-guided picking:</span> the idea of a grasp pose relative to an object, approach and retreat moves, and why the pick pose comes from somewhere else in a real cell (see <a href=\"robotics-2-8.html\">2.8</a>)."
+ },
+ {
+  "id": "10-2#4",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">MoveIt Task Constructor:</span> built from source in your workspace. The tutorial says to clone <code>moveit_task_constructor</code> on the <code>humble</code> branch for ROS 2 Humble, or on the <code>ros2</code> branch to build against MoveIt 2 main, then run rosdep and colcon build.<sup><a href=\"#ref-1\">[1]</a></sup> The tutorial names only these two branches, so check the repository's branch list for your ROS 2 release before you clone."
+ },
+ {
+  "id": "10-2#5",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "<strong>Choosing mock hardware or Gazebo.</strong> Start with mock hardware: it is the lightest option and enough to test planning and the MTC stage chain. Know its limits. UR's simulation page lists that on mock hardware there is no TCP pose broadcaster, the passthrough trajectory controller and force mode do not work, and the GPIO (general-purpose input/output) controller reports a failure when you try to set I/O.<sup><a href=\"#ref-4\">[4]</a></sup> So if you planned to open and close a gripper through UR digital outputs, you cannot check that in mock mode.<sup><a href=\"#ref-4\">[4]</a></sup> Gazebo adds a physics simulation and comes with its own MoveIt launch (milestone 4).<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "10-2#6",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 39,
+   "stiff": []
+  },
+  "html": "<strong>How MTC thinks.</strong> MTC splits a task into stages of three kinds.<sup><a href=\"#ref-1\">[1]</a></sup> <strong>Generators</strong> create states on their own (the current state, candidate grasp poses). <strong>Propagators</strong> take a neighbour's state and push it forward or backward (\"move 10 cm up\"). <strong>Connectors</strong> plan a free motion between two states that already exist. Stages can be grouped in containers: wrappers, serial containers and parallel containers.<sup><a href=\"#ref-1\">[1]</a></sup> MTC also has three planners (solvers) a stage can use: a Cartesian planner for straight-line moves, joint interpolation for simple moves, and the full planning pipeline using OMPL (the Open Motion Planning Library, which provides sampling-based path planning algorithms). The tutorial uses joint interpolation for the simple hand move.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "10-2#7",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "<strong>M1.</strong> Bring up the UR5e on mock hardware with MoveIt exactly as you did in <a href=\"robotics-4-8.html\">4.8</a>, with the driver in one terminal and <code>ur_moveit_config</code> in another, using the same <code>ur_type</code> in both. In RViz, drag the interactive marker to plan a pose goal, then pick a named state for a joint goal, and execute both. Record the exact commands in your hand-in."
+ },
+ {
+  "id": "10-2#8",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "<strong>M2.</strong> Now give the robot something to work with. The MTC tutorial adds a cylinder to the planning scene as a <strong>collision object</strong>, and it shows that if you move the cylinder out of the robot's reach, planning fails.<sup><a href=\"#ref-1\">[1]</a></sup> Add two objects: a flat box for the table and a small box or cylinder for the part. The snippet below follows the pattern of the tutorial node. It is an example: try it in simulation first, and set the sizes, positions and <code>frame_id</code> to match your own scene (check the Fixed Frame in RViz)."
+ },
+ {
+  "id": "10-2#9",
+  "lesson": "10-2",
+  "why": {
+   "longest_sentence": 38,
+   "stiff": []
+  },
+  "html": "The rubric uses four levels with no neutral middle. An ASEE paper on capstone rubrics used a 1 to 4 scale from \"Not Acceptable\" to \"Exemplary\" and chose that scale on purpose, so that the instructor has to make a clear decision about whether expectations were met.<sup><a href=\"#ref-7\">[7]</a></sup> (The two middle labels below are this course's own.) Capstone research also warns that very detailed rubrics can narrow students' creativity, so the rows describe outcomes, not one fixed way to reach them.<sup><a href=\"#ref-9\">[9]</a></sup>"
+ },
+ {
+  "id": "10-3#1",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 38,
+   "stiff": []
+  },
+  "html": "In this capstone you build a small machine that holds a wheel at a speed you choose, in revolutions per minute (RPM), and keeps it there when the load changes. An Arduino reads a quadrature encoder on a DC gearmotor, works out the wheel speed, and runs a PID loop that sets the PWM duty cycle sent to an H-bridge driver. A state machine wraps the loop: the wheel ramps up gently, runs under PID control, ramps back down, and drops into a FAULT state if something goes wrong, such as a stalled shaft or a lost encoder signal."
+ },
+ {
+  "id": "10-3#2",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 59,
+   "stiff": []
+  },
+  "html": "Every closed-loop axis has the same parts, from a hobby robot's drive wheel to a joint inside an industrial arm (see the nested servo loops in <a href=\"robotics-6-4.html\">6.4</a>): a sensor that measures motion, a controller that compares it with a target, a power stage that drives the motor, and supervisory logic that decides when the loop may run at all. Lessons in Chapter 6 taught these parts one at a time. Here you join them, measure how well the result works, and write up what you learned."
+ },
+ {
+  "id": "10-3#3",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 34,
+   "stiff": []
+  },
+  "html": "This page is a project brief, not a lecture. It follows Virginia Tech&rsquo;s advice on assessing project work: the rubric is shared at the start, and the work is split into graded milestones such as a plan, a prototype and a progress briefing.<sup><a href=\"#ref-1\">[1]</a></sup> You hand in evidence at each milestone, so problems surface early instead of the night before the final demo."
+ },
+ {
+  "id": "10-3#4",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 35,
+   "stiff": []
+  },
+  "html": "Part specifications and prices in this table come from search summaries of vendor pages that could not be opened while this course was written, so check them against the current product pages before you buy."
+ },
+ {
+  "id": "10-3#5",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 40,
+   "stiff": []
+  },
+  "html": "If you write your own interrupt service routine (ISR) instead, follow the Arduino rules: attach it with <code>attachInterrupt(digitalPinToInterrupt(pin), ISR, mode)</code>, where mode is LOW, CHANGE, RISING or FALLING; keep it short; and declare any variable shared with <code>loop()</code> as <code>volatile</code>. Inside an ISR, <code>delay()</code> does not work and <code>millis()</code> does not advance.<sup><a href=\"#ref-4\">[4]</a></sup> A multi-byte count can change halfway through being copied, so copy it between <code>noInterrupts()</code> and <code>interrupts()</code>. The library handles this for you."
+ },
+ {
+  "id": "10-3#6",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 42,
+   "stiff": []
+  },
+  "html": "Worked example: at the 30:1 motor's no-load speed of about 330 RPM,<sup><a href=\"#ref-5\">[5]</a></sup> the output turns 5.5 times per second, so the encoder produces about 5.5 &times; 1920 = 10&nbsp;560 counts per second, or about 1056 counts in a 100 ms sample. One count in a 100 ms window is worth 60&nbsp;000 / (1920 &times; 100) = 0.3125 RPM, which is the resolution of your speed reading. With a 10 ms window, one count would be worth 3.125 RPM, so short windows give coarse, jumpy speed readings."
+ },
+ {
+  "id": "10-3#7",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 35,
+   "stiff": []
+  },
+  "html": "<strong>Open loop first.</strong> Before adding feedback, drive the motor with fixed duty cycles and record the speed. <code>analogWrite()</code> takes values from 0 to 255; on an Uno or Nano, pins 9 and 10 run at 490 Hz and pins 5 and 6 at 980 Hz.<sup><a href=\"#ref-16\">[16]</a></sup> Step through values such as 50, 100, 150, 200 and 255 and note the RPM each time. This table shows you the dead zone (the PWM below which the motor does not turn) and how nearly linear the motor is, and it gives you a sanity check for the PID output later."
+ },
+ {
+  "id": "10-3#8",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "The sketch below shows the measurement and control core. It is an example to test, not proven code: try your gains in the 6.4 simulation first, then run it with the wheel free, the supply current-limited and the PWM limit set low. Pin numbers for the direction inputs are placeholders; check your driver carrier's documentation for its pin names and any enable or standby input."
+ },
+ {
+  "id": "10-3#9",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">RAMP_UP:</span> the PID is in AUTOMATIC and the setpoint rises at a fixed rate (for example a few hundred RPM per second) until it reaches the target, then the machine moves to RUN. This is a simple version of the trapezoidal velocity profile from <a href=\"robotics-6-9.html\">6.9</a>: the gearbox sees a gentle acceleration instead of a step."
+ },
+ {
+  "id": "10-3#10",
+  "lesson": "10-3",
+  "why": {
+   "longest_sentence": 31,
+   "stiff": []
+  },
+  "html": "Using the RPM formula, work out how many counts your encoder will produce in one sample at your chosen target speed and sample time, and the RPM value of one count."
+ },
+ {
+  "id": "10-4#1",
+  "lesson": "10-4",
+  "why": {
+   "longest_sentence": 43,
+   "stiff": []
+  },
+  "html": "The first three capstones each go deep in one area. This one uses a little of everything. You will build a small open-source program that watches a robot cell: it reads the robot's state, the cell's handshake signals and a camera check, writes a maintenance log, and is published so that someone else could use it and contribute to it."
+ },
+ {
+  "id": "10-4#2",
+  "lesson": "10-4",
+  "why": {
+   "longest_sentence": 36,
+   "stiff": []
+  },
+  "html": "<span class=\"spec-label\">M5 Open it up:</span> add a CONTRIBUTING file, open one issue that a newcomer could take, and open one real pull request: to your classmates' monitor, to robOSStics, or to a robotics project from Chapter 3. Pull requests do not have to be finished; you can open one early as a draft pull request to get feedback.<sup><a href=\"#ref-6\">[6]</a></sup> Hand in: the links."
+ },
+ {
+  "id": "11-1#1",
+  "lesson": "11-1",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "An industrial arm is bolted down, so every position can be measured from its base (<a href=\"robotics-1-6.html\">1.6</a>). A mobile robot has to work out where it is before it can plan a route. This chapter uses Nav2, the ROS 2 navigation project introduced in <a href=\"robotics-3-5.html\">3.5 Case Study: Contributing to Nav2</a>, as its worked example, and builds on the wheel odometry in <a href=\"robotics-6-6.html\">6.6 Odometry</a>."
+ },
+ {
+  "id": "11-3#1",
+  "lesson": "11-3",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "Planners and controllers are at the heart of a navigation task.<sup><a href=\"#ref-1\">[1]</a></sup> Nav2 runs them inside action servers: five of its action servers are the planner, behavior, smoother, route and controller servers, and they host the algorithm plugins that do the work.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "11-3#2",
+  "lesson": "11-3",
+  "why": {
+   "longest_sentence": 33,
+   "stiff": []
+  },
+  "html": "The <code>nav2_waypoint_follower</code> sends the robot to several destinations and has a plugin interface for a task at each one, such as taking a picture, picking up a box or waiting for user input.<sup><a href=\"#ref-1\">[1]</a></sup> Nav2 describes two schools of thought for fleets: a dumb robot with a smart centralized dispatcher, or a smart robot with a dumb one.<sup><a href=\"#ref-1\">[1]</a></sup> In the first, a request to the waypoint follower is one unit of work, such as one pick in a warehouse, after which the robot returns to the dispatcher for its next task.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "11-3#3",
+  "lesson": "11-3",
+  "why": {
+   "longest_sentence": 41,
+   "stiff": []
+  },
+  "html": "For each job, name the Nav2 server that does it: finding a way across the building; steering around a cart that has just been left in the aisle; freeing the robot after its costmap fills with obstacles that are not there."
+ },
+ {
+  "id": "11-4#1",
+  "lesson": "11-4",
+  "why": {
+   "longest_sentence": 30,
+   "stiff": []
+  },
+  "html": "Driving across a building takes time, so Nav2 is built on ROS 2 actions. Action servers are a common way to control long-running tasks: a client requests a task, the server provides feedback while it runs, and a result comes back at the end.<sup><a href=\"#ref-1\">[1]</a></sup> For navigation, the request may be a position, the feedback may be the time spent navigating and the distance to the goal, and the result a boolean for success.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ }
+]

@@ -1,0 +1,354 @@
+[
+ {
+  "id": "1-1#2",
+  "html": "The dictionary also gives two meanings that do not depend on looks at all. One is &ldquo;a device that automatically performs complicated, often repetitive tasks (as in an industrial assembly line)&rdquo; and the other is &ldquo;a mechanism guided by automatic controls.&rdquo;<sup><a href=\"#ref-1\">[1]</a></sup> <em>Encyclop&aelig;dia Britannica</em> takes the same practical view. A robot is &ldquo;any automatically operated machine that replaces human effort,&rdquo; even if it does not look or act like a person. Britannica calls <em>robotics</em> &ldquo;the engineering discipline dealing with the design, construction, and operation of robots.&rdquo;<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "1-1#3",
+  "html": "A six-axis arm that welds car frames on an assembly line does not look like a person. Yet it moves on its own, performs complex actions and is guided by a program. That makes it a robot."
+ },
+ {
+  "id": "1-1#4",
+  "html": "<span class=\"spec-label\">Mechanism:</span> it is a physical machine. The notes to clause 3.1 give a manipulator (an arm), a mobile platform and a wearable robot as examples of its mechanical structure. They also say that &ldquo;A robot includes the control system.&rdquo;"
+ },
+ {
+  "id": "1-1#8",
+  "html": "The dates are often mixed up, so here they are in order. <em>R.U.R.</em> was published by Aventinum in November 1920, with a cover by Josef &#268;apek. An amateur group in Hradec Kr&aacute;lov&eacute; staged it first, on 2 January 1921. The official premiere was at the National Theatre in Prague on 25 January 1921, where it stayed in the repertoire for six years. It was first performed in English in 1922, when the Theatre Guild opened it at the Garrick Theater in New York on 9 October 1922. It then reached London in 1923.<sup><a href=\"#ref-18\">[18]</a></sup> That is why Merriam-Webster dates the first known use of &ldquo;robot&rdquo; in English to 1922.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "1-1#11",
+  "html": "The <a href=\"robotics-control.html\">Electronics and Control</a> chapter follows exactly this loop. Here, <a href=\"robotics-6-2.html\">PWM</a> is how a program acts on a motor, <a href=\"robotics-6-3.html\">encoders</a> are how it senses the result, and <a href=\"robotics-6-4.html\">PID control</a> is how it thinks about the difference."
+ },
+ {
+  "id": "1-1#12",
+  "html": "<strong>Sense, plan, act (hierarchical).</strong> The robot senses, updates an internal model of the world, makes a plan, carries out the first step and then senses again. This approach dominated early robotics research.<sup><a href=\"#ref-24\">[24]</a></sup> The classic example is Shakey, built at the research institute SRI from 1966 to 1972 and the &ldquo;first mobile robot to reason about its actions.&rdquo; Its cameras and touch sensors sent data by radio to remote computers. Those computers used search and planning programs (the A* pathfinding search algorithm and the STRIPS automated planner) to make a plan. They then sent motion commands back to the robot.<sup><a href=\"#ref-25\">[25]</a></sup>"
+ },
+ {
+  "id": "1-1#14",
+  "html": "You can map this onto the course. The PID loop you will write in <a href=\"robotics-6-4.html\">lesson 6.4</a> is the kind of fast feedback loop that lives in Gat&rsquo;s controller layer. The <a href=\"robotics-6-7.html\">state machines</a> of lesson 6.7 do the job of a simple sequencer."
+ },
+ {
+  "id": "1-2#1",
+  "html": "People were trying to build machines that move on their own long before electricity. An <strong>automaton</strong> (plural <em>automata</em>) is a mechanical object that is &ldquo;relatively self-operating after&rdquo; it has &ldquo;been set in motion.&rdquo;<sup><a href=\"#ref-1\">[1]</a></sup> None of these machines could sense the world and change its plan, so they are not robots in the modern sense (see <a href=\"robotics-1-1.html\">1.1 Definition of Robots</a>). Even so, they introduced ideas that robots still use."
+ },
+ {
+  "id": "1-2#3",
+  "html": "In the 1700s, clockwork automata became popular in Europe. Between 1768 and 1774 Pierre Jaquet-Droz, his son Henri-Louis and Jean-Fr&eacute;d&eacute;ric Leschot built three famous dolls: the Writer, the Draughtsman and the Musician.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup> All three are now at the Mus&eacute;e d&rsquo;Art et d&rsquo;Histoire in Neuch&acirc;tel, Switzerland.<sup><a href=\"#ref-11\">[11]</a></sup> The Writer is driven by a mechanism of about 6,000 metal parts, and the Draughtsman can draw four different pictures.<sup><a href=\"#ref-12\">[12]</a></sup> The Writer uses a goose-feather quill to write any custom text of up to 40 letters. The text is coded on a wheel where characters are selected one by one, and cams guide the hand to form each letter. The text can be changed by resetting the wheel.<sup><a href=\"#ref-11\">[11]</a></sup> That is the key step: the same machine could do different work without being rebuilt."
+ },
+ {
+  "id": "1-2#4",
+  "html": "The next step came from machine tools. MIT founded its Servomechanisms Laboratory in 1940, with Gordon Brown as its first director. In the 1950s the lab developed automatic programming for continuous-path control of machine tools. In the 1960s, its APT language grew into a computer-aided design and manufacturing (CAD/CAM) system.<sup><a href=\"#ref-16\">[16]</a></sup> This kind of <strong>numerical control</strong>, where numbers stored on a medium tell a machine where to move, is the bridge between the loom and the robot. The first industrial robot stored its program on a magnetic drum.<sup><a href=\"#ref-17\">[17]</a></sup> In all three technologies, a machine&rsquo;s job changed when its stored instructions were swapped, not when the machine was rebuilt."
+ },
+ {
+  "id": "1-2#5",
+  "html": "The American inventor George Devol filed a patent for a &ldquo;Programmed Article Transfer&rdquo; on 10 December 1954. It was granted on 13 June 1961 as U.S. Patent 2,988,237.<sup><a href=\"#ref-20\">[20]</a></sup><sup><a href=\"#ref-21\">[21]</a></sup> The patent describes a fairly simple arm whose three links slide in and out (engineers call these <em>prismatic</em> joints). Devol and his business partner Joseph Engelberger actually built a different machine, the <strong>Unimate</strong>. It was a hydraulic arm with five degrees of freedom that differed significantly from the patent drawing.<sup><a href=\"#ref-20\">[20]</a></sup><sup><a href=\"#ref-22\">[22]</a></sup> A degree of freedom is one independent way the arm can move, such as one joint turning."
+ },
+ {
+  "id": "1-2#6",
+  "html": "Other companies followed quickly. In 1962 American Machine and Foundry (AMF) installed six Versatran robots, the first cylindrical robots, at Ford&rsquo;s factory in Canton.<sup><a href=\"#ref-17\">[17]</a></sup> In 1967 the first robot in Europe, a Unimate, started work at Svenska Metallverken in Upplands V&auml;sby, Sweden. That same year, a Versatran became the first robot at a Japanese production site.<sup><a href=\"#ref-17\">[17]</a></sup><sup><a href=\"#ref-25\">[25]</a></sup>"
+ },
+ {
+  "id": "1-2#8",
+  "html": "ABB&rsquo;s own history of its robots adds that IRB 6 development began in 1970 and that the first one was delivered in 1974 to Magnusson i Genarp, an engineering workshop in southern Sweden. ABB calls it &ldquo;the world&rsquo;s first all electric industrial robot.&rdquo;<sup><a href=\"#ref-29\">[29]</a></sup> That claim and KUKA&rsquo;s claim for FAMULUS are each company&rsquo;s own, and they describe different firsts. KUKA&rsquo;s claim is about six electrically driven axes, while ASEA&rsquo;s is about an all-electric robot with microprocessor control. The IRB 6 stayed in production for more than 20 years.<sup><a href=\"#ref-25\">[25]</a></sup> The T3 went to work in Volvo plants in Sweden.<sup><a href=\"#ref-25\">[25]</a></sup> The SCARA (Selective Compliance Assembly Robot Arm) has three parallel rotating joints and one sliding joint.<sup><a href=\"#ref-25\">[25]</a></sup> Lesson <a href=\"robotics-1-3.html\">1.3 Types of Robots</a> explains where it is used."
+ },
+ {
+  "id": "1-2#9",
+  "html": "<span class=\"spec-label\">2026, plans for factory humanoids:</span> in January 2026 Hyundai Motor Group announced plans to make 30,000 Boston Dynamics Atlas humanoid robots a year by 2028. It plans to start using them in 2028 at its plant near Savannah, Georgia.<sup><a href=\"#ref-39\">[39]</a></sup> These are announced plans, not results yet."
+ },
+ {
+  "id": "1-2#10",
+  "html": "Grey Walter&rsquo;s tortoises reacted directly to what they sensed. Shakey sensed, planned and then acted. Sojourner and the DARPA vehicles took that kind of autonomy out into the field. Roomba and Kiva turned it into products sold by the thousands, and humanoids are the current frontier, mostly still at the pilot or planning stage."
+ },
+ {
+  "id": "1-2#11",
+  "html": "Sixty-five years after one Unimate started work in New Jersey, the IFR&rsquo;s <em>World Robotics 2026</em> report was released on 24 September 2026. It counts 603,307 industrial robots installed in 2025, up 11% on the year before. The number of industrial robots in operation worldwide grew 9% to 5,079,078, about 5.08 million.<sup><a href=\"#ref-40\">[40]</a></sup><sup><a href=\"#ref-41\">[41]</a></sup> Asia received 76% of the new robots, and China alone installed 354,226 units, up 20%.<sup><a href=\"#ref-40\">[40]</a></sup> Europe installed 73,054 robots and the Americas a record 57,044.<sup><a href=\"#ref-40\">[40]</a></sup>"
+ },
+ {
+  "id": "1-3#1",
+  "html": "SCARA stands for Selective Compliance Assembly Robot Arm. It was proposed in 1978 by Hiroshi Makino at Yamanashi University, and commercial models appeared in 1981.<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup> A SCARA robot usually has four axes. Two rotating joints swing the arm in a horizontal plane, a vertical axis moves the tool up and down, and another joint rotates the tool."
+ },
+ {
+  "id": "1-3#2",
+  "html": "<span class=\"spec-label\">Humanoids</span> are robots with a roughly human body shape. The first commercial deployments have begun. In June 2024 the logistics company GXO signed a multi-year Robots-as-a-Service deal for Agility Robotics&rsquo; Digit, billed as the industry&rsquo;s first formal commercial deployment of humanoids. Digit takes totes from cobots and places them onto conveyors.<sup><a href=\"#ref-28\">[28]</a></sup> In January 2026 Boston Dynamics unveiled the production version of Atlas, a fully electric humanoid with 56 degrees of freedom that can lift up to 50 kg and swap its own battery. All 2026 deployments were already committed.<sup><a href=\"#ref-29\">[29]</a></sup>"
+ },
+ {
+  "id": "1-4#2",
+  "html": "A typical first FANUC course covers the teach pendant and jogging (moving the arm by hand with buttons). It also covers frames, motion types, material handling programs, input/output (I/O) signals, and backup and restore.<sup><a href=\"#ref-7\">[7]</a></sup> Once you understand points, frames and moves in one language, the next one is much easier. Lesson <a href=\"robotics-2-3.html\">2.3 Common Programming Languages</a> compares them."
+ },
+ {
+  "id": "1-4#3",
+  "html": "<span class=\"spec-label\">OPC UA:</span> the OPC UA Robotics specification (OPC 40010-1) defines a shared information model for industrial and mobile robots. It covers asset management and condition monitoring of arms, axes, motors, controllers and software. Version 1.02 was released in September 2025.<sup><a href=\"#ref-22\">[22]</a></sup>"
+ },
+ {
+  "id": "1-4#4",
+  "html": "The evidence points the same way. An engineering education paper by He, Zhang and Shen (2015) taught microcontrollers with about 30% assembly and 70% embedded C. It kept assembly for understanding machine code, instruction timing and the stack, and noted that industry prefers high-level languages such as embedded C.<sup><a href=\"#ref-24\">[24]</a></sup> A 2022 All About Circuits article pointed out that assembly ranked 30th in IEEE Spectrum&rsquo;s 2022 job-posting ranking, while C and C++ ranked 6th and 7th. It argued that the strongest reason to learn assembly is to understand what the processor actually does, and that there is &ldquo;no one-size-fits-all answer.&rdquo;<sup><a href=\"#ref-25\">[25]</a></sup>"
+ },
+ {
+  "id": "1-4#5",
+  "html": "So treat assembly as enrichment. Knowing what it looks like helps you reason about registers, memory, timing and interrupts. That matters when code has to be fast and predictable, such as reading an <a href=\"robotics-6-3.html\">encoder</a> inside an interrupt or generating precise <a href=\"robotics-6-2.html\">PWM</a> timing. You would normally write that code in C or C++, though."
+ },
+ {
+  "id": "1-4#6",
+  "html": "Robots need people to program and maintain them. The U.S. Bureau of Labor Statistics (BLS) covers this work in its <em>Occupational Outlook Handbook</em> under industrial machinery mechanics, maintenance workers and millwrights. That entry gives current job counts, median pay and a ten-year growth projection. Check that page for the latest figures.<sup><a href=\"#ref-26\">[26]</a></sup>"
+ },
+ {
+  "id": "1-5#1",
+  "html": "The two rankings tell different stories. China has about two million robots in operation, roughly 4.5 times as many as Japan in second place. Yet China ranks only 22nd for density because its factories also employ a very large number of people.<sup><a href=\"#ref-7\">[7]</a></sup> When someone calls a country &ldquo;the most automated,&rdquo; ask whether they mean total robots or robots per worker."
+ },
+ {
+  "id": "1-5#3",
+  "html": "Not every robot makes it. In October 2025 Amazon showed Blue Jay, a cell with several arms that picks and stows items. It could handle about 75% of the item types at a South Carolina site. In February 2026 Amazon said it &ldquo;is no longer utilizing Blue Jay in operations.&rdquo;<sup><a href=\"#ref-10\">[10]</a></sup> Pilots are experiments, and some of them end."
+ },
+ {
+  "id": "1-5#4",
+  "html": "<span class=\"spec-label\">BMW and Figure.</span> At BMW&rsquo;s plant in Spartanburg, South Carolina, a Figure 02 humanoid robot worked in the body shop in 2025, placing sheet-metal parts for welding with millimetre precision. Over ten months of ten-hour weekday shifts it logged about 1,250 operating hours and moved more than 90,000 parts. It walked about 1.2 million steps and helped build more than 30,000 BMW X3 cars.<sup><a href=\"#ref-11\">[11]</a></sup> Hard numbers like these are rare for humanoid pilots."
+ },
+ {
+  "id": "1-5#5",
+  "html": "They were shoebox-sized machines. The tethered Inuktun robots weighed about 4.5 kg and measured about 17 &times; 32 &times; 6 cm. Most voids were less than a metre across. The robots went 5 to 20 m into the rubble, compared with about 2 m for a camera on a pole.<sup><a href=\"#ref-30\">[30]</a></sup>"
+ },
+ {
+  "id": "1-5#6",
+  "html": "The robots found no survivors, but they did find several sets of human remains. Some of these were missed during the live feed and spotted only later on the recorded video.<sup><a href=\"#ref-30\">[30]</a></sup> The deployment was the first major test of rescue robots, and Murphy&rsquo;s numbers show why field robotics is hard:"
+ },
+ {
+  "id": "1-5#7",
+  "html": "After the 2011 earthquake and tsunami, radiation inside the Fukushima Daiichi reactor buildings was too high for workers. On April 17&ndash;18, 2011, iRobot PackBots<sup><a href=\"#ref-31\">[31]</a></sup><sup><a href=\"#ref-32\">[32]</a></sup> entered the first floors of the reactor buildings of Units 1 to 3. Quince, a tracked robot of about 50 kg built by the Chiba Institute of Technology, Tohoku University and the International Rescue System Institute, followed. On July 8, 2011, it reached the third floor of Unit 2.<sup><a href=\"#ref-33\">[33]</a></sup>"
+ },
+ {
+  "id": "1-5#8",
+  "html": "<span class=\"spec-label\">February 2017, surveying:</span> the Scorpion robot from Toshiba and IRID (the International Research Institute for Nuclear Decommissioning) entered the Unit 2 containment vessel. However, deposits blocked its path to the area under the reactor.<sup><a href=\"#ref-34\">[34]</a></sup>"
+ },
+ {
+  "id": "1-6#1",
+  "html": "<span class=\"spec-label\">RV (cycloidal) reducers:</span> Nabtesco builds its RS series gearheads on its RV reduction gear, which it calls &ldquo;industrial robot industry-proven,&rdquo; for high accuracy and rigidity. It quotes backlash under 1 arc-minute (1.5 arc-minutes for the RS-50A). That stiffness suits the heavily loaded main axes.<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-11\">[11]</a></sup>"
+ },
+ {
+  "id": "1-6#3",
+  "html": "So 1 arc-minute at the base of a 0.7 m arm moves the tool about 0.2 mm. That is ten times the 0.02 mm repeatability ABB quotes for its 0.7 m IRB 1200 (section 05).<sup><a href=\"#ref-6\">[6]</a></sup> Robot reducers are built to about 1 arc-minute of backlash or less,<sup><a href=\"#ref-9\">[9]</a></sup> and good repeatability also depends on the encoders and servo control."
+ },
+ {
+  "id": "1-6#5",
+  "html": "<span class=\"spec-label\">Work object (user frame):</span> a frame attached to the fixture or workpiece. In ABB robots it consists of a user frame and an object frame, where the object frame is a child of the user frame. All program targets are measured relative to it. The default work object, <code>wobj0</code>, coincides with the robot&rsquo;s base frame.<sup><a href=\"#ref-17\">[17]</a></sup>"
+ },
+ {
+  "id": "1-6#6",
+  "html": "Defining frames is what makes a program reusable. If the fixture is placed a little differently in the real cell than in simulation, or moved to another spot, you re-teach the work object. Every target moves with it, and the program itself does not change."
+ },
+ {
+  "id": "1-6#7",
+  "html": "<span class=\"spec-label\">robconf:</span> the <em>configuration data</em> (confdata) that picks one arm configuration when several could reach the same pose. The fields cf1, cf4 and cf6 give the quarter-turn &ldquo;quadrant&rdquo; that axes 1, 4 and 6 are in. Here, &minus;1 means between &minus;90&deg; and 0&deg;, 0 means between 0&deg; and +90&deg;, and 1 means between +90&deg; and +180&deg;.<sup><a href=\"#ref-18\">[18]</a></sup>"
+ },
+ {
+  "id": "1-6#8",
+  "html": "For real arms, engineers describe each link with four <em>Denavit&ndash;Hartenberg (DH) parameters</em> (geometric values that define the relative position and orientation of successive joint frames) and multiply one transform per link. For this arm, that gives the same x and y as above.<sup><a href=\"#ref-20\">[20]</a></sup>"
+ },
+ {
+  "id": "2-1#1",
+  "html": "<span class=\"spec-label\">ABB FlexPendant:</span> Used with ABB IRC5 controllers, the FlexPendant has a touch screen and dedicated hardware buttons (four of which the user can assign). A joystick is used to jog the manipulator.<sup><a href=\"#ref-7\">[7]</a></sup> Buttons toggle the joystick between motion modes such as axes 1&ndash;3, axes 4&ndash;6, linear, and reorient.<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "2-1#2",
+  "html": "<span class=\"spec-label\">KUKA smartPAD:</span> The smartPAD combines an 8.4-inch capacitive touch display with a 6D mouse (a control puck that can be tilted, pushed, and rotated). This puck lets the operator jog and reorient the robot in three or six degrees of freedom. It is hot-pluggable, so it can be connected and disconnected at any time.<sup><a href=\"#ref-9\">[9]</a></sup>"
+ },
+ {
+  "id": "2-1#3",
+  "html": "<span class=\"spec-label\">Universal Robots Teach Pendant:</span> Paired with UR cobot controllers running PolyScope, this touchscreen pendant moves the robot with on-screen TCP arrows and joint position values. It can also move the arm by Freedrive, where the operator pulls the arm into position by hand.<sup><a href=\"#ref-10\">[10]</a></sup>"
+ },
+ {
+  "id": "2-1#4",
+  "html": "<span class=\"spec-label\">World / Base Coordinates:</span> The controller coordinates several joints to move the tool center point in straight lines. These lines follow the fixed X, Y, and Z axes of the robot base or the cell. Moving along +Z lifts the tool straight up regardless of the current joint angles."
+ },
+ {
+  "id": "2-1#5",
+  "html": "<span class=\"spec-label\">Joint Torque Sensors:</span> The KUKA LBR iiwa has joint torque sensors in all seven axes.<sup><a href=\"#ref-15\">[15]</a></sup> The ABB GoFa has torque and position sensors in each of its six joints.<sup><a href=\"#ref-13\">[13]</a></sup> These sensors let the robot detect contact immediately and respond to forces applied by a person.<sup><a href=\"#ref-15\">[15]</a></sup>"
+ },
+ {
+  "id": "2-1#6",
+  "html": "<span class=\"spec-label\">Work Object / User Frame Calibration:</span> Three reference points on the physical fixture (for example, the origin and points along its axes) are touched with the calibrated TCP. The software then calculates the frame. The TCP should be defined first, because TCP errors carry into the frame.<sup><a href=\"#ref-12\">[12]</a></sup>"
+ },
+ {
+  "id": "2-1#7",
+  "html": "<span class=\"spec-label\">Kinematic Calibration:</span> For demanding work such as aerospace drilling, a measurement system such as a laser tracker measures the robot in many poses and software identifies corrected kinematic parameters. RoboDK states that calibration can improve accuracy by a factor of 2 to 10. Depending on the robot and setup, it can reach up to 0.050 mm for small robots and 0.150 mm for medium-sized robots. It can remarkably improve the accuracy of robots programmed offline.<sup><a href=\"#ref-21\">[21]</a></sup>"
+ },
+ {
+  "id": "2-1#8",
+  "html": "The numbers in this case study are an illustrative worked example, not measured data. Consider an automotive spot-welding cell with two six-axis arms. A new car body requires 450 spot welds. Programming online with a teach pendant requires jogging to 450 points, checking gun clearances, and programming approach moves. That might take two technicians 40 to 60 hours inside the cell, during which the line cannot build cars."
+ },
+ {
+  "id": "2-1#9",
+  "html": "Using an offline suite such as ABB RobotStudio or FANUC ROBOGUIDE, engineers import the car body CAD data, generate weld paths, simulate the two robots together to avoid collisions, and estimate cycle time. ROBOGUIDE's virtual controller, for example, calculates and validates cycle times. In addition, its SpotPRO package balances spot-welding tasks across several robots while avoiding collisions.<sup><a href=\"#ref-17\">[17]</a></sup> When the line shuts down for changeover, the program is downloaded and the technician spends a few hours touching up calibration frames before production restarts."
+ },
+ {
+  "id": "2-2#5",
+  "html": "Because the simulation uses the real motion software, engineers use it to estimate cycle times before hardware is installed, for example to check whether a proposed two-robot packaging cell can meet a required cycle time. Simulated times are still estimates. An early RobotStudio product specification noted that motion time in the Virtual Controller was 0.1 s too fast per program cycle. It also noted that non-motion time such as wait instructions was not included.<sup><a href=\"#ref-4\">[4]</a></sup>"
+ },
+ {
+  "id": "2-2#6",
+  "html": "Once a part model is imported, engineers can generate robot paths automatically. Instead of jogging a robot to teach hundreds of discrete points, the programmer selects curves on the part model, such as the edge of a sheet metal part. RobotStudio then creates robot targets and paths along them. The user controls how closely the path follows the geometry and whether segments are linear or circular.<sup><a href=\"#ref-4\">[4]</a></sup><sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "2-2#7",
+  "html": "<strong>Virtual commissioning</strong> is &ldquo;a technique that aims to validate the control software of a manufacturing system with a simulation model,&rdquo; carried out early in the commissioning process.<sup><a href=\"#ref-1\">[1]</a></sup> Raffaeli et al. used ABB RobotStudio as the virtual prototyping platform for a robotic assembly cell. They developed a &ldquo;PLC Smart Component&rdquo; that extends RobotStudio so the simulated robots can exchange signals with a Beckhoff TwinCAT PLC environment. Their paper also discusses coupling simulation models to control software through the open platform communications (OPC) protocol.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "2-2#8",
+  "html": "Rather than asking operators to write text code, PolyScope shows a robot routine as a <strong>program tree</strong>. The tree grows as nodes are added, and each selected node is configured in the Command tab. Nodes that are not configured correctly are highlighted in yellow, so the program cannot run until they are fixed.<sup><a href=\"#ref-11\">[11]</a></sup> A simplified example of a pick-and-sort routine:"
+ },
+ {
+  "id": "2-2#9",
+  "html": "To teach a fixed waypoint, the operator physically moves the robot arm to the position, for example by holding the <strong>Freedrive</strong> button, and then sets the waypoint in the program.<sup><a href=\"#ref-11\">[11]</a></sup> Freedrive can be enabled from the teach pendant or from a Freedrive button on the robot. In Freedrive, the brakes are released and the joints move with little resistance.<sup><a href=\"#ref-11\">[11]</a></sup><sup><a href=\"#ref-12\">[12]</a></sup>"
+ },
+ {
+  "id": "2-2#10",
+  "html": "Universal Robots addresses this with <strong>URCaps</strong>. In PolyScope 5, &ldquo;a URCap is a Java-based plugin, that integrates in to PolyScope.&rdquo; A URCap can add installation nodes, which configure general settings and the application environment, and program nodes, which carry out particular commands in the program sequence. A URCap can also install a daemon, a background process that runs continuously without user intervention. One example is a Python script that runs on the UR controller in the background.<sup><a href=\"#ref-16\">[16]</a></sup> For PolyScope X, URCaps are packaged as single .urcapx files. The SDK supports custom program nodes, application nodes, and Docker container contributions, with web contributions written against a TypeScript API.<sup><a href=\"#ref-13\">[13]</a></sup>"
+ },
+ {
+  "id": "2-2#11",
+  "html": "When a gripper URCap is installed, its program nodes appear in the PolyScope program tree next to the built-in nodes. The operator can then operate the gripper through a simple user interface instead of writing low-level communication code.<sup><a href=\"#ref-16\">[16]</a></sup>"
+ },
+ {
+  "id": "2-2#13",
+  "html": "<span class=\"spec-label\">RoboDK:</span> Unlike vendor tools, RoboDK is an independent offline programming environment. RoboDK states that it includes over 100 post processors to generate programs for more than 1400 robots from 80 robot manufacturers. Its API is available for Python, C#/.NET, C++, and Matlab.<sup><a href=\"#ref-20\">[20]</a></sup>"
+ },
+ {
+  "id": "2-3#1",
+  "html": "If you come to industrial robotics from software engineering, you may first wonder why every robot manufacturer invents its own programming language. In web, cloud, and embedded systems, developers converge around general-purpose languages like Python, C++, Rust, and Java. In the industrial robot sector, however, vendor languages dominate. ABB robots are programmed in RAPID, Universal Robots arms in URScript, KUKA arms in KRL, and FANUC arms in TP (teach pendant) programs or KAREL.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup><sup><a href=\"#ref-3\">[3]</a></sup><sup><a href=\"#ref-4\">[4]</a></sup><sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "2-3#2",
+  "html": "Vendor languages are also built around the physics of robot arms. Their basic building blocks are not just strings and integers but target positions, tool definitions, speeds, and corner-blending zones. A single RAPID motion instruction names its target, its speed, its zone, and its tool.<sup><a href=\"#ref-6\">[6]</a></sup> Graphical tools such as ABB's RobotStudio and UR's PolyScope sit on top of these languages. RobotStudio converts the targets you place in its 3D view into RAPID <code>robtarget</code> data when it synchronizes them to the controller.<sup><a href=\"#ref-7\">[7]</a></sup> PolyScope connects to the UR controller as a client.<sup><a href=\"#ref-2\">[2]</a></sup> Writing the language directly gives you access to most of what the controller offers."
+ },
+ {
+  "id": "2-3#3",
+  "html": "RAPID is ABB's high-level robot programming language. It was introduced with ABB's S4 control system in the 1990s, replacing the earlier ARLA language.<sup><a href=\"#ref-8\">[8]</a></sup> It is still the language of ABB's IRC5 controllers, documented in a reference manual of well over a thousand pages.<sup><a href=\"#ref-1\">[1]</a></sup> Its code is written in keyword blocks such as <code>PROC ... ENDPROC</code> and <code>IF ... ENDIF</code>, and every data item is declared with a type.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "2-3#4",
+  "html": "<span class=\"spec-label\">Modules:</span> Within a task, code and data are organized into modules (declared with <code>MODULE ... ENDMODULE</code>). Program modules (<code>.mod</code> files) hold the user's logic and can be loaded and unloaded. System modules (<code>.sys</code> files) hold data and routines that should survive a program change, such as a calibrated tool definition. Only one program module may contain the <code>main</code> procedure.<sup><a href=\"#ref-6\">[6]</a></sup><sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "2-3#5",
+  "html": "Data can be declared in three ways. A <code>CONST</code> declaration is a constant that cannot change after it is declared. A <code>PERS</code> declaration is a persistent value that keeps its last assigned value even when the program is stopped and restarted. A <code>VAR</code> declaration is a variable that is reset if the program pointer is moved back to <code>main</code>.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "2-3#6",
+  "html": "<span class=\"spec-label\">zonedata:</span> Governs corner blending. Its fields are <code>[finep, pzone_tcp, pzone_ori, pzone_eax, zone_ori, zone_leax, zone_reax]</code>.<sup><a href=\"#ref-9\">[9]</a></sup> If the zone is <code>fine</code>, the robot goes exactly to the programmed position before continuing. With a zone such as <code>z50</code>, the robot is allowed to cut the corner once its path is within 50 mm of the point. This keeps it moving smoothly and saves cycle time.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "2-3#7",
+  "html": "Lines that start with <code>!</code> are comments that the controller ignores. <code>Offs(point, x, y, z)</code> returns a copy of a point shifted by the given offsets. This is how the program makes approach points 100 mm above the pick and drop targets. <code>MoveJ</code> moves the arm without forcing a straight-line path, while <code>MoveL</code> moves the tool in a straight line.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "2-3#9",
+  "html": "KRL represents Cartesian targets with structures such as <code>FRAME</code>, <code>POS</code> and <code>E6POS</code>. A <code>FRAME</code> holds a position <code>X, Y, Z</code> and orientation angles <code>A, B, C</code>. <code>POS</code> adds two integers, <strong>Status (S)</strong> and <strong>Turn (T)</strong>, which store flags that pick out one arm configuration among several. Finally, <code>E6POS</code> adds the external axis values <code>E1</code> to <code>E6</code>.<sup><a href=\"#ref-14\">[14]</a></sup><sup><a href=\"#ref-3\">[3]</a></sup> Motions can be blended (KUKA calls this approximate positioning) with parameters such as <code>C_DIS</code>.<sup><a href=\"#ref-13\">[13]</a></sup><sup><a href=\"#ref-3\">[3]</a></sup>"
+ },
+ {
+  "id": "2-4#1",
+  "html": "The same problem slows research. The original ROS paper observed that robot software projects often tangle reusable drivers and algorithms with the project's own middleware. Because of this, a new algorithm for path planning, object detection, or simultaneous localization and mapping (SLAM) gets rewritten again and again for each platform.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "2-4#2",
+  "html": "Despite its name, ROS is not an operating system like Linux or Windows. Its authors wrote that ROS &ldquo;is not an operating system in the traditional sense of process management and scheduling&rdquo;. Instead, it provides a structured communications layer above the host operating system.<sup><a href=\"#ref-1\">[1]</a></sup> This kind of software is called <strong>middleware</strong>. For ROS 2, the main (Tier 1) host platform is Ubuntu Linux.<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "2-4#3",
+  "html": "<span class=\"spec-label\">Algorithm Reuse:</span> Large community libraries, such as MoveIt 2 for robot arms and Nav2 for mobile robots, are built as collections of plugins that can be configured for many different robots. Because of this, an improvement to the library can benefit every robot that uses it.<sup><a href=\"#ref-5\">[5]</a></sup><sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "2-4#4",
+  "html": "ROS grew out of two groups. At Stanford University, two efforts tackled this problem: the STAIR project, started by Andrew Ng, and the Personal Robotics Program, run by Eric Berger and Keenan Wyrobek in Ken Salisbury's lab. Both were trying to build capable robots on top of reusable software.<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-1\">[1]</a></sup> Wyrobek later described the problem they wanted to fix as a cycle of researchers &ldquo;90 percent duplicating what someone else has already done&rdquo;.<sup><a href=\"#ref-9\">[9]</a></sup>"
+ },
+ {
+  "id": "2-4#5",
+  "html": "The work continued at <strong>Willow Garage</strong>, a robotics research lab in Menlo Park, California, funded by Scott Hassan, who saw building the &ldquo;Linux of robots&rdquo; as a way of giving back. Steve Cousins served as its CEO.<sup><a href=\"#ref-9\">[9]</a></sup> The name &ldquo;ROS&rdquo; was first used publicly when Ken Conley set up the code repository on 7 November 2007.<sup><a href=\"#ref-9\">[9]</a></sup> Willow Garage also built the <strong>PR2 (Personal Robot 2)</strong>. Its capabilities, in Berger's words, &ldquo;way outstripped the current software,&rdquo; and ROS was developed for its Personal Robots Program.<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "2-4#6",
+  "html": "New ROS 2 releases are published on a time-based schedule every 12 months. In even years, the release comes one month after the new Ubuntu LTS (long-term support) release and is itself an LTS release supported for five years. Releases in odd years are supported for 1.5 years.<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "2-4#7",
+  "html": "In this curriculum, our target release is <strong>ROS 2 Lyrical Luth</strong>, the twelfth ROS 2 release, announced on 22 May 2026. It is an LTS release supported until May 2031, with <strong>Ubuntu 26.04</strong> as its Tier 1 Linux platform.<sup><a href=\"#ref-8\">[8]</a></sup> Its release notes highlight a new events-based executor for C++ nodes and an <code>AsyncNode</code> that lets Python nodes use <code>asyncio</code>. They also add zero-copy buffer support for moving large data to GPUs, along with rosbag2 and command-line improvements.<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "2-4#8",
+  "html": "ROS is often described as four things at once. These are plumbing (message passing between nodes), tools (launch, introspection, debugging, visualization, plotting, logging, and playback), capabilities (ready-made software so you can focus on your application), and a community ecosystem.<sup><a href=\"#ref-15\">[15]</a></sup> The table gives ROS 2 examples of each:"
+ },
+ {
+  "id": "2-4#9",
+  "html": "<strong>MoveIt 2:</strong> MoveIt 2 is the main motion planning framework for robot arms in ROS 2.<sup><a href=\"#ref-5\">[5]</a></sup> It keeps a planning scene, a model of the world and the robot's current state. It uses FCL (the Flexible Collision Library) as its primary collision checker and a KDL numerical solver as its default inverse kinematics plugin. For planners, it uses OMPL (the Open Motion Planning Library) by default, with the Pilz industrial motion planner and CHOMP also available.<sup><a href=\"#ref-5\">[5]</a></sup> Instead of coding every joint waypoint by hand, a programmer can ask MoveIt to move the tool to a target pose without hitting the table. MoveIt then plans a collision-free joint trajectory.<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "2-4#10",
+  "html": "Manufacturing companies need software with long-term support and reliable interfaces to industrial hardware. Early ROS, built for research robots, did not focus on these. <strong>ROS-Industrial (ROS-I)</strong> was created to fill that gap.<sup><a href=\"#ref-17\">[17]</a></sup>"
+ },
+ {
+  "id": "2-5#1",
+  "html": "On its own, a robot arm only carries a flange through space. The work is done by the <strong>end-of-arm tooling</strong> (EOAT), also called the end effector: a gripper, suction cups, a torch or a screwdriver. In <a href=\"robotics-2-3.html\">lesson 2.3</a> you wrote pick-and-place programs. A single line set a digital output to close a gripper, and another line read an input to check for a part. This lesson looks at what sits behind those lines."
+ },
+ {
+  "id": "2-5#2",
+  "html": "Three questions run through the lesson. First, what can physically hold the part? Second, what does the controller need to know about the tool bolted to it? Finally, how does the program find out whether the tool actually did its job? The answers involve mechanics, tool configuration and input/output (I/O) programming in URScript and ABB RAPID."
+ },
+ {
+  "id": "2-5#3",
+  "html": "A pneumatic finger gripper is driven by a solenoid valve. The robot switches a digital output, the valve sends air to one side of the gripper's piston, and the fingers move. Grip force is set mechanically, by the air pressure, rather than in the program. This makes pneumatic grippers cheap and reliable, but they tell the controller little unless sensors are added."
+ },
+ {
+  "id": "2-5#4",
+  "html": "Compare the gripper's coupling with the flange drawing in your robot's manual. Remember that every adapter plate moves the tool further out, which changes the tool center point (TCP) offset."
+ },
+ {
+  "id": "2-5#5",
+  "html": "<strong>In ABB RAPID</strong>, the tool's load is part of the <code>tooldata</code> record. Its components are <code>robhold</code> (TRUE when the robot holds the tool), <code>tframe</code> (the TCP as a translation and a quaternion) and <code>tload</code> (mass, center of gravity, axes of moment <code>aom</code>, and the inertia values <code>ix</code>, <code>iy</code>, <code>iz</code>).<sup><a href=\"#ref-19\">[19]</a></sup> One ABB community example defines a dual gripper of 8.5 kg with its CoG at [10, 0, 80] mm.<sup><a href=\"#ref-20\">[20]</a></sup> The RobotStudio API documentation models a load as a 5 kg point mass at (0.023, 0, 0.075) m.<sup><a href=\"#ref-21\">[21]</a></sup> The part being carried is handled separately. <code>GripLoad</code> sets the payload of the gripped part relative to the active TCP. The optional <code>\\TLoad</code> argument of a move instruction gives the total load of tool and part relative to the wrist flange.<sup><a href=\"#ref-22\">[22]</a></sup> The declarations below are an illustrative example with made-up values, not a measured tool:"
+ },
+ {
+  "id": "2-5#6",
+  "html": "On an ABB IRC5, I/O usually comes from fieldbus units. The DSQC 652 is a DeviceNet unit with 16 digital inputs and 16 digital outputs. On the IRC5 Compact these come out on connector XS7 with 24 V, and a forum reply gives 500 mA per output.<sup><a href=\"#ref-28\">[28]</a></sup> The usual way to get more is a second DSQC 652 at an unused DeviceNet address, within DeviceNet's limit of 20 I/O devices per controller.<sup><a href=\"#ref-29\">[29]</a></sup> In RAPID, signals are not addressed by pin number: each one is given a name in the controller's I/O configuration, and the program uses that name.<sup><a href=\"#ref-30\">[30]</a></sup>"
+ },
+ {
+  "id": "2-5#8",
+  "html": "Electric grippers can report more. With the Robotiq URCap installed on a UR, <code>rq_is_object_detected()</code> returns True if an object was picked and False otherwise.<sup><a href=\"#ref-37\">[37]</a></sup> Underneath, Robotiq grippers report object detection through a status register called gOBJ. Sources disagree about what some of its values mean, so read the manual for your exact gripper and firmware before relying on a particular code.<sup><a href=\"#ref-38\">[38]</a></sup><sup><a href=\"#ref-39\">[39]</a></sup> The Zimmer GEP2000 can report jaw position as a 0-10 V signal or over IO-Link, and its -B variant reports a lost workpiece.<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup>"
+ },
+ {
+  "id": "2-5#9",
+  "html": "Every request stays on until it is acknowledged, so a slow scan cannot miss it. Discrete wiring like this works for a handful of bits. When a cell needs many signals, they travel over a fieldbus or industrial Ethernet on one cable instead. For example, the DSQC 652 already sits on DeviceNet,<sup><a href=\"#ref-29\">[29]</a></sup> and UR controllers can add I/O over Modbus.<sup><a href=\"#ref-24\">[24]</a></sup>"
+ },
+ {
+  "id": "2-6#1",
+  "html": "Pick-and-place is the first program most robot programmers write, and it is still one of the most common jobs in a factory: take a part from one place and put it down somewhere else. The earlier lessons in this chapter gave you the pieces. You have seen motion types (<code>MoveJ</code> and <code>MoveL</code>), the RAPID and URScript languages (<a href=\"robotics-2-3.html\">2.3</a>), and how a gripper is switched by a digital output (<a href=\"robotics-2-5.html\">2.5</a>). This lesson puts them together into one working cycle in a simulator. It then shows how to keep it working when the fixture moves by teaching targets relative to the fixture instead of relative to the robot."
+ },
+ {
+  "id": "2-6#4",
+  "html": "A real example from a pick-and-place project on GitHub defines a tool (there, a camera tool) whose TCP is 114.25 mm along the tool Z axis, with a 0.1 kg load: <code>[TRUE,[[0,0,114.25],[1,0,0,0]],[0.1,[0,0,0.1],[1,0,0,0],0,0,0]]</code>.<sup><a href=\"#ref-3\">[3]</a></sup> In RobotStudio, a tool can also be built from its CAD model. Import the geometry, place a frame at the tip, and use Modeling &gt; Create Tool to enter mass, inertia and the TCP frame.<sup><a href=\"#ref-13\">[13]</a></sup>"
+ },
+ {
+  "id": "2-6#5",
+  "html": "In simulation you usually type the TCP from the gripper drawing. On a real robot it is often calibrated instead. Both vendors offer a method in which you touch one fixed, pointed tip with the tool from four different wrist orientations, and the controller solves for the offset. UR calls this the TCP Position wizard. ABB's FlexPendant offers it as a tool definition method with optional extra points to fix the tool's orientation.<sup><a href=\"#ref-16\">[16]</a></sup><sup><a href=\"#ref-17\">[17]</a></sup><sup><a href=\"#ref-13\">[13]</a></sup> The orientations should differ as much as possible for good accuracy.<sup><a href=\"#ref-17\">[17]</a></sup> One university lab that calibrated a marker tool this way on an ABB IRB 140 reported a mean error of 0.353 mm. Its calibrated TCP (x = 7.63, y = 4.37, z = 211.04 mm) differed by several millimeters from the CAD value (x = 12.25, y = 0, z = 214.74 mm).<sup><a href=\"#ref-13\">[13]</a></sup> CAD and reality rarely agree exactly, which is why real cells calibrate."
+ },
+ {
+  "id": "2-6#6",
+  "html": "To get the frame values, you teach three points on the fixture. On ABB's three-point user method, two points (X1 and X2) lie on the X axis and set its direction, and a third point (Y1) sets the plane and which side is +Y.<sup><a href=\"#ref-19\">[19]</a></sup><sup><a href=\"#ref-20\">[20]</a></sup> Z then follows the right-hand rule from X toward Y.<sup><a href=\"#ref-19\">[19]</a></sup> The origin is not simply X1. Both the lecture notes and a third-party guide place it where the X axis meets the perpendicular through Y1. Check it in RobotStudio by looking at the frame after you create it.<sup><a href=\"#ref-19\">[19]</a></sup><sup><a href=\"#ref-20\">[20]</a></sup> The same guide advises checking the tool first, because an inaccurate TCP spoils every work object defined with it, and making sure you jog in the intended frame.<sup><a href=\"#ref-20\">[20]</a></sup> Keeping the three points far apart and not in a line also helps."
+ },
+ {
+  "id": "2-6#7",
+  "html": "PolyScope has the same idea. In the Installation you can define a plane feature by teaching three points, and waypoints in a Move command can then be set relative to that feature instead of the base.<sup><a href=\"#ref-21\">[21]</a></sup> The exact menu labels differ between software versions, so look for them in your own URSim. Under the hood, URScript expresses \"a pose relative to a frame\" with <code>pose_trans</code>. The first argument (the feature) transforms the second argument (the pose relative to the feature) into the base coordinate system.<sup><a href=\"#ref-22\">[22]</a></sup> Programs exported from PolyScope show feature-relative waypoints computed exactly this way, as chains of <code>pose_trans</code> calls on a reference frame.<sup><a href=\"#ref-23\">[23]</a></sup><sup><a href=\"#ref-24\">[24]</a></sup>"
+ },
+ {
+  "id": "2-6#10",
+  "html": "In URScript the same job is done by <code>pose_trans</code>. If <code>pick</code> is the grip pose and <code>app = p[0, 0, -0.100, 0, 0, 0]</code>, then <code>pose_trans(pick, app)</code> is the point 100 mm back along the tool Z axis. That point is above the part when the tool points down. This is the pattern Pickit's UR example uses: define a pre-pick offset with a negative tool-Z component and compute the approach with <code>pose_trans</code>.<sup><a href=\"#ref-27\">[27]</a></sup> UR also has <code>pose_add</code>, which adds a translation in the base frame; one third-party guide recommends <code>pose_trans</code> when the surface is tilted.<sup><a href=\"#ref-28\">[28]</a></sup>"
+ },
+ {
+  "id": "2-6#11",
+  "html": "In PolyScope you build the cycle in the program tree: Move nodes containing waypoints (set relative to your fixture plane), a blend radius on each waypoint, and Set and Wait nodes for the gripper. When you save, PolyScope turns this into URScript. Exported programs show lines such as <code>movel(pose_trans(referencePoint, pose_trans(p[...], ToolActionPoint_p)), a=1.2, v=0.15)</code> followed by <code>set_tool_digital_out(1, False)</code> and a short wait.<sup><a href=\"#ref-23\">[23]</a></sup> Joint moves to an approach point appear as <code>movej(get_inverse_kin(pose_trans(...), qnear=...))</code>.<sup><a href=\"#ref-32\">[32]</a></sup>"
+ },
+ {
+  "id": "2-6#12",
+  "html": "The RAPID version has the same structure. It declares a tool, a work object for the fixture, and two targets stored in that work object. Like the URScript, it is this course's own example, built from the patterns in the GitHub modules cited above, so run it in RobotStudio at reduced speed first. <code>DO_Grip</code> stands for whatever gripper output your station defines (see <a href=\"robotics-2-5.html\">2.5</a>). The robot configuration values in the targets may need to be changed, or the targets re-taught, for your robot model."
+ },
+ {
+  "id": "2-6#13",
+  "html": "Suppose the fixture is bumped 50 mm in X and rotated 10&deg; about Z. Because the pick and place targets are stored in the fixture frame, they have not changed at all relative to the fixture. Only the frame has moved. So the fix is to re-teach the three frame points (X1, X2 and Y1 on ABB, or the three plane points in PolyScope) on the fixture's new position. Then you can run the program unchanged."
+ }
+]

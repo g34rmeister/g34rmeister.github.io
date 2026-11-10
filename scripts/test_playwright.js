@@ -108,6 +108,50 @@ const viewports = [
     else console.log(`PASS: chapter ${ch} wrong answer names the correct choice, locks, shows progress`);
   }
 
+  // Lessons: "Check yourself" sits before the References heading, is a real h2 and is listed in both contents lists.
+  console.log('\n=== Check yourself placement ===');
+  {
+    const pg = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+    for (const name of ['robotics-1-1.html', 'robotics-4-4.html', 'robotics-3-5.html']) {
+      await pg.goto(base + name, { waitUntil: 'networkidle' });
+      await pg.waitForSelector('#check-yourself', { timeout: 10000 }).catch(() => {});
+      const r = await pg.evaluate(() => {
+        const box = document.getElementById('check-yourself');
+        const refs = [...document.querySelectorAll('.robotics-article-body h2')].find(h => /References\s*$/.test(h.textContent));
+        const toc = sel => [...document.querySelectorAll(sel + ' a')].map(a => a.getAttribute('href'));
+        return { box: !!box, h2: !!(box && box.querySelector('h2')), before: !!(box && refs && (box.compareDocumentPosition(refs) & Node.DOCUMENT_POSITION_FOLLOWING)),
+          kp: !!document.querySelector('.key-points') && !!box && !!(document.querySelector('.key-points').compareDocumentPosition(box) & Node.DOCUMENT_POSITION_FOLLOWING),
+          main: toc('nav.wp-toc').includes('#check-yourself'), side: toc('nav.wp-toc-side').includes('#check-yourself'),
+          order: toc('nav.wp-toc').indexOf('#check-yourself') === toc('nav.wp-toc').length - 2 };
+      });
+      if (!r.box || !r.h2 || !r.before || !r.kp || !r.main || !r.side || !r.order) { console.error(`FAIL: ${name} check-yourself ${JSON.stringify(r)}`); totalErrors++; }
+      else console.log(`PASS: ${name} Check yourself after Key points, before References, in both contents lists`);
+    }
+    // Opened at #ref-3 the page must still show that reference after the box is inserted.
+    await pg.goto(base + 'robotics-1-1.html#ref-3', { waitUntil: 'networkidle' });
+    await pg.waitForSelector('#check-yourself');
+    // The browser scrolls smoothly to the fragment, so wait for it to arrive.
+    await pg.waitForFunction(() => { const t = document.getElementById('ref-3').getBoundingClientRect().top; return t > 60 && t < 400; }, null, { timeout: 8000 }).catch(() => {});
+    const top = await pg.evaluate(() => document.getElementById('ref-3').getBoundingClientRect().top);
+    if (top < 60 || top > 400) { console.error(`FAIL: #ref-3 at ${top}px after the quiz box loaded`); totalErrors++; }
+    else console.log('PASS: page opened at #ref-3 still shows that reference');
+    // Wayfinding: breadcrumb nav, position line with previous/next, citation backlinks, icons hidden from assistive tech.
+    await pg.goto(base + 'robotics-4-4.html', { waitUntil: 'networkidle' });
+    const w = await pg.evaluate(() => ({
+      crumb: !!document.querySelector('nav[aria-label="Breadcrumb"] [aria-current="page"]'),
+      quick: /lesson 4 of 9/.test((document.querySelector('.lesson-quicknav') || {}).textContent || '') && document.querySelectorAll('.lesson-quicknav a').length === 2,
+      back: document.querySelectorAll('li[id^="ref-"] .ref-backlinks a').length > 0,
+      icons: document.querySelectorAll('i.fas:not([aria-hidden]), i.far:not([aria-hidden]), i.fab:not([aria-hidden])').length,
+      navCurrent: !!document.querySelector('.nav-menu-list a[aria-current="page"]')
+    }));
+    if (!w.crumb || !w.quick || !w.back || w.icons || !w.navCurrent) { console.error(`FAIL: wayfinding ${JSON.stringify(w)}`); totalErrors++; }
+    else console.log('PASS: breadcrumb nav, position line, citation backlinks, hidden icons, aria-current in menu');
+    await pg.goto(base + 'robotics-4-4.html#ref-3', { waitUntil: 'networkidle' });
+    const hl = await pg.evaluate(() => getComputedStyle(document.getElementById('ref-3')).outlineStyle);
+    if (hl === 'none') { console.error('FAIL: targeted reference is not highlighted'); totalErrors++; } else console.log('PASS: targeted reference is highlighted');
+    await pg.close();
+  }
+
   // Lessons with LaTeX (\( \) or \[ \]) outside code must render with the vendored KaTeX: no errors, no raw delimiters.
   console.log('\n=== Math rendering (KaTeX) ===');
   const mathPages = pages.filter(name => {

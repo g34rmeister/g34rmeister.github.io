@@ -408,11 +408,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function initTableOfContents() {
         const body = document.querySelector('.robotics-article-body');
         if (!body) return;
-        const headings = body.querySelectorAll('h2.article-section-title');
+        const headings = Array.from(body.querySelectorAll('h2.article-section-title'));
         if (headings.length < 2) return;
 
         const toc = document.createElement('nav');
         toc.className = 'wp-toc';
+        toc.id = 'contents';
         toc.setAttribute('aria-labelledby', 'wp-toc-title');
         const title = document.createElement('div');
         title.className = 'wp-toc-title';
@@ -476,6 +477,26 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('scroll', queue, { passive: true });
         window.addEventListener('resize', queue);
         updateActive();
+
+        // Sections added after load (the "Check yourself" box, which waits for the quiz file) join both
+        // lists just before the heading `before`, keeping document order.
+        window.roboticsTocAdd = function (heading, label, before) {
+            if (!heading.id) return;
+            const at = headings.indexOf(before);
+            [list, sideList].forEach((ol, which) => {
+                const item = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = '#' + heading.id;
+                link.textContent = label;
+                item.appendChild(link);
+                const ref = at >= 0 ? ol.children[at] : null;
+                ol.insertBefore(item, ref || null);
+                if (which === 1) sideLinks.splice(at >= 0 ? at : sideLinks.length, 0, link);
+            });
+            headings.splice(at >= 0 ? at : headings.length, 0, heading);
+            current = null;
+            queue();
+        };
     }
     initTableOfContents();
 
@@ -485,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const sel = 'pre, table, .katex-display, .cite-view';
         function mark() {
             document.querySelectorAll(sel).forEach((n) => {
-                const overflows = n.scrollWidth > n.clientWidth + 1 || n.scrollHeight > n.clientHeight + 1;
+                const overflows = n.scrollWidth > n.clientWidth || n.scrollHeight > n.clientHeight;
                 const own = n.getAttribute('data-scroll-focus') === '1';
                 if (overflows && !n.hasAttribute('tabindex')) {
                     n.setAttribute('tabindex', '0');
@@ -504,4 +525,22 @@ document.addEventListener('DOMContentLoaded', () => {
         mark();
     }
     initScrollableFocus();
+
+    // 10. Small accessibility and wayfinding helpers that apply to every page.
+    function initA11yHelpers() {
+        // Font Awesome icons are decoration: the text next to them carries the meaning.
+        document.querySelectorAll('i.fas:not([aria-hidden]), i.far:not([aria-hidden]), i.fab:not([aria-hidden])').forEach((i) => i.setAttribute('aria-hidden', 'true'));
+        // Breadcrumb bars that site_sync does not generate (hub children, glossary, quiz, map).
+        document.querySelectorAll('div.article-breadcrumb-bar').forEach((bar) => {
+            bar.setAttribute('role', 'navigation');
+            bar.setAttribute('aria-label', 'Breadcrumb');
+            bar.querySelectorAll('.article-breadcrumb-divider').forEach((d) => d.setAttribute('aria-hidden', 'true'));
+            const last = bar.querySelector('span:last-child:not(.article-breadcrumb-divider)');
+            if (last) last.setAttribute('aria-current', 'page');
+        });
+    }
+    initA11yHelpers();
+
+    // 11. "Contents" shortcut on narrow screens, where the side contents panel is hidden: appears once the
+    // reader is past the in-page contents list and jumps back to it.
 });

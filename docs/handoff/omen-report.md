@@ -1,13 +1,19 @@
-# Omen handoff (2026-11-08, State updated 2026-11-09)
+# Omen handoff (2026-11-08, State updated 2026-11-10)
 
 Who this is for: the next agent session (or Gerald) picking up robOSStics on the Linux Omen machine. Read `CLAUDE.md` and the tail of `CHANGELOG.agents.md` first; this file only adds what those do not say. The previous report (2026-10-28) is in git history.
 
 ## State
-- `main` is at `04f1be6`. All work since then is uncommitted on branch `site-architecture-tools` (about 100 files: agent tools, Chapter 11, Try-it boxes, figures, Open-Source Map links and entries, README). Gerald has not asked for a commit or PR yet.
-- 70 lessons in 11 chapters, 95 pages; Chapter 11 (Mobile Robots and Navigation, 11.1-11.4) is new and has no lab yet. Every cited ref has a recorded claim check (`sources.py check` passes, 1112 sources). Local checks, browser tests and the widget tests (74 renders) pass on the branch; CI has not run on it.
-- No open PRs, no open issues (#21 closed 2026-11-06: the link came back).
+- `main` is at `10d52ec`, clean. Everything is merged: PR #23 (`site-architecture-tools`: agent tools, Chapter 11, quizzes split into `assets/js/quiz/ch<N>.js`, KaTeX, chapters menu and navbar search, show-answer blocks, accessibility fixes) and PR #24 (issue #22 source links). CI passed on both.
+- 70 lessons in 11 chapters, 95 pages, 240 quiz questions; Chapter 11 (Mobile Robots and Navigation, 11.1-11.4) has no lab yet. Every cited ref has a recorded claim check (`sources.py check` passes, 1111 sources).
+- No open PRs, no open issues (#22 closed 2026-11-10 by #24).
+- The repo's GitHub account is `g34rmeister`. This machine's `gh` also has `johnbachspec` logged in and it may be the active one; run `gh auth switch -u g34rmeister` before pushing or touching issues.
 
-## What happened since 2026-10-28 (details in the changelog)
+## Round of 2026-11-09/10 (details in the changelog)
+- Uncommitted on branch `nav-a11y-plain-language` (2026-11-10): Check yourself above References, breadcrumb and previous/next line on lessons, reference back-links, accessibility fixes, and the plain-language pass (see the last changelog entry). Gerald has not asked for a commit or PR. To repeat the language pass: `scripts/plain_language.py` and tickets `docs/handoff/step-47.md` and `step-49.md`. If agy prints "authentication required", Gerald must run `agy` to log in.
+- Look and interaction rounds were planned by Claude and implemented by Sonnet subagents, each verified by Claude (checks, Playwright, widget tests, screenshots). Gerald has not yet looked at the result in a browser; the visible changes are the 720 px text column, underlined links in running text (including citation numbers) and the "Chapters" dropdown in the navbar.
+- Chapter order stays numerical (Gerald reverted a reorder; see `CLAUDE.md`).
+
+## What happened 2026-10-28 to 2026-11-08
 - New lesson 3.5 (Nav2 case study), teaching page, licences (Apache 2.0 code, CC BY-SA 4.0 text), free PR explainer and weekly link-check workflows.
 - 37 widgets in `assets/js/widgets.js`, the latest being `fov` (7.1) and `vlan` (8.6); `scripts/test_widgets.js` finds and tests all of them.
 - Overnight coherence/slop pass over the whole site (agy + Haiku audits, Opus line edits, Haiku before/after QA, Claude review). Citations, numbers and safety text unchanged.
@@ -22,10 +28,14 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 - Books (Siegwart, Gat, R.U.R.) are optional. If used, keep them outside the repo and only use them to check claims.
 
 ## Known loose ends (safe to do without asking)
+- 2.8 ref 18 cites an unreadable Scribd copy of the UR script manual; UR's own script manual confirms the same signatures, so swap the citation to it (record the check). 2.8 ref 12 is partial but ref 11 covers the rest of the sentence; no change needed.
+- 10.3 ref 10 (NUS copy of the L298 datasheet) answered nothing from GitHub's runners once while loading fine locally. If the Monday link check flags it again, the runners are probably blocked there; st.com does not answer scripts either, so there is no better host yet.
+- axe left 105 "incomplete" nodes on 6.4 (formulas) uninspected. Not tested at all: Safari, Firefox, touch use of the search.
 - Update 2026-11-09: of the partial refs in the next item, all are resolved, including 1.7 and 5.2 (fixed 2026-11-10 with Gerald's approval; see the changelog).
 - Partial refs worth a look (from the 2026-11-08 recheck; `sources.py report <lesson>` shows the notes). Each sentence names something its source does not show; check whether another ref in the same sentence covers it, else soften the wording or add a source: 1.3 ref 16 ("two classes", "four types of collaborative operation"), 1.3 ref 28 (humanoids "moving from pilots to early production"), 1.6 ref 4 (joint DOF counts, "numbered from the base"), 1.7 ref 3 (Part 1 "partly completed machinery") and ref 12 (OSHA four options; "no part of the operator's body"; safety text, so ask Gerald before editing), 5.2 ref 28 (Article 6/Annex I not reached in the fetch), 6.5 ref 8 (DMP "computes orientation angles on-chip"; the datasheet says "hardware accelerator engine").
 - 4.1 ref 8 venue (ICRA workshop, Kobe) is still unconfirmed; wiki.ros.org/Papers/ICRA2009_Quigley is behind Anubis.
 - About 35 refs are still unreachable behind bot walls (Britannica, ABB library, iso.org, analog.com, st.com, scribd, doi.org). Wayback rate-limited again on 2026-11-08; retry `archive.org/wayback/available` lookups slowly (one every few seconds).
+- `assets.robotiq.com` is gone for good (no DNS). Robotiq manuals now live under `blog.robotiq.com/hubfs/support-files/`; the full file list is in the HTML of `robotiq.com/support/wrist-camera`. The 2019 Hand-E online manual is not hosted anywhere by Robotiq.
 - Two brettbeauregard.com links in 6.4 are http only (the site has no https). Leave them.
 - About 50 audit findings were kept on purpose (judgement calls or QA restorations). Do not re-apply them from `docs/handoff/step-45-slop-*.md` without reading the changelog first.
 
@@ -38,6 +48,9 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 
 ## Tool gotchas
 - Full check: `python3 scripts/site_sync.py --check && python3 scripts/check_site.py && python3 scripts/sources.py check && python3 scripts/build_index.py --check && python3 scripts/test_hygiene.py`, then `NODE_PATH=~/pw/node_modules node scripts/test_playwright.js`.
+- Accessibility: download axe-core 4.10.2 to the scratchpad (never vendor it) and run `AXE_PATH=/path/axe.min.js NODE_PATH=~/pw/node_modules node scripts/test_playwright.js`.
+- Wayback (`web.archive.org`) blocked automated downloads as "abusive bot traffic" on 2026-11-09; the `wayback/available` lookup API still answers.
+- Quiz questions are in `assets/js/quiz/ch<N>.js`; bump `version` in `course-data.js` after changing any (it busts their cache). `quizCounts` is generated.
 - `test_widgets.js` needs arguments: `node scripts/test_widgets.js "$PWD" <outdir> [name,name]`. It takes about 2-3 minutes, so run it in the background.
 - After lesson or source edits: `sources.py sync && build_index.py && site_sync.py`. Record new claim checks with `sources.py import FILE LESSON`. The file is a JSON list of `{ref, status, claim, evidence, note}` using the ref number after renumbering.
 - `renumber_refs.py` drops non-numeric ref ids, so give a new ref a numeric placeholder id (for example the next free number).

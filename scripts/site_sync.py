@@ -180,6 +180,25 @@ def footer_nav(left, right):
             + ' ' * 28 + '</div>')
 
 
+def lesson_header_nav(ch, i, left, right):
+    """Breadcrumb (Course home > Chapter > this lesson) and a compact position line with previous/next near the top."""
+    lessons = ch['lessons']
+    crumbs = ('<nav class="article-breadcrumb-bar" aria-label="Breadcrumb">\n'
+              '                                <a href="robotics.html" class="article-breadcrumb-link">Course Home</a>\n'
+              '                                <span class="article-breadcrumb-divider" aria-hidden="true">/</span>\n'
+              f'                                <a href="{ch["url"]}">Chapter {ch["id"]} &middot; {ch["title"]}</a>\n'
+              '                                <span class="article-breadcrumb-divider" aria-hidden="true">/</span>\n'
+              f'                                <span aria-current="page">{lessons[i]["id"].replace("-", ".")}</span>\n'
+              '                            </nav>')
+    prev = f'<a class="lesson-quicknav-prev" href="{left[0]}"><span aria-hidden="true">&larr;</span> Previous<span class="sr-only">: {left[2]}</span></a>'
+    nxt = f'<a class="lesson-quicknav-next" href="{right[0]}">Next<span class="sr-only">: {right[2]}</span> <span aria-hidden="true">&rarr;</span></a>'
+    quick = ('<nav class="lesson-quicknav" aria-label="Lesson position and previous or next lesson">\n'
+             f'                                <span class="lesson-quicknav-pos">Chapter {ch["id"]}, lesson {i + 1} of {len(lessons)}</span>\n'
+             f'                                {prev}\n                                {nxt}\n'
+             '                            </nav>')
+    return crumbs, quick
+
+
 def replace_once(text, pattern, new, where):
     matches = list(re.finditer(pattern, text, re.S))
     if len(matches) != 1:
@@ -195,8 +214,8 @@ def chapter_title(ch):
 def nav_links(chapters, active, drawer):
     """Drawer: the full flat list. Desktop row: Course Home, one 'Chapters' <details> menu, Quizzes, Cite."""
     def link(href, icon, label, extra=''):
-        cls = ' class="active"' if href == active else ''
-        return f'<a href="{href}"{cls}{extra}><i class="fas {icon}"></i> {label}</a>'
+        cls = ' class="active" aria-current="page"' if href == active else ''
+        return f'<a href="{href}"{cls}{extra}><i class="fas {icon}" aria-hidden="true"></i> {label}</a>'
     tail = [('robotics-quiz.html', 'fa-question-circle', 'Quizzes'),
             ('robotics.html#thesis-cite', 'fa-quote-right', 'Citation (BibTeX)' if drawer else 'Cite')]
     lines = []
@@ -205,7 +224,7 @@ def nav_links(chapters, active, drawer):
         items += [(ch['url'], ch['icon'], ch['nav']) for ch in chapters]
         for href, icon, label in items + tail:
             lines.append(' ' * 20 + link(href, icon, label))
-        lines.append(' ' * 20 + '<a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>')
+        lines.append(' ' * 20 + '<a href="index.html" class="drawer-return"><i class="fas fa-arrow-left" aria-hidden="true"></i> Return to Main Portfolio</a>')
         return '\n' + '\n'.join(lines) + '\n' + ' ' * 16
     pad = ' ' * 24
     lines.append(f'{pad}<li>{link("robotics.html", "fa-home", "Course Home")}</li>')
@@ -232,7 +251,7 @@ def nav_search(kind):
     pad = ' ' * (24 if kind == 'nav' else 16)
     cls = 'nav-search' + (' nav-search-drawer' if kind == 'drawer' else '')
     lines = [f'<!-- {kind}-search -->',
-             f'<div class="{cls}" role="search" hidden>',
+             f'<div class="{cls}" role="search" aria-label="{"Search the course (menu)" if kind == "drawer" else "Search the course"}" hidden>',
              f'    <label class="sr-only" for="{kind}-search-input">Search lessons and glossary terms (press / to focus)</label>',
              '    <i class="fas fa-search" aria-hidden="true"></i>',
              f'    <input type="search" id="{kind}-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" '
@@ -368,6 +387,14 @@ def lesson_page(text, ch, i, where):
     else:
         right = ('robotics.html', 'Finished -&gt;', 'Course home')
     text = replace_once(text, r'(<div class="article-footer-nav">.*?</div>)', footer_nav(left, right), where)
+    crumbs, quick = lesson_header_nav(ch, i, left, right)
+    text = replace_once(text, r'(<(?:div|nav) class="article-breadcrumb-bar"[^>]*>.*?</(?:div|nav)>)', crumbs, where)
+    if '<nav class="lesson-quicknav"' in text:
+        text = replace_once(text, r'(<nav class="lesson-quicknav".*?</nav>)', quick, where)
+    else:
+        if len(re.findall(r'\n([ \t]*)</header>', text)) != 1:
+            sys.exit(f'{where}: expected one masthead </header>')
+        text = re.sub(r'\n([ \t]*)</header>', lambda m: '\n' + m.group(1) + '    ' + quick + '\n' + m.group(1) + '</header>', text, count=1)
     return sync_navbars(text, ch['url'], where)
 
 

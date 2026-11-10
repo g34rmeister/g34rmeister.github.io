@@ -1,0 +1,422 @@
+[
+ {
+  "id": "2-7#1",
+  "html": "In <a href=\"robotics-2-6.html\">2.6</a> you wrote one pick-and-place cycle as a straight list of moves. A production program has to repeat the cycle and put each part in a different place. It also has to survive a restart halfway through and handle failures, such as a gripper closing on nothing. The main examples are ABB RAPID and Universal Robots (UR) URScript and PolyScope, with a short look at the FANUC teach-pendant language."
+ },
+ {
+  "id": "2-7#2",
+  "html": "The short code excerpts in this lesson come from three open-source programs that run on real controllers. They are the ROS-Industrial driver for ABB robots,<sup><a href=\"#ref-1\">[1]</a></sup> the motion-program executor maintained by Rensselaer Polytechnic Institute (RPI),<sup><a href=\"#ref-2\">[2]</a></sup> and the External Control script in UR's own client library.<sup><a href=\"#ref-3\">[3]</a></sup> The longer examples are this course's own, built from the same syntax: test them in RobotStudio or URSim (see 2.6) before using them on a real robot."
+ },
+ {
+  "id": "2-7#3",
+  "html": "The keyword <code>LOCAL</code> limits a name to its own module.<sup><a href=\"#ref-1\">[1]</a></sup> Inside <code>main</code>, the driver first declares its routine-local data (<code>VAR num current_index; VAR speeddata move_speed := v10;</code> and so on). It then wires the interrupt to its TRAP with <code>IDelete intr_new_trajectory;</code>, <code>CONNECT intr_new_trajectory WITH new_trajectory_handler;</code> and <code>IPers ROS_new_trajectory, intr_new_trajectory;</code>. A change in the persistent variable <code>ROS_new_trajectory</code> then runs the TRAP. Finally it enters an endless loop, <code>WHILE true DO ... WaitTime 0.05; ENDWHILE</code>.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "2-7#4",
+  "html": "Most UR programs are built on the pendant as a <strong>program tree</strong> in PolyScope rather than typed as script. The PolyScope 5 handbook lists program nodes such as SubProgram, Thread and Palletizing.<sup><a href=\"#ref-8\">[8]</a></sup> A UR Academy page describes a <strong>Before Start</strong> sequence, a set of commands placed ahead of the main program. For example, it is used to avoid collisions or bumps when a program starts again after the previous run has ended.<sup><a href=\"#ref-9\">[9]</a></sup> In the newer PolyScope X, Thread, Call and Function are program nodes.<sup><a href=\"#ref-10\">[10]</a></sup> The release notes for version 10.8 say a Function can now be converted into a Thread in the user interface.<sup><a href=\"#ref-11\">[11]</a></sup>"
+ },
+ {
+  "id": "2-7#5",
+  "html": "<span class=\"spec-label\">CONST, PERS and VAR:</span> loosely, installation variables, <code>global</code> variables and local variables. PERS versus installation variables is the weakest part of the analogy. How variables persist was not checked for PolyScope 5 or X, so test what survives a restart on your version."
+ },
+ {
+  "id": "2-7#6",
+  "html": "In URScript the official script uses <code>while</code> and <code>if</code>, each with a colon after the condition and an <code>end</code> to close the block. An example is <code>while control_mode == MODE_SERVOJ:</code> ... <code>end</code>.<sup><a href=\"#ref-3\">[3]</a></sup>"
+ },
+ {
+  "id": "2-7#7",
+  "html": "The choice of function matters. In general terms, <code>pose_trans(corner, offset)</code> applies the offset along the corner pose's own axes, while <code>pose_add</code> applies it along the robot base axes. If the corner was taught square to a tilted pallet, <code>pose_trans</code> makes the grid follow the pallet. For a tool pointing down, those axes may not match the base axes. Watch which way the first row grows in the simulator, and confirm both functions in the URScript manual. In RAPID the same benefit comes from teaching <code>pPalletCorner</code> in a work object on the pallet, as in <a href=\"robotics-2-6.html\">2.6</a>. Re-teach that one frame and the whole grid moves with it."
+ },
+ {
+  "id": "2-7#8",
+  "html": "For production palletizing, vendors sell or bundle tools that generate this kind of code. PolyScope has a Palletizing program node.<sup><a href=\"#ref-8\">[8]</a></sup> One user on PolyScope 5.12 reported on UR's forum that the node ran only the first item until an outer loop was added.<sup><a href=\"#ref-15\">[15]</a></sup> ABB merged its PickMaster 5 palletizing software into RobotStudio as the Palletizing PowerPac.<sup><a href=\"#ref-16\">[16]</a></sup> Its newer Palletizing Template is a free RobotStudio add-in that ABB describes as a starting point rather than a turnkey product.<sup><a href=\"#ref-17\">[17]</a></sup> FANUC's PalletTool lets operators create and compare pallet patterns from the product dimensions, with the space efficiency of each.<sup><a href=\"#ref-18\">[18]</a></sup> FANUC's PalletPRO is offline simulation software for palletizing applications.<sup><a href=\"#ref-19\">[19]</a></sup> Write the loop by hand first, so you can tell whether a wizard did what you meant."
+ },
+ {
+  "id": "2-7#9",
+  "html": "After booking, the program can raise the error like a system error. It usually writes a message to the event log first: <code>ErrWrite \"Invalid Motion Program\",\"Invalid motion program file version\"; RAISE ERR_INVALID_MP_VERSION;</code>. System errors are raised the same way, as in <code>RAISE ERR_FILESIZE;</code>.<sup><a href=\"#ref-2\">[2]</a></sup> ABB's reference manual includes an example of this kind, in which a custom error booked with <code>BookErrNo</code> is raised and then caught in an <code>ERROR</code> handler.<sup><a href=\"#ref-12\">[12]</a></sup>"
+ },
+ {
+  "id": "2-7#10",
+  "html": "For a missed pick, the check should be a branch at the moment the grip is confirmed, not a fixed delay. Use a part-present input or the gripper's own grip-detected status (for a Robotiq gripper, <code>rq_is_object_detected()</code>, as in <a href=\"robotics-2-5.html\">2.5</a>).<sup><a href=\"#ref-24\">[24]</a></sup> Robotiq's example re-attempts the grasp until the object is detected and then prompts the operator.<sup><a href=\"#ref-25\">[25]</a></sup> The retry with a counter, written as a loop, looks like this. It is this course's example, to be tested in URSim. The input and output numbers depend on your gripper, and Robotiq and OnRobot URCaps supply their own functions or nodes:"
+ },
+ {
+  "id": "2-7#11",
+  "html": "Here is the top of the RAPID module that joins sections 06 and 08. It is this course's example, to be tested in RobotStudio. Targets, tool and signal names are placeholders, and confirm in the manual that a FOR loop may start from a PERS variable:"
+ },
+ {
+  "id": "2-8#1",
+  "html": "How a camera works as a sensor is covered in <a href=\"robotics-6-5.html\">6.5 Sensors for Robots</a>, so it is not repeated here. This lesson covers the robot side: which kind of vision the job needs and where the camera goes. It also explains how to calibrate it so that a pixel becomes a millimetre in the robot's world, and how the vision result becomes a correct robot move."
+ },
+ {
+  "id": "2-8#2",
+  "html": "A 2.5D system adds height,<sup><a href=\"#ref-1\">[1]</a></sup> and some also estimate a small amount of tilt.<sup><a href=\"#ref-2\">[2]</a></sup> A FANUC engineer quoted by the Association for Advancing Automation (A3) said that 2.5D works when the robot only needs the distance to the object.<sup><a href=\"#ref-2\">[2]</a></sup> Full 3D vision measures X, Y and Z together with rotation about all three axes.<sup><a href=\"#ref-2\">[2]</a></sup> The same A3 article argues that for bin picking \"only 3D will do\". When a part is not lying on a flat surface, or its scale is unknown, a 3D point cloud is the way to go. Low contrast, such as boxes on a pallet that look alike, can push a job toward 3D even on a flat surface.<sup><a href=\"#ref-2\">[2]</a></sup> Be aware that vendors do not all use \"2.5D\" the same way, so check which values a system actually reports."
+ },
+ {
+  "id": "2-8#3",
+  "html": "A typical eye-in-hand product is the Robotiq Wrist Camera for Universal Robots arms. Its workflow is built around a taught <strong>snapshot position</strong>, the robot pose from which the camera takes its pictures. That pose is calibrated with a calibration board. Program nodes called \"Find Visual Offset\" and \"Apply Visual Offset\" then shift the rest of the program according to what the camera sees.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "2-8#4",
+  "html": "<span class=\"spec-label\">Fixed camera (eye-to-hand):</span> it can take the next picture while the robot is still placing the last part, so vision time overlaps with motion. It also needs only one calibration. Its field of view is fixed."
+ },
+ {
+  "id": "2-8#5",
+  "html": "OpenCV's calibration tutorial explains why the first step is needed. Inexpensive lenses introduce \"significant distortion\" into images. The distortion is constant for a given lens, so it can be measured once and corrected. Calibration also gives the relation between pixels and real-world units such as millimetres.<sup><a href=\"#ref-7\">[7]</a></sup> The camera's basic geometry is summarized in a 3&times;3 <strong>camera matrix</strong>:<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "2-8#6",
+  "html": "Here <code>fx</code> and <code>fy</code> are the focal lengths in pixels, and <code>(cx, cy)</code> is the optical centre of the image in pixels.<sup><a href=\"#ref-7\">[7]</a></sup> On top of this ideal pinhole model, OpenCV models <strong>lens distortion</strong> in two parts. <em>Radial</em> distortion gives the \"barrel\" or \"fish-eye\" look. For a point at distance <code>r</code> from the centre, <code>x_d = x(1 + k1&middot;r&sup2; + k2&middot;r&#8308; + k3&middot;r&#8310;)</code>, and the same for <code>y</code>. <em>Tangential</em> distortion appears when the lens is not exactly parallel to the sensor and adds <code>x_d = x + [2&middot;p1&middot;x&middot;y + p2&middot;(r&sup2; + 2x&sup2;)]</code>. That makes five distortion coefficients: <code>k1, k2, p1, p2, k3</code>.<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "2-8#7",
+  "html": "The procedure documented in OpenCV is: keep a calibration pattern static, move the robot to several poses, and at each pose record two transforms.<sup><a href=\"#ref-5\">[5]</a></sup> One comes from the robot: the gripper-to-base pose the controller computes from its joint angles. The other comes from the camera: the pose of the pattern relative to the camera, found from the image. For each pair of poses, the gripper's motion (<code>A</code>) and the motion the camera sees (<code>B</code>) are linked by the unknown transform <code>X</code>. The problem \"is also known as solving the AX=XB equation\".<sup><a href=\"#ref-5\">[5]</a></sup> For eye-to-hand the idea is the same, but <code>X</code> becomes the camera-to-base transform.<sup><a href=\"#ref-5\">[5]</a></sup> OpenCV's documented function is:<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "2-8#9",
+  "html": "Once calibrated, the vision system reports the part's pose in a robot user frame. Across vendors the pattern is the same: the taught pick points do not change, and the program runs them inside a frame that the vision result has moved. The descriptions below come from vendor training notes and forum posts that could not be checked against the controller manuals. Confirm exact instruction names in your manual before use."
+ },
+ {
+  "id": "2-8#10",
+  "html": "<span class=\"spec-label\">FANUC:</span> FANUC applies the vision result as a single offset that shifts the taught points of the part.<sup><a href=\"#ref-15\">[15]</a></sup> FANUC advises a <em>fixed frame offset</em> when picking, because the part has moved on the table. It advises a <em>tool offset</em> when placing, because the part has shifted in the gripper.<sup><a href=\"#ref-16\">[16]</a></sup> To re-teach a point that already runs with an offset, the \"subtract offset\" option removes the current offset so the point is stored in the unshifted frame.<sup><a href=\"#ref-15\">[15]</a></sup>"
+ },
+ {
+  "id": "2-8#11",
+  "html": "<strong>The common mistake.</strong> A beginner sees \"the part moved +15, &minus;10\" and adds that to the taught point, giving (225, 140) with the rotation ignored. The distance to the correct point is the square root of (1.340&sup2; + 5.000&sup2;), which is <strong>5.18 mm</strong>. The gripper is also 30&deg; out of line with the part. That is enough to miss a small part or hit it with a finger. The cause is the lever arm: the pick point is 10 mm from the part's reference point, and when the part rotates, that arm swings to a new direction."
+ },
+ {
+  "id": "2-8#12",
+  "html": "If your vision tool reports in pixels, first convert the result into the user frame through the calibration. This uses the millimetres-per-pixel scale plus the camera-to-frame transform. Only then apply the frame shift."
+ },
+ {
+  "id": "2-8#13",
+  "html": "Estimate the error before you buy a camera. Start with resolution: the size of one pixel on the part is the field of view (FOV) divided by the number of pixels across it. The Imaging Source gives the example of a 1920-pixel sensor viewing 200 mm, which is 9.6 pixels per millimetre. Its rule of thumb is 2 to 3 pixels across a feature.<sup><a href=\"#ref-19\">[19]</a></sup> Machine-vision supplier 1stVision says at least 2 pixels are needed to find an edge when contrast is excellent, and 3 to 4 pixels is more reliable. Its example: to resolve a 0.25 mm feature with 4 pixels, you need 0.0625 mm per pixel, so a 40 mm FOV needs 640 pixels. Those figures assume the lens is not the limit, and they depend on lighting, optics and algorithm.<sup><a href=\"#ref-20\">[20]</a></sup>"
+ },
+ {
+  "id": "2-8#14",
+  "html": "<span class=\"spec-label\">Part height:</span> in 2D, the distance from the camera to the part enters the conversion from pixels to millimetres. Because of this, a part taller or shorter than the set-up height is measured wrongly. FANUC's part Z height setting accounts for this distance.<sup><a href=\"#ref-4\">[4]</a></sup>"
+ },
+ {
+  "id": "2-8#15",
+  "html": "Whichever product you use, the workflow is the same. Choose 2D or 3D, and choose where the camera goes. Then calibrate the lens, calibrate the camera to the robot, teach the pick points once in a frame, and let the vision result shift that frame on every cycle."
+ },
+ {
+  "id": "3-5#2",
+  "html": "Nav2 welcomes developers to engage through its community platforms. All ROS 2 Technical Steering Committee working group meetings are published on the ROS working group calendar. Contributors can check it for scheduled dates and times of Nav2 working group sessions.<sup><a href=\"#ref-11\">[11]</a></sup> The project also hosts a Community Slack where contributors discuss topics in public channels or send direct messages to maintainers.<sup><a href=\"#ref-11\">[11]</a></sup> <!-- F47 F48 -->"
+ },
+ {
+  "id": "4-1#1",
+  "html": "The Robot Operating System (ROS) is an open-source ecosystem of frameworks, tools and libraries for building, running and maintaining robot applications.<sup><a href=\"#ref-1\">[1]</a></sup> However, its name is a historical misnomer. The official documentation says plainly that ROS is &ldquo;not an operating system in the traditional sense, but a set of tools and libraries&rdquo;. These tools help developers build robots on various platforms and in various programming languages.<sup><a href=\"#ref-1\">[1]</a></sup> It does not replace Linux, Windows or macOS: it does not schedule CPU time, manage virtual memory or drive hard disks."
+ },
+ {
+  "id": "4-1#2",
+  "html": "The roots of ROS lie at Stanford University. Morgan Quigley was then a student on Andrew Ng's STAIR (Stanford AI Robot) project. He built a message-passing system called Switchyard, which he describes as &ldquo;our first attempt at having the STAIR Project work together.&rdquo;<sup><a href=\"#ref-5\">[5]</a></sup> At the same time, Eric Berger and Keenan Wyrobek were running the Personal Robotics Program in Ken Salisbury's lab at Stanford. They saw that robotics researchers kept rebuilding the same basic software from scratch.<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "4-1#3",
+  "html": "In 2009, Quigley, Gerkey and colleagues presented the paper &ldquo;ROS: an open-source Robot Operating System&rdquo;. They presented it at the ICRA Workshop on Open Source Software in Kobe, Japan, held with the IEEE International Conference on Robotics and Automation.<sup><a href=\"#ref-8\">[8]</a></sup><sup><a href=\"#ref-5\">[5]</a></sup> In May 2012 the Open Source Robotics Foundation (OSRF) was created as one of several spin-offs of Willow Garage, to continue developing ROS and the Gazebo simulator.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "4-1#4",
+  "html": "<span class=\"spec-label\">Anonymous Communication:</span> A subscriber generally does not know or care which publisher sent a piece of data. Publishers and subscribers can therefore be swapped without affecting the rest of the system.<sup><a href=\"#ref-11\">[11]</a></sup> For example, a lidar driver can publish scans to <code>/scan</code> while a mapping node, an obstacle detector and a visualization tool on an engineer's laptop all subscribe at once."
+ },
+ {
+  "id": "4-1#7",
+  "html": "Topics suit continuous data flows, but robots also need to ask one-off questions and get an answer. Examples include asking a node to save the current map to disk or to report a battery's health. In ROS 2 these are handled by a remote procedure call, where one node asks another to do a computation and return a result.<sup><a href=\"#ref-15\">[15]</a></sup>"
+ },
+ {
+  "id": "4-1#8",
+  "html": "When a client node calls a service, it sends a typed request to the server node. The server processes the request and returns a typed response, so the caller learns whether the request succeeded.<sup><a href=\"#ref-18\">[18]</a></sup><sup><a href=\"#ref-17\">[17]</a></sup>"
+ },
+ {
+  "id": "4-1#9",
+  "html": "Some tasks take ten seconds, two minutes or half an hour. Examples include having a robot arm pick up a bin, or sending an autonomous rover to a waypoint 50 meters down a warehouse corridor."
+ },
+ {
+  "id": "4-1#10",
+  "html": "For these tasks, ROS provides <strong>actions</strong>: long-running remote procedure calls with feedback and the ability to cancel or preempt the goal.<sup><a href=\"#ref-19\">[19]</a></sup> An action is defined in an <code>.action</code> file with three parts, goal, result and feedback, separated by <code>---</code>.<sup><a href=\"#ref-19\">[19]</a></sup><sup><a href=\"#ref-13\">[13]</a></sup> The example below is a simplified version of the <code>NavigateToPose</code> action used by the Nav2 navigation stack. The real definition also includes a behavior tree name, error codes and more feedback fields.<sup><a href=\"#ref-20\">[20]</a></sup>"
+ },
+ {
+  "id": "4-1#11",
+  "html": "This automatic discovery creates a real problem in classrooms, university labs and multi-robot factories. Suppose ten students turn on ten TurtleBots on the same school Wi-Fi network with default settings. Every computer can then discover every robot, and a student teleoperating their robot on <code>/cmd_vel</code> may drive other robots in the room. The ROS documentation warns that running several ROS 2 systems on one network can cause this kind of interference.<sup><a href=\"#ref-27\">[27]</a></sup>"
+ },
+ {
+  "id": "4-1#12",
+  "html": "To isolate robots on a shared network, ROS 2 provides the <strong>ROS_DOMAIN_ID</strong> environment variable. Nodes on the same domain can discover and message each other, while nodes on different domains cannot.<sup><a href=\"#ref-26\">[26]</a></sup> The documentation recommends choosing a domain ID between 0 and 101 inclusive. The highest ID that can be assigned at all is 232, and IDs above 101 can collide with the Linux ephemeral port range.<sup><a href=\"#ref-26\">[26]</a></sup> DDS uses the domain ID to calculate its UDP ports.<sup><a href=\"#ref-26\">[26]</a></sup>"
+ },
+ {
+  "id": "4-1#13",
+  "html": "ROS has grown far beyond the single PR2 research robot it was built for. It is now used on wheeled robots of all sizes, humanoids, industrial arms, self-driving cars, aerial vehicles and more.<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "4-1#14",
+  "html": "The OSRA is a membership organization. Its inaugural members included Intrinsic, NVIDIA and Qualcomm Technologies (Platinum), Apex.AI and Zettascale (Gold), and Clearpath Robotics, Ekumen, eProsima and PickNik (Silver). The OSRF Board assigned it ROS, Gazebo, Open-RMF and their supporting infrastructure.<sup><a href=\"#ref-29\">[29]</a></sup> A Technical Governance Committee oversees all OSRA projects. A ROS Project Management Committee runs the day-to-day work on ROS 2, including reviewing and merging code and making technical decisions.<sup><a href=\"#ref-30\">[30]</a></sup>"
+ },
+ {
+  "id": "4-1#15",
+  "html": "Decide whether each task below is best suited for a Topic, a Service, or an Action. (a) Streaming 30 fps video from a depth camera. (b) Navigating a mobile robot across a room to docking station 4. (c) Setting a digital gripper output to release a part. Justify your choices."
+ },
+ {
+  "id": "4-2#1",
+  "html": "ROS began life as the development environment for Willow Garage's PR2 robot, and that use case shaped its design. It assumed a single robot, workstation-class computers on board, no real-time requirements, excellent network connectivity (wired or close-range, high-bandwidth wireless), and mostly academic research applications.<sup><a href=\"#ref-1\">[1]</a></sup> Work on ROS started in November 2007.<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "4-2#2",
+  "html": "ROS 2 is not tied to any single vendor's communication engine. The ROS 2 core talks to the middleware through a C interface called <strong>rmw</strong> (ROS Middleware). Each middleware has an adapter package that implements that interface, such as <code>rmw_fastrtps_cpp</code> for Fast DDS or <code>rmw_zenoh_cpp</code> for Zenoh.<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-2#3",
+  "html": "<span class=\"spec-label\">rmw_zenoh_cpp:</span> Built on Eclipse Zenoh, a non-DDS protocol. It became Tier 1 in Kilted Kaiju (2025) and remains Tier 1 in Lyrical Luth.<sup><a href=\"#ref-11\">[11]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup> The documentation describes Zenoh as a more lightweight alternative to DDS whose low wire overhead and flexible routing suit challenging network conditions. A Zenoh router is used to help nodes find each other.<sup><a href=\"#ref-5\">[5]</a></sup><sup><a href=\"#ref-12\">[12]</a></sup>"
+ },
+ {
+  "id": "4-2#4",
+  "html": "As an illustration, imagine an autonomous vehicle whose Wi-Fi link drops a few packets of lidar data. A transport that insists on retransmitting the missing data delays the newer scans behind them. By the time the old frames arrive, they may be too stale to use for obstacle avoidance. For sensor data, the ROS documentation notes, it is usually more important to receive readings quickly than to receive every one of them.<sup><a href=\"#ref-14\">[14]</a></sup>"
+ },
+ {
+  "id": "4-2#5",
+  "html": "In ROS 2, launch files can be written in XML, YAML or <strong>Python</strong> (<code>*.launch.py</code>), and for most applications the choice comes down to developer preference.<sup><a href=\"#ref-18\">[18]</a></sup><sup><a href=\"#ref-19\">[19]</a></sup> Python is the most flexible option, because you can use the whole language and its libraries. The launch system itself is written in Python, so a Python launch file can reach features that XML and YAML do not expose. The trade-off is that Python launch files can be more complex and verbose.<sup><a href=\"#ref-19\">[19]</a></sup>"
+ },
+ {
+  "id": "4-2#6",
+  "html": "New robotics development therefore targets ROS 2. Long Term Support (LTS) releases have so far appeared every two years in May, each supported for five years. These include ROS 2 Humble Hawksbill (Ubuntu 22.04, May 2022 to May 2027) and ROS 2 Jazzy Jalisco (Ubuntu 24.04, May 2024 to May 2029). Our target platform is <strong>ROS 2 Lyrical Luth</strong>, released on May 22, 2026 for <strong>Ubuntu 26.04 LTS</strong> and supported until May 2031.<sup><a href=\"#ref-27\">[27]</a></sup><sup><a href=\"#ref-28\">[28]</a></sup><sup><a href=\"#ref-29\">[29]</a></sup><sup><a href=\"#ref-30\">[30]</a></sup><sup><a href=\"#ref-10\">[10]</a></sup>"
+ },
+ {
+  "id": "4-3#1",
+  "html": "ROS 2 is not a stand-alone operating system. It is a set of tools and libraries that runs on top of a host operating system. Each ROS 2 distribution requires a specific Ubuntu LTS release (other platforms may need a source build or containers).<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "4-3#2",
+  "html": "New engineers often run into installation problems because they do not know which platforms a release officially supports. Your path to a working ROS 2 environment depends on whether your computer runs Ubuntu Linux, Microsoft Windows or Apple macOS. Binary packages are only built for the Tier 1 platforms, and everything else means building from source or using a container.<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "4-3#3",
+  "html": "ROS 2 groups supported platforms (an operating system, a CPU architecture and a middleware) into three tiers.<sup><a href=\"#ref-5\">[5]</a></sup> Up to Kilted Kaiju, the target platforms for each release were listed in <strong>ROS Enhancement Proposal 2000 (REP 2000)</strong>. From Lyrical Luth onward, REP 2000 no longer covers new releases and the platform list lives in each release's own documentation.<sup><a href=\"#ref-6\">[6]</a></sup><sup><a href=\"#ref-7\">[7]</a></sup> The tiers are:"
+ },
+ {
+  "id": "4-3#4",
+  "html": "<span class=\"spec-label\">Tier 1:</span> Run through the unit test suite and other tests frequently, including continuous integration, nightly, packaging and performance jobs. Bugs on these platforms are prioritized and can delay a release.<sup><a href=\"#ref-5\">[5]</a></sup> For ROS 2 Lyrical Luth, Tier 1 platforms are <strong>Ubuntu 26.04 LTS</strong> (amd64 and arm64), which gets Debian packages and binary archives. The other is <strong>Windows 11</strong> (amd64), which gets a binary archive.<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "4-3#5",
+  "html": "Ubuntu Linux is the main home of ROS. Deb packages are the recommended way to install, because they pull in their dependencies automatically and update along with regular system updates.<sup><a href=\"#ref-2\">[2]</a></sup> Installing ROS 2 Lyrical Luth on Ubuntu 26.04 LTS follows four stages: set up your system (locale and repositories), install ROS, set up your environment, and test the installation.<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-3#6",
+  "html": "Next, install the <code>ros2-apt-source</code> package. It provides both the signing keys and the apt source configuration for the ROS repositories. Apt uses the keys to check that downloaded packages really come from the ROS repositories. Because it is a package, the repository configuration also updates automatically when new versions are released.<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-3#7",
+  "html": "After installation, typing <code>ros2</code> in a fresh terminal will typically fail with <code>bash: ros2: command not found</code>. Until you source the setup files, the shell cannot find ROS commands or ROS packages.<sup><a href=\"#ref-9\">[9]</a></sup>"
+ },
+ {
+  "id": "4-3#8",
+  "html": "<strong>Option A: Windows Subsystem for Linux (WSL 2).</strong> WSL runs a real Ubuntu installation on Windows. The ROS documentation's guide to setting up the Webots simulator on Windows notes that WSL improves the ROS 2 experience. This is because it runs on a Linux platform rather than a native Windows install.<sup><a href=\"#ref-11\">[11]</a></sup> On Windows 11 (or Windows 10 build 19044 and later), WSL 2 can also run Linux GUI applications such as RViz2 and Turtlesim as normal desktop windows. These run with hardware-accelerated OpenGL once the matching GPU driver is installed.<sup><a href=\"#ref-12\">[12]</a></sup>"
+ },
+ {
+  "id": "4-3#9",
+  "html": "<strong>Option B: Native Windows 11 binary archive.</strong> For engineers who need tight integration with Windows software or Visual Studio C++ development, ROS 2 provides a pre-built Windows archive. Only Windows 11 is supported.<sup><a href=\"#ref-15\">[15]</a></sup> It includes all ROS base packages but only some desktop packages. Dependencies come from conda-forge, managed with the <code>pixi</code> package manager (a tool built on the conda-forge ecosystem that handles binary dependencies on Windows). Compiling C++ packages needs Visual Studio Build Tools 2022.<sup><a href=\"#ref-15\">[15]</a></sup> The documented steps are to create a short folder such as <code>C:\\dev</code>, install pixi, and download the Windows archive from the ROS 2 GitHub releases page. Then unpack it, install the dependencies, and source the environment in every new Command Prompt.<sup><a href=\"#ref-15\">[15]</a></sup> The documentation gives the file name pattern as <code>windows-release-amd64.zip</code>, but on the releases page the file is actually named like <code>ros2-lyrical-2026-08-07-windows-AMD64.zip</code>, so look for a name ending in <code>-windows-AMD64.zip</code>:<sup><a href=\"#ref-16\">[16]</a></sup>"
+ },
+ {
+  "id": "4-3#10",
+  "html": "<strong>Graphics expectations.</strong> WSLg will still open RViz2 and Turtlesim windows, but you may not get GPU acceleration. Microsoft's guide lists vGPU drivers for Intel, AMD and NVIDIA only.<sup><a href=\"#ref-12\">[12]</a></sup> An open bug report from June 2026 says that on Snapdragon laptops WSL 2 cannot reach the Qualcomm GPU. The graphics library then falls back to software rendering on the CPU.<sup><a href=\"#ref-25\">[25]</a></sup> Check that issue for updates, because this may be fixed later. If RViz crashes, use the <code>LIBGL_ALWAYS_SOFTWARE=true</code> workaround from section 07.<sup><a href=\"#ref-14\">[14]</a></sup> Turtlesim and simple RViz scenes should still be usable on the CPU. Gazebo will be slow, and the Gazebo project itself treats arm architectures as best-effort rather than officially supported.<sup><a href=\"#ref-26\">[26]</a></sup>"
+ },
+ {
+  "id": "4-3#11",
+  "html": "<strong>Where to run heavy tools.</strong> Run heavy Gazebo simulation and URSim on an x64 lab PC or on a cloud virtual machine running Ubuntu 26.04, which also gets the Tier 1 packages. RobotStudio is Windows software, so run it on an x64 Windows PC.<sup><a href=\"#ref-7\">[7]</a></sup> ROS on your laptop can still talk to that machine over the network. This works as long as both use the same <code>ROS_DOMAIN_ID</code> and the firewall allows DDS traffic (see section 12).<sup><a href=\"#ref-9\">[9]</a></sup><sup><a href=\"#ref-14\">[14]</a></sup> For command-line work you can also use Docker inside WSL, because the official <code>ros:lyrical</code> images are published for both amd64 and arm64.<sup><a href=\"#ref-27\">[27]</a></sup>"
+ },
+ {
+  "id": "4-3#12",
+  "html": "<strong>Apple silicon Macs.</strong> Running Windows 11 on Arm in a virtual machine on a Mac brings all of the limits above. In addition, WSL 2 is reportedly not available inside such a virtual machine because it needs nested virtualization.<sup><a href=\"#ref-28\">[28]</a></sup> Mac users should skip Windows and install Ubuntu 26.04 arm64 in a virtual machine directly, as described in section 09."
+ },
+ {
+  "id": "4-3#13",
+  "html": "<code>rosdep</code> reads the dependency keys in the <code>package.xml</code> files of your workspace. It looks them up in the central <code>rosdistro</code> index, and installs the matching packages through the system package manager (<code>apt</code> on Ubuntu). It currently works on Linux and macOS but not Windows.<sup><a href=\"#ref-33\">[33]</a></sup> Install and initialize it once on your system:<sup><a href=\"#ref-33\">[33]</a></sup>"
+ },
+ {
+  "id": "4-4#1",
+  "html": "The official ROS 2 documentation uses <strong>Turtlesim</strong> for exactly this. It is a lightweight simulator that demonstrates core ROS concepts without any hardware, showing the robot as a turtle you drive around a 2D window.<sup><a href=\"#ref-1\">[1]</a></sup> Behind its friendly appearance it is a real ROS 2 program."
+ },
+ {
+  "id": "4-4#2",
+  "html": "The Turtlesim node creates topics (velocity commands in, pose and colour readings out) and offers services (such as spawning, clearing and teleporting turtles). It also serves an action that rotates the turtle to an absolute heading.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup> The command-line tools, message types and Python patterns you practise here are the same ones you will use with real robots later in the course."
+ },
+ {
+  "id": "4-4#3",
+  "html": "REP 2001 defines the ROS 2 install variants and lists <code>turtlesim</code> in the <code>desktop</code> variant (both the Jazzy and Rolling lists include it). A <code>ros-lyrical-desktop</code> install normally has it already.<sup><a href=\"#ref-3\">[3]</a></sup> If you installed the smaller <code>ros-base</code> variant, install it with apt:<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "4-4#4",
+  "html": "The first line of the output is <code>Type: geometry_msgs/msg/Twist</code>.<sup><a href=\"#ref-4\">[4]</a></sup> You can print the structure of that type with <code>ros2 interface show geometry_msgs/msg/Twist</code>: a <code>Twist</code> \"expresses velocity in free space broken into its linear and angular parts\", each part a three-element vector (x, y, z).<sup><a href=\"#ref-4\">[4]</a></sup><sup><a href=\"#ref-6\">[6]</a></sup> By ROS convention, distances are in meters, angles in radians and time in seconds, and a robot's body frame has x pointing forward and z pointing up.<sup><a href=\"#ref-7\">[7]</a></sup> Turtlesim only reads <code>linear.x</code> (forward speed) and <code>angular.z</code> (turning rate about the vertical axis), plus <code>linear.y</code> if its optional <code>holonomic</code> parameter is turned on. A holonomic robot can move in any direction immediately, without first rotating its chassis.<sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "4-4#5",
+  "html": "In ROS 2, you can redirect a node's topic and service names when it starts by passing <strong>remapping arguments</strong> after the <code>--ros-args</code> flag. The syntax is <code>--remap old_name:=new_name</code> (or the short form <code>-r</code>).<sup><a href=\"#ref-8\">[8]</a></sup> Open a fourth terminal and start a second teleop node pointed at <code>turtle2</code>:<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "4-4#6",
+  "html": "In ROS 2 you develop your own nodes in a <strong>workspace</strong>. This is a directory that you build as an \"overlay\" on top of your main ROS 2 installation (the \"underlay\"). In this way, new packages can be added without disturbing the installation you are extending.<sup><a href=\"#ref-9\">[9]</a></sup>"
+ },
+ {
+  "id": "4-4#7",
+  "html": "Next, open a <strong>new terminal</strong> (the documentation warns against sourcing an overlay in the same terminal where you built it). Source your main ROS 2 installation, and then source your workspace as an overlay:<sup><a href=\"#ref-9\">[9]</a></sup>"
+ },
+ {
+  "id": "4-4#8",
+  "html": "In <a href=\"robotics-4-5.html\">lesson 4.5</a>, we look at the wider ROS toolset. This includes visualising data in RViz2, inspecting node connections with rqt_graph, recording and replaying data with ros2 bag, and simulating robots in Gazebo."
+ },
+ {
+  "id": "4-5#1",
+  "html": "<span class=\"spec-label\">RobotModel:</span> Shows the robot in its current pose, as defined by the current TF transforms.<sup><a href=\"#ref-1\">[1]</a></sup> Those transforms usually come from <code>robot_state_publisher</code>. It reads the robot's URDF (Unified Robot Description Format, an XML file describing links and joints) description and joint positions (<code>sensor_msgs/msg/JointState</code> messages), and calculates the transforms between all of the robot's parts.<sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "4-5#2",
+  "html": "To draw data from several sensors in the same 3D view, RViz2 uses the tf transform system. It converts each piece of data from the coordinate frame it arrived in into a common reference frame.<sup><a href=\"#ref-1\">[1]</a></sup> In ROS 2 this is the <strong>tf2</strong> library, which keeps track of multiple coordinate frames over time.<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "4-5#3",
+  "html": "On a real robot, sensors are mounted in different places. As an example of our own: a front lidar might sit 30 cm ahead of and 15 cm above the robot's wheel centre. A depth camera sits on a mast. Suppose the lidar reports an obstacle at (x = 1.2 m, y = 0.5 m) in its own frame. The navigation software needs to know where that obstacle is relative to the robot's base or to the map."
+ },
+ {
+  "id": "4-5#4",
+  "html": "In rqt_graph, running nodes are drawn as ovals (here <code>/teleop_turtle</code> and <code>/turtlesim</code>) and topics as boxes (<code>/turtle1/cmd_vel</code>), with arrows showing which way messages flow.<sup><a href=\"#ref-3\">[3]</a></sup><sup><a href=\"#ref-8\">[8]</a></sup> In this graph, <code>/teleop_turtle</code> publishes your keystrokes on <code>/turtle1/cmd_vel</code> and <code>/turtlesim</code> subscribes to it.<sup><a href=\"#ref-3\">[3]</a></sup> If a new sensor driver is not reaching your planner, rqt_graph quickly helps you debug. It shows whether the two nodes are really joined by the same topic, or whether a typo in a topic name has left one of them disconnected. Recent versions also flag topics whose publishers and subscribers have incompatible message types or QoS settings.<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-5#5",
+  "html": "The terminal prints the files, bag size, storage format (<code>mcap</code> by default), ROS distribution, duration, and start and end times. It also shows the total message count, and lists each topic with its message type, message count and serialization format.<sup><a href=\"#ref-4\">[4]</a></sup> In the official example, <code>/turtle1/cmd_vel</code> had only 9 messages (one per key press). In contrast, <code>/turtle1/pose</code> had over 3000, because Turtlesim publishes the pose at regular intervals the whole time it runs.<sup><a href=\"#ref-4\">[4]</a></sup>"
+ },
+ {
+  "id": "4-5#6",
+  "html": "<code>ros2 bag play</code> publishes the recorded messages again, and the turtle follows the path you drove while recording. It will not match 100% exactly, because Turtlesim is sensitive to small changes in timing.<sup><a href=\"#ref-4\">[4]</a></sup> Because this bag also contains <code>/turtle1/pose</code>, playback keeps going for as long as Turtlesim was running during the recording, even if the turtle was standing still.<sup><a href=\"#ref-4\">[4]</a></sup>"
+ },
+ {
+  "id": "4-5#7",
+  "html": "Gazebo is an open-source robot simulator. Current Gazebo (Gazebo Sim) ships physics engine plugins for DART and Bullet, plus its own simple TPE engine. The ODE and Simbody engines used by Gazebo Classic are not supported in the new Gazebo.<sup><a href=\"#ref-5\">[5]</a></sup> In Gazebo:"
+ },
+ {
+  "id": "4-5#8",
+  "html": "The argument gives the topic name, the ROS message type and the Gazebo message type. The symbol between the two types sets the direction: <code>@</code> is a two-way bridge, <code>[</code> bridges from Gazebo to ROS, and <code>]</code> bridges from ROS to Gazebo.<sup><a href=\"#ref-21\">[21]</a></sup> Here the simulated lidar's <code>gz.msgs.LaserScan</code> messages are converted into ROS <code>sensor_msgs/msg/LaserScan</code> messages on <code>/scan</code>. Any ROS node subscribed to <code>/scan</code> (for example a navigation stack) receives them just as it would from a real lidar driver. This is what lets you test the same code in simulation first."
+ },
+ {
+  "id": "4-6#1",
+  "html": "In <a href=\"robotics-4-4.html\">lesson 4.4</a> you drove Turtlesim from the keyboard and wrote two small nodes. In <a href=\"robotics-4-5.html\">lesson 4.5</a> you met the tools used to inspect a running system. This lesson slows down and looks closely at the thing every ROS 2 project is built from: the <strong>package</strong>. You will set up a workspace on purpose rather than by copying commands, and learn what each file that <code>ros2 pkg create</code> writes is for. You will also declare dependencies so that other people can build your code, and finish with a node that drives the turtle around a square."
+ },
+ {
+  "id": "4-6#2",
+  "html": "Everything here targets <strong>ROS 2 Lyrical Luth</strong>, the twelfth release of ROS 2. It is a long-term support (LTS) release that came out in May 2026 and is supported until May 2031.<sup><a href=\"#ref-1\">[1]</a></sup> Its Tier 1 platforms are Ubuntu 26.04 (Resolute) on amd64 and arm64, and Windows 11 with Visual Studio 2022 on amd64. It supports Python 3.12 to 3.14 (Ubuntu 26.04 ships Python 3.14.3).<sup><a href=\"#ref-2\">[2]</a></sup> A few details of package building changed in the last two releases. Many tutorials you find online were written for older distributions, so this lesson points out where Lyrical differs."
+ },
+ {
+  "id": "4-6#3",
+  "html": "When you later run <code>colcon build</code> from <code>~/ros2_ws</code>, colcon creates three folders next to <code>src</code>. <code>build</code> holds intermediate files with one subfolder per package. <code>install</code> holds each installed package (by default in its own subfolder). <code>log</code> \"contains various logging information about each colcon invocation.\" Unlike the older catkin tool, there is no <code>devel</code> folder, and colcon builds out of the source tree.<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "4-6#5",
+  "html": "The workspace tutorial proves the layering with a small experiment. In a cloned copy, change the window title in Turtlesim's <code>turtle_frame.cpp</code> from <code>\"TurtleSim\"</code> to <code>\"MyTurtleSim\"</code>, rebuild, and run Turtlesim in a terminal that has the overlay sourced. The window shows the new title, while a terminal that sourced only the underlay still shows the original. That shows \"the overlay takes precedence over the underlay.\"<sup><a href=\"#ref-3\">[3]</a></sup> A good mental model is a stack: whatever you sourced last sits on top."
+ },
+ {
+  "id": "4-6#6",
+  "html": "The Lyrical Windows install uses pixi and conda-forge. In every Command Prompt you run <code>pixi shell</code> and then <code>call C:\\dev\\lyrical\\local_setup.bat</code>. C++ builds need Visual Studio Build Tools 2022, run from the \"x64 Native Tools Command Prompt for VS 2022\".<sup><a href=\"#ref-6\">[6]</a></sup> On Windows you build with <code>colcon build --merge-install</code> and source with <code>call install\\setup.bat</code> (or <code>install\\setup.ps1</code> in PowerShell).<sup><a href=\"#ref-3\">[3]</a></sup><sup><a href=\"#ref-5\">[5]</a></sup> The Lyrical workspace and colcon tutorials still mention the VS 2019 prompt and <code>C:\\dev\\ros2</code>; follow the install page where they disagree.<sup><a href=\"#ref-3\">[3]</a></sup><sup><a href=\"#ref-6\">[6]</a></sup>"
+ },
+ {
+  "id": "4-6#7",
+  "html": "Other useful options include <code>--dependencies</code> (one or more packages to depend on), <code>--description</code>, <code>--maintainer-name</code> and <code>--maintainer-email</code> (filled in from your <code>git config</code> when available). You can also use <code>--package-format</code> (2 or 3, default 3), <code>--destination-directory</code> and <code>--library-name</code>. Passing <code>--license ?</code> lists the licenses that also produce a LICENSE file.<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-6#8",
+  "html": "The generated Python <code>package.xml</code> uses format 3 and has <code>TODO</code> placeholders for the description and license. It lists the test tools <code>ament_copyright</code>, <code>ament_flake8</code>, <code>ament_pep257</code> and <code>python3-pytest</code> as test dependencies, and ends with <code>&lt;export&gt;&lt;build_type&gt;ament_python&lt;/build_type&gt;&lt;/export&gt;</code>.<sup><a href=\"#ref-7\">[7]</a></sup> The Lyrical template also adds <code>ament_mypy</code> and <code>ament_xmllint</code> to the test dependencies.<sup><a href=\"#ref-8\">[8]</a></sup> Every package your code imports should also be declared here. The tags say <em>when</em> each dependency is needed:<sup><a href=\"#ref-11\">[11]</a></sup>"
+ },
+ {
+  "id": "4-6#10",
+  "html": "Topics are not the only tools in a node. A service server is created with <code>create_service(Type, 'name', callback)</code>, where the callback fills in and returns a response. A client uses <code>create_client</code>, <code>wait_for_service</code> and <code>call_async</code>, and the docs warn: \"Do not use <code>rclpy.spin_until_future_complete</code> in a ROS 2 callback.\"<sup><a href=\"#ref-12\">[12]</a></sup> A node can also declare a parameter with <code>self.declare_parameter('my_parameter', 'world')</code> (the type comes from the default value). You can read it with <code>self.get_parameter('my_parameter').get_parameter_value().string_value</code>, and have it changed at run time with <code>ros2 param set</code>.<sup><a href=\"#ref-13\">[13]</a></sup> Lesson 4.7 covers parameters in depth; for now we use topics only."
+ },
+ {
+  "id": "4-6#11",
+  "html": "Do not expect a perfect square. The timer only checks the clock every 0.1 s, so a turn that should last 1.57 s actually lasts until the next tick after that. In addition, Turtlesim integrates the motion in its own small time steps.<sup><a href=\"#ref-14\">[14]</a></sup> These small errors add up from corner to corner, and the last side will not land exactly on the start point. That drift shows the limit of open-loop control, and it is why Section 10 adds feedback."
+ },
+ {
+  "id": "4-6#12",
+  "html": "<span class=\"spec-label\">The node runs but the turtle does not move:</span> Check the topic name with <code>ros2 topic info /turtle1/cmd_vel</code>. Make sure you publish repeatedly from a timer, not once, because of the one-second timeout.<sup><a href=\"#ref-14\">[14]</a></sup>"
+ },
+ {
+  "id": "4-6#13",
+  "html": "Create the <code>turtle_square</code> package with <code>ros2 pkg create</code> as in Section 03. Open <code>setup.py</code> and <code>package.xml</code>, and find the entry point, the <code>py.typed</code> line and the dependency tags you asked for."
+ },
+ {
+  "id": "4-7#1",
+  "html": "In <a href=\"robotics-4-4.html\">lesson 4.4</a> you started Turtlesim and its teleop node by hand, one terminal per node. In <a href=\"robotics-4-6.html\">lesson 4.6</a> you wrote your own package with <code>rclpy</code> and <code>turtlesim_msgs</code>. That works for two or three nodes. A real robot is different. The ROS 2 documentation notes that a system \"typically consists of many nodes running across many different processes (and even different machines)\", and starting each one by hand \"gets cumbersome quite quickly.\"<sup><a href=\"#ref-1\">[1]</a></sup>"
+ },
+ {
+  "id": "4-7#2",
+  "html": "The <strong>launch system</strong> solves this. It is \"meant to automate the running of many nodes with a single command.\"<sup><a href=\"#ref-1\">[1]</a></sup> A launch description specifies what programs to run, where to run them, and what arguments to pass them. By applying ROS conventions such as names, namespaces and remappings, you can reuse the same component in different configurations.<sup><a href=\"#ref-1\">[1]</a></sup> Launch does more than start processes. It also monitors the state of the processes it launched and can report or react when that state changes.<sup><a href=\"#ref-1\">[1]</a></sup><sup><a href=\"#ref-2\">[2]</a></sup>"
+ },
+ {
+  "id": "4-7#3",
+  "html": "The second half of this lesson covers <strong>parameters</strong>, the settings that configure a node at startup and while it runs without changing its code.<sup><a href=\"#ref-3\">[3]</a></sup> Launch files and parameter files work together: the launch file decides which nodes run, and the parameter file decides how each one is tuned. On an industrial cell, this is how one tested program can drive two identical robots, such as a simulated one and a real one. It can also drive a test bench and a production line, with only configuration changing."
+ },
+ {
+  "id": "4-7#4",
+  "html": "Some ideas carried over unchanged. Launch still turns remapping and namespace settings into command-line arguments for each node, manages complexity through includes and groups, and aims to be portable across operating systems.<sup><a href=\"#ref-2\">[2]</a></sup> In ROS 2 the framework is the <code>launch_ros</code> package, which sits on top of the general-purpose, non-ROS-specific <code>launch</code> package.<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "4-7#5",
+  "html": "ROS 2 launch files can be written in <strong>Python, XML or YAML</strong>, and you run them with the <code>ros2 launch</code> command.<sup><a href=\"#ref-1\">[1]</a></sup> Which format should you choose? The official how-to says that for most applications \"the choice of which ROS 2 launch format comes down to developer preference.\"<sup><a href=\"#ref-6\">[6]</a></sup> Python is the most flexible, because you can use the whole language and its libraries. Because <code>launch</code> itself is written in Python, you also get lower-level access to features that XML and YAML may not expose. The price is that a Python launch file \"may be more complex and verbose.\"<sup><a href=\"#ref-6\">[6]</a></sup> The ROS 1 migration guide leans further toward the static formats, saying that \"for typical use cases, XML and YAML should be preferred over Python.\"<sup><a href=\"#ref-7\">[7]</a></sup> This lesson teaches Python first, because it matches the <code>rclpy</code> track of this course, and shows the XML version alongside so you can read either."
+ },
+ {
+  "id": "4-7#6",
+  "html": "If you ever port a ROS 1 file, the migration guide lists the main XML changes. On <code>&lt;node&gt;</code>, <code>type</code> becomes <code>exec</code> and <code>ns</code> becomes <code>namespace</code>. In addition, <code>&lt;param&gt;</code> can only appear inside a <code>&lt;node&gt;</code> because there is no global parameter concept, and <code>&lt;rosparam&gt;</code> is replaced by <code>&lt;param from=\"file.yaml\"/&gt;</code>.<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "4-7#7",
+  "html": "The official \"Creating a launch file\" tutorial builds a small system called <strong>turtlesim_mimic</strong>. It uses two Turtlesim windows and a third node, <code>mimic</code>, that makes the second turtle copy whatever the first turtle does.<sup><a href=\"#ref-5\">[5]</a></sup> Here is the Python version exactly as the Lyrical documentation gives it:<sup><a href=\"#ref-5\">[5]</a></sup>"
+ },
+ {
+  "id": "4-7#8",
+  "html": "Each <code>Node</code> names the <code>package</code> and the <code>executable</code> to start (the same two words you would type after <code>ros2 run</code>). It can also set a node <code>name</code> and a <code>namespace</code>.<sup><a href=\"#ref-5\">[5]</a></sup> Notice that both simulators are called <code>sim</code>. That is allowed only because they live in different namespaces, <code>turtlesim1</code> and <code>turtlesim2</code>. The tutorial explains: \"Unique namespaces allow the system to start two nodes without node name or topic name conflicts.\"<sup><a href=\"#ref-5\">[5]</a></sup> The full names become <code>/turtlesim1/sim</code> and <code>/turtlesim2/sim</code>, and each turtle's topics are prefixed the same way, for example <code>/turtlesim1/turtle1/pose</code>."
+ },
+ {
+  "id": "4-7#9",
+  "html": "The third node does the interesting work. In the Turtlesim source code, <code>mimic</code> subscribes to a topic named <code>input/pose</code> (type <code>turtlesim_msgs/msg/Pose</code>) and publishes velocity commands on <code>output/cmd_vel</code> (type <code>geometry_msgs/msg/Twist</code>).<sup><a href=\"#ref-9\">[9]</a></sup> The <code>remappings</code> list connects those generic names to real topics. Here <code>/input/pose</code> becomes the first turtle's pose, and <code>/output/cmd_vel</code> becomes the second turtle's velocity command. \"In other words, <code>turtlesim2</code> will mimic <code>turtlesim1</code>'s movements.\"<sup><a href=\"#ref-5\">[5]</a></sup> This is the same remapping you met in lesson 4.4 with <code>--ros-args --remap</code>, written once in a file instead of typed every time."
+ },
+ {
+  "id": "4-7#10",
+  "html": "Placing the file there is not enough. When you build, colcon installs the files that the package lists into the workspace's <code>install</code> folder. The command <code>ros2 launch &lt;package&gt; &lt;file&gt;</code> looks for launch files there.<sup><a href=\"#ref-10\">[10]</a></sup> For an <code>ament_python</code> package, such as the one you made in lesson 4.6, the documentation says: \"To enable colcon to locate and utilize our launch files, we need to inform Python's setup tools of their presence.\"<sup><a href=\"#ref-8\">[8]</a></sup> You do that by adding an entry to <code>data_files</code> in <code>setup.py</code>:<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-7#11",
+  "html": "<span class=\"spec-label\">Name the file correctly:</span> the <code>_launch.py</code>, <code>_launch.xml</code> and <code>_launch.yaml</code> suffixes are recommended but not required. However, \"the launch file name needs to end with <code>launch.py</code> to be recognized and autocompleted by <code>ros2 launch</code>.\"<sup><a href=\"#ref-8\">[8]</a></sup>"
+ },
+ {
+  "id": "4-7#12",
+  "html": "The build copies your files, so an edit to <code>src/.../launch/mimic_launch.py</code> or to a YAML file has no effect until you build again. Alternatively, you can build with <code>--symlink-install</code>, as described in lesson 4.4."
+ },
+ {
+  "id": "4-7#13",
+  "html": "<code>LaunchConfiguration</code> is a <strong>substitution</strong>. The documentation defines substitutions as \"variables that are only evaluated during execution of the launch description,\" used to get information such as a launch configuration, an environment variable, or the result of a Python expression.<sup><a href=\"#ref-11\">[11]</a></sup> In other words, when Python reads your file, <code>turtlesim_ns</code> is not yet a string. It is a placeholder that the launch system fills in once it knows the argument's value. Note that the default is written as a string (<code>'turtlesim1'</code>). In the documentation's examples even numbers are passed to launch arguments as quoted strings.<sup><a href=\"#ref-11\">[11]</a></sup>"
+ },
+ {
+  "id": "4-7#15",
+  "html": "To run a whole included file inside a namespace, wrap it in a <code>GroupAction</code> whose first action is <code>PushROSNamespace('turtlesim2')</code>. In XML, use a <code>&lt;group&gt;</code> that starts with <code>&lt;push_ros_namespace namespace=\"turtlesim2\" /&gt;</code>. The order matters: \"<code>PushROSNamespace</code> has to be the first action in the list for the following actions to apply the namespace.\"<sup><a href=\"#ref-10\">[10]</a></sup>"
+ },
+ {
+  "id": "4-7#17",
+  "html": "<code>get</code> prints a result such as <code>Integer value is: 86</code>, and <code>set</code> prints <code>Set parameter successful</code> and changes the background colour at once. A value set this way is lost when the node restarts.<sup><a href=\"#ref-14\">[14]</a></sup> <code>dump</code> saves all of the node's current parameters to a YAML file, and <code>load</code> applies a file to a running node. When loading at runtime, read-only entries such as <code>qos_overrides.*</code> fail with a \"read-only\" message. When the same file is given at node startup, all parameters are applied, including the read-only ones.<sup><a href=\"#ref-14\">[14]</a></sup>"
+ },
+ {
+  "id": "4-7#18",
+  "html": "A <strong>parameter file</strong> is a YAML file that sets parameters for one or more nodes. It is not a launch file. The large-projects tutorial stresses that it \"is a configuration file for the <code>turtlesim_node</code> that sets parameters for the node.\"<sup><a href=\"#ref-10\">[10]</a></sup> Its structure is the node's fully qualified name, then the special key <code>ros__parameters</code> (with two underscores), then the values:<sup><a href=\"#ref-10\">[10]</a></sup>"
+ },
+ {
+  "id": "4-7#19",
+  "html": "In a YAML parameter file, what does the top-level key (for example <code>/turtlesim2/sim</code>) specify? <strong>The fully qualified name of the node, including its namespace, that the parameters under it apply to.</strong><sup><a href=\"#ref-10\">[10]</a></sup> This is easy to get wrong. The tutorial shows that a third node, <code>/turtlesim3/sim</code>, loading the same file is not affected at all, because \"its parameters are stored under another namespace.\"<sup><a href=\"#ref-10\">[10]</a></sup> The fix is a wildcard. \"<code>/**</code> will assign all the parameters in every node, despite differences in node names and namespaces.\"<sup><a href=\"#ref-10\">[10]</a></sup> The command-line arguments guide gives the full rules. <code>*</code> matches a single name token between slashes, <code>**</code> matches zero or more tokens, and partial matches such as <code>foo*</code> are not allowed. Nested YAML maps become dotted parameter names, such as <code>some_lists.some_integers</code>.<sup><a href=\"#ref-15\">[15]</a></sup>"
+ },
+ {
+  "id": "4-7#20",
+  "html": "In XML the same thing is a <code>&lt;param from=\"$(find-pkg-share launch_tutorial)/config/turtlesim.yaml\" /&gt;</code> tag inside the <code>&lt;node&gt;</code>.<sup><a href=\"#ref-10\">[10]</a></sup> The <code>parameters</code> list can also hold plain dictionaries for quick inline values, such as <code>parameters=[{'my_parameter': 'earth'}]</code>. The parameters tutorial pairs this with <code>output='screen', emulate_tty=True</code> so the node's log messages appear in your console.<sup><a href=\"#ref-13\">[13]</a></sup> In XML, inline values are written <code>&lt;param name=\"...\" value=\"...\"/&gt;</code>, and the type is inferred from the text: <code>value=\"1\"</code> is an integer, <code>\"1.0\"</code> a float, and <code>\"'1'\"</code> the string \"1\".<sup><a href=\"#ref-7\">[7]</a></sup>"
+ },
+ {
+  "id": "4-7#21",
+  "html": "You rarely need to type a parameter file from scratch. As the tutorial notes, \"YAML files can be easily exported from the current <code>ros2 param</code> list\". Tune a running node with <code>ros2 param set</code>, then save the result with <code>ros2 param dump</code>.<sup><a href=\"#ref-10\">[10]</a></sup><sup><a href=\"#ref-14\">[14]</a></sup>"
+ },
+ {
+  "id": "4-7#22",
+  "html": "In the <code>src</code> folder of your workspace, create a package with <code>ros2 pkg create --build-type ament_python --license Apache-2.0 turtle_launch_demo</code>. Next, add <code>launch/</code> and <code>config/</code> folders next to its <code>setup.py</code>, and add <code>&lt;exec_depend&gt;ros2launch&lt;/exec_depend&gt;</code> to its <code>package.xml</code>. (You can add these files to your lesson 4.6 package instead if you prefer.)"
+ }
+]

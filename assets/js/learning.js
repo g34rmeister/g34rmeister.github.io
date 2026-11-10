@@ -179,6 +179,7 @@
 
 		document.body.setAttribute('data-lesson-id', id);
 		addReadingTime(body, lesson.minutes);
+		addCitationBacklinks(body);
 
 		if (lesson.objectives && lesson.objectives.length) {
 			var box = el('div', { 'class': 'article-callout learning-objectives', role: 'note' }, [
@@ -259,6 +260,9 @@
 			hidden: ''
 		});
 
+		addNextReadingTime();
+		addLessonBottomBar(chapter);
+
 		if (footerNav) {
 			body.insertBefore(panel, footerNav);
 			body.insertBefore(slot, footerNav);
@@ -270,7 +274,7 @@
 		// The inline self-check needs this chapter's quiz file; the lesson reads fine without it if the file fails to load.
 		loadQuiz(chapter.id, function () {
 			var check = selfCheck(id);
-			if (check) body.insertBefore(check, panel);
+			if (check) placeSelfCheck(body, check, panel);
 			// Math first: auto-render only sees delimiters inside one text node, and the glossary splits text nodes.
 			renderMath(body, function () { glossaryPopups(body, lesson); done(); });
 		});
@@ -445,14 +449,66 @@
 		});
 	}
 
+	// Wikipedia-style "^" after each reference: one link back to every place the reference is cited.
+	function addCitationBacklinks(body) {
+		var uses = {};
+		Array.prototype.forEach.call(body.querySelectorAll('sup > a[href^="#ref-"]'), function (a) {
+			var n = a.getAttribute('href').slice(5), sup = a.parentNode;
+			(uses[n] = uses[n] || []).push(sup);
+			if (!sup.id) sup.id = 'cite-' + n + '-' + uses[n].length;
+		});
+		Object.keys(uses).forEach(function (n) {
+			var li = document.getElementById('ref-' + n);
+			if (!li || li.querySelector('.ref-backlinks')) return;
+			var wrap = el('span', { 'class': 'ref-backlinks' });
+			uses[n].forEach(function (sup, k) {
+				wrap.appendChild(el('a', {
+					href: '#' + sup.id,
+					'aria-label': 'Back to where reference ' + n + ' is cited' + (uses[n].length > 1 ? ' (use ' + (k + 1) + ' of ' + uses[n].length + ')' : ''),
+					title: 'Back to the text',
+					html: uses[n].length > 1 ? '&uarr;' + (k + 1) : '&uarr;'
+				}));
+			});
+			li.appendChild(wrap);
+		});
+	}
+
 	/* ---------- Lessons: "Check yourself" questions from the chapter quiz ---------- */
+
+	// Goes just before the References heading, so the quiz comes before the source list; without one it stays before the complete panel.
+	// The box arrives after the quiz file loads: keep a reader who is at or below the References where they were.
+	function placeSelfCheck(body, check, panel) {
+		var refs = null;
+		Array.prototype.forEach.call(body.querySelectorAll('h2'), function (h) {
+			if (!refs && /References\s*$/.test(h.textContent)) refs = h;
+		});
+		if (!refs) { body.insertBefore(check, panel); return; }
+		var before = refs.getBoundingClientRect().top;
+		body.insertBefore(check, refs);
+		// A page opened at #ref-N or #references may still be scrolling smoothly to it, so aim at the target again
+		// (instantly) instead of trusting a measured shift; otherwise keep the reader's place by the measured shift.
+		var target = null;
+		try { target = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch (e) { target = null; }
+		var atOrAfterRefs = target && (target === refs || (refs.compareDocumentPosition(target) & 4));
+		if (atOrAfterRefs && !placeSelfCheck.userScrolled) {
+			target.scrollIntoView({ behavior: 'instant', block: 'start' });
+		} else if (before < window.innerHeight) {
+			var shift = refs.getBoundingClientRect().top - before;
+			if (shift) window.scrollBy({ top: shift, behavior: 'instant' });
+		}
+		if (window.roboticsTocAdd) window.roboticsTocAdd(check, 'Check yourself', refs);
+	}
+
+	['wheel', 'touchmove', 'keydown'].forEach(function (ev) {
+		window.addEventListener(ev, function () { placeSelfCheck.userScrolled = true; }, { passive: true, once: true });
+	});
 
 	function selfCheck(id) {
 		var chapter = chapterOfLesson(id);
 		var qs = ((chapter && course.quizzes[chapter.id]) || []).filter(function (q) { return q.lesson === id; });
 		if (!qs.length) return null;
-		var box = el('section', { 'class': 'article-callout self-check', 'aria-label': 'Check yourself' }, [
-			el('div', { 'class': 'article-callout-header', html: '<i class="fas fa-clipboard-check" aria-hidden="true"></i> Check yourself' }),
+		var box = el('section', { 'class': 'article-callout self-check', id: 'check-yourself', 'aria-labelledby': 'check-yourself-title' }, [
+			el('h2', { 'class': 'article-callout-header', id: 'check-yourself-title', html: '<i class="fas fa-clipboard-check" aria-hidden="true"></i> Check yourself' }),
 			el('p', { text: 'Pick an answer to see if you got it. These questions also appear in the Chapter ' + chapter.id + ' quiz.' })
 		]);
 		qs.forEach(function (q, qi) {
@@ -702,27 +758,97 @@
 				start.setAttribute('href', lessonUrl(next.id));
 				start.innerHTML = '<i class="fas fa-forward" aria-hidden="true"></i> ';
 				start.appendChild(document.createTextNode('Continue: ' + next.id.replace('-', '.') + ' ' + next.title));
+				// Where that lesson sits, under the button: "Chapter 1 · 13 min · lesson 4 of 7".
+				var nch = chapterOfLesson(next.id);
+				if (nch) {
+					var pos = nch.lessons.map(function (l) { return l.id; }).indexOf(next.id) + 1;
+					start.parentNode.appendChild(el('p', {
+						'class': 'hub-resume-meta',
+						text: 'Chapter ' + nch.id + (next.minutes ? ' \u00b7 ' + next.minutes + ' min' : '') + ' \u00b7 lesson ' + pos + ' of ' + nch.lessons.length
+					}));
+				}
 			} else {
 				start.setAttribute('href', 'robotics-capstone.html');
 				start.innerHTML = '<i class="fas fa-flag-checkered" aria-hidden="true"></i> ';
 				start.appendChild(document.createTextNode('All lessons complete: try a capstone project'));
 			}
 		}
+		// The "where to start" cards are for first-time visitors; a returning reader gets the Continue button instead.
+		var startCards = document.querySelector('.hub-start');
+		if (startCards && started) startCards.hidden = true;
+
+		// Only the chapter in progress starts open (Chapter 1 for a new visitor), unless the link points into another one.
+		var upNext = nextLesson();
+		var openCh = upNext ? chapterOfLesson(upNext.id) : null;
+		var hashEl = null;
+		try { hashEl = location.hash.length > 1 ? document.getElementById(decodeURIComponent(location.hash.slice(1))) : null; } catch (e) { hashEl = null; }
 		course.chapters.forEach(function (ch) {
-			var kicker = document.querySelector('#chapter-' + ch.id + '-header .hltv-chapter-kicker');
+			var header = document.getElementById('chapter-' + ch.id + '-header');
+			var kicker = header && header.querySelector('.hltv-chapter-kicker');
 			if (!kicker) return;
 			var cp = chapterProgress(ch);
-			if (cp.done || loadProgress().quizzes[ch.id]) {
-				kicker.appendChild(el('span', {
-					'class': 'chapter-progress-pill',
-					text: cp.done + '/' + cp.total + ' done' + quizScoreText(ch.id)
-				}));
-			}
+			kicker.appendChild(el('span', {
+				'class': 'chapter-progress-pill',
+				text: (cp.done ? cp.done + ' of ' + cp.total + ' done' : cp.total + ' lessons') + quizScoreText(ch.id)
+			}));
+			var block = header.closest('.hltv-chapter-block');
+			if (!block || ch === openCh || (hashEl && block.contains(hashEl))) return;
+			block.classList.add('is-collapsed');
+			header.setAttribute('aria-expanded', 'false');
 		});
+	}
+
+	/* ---------- Lesson and chapter pages: reading time on the Next card, and a bottom bar on small screens ---------- */
+
+	function nextCard() {
+		var cards = document.querySelectorAll('.article-footer-nav a.article-nav-card');
+		return cards.length ? cards[cards.length - 1] : null;
+	}
+
+	function addNextReadingTime() {
+		var card = nextCard();
+		var m = card && (card.getAttribute('href') || '').match(/^robotics-(\d+-\d+)\.html$/);
+		var lesson = m && getLesson(m[1]);
+		var dir = card && card.querySelector('.article-nav-dir');
+		if (lesson && lesson.minutes && dir && !dir.querySelector('.article-nav-time')) {
+			dir.appendChild(el('span', { 'class': 'article-nav-time', text: ' \u00b7 ' + lesson.minutes + ' min' }));
+		}
+	}
+
+	// Below 1200px there is no side contents panel: a fixed bar gives the chapter, the contents list and the next page.
+	function addLessonBottomBar(chapter) {
+		if (document.querySelector('.lesson-bottom-bar')) return;
+		var card = nextCard();
+		var bar = el('nav', { 'class': 'lesson-bottom-bar', 'aria-label': 'Lesson shortcuts' }, [
+			el('a', { href: chapter.url, 'class': 'lesson-bottom-link', 'aria-label': 'Chapter ' + chapter.id + ' overview', html: '<span aria-hidden="true">&larr;</span> Ch. ' + chapter.id })
+		]);
+		// The contents list is built by robotics.js after this runs, so link to it and fall back to the top of the page.
+		var toc = el('a', { href: '#contents', 'class': 'lesson-bottom-link', text: 'Contents' });
+		toc.addEventListener('click', function (e) {
+			var list = document.getElementById('contents');
+			e.preventDefault();
+			if (!list) { window.scrollTo(0, 0); return; }
+			list.scrollIntoView({ block: 'start' });
+			list.setAttribute('tabindex', '-1');
+			list.focus({ preventScroll: true });
+		});
+		bar.appendChild(toc);
+		if (card) {
+			var target = card.querySelector('.article-nav-target');
+			var label = (target ? target.textContent : card.textContent).replace(/\s+/g, ' ').trim();
+			var next = el('a', { href: card.getAttribute('href'), 'class': 'lesson-bottom-next' }, [
+				el('span', { 'class': 'lesson-bottom-next-label', text: 'Next: ' + label }),
+				el('span', { 'aria-hidden': 'true', text: ' \u2192' })
+			]);
+			bar.appendChild(next);
+		}
+		document.body.appendChild(bar);
+		document.body.classList.add('has-bottom-bar');
 	}
 
 	function initChapter(chId) {
 		markLessonLinks();
+		addNextReadingTime();
 		var ch = getChapter(chId);
 		var cbody = document.querySelector('.robotics-article-body');
 		if (ch && cbody) {
