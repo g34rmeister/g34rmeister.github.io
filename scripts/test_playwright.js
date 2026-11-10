@@ -127,6 +127,24 @@ const viewports = [
       if (!r.box || !r.h2 || !r.before || !r.kp || !r.main || !r.side || !r.order) { console.error(`FAIL: ${name} check-yourself ${JSON.stringify(r)}`); totalErrors++; }
       else console.log(`PASS: ${name} Check yourself after Key points, before References, in both contents lists`);
     }
+    // Layout round: hub starts with one chapter open and start cards; lessons get a bottom bar below 1200px and a filled Next card.
+    {
+      const hp = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+      await hp.goto(base + 'robotics.html', { waitUntil: 'networkidle' });
+      const hub = await hp.evaluate(() => ({ open: document.querySelectorAll('.hltv-chapter-block:not(.is-collapsed)').length,
+        pills: document.querySelectorAll('.chapter-progress-pill').length, blocks: document.querySelectorAll('.hltv-chapter-block').length,
+        cards: document.querySelectorAll('.hub-start:not([hidden]) .hub-start-card').length }));
+      if (hub.open !== 1 || hub.pills !== hub.blocks || hub.cards !== 3) { console.error(`FAIL: hub layout ${JSON.stringify(hub)}`); totalErrors++; }
+      else console.log('PASS: hub opens one chapter, labels every chapter and shows three start cards to a new visitor');
+      await hp.setViewportSize({ width: 375, height: 760 });
+      await hp.goto(base + 'robotics-4-4.html', { waitUntil: 'networkidle' });
+      const bar = await hp.evaluate(() => { const b = document.querySelector('.lesson-bottom-bar'); const n = document.querySelector('.article-footer-nav a.article-nav-card:last-child');
+        return { shown: !!b && getComputedStyle(b).display !== 'none', links: b ? b.querySelectorAll('a').length : 0, next: b && b.querySelector('.lesson-bottom-next') ? b.querySelector('.lesson-bottom-next').getAttribute('href') : '',
+          time: !!(n && n.querySelector('.article-nav-time')), overflow: document.documentElement.scrollWidth - window.innerWidth }; });
+      if (!bar.shown || bar.links !== 3 || bar.next !== 'robotics-4-5.html' || !bar.time || bar.overflow > 0) { console.error(`FAIL: lesson bottom bar ${JSON.stringify(bar)}`); totalErrors++; }
+      else console.log('PASS: phone lesson has the bottom bar (chapter, contents, next) and a reading time on the Next card');
+      await hp.close();
+    }
     // Opened at #ref-3 the page must still show that reference after the box is inserted.
     await pg.goto(base + 'robotics-1-1.html#ref-3', { waitUntil: 'networkidle' });
     await pg.waitForSelector('#check-yourself');

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -298,13 +298,13 @@
                                     </tr>
                                     <tr>
                                         <td><strong>M5 Test evidence and report</strong></td>
-                                        <td>Measure success over many runs with randomised object poses and analyse failures.</td>
+                                        <td>Measure success over many runs with randomized object poses and analyze failures.</td>
                                         <td>Test table, failure analysis, final report (3 to 5 pages) and final reflection.</td>
                                     </tr>
                                 </tbody>
                             </table>
                             <p>
-                                Capstones described in the engineering education literature are organised in a similar way: students wrote specifications, planned milestones, gave oral presentations and wrote a final report.<sup><a href="#ref-7">[7]</a></sup>
+                                Capstones described in the engineering education literature are organized in a similar way: students wrote specifications, planned milestones, gave oral presentations and wrote a final report.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">05. M0: run the Panda demo and read the stage tree</h2>
@@ -329,7 +329,7 @@ ros2 launch moveit_task_constructor_demo run.launch.py exe:=pick_place_demo</cod
                                 The tutorial describes its environment launch file (<code>mtc_demo.launch.py</code> in <code>moveit2_tutorials</code>) as starting <code>move_group</code>, <code>ros2_control</code>, a static TF publisher, <code>robot_state_publisher</code> and RViz.<sup><a href="#ref-1">[1]</a></sup> In RViz, add the <strong>Motion Planning Tasks</strong> display and set its Task Solution Topic to <code>/solution</code>.<sup><a href="#ref-1">[1]</a></sup> You can now click on each stage to see its successful and failed solutions and their costs.<sup><a href="#ref-1">[1]</a></sup> Take your stage-tree screenshot here.
                             </p>
                             <p>
-                                <strong>How MTC thinks.</strong> MTC splits a task into stages of three kinds.<sup><a href="#ref-1">[1]</a></sup> <strong>Generators</strong> create states on their own (the current state, candidate grasp poses). <strong>Propagators</strong> take a neighbour's state and push it forward or backward ("move 10 cm up"). <strong>Connectors</strong> plan a free motion between two states that already exist. Stages can be grouped in containers: wrappers, serial containers and parallel containers.<sup><a href="#ref-1">[1]</a></sup> MTC also has three planners (solvers) a stage can use. These are a Cartesian planner for straight-line moves, joint interpolation for simple moves, and the full planning pipeline using OMPL (the Open Motion Planning Library, which provides sampling-based path planning algorithms). The tutorial uses joint interpolation for the simple hand move.<sup><a href="#ref-1">[1]</a></sup>
+                                <strong>How MTC thinks.</strong> MTC splits a task into stages of three kinds.<sup><a href="#ref-1">[1]</a></sup> <strong>Generators</strong> create states on their own (the current state, candidate grasp poses). <strong>Propagators</strong> take a neighbor's state and push it forward or backward ("move 10 cm up"). <strong>Connectors</strong> plan a free motion between two states that already exist. Stages can be grouped in containers: wrappers, serial containers and parallel containers.<sup><a href="#ref-1">[1]</a></sup> MTC also has three planners (solvers) a stage can use. These are a Cartesian planner for straight-line moves, joint interpolation for simple moves, and the full planning pipeline using OMPL (the Open Motion Planning Library, which provides sampling-based path planning algorithms). The tutorial uses joint interpolation for the simple hand move.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 The tutorial's task is this sequence of stages:<sup><a href="#ref-1">[1]</a></sup>
@@ -415,7 +415,7 @@ grasp-&gt;insert(std::move(stage));   // inside the "pick object" container</cod
                                 In the tutorial, <code>allowCollisions</code> uses the links of the hand group. Without a hand group, you must list the link names of your tool yourself. Read the tutorial's version of that stage carefully before you change it.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                <strong>Plan, then execute.</strong> At the end of the node, <code>task.plan(5)</code> searches until it has found 5 complete solutions, and <code>task.execute()</code> runs the chosen solution through an action server.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> On mock hardware the "execution" just copies commanded positions into the joint states, but the arm still moves in RViz. Watch the object: when it is attached, RViz draws it in a different colour and it moves with the tool. When it is detached, it stays at the place pose.
+                                <strong>Plan, then execute.</strong> At the end of the node, <code>task.plan(5)</code> searches until it has found 5 complete solutions, and <code>task.execute()</code> runs the chosen solution through an action server.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-3">[3]</a></sup> On mock hardware the "execution" just copies commanded positions into the joint states, but the arm still moves in RViz. Watch the object: when it is attached, RViz draws it in a different color and it moves with the tool. When it is detached, it stays at the place pose.
                             </p>
                             <p>
                                 Tune one thing at a time. The tutorial's approach and lift distances (0.1 to 0.15 m and 0.1 to 0.3 m) were set for the Panda hand.<sup><a href="#ref-1">[1]</a></sup> With a bare <code>tool0</code> you will probably need to change the grasp transform and approach direction. Log each change and its effect; that log feeds your failure analysis.
@@ -473,12 +473,12 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
                                     <tr>
                                         <td>T5</td>
                                         <td>Success rate</td>
-                                        <td>Over N runs (N of at least 20) with randomised object positions inside a stated area, you report successes and failures and classify every failure.</td>
+                                        <td>Over N runs (N of at least 20) with randomized object positions inside a stated area, you report successes and failures and classify every failure.</td>
                                     </tr>
                                 </tbody>
                             </table>
                             <p>
-                                T4 builds on a behaviour the tutorial itself points out: moving the object out of reach makes planning fail.<sup><a href="#ref-1">[1]</a></sup> Your node should check the result of <code>plan()</code> and report it. For T5, randomise the object's x and y within a rectangle on the table and log the seed, so that a failing case can be repeated exactly. For each failure, note which stage failed. The Motion Planning Tasks panel shows failed solutions per stage, and the tutorial has a section on the debugging information MTC prints to the terminal.<sup><a href="#ref-1">[1]</a></sup> Typical classes are "no IK solution", "connect failed" and "table collision".
+                                T4 builds on a behavior the tutorial itself points out: moving the object out of reach makes planning fail.<sup><a href="#ref-1">[1]</a></sup> Your node should check the result of <code>plan()</code> and report it. For T5, randomize the object's x and y within a rectangle on the table and log the seed, so that a failing case can be repeated exactly. For each failure, note which stage failed. The Motion Planning Tasks panel shows failed solutions per stage, and the tutorial has a section on the debugging information MTC prints to the terminal.<sup><a href="#ref-1">[1]</a></sup> Typical classes are "no IK solution", "connect failed" and "table collision".
                             </p>
 
                             <h2 class="article-section-title">10. Common problems</h2>
@@ -525,7 +525,7 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
                                     <tr>
                                         <td><strong>Test evidence</strong></td>
                                         <td>No test results.</td>
-                                        <td>A few runs, with no randomisation or failure classes.</td>
+                                        <td>A few runs, with no randomization or failure classes.</td>
                                         <td>T1 to T5 done, with N of at least 20 and every failure classified by stage.</td>
                                         <td>As 3, plus a change made in response to the failure analysis and re-tested.</td>
                                     </tr>
@@ -569,7 +569,7 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">A real gripper model.</span> Add a gripper to the UR description and SRDF (Option B) and restore the open and close stages.<sup><a href="#ref-8">[8]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Gazebo physics.</span> Make the part physically move with the tool in Gazebo, and document how you did it.</li>
-                                <li class="article-spec-item"><span class="spec-label">URSim.</span> Run the driver against URSim instead of mock hardware, which from the driver's point of view is equivalent, and compare the behaviour.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">URSim.</span> Run the driver against URSim instead of mock hardware, which from the driver's point of view is equivalent, and compare the behavior.<sup><a href="#ref-4">[4]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Choose by cost.</span> Plan more than 5 solutions and compare the costs shown in the stage tree before executing the cheapest.<sup><a href="#ref-1">[1]</a></sup></li>
                             </ul>
 
@@ -606,11 +606,11 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-10-1.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">10.1 Capstone: Build a Simulated Work Cell</span>
                                 </a>
                                 <a href="robotics-10-3.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">10.3 Capstone: Speed-Controlled Wheel</span>
                                 </a>
                             </div>
@@ -637,8 +637,8 @@ ros2 launch ur_simulation_gz ur_sim_moveit.launch.py</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
 
     </body>

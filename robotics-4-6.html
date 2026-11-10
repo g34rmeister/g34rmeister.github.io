@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -346,7 +346,7 @@ setup(
 &lt;exec_depend&gt;geometry_msgs&lt;/exec_depend&gt;
 &lt;exec_depend&gt;turtlesim_msgs&lt;/exec_depend&gt;</code></pre>
                             <p>
-                                Why bother, if the code already imports these modules? Because <strong>rosdep</strong> reads these lines. rosdep is "a meta-package manager": it looks up each key from <code>package.xml</code> in the <code>rosdistro</code> index and installs the matching system package through apt or dnf. Released ROS packages use their package name as the key.<sup><a href="#ref-11">[11]</a></sup> Initialise it once per machine, then run it from the workspace root before every build of new code:<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                                Why bother, if the code already imports these modules? Because <strong>rosdep</strong> reads these lines. rosdep is "a meta-package manager": it looks up each key from <code>package.xml</code> in the <code>rosdistro</code> index and installs the matching system package through apt or dnf. Released ROS packages use their package name as the key.<sup><a href="#ref-11">[11]</a></sup> Initialize it once per machine, then run it from the workspace root before every build of new code:<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <pre class="article-code"><code>sudo rosdep init
 rosdep update
@@ -403,7 +403,7 @@ if __name__ == '__main__':
                                 <li class="article-spec-item"><span class="spec-label">Walls are hard limits:</span> Positions are clamped to the canvas, and Turtlesim logs "Oh no! I hit the wall!" when the turtle reaches the edge.<sup><a href="#ref-14">[14]</a></sup></li>
                             </ul>
                             <p>
-                                The <code>Pose</code> message has five <code>float32</code> fields: <code>x</code>, <code>y</code>, <code>theta</code>, <code>linear_velocity</code> and <code>angular_velocity</code>.<sup><a href="#ref-15">[15]</a></sup> In the published pose, <code>y</code> points up the screen and <code>theta</code> is the heading in radians.<sup><a href="#ref-14">[14]</a></sup> The first turtle spawns at <code>x=5.544445, y=5.544445, theta=0.0</code>, near the centre and facing to the right.<sup><a href="#ref-16">[16]</a></sup> Turtlesim's topics use a reliable QoS profile that keeps the last 7 messages.<sup><a href="#ref-14">[14]</a></sup>
+                                The <code>Pose</code> message has five <code>float32</code> fields: <code>x</code>, <code>y</code>, <code>theta</code>, <code>linear_velocity</code> and <code>angular_velocity</code>.<sup><a href="#ref-15">[15]</a></sup> In the published pose, <code>y</code> points up the screen and <code>theta</code> is the heading in radians.<sup><a href="#ref-14">[14]</a></sup> The first turtle spawns at <code>x=5.544445, y=5.544445, theta=0.0</code>, near the center and facing to the right.<sup><a href="#ref-16">[16]</a></sup> Turtlesim's topics use a reliable QoS profile that keeps the last 7 messages.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fas fa-exclamation-triangle"></i> Old tutorials will break: turtlesim_msgs</div>
@@ -475,7 +475,7 @@ def main(args=None):
 if __name__ == '__main__':
     main()</code></pre>
                             <p>
-                                Each piece follows the tutorial pattern: the publisher and timer are created in <code>__init__</code>, all the behaviour lives in the timer callback, and <code>main</code> uses the <code>with rclpy.init(...)</code> block.<sup><a href="#ref-10">[10]</a></sup> The callback first checks for a state change and then builds the message, so the command sent on each tick always matches the current state.
+                                Each piece follows the tutorial pattern: the publisher and timer are created in <code>__init__</code>, all the behavior lives in the timer callback, and <code>main</code> uses the <code>with rclpy.init(...)</code> block.<sup><a href="#ref-10">[10]</a></sup> The callback first checks for a state change and then builds the message, so the command sent on each tick always matches the current state.
                             </p>
                             <p>
                                 Do not expect a perfect square. The timer only checks the clock every 0.1 s, so a turn that should last 1.57 s actually lasts until the next tick after that, and Turtlesim integrates the motion in its own small time steps.<sup><a href="#ref-14">[14]</a></sup> These small errors add up from corner to corner, and the last side will not land exactly on the start point. That drift shows the limit of open-loop control, and it is why Section 10 adds feedback.
@@ -540,7 +540,7 @@ ros2 run turtle_square square_driver</code></pre>
                                 <figcaption>The workspace from this lesson after a build, and the order of the steps that build and run it. Build and run in separate terminals: the run terminal sources the underlay and then the overlay.</figcaption>
                             </figure>
                             <p>
-                                The turtle should trace four sides and stop, and Terminal 2 should log "Finished side 1" through "Finished side 4". In a third terminal you can watch it work with <code>ros2 topic echo /turtle1/pose</code>, check who is connected with <code>ros2 topic info /turtle1/cmd_vel</code>, or open <code>rqt_graph</code> from lesson 4.5. To clear the drawing and put the turtle back in the centre, call <code>ros2 service call /reset std_srvs/srv/Empty</code>; if that type is rejected, check it with <code>ros2 service type /reset</code>.<sup><a href="#ref-14">[14]</a></sup>
+                                The turtle should trace four sides and stop, and Terminal 2 should log "Finished side 1" through "Finished side 4". In a third terminal you can watch it work with <code>ros2 topic echo /turtle1/pose</code>, check who is connected with <code>ros2 topic info /turtle1/cmd_vel</code>, or open <code>rqt_graph</code> from lesson 4.5. To clear the drawing and put the turtle back in the center, call <code>ros2 service call /reset std_srvs/srv/Empty</code>; if that type is rejected, check it with <code>ros2 service type /reset</code>.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
                                 When something goes wrong, the message usually points to one of a small number of causes:
@@ -623,11 +623,11 @@ ros2 run turtle_square square_driver</code></pre>
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-4-5.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">4.5 ROS Tools</span>
                                 </a>
                                 <a href="robotics-4-7.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">4.7 Launch Files and Parameters</span>
                                 </a>
                             </div>
@@ -654,8 +654,8 @@ ros2 run turtle_square square_driver</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 

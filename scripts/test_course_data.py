@@ -10,7 +10,7 @@ course_js = (root / 'assets/js/course-data.js').read_text(encoding='utf-8')
 
 # Extract lessons
 # Simple regex to get lesson entries
-lesson_matches = re.finditer(r'\{\s*"id":\s*"(\d+-\d+)",\s*"minutes":\s*(\d+),\s*"title":\s*"([^"]+)",\s*"objectives":\s*\[(.*?)\],\s*"keyTerms":\s*\[(.*?)\]\s*\}', course_js, re.DOTALL)
+lesson_matches = re.finditer(r'\{\s*"id":\s*"(\d+-\d+)",\s*"minutes":\s*(\d+),\s*"title":\s*"([^"]+)",\s*"objectives":\s*\[(.*?)\],\s*"keyTerms":\s*\[(.*?)\]', course_js, re.DOTALL)
 
 lessons = {}
 all_key_terms = set()

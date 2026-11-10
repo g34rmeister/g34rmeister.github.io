@@ -1586,3 +1586,20 @@ input[type="range"] { min-height: 24px; }
 	html { scroll-padding-bottom: 70px; }
 }
 @media (forced-colors: active) { .lesson-bottom-next { border: 2px solid LinkText; } }
+
+/* Visual polish (2026-11-10) */
+/* Quiz questions: keep a wrapping question inside its box instead of across the top border */
+.quiz-question legend { float: left; width: 100%; box-sizing: border-box; padding: 0; margin: 0 0 6px; }
+.quiz-question legend + * { clear: both; }
+/* With the side contents panel showing, the in-page copy only pushes the lesson down */
+@media (min-width: 1200px) { nav.wp-toc:not(.wp-toc-side) { display: none; } }
+/* Breadcrumb: the slash travels with the item after it, so a wrapped line never ends in "/" */
+.article-breadcrumb-divider { display: none; }
+.article-breadcrumb-bar > :not(.article-breadcrumb-divider):not(:first-child)::before { content: '/'; content: '/' / ''; display: inline-block; margin: 0 8px 0 2px; color: var(--wp-text-muted); text-decoration: none; }
+/* Hub: stacked meta chips on phones, room above the start cards, one entry point for new visitors */
+@media (max-width: 600px) { .thesis-meta-chips { flex-direction: column; align-items: flex-start; gap: 0; } .thesis-chip + .thesis-chip::before { content: none; } }
+.hub-start { margin-top: 4px; }
+.thesis-masthead-actions:has(+ .hub-start:not([hidden])) { display: none; }
+.article-meta-item.chapter-progress-pill::before { content: none; }
+.article-meta-item.chapter-progress-pill { margin-left: 10px; }
+@media (max-width: 1199px) { .lesson-bottom-next { flex: 0 1 420px; margin-left: auto; gap: 6px; } }

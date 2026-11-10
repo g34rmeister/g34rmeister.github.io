@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -230,7 +230,7 @@
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">State:</span> A distinct operating mode or behavior the robot can be in. While in a state, the robot executes specific actions. For example, in <code>FOLLOW_LINE</code>, the robot adjusts the speeds of its two motors based on the line reflectance sensors. The system remains in exactly one state at a time; in a state diagram each state is a node of the graph.<sup><a href="#ref-2">[2]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Event:</span> An external or internal stimulus detected by the system. Events originate from hardware sensors (ultrasonic distance drops below 20 cm), timer triggers (elapsed time exceeds 600 ms), or user inputs (digital emergency stop button pressed). In Harel's notation, each transition arrow is labelled with the event that triggers it.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Event:</span> An external or internal stimulus detected by the system. Events originate from hardware sensors (ultrasonic distance drops below 20 cm), timer triggers (elapsed time exceeds 600 ms), or user inputs (digital emergency stop button pressed). In Harel's notation, each transition arrow is labeled with the event that triggers it.<sup><a href="#ref-2">[2]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Guard:</span> A Boolean conditional expression that must evaluate to true for an event to trigger a transition. For example, the event "turn completed" may be guarded by the condition <code>[path ahead is clear]</code>. If the guard evaluates to false, the transition is inhibited. Harel writes the guard as a condition in parentheses next to the event; the transition fires only if the condition holds when the event occurs.<sup><a href="#ref-2">[2]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Transition:</span> The deterministic move from the current (source) state to a target state, triggered when an event occurs and its associated guard evaluates to true.<sup><a href="#ref-2">[2]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Action:</span> Executable code invoked by the state machine. In classic automata theory, state machines execute actions either during states (a <strong>Moore machine</strong>) or during state transitions (a <strong>Mealy machine</strong>). Harel's statecharts allow both, and also allow actions on entering and on leaving a state.<sup><a href="#ref-2">[2]</a></sup> In embedded robot code it is common to split a state's work into entry actions (run once on arrival, such as resetting a timer), execution actions (run on every pass of the control loop), and exit actions (run once on leaving, such as turning off an indicator LED).</li>
@@ -440,10 +440,10 @@ void loop() {
                                 The following five pitfalls are the lesson's own design guidance, drawn from the example above:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Blocking Delays:</span> Introducing <code>delay()</code> calls inside state branches blinds the robot to sensory events and user e-stops, because nothing else in the program runs during the pause.<sup><a href="#ref-4">[4]</a></sup> Every timed behavior should rely on <code>millis()</code> delta comparisons.</li>
+                                <li class="article-spec-item"><span class="spec-label">Blocking Delays:</span> Introducing <code>delay()</code> calls inside state branches blinds the robot to sensory events and user emergency stops, because nothing else in the program runs during the pause.<sup><a href="#ref-4">[4]</a></sup> Every timed behavior should rely on <code>millis()</code> delta comparisons.</li>
                                 <li class="article-spec-item"><span class="spec-label">Neglected Entry Actions:</span> If an engineer changes <code>state = SEARCH;</code> directly in multiple places without updating <code>stateStart</code>, the state timer operates with stale timestamps, causing premature or delayed timeouts. Routing every transition through <code>enterState()</code> ensures the entry action runs the same way every time.</li>
                                 <li class="article-spec-item"><span class="spec-label">Chattering and State Flapping:</span> A sensor value may hover directly on a decision boundary, such as distance oscillating between 19.9 cm and 20.1 cm. When that happens, the FSM can oscillate between <code>FOLLOW_LINE</code> and <code>AVOID_OBSTACLE</code> on successive loop passes. This is resolved by adding <strong>hysteresis</strong>: trigger obstacle avoidance at 20 cm, but require the path to clear 25 cm before exiting.</li>
-                                <li class="article-spec-item"><span class="spec-label">Terminal Traps:</span> An unhandled exception or missing transition row in the state table can strand a robot in an active state indefinitely. Every state must have at least one valid transition path, and every active state must transition to <code>STOP</code> upon an e-stop event or safety timeout.</li>
+                                <li class="article-spec-item"><span class="spec-label">Terminal Traps:</span> An unhandled exception or missing transition row in the state table can strand a robot in an active state indefinitely. Every state must have at least one valid transition path, and every active state must transition to <code>STOP</code> upon an emergency stop event or safety timeout.</li>
                                 <li class="article-spec-item"><span class="spec-label">Duplicate Output Actuation:</span> Writing motor speeds inside scattered conditional checks creates conflicting actuator commands within the same cycle. A well-structured FSM updates actuator outputs only once per pass based on the active state.</li>
                             </ul>
 
@@ -601,11 +601,11 @@ void loop() {
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-6-6.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">6.6 Odometry</span>
                                 </a>
                                 <a href="robotics-6-8.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">6.8 Intro to Kalman Filters</span>
                                 </a>
                             </div>
@@ -632,8 +632,8 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
 

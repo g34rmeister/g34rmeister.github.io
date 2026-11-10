@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -296,14 +296,14 @@
                             In standard Ethernet, a cable loop creates a broadcast storm: broadcast packets circulate endlessly and disable the network. To use ring topologies safely, industrial protocols implement media redundancy management. Device Level Ring (DLR) is an EtherNet/IP protocol defined by ODVA.<sup><a href="#ref-5">[5]</a></sup> In a DLR network, one device is configured as the active ring supervisor, while the remaining devices act as ring nodes. The active ring supervisor transmits beacon frames through both of its ring ports to monitor network health.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
                         <p>
-                            During normal operation, one of the supervisor's ring ports is blocked, so the ring behaves like a line with no loop.<sup><a href="#ref-5">[5]</a></sup> It continuously sends beacon frames out of both ports to confirm ring continuity. If a cable breaks or a node loses power, beacon frames stop arriving at the opposite supervisor port. The supervisor then unblocks its blocked port so traffic can reach every node through the remaining path.
+                            During normal operation, one of the supervisor's ring ports is blocked, so the ring behaves like a line with no loop.<sup><a href="#ref-5">[5]</a></sup> The supervisor continuously sends beacon frames out of both ports to confirm ring continuity. If a cable breaks or a node loses power, beacon frames stop arriving at the opposite supervisor port. The supervisor then unblocks its blocked port so traffic can reach every node through the remaining path.
                         </p>
                         <p>
                             Recovery must be fast so that a damaged cable does not stop the automated process. A copper Device Level Ring network achieves a worst-case recovery time of 2890 µs using default beacon settings.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
 
                         <div data-widget="dlr-ring-recovery">
-                            <p class="widget-note">The Device Level Ring recovery simulator needs JavaScript. With it on, you can break a ring segment to observe beacon loss and automatic unblocking restoring network path.</p>
+                            <p class="widget-note">The Device Level Ring recovery simulator needs JavaScript. With it on, you can break a ring segment to observe beacon loss and automatic unblocking restoring the network path.</p>
                         </div>
                         <p>
                             Keeping that recovery speed means limiting network size. Rockwell Automation recommends limiting a Device Level Ring network to 50 or fewer nodes to avoid degraded recovery time and network performance.<sup><a href="#ref-5">[5]</a></sup> Too many ring nodes make multiple faults more likely and slow down fault detection and recovery, so larger installations are split into separate rings.<sup><a href="#ref-5">[5]</a></sup>
@@ -319,7 +319,7 @@
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>You have two proximity sensors, one NPN and one PNP. For each, say whether its output switches the signal line to supply common or to positive supply, and whether it needs a sinking or a sourcing PLC input.</li>
+                                    <li>You have two proximity sensors, one NPN and one PNP. For each, say whether its output switches the signal line to supply common or to positive supply. State whether it needs a sinking or a sourcing PLC input.</li>
                                     <li>An input module has eight inputs that share one common terminal. Can you wire four NPN and four PNP sensors to it? Use the grouping rule from section 02.</li>
                                     <li>A cell has 40 sensors, each wired back to the PLC with its own cable. In one sentence, say what a fieldbus changes, then give one piece of data that suits cyclic exchange and one that suits acyclic exchange.</li>
                                 </ol>
@@ -338,11 +338,11 @@
                         <!-- Footer Navigation -->
                         <div class="article-footer-nav">
                                 <a href="robotics-networks.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">Chapter 8 overview</span>
                                 </a>
                                 <a href="robotics-8-2.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">8.2 Industrial Ethernet Protocols</span>
                                 </a>
                             </div>
@@ -369,8 +369,8 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-        <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+        <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
         <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
         <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 

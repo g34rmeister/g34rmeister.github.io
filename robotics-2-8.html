@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -222,7 +222,7 @@
                                 <strong>Vision-guided robotics</strong> handles these cases. A camera takes a picture, vision software finds the part and reports where it is, and the robot program adjusts its taught points to match. The motion instructions stay the same as in 2.6. What changes is the frame the points are expressed in: it now moves with the part.
                             </p>
                             <p>
-                                How a camera works as a sensor is covered in <a href="robotics-6-5.html">6.5 Sensors for Robots</a>, so it is not repeated here. This lesson covers the robot side: which kind of vision the job needs and where the camera goes. It also explains how to calibrate it so that a pixel becomes a millimetre in the robot's world, and how the vision result becomes a correct robot move.
+                                How a camera works as a sensor is covered in <a href="robotics-6-5.html">6.5 Sensors for Robots</a>, so it is not repeated here. This lesson covers the robot side: which kind of vision the job needs and where the camera goes. It also explains how to calibrate it so that a pixel becomes a millimeter in the robot's world, and how the vision result becomes a correct robot move.
                             </p>
 
                             <h2 class="article-section-title">02. 2D, 2.5D and 3D guidance</h2>
@@ -287,13 +287,13 @@
                                 A raw camera image is not a measurement. Two things must be calibrated first: the camera itself, called <strong>intrinsic calibration</strong>, and where the camera sits relative to the robot. An easy way to remember the split: intrinsic calibration fixes the <em>lens</em>, and hand-eye calibration fixes <em>where the camera is</em>.
                             </p>
                             <p>
-                                OpenCV's calibration tutorial explains why the first step is needed. Inexpensive lenses introduce "significant distortion" into images. The distortion is constant for a given lens, so it can be measured once and corrected. Calibration also gives the relation between pixels and real-world units such as millimetres.<sup><a href="#ref-7">[7]</a></sup> The camera's basic geometry is summarized in a 3&times;3 <strong>camera matrix</strong>:<sup><a href="#ref-7">[7]</a></sup>
+                                OpenCV's calibration tutorial explains why the first step is needed. Inexpensive lenses introduce "significant distortion" into images. The distortion is constant for a given lens, so it can be measured once and corrected. Calibration also gives the relation between pixels and real-world units such as millimeters.<sup><a href="#ref-7">[7]</a></sup> The camera's basic geometry is summarized in a 3&times;3 <strong>camera matrix</strong>:<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <pre class="article-code"><code>        | fx   0   cx |
     K = |  0  fy   cy |
         |  0   0    1 |</code></pre>
                             <p>
-                                Here <code>fx</code> and <code>fy</code> are the focal lengths in pixels, and <code>(cx, cy)</code> is the optical centre of the image in pixels.<sup><a href="#ref-7">[7]</a></sup> On top of this ideal pinhole model, OpenCV models <strong>lens distortion</strong> in two parts. <em>Radial</em> distortion gives the "barrel" or "fish-eye" look. For a point at distance <code>r</code> from the centre, <code>x_d = x(1 + k1&middot;r&sup2; + k2&middot;r&#8308; + k3&middot;r&#8310;)</code>, and the same for <code>y</code>. <em>Tangential</em> distortion appears when the lens is not exactly parallel to the sensor and adds <code>x_d = x + [2&middot;p1&middot;x&middot;y + p2&middot;(r&sup2; + 2x&sup2;)]</code>. That makes five distortion coefficients: <code>k1, k2, p1, p2, k3</code>.<sup><a href="#ref-7">[7]</a></sup>
+                                Here <code>fx</code> and <code>fy</code> are the focal lengths in pixels, and <code>(cx, cy)</code> is the optical center of the image in pixels.<sup><a href="#ref-7">[7]</a></sup> On top of this ideal pinhole model, OpenCV models <strong>lens distortion</strong> in two parts. <em>Radial</em> distortion gives the "barrel" or "fish-eye" look. For a point at distance <code>r</code> from the center, <code>x_d = x(1 + k1&middot;r&sup2; + k2&middot;r&#8308; + k3&middot;r&#8310;)</code>, and the same for <code>y</code>. <em>Tangential</em> distortion appears when the lens is not exactly parallel to the sensor and adds <code>x_d = x + [2&middot;p1&middot;x&middot;y + p2&middot;(r&sup2; + 2x&sup2;)]</code>. That makes five distortion coefficients: <code>k1, k2, p1, p2, k3</code>.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <p>
                                 You find these numbers by showing the camera a pattern of known geometry and letting software solve for them. OpenCV supports a chessboard, a ChArUco board (which combines a chessboard pattern with ArUco fiducial markers for improved corner detection accuracy), and symmetric or asymmetric circle grids. Two chessboard pictures are enough in theory, but the tutorial warns that "you will probably need at least 10 good snapshots of the input pattern in different positions".<sup><a href="#ref-7">[7]</a></sup> Tilt the board, move it into the corners of the image and vary the distance, so the distortion near the edges is actually measured.
@@ -323,7 +323,7 @@
 
                             <h2 class="article-section-title">06. The industrial shortcut for 2D: calibrate to a user frame</h2>
                             <p>
-                                For planar 2D guidance, vendor tools usually skip the general AX = XB solution. Instead, the camera is calibrated directly to a robot <strong>user frame</strong> (an ABB work object, see <a href="robotics-2-6.html">2.6</a>) taught on a calibration grid. When the camera and the robot both know the same grid, an image position converts straight into millimetres in that frame.
+                                For planar 2D guidance, vendor tools usually skip the general AX = XB solution. Instead, the camera is calibrated directly to a robot <strong>user frame</strong> (an ABB work object, see <a href="robotics-2-6.html">2.6</a>) taught on a calibration grid. When the camera and the robot both know the same grid, an image position converts straight into millimeters in that frame.
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">FANUC iRVision:</span> FANUC's training material describes grid-based camera calibration, and its related training videos cover the GRID_UFRAME and GRID_UTOOL utilities that work with the calibration grid.<sup><a href="#ref-11">[11]</a></sup></li>
@@ -341,7 +341,7 @@
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">ABB:</span> a work object has a user frame and an object frame. With Integrated Vision you teach only the user frame, and the program copies the pose found by the camera into the object frame at run time. Targets taught in that work object then follow the part.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-12">[12]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">FANUC:</span> FANUC applies the vision result as a single offset that shifts the taught points of the part.<sup><a href="#ref-15">[15]</a></sup> FANUC advises a <em>fixed frame offset</em> when picking, because the part has moved on the table. It advises a <em>tool offset</em> when placing, because the part has shifted in the gripper.<sup><a href="#ref-16">[16]</a></sup> To re-teach a point that already runs with an offset, the "subtract offset" option removes the current offset so the point is stored in the unshifted frame.<sup><a href="#ref-15">[15]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Universal Robots:</span> a camera offset in millimetres and degrees is turned into a pose and applied to a reference point with the URScript function <code>pose_trans</code>.<sup><a href="#ref-17">[17]</a></sup> Alternatively, points are defined relative to a feature plane, and the vision result moves the feature.<sup><a href="#ref-18">[18]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Universal Robots:</span> a camera offset in millimeters and degrees is turned into a pose and applied to a reference point with the URScript function <code>pose_trans</code>.<sup><a href="#ref-17">[17]</a></sup> Alternatively, points are defined relative to a feature plane, and the vision result moves the feature.<sup><a href="#ref-18">[18]</a></sup></li>
                             </ul>
                             <p>
                                 All of these work because a shift is a full rigid transform: a translation <em>and</em> a rotation. If the part turns, the pick point must swing around with it, like the end of a lever. A simple "add the offset" calculation gets this wrong, as the next section shows.
@@ -349,7 +349,7 @@
 
                             <h2 class="article-section-title">08. The math of a frame shift, worked through</h2>
                             <p>
-                                A planar pose, a position <code>(x, y)</code> and a rotation <code>&theta;</code> about Z, can be written as a 3&times;3 homogeneous transform. The numbers below were computed for this lesson and checked numerically; they are not from a vendor manual. Positions are in millimetres, in the robot's user frame.
+                                A planar pose, a position <code>(x, y)</code> and a rotation <code>&theta;</code> about Z, can be written as a 3&times;3 homogeneous transform. The numbers below were computed for this lesson and checked numerically; they are not from a vendor manual. Positions are in millimeters, in the robot's user frame.
                             </p>
                             <pre class="article-code"><code>              | cos&theta;  -sin&theta;   x |
     T(x,y,&theta;) = | sin&theta;   cos&theta;   y |
@@ -406,15 +406,15 @@ print("P_new:", pose(P_new))       # (223.66, 145.0, 30.0)
 T_off = mul(T_found, inv(T_ref))   # the frame offset itself
 print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
                             <p>
-                                If your vision tool reports in pixels, first convert the result into the user frame through the calibration. This uses the millimetres-per-pixel scale plus the camera-to-frame transform. Only then apply the frame shift.
+                                If your vision tool reports in pixels, first convert the result into the user frame through the calibration. This uses the millimeters-per-pixel scale plus the camera-to-frame transform. Only then apply the frame shift.
                             </p>
 
                             <h2 class="article-section-title">09. How accurate can it be? Pixels, calibration and light</h2>
                             <p>
-                                Estimate the error before you buy a camera. Start with resolution: the size of one pixel on the part is the field of view (FOV) divided by the number of pixels across it. The Imaging Source gives the example of a 1920-pixel sensor viewing 200 mm, which is 9.6 pixels per millimetre, and a rule of thumb of 2 to 3 pixels across a feature.<sup><a href="#ref-19">[19]</a></sup> Machine-vision supplier 1stVision says at least 2 pixels are needed to find an edge when contrast is excellent, and 3 to 4 pixels is more robust. Its example: to resolve a 0.25 mm feature with 4 pixels, you need 0.0625 mm per pixel, so a 40 mm FOV needs 640 pixels. Those figures assume the lens is not the limit, and they depend on lighting, optics and algorithm.<sup><a href="#ref-20">[20]</a></sup>
+                                Estimate the error before you buy a camera. Start with resolution: the size of one pixel on the part is the field of view (FOV) divided by the number of pixels across it. The Imaging Source gives the example of a 1920-pixel sensor viewing 200 mm, which is 9.6 pixels per millimeter, and a rule of thumb of 2 to 3 pixels across a feature.<sup><a href="#ref-19">[19]</a></sup> Machine-vision supplier 1stVision says at least 2 pixels are needed to find an edge when contrast is excellent, and 3 to 4 pixels is more robust. Its example: to resolve a 0.25 mm feature with 4 pixels, you need 0.0625 mm per pixel, so a 40 mm FOV needs 640 pixels. Those figures assume the lens is not the limit, and they depend on lighting, optics and algorithm.<sup><a href="#ref-20">[20]</a></sup>
                             </p>
                             <p>
-                                Apply that to a typical cell. A camera 1280 pixels wide viewing a 320 mm field gives 4 pixels per millimetre, or 0.25 mm per pixel. With the 2 to 4 pixel rule, the smallest feature it can locate reliably is about 0.5 to 1 mm. Halve the FOV to 160 mm and each pixel covers half as much. That is why a wrist camera that moves closer can see finer detail than a fixed camera that must see the whole table.
+                                Apply that to a typical cell. A camera 1280 pixels wide viewing a 320 mm field gives 4 pixels per millimeter, or 0.25 mm per pixel. With the 2 to 4 pixel rule, the smallest feature it can locate reliably is about 0.5 to 1 mm. Halve the FOV to 160 mm and each pixel covers half as much. That is why a wrist camera that moves closer can see finer detail than a fixed camera that must see the whole table.
                             </p>
                             <p>
                                 Rotation errors grow with distance, for the same lever-arm reason as in section 08. A 0.5&deg; angle error moves a pick point 100 mm from the part's reference point by 100 &times; sin(0.5&deg;), about <strong>0.87 mm</strong>. A badly taught user frame or hand-eye calibration behaves the same way: the error grows as the part rotates more and sits farther from the frame origin. The other contributors stack on top:
@@ -422,7 +422,7 @@ print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Lens calibration:</span> uncorrected distortion makes positions near the image edges wrong. Sub-pixel corner refinement and a low re-projection error are the checks.<sup><a href="#ref-7">[7]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Camera-to-robot calibration:</span> users of wrist cameras report parts ending up "a few mm off" when this step is not done well.<sup><a href="#ref-21">[21]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Part height:</span> in 2D, the distance from the camera to the part enters the conversion from pixels to millimetres. Because of this, a part taller or shorter than the set-up height is measured wrongly. FANUC's part Z height setting accounts for this distance.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Part height:</span> in 2D, the distance from the camera to the part enters the conversion from pixels to millimeters. Because of this, a part taller or shorter than the setup height is measured wrongly. FANUC's part Z height setting accounts for this distance.<sup><a href="#ref-4">[4]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Robot repeatability:</span> the robot adds its own small error to every move, and a wrist camera adds it at both the snapshot position and the pick.</li>
                                 <li class="article-spec-item"><span class="spec-label">Lighting and contrast:</span> these decide whether the part is found reliably at all, and low contrast is a known weakness of 2D vision.<sup><a href="#ref-2">[2]</a></sup> Changing daylight or reflections can make detections jitter from image to image.</li>
                             </ul>
@@ -486,11 +486,11 @@ print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-2-7.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">2.7 Program Structure and Error Handling</span>
                                 </a>
                                 <a href="robotics-oss.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-dir">Next chapter &rarr;</span>
                                     <span class="article-nav-target">Chapter 3: How to Contribute to Open Source</span>
                                 </a>
                             </div>
@@ -517,8 +517,8 @@ print("T_off:", pose(T_off))       # (116.795, -89.904, 30.0)</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -250,7 +250,7 @@
                                 To draw data from several sensors in the same 3D view, RViz2 uses the tf transform system. It converts each piece of data from the coordinate frame it arrived in into a common reference frame.<sup><a href="#ref-1">[1]</a></sup> In ROS 2 this is the <strong>tf2</strong> library, which keeps track of multiple coordinate frames over time.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <p>
-                                On a real robot, sensors are mounted in different places. As an example of our own: a front lidar might sit 30 cm ahead of and 15 cm above the robot's wheel centre. A depth camera sits on a mast. Suppose the lidar reports an obstacle at (x = 1.2 m, y = 0.5 m) in its own frame. The navigation software needs to know where that obstacle is relative to the robot's base or to the map.
+                                On a real robot, sensors are mounted in different places. As an example of our own: a front lidar might sit 30 cm ahead of and 15 cm above the robot's wheel center. A depth camera sits on a mast. Suppose the lidar reports an obstacle at (x = 1.2 m, y = 0.5 m) in its own frame. The navigation software needs to know where that obstacle is relative to the robot's base or to the map.
                             </p>
                             <p>
                                 tf2 stores the relationships between frames as a tree, buffered in time, and can transform points and vectors between any two frames at any desired time.<sup><a href="#ref-7">[7]</a></sup> In RViz the most important setting is the <strong>Fixed Frame</strong>, the frame treated as the "world": usually <code>map</code> or <code>world</code>, though it can also be the odometry frame. For correct results, the fixed frame should not move relative to the world. If you set it to a moving frame such as the robot's base, everything the robot has seen will appear in front of the robot instead of where it really is.<sup><a href="#ref-1">[1]</a></sup> Each display also shows a status (OK, Warning, Error or Disabled), which is the first place to look when data does not appear.<sup><a href="#ref-1">[1]</a></sup>
@@ -261,7 +261,7 @@
                                 <strong>rqt</strong> is a graphical user interface framework that implements its tools as plugins. You can run the tools as dockable windows inside one rqt window, or on their own.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                One of the most useful plugins is <strong>rqt_graph</strong>, a GUI plugin for visualising the ROS computation graph: it shows the running nodes and the topics that connect them.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup>
+                                One of the most useful plugins is <strong>rqt_graph</strong>, a GUI plugin for visualizing the ROS computation graph: it shows the running nodes and the topics that connect them.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
                                 Start it from the terminal while Turtlesim and the teleop node are running (or open <code>rqt</code> and choose <strong>Plugins &gt; Introspection &gt; Node Graph</strong>):<sup><a href="#ref-3">[3]</a></sup>
@@ -332,7 +332,7 @@
                                 Starting with ROS 2 Iron, the default format for new bags is <strong>MCAP</strong>, and this is still the default in Jazzy and Lyrical. The older sqlite3 format can still be chosen for recording, and bags in either format can be played back.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-15">[15]</a></sup> MCAP is an open-source container file format for multimodal log data, maintained as a Foxglove project. Its documentation highlights:<sup><a href="#ref-16">[16]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Append-only writing:</span> MCAP uses a row-oriented, append-only design to minimise disk I/O while recording.<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Append-only writing:</span> MCAP uses a row-oriented, append-only design to minimize disk I/O while recording.<sup><a href="#ref-16">[16]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Built-in indexing:</span> Files can contain an optional index for fast, efficient reading, so tools can jump to a point in a recording without reading the whole file.<sup><a href="#ref-16">[16]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Self-describing schemas:</span> MCAP stores message schemas alongside the data, so files stay readable in the future even as your code changes.<sup><a href="#ref-16">[16]</a></sup></li>
                             </ul>
@@ -453,11 +453,11 @@
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-4-4.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">4.4 Running Your First Example (Turtlesim)</span>
                                 </a>
                                 <a href="robotics-4-6.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">4.6 Writing Your First ROS 2 Package</span>
                                 </a>
                             </div>
@@ -484,8 +484,8 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
 
     </body>

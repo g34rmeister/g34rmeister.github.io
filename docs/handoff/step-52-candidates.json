@@ -1,0 +1,497 @@
+[
+ {
+  "id": "q1:0:explanation",
+  "file": "assets/js/quiz/ch1.js",
+  "lesson": "1-2",
+  "field": "explanation",
+  "question": "Which 1974 robot does the IFR describe as the first fully electric, microprocessor-controlled industrial robot?",
+  "choices": [
+   "Unimate",
+   "KUKA FAMULUS",
+   "ASEA IRB 6",
+   "Cincinnati Milacron T3"
+  ],
+  "answer": "ASEA IRB 6",
+  "text": "The ASEA IRB 6 (Sweden, 1974) was the first fully electric, microprocessor-controlled industrial robot. FAMULUS (1973) was the first with six electromechanically driven axes, and the T3 was the first commercial minicomputer-controlled robot."
+ },
+ {
+  "id": "q2:1:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-1",
+  "field": "explanation",
+  "question": "Why must offline programs often be touched up or calibrated before running in production?",
+  "choices": [
+   "Offline software cannot output the correct vendor language syntax",
+   "Warped parts, fixtures sitting off their CAD positions and the robot not moving exactly like its model create a gap between the CAD model and reality",
+   "Industrial robots refuse to run programs generated on a computer",
+   "Offline programming tools do not support 6-axis kinematics"
+  ],
+  "answer": "Warped parts, fixtures sitting off their CAD positions and the robot not moving exactly like its model create a gap between the CAD model and reality",
+  "text": "The real cell never matches the CAD model exactly: parts warp, fixtures are bolted down slightly away from their CAD positions, and the robot does not move exactly as its nominal model says, so TCP and work object calibration are needed."
+ },
+ {
+  "id": "q2:2:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-4",
+  "field": "explanation",
+  "question": "What problem does ROS solve that vendor languages do not?",
+  "choices": [
+   "It makes robots cheaper",
+   "It gives a common layer so skills and code carry over between robot brands",
+   "It replaces the robot controller hardware",
+   "It removes the need for safety systems"
+  ],
+  "answer": "It gives a common layer so skills and code carry over between robot brands",
+  "text": "Vendor languages are tied to a single brand. ROS adds a common abstraction layer so algorithms and skills transfer across different robot platforms."
+ },
+ {
+  "id": "q2:3:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-6",
+  "field": "explanation",
+  "question": "In a pick-and-place cycle, where should the robot make an exact stop (fine in RAPID, r=0 in URScript)?",
+  "choices": [
+   "At every waypoint, including the transfer moves",
+   "Wherever the gripper changes state, such as the grip and release points",
+   "Only at the approach point above the part",
+   "Nowhere; blending always gives better results"
+  ],
+  "answer": "Wherever the gripper changes state, such as the grip and release points",
+  "text": "The rule is to stop exactly wherever the gripper changes state. Approach and transfer points may be blended, but a blend at the grip point lets the gripper close while the robot is still moving."
+ },
+ {
+  "id": "q2:4:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-6",
+  "field": "explanation",
+  "question": "With the tool pointing straight down, which RAPID expression gives a point 100 mm above the grip point pPick?",
+  "choices": [
+   "RelTool(pPick,0,0,100)",
+   "RelTool(pPick,0,0,-100)",
+   "Offs(pPick,0,0,-100) in a Z-up work object",
+   "Offs(pPick,100,0,0)"
+  ],
+  "answer": "RelTool(pPick,0,0,-100)",
+  "text": "RelTool offsets along the tool axes. With the tool pointing down, tool Z points into the table, so -100 along tool Z lifts the TCP away from the part. In a Z-up work object, Offs(pPick,0,0,100) gives the same point."
+ },
+ {
+  "id": "q2:5:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-7",
+  "field": "explanation",
+  "question": "A RAPID routine raises ERR_MISSED_PICK from the IF line that checks the part sensor, and its own ERROR handler opens the gripper and calls RETRY. What happens?",
+  "choices": [
+   "The whole routine runs again from the approach move",
+   "Only the IF line that raised the error runs again, so the sensor is re-read without re-gripping",
+   "The program skips the IF line and continues",
+   "The error is passed to the calling routine"
+  ],
+  "answer": "Only the IF line that raised the error runs again, so the sensor is re-read without re-gripping",
+  "text": "RETRY re-executes only the instruction that raised the error, not the whole routine. To re-run the whole pick, raise the error from a small routine that does the whole pick and RETRY the call in the caller, or use a WHILE loop with a counter."
+ },
+ {
+  "id": "q2:6:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-7",
+  "field": "explanation",
+  "question": "Why is the pallet counter nPlaced declared PERS instead of VAR?",
+  "choices": [
+   "PERS variables run faster",
+   "A PERS variable keeps its last value even if the program is stopped and started from the beginning, so the loop resumes at the right slot",
+   "VAR variables cannot hold numbers",
+   "PERS variables cannot be changed by the program, which protects the count"
+  ],
+  "answer": "A PERS variable keeps its last value even if the program is stopped and started from the beginning, so the loop resumes at the right slot",
+  "text": "A VAR is reset when the program pointer is moved to main, while a PERS remembers its last value even after a restart from the beginning. The counter is written only after a successful place, so a restart resumes at the next empty slot."
+ },
+ {
+  "id": "q2:7:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-7",
+  "field": "explanation",
+  "question": "A URScript program shows a blocking popup and then calls halt after three missed picks. Which statement is correct?",
+  "choices": [
+   "This is a safety function that protects people in the cell",
+   "It is error handling for production; safety comes from configured safety functions such as protective stops, guarding and safety I/O",
+   "A popup without halt also stops the robot safely",
+   "URScript's try/catch makes this a certified safety stop"
+  ],
+  "answer": "It is error handling for production; safety comes from configured safety functions such as protective stops, guarding and safety I/O",
+  "text": "A popup or halt in the program is not a safety function. A popup followed by halt cannot be resumed, a popup without halt does not stop the program, and real safety relies on configured safety functions, guarding and safety I/O (lesson 5.4). URScript has no try/catch."
+ },
+ {
+  "id": "q2:8:question",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-8",
+  "field": "question",
+  "question": "A pick point is taught at (210, 150, 0°) when vision sees the part at (200, 150, 0°). Vision now finds the part at (215, 140, 30°). Where is the corrected pick point?",
+  "choices": [
+   "(225.000, 140.000, 0°)",
+   "(225.000, 140.000, 30°)",
+   "(223.660, 145.000, 30°)",
+   "(116.795, -89.904, 30°)"
+  ],
+  "answer": "(223.660, 145.000, 30°)",
+  "text": "A pick point is taught at (210, 150, 0°) when vision sees the part at (200, 150, 0°). Vision now finds the part at (215, 140, 30°). Where is the corrected pick point?"
+ },
+ {
+  "id": "q2:9:explanation",
+  "file": "assets/js/quiz/ch2.js",
+  "lesson": "2-8",
+  "field": "explanation",
+  "question": "A pick point is taught at (210, 150, 0°) when vision sees the part at (200, 150, 0°). Vision now finds the part at (215, 140, 30°). Where is the corrected pick point?",
+  "choices": [
+   "(225.000, 140.000, 0°)",
+   "(225.000, 140.000, 30°)",
+   "(223.660, 145.000, 30°)",
+   "(116.795, -89.904, 30°)"
+  ],
+  "answer": "(223.660, 145.000, 30°)",
+  "text": "The pick point is (10, 0) in the part's own frame. Rotated by 30° it becomes (8.660, 5.000), and adding the new part position (215, 140) gives (223.660, 145.000, 30°). Simply adding (+15, -10) gives (225, 140), which is 5.18 mm off."
+ },
+ {
+  "id": "q4:10:explanation",
+  "file": "assets/js/quiz/ch4.js",
+  "lesson": "4-2",
+  "field": "explanation",
+  "question": "How can an engineer switch the underlying middleware implementation in ROS 2 (e.g. from Fast DDS to Cyclone DDS or Zenoh)?",
+  "choices": [
+   "By modifying and recompiling the Linux kernel",
+   "By setting the RMW_IMPLEMENTATION environment variable before running nodes",
+   "By re-soldering the robot's Ethernet transceiver",
+   "By rewriting all publisher and subscriber code in C++"
+  ],
+  "answer": "By setting the RMW_IMPLEMENTATION environment variable before running nodes",
+  "text": "Because of the ROS Middleware (RMW) abstraction layer, changing middleware simply requires setting the RMW_IMPLEMENTATION environment variable in the terminal."
+ },
+ {
+  "id": "q4:11:explanation",
+  "file": "assets/js/quiz/ch4.js",
+  "lesson": "4-8",
+  "field": "explanation",
+  "question": "Why is the \"pick\" in this lesson only an approach motion of tool0?",
+  "choices": [
+   "Mock hardware cannot move the wrist joints",
+   "OMPL cannot plan to poses near the floor",
+   "The stock UR description and SRDF define no gripper or end effector",
+   "RViz cannot display the gripper mesh"
+  ],
+  "answer": "The stock UR description and SRDF define no gripper or end effector",
+  "text": "UR's SRDF has an end-effector section with no elements because the default UR description has no gripper, so the lesson plans the tool flange (tool0) to a pre-grasp and grasp pose without closing anything."
+ },
+ {
+  "id": "q4:12:explanation",
+  "file": "assets/js/quiz/ch4.js",
+  "lesson": "4-9",
+  "field": "explanation",
+  "question": "On ROS 2 Lyrical, which action server does the Universal Robots driver offer by default for trajectory goals?",
+  "choices": [
+   "/scaled_joint_trajectory_controller/follow_joint_trajectory",
+   "/joint_trajectory_controller/follow_joint_trajectory",
+   "/io_and_status_controller/resend_robot_program",
+   "/passthrough_trajectory_controller/forward"
+  ],
+  "answer": "/joint_trajectory_controller/follow_joint_trajectory",
+  "text": "On the Lyrical and main branches the scaled_joint_trajectory_controller entry is gone; the stock joint_trajectory_controller takes a speed_scaling parameter and is started by default. The scaled controller name is used on Humble, Jazzy and Kilted."
+ },
+ {
+  "id": "q4:13:explanation",
+  "file": "assets/js/quiz/ch4.js",
+  "lesson": "4-9",
+  "field": "explanation",
+  "question": "A ROS 2 node sends a trajectory to an industrial arm while a protective stop is active. What decides whether the robot moves?",
+  "choices": [
+   "MoveIt 2's execution monitor",
+   "The ros2_control controller manager",
+   "The robot controller's own certified safety system",
+   "The ROS 2 action server's goal tolerance"
+  ],
+  "answer": "The robot controller's own certified safety system",
+  "text": "ROS 2 is not the safety system. The safety functions live in the vendor's controller and keep working whatever the PC sends; ROS only sends requests, and the robot may slow down or stop at any time."
+ },
+ {
+  "id": "q5:14:explanation",
+  "file": "assets/js/quiz/ch5.js",
+  "lesson": "5-1",
+  "field": "explanation",
+  "question": "According to studies cited by OSHA, when do many robot accidents happen?",
+  "choices": [
+   "During normal automatic production when the cell is locked",
+   "During non-routine work such as programming, program touch-up, maintenance, installation and testing",
+   "While robots are being transported on delivery trucks",
+   "During overnight facility shutdowns when power is disconnected"
+  ],
+  "answer": "During non-routine work such as programming, program touch-up, maintenance, installation and testing",
+  "text": "OSHA cites Swedish and Japanese studies finding that many robot accidents happen during programming, maintenance, setup and testing rather than normal operation, and NIOSH found many fatal robot strikes in the US (1992 to 2017) happened during maintenance."
+ },
+ {
+  "id": "q5:15:explanation",
+  "file": "assets/js/quiz/ch5.js",
+  "lesson": "5-2",
+  "field": "explanation",
+  "question": "Under the EU AI Act (Regulation 2024/1689), how is an AI safety component of machinery classified when the machine must undergo a third-party conformity assessment?",
+  "choices": [
+   "Unacceptable risk (banned entirely)",
+   "High risk, requiring formal risk management and human oversight",
+   "Minimal risk with no requirements",
+   "Transparency risk, requiring only a user disclaimer"
+  ],
+  "answer": "High risk, requiring formal risk management and human oversight",
+  "text": "Under Article 6(1), an AI safety component of machinery is high risk when the machine must undergo a third-party conformity assessment. Since Regulation (EU) 2026/1744, machinery sits in Annex I Section B, so the detailed high-risk requirements (risk management, data governance, logging, human oversight) will be applied through delegated acts under the Machinery Regulation, due by 2 August 2028."
+ },
+ {
+  "id": "q5:16:explanation",
+  "file": "assets/js/quiz/ch5.js",
+  "lesson": "5-5",
+  "field": "explanation",
+  "question": "In the USENIX Security 2025 study of 16 code LLMs, how often did models recommend software packages that do not exist?",
+  "choices": [
+   "Never, once mitigations were applied",
+   "About 0.1% for all models",
+   "On average at least 5.2% for commercial models and 21.7% for open-source models",
+   "Over 90% for every model"
+  ],
+  "answer": "On average at least 5.2% for commercial models and 21.7% for open-source models",
+  "text": "Spracklen et al. found hallucinated packages averaged at least 5.2% for commercial and 21.7% for open-source models across 576,000 samples; mitigations reduced but did not remove the rate."
+ },
+ {
+  "id": "q6:17:explanation",
+  "file": "assets/js/quiz/ch6.js",
+  "lesson": "6-1",
+  "field": "explanation",
+  "question": "What is the critical minimum safe discharge voltage per cell for a Lithium Polymer (LiPo) battery?",
+  "choices": [
+   "0.0 V per cell",
+   "1.5 V per cell",
+   "3.0 V per cell",
+   "4.2 V per cell"
+  ],
+  "answer": "3.0 V per cell",
+  "text": "3.0 V per cell is treated as the full-discharge floor for a LiPo cell; discharging below it damages the cell, so robots should warn or cut off well before any cell reaches it."
+ },
+ {
+  "id": "q6:18:explanation",
+  "file": "assets/js/quiz/ch6.js",
+  "lesson": "6-2",
+  "field": "explanation",
+  "question": "What pulse width sent at 50 Hz commands a standard hobby servomotor to its neutral center position?",
+  "choices": [
+   "0.5 ms",
+   "1.5 ms",
+   "2.5 ms",
+   "20.0 ms"
+  ],
+  "answer": "1.5 ms",
+  "text": "A standard hobby servo reads one pulse every 20 ms (50 Hz). Pulses from about 1 ms to 2 ms span its standard range of travel, and 1.5 ms (1500 microseconds) commands the center (neutral) position."
+ },
+ {
+  "id": "q6:19:explanation",
+  "file": "assets/js/quiz/ch6.js",
+  "lesson": "6-8",
+  "field": "explanation",
+  "question": "In the dual-EKF architecture of the ROS 2 robot_localization package, why does the local EKF fuse wheel odometry and IMU without GPS data?",
+  "choices": [
+   "GPS satellites cannot transmit messages over ROS 2 topics",
+   "To provide a smooth, continuous state estimate in the odom frame without discrete jumps that could destabilize motor control loops",
+   "Wheel odometry is more accurate than RTK-GPS over kilometer journeys",
+   "The local EKF can only accept a single sensor stream at a time"
+  ],
+  "answer": "To provide a smooth, continuous state estimate in the odom frame without discrete jumps that could destabilize motor control loops",
+  "text": "The local EKF produces a smooth, continuous transform in the odom frame for real-time trajectory controllers, while the global EKF incorporates GPS in the map frame where discrete satellite fixes will not cause control jumps."
+ },
+ {
+  "id": "q7:20:explanation",
+  "file": "assets/js/quiz/ch7.js",
+  "lesson": "7-3",
+  "field": "explanation",
+  "question": "What dimensions are produced for the output correlation matrix when matching a template of size w × h across an image of size W × H?",
+  "choices": [
+   "(W - w + 1, H - h + 1)",
+   "(W, H)",
+   "(W / w, H / h)",
+   "(w, h)"
+  ],
+  "answer": "(W - w + 1, H - h + 1)",
+  "text": "In template matching, comparing an image of size W × H with a template of size w × h produces an output match matrix of size (W - w + 1, H - h + 1)."
+ },
+ {
+  "id": "q7:21:explanation",
+  "file": "assets/js/quiz/ch7.js",
+  "lesson": "7-5",
+  "field": "explanation",
+  "question": "Under the Nyquist limit, what is the minimum sensor sampling requirement to resolve an optical line pair?",
+  "choices": [
+   "One pixel per line pair",
+   "At least two pixels per line pair",
+   "Four pixels per millimeter",
+   "Ten pixels per line pair"
+  ],
+  "answer": "At least two pixels per line pair",
+  "text": "The Nyquist limit represents the highest spatial frequency a sensor can sample and requires at least two pixels per line pair (one pixel on the bright bar and one on the dark bar)."
+ },
+ {
+  "id": "q7:22:explanation",
+  "file": "assets/js/quiz/ch7.js",
+  "lesson": "7-5",
+  "field": "explanation",
+  "question": "Which version of Data Matrix barcode uses Reed-Solomon error correction to detect damage and reconstruct corrupted codewords?",
+  "choices": [
+   "Data Matrix ECC 000",
+   "Data Matrix ECC 050",
+   "Data Matrix ECC 200",
+   "Data Matrix Linear 15416"
+  ],
+  "answer": "Data Matrix ECC 200",
+  "text": "Data Matrix ECC 200 is the only Data Matrix version that utilizes Reed-Solomon error correction to detect damage locations and reconstruct corrupted codewords."
+ },
+ {
+  "id": "q8:23:explanation",
+  "file": "assets/js/quiz/ch8.js",
+  "lesson": "8-4",
+  "field": "explanation",
+  "question": "What premise defines the black channel principle in functional safety communication?",
+  "choices": [
+   "All network switches must perform hardware-level encryption on safety packets",
+   "Safety signals must be transmitted exclusively over dedicated fiber optic cables",
+   "The transmission network is unreliable, meaning safety diagnostics must exist outside the network infrastructure",
+   "The network layer must guarantee zero packet loss under all operating conditions"
+  ],
+  "answer": "The transmission network is unreliable, meaning safety diagnostics must exist outside the network infrastructure",
+  "text": "The black channel principle assumes the network is unreliable, meaning diagnostics must exist outside the network infrastructure."
+ },
+ {
+  "id": "q8:24:explanation",
+  "file": "assets/js/quiz/ch8.js",
+  "lesson": "8-5",
+  "field": "explanation",
+  "question": "Which registered TCP port does OPC UA client-server communication use?",
+  "choices": [
+   "502",
+   "4840",
+   "1883",
+   "8883"
+  ],
+  "answer": "4840",
+  "text": "OPC UA Client-Server communications use an optimized TCP-based binary protocol for data exchange over IANA registered port 4840."
+ },
+ {
+  "id": "q8:25:explanation",
+  "file": "assets/js/quiz/ch8.js",
+  "lesson": "8-2",
+  "field": "explanation",
+  "question": "How do PROFINET RT and PROFINET IRT differ?",
+  "choices": [
+   "PROFINET RT transmits only analog signals, while IRT transmits only binary discrete bits",
+   "PROFINET RT bypasses TCP/IP for 1 to 10 ms deterministic cycles, while IRT uses scheduled switching and hardware ASICs for sub-millisecond cycles with microsecond-level jitter",
+   "PROFINET RT cannot communicate with PLCs, while IRT is restricted to robot teach pendants",
+   "PROFINET RT runs exclusively over serial RS-485 cables, while IRT requires Wi-Fi"
+  ],
+  "answer": "PROFINET RT bypasses TCP/IP for 1 to 10 ms deterministic cycles, while IRT uses scheduled switching and hardware ASICs for sub-millisecond cycles with microsecond-level jitter",
+  "text": "PROFINET RT bypasses TCP/IP layers for deterministic communication in the 1 to 10 ms range, while PROFINET IRT uses scheduled switching and hardware ASICs for sub-millisecond cycles with microsecond-level jitter."
+ },
+ {
+  "id": "q9:26:question",
+  "file": "assets/js/quiz/ch9.js",
+  "lesson": "9-2",
+  "field": "question",
+  "question": "Why does the recommended troubleshooting methodology require changing only one variable at a time when testing a hypothesis?",
+  "choices": [
+   "Because calibrated torque wrenches cannot measure more than one bolt per day",
+   "Because robot controllers can only store one numerical parameter in memory",
+   "Because industrial Ethernet switches disconnect if multiple parameters change",
+   "Because changing multiple variables prevents knowing which fix worked and risks creating new faults"
+  ],
+  "answer": "Because changing multiple variables prevents knowing which fix worked and risks creating new faults",
+  "text": "Why does the recommended troubleshooting methodology require changing only one variable at a time when testing a hypothesis?"
+ },
+ {
+  "id": "q10:27:explanation",
+  "file": "assets/js/quiz/ch10.js",
+  "lesson": "10-2",
+  "field": "explanation",
+  "question": "Which of these does UR's documentation list as NOT working on ros2_control mock hardware?",
+  "choices": [
+   "Planning joint goals in RViz",
+   "Setting I/O through the GPIO controller",
+   "Running the joint trajectory controller",
+   "Loading the UR5e robot description"
+  ],
+  "answer": "Setting I/O through the GPIO controller",
+  "text": "On mock hardware there is no TCP pose broadcaster, passthrough control and force mode do not work, and the GPIO controller reports a failure when setting I/O, so a gripper on UR I/O cannot be checked."
+ },
+ {
+  "id": "q10:28:explanation",
+  "file": "assets/js/quiz/ch10.js",
+  "lesson": "10-2",
+  "field": "explanation",
+  "question": "Why does the capstone rubric use four levels instead of three or five?",
+  "choices": [
+   "Four levels are required by ISO 10218",
+   "It matches the four MTC solver types",
+   "An even number of levels has no neutral middle, so graders must decide whether expectations were met",
+   "Four levels make the rubric more detailed, which increases creativity"
+  ],
+  "answer": "An even number of levels has no neutral middle, so graders must decide whether expectations were met",
+  "text": "The ASEE capstone rubric paper chose its 1 to 4 scale on purpose so the instructor has to make a clear decision about whether expectations were met. With four levels there is no neutral middle to fall back on."
+ },
+ {
+  "id": "q10:29:explanation",
+  "file": "assets/js/quiz/ch10.js",
+  "lesson": "10-3",
+  "field": "explanation",
+  "question": "On an Arduino Uno, the encoder's A and B channels use pins 2 and 3. Where should the motor PWM go?",
+  "choices": [
+   "Pin 3, because it is a PWM pin",
+   "Another PWM pin such as 5, 6, 9 or 10",
+   "Pin 2, shared with channel A",
+   "Any analog input pin"
+  ],
+  "answer": "Another PWM pin such as 5, 6, 9 or 10",
+  "text": "Pins 2 and 3 are the Uno's only interrupt pins and pin 3 is taken by the encoder, so the PWM goes on another PWM-capable pin such as 5, 6, 9 or 10."
+ },
+ {
+  "id": "q10:30:explanation",
+  "file": "assets/js/quiz/ch10.js",
+  "lesson": "10-3",
+  "field": "explanation",
+  "question": "The example motor stalls at 5.5 A, but the TB6612FNG carrier is rated 1 A continuous and 3 A peak. What does the project's state machine do about this?",
+  "choices": [
+   "Nothing; the driver limits current by itself",
+   "It raises the PID output limits to 255",
+   "It enters a FAULT state that sets PWM to 0 when PWM is high but speed stays near zero for too long, and needs a manual reset",
+   "It switches the PID to derivative-only control"
+  ],
+  "answer": "It enters a FAULT state that sets PWM to 0 when PWM is high but speed stays near zero for too long, and needs a manual reset",
+  "text": "A stall or lost encoder shows up as high commanded PWM with near-zero measured speed; after a time limit the FAULT state forces PWM to 0 and only a deliberate manual reset clears it."
+ },
+ {
+  "id": "q10:31:explanation",
+  "file": "assets/js/quiz/ch10.js",
+  "lesson": "10-1",
+  "field": "explanation",
+  "question": "In a team capstone project, why is a contribution statement required from each team member with every milestone hand-in?",
+  "choices": [
+   "To replace the need for a final test sheet and report",
+   "To provide individual evidence so an instructor can grade the group product and each person's part separately",
+   "To automatically calculate cycle time",
+   "To register the team for an ABB commercial license"
+  ],
+  "answer": "To provide individual evidence so an instructor can grade the group product and each person's part separately",
+  "text": "Team projects add a contribution statement of a few lines from each member saying what they did since the last milestone, allowing instructors to grade the group product and each person's part separately."
+ },
+ {
+  "id": "q10:32:explanation",
+  "file": "assets/js/quiz/ch10.js",
+  "lesson": "10-3",
+  "field": "explanation",
+  "question": "In Milestone 2 of the speed-controlled wheel capstone, why do you test open-loop drive with fixed PWM values before closing the PID loop?",
+  "choices": [
+   "To calibrate the baud rate of the Arduino hardware serial port",
+   "To measure the thermal breakdown voltage of the logic pins",
+   "To program the H-bridge's internal non-volatile EEPROM",
+   "To find the motor's dead zone and check linearity as a sanity check for the PID output"
+  ],
+  "answer": "To find the motor's dead zone and check linearity as a sanity check for the PID output",
+  "text": "Testing open loop with fixed PWM values reveals the dead zone (the PWM below which the motor does not turn) and how nearly linear the motor is, providing a sanity check for PID output."
+ }
+]

@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -223,10 +223,10 @@
 
                             <h2 class="article-section-title">02. Historical origins: Minorsky and the USS New Mexico</h2>
                             <p>
-                                The first mathematical treatment of what we now call three-term (PID) control was published by the Russian-born engineer <strong>Nicolas Minorsky</strong>, who later worked in the United States. His 1922 paper, &ldquo;Directional Stability of Automatically Steered Bodies,&rdquo; appeared in the <em>Journal of the American Society of Naval Engineers</em> and analysed the automatic steering of ships.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup>
+                                The first mathematical treatment of what we now call three-term (PID) control was published by the Russian-born engineer <strong>Nicolas Minorsky</strong>, who later worked in the United States. His 1922 paper, &ldquo;Directional Stability of Automatically Steered Bodies,&rdquo; appeared in the <em>Journal of the American Society of Naval Engineers</em> and analyzed the automatic steering of ships.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                Minorsky started from the way a skilled helmsman keeps a ship on course. The helmsman does not only react to how far the ship is off course, but times the rudder to meet and oppose the ship's swing.<sup><a href="#ref-4">[4]</a></sup> Read in today's terms, that behaviour maps onto the three PID actions:
+                                Minorsky started from the way a skilled helmsman keeps a ship on course. The helmsman does not only react to how far the ship is off course, but times the rudder to meet and oppose the ship's swing.<sup><a href="#ref-4">[4]</a></sup> Read in today's terms, that behavior maps onto the three PID actions:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Present error:</span> When the ship is off course, turn the rudder in proportion to the heading error.</li>
@@ -304,7 +304,7 @@ float updatePID(float setpoint, float measured, float dt) {
     return output;
 }</code></pre>
                             <p>
-                                In real-time software, the PID calculation works best when it runs at a regular interval. If the loop timing jitters, the integral sum and the derivative slope are computed with the wrong \(\Delta t\), so the effective gains change from one pass to the next. Robot loops are therefore usually driven by a hardware timer interrupt, or they measure the elapsed time on every pass.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-8">[8]</a></sup> WPILib's PID controller, for example, assumes it is called at its configured period (20 ms by default) and warns that calling it irregularly gives unintended loop behaviour.<sup><a href="#ref-9">[9]</a></sup> Libraries such as Beauregard's Arduino PID library fold the sample time into the gains once (\(K_i \Delta t\) and \(K_d / \Delta t\)), which is only valid if the loop really runs at that fixed interval.<sup><a href="#ref-10">[10]</a></sup>
+                                In real-time software, the PID calculation works best when it runs at a regular interval. If the loop timing jitters, the integral sum and the derivative slope are computed with the wrong \(\Delta t\), so the effective gains change from one pass to the next. Robot loops are therefore usually driven by a hardware timer interrupt, or they measure the elapsed time on every pass.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-8">[8]</a></sup> WPILib's PID controller, for example, assumes it is called at its configured period (20 ms by default) and warns that calling it irregularly gives unintended loop behavior.<sup><a href="#ref-9">[9]</a></sup> Libraries such as Beauregard's Arduino PID library fold the sample time into the gains once (\(K_i \Delta t\) and \(K_d / \Delta t\)), which is only valid if the loop really runs at that fixed interval.<sup><a href="#ref-10">[10]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">06. Classical tuning methods: Ziegler–Nichols and Cohen–Coon</h2>
@@ -377,7 +377,7 @@ float updatePID(float setpoint, float measured, float dt) {
                                 Textbook PID equations assume ideal components. Physical actuators have real limits (saturation, finite update rates and electrical noise) that call for a few standard modifications:<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Integral Windup:</span> When a robot is blocked by an immovable barrier, its integral term keeps growing, and it lurches violently when released: this is <strong>integral windup</strong>. Once an actuator reaches physical saturation (such as maximum 100% PWM), the error cannot be reduced immediately, so the integral term keeps accumulating past physical limits. When the obstacle is removed, the controller remains saturated until the accumulated integral slowly unwinds, causing massive overshoot. Robot software should include an <strong>anti-windup</strong> measure, such as <strong>integrator clamping</strong> (bounding the integral term) or <strong>conditional integration</strong> (halting integration whenever the commanded output saturates).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-8">[8]</a></sup> WPILib's PID controller clamps the integrator by default,<sup><a href="#ref-9">[9]</a></sup> and its tuning guide adds another option: reset the integrator whenever the error is large (an &ldquo;I-zone&rdquo;).<sup><a href="#ref-1">[1]</a></sup> ROS 2's ros2_control PID offers a third anti-windup option, back-calculation, which bleeds the integrator off in proportion to how far the output exceeds its limit.<sup><a href="#ref-15">[15]</a></sup> WPILib&rsquo;s documentation goes further: it strongly recommends avoiding integral gain unless nothing else works, because a more accurate feedforward often solves the same problem.<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Integral Windup:</span> When a robot is blocked by an immovable barrier, its integral term keeps growing, and it lurches violently when released: this is <strong>integral windup</strong>. Once an actuator reaches physical saturation (such as maximum 100% PWM), the error cannot be reduced immediately, so the integral term keeps accumulating past physical limits. When the obstacle is removed, the controller remains saturated until the accumulated integral slowly unwinds, causing massive overshoot. Robot software should include an <strong>anti-windup</strong> measure, such as <strong>integrator clamping</strong> (bounding the integral term) or <strong>conditional integration</strong> (halting integration whenever the commanded output saturates).<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-8">[8]</a></sup> WPILib's PID controller clamps the integrator by default,<sup><a href="#ref-9">[9]</a></sup> and its tuning guide adds another option: reset the integrator whenever the error is large (an &ldquo;I-zone&rdquo;).<sup><a href="#ref-1">[1]</a></sup> ROS 2's ros2_control PID offers a third anti-windup option, back-calculation, which bleeds the integrator off in proportion to how far the output exceeds its limit.<sup><a href="#ref-15">[15]</a></sup> WPILib&rsquo;s documentation goes further: it strongly recommends avoiding integral gain unless nothing else works, because a more accurate feed-forward often solves the same problem.<sup><a href="#ref-9">[9]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Derivative Kick:</span> When an operator commands an instantaneous step change in target setpoint \(r(t)\), the error jumps in a single sample, so the derivative of error \(\frac{d(r - y)}{dt}\) produces a huge one-sample spike in the output. This &ldquo;derivative kick&rdquo; jolts motor drives and gearboxes. Industrial servo controllers prevent it <strong>by computing the derivative on the process measurement rather than on the error</strong>. While the setpoint is constant, the derivative of the error is just the negative derivative of the measurement, so nothing else changes:<sup><a href="#ref-8">[8]</a></sup>
                                 <div class="article-callout">
                                     <p>\[D[k] = -K_d \, \frac{y[k] - y[k-1]}{\Delta t}\]</p>
@@ -406,7 +406,7 @@ float updatePID(float setpoint, float measured, float dt) {
                                 <p>\[\tau_{cmd} = \tau_{PID} + M(q)\ddot{q}_{ref} + C(q,\dot{q})\dot{q}_{ref} + g(q)\]</p>
                             </div>
                             <p>
-                                Rather than waiting for a feedback error to develop, the model predicts the joint torque needed to accelerate the arm's mass matrix \(M(q)\), cancel Coriolis and centrifugal effects \(C(q,\dot{q})\), and hold the arm against gravity \(g(q)\). The better the model, the less work is left for the feedback PID loop, which then mainly corrects modelling errors and unmodelled friction.<sup><a href="#ref-19">[19]</a></sup>
+                                Rather than waiting for a feedback error to develop, the model predicts the joint torque needed to accelerate the arm's mass matrix \(M(q)\), cancel Coriolis and centrifugal effects \(C(q,\dot{q})\), and hold the arm against gravity \(g(q)\). The better the model, the less work is left for the feedback PID loop, which then mainly corrects modeling errors and unmodeled friction.<sup><a href="#ref-19">[19]</a></sup>
                             </p>
 
                             <div class="article-callout try-it">
@@ -445,11 +445,11 @@ float updatePID(float setpoint, float measured, float dt) {
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-6-3.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">6.3 Encoders and Shaft Encoders</span>
                                 </a>
                                 <a href="robotics-6-5.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">6.5 Sensors for Robots</span>
                                 </a>
                             </div>
@@ -476,8 +476,8 @@ float updatePID(float setpoint, float measured, float dt) {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 

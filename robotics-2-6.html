@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -216,7 +216,7 @@
 
                             <h2 class="article-section-title">01. The job: one part, two places</h2>
                             <p>
-                                Pick-and-place is the first program most robot programmers write, and it is still one of the most common jobs in a factory: take a part from one place and put it down somewhere else. The earlier lessons in this chapter gave you the pieces. You have seen motion types (<code>MoveJ</code> and <code>MoveL</code>), the RAPID and URScript languages (<a href="robotics-2-3.html">2.3</a>), and how a gripper is switched by a digital output (<a href="robotics-2-5.html">2.5</a>). This lesson puts them together into one working cycle in a simulator, and then shows how to keep it working when the fixture moves: teaching targets relative to the fixture instead of relative to the robot.
+                                Pick-and-place is the first program most robot programmers write. It is still one of the most common jobs in a factory: take a part from one place and put it down somewhere else. The earlier lessons in this chapter gave you the pieces. You have seen motion types (<code>MoveJ</code> and <code>MoveL</code>), the RAPID and URScript languages (<a href="robotics-2-3.html">2.3</a>), and how a gripper is switched by a digital output (<a href="robotics-2-5.html">2.5</a>). This lesson puts them together into one working cycle in a simulator. It then shows how to keep it working when the fixture moves: teaching targets relative to the fixture instead of relative to the robot.
                             </p>
                             <p>
                                 Real robot programs that move parts follow the same basic shape. Looking at RAPID modules from university labs and industrial projects, the pick side almost always reads: move quickly to a point above the part, move straight down slowly, stop exactly, close the gripper, then move back up.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> The place side mirrors it. Written out as steps, one cycle is:
@@ -260,7 +260,7 @@
                                 Every Cartesian target describes where the <strong>tool center point (TCP)</strong> should go, not where the robot's flange goes. If the controller thinks the TCP is at the flange while a 150 mm gripper is bolted on, every "grip" will stop 150 mm away from where you meant. So the first step in any pick-and-place job is to define the tool.
                             </p>
                             <p>
-                                On ABB, the tool is a <code>tooldata</code> variable. It holds whether the robot holds the tool, the tool frame (a position plus a quaternion), and the load (mass, centre of gravity and inertia):<sup><a href="#ref-13">[13]</a></sup>
+                                On ABB, the tool is a <code>tooldata</code> variable. It holds whether the robot holds the tool, the tool frame (a position plus a quaternion), and the load (mass, center of gravity and inertia):<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <pre class="article-code"><code>tooldata name := [robhold, tframe[[x,y,z],[q1,q2,q3,q4]], tload[mass, cog[x,y,z], aom[q1,q2,q3,q4], Ix, Iy, Iz]];</code></pre>
                             <p>
@@ -273,7 +273,7 @@
                                 In simulation you usually type the TCP from the gripper drawing. On a real robot it is often calibrated instead. Both vendors offer a method in which you touch one fixed, pointed tip with the tool from four different wrist orientations, and the controller solves for the offset. UR calls this the TCP Position wizard. ABB's FlexPendant offers it as a tool definition method with optional extra points to fix the tool's orientation.<sup><a href="#ref-16">[16]</a></sup><sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-13">[13]</a></sup> The orientations should differ as much as possible for good accuracy.<sup><a href="#ref-17">[17]</a></sup> One university lab that calibrated a marker tool this way on an ABB IRB 140 reported a mean error of 0.353 mm. Its calibrated TCP (x = 7.63, y = 4.37, z = 211.04 mm) differed by several millimeters from the CAD value (x = 12.25, y = 0, z = 214.74 mm).<sup><a href="#ref-13">[13]</a></sup> CAD and reality rarely agree exactly, which is why real cells calibrate.
                             </p>
                             <p>
-                                The payload (mass and centre of gravity) matters too. UR's payload wizard estimates both from several taught positions, and the manual asks you not to touch the tool while it measures.<sup><a href="#ref-18">[18]</a></sup> In this lesson's examples a payload of 0.5 kg is simply entered by hand.
+                                The payload (mass and center of gravity) matters too. UR's payload wizard estimates both from several taught positions, and the manual asks you not to touch the tool while it measures.<sup><a href="#ref-18">[18]</a></sup> In this lesson's examples a payload of 0.5 kg is simply entered by hand.
                             </p>
 
                             <h2 class="article-section-title">04. A frame for the fixture: the three-point work object</h2>
@@ -423,7 +423,7 @@ ENDMODULE</code></pre>
                                     <li>Set the TCP (150 mm along tool Z) and a 0.5 kg payload in the Installation. Then teach a plane feature for your "fixture" with three points spaced well apart and not in a line.</li>
                                     <li>Build the cycle in the program tree, with waypoints relative to the plane: a joint move to the approach point above the pick, a linear move down to the grip point with no blend (an exact stop), a Set node for the tool output plus a 0.5 s Wait, a linear retract back up, a joint transfer move to above the place point, then the place sequence (linear down, exact stop, open, wait, linear up). Run it with the speed slider turned down. URSim lets you watch the tool output change on the I/O tab.</li>
                                     <li>Now "move the fixture": re-teach only the three plane points somewhere else (for example 50 mm to the side and turned slightly). Run the program again without touching any waypoint and check that the whole cycle followed the fixture.</li>
-                                    <li>Optional: paste the URScript from section 07 into a Script node or file, and compare the motion with your tree program. If you have RobotStudio (within the trial, or under a school Education license), repeat the exercise with the RAPID module from section 08 and redefine <code>wobjFixture</code> with the three-point method.</li>
+                                    <li>Optional: paste the URScript from section 07 into a Script node or file, and compare the motion with your tree program. If you have RobotStudio (within the trial, or under a school Education license), repeat the exercise with the RAPID module from section 08. Then redefine <code>wobjFixture</code> with the three-point method.</li>
                                 </ol>
                             </div>
 
@@ -470,11 +470,11 @@ ENDMODULE</code></pre>
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-2-5.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">2.5 End-of-Arm Tooling and I/O</span>
                                 </a>
                                 <a href="robotics-2-7.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">2.7 Program Structure and Error Handling</span>
                                 </a>
                             </div>
@@ -501,8 +501,8 @@ ENDMODULE</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 

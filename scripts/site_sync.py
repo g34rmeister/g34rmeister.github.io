@@ -376,16 +376,16 @@ def lesson_page(text, ch, i, where):
     text = replace_once(text, r'<p class="references-note">(.*?)</p>', references_note(ch['lessons'][i]['id'], ch['lessons'][i]['url']), where)
     lessons = ch['lessons']
     if i == 0:
-        left = (ch['url'], '&lt;- Previous', f'Chapter {ch["id"]} overview')
+        left = (ch['url'], '&larr; Previous', f'Chapter {ch["id"]} overview')
     else:
-        left = (lessons[i - 1]['url'], '&lt;- Previous', lessons[i - 1]['label'])
+        left = (lessons[i - 1]['url'], '&larr; Previous', lessons[i - 1]['label'])
     nxt = CHAPTERS[CHAPTERS.index(ch) + 1] if ch is not CHAPTERS[-1] else None
     if i + 1 < len(lessons):
-        right = (lessons[i + 1]['url'], 'Next -&gt;', lessons[i + 1]['label'])
+        right = (lessons[i + 1]['url'], 'Next &rarr;', lessons[i + 1]['label'])
     elif nxt:
-        right = (nxt['url'], 'Next chapter -&gt;', chapter_title(nxt))
+        right = (nxt['url'], 'Next chapter &rarr;', chapter_title(nxt))
     else:
-        right = ('robotics.html', 'Finished -&gt;', 'Course home')
+        right = ('robotics.html', 'Finished &rarr;', 'Course home')
     text = replace_once(text, r'(<div class="article-footer-nav">.*?</div>)', footer_nav(left, right), where)
     crumbs, quick = lesson_header_nav(ch, i, left, right)
     text = replace_once(text, r'(<(?:div|nav) class="article-breadcrumb-bar"[^>]*>.*?</(?:div|nav)>)', crumbs, where)
@@ -400,11 +400,11 @@ def lesson_page(text, ch, i, where):
 
 def chapter_page(text, ch, where):
     k = CHAPTERS.index(ch)
-    left = (('robotics.html', '&lt;- Course home', 'All chapters') if k == 0 else
-            (CHAPTERS[k - 1]['url'], '&lt;- Previous chapter', chapter_title(CHAPTERS[k - 1])))
+    left = (('robotics.html', '&larr; Course home', 'All chapters') if k == 0 else
+            (CHAPTERS[k - 1]['url'], '&larr; Previous chapter', chapter_title(CHAPTERS[k - 1])))
     first = ch['lessons'][0]
     text = replace_once(text, r'(<div class="article-footer-nav">.*?</div>)',
-                        footer_nav(left, (first['url'], 'Start reading -&gt;', first['label'])), where)
+                        footer_nav(left, (first['url'], 'Start reading &rarr;', first['label'])), where)
     items = ''.join(f'\n{" " * 32}<li><a href="{l["url"]}">{l["label"]}</a>: {l["blurb"]}</li>' for l in ch['lessons'])
     text = replace_once(text, r'Articles in this chapter</h2>\s*<ol class="article-spec-list">(.*?)</ol>',
                         items + '\n' + ' ' * 28, where)

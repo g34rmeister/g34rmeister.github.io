@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -329,7 +329,7 @@ def generate_launch_description():
                                 <text class="d-muted" x="472" y="280" text-anchor="middle">remapped from /output/cmd_vel</text>
                                 <text class="d-muted" x="340" y="316" text-anchor="middle">Both simulators are named sim; unique namespaces keep their names and topics apart.</text>
                                 </svg>
-                                <figcaption>What the <code>turtlesim_mimic</code> launch file starts. The two simulators share the node name <code>sim</code> but live in different namespaces, and the <code>remappings</code> connect <code>mimic</code>'s generic topics to the first turtle's pose and the second turtle's velocity command.</figcaption>
+                                <figcaption>What the <code>turtlesim_mimic</code> launch file starts. The two simulators share the node name <code>sim</code> but live in different namespaces. The <code>remappings</code> connect <code>mimic</code>'s generic topics to the first turtle's pose and the second turtle's velocity command.</figcaption>
                             </figure>
 
                             <h2 class="article-section-title">04. Running the mimic system, and the same file in XML</h2>
@@ -494,7 +494,7 @@ ros2 param set /turtlesim background_r 150
 ros2 param dump /turtlesim &gt; turtlesim.yaml
 ros2 param load /turtlesim turtlesim.yaml</code></pre>
                             <p>
-                                <code>get</code> prints a result such as <code>Integer value is: 86</code>, and <code>set</code> prints <code>Set parameter successful</code> and changes the background colour at once. A value set this way is lost when the node restarts.<sup><a href="#ref-14">[14]</a></sup> <code>dump</code> saves all of the node's current parameters to a YAML file, and <code>load</code> applies a file to a running node. When loading at runtime, read-only entries such as <code>qos_overrides.*</code> fail with a "read-only" message. When the same file is given at node startup, all parameters are applied, including the read-only ones.<sup><a href="#ref-14">[14]</a></sup>
+                                <code>get</code> prints a result such as <code>Integer value is: 86</code>, and <code>set</code> prints <code>Set parameter successful</code> and changes the background color at once. A value set this way is lost when the node restarts.<sup><a href="#ref-14">[14]</a></sup> <code>dump</code> saves all of the node's current parameters to a YAML file, and <code>load</code> applies a file to a running node. When loading at runtime, read-only entries such as <code>qos_overrides.*</code> fail with a "read-only" message. When the same file is given at node startup, all parameters are applied, including the read-only ones.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
                                 A node can also guard its own parameters with callbacks. A pre-set callback can modify the list of parameters being set, an on-set callback can inspect a proposed change and explicitly reject it, and a post-set callback reacts after a change has been accepted.<sup><a href="#ref-3">[3]</a></sup> That is how a motor driver could refuse a speed limit outside its safe range.
@@ -589,7 +589,7 @@ def generate_launch_description():
                                     <li>In <code>setup.py</code>, add <code>import os</code> and <code>from glob import glob</code> at the top, and add these two entries to the existing <code>data_files</code> list:
 <pre class="article-code"><code>(os.path.join('share', package_name, 'launch'), glob('launch/*')),
 (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),</code></pre></li>
-                                    <li>From the workspace root, run <code>colcon build --packages-select turtle_launch_demo</code>, open a new terminal, run <code>source install/setup.bash</code>, then <code>ros2 launch turtle_launch_demo mimic_launch.py</code>. Two windows should open with different background colours.</li>
+                                    <li>From the workspace root, run <code>colcon build --packages-select turtle_launch_demo</code>, open a new terminal, run <code>source install/setup.bash</code>, then <code>ros2 launch turtle_launch_demo mimic_launch.py</code>. Two windows should open with different background colors.</li>
                                     <li>In another sourced terminal, publish the circle command from <a href="robotics-4-4.html">lesson 4.4</a> to <code>/turtlesim1/turtle1/cmd_vel</code> and check that the second turtle copies the first. Then confirm the parameters with <code>ros2 param get /turtlesim2/sim background_g</code> and <code>ros2 param dump /turtlesim1/sim</code>.</li>
                                     <li>Experiment: change the key <code>/turtlesim2/sim</code> to <code>/turtlesim3/sim</code>, rebuild and relaunch. What happens to the second window, and why? Then replace both blocks with one <code>/**</code> block and predict the result before you run it.</li>
                                 </ol>
@@ -626,11 +626,11 @@ def generate_launch_description():
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-4-6.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">4.6 Writing Your First ROS 2 Package</span>
                                 </a>
                                 <a href="robotics-4-8.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">4.8 Moving an Arm with MoveIt 2</span>
                                 </a>
                             </div>
@@ -657,8 +657,8 @@ def generate_launch_description():
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
 
     </body>

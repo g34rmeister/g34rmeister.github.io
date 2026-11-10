@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=39f300c6" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=33a36553" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -216,13 +216,13 @@
 
                             <h2 class="article-section-title">01. Hands-on robotics with Turtlesim</h2>
                             <p>
-                                You installed ROS 2 in <a href="robotics-4-3.html">lesson 4.3</a>. Jumping straight onto real hardware is risky for a beginner: a wrong motor command can tip over a rover or damage a gearbox, so it pays to practise somewhere harmless first.
+                                You installed ROS 2 in <a href="robotics-4-3.html">lesson 4.3</a>. Jumping straight onto real hardware is risky for a beginner: a wrong motor command can tip over a rover or damage a gearbox, so it pays to practice somewhere harmless first.
                             </p>
                             <p>
                                 The official ROS 2 documentation uses <strong>Turtlesim</strong> for exactly this. It is a lightweight simulator that demonstrates core ROS concepts without any hardware, showing the robot as a turtle you drive around a 2D window.<sup><a href="#ref-1">[1]</a></sup> Behind its friendly appearance it is a real ROS 2 program.
                             </p>
                             <p>
-                                The Turtlesim node creates topics (velocity commands in, pose and colour readings out) and offers services (such as spawning, clearing and teleporting turtles). It also serves an action that rotates the turtle to an absolute heading.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> The command-line tools, message types and Python patterns you practise here are the same ones you will use with real robots later in the course.
+                                The Turtlesim node creates topics (velocity commands in, pose and color readings out) and offers services (such as spawning, clearing and teleporting turtles). It also serves an action that rotates the turtle to an absolute heading.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup> The command-line tools, message types and Python patterns you practice here are the same ones you will use with real robots later in the course.
                             </p>
 
                             <h2 class="article-section-title">02. Launching and teleoperating your first robot</h2>
@@ -359,7 +359,7 @@ cd ~/ros2_ws/src</code></pre>
 
                             <h2 class="article-section-title">07. Python package layout: package.xml and setup.py</h2>
                             <p>
-                                ROS code is organised into <strong>packages</strong>, which you create from the workspace's <code>src</code> directory with <code>ros2 pkg create</code>, choosing either the <code>ament_cmake</code> or <code>ament_python</code> build type.<sup><a href="#ref-11">[11]</a></sup> Create a Python package named <code>my_robot_controller</code>:
+                                ROS code is organized into <strong>packages</strong>, which you create from the workspace's <code>src</code> directory with <code>ros2 pkg create</code>, choosing either the <code>ament_cmake</code> or <code>ament_python</code> build type.<sup><a href="#ref-11">[11]</a></sup> Create a Python package named <code>my_robot_controller</code>:
                             </p>
                             <pre class="article-code"><code>ros2 pkg create --build-type ament_python --license Apache-2.0 my_robot_controller --dependencies rclpy geometry_msgs turtlesim_msgs</code></pre>
                             <p>
@@ -419,7 +419,7 @@ def main(args=None):
 if __name__ == '__main__':
     main()</code></pre>
                             <p>
-                                Our class inherits from <code>rclpy.node.Node</code>, and <code>super().__init__</code> gives the node its name. <code>create_publisher</code> declares that the node publishes <code>Twist</code> messages on a topic with a "queue size" of 10, a Quality of Service setting that limits how many messages are queued if a subscriber cannot keep up. <code>create_timer</code> makes a callback run every 0.5 seconds. In <code>main</code>, the ROS client library is initialised, the node is created, and <code>rclpy.spin(node)</code> keeps the node running so its callbacks are called, until you stop it with <code>Ctrl+C</code>.<sup><a href="#ref-13">[13]</a></sup> The Jazzy version of the tutorial writes <code>main</code> in an older style (<code>rclpy.init()</code>, <code>rclpy.spin()</code>, then <code>destroy_node()</code> and <code>rclpy.shutdown()</code>), which you will also see in many existing projects.<sup><a href="#ref-14">[14]</a></sup> Because the 0.5 s timer is shorter than Turtlesim's one-second command timeout, the turtle never stops between messages.<sup><a href="#ref-2">[2]</a></sup>
+                                Our class inherits from <code>rclpy.node.Node</code>, and <code>super().__init__</code> gives the node its name. <code>create_publisher</code> declares that the node publishes <code>Twist</code> messages on a topic with a "queue size" of 10, a Quality of Service setting that limits how many messages are queued if a subscriber cannot keep up. <code>create_timer</code> makes a callback run every 0.5 seconds. In <code>main</code>, the ROS client library is initialized, the node is created, and <code>rclpy.spin(node)</code> keeps the node running so its callbacks are called, until you stop it with <code>Ctrl+C</code>.<sup><a href="#ref-13">[13]</a></sup> The Jazzy version of the tutorial writes <code>main</code> in an older style (<code>rclpy.init()</code>, <code>rclpy.spin()</code>, then <code>destroy_node()</code> and <code>rclpy.shutdown()</code>), which you will also see in many existing projects.<sup><a href="#ref-14">[14]</a></sup> Because the 0.5 s timer is shorter than Turtlesim's one-second command timeout, the turtle never stops between messages.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">09. Writing a custom rclpy pose subscriber</h2>
@@ -522,7 +522,7 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
                                 <li class="article-spec-item">Code structure: the <code>rclpy.node.Node</code> class, timer callbacks and <code>create_publisher</code> / <code>create_subscription</code> calls stay the same when you move from Turtlesim to a real robot.<sup><a href="#ref-13">[13]</a></sup></li>
                             </ul>
                             <p>
-                                In <a href="robotics-4-5.html">lesson 4.5</a>, we look at the wider ROS toolset. This includes visualising data in RViz2, inspecting node connections with rqt_graph, recording and replaying data with ros2 bag, and simulating robots in Gazebo.
+                                In <a href="robotics-4-5.html">lesson 4.5</a>, we look at the wider ROS toolset. This includes visualizing data in RViz2, inspecting node connections with rqt_graph, recording and replaying data with ros2 bag, and simulating robots in Gazebo.
                             </p>
 
                             <div class="article-callout try-it">
@@ -564,11 +564,11 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
                             <!-- Footer Navigation -->
                             <div class="article-footer-nav">
                                 <a href="robotics-4-3.html" class="article-nav-card">
-                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-dir">&larr; Previous</span>
                                     <span class="article-nav-target">4.3 Installing ROS on Your Local Environment</span>
                                 </a>
                                 <a href="robotics-4-5.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-dir">Next &rarr;</span>
                                     <span class="article-nav-target">4.5 ROS Tools</span>
                                 </a>
                             </div>
@@ -595,8 +595,8 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=f8fc609d" defer></script>
-            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/course-data.js?v=6d58a1bf" defer></script>
+            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
             <script src="assets/js/learning.js?v=9b7c7d5b" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 

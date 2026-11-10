@@ -128,7 +128,7 @@ Source checks, all lessons: fixed 131, partial 36, unreachable 48, verified 1083
 `robotics-3-5.html` · 6 min · 11 refs (verified 11) · 1 figures · 0 Try it
 - Objectives: Describe what Nav2 does for a mobile robot and how localization, costmaps, planners, controllers and behavior trees fit together. / Find your way around the Nav2 project: packages, plugin interfaces and the separate documentation repository. / Tell the LICENSE wording apart from the CONTRIBUTING wording, and sign off commits for the DCO. / Follow the Nav2 contribution steps: open or claim an issue, then open a pull request with the template filled in.
 - Key terms: Nav2, costmap, planner, behavior tree, tf2, Developer Certificate of Origin, Open Navigation
-- Sections: What Nav2 is · How a mobile robot navigates · How the project is organised · Licensing and sign-off · How to get involved · A first contribution path · Check your understanding
+- Sections: What Nav2 is · How a mobile robot navigates · How the project is organized · Licensing and sign-off · How to get involved · A first contribution path · Check your understanding
 
 ## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 9 lessons, 150 min)
 
@@ -404,7 +404,7 @@ Source checks, all lessons: fixed 131, partial 36, unreachable 48, verified 1083
 
 ### 10.2 Capstone: ROS 2 Pick-and-Place with MoveIt 2
 `robotics-10-2.html` · 20 min · 9 refs (fixed 4, verified 5) · 1 figures · 1 Try it
-- Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Run a UR5e on ros2_control mock hardware with MoveIt, add table and part collision objects, and describe mock hardware limits. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach when the arm has no gripper. / Test the task over randomised object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
+- Objectives: Build and run the MoveIt Task Constructor pick-and-place demo and explain its stage tree using generator, propagator and connector stages. / Run a UR5e on ros2_control mock hardware with MoveIt, add table and part collision objects, and describe mock hardware limits. / Port the MTC pick-and-place node to UR group and frame names, using attach and detach when the arm has no gripper. / Test the task over randomized object poses, classify failures by stage, and grade the work against a four-level rubric that includes sim-to-real limits.
 - Key terms: MoveIt Task Constructor, MTC stage, generator stage, connector stage, ComputeIK, collision object, attached object, mock hardware, planning scene
 - Sections: What you will build and why · Prerequisites · Equipment and software · Milestones and what to hand in · M0: run the Panda demo and read the stage tree · M1 and M2: a UR5e and its planning scene · M3: port the MTC node to the UR · M4 (optional): run it in Gazebo · M5: testing and verification · Common problems · Grading rubric · Reflection questions · Stretch goals
 
