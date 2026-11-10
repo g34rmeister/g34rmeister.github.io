@@ -1,11 +1,11 @@
-# Omen handoff (2026-11-08)
+# Omen handoff (2026-11-08, State updated 2026-11-09)
 
 Who this is for: the next agent session (or Gerald) picking up robOSStics on the Linux Omen machine. Read `CLAUDE.md` and the tail of `CHANGELOG.agents.md` first; this file only adds what those do not say. The previous report (2026-10-28) is in git history.
 
 ## State
-- `main` is clean at `8a2de06`; local checks, browser tests and CI all green.
-- 66 lessons, 90 pages. Every cited ref has a recorded claim check (`sources.py check` passes, 1104 sources).
-- Nothing is in progress. No open PRs, no open issues (#21 closed 2026-11-06: the link came back).
+- `main` is at `04f1be6`. All work since then is uncommitted on branch `site-architecture-tools` (about 100 files: agent tools, Chapter 11, Try-it boxes, figures, Open-Source Map links and entries, README). Gerald has not asked for a commit or PR yet.
+- 70 lessons in 11 chapters, 95 pages; Chapter 11 (Mobile Robots and Navigation, 11.1-11.4) is new and has no lab yet. Every cited ref has a recorded claim check (`sources.py check` passes, 1112 sources). Local checks, browser tests and the widget tests (74 renders) pass on the branch; CI has not run on it.
+- No open PRs, no open issues (#21 closed 2026-11-06: the link came back).
 
 ## What happened since 2026-10-28 (details in the changelog)
 - New lesson 3.5 (Nav2 case study), teaching page, licences (Apache 2.0 code, CC BY-SA 4.0 text), free PR explainer and weekly link-check workflows.
@@ -16,12 +16,13 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 - Contribution path for outsiders is now a "Suggest an edit" link in the top meta bar of every course page (`addEditLink` in `learning.js`), plus the existing one under each lesson's References.
 
 ## Open decisions (ask Gerald; do not decide)
-- Chapter 11 for AMR material, or leave it as lesson 3.5.
+- Chapter 11 for AMR material: decided 2026-11-09, Gerald asked for it; 11.1 to 11.4 exist (see the changelog). Still open: a Nav2 simulation lab (must be run first) and whether to cover AMR safety (ask Gerald; safety content).
 - Chapter 3 overview (`robotics-oss.html`) has audit findings (roadmap sentences, a seven-step workflow in one sentence). It is Gerald's prose: propose edits, do not apply them.
 - Teaching page wording is Gerald's. Its sentence about the edit link ("under its references") is still accurate.
 - Books (Siegwart, Gat, R.U.R.) are optional. If used, keep them outside the repo and only use them to check claims.
 
 ## Known loose ends (safe to do without asking)
+- Update 2026-11-09: of the partial refs in the next item, all are resolved, including 1.7 and 5.2 (fixed 2026-11-10 with Gerald's approval; see the changelog).
 - Partial refs worth a look (from the 2026-11-08 recheck; `sources.py report <lesson>` shows the notes). Each sentence names something its source does not show; check whether another ref in the same sentence covers it, else soften the wording or add a source: 1.3 ref 16 ("two classes", "four types of collaborative operation"), 1.3 ref 28 (humanoids "moving from pilots to early production"), 1.6 ref 4 (joint DOF counts, "numbered from the base"), 1.7 ref 3 (Part 1 "partly completed machinery") and ref 12 (OSHA four options; "no part of the operator's body"; safety text, so ask Gerald before editing), 5.2 ref 28 (Article 6/Annex I not reached in the fetch), 6.5 ref 8 (DMP "computes orientation angles on-chip"; the datasheet says "hardware accelerator engine").
 - 4.1 ref 8 venue (ICRA workshop, Kobe) is still unconfirmed; wiki.ros.org/Papers/ICRA2009_Quigley is behind Anubis.
 - About 35 refs are still unreachable behind bot walls (Britannica, ABB library, iso.org, analog.com, st.com, scribd, doi.org). Wayback rate-limited again on 2026-11-08; retry `archive.org/wayback/available` lookups slowly (one every few seconds).

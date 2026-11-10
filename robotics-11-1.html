@@ -1,0 +1,330 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 11.1 Where Is the Robot? Frames, Odometry and Localization
+-->
+<html lang="en">
+    <head>
+        <title>11.1 Where Is the Robot? Frames, Odometry and Localization — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How a ROS 2 mobile robot tracks its position: the map, odom and base_link frames from REP 105, odometry, and localization with AMCL or SLAM in Nav2." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-11-1.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="11.1 Where Is the Robot? Frames, Odometry and Localization — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="How a ROS 2 mobile robot tracks its position: the map, odom and base_link frames from REP 105, odometry, and localization with AMCL or SLAM in Nav2." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-11-1.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="11.1 Where Is the Robot? Frames, Odometry and Localization, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="11.1 Where Is the Robot? Frames, Odometry and Localization — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="How a ROS 2 mobile robot tracks its position: the map, odom and base_link frames from REP 105, odometry, and localization with AMCL or SLAM in Nav2." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
+        <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+        <script type="application/ld+json" id="lesson-ld">
+{
+            "@context": "https://schema.org",
+            "@type": "LearningResource",
+            "name": "11.1 Where Is the Robot? Frames, Odometry and Localization",
+            "url": "https://g34rmeister.github.io/robotics-11-1.html",
+            "description": "How a ROS 2 mobile robot tracks its position: the map, odom and base_link frames from REP 105, odometry, and localization with AMCL or SLAM in Nav2.",
+            "inLanguage": "en",
+            "learningResourceType": "Lesson",
+            "educationalLevel": "Beginner",
+            "timeRequired": "PT4M",
+            "teaches": [
+                "base_link",
+                "odom frame",
+                "map frame",
+                "REP 105",
+                "TF2",
+                "odometry",
+                "robot_localization",
+                "AMCL",
+                "SLAM"
+            ],
+            "isPartOf": {
+                "@type": "Course",
+                "name": "robOSStics",
+                "url": "https://g34rmeister.github.io/robotics.html"
+            },
+            "author": {
+                "@type": "Person",
+                "name": "Gerald Lê"
+            },
+            "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html" aria-current="page"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html" class="active"><i class="fas fa-route"></i> Mobile</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-mobile.html">Chapter 11 &middot; Mobile</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">11.1 Where Is the Robot? Frames, Odometry and Localization</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. From a fixed arm to a moving base</h2>
+                        <p>
+                            An industrial arm is bolted down, so every position can be measured from its base (<a href="robotics-1-6.html">1.6</a>). A mobile robot has to work out where it is before it can plan a route. This chapter uses Nav2, the ROS 2 navigation project introduced in <a href="robotics-3-5.html">3.5 Case Study: Contributing to Nav2</a>, as its worked example, and builds on the wheel odometry in <a href="robotics-6-6.html">6.6 Odometry</a>.
+                        </p>
+                        <p>
+                            Nav2 does not require a lidar. Its documentation says there is no requirement to use lidar-based collision avoidance, localization or SLAM, and that a vision or depth based positioning system can be equally successful, as long as the standards below are followed.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Three coordinate frames</h2>
+                        <p>
+                            ROS mobile robots share a set of frame names. They come from REP 105, which Nav2 describes as defining the frames and conventions required for navigation.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><code>base_link</code> is rigidly attached to the mobile robot base.<sup><a href="#ref-2">[2]</a></sup></li>
+                            <li class="article-spec-item"><code>odom</code> is a world-fixed frame in which the robot&rsquo;s pose is guaranteed to be continuous: it evolves smoothly, without discrete jumps. The price is drift, which can grow over time without any bounds.<sup><a href="#ref-2">[2]</a></sup></li>
+                            <li class="article-spec-item"><code>map</code> is a world-fixed frame in which the pose should not significantly drift over time. It is not continuous: the pose can change in discrete jumps at any time.<sup><a href="#ref-2">[2]</a></sup></li>
+                        </ul>
+                        <p>
+                            Each frame suits a different job. REP 105 calls <code>odom</code> useful as an accurate, short-term local reference, and <code>map</code> useful as a long-term global reference but a poor frame for local sensing and acting.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 104" role="img" aria-label="A chain of four frames: map, odom, base_link and the sensor frames. Localization or SLAM provides the map to odom transform, odometry provides odom to base_link, and the sensor transforms are static and come from the URDF" xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-11-1-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box-gold" x="4" y="14" width="80" height="40" rx="4"/><text class="d-title" x="44" y="39" text-anchor="middle">map</text><line class="d-line" x1="84" y1="34" x2="106" y2="34" marker-end="url(#arrow-11-1-1)"/><rect class="d-box" x="108" y="14" width="80" height="40" rx="4"/><text class="d-title" x="148" y="39" text-anchor="middle">odom</text><line class="d-line" x1="188" y1="34" x2="210" y2="34" marker-end="url(#arrow-11-1-1)"/><rect class="d-box" x="212" y="14" width="80" height="40" rx="4"/><text class="d-title" x="252" y="39" text-anchor="middle">base_link</text><line class="d-line" x1="292" y1="34" x2="314" y2="34" marker-end="url(#arrow-11-1-1)"/><rect class="d-box" x="316" y="14" width="80" height="40" rx="4"/><text class="d-title" x="356" y="39" text-anchor="middle">sensors</text><line class="d-line" stroke-dasharray="3 3" x1="96" y1="40" x2="96" y2="66"/><text class="d-muted" x="96" y="80" text-anchor="middle">localization</text><text class="d-muted" x="96" y="95" text-anchor="middle">or SLAM</text><line class="d-line" stroke-dasharray="3 3" x1="200" y1="40" x2="200" y2="66"/><text class="d-muted" x="200" y="80" text-anchor="middle">odometry</text><line class="d-line" stroke-dasharray="3 3" x1="304" y1="40" x2="304" y2="66"/><text class="d-muted" x="304" y="80" text-anchor="middle">static,</text><text class="d-muted" x="304" y="95" text-anchor="middle">from URDF</text>
+                            </svg>
+                            <figcaption>The transform chain Nav2 needs, and who provides each link.<sup><a href="#ref-1">[1]</a></sup></figcaption>
+                        </figure>
+
+                        <h2 class="article-section-title">03. The transform chain Nav2 needs</h2>
+                        <p>
+                            Nav2 needs two major transformations: <code>map</code> to <code>odom</code>, provided by a positioning system (localization, mapping or SLAM), and <code>odom</code> to <code>base_link</code>, provided by an odometry system.<sup><a href="#ref-1">[1]</a></sup> At minimum, the robot must build a transform tree with the full chain: <code>map</code>, <code>odom</code>, <code>base_link</code>, then its sensor frames.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The tree is kept by TF2, the time-variant transformation library in ROS 2.<sup><a href="#ref-1">[1]</a></sup> The remaining transforms, from <code>base_link</code> to each sensor, should be static and defined in the robot&rsquo;s URDF.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. Odometry: smooth, but it drifts</h2>
+                        <p>
+                            The odometry system provides the <code>odom</code> to <code>base_link</code> transform, and its goal is a smooth and continuous local frame based on robot motion.<sup><a href="#ref-1">[1]</a></sup> Odometry can come from many sources, including lidar, radar, wheel encoders, visual-inertial odometry (VIO) and IMUs.<sup><a href="#ref-1">[1]</a></sup> <a href="robotics-6-3.html">6.3</a> and <a href="robotics-6-6.html">6.6</a> worked through the wheel-encoder version, and <a href="robotics-6-5.html">6.5</a> covered the IMU.
+                        </p>
+                        <p>
+                            One source is rarely enough. Nav2&rsquo;s documentation says the <code>robot_localization</code> package is typically used to fuse them: it takes in N sensors of various types and provides a continuous and smooth odometry.<sup><a href="#ref-1">[1]</a></sup> A typical setup fuses wheel encoders, IMUs and vision.<sup><a href="#ref-1">[1]</a></sup> The fused output can then be used for dead reckoning between global position updates.<sup><a href="#ref-1">[1]</a></sup> <a href="robotics-6-8.html">6.8 Intro to Kalman Filters</a> introduces one common way of fusing sensors.
+                        </p>
+
+                        <h2 class="article-section-title">05. Global positioning: correcting the drift</h2>
+                        <p>
+                            The global positioning system (GPS, SLAM or motion capture) must, at minimum, provide the <code>map</code> to <code>odom</code> transform.<sup><a href="#ref-1">[1]</a></sup> It updates that transform to account for the odometric drift.<sup><a href="#ref-1">[1]</a></sup> This is why the <code>map</code> frame jumps: a localization component keeps re-computing the robot pose from sensor observations, which removes drift but causes discrete jumps when new sensor information arrives.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Nav2 provides two tools for this. <code>amcl</code> is an Adaptive Monte-Carlo Localization technique based on a particle filter, for localization in a static map.<sup><a href="#ref-1">[1]</a></sup> SLAM Toolbox is the default SLAM algorithm, used to position the robot and generate a static map.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">06. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Which of the two frames, <code>odom</code> or <code>map</code>, is continuous, and which one does not drift?<details class="check-answer"><summary>Show answer</summary><p>The odom frame is continuous: the robot&rsquo;s pose evolves smoothly, without discrete jumps, although it drifts over time. The map frame is the one that does not significantly drift, but it is not continuous. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">Which system provides the <code>map</code> to <code>odom</code> transform, and which provides <code>odom</code> to <code>base_link</code>?<details class="check-answer"><summary>Show answer</summary><p>The map to odom transform is provided by a positioning system (localization, mapping or SLAM). The odom to base_link transform is provided by an odometry system. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">What is the difference between what <code>amcl</code> and SLAM Toolbox are used for?<details class="check-answer"><summary>Show answer</summary><p><code>amcl</code> is an Adaptive Monte-Carlo Localization technique based on a particle filter, used for localization in a static map. SLAM Toolbox is the default SLAM algorithm, used to position the robot and generate a static map. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                        </ul>
+
+                        <div class="article-callout try-it">
+                            <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                            <ol>
+                                <li>A robot drives a 20 m loop and returns to its start. Its wheels slipped on the way. In which frame is its reported pose now wrong, and which component corrects it?</li>
+                                <li>Sketch the transform tree for a robot with one lidar and one camera. Label each link with who provides it: localization, odometry or the URDF.</li>
+                                <li>A controller needs a pose that never jumps between two control cycles. Which frame should it work in, and why would the other frame be a poor choice?</li>
+                            </ol>
+                        </div>
+
+                            <!-- oss-note -->
+                            <div class="article-callout oss-note">
+                                <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>
+                                <p>Projects used or discussed here: <a href="robotics-oss-map.html#nav2">Nav2</a>. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows its licence, where the code lives and how to make a first contribution.</p>
+                            </div>
+                            <!-- /oss-note -->
+
+                        <h2 class="article-section-title">07. References</h2>
+                        <p class="references-note">Source check (November 2026): 2 of 2 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-11-1.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Nav2, &ldquo;State Estimation.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/state_estimation.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/state_estimation.md</a>.</li>
+                            <li id="ref-2">W. Meeussen, &ldquo;REP 105: Coordinate Frames for Mobile Platforms,&rdquo; ROS Enhancement Proposal, Oct. 2010. <a href="https://github.com/ros-infrastructure/rep/blob/master/rep-0105.rst" target="_blank" rel="noopener noreferrer">github.com/ros-infrastructure/rep/blob/master/rep-0105.rst</a>.</li>
+                        </ol>
+
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-mobile.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">Chapter 11 overview</span>
+                                </a>
+                                <a href="robotics-11-2.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">11.2 Costmaps: How the Robot Sees Its Surroundings</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
+                            <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
+                            <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
+
+    </body>
+</html>

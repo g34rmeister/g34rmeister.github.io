@@ -1,9 +1,11 @@
 {
- "_about": "Course structure for scripts/site_sync.py. Lesson ids, titles and minutes come from assets/js/course-data.js; this file only adds what that file lacks: each chapter's navbar label and Font Awesome icon, and the one-line lesson summaries shown on chapter pages (HTML allowed).",
+ "_about": "Course structure for scripts/site_sync.py. Lesson ids, titles and minutes come from assets/js/course-data.js; this file only adds what that file lacks: each chapter's navbar label and Font Awesome icon, the title and description of its featured card on robotics.html (featuredTitle, featuredDesc; HTML allowed), and the one-line lesson summaries shown on chapter pages (HTML allowed). ossProjects lists the projects on the Open-Source Map (robotics-oss-map.html) in page order: `name` is the section heading, `id` its anchor, `lessons` the lessons that use it. site_sync.py writes the map's 'Used in these lessons' lines and the 'Open source in this lesson' box in each listed lesson from it.",
  "chapters": {
   "1": {
    "nav": "Intro",
    "icon": "fa-book-open",
+   "featuredTitle": "What robots are, where they came from, and where they work",
+   "featuredDesc": "Definitions, history, the main types of robots, the skills to learn first, and common applications.",
    "blurbs": {
     "1-1": "What a robot is, where the word came from, and the sense, think, act loop every robot shares.",
     "1-2": "How automation evolved over time, from early attempts at automatic machines to modern automation.",
@@ -17,6 +19,8 @@
   "2": {
    "nav": "Programming",
    "icon": "fa-robot",
+   "featuredTitle": "From the teach pendant to the digital twin",
+   "featuredDesc": "How industrial robots are programmed: online or offline, in environments like RobotStudio and PolyScope, in vendor languages, and with vendor-agnostic ROS.",
    "blurbs": {
     "2-1": "The two ways industrial robots are programmed: offline in simulation software, and online with a teach pendant or by hand guiding.",
     "2-2": "Two widely used robot programming environments: ABB RobotStudio for offline programming and simulation, and Universal Robots PolyScope for cobots.",
@@ -31,6 +35,8 @@
   "3": {
    "nav": "Open Source",
    "icon": "fa-code-branch",
+   "featuredTitle": "Join the projects robotics runs on",
+   "featuredDesc": "What open source is, how to make a first contribution, how robotics projects like ROS 2 and MoveIt work, and a lab where you open a real pull request.",
    "blurbs": {
     "3-1": "What open source is: licenses, public artifacts, core repository files (README, CONTRIBUTING, CODE_OF_CONDUCT, LICENSE), and ROS 2 package examples.",
     "3-2": "Finding your first contribution: non-code tasks, beginner labels, the fork and pull request workflow, and public communication norms.",
@@ -42,6 +48,8 @@
   "4": {
    "nav": "ROS",
    "icon": "fa-project-diagram",
+   "featuredTitle": "Getting started with ROS",
+   "featuredDesc": "What ROS is, how ROS 2 differs from ROS 1, installing it, a first Turtlesim example, and the tools you will use most.",
    "blurbs": {
     "4-1": "What ROS is and how it splits a robot into nodes that communicate by publishing and subscribing to messages.",
     "4-2": "The history of ROS and the main differences between ROS 1 and ROS 2: communication protocol, launch files, and compatibility and flexibility.",
@@ -57,6 +65,8 @@
   "5": {
    "nav": "Ethics",
    "icon": "fa-balance-scale",
+   "featuredTitle": "Building robots responsibly",
+   "featuredDesc": "Ethics in engineering in general, and the specific questions robots raise in hardware and software.",
    "blurbs": {
     "5-1": "The ethical responsibilities engineers carry.",
     "5-2": "The ethical questions robots raise, and the safety layer every robot needs in hardware and software.",
@@ -68,6 +78,8 @@
   "6": {
    "nav": "Control",
    "icon": "fa-bolt",
+   "featuredTitle": "Pulse to move, count to know",
+   "featuredDesc": "How a microcontroller drives a motor with PWM, measures the result with an encoder, and closes the loop with a PID controller.",
    "blurbs": {
     "6-1": "The Arduino basics a robot programmer needs: pin types, the setup and loop structure, driving servos and DC motors, reading sensors and debugging.",
     "6-2": "How PWM lets a digital pin control motor speed, servo angle and LED brightness, and the practical details that matter on a real robot.",
@@ -84,6 +96,8 @@
   "7": {
    "nav": "Vision",
    "icon": "fa-eye",
+   "featuredTitle": "How robots see",
+   "featuredDesc": "Cameras, lighting, 2D image processing, 3D point clouds, inspection and a ROS 2 camera pipeline.",
    "blurbs": {
     "7-1": "Industrial camera sensors and optics: CMOS versus CCD, global and rolling shutters, pixel size and Nyquist resolution, focal length and f-number, telecentric lenses, and GenICam.",
     "7-2": "Illumination for machine vision: backlighting, ring, glancing, darkfield, diffuse dome, coaxial and in-line lighting, optical filters, cross-polarization, and LED strobing.",
@@ -96,6 +110,8 @@
   "8": {
    "nav": "Networks",
    "icon": "fa-network-wired",
+   "featuredTitle": "How machines talk",
+   "featuredDesc": "Fieldbuses and industrial Ethernet, a robot-to-PLC Modbus lab, safety protocols, OPC UA and MQTT, and network security and diagnostics.",
    "blurbs": {
     "8-1": "From discrete wiring to industrial networks: sinking and sourcing (NPN/PNP), fieldbus history, line, star and ring topologies, cyclic versus acyclic data, and Device Level Ring recovery.",
     "8-2": "Industrial Ethernet protocols: EtherNet/IP CIP implicit and explicit messaging, PROFINET RT and IRT with GSDML, EtherCAT on-the-fly frame processing with ESI, and Modbus TCP.",
@@ -107,7 +123,9 @@
   },
   "9": {
    "nav": "Maintenance",
-   "icon": "fa-screwdriver-wrench",
+   "icon": "fa-tools",
+   "featuredTitle": "Keeping the cell running",
+   "featuredDesc": "Preventive maintenance, a troubleshooting method with lockout/tagout, mechanical and electrical faults, calibration and backups, and a Python lab on robot state.",
    "blurbs": {
     "9-1": "Preventive, predictive and reactive maintenance strategies: inspection intervals, cleaning and ESD protection, fastener torque checks, and maintenance records.",
     "9-2": "A systematic troubleshooting method: OSHA 29 CFR 1910.147 lockout/tagout, controller error logs, flight records, and avoiding masked faults.",
@@ -120,12 +138,153 @@
   "10": {
    "nav": "Capstone",
    "icon": "fa-flag-checkered",
+   "featuredTitle": "Put it all together",
+   "featuredDesc": "Three projects with milestones and rubrics: a simulated work cell, a ROS 2 pick-and-place with MoveIt 2, and a speed-controlled wheel.",
    "blurbs": {
     "10-1": "Capstone project: build a simulated pick-and-place work cell in URSim or ABB RobotStudio with gripper I/O, a safety configuration and a FAT-style test sheet, graded by milestones and a four-level rubric.",
     "10-2": "Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric.",
     "10-3": "Capstone project: build an Arduino speed-controlled wheel with a quadrature encoder, H-bridge driver, PID loop and a state machine with ramps and a FAULT state, with milestones, safety and a rubric.",
     "10-4": "Capstone project: an open-source ROS 2 cell monitor that reads robot state, packed Modbus handshake bits and a camera check from stand-in servers, keeps a maintenance log, and ends with a real pull request. No hardware needed."
    }
+  },
+  "11": {
+   "nav": "Mobile",
+   "icon": "fa-route",
+   "featuredTitle": "Robots that drive",
+   "featuredDesc": "How a mobile robot finds its position, sees obstacles, plans and follows a path, and recovers when it gets stuck, following the open-source Nav2 project.",
+   "blurbs": {
+    "11-1": "The map, odom and base_link frames from REP 105, why odometry drifts, and how localization or SLAM corrects it.",
+    "11-2": "Costmap cells, layers and inflation, the robot footprint, and costmap filters such as keep-out zones and speed limits.",
+    "11-3": "The Nav2 servers that plan a path, smooth it, follow it and recover when the robot gets stuck, plus waypoint following.",
+    "11-4": "How a navigation request travels through the NavigateToPose action and the behavior tree, and how lifecycle nodes start and stop in order."
+   }
   }
- }
+ },
+ "ossProjects": [
+  {
+   "id": "ros-2",
+   "name": "ROS 2",
+   "lessons": [
+    "2-4",
+    "4-1",
+    "4-2",
+    "4-3",
+    "4-4",
+    "4-5",
+    "4-6",
+    "4-7",
+    "7-6",
+    "11-4"
+   ]
+  },
+  {
+   "id": "moveit-2",
+   "name": "MoveIt 2",
+   "lessons": [
+    "2-4",
+    "4-8",
+    "4-9",
+    "10-2"
+   ]
+  },
+  {
+   "id": "nav2",
+   "name": "Nav2",
+   "lessons": [
+    "2-4",
+    "3-3",
+    "3-5",
+    "6-7",
+    "11-1",
+    "11-2",
+    "11-3",
+    "11-4"
+   ]
+  },
+  {
+   "id": "ros2-control",
+   "name": "ros2_control",
+   "lessons": [
+    "4-8",
+    "4-9",
+    "8-5",
+    "10-2"
+   ]
+  },
+  {
+   "id": "gazebo",
+   "name": "Gazebo",
+   "lessons": [
+    "1-4",
+    "4-5",
+    "10-2"
+   ]
+  },
+  {
+   "id": "opencv",
+   "name": "OpenCV",
+   "lessons": [
+    "2-8",
+    "7-3",
+    "7-5",
+    "7-6"
+   ]
+  },
+  {
+   "id": "pcl",
+   "name": "PCL",
+   "lessons": [
+    "7-4"
+   ]
+  },
+  {
+   "id": "ur-client-library",
+   "name": "Universal Robots Client Library",
+   "lessons": [
+    "9-6"
+   ]
+  },
+  {
+   "id": "ur-ros2-driver",
+   "name": "Universal Robots ROS 2 driver",
+   "lessons": [
+    "4-8",
+    "4-9",
+    "10-2"
+   ]
+  },
+  {
+   "id": "wireshark",
+   "name": "Wireshark",
+   "lessons": [
+    "8-6"
+   ]
+  },
+  {
+   "id": "pymodbus",
+   "name": "pymodbus",
+   "lessons": [
+    "8-3"
+   ]
+  },
+  {
+   "id": "colcon",
+   "name": "colcon",
+   "lessons": [
+    "4-3",
+    "4-4",
+    "4-6"
+   ]
+  },
+  {
+   "id": "turtlesim",
+   "name": "turtlesim",
+   "lessons": [
+    "4-4",
+    "4-5",
+    "4-6",
+    "4-7"
+   ]
+  }
+ ]
 }

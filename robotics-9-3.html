@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -90,20 +90,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html" aria-current="page"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -131,6 +148,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -141,8 +167,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -300,10 +327,19 @@
 
                         <h2 class="article-section-title">08. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">Why must all joint flat rings be replaced together if visual inspection reveals wear or damage on only one ring?</li>
-                            <li class="article-spec-item">What safety mechanism keeps a robot arm from falling if a joint brake fails to engage during shutdown, and how much mechanical motion should an engaged brake permit?</li>
-                            <li class="article-spec-item">How do cable retraction systems and fixed bending radius stops protect dress pack cables from mechanical stress during robot motion?</li>
+                            <li class="article-spec-item">Why must all joint flat rings be replaced together if visual inspection reveals wear or damage on only one ring?<details class="check-answer"><summary>Show answer</summary><p>UR&rsquo;s rule is that if any flat ring is worn or damaged, all of them are replaced, because they share the same operating environment. <span class="check-answer-src">(Section 01)</span></p></details></li>
+                            <li class="article-spec-item">What safety mechanism keeps a robot arm from falling if a joint brake fails to engage during shutdown, and how much mechanical motion should an engaged brake permit?<details class="check-answer"><summary>Show answer</summary><p>When the robot detects that a joint brake failed to engage, motor power is maintained to keep the arm at a standstill until an operator performs a controlled shutdown. A properly engaged brake permits only one to two degrees of mechanical motion before hitting the brake pin. <span class="check-answer-src">(Section 04)</span></p></details></li>
+                            <li class="article-spec-item">How do cable retraction systems and fixed bending radius stops protect dress pack cables from mechanical stress during robot motion?<details class="check-answer"><summary>Show answer</summary><p>Cable retraction systems guide the cable carrier to prevent loops in the robot work area, and the cable carrier has a fixed bending radius stop to prevent cable stress. <span class="check-answer-src">(Section 07)</span></p></details></li>
                         </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>With the robot powered off, you push gently on a joint and it turns about 10 degrees before it stops. What does the brake rule in this lesson say about that?</li>
+                                    <li>One flat ring on the wrist is cracked and the others look fine. How many do you replace, and why?</li>
+                                    <li>The arm has stopped a few millimeters from a fixture and cannot be jogged away safely. Which mode does this lesson describe for moving it clear, and what does that mode do to the brakes?</li>
+                                </ol>
+                            </div>
 
                         <h2 class="article-section-title">09. References</h2>
                         <p class="references-note">Source check (October 2026): 5 of 5 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-9-3.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
@@ -348,10 +384,10 @@
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=72f75746" defer></script>
-        <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-        <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>

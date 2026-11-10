@@ -3,6 +3,12 @@
   python3 scripts/build_index.py          # rewrite the index
   python3 scripts/build_index.py --check  # CI: fail if the index is out of date
 
+Lookups that print a few lines instead of making you read the whole 80 KB file:
+
+  python3 scripts/build_index.py 4-4            # one lesson's entry
+  python3 scripts/build_index.py --chapter 4    # one chapter's entries
+  python3 scripts/build_index.py --find lidar   # lessons that mention a word, with the matching lines
+
 Per lesson: file, minutes, objectives, key terms, section headings, figures, Try it boxes,
 reference count and source-check status (from docs/sources.json). Read this instead of
 opening lesson pages to find where a topic is covered or which lessons need source work.
@@ -55,8 +61,32 @@ def build():
     return '\n'.join(lines)
 
 
+def query(text, args):
+    """Print part of the index: one lesson, one chapter, or the lessons matching a word."""
+    chapters = re.split(r'\n(?=## Chapter )', text)[1:]
+    if args[0] == '--chapter':
+        hit = [c for c in chapters if c.startswith(f'## Chapter {args[1]}:')]
+        return hit[0].strip() if hit else f'No chapter {args[1]}.'
+    lessons = [b.strip() for c in chapters for b in re.split(r'\n(?=### )', c)[1:]]
+    if args[0] == '--find':
+        word, out = ' '.join(args[1:]).lower(), []
+        for b in lessons:
+            rows = b.split('\n')
+            hits = [r for r in rows[2:] if word in r.lower()]
+            if hits or word in rows[0].lower():
+                out += rows[:2] + [re.sub(r'^(- [^:]+: ).*?([^/·,]*' + re.escape(word) + r'[^/·,]*).*$', r'\1…\2…', r,
+                                          flags=re.I) for r in hits] + ['']
+        return '\n'.join(out).strip() or f'No lesson mentions "{word}".'
+    lid = args[0].replace('-', '.')
+    hit = [b for b in lessons if b.startswith(f'### {lid} ')]
+    return hit[0] if hit else f'No lesson {args[0]}.'
+
+
 if __name__ == '__main__':
     new = build()
+    if len(sys.argv) > 1 and sys.argv[1] != '--check':
+        print(query(new, sys.argv[1:]))
+        sys.exit()
     if '--check' in sys.argv:
         if not OUT.exists() or OUT.read_text(encoding='utf-8') != new:
             sys.exit('docs/lessons-index.md is out of date. Run: python3 scripts/build_index.py')

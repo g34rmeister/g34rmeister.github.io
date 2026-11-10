@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT5M",
+            "timeRequired": "PT6M",
             "teaches": [
                 "Nav2",
                 "costmap",
@@ -91,20 +91,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html" class="active"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html" aria-current="page"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -132,6 +149,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -142,8 +168,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -247,6 +274,13 @@
                             Nav2 structures contributions through a three-step workflow. First, open an issue ticket for any defect or enhancement; fixing it immediately is optional, as reporting bugs is already valuable.<sup><a href="#ref-11">[11]</a></sup> Second, claim an issue by commenting on the ticket, ideally providing an implementation strategy and timeline so others can coordinate.<sup><a href="#ref-11">[11]</a></sup> Third, submit a pull request with the PR template completed.<sup><a href="#ref-11">[11]</a></sup> Submissions undergo review by one to two reviewers. While a single maintainer can merge trivial fixes, substantial changes require approval from at least one maintainer and one other community member.<sup><a href="#ref-11">[11]</a></sup> <!-- F49 F50 -->
                         </p>
 
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 346" role="img" aria-label="Nav2 contribution workflow in four steps: 1, open an issue for a defect or enhancement (fixing it right away is optional); 2, claim the issue by commenting on the ticket with an implementation strategy and timeline; 3, submit a pull request with the PR template completed; then review by one to two reviewers, where substantial changes need one maintainer and one other community member." xmlns="http://www.w3.org/2000/svg">
+                                <defs><marker id="arrow-3-5-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="30" y="8" width="340" height="66" rx="4"/><text class="d-title" x="200" y="30" text-anchor="middle">1. Open an issue</text><text class="d-muted" x="200" y="48" text-anchor="middle">for a defect or enhancement.</text><text class="d-muted" x="200" y="64" text-anchor="middle">Fixing it right away is optional.</text><line class="d-line" x1="200" y1="74" x2="200" y2="94" marker-end="url(#arrow-3-5-1)"/><rect class="d-box" x="30" y="96" width="340" height="66" rx="4"/><text class="d-title" x="200" y="118" text-anchor="middle">2. Claim the issue</text><text class="d-muted" x="200" y="136" text-anchor="middle">Comment on the ticket, ideally with an</text><text class="d-muted" x="200" y="152" text-anchor="middle">implementation strategy and timeline.</text><line class="d-line" x1="200" y1="162" x2="200" y2="182" marker-end="url(#arrow-3-5-1)"/><rect class="d-box" x="30" y="184" width="340" height="50" rx="4"/><text class="d-title" x="200" y="206" text-anchor="middle">3. Submit a pull request</text><text class="d-muted" x="200" y="224" text-anchor="middle">Complete the PR template.</text><line class="d-line" x1="200" y1="234" x2="200" y2="254" marker-end="url(#arrow-3-5-1)"/><rect class="d-box-gold" x="30" y="256" width="340" height="82" rx="4"/><text class="d-title" x="200" y="278" text-anchor="middle">Review</text><text class="d-muted" x="200" y="296" text-anchor="middle">One to two reviewers look at it.</text><text class="d-muted" x="200" y="312" text-anchor="middle">Substantial changes need one maintainer</text><text class="d-muted" x="200" y="328" text-anchor="middle">and one other community member.</text>
+                            </svg>
+                            <figcaption>Nav2&rsquo;s three-step contribution workflow and the review that follows.<sup><a href="#ref-11">[11]</a></sup></figcaption>
+                        </figure>
+
                         <h2 class="article-section-title">06. A first contribution path</h2>
                         <p>
                             Lessons <a href="robotics-3-2.html">3.2</a> and <a href="robotics-3-4.html">3.4</a> introduced GitHub workflows for branching, making commits, and opening pull requests. Those mechanics apply directly to Nav2.
@@ -260,9 +294,9 @@
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">What is the role of a costmap in the Nav2 environmental representation, and how do costmap layers buffer sensor data into it?</li>
-                            <li class="article-spec-item">How do the licensing requirements in Nav2's repository LICENSE file differ from the terms in CONTRIBUTING.md, and how do contributors certify their commits under the DCO?</li>
-                            <li class="article-spec-item">What are the three steps in the Nav2 contribution process, and what level of community approval is required before merging substantial pull requests?</li>
+                            <li class="article-spec-item">What is the role of a costmap in the Nav2 environmental representation, and how do costmap layers add to it?<details class="check-answer"><summary>Show answer</summary><p>The costmap is how Nav2 represents the environment: a regular two-dimensional cell grid whose values represent unknown, free, occupied or inflated obstacle regions. Planners search it to compute a global plan, and controllers sample it to compute local control efforts. Costmap layers, written as plugins, feed information into the costmap. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">How do the licensing requirements in Nav2's repository LICENSE file differ from the terms in CONTRIBUTING.md, and how do contributors certify their commits under the DCO?<details class="check-answer"><summary>Show answer</summary><p>The LICENSE file says portions of the repository are available under Apache-2.0, BSD-3-Clause, or Apache-2.0 AND BSD-3-Clause, and that contributions to existing files should be made under the license of that file. CONTRIBUTING.md says any contribution will be under the Apache 2 License. Contributors certify their commits under the DCO by adding a Signed-off-by line to each commit message; <code>git commit -s</code> appends it automatically. <span class="check-answer-src">(Section 04)</span></p></details></li>
+                            <li class="article-spec-item">What are the three steps in the Nav2 contribution process, and what level of community approval is required before merging substantial pull requests?<details class="check-answer"><summary>Show answer</summary><p>First, open an issue ticket for a defect or enhancement. Second, claim an issue by commenting on the ticket. Third, submit a pull request with the PR template completed. Substantial changes require approval from at least one maintainer and one other community member. <span class="check-answer-src">(Section 05)</span></p></details></li>
                         </ul>
 
                         <h2 class="article-section-title">08. References</h2>
@@ -314,10 +348,10 @@
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=72f75746" defer></script>
-        <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-        <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>

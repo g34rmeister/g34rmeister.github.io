@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT4M",
+            "timeRequired": "PT6M",
             "teaches": [
                 "cell monitor",
                 "maintenance log",
@@ -87,20 +87,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html" aria-current="page"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -128,6 +145,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -138,8 +164,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html" class="active"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -250,10 +277,50 @@
                                 <li><span class="spec-label">M5 Open it up:</span> add a CONTRIBUTING file, open one issue that a newcomer could take, and open one real pull request: to your classmates' monitor, to robOSStics, or to a robotics project from Chapter 3. Pull requests do not have to be finished; you can open one early as a draft pull request to get feedback.<sup><a href="#ref-6">[6]</a></sup> Hand in: the links.</li>
                             </ol>
 
+                        <p>
+                            One way to lay out the repository is shown below. It is the Python package layout from <a href="robotics-4-6.html">4.6</a> with the capstone&rsquo;s documents added; the names are suggestions, not requirements.
+                        </p>
+                        <pre class="article-code"><code>cell_monitor/                 the repository
+├── README.md                 what it does, how to run it (M0)
+├── LICENSE                   M0
+├── CONTRIBUTING.md           M5
+├── docs/
+│   ├── handshake-bits.md     which bit means what (M2)
+│   └── test-results.md       pass conditions and results (section 05)
+├── package.xml               ROS 2 package, as in 4.6
+├── setup.py                  entry point for the monitor node
+└── cell_monitor/
+    ├── __init__.py
+    ├── monitor_node.py       M1 to M4
+    └── maintenance_log.py    M4</code></pre>
+                        <p>
+                            For M4, one line per state change is enough. The format below is only an example; what matters is a time stamp, the old and new state, and a warning in place of a reset.
+                        </p>
+                        <pre class="article-code"><code>2026-11-09T14:02:11  robotmode     RUNNING
+2026-11-09T14:02:11  safetystatus  NORMAL
+2026-11-09T14:07:43  safetystatus  NORMAL -&gt; PROTECTIVE_STOP
+2026-11-09T14:08:20  safetystatus  PROTECTIVE_STOP -&gt; NORMAL   (cleared by a person)
+2026-11-09T14:15:02  safetystatus  NORMAL -&gt; PROTECTIVE_STOP
+2026-11-09T14:15:02  WARNING       2 protective stops in 10 minutes; not resetting, see the 9.3 checklist</code></pre>
+
                             <h2 class="article-section-title">05. Testing and verification</h2>
                             <p>
                                 Write the pass conditions before you test. For example: M1 reports <code>PROTECTIVE_STOP</code> within two seconds of the stand-in entering it; M2 reads back exactly the bits you wrote; M4 never sends <code>unlock protective stop</code>. Run each test, record the result, and keep the record in the repository.
                             </p>
+
+                        <p>
+                            A small table is enough for the record. Fill in the last two columns when you run each test:
+                        </p>
+                        <table class="article-table" style="width: 100%;">
+                            <thead>
+                                <tr><th scope="col">Milestone</th><th scope="col">Pass condition</th><th scope="col">How to test it</th><th scope="col">Result</th><th scope="col">Date</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>M1</td><td>Reports <code>PROTECTIVE_STOP</code> within two seconds of the stand-in entering it</td><td>Trigger the stop on the stand-in and time the topic output</td><td></td><td></td></tr>
+                                <tr><td>M2</td><td>Reads back exactly the bits that were written</td><td>Write a known pattern to the register, read it, compare</td><td></td><td></td></tr>
+                                <tr><td>M4</td><td>Never sends <code>unlock protective stop</code></td><td>Search the code and the stand-in&rsquo;s received commands</td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
 
                             <h2 class="article-section-title">06. Grading rubric</h2>
                             <p>
@@ -285,9 +352,9 @@
                                     <span class="article-nav-dir">&lt;- Previous</span>
                                     <span class="article-nav-target">10.3 Capstone: Speed-Controlled Wheel</span>
                                 </a>
-                                <a href="robotics.html" class="article-nav-card" style="text-align: right;">
-                                    <span class="article-nav-dir">Finished -&gt;</span>
-                                    <span class="article-nav-target">Course home</span>
+                                <a href="robotics-mobile.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter -&gt;</span>
+                                    <span class="article-nav-target">Chapter 11: Mobile Robots and Navigation</span>
                                 </a>
                             </div>
 
@@ -313,10 +380,10 @@
         </div>
 
         <!-- Scripts -->
-            <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-            <script src="assets/js/course-data.js?v=72f75746" defer></script>
-            <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-            <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+            <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+            <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+            <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+            <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>

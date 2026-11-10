@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=a6842ae4" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT5M",
+            "timeRequired": "PT6M",
             "teaches": [
                 "continuity testing",
                 "pulse stretcher",
@@ -90,20 +90,37 @@
                     </a>
                     <ul class="thesis-nav-links">
                         <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
-                        <li><a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a></li>
-                        <li><a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a></li>
-                        <li><a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a></li>
-                        <li><a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a></li>
-                        <li><a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a></li>
-                        <li><a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a></li>
-                        <li><a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a></li>
-                        <li><a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a></li>
-                        <li><a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a></li>
-                        <li><a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html" aria-current="page"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
                         <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
                         <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
                     </ul>
                     <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
                         <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
                             <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
                         </a>
@@ -131,6 +148,15 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
                 <div class="thesis-drawer-links">
                     <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
                     <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
@@ -141,8 +167,9 @@
                     <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
                     <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
                     <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
-                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-screwdriver-wrench"></i> Maintenance</a>
+                    <a href="robotics-maintenance.html" class="active"><i class="fas fa-tools"></i> Maintenance</a>
                     <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route"></i> Mobile</a>
                     <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
                     <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
                     <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
@@ -258,6 +285,13 @@
                             Electrical noise from external equipment can be reduced with galvanic isolation through an intermediate relay.<sup><a href="#ref-5">[5]</a></sup> Galvanic isolation means there is no direct electrical connection between the two circuits. In UR's example, a robot digital output drives a relay, and the relay's contact switches a signal from an external power supply to a frequency converter.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
 
+                            <figure class="lesson-diagram">
+                                <svg viewBox="0 0 400 168" role="img" aria-label="A robot digital output drives the coil of a relay. On the other side of the relay, its contact switches a signal from an external power supply to a frequency converter. A dashed line through the relay shows there is no electrical connection between the two sides" xmlns="http://www.w3.org/2000/svg">
+                                    <defs><marker id="arrow-9-4-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" class="d-fill"/></marker></defs><rect class="d-box" x="8" y="48" width="112" height="56" rx="4"/><text class="d-text" x="64" y="72" text-anchor="middle">Robot digital</text><text class="d-text" x="64" y="90" text-anchor="middle">output</text><rect class="d-box-gold" x="150" y="30" width="100" height="92" rx="4"/><text class="d-title" x="200" y="22" text-anchor="middle">Relay</text><text class="d-muted" x="175" y="80" text-anchor="middle">coil</text><text class="d-muted" x="226" y="80" text-anchor="middle">contact</text><line class="d-line" stroke-dasharray="5 4" x1="200" y1="36" x2="200" y2="116"/><line class="d-line" x1="120" y1="76" x2="150" y2="76" marker-end="url(#arrow-9-4-1)"/><rect class="d-box" x="280" y="10" width="112" height="44" rx="4"/><text class="d-text" x="336" y="37" text-anchor="middle">External supply</text><rect class="d-box" x="280" y="98" width="112" height="56" rx="4"/><text class="d-text" x="336" y="122" text-anchor="middle">Frequency</text><text class="d-text" x="336" y="140" text-anchor="middle">converter</text><path class="d-line" d="M 280,32 L 262,32 L 262,60 L 250,60"/><path class="d-line" d="M 250,96 L 262,96 L 262,126 L 280,126" marker-end="url(#arrow-9-4-1)"/><text class="d-muted" x="200" y="142" text-anchor="middle">no electrical connection</text><text class="d-muted" x="200" y="158" text-anchor="middle">between the two sides</text>
+                                </svg>
+                                <figcaption>Universal Robots&rsquo; example of galvanic isolation: the robot output only drives the relay, and the relay&rsquo;s contact switches a signal from an external supply to the frequency converter.<sup><a href="#ref-5">[5]</a></sup></figcaption>
+                            </figure>
+
                         <h2 class="article-section-title">06. Diagnosing network and fieldbus faults</h2>
                         <p>
                             <a href="robotics-8-3.html">8.3 Lab: Connecting a Robot to a PLC</a> showed Modbus TCP, and <a href="robotics-8-6.html">8.6 Network Design, Security and Diagnostics</a> showed how to watch traffic in Wireshark.
@@ -277,10 +311,20 @@
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">Why should technicians ohm out multimeter test leads before taking measurements, and what hazard is created if test probes are connected to current jacks during voltage testing?</li>
-                            <li class="article-spec-item">What causes most industrial sensor failures, and why do fuses not prevent them?</li>
-                            <li class="article-spec-item">What does an unexpected Working Counter in EtherCAT mean, and which registers record intermittent link drops?</li>
+                            <li class="article-spec-item">Why should technicians ohm out multimeter test leads before taking measurements, and what hazard is created if test probes are connected to current jacks during voltage testing?<details class="check-answer"><summary>Show answer</summary><p>They should be ohmed out to verify that the resistance measurement is close to zero, by setting the meter to resistance and touching the probe tips together. If test probes are plugged into current jacks rather than voltage jacks, measuring voltage will create a short circuit. <span class="check-answer-src">(Sections 01 and 02)</span></p></details></li>
+                            <li class="article-spec-item">What causes most industrial sensor failures, and why do fuses not prevent them?<details class="check-answer"><summary>Show answer</summary><p>Most industrial sensor failures come from incorrect wiring, in which the sensor output is connected directly to the power supply or AC line. Fuses do not prevent them because fast-acting fuses and electronic current-limiting circuits operate too slowly to protect solid-state sensors from short circuits or reverse polarity wiring. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">What does an unexpected Working Counter in EtherCAT mean, and which registers record intermittent link drops?<details class="check-answer"><summary>Show answer</summary><p>An unexpected Working Counter in a returned frame indicates a slave communication failure, and the master discards the input data. The Lost Link Counter registers, 0x0310 to 0x0313 (one per port), record intermittent link drops. <span class="check-answer-src">(Section 06)</span></p></details></li>
                         </ul>
+
+                            <div class="article-callout try-it">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li>On paper, list in order what you would check when a 24 V proximity sensor stops switching its PLC input. Start with the meter itself: what do you do to the test leads first?</li>
+                                    <li>Before a continuity test, what two things must be true of the circuit?</li>
+                                    <li>A colleague says the fuse will protect a solid-state sensor from a wiring mistake. Use this lesson to explain why it will not.</li>
+                                    <li>An EtherCAT link drops for a moment a few times a day. Which register tells you where, and what does the master do with a frame whose Working Counter is not what it expected?</li>
+                                </ol>
+                            </div>
 
                         <h2 class="article-section-title">08. References</h2>
                         <p class="references-note">Source check (October 2026): 7 of 7 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-9-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
@@ -327,10 +371,10 @@
         </div>
 
         <!-- Scripts -->
-        <script src="assets/js/robotics.js?v=45a7fb1e" defer></script>
-        <script src="assets/js/course-data.js?v=72f75746" defer></script>
-        <script src="assets/js/glossary-data.js?v=d7b06bc8" defer></script>
-        <script src="assets/js/learning.js?v=2f0daa4f" defer></script>
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
 
     </body>
 </html>

@@ -1,0 +1,319 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 11.2 Costmaps: How the Robot Sees Its Surroundings
+-->
+<html lang="en">
+    <head>
+        <title>11.2 Costmaps: How the Robot Sees Its Surroundings — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="How Nav2 represents the world as a costmap: cell costs, layers and inflation, global and local costmaps, the robot footprint, and costmap filters." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-11-2.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="11.2 Costmaps: How the Robot Sees Its Surroundings — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="How Nav2 represents the world as a costmap: cell costs, layers and inflation, global and local costmaps, the robot footprint, and costmap filters." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-11-2.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="11.2 Costmaps: How the Robot Sees Its Surroundings, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="11.2 Costmaps: How the Robot Sees Its Surroundings — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="How Nav2 represents the world as a costmap: cell costs, layers and inflation, global and local costmaps, the robot footprint, and costmap filters." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
+        <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+        <script type="application/ld+json" id="lesson-ld">
+{
+            "@context": "https://schema.org",
+            "@type": "LearningResource",
+            "name": "11.2 Costmaps: How the Robot Sees Its Surroundings",
+            "url": "https://g34rmeister.github.io/robotics-11-2.html",
+            "description": "How Nav2 represents the world as a costmap: cell costs, layers and inflation, global and local costmaps, the robot footprint, and costmap filters.",
+            "inLanguage": "en",
+            "learningResourceType": "Lesson",
+            "educationalLevel": "Beginner",
+            "timeRequired": "PT3M",
+            "teaches": [
+                "costmap",
+                "costmap layer",
+                "inflation layer",
+                "robot footprint",
+                "costmap filter",
+                "filter mask"
+            ],
+            "isPartOf": {
+                "@type": "Course",
+                "name": "robOSStics",
+                "url": "https://g34rmeister.github.io/robotics.html"
+            },
+            "author": {
+                "@type": "Person",
+                "name": "Gerald Lê"
+            },
+            "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html" aria-current="page"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html" class="active"><i class="fas fa-route"></i> Mobile</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <a href="robotics-mobile.html">Chapter 11 &middot; Mobile</a>
+                        </div>
+
+                        <h1 class="robotics-article-headline">11.2 Costmaps: How the Robot Sees Its Surroundings</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. One shared picture of the world</h2>
+                        <p>
+                            The environmental representation is the way the robot perceives its environment.<sup><a href="#ref-1">[1]</a></sup> It is also where different algorithms and data sources combine their information into a single space, which the controllers, planners and recoveries then use to compute their tasks.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. The costmap</h2>
+                        <p>
+                            In Nav2 the environmental representation is a costmap: a regular 2D grid of cells, each holding a cost from unknown, free, occupied or inflated.<sup><a href="#ref-1">[1]</a></sup> The costmap is searched to compute a global plan, or sampled to compute local control efforts.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 400 172" role="img" aria-label="A grid of square cells. Four dark cells in the middle are occupied by an obstacle, the ring of cells around them is inflated, a few cells at the edge are marked unknown and the rest are free. A circle shows the robot footprint" xmlns="http://www.w3.org/2000/svg">
+                                <rect class="d-box" x="8" y="8" width="26" height="26"/><rect class="d-box" x="34" y="8" width="26" height="26"/><rect class="d-box" x="60" y="8" width="26" height="26"/><rect class="d-box" x="86" y="8" width="26" height="26"/><rect class="d-box-gold" x="112" y="8" width="26" height="26"/><rect class="d-box-gold" x="138" y="8" width="26" height="26"/><rect class="d-box-gold" x="164" y="8" width="26" height="26"/><rect class="d-box-gold" x="190" y="8" width="26" height="26"/><rect class="d-box" x="216" y="8" width="26" height="26"/><rect class="d-box" x="242" y="8" width="26" height="26"/><rect class="d-box" x="8" y="34" width="26" height="26"/><rect class="d-box" x="34" y="34" width="26" height="26"/><rect class="d-box" x="60" y="34" width="26" height="26"/><rect class="d-box" x="86" y="34" width="26" height="26"/><rect class="d-box-gold" x="112" y="34" width="26" height="26"/><rect class="d-fill" x="138" y="34" width="26" height="26"/><rect class="d-fill" x="164" y="34" width="26" height="26"/><rect class="d-box-gold" x="190" y="34" width="26" height="26"/><rect class="d-box" x="216" y="34" width="26" height="26"/><rect class="d-box" x="242" y="34" width="26" height="26"/><rect class="d-box" x="8" y="60" width="26" height="26"/><rect class="d-box" x="34" y="60" width="26" height="26"/><rect class="d-box" x="60" y="60" width="26" height="26"/><rect class="d-box" x="86" y="60" width="26" height="26"/><rect class="d-box-gold" x="112" y="60" width="26" height="26"/><rect class="d-fill" x="138" y="60" width="26" height="26"/><rect class="d-fill" x="164" y="60" width="26" height="26"/><rect class="d-box-gold" x="190" y="60" width="26" height="26"/><rect class="d-box" x="216" y="60" width="26" height="26"/><rect class="d-box" x="242" y="60" width="26" height="26"/><rect class="d-box" x="8" y="86" width="26" height="26"/><rect class="d-box" x="34" y="86" width="26" height="26"/><rect class="d-box" x="60" y="86" width="26" height="26"/><rect class="d-box" x="86" y="86" width="26" height="26"/><rect class="d-box-gold" x="112" y="86" width="26" height="26"/><rect class="d-box-gold" x="138" y="86" width="26" height="26"/><rect class="d-box-gold" x="164" y="86" width="26" height="26"/><rect class="d-box-gold" x="190" y="86" width="26" height="26"/><rect class="d-box" x="216" y="86" width="26" height="26"/><rect class="d-box" x="242" y="86" width="26" height="26"/><text class="d-muted" x="255" y="104" text-anchor="middle">?</text><rect class="d-box" x="8" y="112" width="26" height="26"/><rect class="d-box" x="34" y="112" width="26" height="26"/><rect class="d-box" x="60" y="112" width="26" height="26"/><rect class="d-box" x="86" y="112" width="26" height="26"/><rect class="d-box" x="112" y="112" width="26" height="26"/><rect class="d-box" x="138" y="112" width="26" height="26"/><rect class="d-box" x="164" y="112" width="26" height="26"/><rect class="d-box" x="190" y="112" width="26" height="26"/><rect class="d-box" x="216" y="112" width="26" height="26"/><rect class="d-box" x="242" y="112" width="26" height="26"/><text class="d-muted" x="255" y="130" text-anchor="middle">?</text><rect class="d-box" x="8" y="138" width="26" height="26"/><rect class="d-box" x="34" y="138" width="26" height="26"/><rect class="d-box" x="60" y="138" width="26" height="26"/><rect class="d-box" x="86" y="138" width="26" height="26"/><rect class="d-box" x="112" y="138" width="26" height="26"/><rect class="d-box" x="138" y="138" width="26" height="26"/><rect class="d-box" x="164" y="138" width="26" height="26"/><rect class="d-box" x="190" y="138" width="26" height="26"/><rect class="d-box" x="216" y="138" width="26" height="26"/><text class="d-muted" x="229" y="156" text-anchor="middle">?</text><rect class="d-box" x="242" y="138" width="26" height="26"/><text class="d-muted" x="255" y="156" text-anchor="middle">?</text><circle class="d-strong" cx="60" cy="125" r="20"/><text class="d-muted" x="60" y="129" text-anchor="middle">robot</text><rect class="d-box" x="284" y="20" width="18" height="18"/><text class="d-text" x="310" y="34" text-anchor="start">free</text><rect class="d-fill" x="284" y="50" width="18" height="18"/><text class="d-text" x="310" y="64" text-anchor="start">occupied</text><rect class="d-box-gold" x="284" y="80" width="18" height="18"/><text class="d-text" x="310" y="94" text-anchor="start">inflated</text><rect class="d-box" x="284" y="110" width="18" height="18"/><text class="d-muted" x="293" y="124" text-anchor="middle">?</text><text class="d-text" x="310" y="124" text-anchor="start">unknown</text>
+                            </svg>
+                            <figcaption>A costmap is a grid in which every cell is unknown, free, occupied or inflated.<sup><a href="#ref-1">[1]</a></sup> The inflation layer adds cost around obstacles.<sup><a href="#ref-2">[2]</a></sup></figcaption>
+                        </figure>
+
+                        <h2 class="article-section-title">03. Layers and inflation</h2>
+                        <p>
+                            A costmap is built from layers. Costmap layers are plugins that buffer information into the costmap, including information from lidar, radar, sonar and depth images.<sup><a href="#ref-1">[1]</a></sup> Layers can also be written to detect and track obstacles using camera or depth sensors, or to change the underlying costmap by some rule or heuristic.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            The inflation layer is one of those rule-based layers. It places a decaying cost around obstacles, which makes it more costly to travel near a collision.<sup><a href="#ref-2">[2]</a></sup> Its <code>inflation_radius</code> parameter sets the radius to inflate around lethal obstacles.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. Two costmaps and one robot shape</h2>
+                        <p>
+                            Nav2 keeps a global and a local view. The planner has access to a global environmental representation, and the controller to a local one.<sup><a href="#ref-3">[3]</a></sup> The behavior server subscribes to the local costmap instead of building its own, because costmaps are computationally expensive to duplicate.<sup><a href="#ref-3">[3]</a></sup> <a href="robotics-11-3.html">11.3</a> covers those three servers.
+                        </p>
+                        <p>
+                            The costmap also needs the robot&rsquo;s shape. The footprint is set either as a circle of radius <code>robot_radius</code> or, for a non-circular robot, as a list of points called <code>footprint</code> that describes a polygon.<sup><a href="#ref-3">[3]</a></sup> The footprint can change while the robot runs, for example when it picks up a pallet, and the planners and controllers then use the new polygon automatically.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">05. Costmap filters: rules painted on the map</h2>
+                        <p>
+                            A filter mask is an annotated map that marks areas where something different should happen.<sup><a href="#ref-1">[1]</a></sup> Costmap filters are costmap plugins that read the mask and change the robot&rsquo;s behavior depending on where it is.<sup><a href="#ref-1">[1]</a></sup> Nav2&rsquo;s documentation gives three examples: keep-out zones the robot will never enter, speed restriction areas, and preferred lanes for robots moving in industrial environments and warehouses.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">06. Other representations</h2>
+                        <p>
+                            Costmaps are not the only option. Nav2 lists gradient maps, 3D costmaps (which then also need 3D planning and collision checking) and mesh maps as other forms.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">07. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">What four kinds of cost can a costmap cell hold?<details class="check-answer"><summary>Show answer</summary><p>Each cell holds a cost that is unknown, free, occupied or inflated. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">What does the inflation layer do, and which parameter sets how far it reaches?<details class="check-answer"><summary>Show answer</summary><p>The inflation layer places a decaying cost around obstacles, which makes it more costly to travel near a collision. Its <code>inflation_radius</code> parameter sets how far it reaches. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">Name two things a costmap filter can make a robot do in a marked area.<details class="check-answer"><summary>Show answer</summary><p>It can keep a robot out of an area it will never enter (a keep-out zone), or restrict its speed in a marked area. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                        </ul>
+
+                        <div class="article-callout try-it">
+                            <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                            <ol>
+                                <li>A warehouse has a pedestrian walkway the robots must not use and a loading dock where they must slow down. Which Nav2 feature handles both, and what would you draw on the filter mask for each?</li>
+                                <li>A robot picks up a pallet that is wider than the robot. What must change in the costmap configuration while it carries the pallet, and which Nav2 parts use the change?</li>
+                                <li>On squared paper, draw a 10 by 6 costmap with one obstacle. Mark the occupied cells, then the cells you would expect the inflation layer to raise.</li>
+                            </ol>
+                        </div>
+
+                            <!-- oss-note -->
+                            <div class="article-callout oss-note">
+                                <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>
+                                <p>Projects used or discussed here: <a href="robotics-oss-map.html#nav2">Nav2</a>. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows its licence, where the code lives and how to make a first contribution.</p>
+                            </div>
+                            <!-- /oss-note -->
+
+                        <h2 class="article-section-title">08. References</h2>
+                        <p class="references-note">Source check (November 2026): 3 of 3 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-11-2.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Nav2, &ldquo;Environmental Representation.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/environmental_representation.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/environmental_representation.md</a>.</li>
+                            <li id="ref-2">Nav2, &ldquo;Inflation Layer Parameters.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md</a>.</li>
+                            <li id="ref-3">Nav2, &ldquo;Navigation Servers.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md</a>.</li>
+                        </ol>
+
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-11-1.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous</span>
+                                    <span class="article-nav-target">11.1 Where Is the Robot? Frames, Odometry and Localization</span>
+                                </a>
+                                <a href="robotics-11-3.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next -&gt;</span>
+                                    <span class="article-nav-target">11.3 Planners, Controllers and Recoveries</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
+                            <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
+                            <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
+
+    </body>
+</html>

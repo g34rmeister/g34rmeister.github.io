@@ -4,7 +4,9 @@
 	  - "In this lesson" objectives at the top of each lesson
 	  - "Mark as complete" progress, shown again on the hub and chapter pages
 	  - chapter quizzes on robotics-quiz.html?chapter=N, and the same questions
-	    as "Check yourself" boxes at the end of each lesson
+	    as "Check yourself" boxes at the end of each lesson (the questions live in
+	    assets/js/quiz/ch<N>.js, loaded on demand by loadQuiz())
+	  - a search box in the navbar and drawer on every course page
 	  - a lesson search box on the hub
 	  - reading time, key terms linked to the glossary, a "Continue" button on
 	    the hub, and a plan box on each chapter page
@@ -148,7 +150,6 @@
 
 	function nextLesson() {
 		var p = loadProgress(), lessons = allLessons();
-		if (!Object.keys(p.completed).length) return null;
 		for (var i = 0; i < lessons.length; i++) {
 			if (!p.completed[lessons[i].id]) return lessons[i];
 		}
@@ -170,11 +171,11 @@
 
 	/* ---------- Lesson pages ---------- */
 
-	function initLesson(id) {
+	function initLesson(id, done) {
 		var lesson = getLesson(id);
 		var chapter = chapterOfLesson(id);
 		var body = document.querySelector('.robotics-article-body');
-		if (!lesson || !body) return;
+		if (!lesson || !body) { done(); return; }
 
 		document.body.setAttribute('data-lesson-id', id);
 		addReadingTime(body, lesson.minutes);
@@ -196,7 +197,7 @@
 			body.insertBefore(box, body.firstChild);
 		}
 
-		// "Key points" summary just before the References heading (from course-data.js keyPoints).
+		// "Key points" summary after the self-check list, else just before the References heading (from course-data.js keyPoints).
 		if (lesson.keyPoints && lesson.keyPoints.length) {
 			var refsHeading = null;
 			Array.prototype.forEach.call(body.querySelectorAll('h2'), function (h) {
@@ -206,7 +207,16 @@
 				el('div', { 'class': 'article-callout-header', html: '<i class="fas fa-clipboard-list" aria-hidden="true"></i> Key points' }),
 				el('ul', {}, lesson.keyPoints.map(function (k) { return el('li', { text: k }); }))
 			]);
-			if (refsHeading) body.insertBefore(kp, refsHeading);
+			// Directly after the list under "Check your understanding" when that section exists.
+			var checkList = null;
+			Array.prototype.forEach.call(body.querySelectorAll('h2'), function (h) {
+				if (checkList || !/Check your understanding\s*$/.test(h.textContent)) return;
+				for (var sib = h.nextElementSibling; sib && sib.tagName !== 'H2'; sib = sib.nextElementSibling) {
+					if (sib.tagName === 'OL' || sib.tagName === 'UL') { checkList = sib; break; }
+				}
+			});
+			if (checkList) checkList.parentNode.insertBefore(kp, checkList.nextSibling);
+			else if (refsHeading) body.insertBefore(kp, refsHeading);
 		}
 
 		var footerNav = body.querySelector('.article-footer-nav');
@@ -249,9 +259,6 @@
 			hidden: ''
 		});
 
-		var check = selfCheck(id);
-		if (check) body.insertBefore(check, footerNav || null);
-
 		if (footerNav) {
 			body.insertBefore(panel, footerNav);
 			body.insertBefore(slot, footerNav);
@@ -259,6 +266,183 @@
 			body.appendChild(panel);
 			body.appendChild(slot);
 		}
+
+		// The inline self-check needs this chapter's quiz file; the lesson reads fine without it if the file fails to load.
+		loadQuiz(chapter.id, function () {
+			var check = selfCheck(id);
+			if (check) body.insertBefore(check, panel);
+			// Math first: auto-render only sees delimiters inside one text node, and the glossary splits text nodes.
+			renderMath(body, function () { glossaryPopups(body, lesson); done(); });
+		});
+	}
+
+	/* ---------- Lessons: LaTeX in the text (\( ... \) and \[ ... \]) is drawn by the vendored KaTeX ---------- */
+
+	var KATEX_DIR = 'assets/vendor/katex/';
+
+	// True when text outside <code>/<pre> holds a math delimiter, so pages without formulas load nothing.
+	function hasMath(body) {
+		var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false), n;
+		while ((n = walker.nextNode())) {
+			if (n.nodeValue.indexOf('\\(') === -1 && n.nodeValue.indexOf('\\[') === -1) continue;
+			if (n.parentNode.closest && n.parentNode.closest('code,pre,script,style')) continue;
+			return true;
+		}
+		return false;
+	}
+
+	function loadScript(src, done) {
+		var s = document.createElement('script');
+		s.src = src;
+		s.onload = function () { done(true); };
+		s.onerror = function () { done(false); };
+		document.head.appendChild(s);
+	}
+
+	// A chapter's quiz questions are a separate file, injected as a script tag (works from file://). The query is the
+	// course `version`, so bumping it in course-data.js refreshes cached question files. done(true) once
+	// course.quizzes[chId] exists; done(false) if the file is missing or fails to load.
+	function loadQuiz(chId, done) {
+		course.quizzes = course.quizzes || {};
+		if (course.quizzes[chId]) { done(true); return; }
+		loadScript('assets/js/quiz/ch' + chId + '.js?v=' + encodeURIComponent(course.version || ''), function (ok) {
+			done(!!(ok && course.quizzes[chId]));
+		});
+	}
+
+	function renderMath(body, done) {
+		if (!hasMath(body)) { done(); return; }
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.href = KATEX_DIR + 'katex.min.css';
+		document.head.appendChild(link);
+		loadScript(KATEX_DIR + 'katex.min.js', function (ok) {
+			if (!ok) { done(); return; }
+			loadScript(KATEX_DIR + 'contrib/auto-render.min.js', function (ok2) {
+				if (ok2 && window.renderMathInElement) {
+					window.renderMathInElement(body, {
+						delimiters: [
+							{ left: '\\[', right: '\\]', display: true },
+							{ left: '\\(', right: '\\)', display: false }
+						],
+						throwOnError: false
+					});
+				}
+				document.documentElement.setAttribute('data-math', ok2 ? 'ready' : 'failed');
+				done();
+			});
+		});
+	}
+
+	/* ---------- Lessons: key terms at first use open a short definition ---------- */
+
+	var GLOSSARY_SKIP = 'h1,h2,h3,h4,h5,h6,a,code,pre,kbd,figure,table,button,label,select,textarea,sup,svg,script,style,' +
+		'.article-callout,.learning-objectives,.wp-toc,[data-widget],[id^="ref-"],.glossary-term,' +
+		'.article-footer-nav,.lesson-complete-panel,.rise-tutor-slot,.katex';
+
+	function escapeRegExp(t) { return t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+	// Plain text nodes in normal paragraphs and list items, before the References heading.
+	function glossaryTextNodes(body, stop) {
+		var walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+		var out = [], n;
+		while ((n = walker.nextNode())) {
+			var parent = n.parentNode;
+			if (!n.nodeValue.trim() || !parent.closest) continue;
+			if (stop && (stop.compareDocumentPosition(n) & Node.DOCUMENT_POSITION_FOLLOWING)) break;
+			if (parent.closest(GLOSSARY_SKIP) || !parent.closest('p,li')) continue;
+			out.push(n);
+		}
+		return out;
+	}
+
+	var glossaryPop = null, glossaryOpener = null;
+
+	function closeGlossaryPop(returnFocus) {
+		if (!glossaryPop) return;
+		var opener = glossaryOpener;
+		glossaryPop.hidden = true;
+		glossaryOpener = null;
+		if (opener) {
+			opener.setAttribute('aria-expanded', 'false');
+			if (returnFocus) opener.focus();
+		}
+	}
+
+	function openGlossaryPop(opener) {
+		var term = opener.getAttribute('data-term');
+		if (!glossaryPop) {
+			glossaryPop = el('div', { 'class': 'glossary-pop', role: 'dialog', tabindex: '-1', hidden: '' });
+			document.body.appendChild(glossaryPop);
+			glossaryPop.addEventListener('keydown', function (e) {
+				if (e.key === 'Escape') { e.stopPropagation(); closeGlossaryPop(true); }
+			});
+			glossaryPop.addEventListener('focusout', function (e) {
+				if (e.relatedTarget && !glossaryPop.contains(e.relatedTarget) && e.relatedTarget !== glossaryOpener) closeGlossaryPop(false);
+			});
+			document.addEventListener('click', function (e) {
+				if (glossaryPop.hidden) return;
+				if (glossaryPop.contains(e.target) || (e.target.closest && e.target.closest('.glossary-term'))) return;
+				closeGlossaryPop(false);
+			});
+			document.addEventListener('keydown', function (e) {
+				if (e.key === 'Escape' && !glossaryPop.hidden) closeGlossaryPop(true);
+			});
+		}
+		closeGlossaryPop(false);
+		glossaryPop.innerHTML = '';
+		glossaryPop.setAttribute('aria-label', 'Definition of ' + term);
+		glossaryPop.appendChild(el('strong', { text: term }));
+		glossaryPop.appendChild(el('p', { text: glossary[term] }));
+		glossaryPop.appendChild(el('a', { href: 'robotics-glossary.html#' + termSlug(term), text: 'Glossary' }));
+		glossaryPop.hidden = false;
+		var r = opener.getBoundingClientRect();
+		var w = Math.min(320, document.documentElement.clientWidth - 16);
+		glossaryPop.style.width = w + 'px';
+		var left = Math.max(8, Math.min(r.left, document.documentElement.clientWidth - w - 8));
+		var h = glossaryPop.offsetHeight;
+		var top = r.bottom + 6;
+		if (top + h > window.innerHeight - 8 && r.top - 6 - h > 8) top = r.top - 6 - h;
+		glossaryPop.style.left = (left + window.pageXOffset) + 'px';
+		glossaryPop.style.top = (top + window.pageYOffset) + 'px';
+		glossaryOpener = opener;
+		opener.setAttribute('aria-expanded', 'true');
+		glossaryPop.focus();
+	}
+
+	function glossaryPopups(body, lesson) {
+		if (!body.closest || !Element.prototype.closest) return;
+		var refsHeading = null;
+		Array.prototype.forEach.call(body.querySelectorAll('h2'), function (h) {
+			if (!refsHeading && /References\s*$/.test(h.textContent)) refsHeading = h;
+		});
+		var terms = (lesson.keyTerms || []).filter(function (t) { return glossary[t]; })
+			.sort(function (a, b) { return b.length - a.length; }); // longest first, so "force sensor" beats "sensor"
+		terms.forEach(function (term) {
+			var re = new RegExp('(^|[^A-Za-z0-9])(' + escapeRegExp(term) + '(?:e?s)?)(?![A-Za-z0-9])', 'i');  // whole word, plural allowed
+			var nodes = glossaryTextNodes(body, refsHeading);
+			for (var i = 0; i < nodes.length; i++) {
+				var m = re.exec(nodes[i].nodeValue);
+				if (!m) continue;
+				var node = nodes[i], start = m.index + m[1].length;
+				var tail = node.splitText(start);
+				tail.splitText(m[2].length);
+				var span = el('span', {
+					'class': 'glossary-term', role: 'button', tabindex: '0', 'aria-expanded': 'false',
+					'aria-haspopup': 'dialog', 'data-term': term, title: 'Definition'
+				});
+				span.appendChild(document.createTextNode(tail.nodeValue));
+				tail.parentNode.replaceChild(span, tail);
+				span.addEventListener('click', function (e) {
+					var t = e.currentTarget;
+					if (glossaryOpener === t) closeGlossaryPop(false); else openGlossaryPop(t);
+				});
+				span.addEventListener('keydown', function (e) {
+					if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.currentTarget.click(); }
+				});
+				break;
+			}
+		});
 	}
 
 	/* ---------- Lessons: "Check yourself" questions from the chapter quiz ---------- */
@@ -294,14 +478,54 @@
 		return box;
 	}
 
-	/* ---------- Hub: lesson search ---------- */
+	/* ---------- Search: one index for the hub box and the navbar ---------- */
 
+	var searchIndex = null;
+
+	// Lower case, punctuation to spaces (keeping "." so "4.4" works), so a word matches only at the start of a word:
+	// "pid" finds "PID control" but not "rapid".
+	function searchNorm(t) { return ' ' + String(t).toLowerCase().replace(/[^a-z0-9.]+/g, ' ') + ' '; }
+
+	function buildSearchIndex() {
+		if (searchIndex) return searchIndex;
+		searchIndex = {
+			lessons: allLessons().map(function (l) {
+				var head = searchNorm([l.id.replace('-', '.'), l.title].join(' '));
+				return { l: l, head: head, text: head + searchNorm([].concat(l.objectives || [], l.keyTerms || []).join(' ')) };
+			}),
+			terms: Object.keys(glossary).map(function (t) {
+				return { term: t, name: searchNorm(t), text: searchNorm(t + ' ' + glossary[t]) };
+			})
+		};
+		return searchIndex;
+	}
+
+	// Every word must appear; title (or term name) matches come first, then course order.
+	function searchCourse(query) {
+		var words = searchNorm(query).split(' ').filter(Boolean);
+		var out = { lessons: [], terms: [] };
+		if (!words.length) return out;
+		var idx = buildSearchIndex();
+		function has(text, w) { return text.indexOf(' ' + w) !== -1; }
+		function rank(list, headKey) {
+			var strong = [], weak = [];
+			list.forEach(function (x) {
+				if (!words.every(function (w) { return has(x.text, w); })) return;
+				(words.every(function (w) { return has(x[headKey], w); }) ? strong : weak).push(x);
+			});
+			return strong.concat(weak);
+		}
+		out.lessons = rank(idx.lessons, 'head').map(function (x) { return x.l; });
+		out.terms = rank(idx.terms, 'name').map(function (x) { return x.term; });
+		return out;
+	}
+
+	function lessonLabel(l) { return l.id.replace('-', '.') + ' ' + l.title; }
+
+	// Hub box ("Find a lesson"): lessons only, same matching as the navbar search.
 	function initSearch() {
 		var section = document.querySelector('#fleet-grid .hltv-feed-section-header');
 		if (!section) return;
-		var index = allLessons().map(function (l) {
-			return { l: l, text: [l.id.replace('-', '.'), l.title].concat(l.objectives || [], l.keyTerms || []).join(' ').toLowerCase() };
-		});
 		var input = el('input', { type: 'search', id: 'lesson-search', 'class': 'lesson-search-input', placeholder: 'Search lessons and key terms, e.g. PID, MoveIt, safety', autocomplete: 'off' });
 		var results = el('ol', { 'class': 'lesson-search-results', 'aria-live': 'polite' });
 		var wrap = el('div', { 'class': 'lesson-search' }, [
@@ -310,14 +534,133 @@
 		]);
 		section.appendChild(wrap);
 		input.addEventListener('input', function () {
-			var words = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
 			results.innerHTML = '';
-			if (!words.length) return;
-			var hits = index.filter(function (x) { return words.every(function (w) { return x.text.indexOf(w) !== -1; }); });
+			if (!input.value.trim()) return;
+			var hits = searchCourse(input.value).lessons;
 			if (!hits.length) { results.appendChild(el('li', { text: 'No lessons match. Try a shorter word, or the glossary.' })); return; }
-			hits.slice(0, 12).forEach(function (x) {
-				results.appendChild(el('li', {}, [el('a', { href: lessonUrl(x.l.id), text: x.l.id.replace('-', '.') + ' ' + x.l.title })]));
+			hits.slice(0, 12).forEach(function (l) {
+				results.appendChild(el('li', {}, [el('a', { href: lessonUrl(l.id), text: lessonLabel(l) })]));
 			});
+		});
+	}
+
+	/* ---------- Navbar and drawer search (markup generated by scripts/site_sync.py) ---------- */
+
+	function initNavSearch() {
+		var boxes = document.querySelectorAll('.nav-search');
+		if (!boxes.length) return;
+		var lastFocus = null;
+
+		Array.prototype.forEach.call(boxes, function (box) {
+			var input = box.querySelector('.nav-search-input');
+			var list = box.querySelector('.nav-search-results');
+			var status = box.querySelector('.nav-search-status');
+			if (!input || !list) return;
+			var options = [], active = -1, uid = input.id.replace('-input', '');
+			box.hidden = false;
+
+			function setActive(i) {
+				if (options[active]) options[active].classList.remove('is-active');
+				active = i;
+				if (options[i]) {
+					options[i].classList.add('is-active');
+					input.setAttribute('aria-activedescendant', options[i].id);
+					if (options[i].scrollIntoView && !list.hidden) options[i].scrollIntoView({ block: 'nearest' });
+				} else {
+					input.removeAttribute('aria-activedescendant');
+				}
+			}
+
+			function close() {
+				list.hidden = true;
+				input.setAttribute('aria-expanded', 'false');
+				setActive(-1);
+			}
+
+			function option(href, kind, label) {
+				var a = el('a', { href: href, role: 'option', id: uid + '-opt-' + options.length, tabindex: '-1', 'aria-selected': 'false' }, [
+					el('span', { 'class': 'nav-search-kind', text: kind }),
+					el('span', { 'class': 'nav-search-label', text: label })
+				]);
+				options.push(a);
+				a.insertBefore(document.createTextNode(' '), a.lastChild);
+				list.appendChild(el('li', { role: 'presentation' }, [a]));
+			}
+
+			function render() {
+				var q = input.value.trim();
+				list.innerHTML = '';
+				options = [];
+				active = -1;
+				input.removeAttribute('aria-activedescendant');
+				if (!q) { close(); status.textContent = ''; return; }
+				var hits = searchCourse(q);
+				hits.lessons.slice(0, 6).forEach(function (l) { option(lessonUrl(l.id), 'Lesson', lessonLabel(l)); });
+				hits.terms.slice(0, 4).forEach(function (t) { option('robotics-glossary.html#' + termSlug(t), 'Glossary', t); });
+				if (!options.length) {
+					list.appendChild(el('li', { role: 'presentation', 'class': 'nav-search-empty', text: 'No matches. Try a shorter word.' }));
+					status.textContent = 'No results';
+				} else {
+					var total = hits.lessons.length + hits.terms.length;
+					status.textContent = options.length + (options.length === 1 ? ' result' : ' results') +
+						(total > options.length ? ' shown of ' + total : '') + '. Use the up and down arrow keys, then Enter.';
+				}
+				list.hidden = false;
+				input.setAttribute('aria-expanded', 'true');
+			}
+
+			input.addEventListener('input', render);
+			input.addEventListener('focus', function () { if (input.value.trim() && list.hidden) render(); });
+			input.addEventListener('keydown', function (e) {
+				if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+					if (list.hidden) render();
+					if (!options.length) return;
+					e.preventDefault();
+					var n = options.length;
+					setActive(e.key === 'ArrowDown' ? (active + 1) % n : (active - 1 + n) % n);
+				} else if (e.key === 'Enter') {
+					var pick = options[active] || options[0];
+					if (pick && !list.hidden) { e.preventDefault(); window.location.href = pick.getAttribute('href'); }
+				} else if (e.key === 'Escape') {
+					e.preventDefault();
+					close();
+					// Back to the control the "/" shortcut came from; otherwise stay in the box, so focus is never dropped.
+					if (lastFocus && document.contains(lastFocus) && lastFocus !== input) lastFocus.focus();
+					lastFocus = null;
+				}
+			});
+			// Keep focus in the input when a result is pressed; the link still opens on click.
+			list.addEventListener('mousedown', function (e) { e.preventDefault(); });
+			box.addEventListener('focusout', function (e) {
+				if (!e.relatedTarget || !box.contains(e.relatedTarget)) close();
+			});
+			document.addEventListener('click', function (e) { if (!box.contains(e.target)) close(); });
+			box._searchInput = input;
+		});
+
+		// "/" focuses the search (the drawer's, when the navbar row is replaced by the drawer button).
+		document.addEventListener('keydown', function (e) {
+			if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey) return;
+			var t = e.target, tag = t && t.tagName;
+			if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (t && t.isContentEditable)) return;
+			var target = null;
+			Array.prototype.forEach.call(boxes, function (box) {
+				if (!target && box._searchInput && !box.classList.contains('nav-search-drawer') && box.offsetParent !== null) target = box._searchInput;
+			});
+			if (!target) {
+				var toggle = document.getElementById('thesis-mobile-btn');
+				if (toggle && toggle.offsetParent !== null) {
+					toggle.click();
+					Array.prototype.forEach.call(boxes, function (box) {
+						if (box.classList.contains('nav-search-drawer')) target = box._searchInput;
+					});
+				}
+			}
+			if (!target) return;
+			e.preventDefault();
+			lastFocus = document.activeElement && document.activeElement !== document.body ? document.activeElement : null;
+			target.focus();
+			target.select();
 		});
 	}
 
@@ -348,16 +691,22 @@
 	function initHub() {
 		markLessonLinks();
 		initSearch();
-		var actions = document.querySelector('.thesis-masthead-actions');
-		var next = nextLesson();
-		if (actions && next) {
-			actions.insertBefore(el('a', {
-				'class': 'btn-read-case course-resume',
-				href: lessonUrl(next.id),
-				html: '<i class="fas fa-forward" aria-hidden="true"></i> Continue: ' + next.id.replace('-', '.') + ' ' + next.title
-			}), actions.firstChild);
-			var start = actions.querySelector('a[href="robotics-intro.html"]');
-			if (start) start.className = 'btn-secondary-gh';
+		// With progress, the one primary button becomes "Continue: <next lesson>"
+		// (or a pointer to the capstones once every lesson is done).
+		var start = document.querySelector('.thesis-masthead-actions a[href="robotics-intro.html"]');
+		var started = Object.keys(loadProgress().completed).length > 0;
+		if (start && started) {
+			var next = nextLesson();
+			start.classList.add('course-resume');
+			if (next) {
+				start.setAttribute('href', lessonUrl(next.id));
+				start.innerHTML = '<i class="fas fa-forward" aria-hidden="true"></i> ';
+				start.appendChild(document.createTextNode('Continue: ' + next.id.replace('-', '.') + ' ' + next.title));
+			} else {
+				start.setAttribute('href', 'robotics-capstone.html');
+				start.innerHTML = '<i class="fas fa-flag-checkered" aria-hidden="true"></i> ';
+				start.appendChild(document.createTextNode('All lessons complete: try a capstone project'));
+			}
 		}
 		course.chapters.forEach(function (ch) {
 			var kicker = document.querySelector('#chapter-' + ch.id + '-header .hltv-chapter-kicker');
@@ -406,11 +755,23 @@
 		return x[0] - y[0] || x[1] - y[1];
 	}
 
-	function initQuiz() {
+	function initQuiz(done) {
 		var root = document.getElementById('rise-quiz');
-		if (!root) return;
-		var params = new URLSearchParams(location.search);
-		var ch = getChapter(params.get('chapter'));
+		if (!root) { done(); return; }
+		var ch = getChapter(new URLSearchParams(location.search).get('chapter'));
+		if (!ch) { renderQuiz(root, null); done(); return; }
+		loadQuiz(ch.id, function (ok) {
+			if (ok) renderQuiz(root, ch);
+			else {
+				var picker = document.getElementById('quiz-chapter-picker');
+				if (picker) picker.hidden = false;
+				root.replaceChildren(el('p', { 'class': 'quiz-load-error', role: 'alert', text: 'The quiz questions for Chapter ' + ch.id + ' could not be loaded. Check your connection, reload the page, or pick a chapter below.' }));
+			}
+			done();
+		});
+	}
+
+	function renderQuiz(root, ch) {
 		var questions = ch && course.quizzes[ch.id] && course.quizzes[ch.id].slice();
 		// Ask questions in lesson order, keeping the data file's order within a lesson
 		if (questions) questions = questions
@@ -433,8 +794,11 @@
 		root.innerHTML = '';
 		var form = el('form', { 'class': 'quiz-form', novalidate: '' });
 		root.appendChild(el('p', {
-			text: questions.length + ' questions on ' + ch.title.replace(/^Extra: /, '') + '. Pick one answer for each, then check your answers.'
+			text: questions.length + ' questions on ' + ch.title.replace(/^Extra: /, '') + '. Pick one answer for each; you see straight away whether it is right. With a keyboard, move between choices with the arrow keys and press Enter to check.'
 		}));
+		var progress = el('p', { 'class': 'quiz-progress', 'aria-live': 'polite', text: '0 of ' + questions.length + ' answered.' });
+
+		var picks = questions.map(function () { return null; });
 
 		questions.forEach(function (q, qi) {
 			var name = 'q' + qi;
@@ -447,40 +811,49 @@
 					el('span', { text: ' ' + c })
 				]));
 			});
-			fs.appendChild(el('div', { 'class': 'quiz-feedback', 'aria-live': 'polite', hidden: '' }));
+			fs.appendChild(el('div', { 'class': 'quiz-feedback', tabindex: '-1', hidden: '' }));
 			form.appendChild(fs);
 		});
 
 		var result = el('p', { 'class': 'quiz-result', 'aria-live': 'polite' });
-		var submit = el('button', { type: 'submit', 'class': 'btn-read-case', html: '<i class="fas fa-check-double" aria-hidden="true"></i> Check answers' });
-		var reset = el('button', { type: 'button', 'class': 'btn-copy-bibtex', html: '<i class="fas fa-redo" aria-hidden="true"></i> Try again', hidden: '' });
-		form.appendChild(el('div', { 'class': 'quiz-actions' }, [submit, reset]));
+		var retry = el('button', { type: 'button', 'class': 'btn-read-case', html: '<i class="fas fa-redo" aria-hidden="true"></i> Retry missed questions', hidden: '' });
+		var restart = el('button', { type: 'button', 'class': 'btn-copy-bibtex', html: '<i class="fas fa-undo" aria-hidden="true"></i> Start over', hidden: '' });
+		form.appendChild(el('div', { 'class': 'quiz-actions' }, [retry, restart]));
 		form.appendChild(result);
 		root.appendChild(form);
+		root.appendChild(progress); // after the form, so that sticky bottom keeps it in view while scrolling
+		form.addEventListener('submit', function (e) { e.preventDefault(); });
 
-		form.addEventListener('submit', function (e) {
-			e.preventDefault();
-			var score = 0;
-			var answers = [];
-			questions.forEach(function (q, qi) {
-				var fs = form.querySelector('fieldset[data-index="' + qi + '"]');
-				var picked = form.querySelector('input[name="q' + qi + '"]:checked');
-				var choice = picked ? Number(picked.value) : null;
-				var right = choice === q.answer;
-				if (right) score++;
-				answers.push({ lesson: q.lesson, question: q.question, picked: choice, correct: right });
-				fs.classList.remove('is-right', 'is-wrong');
-				fs.classList.add(right ? 'is-right' : 'is-wrong');
-				var fb = fs.querySelector('.quiz-feedback');
-				fb.hidden = false;
-				fb.innerHTML = '';
-				fb.appendChild(el('strong', { text: right ? 'Correct. ' : (choice === null ? 'Not answered. ' : 'Not quite. ') }));
-				fb.appendChild(document.createTextNode(
-					(right ? '' : 'The answer is "' + q.choices[q.answer] + '". ') + q.explanation + ' '
-				));
-				fb.appendChild(el('a', { href: lessonUrl(q.lesson), text: 'Review lesson ' + q.lesson.replace('-', '.') }));
+		function questionBox(qi) { return form.querySelector('fieldset[data-index="' + qi + '"]'); }
+
+		function tally() {
+			var answered = 0, correct = 0;
+			picks.forEach(function (p, i) {
+				if (p === null) return;
+				answered++;
+				if (p === questions[i].answer) correct++;
 			});
+			return { answered: answered, correct: correct };
+		}
 
+		function clearQuestion(qi) {
+			var fs = questionBox(qi);
+			picks[qi] = null;
+			fs.classList.remove('is-right', 'is-wrong');
+			var fb = fs.querySelector('.quiz-feedback');
+			fb.hidden = true;
+			fb.innerHTML = '';
+			Array.prototype.forEach.call(fs.querySelectorAll('input'), function (inp) {
+				inp.checked = false;
+				inp.disabled = false;
+			});
+		}
+
+		function finish(t) {
+			var score = t.correct;
+			var answers = questions.map(function (q, i) {
+				return { lesson: q.lesson, question: q.question, picked: picks[i], correct: picks[i] === q.answer };
+			});
 			var p = loadProgress();
 			var prev = p.quizzes[ch.id];
 			p.quizzes[ch.id] = {
@@ -490,23 +863,81 @@
 				at: new Date().toISOString()
 			};
 			saveProgress(p);
-
-			result.textContent = 'You scored ' + score + ' out of ' + questions.length + '.' +
-				(score === questions.length ? ' Every answer is right.' : ' Review the lessons linked above and try again.');
-			submit.hidden = true;
-			reset.hidden = false;
+			result.textContent = 'Final score: ' + score + ' out of ' + questions.length + '.' +
+				(score === questions.length ? ' Every answer is right.' : ' Use the lesson links under the missed questions, or retry them.');
+			retry.hidden = score === questions.length;
+			restart.hidden = false;
 			emit('rise:quiz-submitted', { chapterId: ch.id, score: score, total: questions.length, answers: answers });
+		}
+
+		function update(announce) {
+			var t = tally();
+			progress.textContent = (announce ? announce + ' ' : '') + t.answered + ' of ' + questions.length + ' answered, ' + t.correct + ' correct.';
+			if (t.answered === questions.length) finish(t);
+			else { result.textContent = ''; retry.hidden = true; restart.hidden = t.answered === 0; }
+		}
+
+		// Check one question. Called when a choice is clicked, or on Enter/Space after moving with the arrow keys.
+		function commit(input) {
+			var fs = input.closest('.quiz-question');
+			var qi = Number(fs.getAttribute('data-index'));
+			if (picks[qi] !== null) return;
+			var q = questions[qi];
+			var choice = Number(input.value);
+			var right = choice === q.answer;
+			picks[qi] = choice;
+			Array.prototype.forEach.call(fs.querySelectorAll('input'), function (inp) { inp.disabled = true; });
+			fs.classList.add(right ? 'is-right' : 'is-wrong');
+			var fb = fs.querySelector('.quiz-feedback');
+			fb.hidden = false;
+			fb.innerHTML = '';
+			fb.appendChild(el('strong', { text: right ? '✓ Correct. ' : '✗ Not quite. ' }));
+			fb.appendChild(document.createTextNode(
+				(right ? '' : 'The answer is "' + q.choices[q.answer] + '". ') + q.explanation + ' '
+			));
+			fb.appendChild(el('a', { href: lessonUrl(q.lesson), text: 'Review lesson ' + q.lesson.replace('-', '.') }));
+			// Keep keyboard focus inside the question now that its radios are locked
+			fb.focus({ preventScroll: true });
+			update(); // the feedback box has focus, so a screen reader reads the result there
+		}
+
+		// Arrow keys move between the choices of a radio group and select as they go. That must not
+		// count as an answer, or a keyboard user could never look through the choices first.
+		var arrowNav = false;
+		form.addEventListener('keydown', function (e) {
+			var input = e.target;
+			if (!input || input.type !== 'radio') return;
+			arrowNav = e.key.indexOf('Arrow') === 0;
+			if (e.key === 'Enter' || e.key === ' ') {
+				var picked = input.closest('.quiz-question').querySelector('input:checked');
+				if (picked && !picked.disabled) { e.preventDefault(); commit(picked); }
+			}
+		});
+		form.addEventListener('pointerdown', function () { arrowNav = false; });
+		form.addEventListener('click', function (e) {
+			var input = e.target;
+			if (!input || input.type !== 'radio' || input.disabled) return;
+			if (arrowNav && e.detail === 0) return; // the click a browser fires for an arrow-key move
+			commit(input);
 		});
 
-		reset.addEventListener('click', function () {
-			form.reset();
-			Array.prototype.forEach.call(form.querySelectorAll('.quiz-question'), function (fs) {
-				fs.classList.remove('is-right', 'is-wrong');
-				fs.querySelector('.quiz-feedback').hidden = true;
+		retry.addEventListener('click', function () {
+			var first = -1;
+			picks.forEach(function (p, i) {
+				if (p !== questions[i].answer) { clearQuestion(i); if (first < 0) first = i; }
 			});
-			result.textContent = '';
-			submit.hidden = false;
-			reset.hidden = true;
+			update('Retrying the missed questions.');
+			if (first >= 0) {
+				var r = form.querySelector('input[name="q' + first + '"]');
+				if (r) r.focus();
+			}
+		});
+
+		restart.addEventListener('click', function () {
+			questions.forEach(function (q, i) { clearQuestion(i); });
+			update('Started over.');
+			var r = form.querySelector('input[name="q0"]');
+			if (r) r.focus();
 		});
 	}
 
@@ -613,7 +1044,10 @@
 		var file = (location.pathname.split('/').pop() || 'robotics.html').replace(/\.html?$/, '') + '.html';
 		// Glossary definitions and quiz questions live in data files, not in the page.
 		if (page.type === 'glossary') file = 'assets/js/glossary-data.js';
-		else if (page.type === 'quiz') file = 'assets/js/course-data.js';
+		else if (page.type === 'quiz') {
+			var qc = new URLSearchParams(location.search).get('chapter');
+			file = /^\d+$/.test(qc || '') ? 'assets/js/quiz/ch' + qc + '.js' : 'assets/js/quiz/';
+		}
 		var a = el('a', {
 			href: REPO_EDIT + file, target: '_blank', rel: 'noopener noreferrer',
 			title: 'Opens this page in GitHub’s editor (free account needed). Lesson 3.4 walks through it.',
@@ -622,18 +1056,36 @@
 		meta.appendChild(el('span', { 'class': 'article-meta-item edit-link' }, [a]));
 	}
 
+	/* ---------- Print: "Show answer" blocks print open ---------- */
+
+	var openedForPrint = [];
+	window.addEventListener('beforeprint', function () {
+		Array.prototype.forEach.call(document.querySelectorAll('details.check-answer:not([open])'), function (d) {
+			d.setAttribute('open', '');
+			openedForPrint.push(d);
+		});
+	});
+	window.addEventListener('afterprint', function () {
+		openedForPrint.forEach(function (d) { d.removeAttribute('open'); });
+		openedForPrint = [];
+	});
+
 	/* ---------- Boot ---------- */
 
 	function boot() {
 		var page = currentPage();
-		if (page.type === 'lesson') initLesson(page.id);
-		else if (page.type === 'hub') initHub();
-		else if (page.type === 'chapter') initChapter(page.id);
-		else if (page.type === 'quiz') initQuiz();
-		else if (page.type === 'glossary') initGlossary();
+		function ready() {
+			if (tutorRenderer) window.RISEBot.registerTutor(tutorRenderer);
+			emit('rise:ready', { page: page });
+		}
 		addEditLink(page);
-		if (tutorRenderer) window.RISEBot.registerTutor(tutorRenderer);
-		emit('rise:ready', { page: page });
+		initNavSearch();
+		if (page.type === 'lesson') { initLesson(page.id, ready); return; }
+		if (page.type === 'quiz') { initQuiz(ready); return; }
+		if (page.type === 'hub') initHub();
+		else if (page.type === 'chapter') initChapter(page.id);
+		else if (page.type === 'glossary') initGlossary();
+		ready();
 	}
 
 	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

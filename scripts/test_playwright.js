@@ -65,6 +65,10 @@ const viewports = [
   console.log('\n\n=== Chapter quizzes (full marks) ===');
   const sandbox = { window: {} };
   new Function('window', fs.readFileSync(path.join(ROOT, 'assets/js/course-data.js'), 'utf8'))(sandbox.window);
+  // Questions live in assets/js/quiz/ch<N>.js (each adds itself to window.RISE_COURSE.quizzes); the answers are read from there.
+  for (const f of fs.readdirSync(path.join(ROOT, 'assets/js/quiz')).filter(n => /^ch\d+\.js$/.test(n)).sort()) {
+    new Function('window', fs.readFileSync(path.join(ROOT, 'assets/js/quiz', f), 'utf8'))(sandbox.window);
+  }
   const quizzes = sandbox.window.RISE_COURSE.quizzes;
   const quizPage = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   for (const ch of Object.keys(quizzes)) {
@@ -77,10 +81,90 @@ const viewports = [
     for (let i = 0; i < questions.length; i++) {
       await quizPage.check(`input[name="q${i}"][value="${questions[i].answer}"]`);
     }
-    await quizPage.click('button[type="submit"]');
+    const status = await quizPage.locator('.quiz-result').textContent();
     const wrong = await quizPage.locator('.quiz-question.is-wrong').count();
-    if (wrong) { console.error(`FAIL: chapter ${ch} quiz had ${wrong} wrong answers`); totalErrors++; }
+    const full = `Final score: ${questions.length} out of ${questions.length}.`;
+    if (wrong || !status.includes(full)) { console.error(`FAIL: chapter ${ch} quiz: ${wrong} wrong, result "${status}"`); totalErrors++; }
     else console.log(`PASS: chapter ${ch} quiz, ${questions.length} questions`);
+  }
+
+  // One wrong answer first: feedback must name the correct choice, and retry must reset only that question
+  {
+    const ch = Object.keys(quizzes)[0];
+    await quizPage.goto(`${base}robotics-quiz.html?chapter=${ch}`, { waitUntil: 'networkidle' });
+    const text = await quizPage.locator('.quiz-question').first().locator('.quiz-choice span').allTextContents();
+    // Find the correct choice text for question 0 by answering wrongly: the feedback reveals it
+    await quizPage.locator('input[name="q0"][value="0"]').check();
+    let fb = await quizPage.locator('.quiz-question').first().locator('.quiz-feedback').textContent();
+    if (/Correct\./.test(fb)) {
+      await quizPage.goto(`${base}robotics-quiz.html?chapter=${ch}`, { waitUntil: 'networkidle' });
+      await quizPage.locator('input[name="q0"][value="1"]').check();
+      fb = await quizPage.locator('.quiz-question').first().locator('.quiz-feedback').textContent();
+    }
+    const named = text.some(t => fb.includes(`The answer is "${t.trim()}"`));
+    const locked = await quizPage.locator('input[name="q0"]').first().isDisabled();
+    const prog = await quizPage.locator('.quiz-progress').textContent();
+    if (!named || !locked || !/1 of \d+ answered, 0 correct/.test(prog)) { console.error(`FAIL: chapter ${ch} wrong-answer feedback ("${fb}", locked=${locked}, "${prog}")`); totalErrors++; }
+    else console.log(`PASS: chapter ${ch} wrong answer names the correct choice, locks, shows progress`);
+  }
+
+  // Lessons with LaTeX (\( \) or \[ \]) outside code must render with the vendored KaTeX: no errors, no raw delimiters.
+  console.log('\n=== Math rendering (KaTeX) ===');
+  const mathPages = pages.filter(name => {
+    const html = fs.readFileSync(path.join(ROOT, name), 'utf8').replace(/<(pre|code|script|style)[^>]*>[\s\S]*?<\/\1>/g, ' ');
+    return /\\[(\[]/.test(html);
+  });
+  const mathContext = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+  for (const name of mathPages) {
+    const page = await mathContext.newPage();
+    await page.goto(base + name, { waitUntil: 'networkidle' });
+    await page.waitForFunction(() => document.documentElement.hasAttribute('data-math'), null, { timeout: 15000 }).catch(() => {});
+    const r = await page.evaluate(() => {
+      const body = document.querySelector('.robotics-article-body');
+      const raw = [];
+      const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, null, false);
+      let n;
+      while ((n = walker.nextNode())) {
+        if (n.parentNode.closest('code,pre,script,style')) continue;
+        if (/\\[(\[]/.test(n.nodeValue)) raw.push(n.nodeValue.trim().slice(0, 60));
+      }
+      return { state: document.documentElement.getAttribute('data-math'), formulas: document.querySelectorAll('.katex').length,
+        errors: [...document.querySelectorAll('.katex-error')].map(e => e.getAttribute('title') || e.textContent), raw };
+    });
+    if (r.state !== 'ready' || !r.formulas || r.errors.length || r.raw.length) {
+      console.error(`FAIL: ${name} math: state=${r.state}, ${r.formulas} formulas, errors=${JSON.stringify(r.errors)}, raw=${JSON.stringify(r.raw)}`);
+      totalErrors++;
+    } else console.log(`PASS: ${name} ${r.formulas} formulas, 0 errors`);
+    await page.close();
+  }
+  await mathContext.close();
+  if (!mathPages.length) { console.error('FAIL: no page with math found'); totalErrors++; }
+
+  // Accessibility (axe-core). Optional: runs only when AXE_PATH points at an axe.min.js (not vendored, not needed in CI).
+  console.log('\n=== Accessibility (axe-core) ===');
+  if (!process.env.AXE_PATH || !fs.existsSync(process.env.AXE_PATH)) {
+    console.log('Skipped: set AXE_PATH to an axe.min.js file to run the axe accessibility check.');
+  } else {
+    const axePages = ['robotics.html', 'robotics-1-1.html', 'robotics-quiz.html?chapter=1', 'robotics-glossary.html'];
+    const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'];
+    for (const scheme of ['light', 'dark']) {
+      const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, colorScheme: scheme });
+      await ctx.addInitScript(t => { try { localStorage.setItem('theme', t); } catch (e) { /* storage blocked */ } }, scheme);
+      for (const name of axePages) {
+        const page = await ctx.newPage();
+        await page.goto(base + name, { waitUntil: 'networkidle' });
+        await page.addScriptTag({ path: process.env.AXE_PATH });
+        const bad = await page.evaluate(async t => {
+          const r = await axe.run(document, { runOnly: { type: 'tag', values: t }, resultTypes: ['violations'] });
+          return r.violations.filter(v => v.impact === 'serious' || v.impact === 'critical')
+            .map(v => v.id + ' (' + v.impact + ', ' + v.nodes.length + ' nodes, e.g. ' + v.nodes[0].target.join(' ') + ')');
+        }, tags);
+        if (bad.length) { console.error(`FAIL: ${name} (${scheme}) axe: ${bad.join('; ')}`); totalErrors++; }
+        else console.log(`PASS: ${name} (${scheme}) no serious or critical axe violations`);
+        await page.close();
+      }
+      await ctx.close();
+    }
   }
 
   await browser.close();

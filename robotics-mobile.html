@@ -1,0 +1,245 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: Chapter 11: Mobile Robots and Navigation
+-->
+<html lang="en">
+    <head>
+        <title>Chapter 11: Mobile Robots and Navigation — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Chapter 11 of robOSStics: how a ROS 2 mobile robot finds its position, sees obstacles with costmaps, plans and follows paths, and is orchestrated by Nav2." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-mobile.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="Chapter 11: Mobile Robots and Navigation — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="Chapter 11 of robOSStics: how a ROS 2 mobile robot finds its position, sees obstacles with costmaps, plans and follows paths, and is orchestrated by Nav2." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-mobile.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="Chapter 11: Mobile Robots and Navigation, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Chapter 11: Mobile Robots and Navigation — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="Chapter 11 of robOSStics: how a ROS 2 mobile robot finds its position, sees obstacles with costmaps, plans and follows paths, and is orchestrated by Nav2." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
+        <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a5a3b933" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home"></i> Course Home</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">10</span> Capstone</a></li>
+                                    <li><a href="robotics-mobile.html" aria-current="page"><span class="nav-menu-num">11</span> Mobile</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools"></i> Maintenance</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered"></i> Capstone</a>
+                    <a href="robotics-mobile.html" class="active"><i class="fas fa-route"></i> Mobile</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <div class="article-breadcrumb-bar">
+                            <a href="robotics.html" class="article-breadcrumb-link"><i class="fas fa-arrow-left"></i> Course Home</a>
+                            <span class="article-breadcrumb-divider">/</span>
+                            <span>Chapter 11</span>
+                        </div>
+
+                        <h1 class="robotics-article-headline">Chapter 11: Mobile Robots and Navigation</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Overview</h2>
+                        <p>
+                            The chapters before this one are mostly about robot arms that stay in one place. Chapter 11 is about robots that drive: the autonomous mobile robots (AMRs) that <a href="robotics-1-3.html">1.3 Types of Robots</a> set apart from AGVs. It follows Nav2, the open-source ROS 2 navigation project, and every lesson is built on Nav2&rsquo;s own documentation.
+                        </p>
+                        <p>
+                            The four lessons follow a navigation request from the bottom up: how the robot knows where it is, how it represents obstacles, how it plans and follows a path, and how a behavior tree ties those pieces together. The chapter has no lab yet, because robOSStics only publishes lab code that has been run.
+                        </p>
+
+                        <h2 class="article-section-title">02. Place in the course</h2>
+                        <p>
+                            Chapter 11 builds on <a href="robotics-3-5.html">3.5 Case Study: Contributing to Nav2</a> (what Nav2 is and how to contribute to it), Chapter 4 (ROS 2 nodes, topics and launch files) and three lessons from Chapter 6: <a href="robotics-6-5.html">6.5 Sensors for Robots</a>, <a href="robotics-6-6.html">6.6 Odometry</a> and <a href="robotics-6-7.html">6.7 State Machines</a>. It does not cover the safety of mobile robots; safety content in this course is in <a href="robotics-5-4.html">5.4 Making a Robot Cell Safe</a> and <a href="robotics-8-4.html">8.4 Safety over the Network</a>.
+                        </p>
+
+                        <h2 class="article-section-title">03. Articles in this chapter</h2>
+                        <ol class="article-spec-list">
+                                <li><a href="robotics-11-1.html">11.1 Where Is the Robot? Frames, Odometry and Localization</a>: The map, odom and base_link frames from REP 105, why odometry drifts, and how localization or SLAM corrects it.</li>
+                                <li><a href="robotics-11-2.html">11.2 Costmaps: How the Robot Sees Its Surroundings</a>: Costmap cells, layers and inflation, the robot footprint, and costmap filters such as keep-out zones and speed limits.</li>
+                                <li><a href="robotics-11-3.html">11.3 Planners, Controllers and Recoveries</a>: The Nav2 servers that plan a path, smooth it, follow it and recover when the robot gets stuck, plus waypoint following.</li>
+                                <li><a href="robotics-11-4.html">11.4 Behavior Trees, Actions and Lifecycle Nodes</a>: How a navigation request travels through the NavigateToPose action and the behavior tree, and how lifecycle nodes start and stop in order.</li>
+                            </ol>
+
+                        <h2 class="article-section-title">04. Chapter quiz</h2>
+                        <p>
+                            After completing the lessons, <a href="robotics-quiz.html?chapter=11">take the Chapter 11 quiz</a> to check what you remember about frames, costmaps, the navigation servers and behavior trees.
+                        </p>
+
+                        <h2 class="article-section-title">05. Feedback</h2>
+                        <p>
+                            robOSStics is being tested with students. If you have questions, spot an error, or have suggestions for Chapter 11, please <a href="contact.html">get in touch</a>.
+                        </p>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-capstone.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&lt;- Previous chapter</span>
+                                    <span class="article-nav-target">Chapter 10: Capstone Projects</span>
+                                </a>
+                                <a href="robotics-11-1.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Start reading -&gt;</span>
+                                    <span class="article-nav-target">11.1 Where Is the Robot? Frames, Odometry and Localization</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
+                            <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
+                            <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=c132c85f" defer></script>
+        <script src="assets/js/course-data.js?v=1277a7d7" defer></script>
+        <script src="assets/js/glossary-data.js?v=5ad1d26c" defer></script>
+        <script src="assets/js/learning.js?v=b14dd9b3" defer></script>
+
+    </body>
+</html>
