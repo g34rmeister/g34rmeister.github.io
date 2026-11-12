@@ -1,0 +1,130 @@
+{
+  "objectives": [
+    "Build and test a pure Python package using colcon and pytest.",
+    "Diagnose a test failure from pytest terminal output and identify the mathematical error.",
+    "Verify a one-line bug fix by re-running automated tests and filtering by test name.",
+    "Draft an actionable bug report following standard ROS issue reporting guidelines."
+  ],
+  "keyTerms": [
+    "assertion",
+    "linter",
+    "regression",
+    "stack trace",
+    "test",
+    "virtual environment"
+  ],
+  "glossary": {
+    "assertion": "An assertion is a check in program code or a test that verifies whether a condition is true. If the condition evaluates to false, the assertion raises an error and halts execution.",
+    "linter": "A linter is a static analysis tool that inspects source code for style violations, programming mistakes, and suspicious patterns without executing the program. It reports warnings or errors to help developers keep code clean and uniform.",
+    "regression": "A regression is an unintended software bug that breaks existing functionality after a code change. Automated tests help developers detect regressions before new changes merge into a repository.",
+    "stack trace": "A stack trace is a diagnostic report showing the active sequence of function calls that led to an error or crash. It displays the file names, line numbers, and function names where the failure occurred.",
+    "test": "A test is an automated procedure that runs a function or program with specific inputs to verify that it produces expected outputs. Running tests regularly ensures that software components behave according to their design.",
+    "virtual environment": "A virtual environment is an isolated directory tree that contains its own Python executable and independent set of installed packages. It prevents dependency conflicts between different software projects on the same computer."
+  },
+  "keyPoints": [
+    "Colcon can build and test pure Python packages with pytest without requiring a ROS 2 installation.",
+    "Running colcon test-result with the verbose flag displays exact test failure messages and comparison values.",
+    "Automated unit tests catch math errors that pass in special edge cases like zero angles.",
+    "Effective bug reports include clear reproduction steps, minimal working examples, and system environment details."
+  ],
+  "quiz": [
+    {
+      "lesson": "4-10",
+      "question": "Why can the two_link package in this lab be built and tested with colcon without installing ROS 2?",
+      "choices": [
+        "Colcon requires a Docker container to simulate ROS 2 nodes",
+        "The package contains only standard Python code and pytest tests without ROS 2 dependencies",
+        "Colcon automatically downloads the ROS 2 C++ binaries during the test step",
+        "Python packages cannot use colcon unless ROS 2 Lyrical is sourced in the terminal"
+      ],
+      "answer": 1,
+      "explanation": "The two_link package is written in pure Python using setuptools and pytest, so colcon can build and test it in any standard Python environment without ROS 2 libraries."
+    },
+    {
+      "lesson": "4-10",
+      "question": "Which colcon command displays the detailed failure message and comparison values of failing tests?",
+      "choices": [
+        "colcon test --clean-first",
+        "colcon build --packages-select two_link",
+        "colcon test-result --all --verbose",
+        "colcon status --all-failures"
+      ],
+      "answer": 2,
+      "explanation": "Running colcon test-result --all --verbose inspects the test result XML files and prints the exact test cases and assertion messages that failed."
+    },
+    {
+      "lesson": "4-10",
+      "question": "According to ROS source control best practices, which files or directories must be excluded from git commits?",
+      "choices": [
+        "Workspace build artifacts like build/, install/, and log/, along with __pycache__ directories",
+        "The setup.py manifest and the tests/ directory",
+        "Source code files inside the two_link/ package folder",
+        "Git configuration files like .gitignore"
+      ],
+      "answer": 0,
+      "explanation": "Build artifacts (build/, install/, log/) and Python bytecode (__pycache__, *.pyc) are generated temporary files that should never be committed to a repository."
+    }
+  ],
+  "claims": [
+    {
+      "ref": 1,
+      "file": "colcon-installation.txt",
+      "claim": "The colcon documentation notes that installation through pip assumes you are using a virtual environment with Python 3.5 or higher.",
+      "quote": "The following assumes that you are using a virtual environment with Python 3.5 or higher."
+    },
+    {
+      "ref": 2,
+      "file": "Python.rst",
+      "claim": "ROS 2 testing guidelines state that your test code needs to go in a folder named tests in the root of your package.",
+      "quote": "Your test code needs to go in a folder named ``tests`` in the root of your package."
+    },
+    {
+      "ref": 3,
+      "file": "CLI.rst",
+      "claim": "The command line testing guide explains that to see the exact test cases which fail, you use the verbose flag.",
+      "quote": "To see the exact test cases which fail, use the ``--verbose`` flag:"
+    },
+    {
+      "ref": 2,
+      "file": "Python.rst",
+      "claim": "The Python testing tutorial explains that you can specify arguments to the pytest framework from the command line with the --pytest-args flag.",
+      "quote": "specify arguments to the ``pytest`` framework from the command line with the ``--pytest-args`` flag."
+    },
+    {
+      "ref": 2,
+      "file": "Python.rst",
+      "claim": "To see the pytest output while running the tests, the tutorial instructs developers to use the console cohesion event handler flag.",
+      "quote": "To see the pytest output while running the tests, use these flags:"
+    },
+    {
+      "ref": 4,
+      "file": "Ament-Lint-For-Clean-Code.rst",
+      "claim": "All ament_lint tools accept files or directories, analyse them, and generate reports.",
+      "quote": "All ``ament_lint`` tools accept files or directories, analyse them, and generate reports."
+    },
+    {
+      "ref": 5,
+      "file": "Reporting-an-issue.rst",
+      "claim": "The official issue reporting guide explains that you can report code issues in the ROS repository for the package where the error occurred.",
+      "quote": "You can report code issues in the ROS repository for the package where the error occurred."
+    },
+    {
+      "ref": 6,
+      "file": "Making-a-PR.rst",
+      "claim": "The pull request guidelines advise contributors to limit each pull request to a single, well-defined change.",
+      "quote": "Limit each pull request to a single, well-defined change."
+    },
+    {
+      "ref": 7,
+      "file": "Source-Control-Best-Practices.rst",
+      "claim": "Source control best practices warn that ROS 2 workspaces generate build artifacts that should generally not be committed to source control.",
+      "quote": "ROS 2 workspaces generate build artifacts that should generally not be committed to source control."
+    },
+    {
+      "ref": 8,
+      "file": "Contributing.rst",
+      "claim": "Before starting work on an open ticket, comment on the issue to let others know that you are working on it.",
+      "quote": "Comment on the issue to let others know that you are working on it."
+    }
+  ]
+}

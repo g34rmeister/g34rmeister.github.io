@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT15M",
+            "timeRequired": "PT18M",
             "teaches": [
                 "Turtlesim",
                 "teleop",
@@ -206,7 +206,7 @@
                                 <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
                             </div>
                             <nav class="lesson-quicknav" aria-label="Lesson position and previous or next lesson">
-                                <span class="lesson-quicknav-pos">Chapter 4, lesson 4 of 9</span>
+                                <span class="lesson-quicknav-pos">Chapter 4, lesson 4 of 10</span>
                                 <a class="lesson-quicknav-prev" href="robotics-4-3.html"><span aria-hidden="true">&larr;</span> Previous<span class="sr-only">: 4.3 Installing ROS on Your Local Environment</span></a>
                                 <a class="lesson-quicknav-next" href="robotics-4-5.html">Next<span class="sr-only">: 4.5 ROS Tools</span> <span aria-hidden="true">&rarr;</span></a>
                             </nav>
@@ -375,6 +375,51 @@ cd ~/ros2_ws/src</code></pre>
                             </ul>
 
                             <h2 class="article-section-title">08. Writing a custom rclpy velocity publisher</h2>
+
+                            <h3>Before you write the node: classes and callbacks in Python</h3>
+                            <p>
+                                The node in this section is written as a Python class. If you have only written short scripts so far, four ideas are enough to read it. A <strong>class</strong> bundles data and functionality together.<sup><a href="#ref-14">[14]</a></sup> It is a pattern, and each <strong>object</strong> (or instance) made from the pattern has its own data, called attributes, that keep its state.<sup><a href="#ref-14">[14]</a></sup> When a class defines a method named <code>__init__()</code>, Python calls it automatically for each new object, so that is where the starting values are set.<sup><a href="#ref-14">[14]</a></sup> The first argument of a method is usually called <code>self</code>. It is the object itself, which Python passes in for you when you call the method.<sup><a href="#ref-14">[14]</a></sup> So <code>self.count</code> means &ldquo;this object&rsquo;s count&rdquo;.
+                            </p>
+                            <p>
+                                <strong>Inheritance</strong> lets a new class build on an existing one. The official tutorial&rsquo;s <code>class MinimalPublisher(Node)</code> creates a class that inherits from <code>Node</code>, so it can already do what a node does, such as creating publishers and timers.<sup><a href="#ref-13">[13]</a></sup> A <strong>callback</strong> is a function you hand to something else, which calls it later. In Python you hand it over by writing its name without parentheses: a method does not have to be called right away, and can be stored and called at a later time.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <p>
+                                The short script below shows all of this with a counter. It runs with plain Python, and no ROS 2 installation is needed:
+                            </p>
+                            <pre class="article-code"><code>class Counter:
+    """A class bundles data (self.count) with the functions that use it."""
+
+    def __init__(self, name):
+        self.name = name
+        self.count = 0
+
+    def on_tick(self):
+        # A callback: we do not call this ourselves. We hand it to
+        # something else (here, run_timer) that calls it for us later.
+        self.count += 1
+        print(f'{self.name}: tick {self.count}')
+
+
+def run_timer(callback, times):
+    """Stands in for a ROS 2 timer: it calls the function it was given."""
+    for _ in range(times):
+        callback()
+
+
+counter = Counter('demo')
+run_timer(counter.on_tick, 3)   # note: no () after on_tick
+print('final count:', counter.count)</code></pre>
+                            <p>
+                                When you run the script from the command line, it produces the following output:
+                            </p>
+                            <pre class="article-code"><code>$ python3 callback_demo.py
+demo: tick 1
+demo: tick 2
+demo: tick 3
+final count: 3</code></pre>
+                            <p>
+                                The node you are about to write has the same shape. In the demo, <code>run_timer</code> stands in for the ROS 2 timer: in the node, <code>self.create_timer</code> is given a callback and calls it every 0.5 seconds.<sup><a href="#ref-13">[13]</a></sup> The demo&rsquo;s <code>on_tick</code> corresponds to the node&rsquo;s <code>send_velocity_command</code> method, and the demo&rsquo;s <code>self.count</code> corresponds to data the node keeps on <code>self</code>, such as its publisher <code>self.cmd_vel_pub_</code>. The callbacks only start running once the node is &ldquo;spun&rdquo;, which is what <code>rclpy.spin</code> does at the end of the program.<sup><a href="#ref-13">[13]</a></sup> For more on classes, read chapter 9, &ldquo;Classes&rdquo;, of The Python Tutorial.<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
                             <p>
                                 Now write a Python node that drives the turtle in a continuous circle by publishing velocity commands twice a second (2 Hz). It follows the structure of the official "simple publisher" tutorial, which uses a timer that fires every 0.5 seconds.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
@@ -419,7 +464,7 @@ def main(args=None):
 if __name__ == '__main__':
     main()</code></pre>
                             <p>
-                                Our class inherits from <code>rclpy.node.Node</code>, and <code>super().__init__</code> gives the node its name. <code>create_publisher</code> declares that the node publishes <code>Twist</code> messages on a topic with a "queue size" of 10, a Quality of Service setting that limits how many messages are queued if a subscriber cannot keep up. <code>create_timer</code> makes a callback run every 0.5 seconds. In <code>main</code>, the ROS client library is initialized, the node is created, and <code>rclpy.spin(node)</code> keeps the node running so its callbacks are called, until you stop it with <code>Ctrl+C</code>.<sup><a href="#ref-13">[13]</a></sup> The Jazzy version of the tutorial writes <code>main</code> in an older style (<code>rclpy.init()</code>, <code>rclpy.spin()</code>, then <code>destroy_node()</code> and <code>rclpy.shutdown()</code>), which you will also see in many existing projects.<sup><a href="#ref-14">[14]</a></sup> Because the 0.5 s timer is shorter than Turtlesim's one-second command timeout, the turtle never stops between messages.<sup><a href="#ref-2">[2]</a></sup>
+                                Our class inherits from <code>rclpy.node.Node</code>, and <code>super().__init__</code> gives the node its name. <code>create_publisher</code> declares that the node publishes <code>Twist</code> messages on a topic with a "queue size" of 10, a Quality of Service setting that limits how many messages are queued if a subscriber cannot keep up. <code>create_timer</code> makes a callback run every 0.5 seconds. In <code>main</code>, the ROS client library is initialized, the node is created, and <code>rclpy.spin(node)</code> keeps the node running so its callbacks are called, until you stop it with <code>Ctrl+C</code>.<sup><a href="#ref-13">[13]</a></sup> The Jazzy version of the tutorial writes <code>main</code> in an older style (<code>rclpy.init()</code>, <code>rclpy.spin()</code>, then <code>destroy_node()</code> and <code>rclpy.shutdown()</code>), which you will also see in many existing projects.<sup><a href="#ref-15">[15]</a></sup> Because the 0.5 s timer is shorter than Turtlesim's one-second command timeout, the turtle never stops between messages.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">09. Writing a custom rclpy pose subscriber</h2>
@@ -514,11 +559,11 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
 
                             <h2 class="article-section-title">11. Transferring skills to physical robots</h2>
                             <p>
-                                Steering a cartoon turtle is a classic beginner exercise, but the same ideas carry over to real robots. For example, <code>diff_drive_controller</code>, the standard wheeled-robot controller in ros2_control, takes velocity commands on a <code>~/cmd_vel</code> topic as <code>geometry_msgs/msg/TwistStamped</code> (a <code>Twist</code> with a timestamp and frame header) and publishes the robot's odometry on <code>~/odom</code> as <code>nav_msgs/msg/Odometry</code>.<sup><a href="#ref-15">[15]</a></sup> The node, publisher, subscriber and timer patterns you wrote here are the same rclpy patterns the official tutorials teach for any ROS 2 node.<sup><a href="#ref-13">[13]</a></sup>
+                                Steering a cartoon turtle is a classic beginner exercise, but the same ideas carry over to real robots. For example, <code>diff_drive_controller</code>, the standard wheeled-robot controller in ros2_control, takes velocity commands on a <code>~/cmd_vel</code> topic as <code>geometry_msgs/msg/TwistStamped</code> (a <code>Twist</code> with a timestamp and frame header) and publishes the robot's odometry on <code>~/odom</code> as <code>nav_msgs/msg/Odometry</code>.<sup><a href="#ref-16">[16]</a></sup> The node, publisher, subscriber and timer patterns you wrote here are the same rclpy patterns the official tutorials teach for any ROS 2 node.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item">Velocity commands: Turtlesim reads a <code>Twist</code>; a real wheeled robot running <code>diff_drive_controller</code> reads the stamped version, with the same <code>linear</code> and <code>angular</code> fields.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-15">[15]</a></sup></li>
-                                <li class="article-spec-item">Position feedback: Turtlesim publishes a simple <code>Pose</code>; a real robot's controller publishes <code>Odometry</code> estimated from its wheels.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-15">[15]</a></sup></li>
+                                <li class="article-spec-item">Velocity commands: Turtlesim reads a <code>Twist</code>; a real wheeled robot running <code>diff_drive_controller</code> reads the stamped version, with the same <code>linear</code> and <code>angular</code> fields.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item">Position feedback: Turtlesim publishes a simple <code>Pose</code>; a real robot's controller publishes <code>Odometry</code> estimated from its wheels.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-16">[16]</a></sup></li>
                                 <li class="article-spec-item">Code structure: the <code>rclpy.node.Node</code> class, timer callbacks and <code>create_publisher</code> / <code>create_subscription</code> calls stay the same when you move from Turtlesim to a real robot.<sup><a href="#ref-13">[13]</a></sup></li>
                             </ul>
                             <p>
@@ -542,7 +587,7 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
                             <!-- /oss-note -->
 
                             <h2 class="article-section-title">12. References</h2>
-                            <p class="references-note">Source check (October 2026): 15 of 15 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-4-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                            <p class="references-note">Source check (November 2026): 16 of 16 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-4-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                             <ol class="article-spec-list">
                                 <li id="ref-1">Open Robotics, &ldquo;Setting up Turtlesim,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/Get-Started/Introducing-Turtlesim/Introducing-Turtlesim.html</a>.</li>
                                 <li id="ref-2">Open Robotics, <em>turtlesim</em> and <em>turtlesim_msgs</em> source code (<code>turtle.cpp</code>, <code>turtle_frame.cpp</code>, <code>teleop_turtle_key.cpp</code>, <code>Pose.msg</code>, <code>Spawn.srv</code>), ros/ros_tutorials repository, <code>lyrical</code> branch. Available: <a href="https://github.com/ros/ros_tutorials/tree/lyrical/turtlesim" target="_blank" rel="noopener noreferrer">github.com/ros/ros_tutorials/tree/lyrical/turtlesim</a>.</li>
@@ -557,8 +602,9 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
                                 <li id="ref-11">Open Robotics, &ldquo;Creating a package,&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Creating-Your-First-ROS2-Package.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Creating-Your-First-ROS2-Package.html</a>.</li>
                                 <li id="ref-12">Open Robotics, &ldquo;Reading from a bag file (Python),&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Reading-From-A-Bag-File-Python.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Reading-From-A-Bag-File-Python.html</a>.</li>
                                 <li id="ref-13">Open Robotics, &ldquo;Writing a simple publisher and subscriber (Python),&rdquo; <em>ROS 2 Documentation: Lyrical</em>. Available: <a href="https://docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/lyrical/ROS-Framework/client-libraries/Working-with-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html</a>.</li>
-                                <li id="ref-14">Open Robotics, &ldquo;Writing a simple publisher and subscriber (Python),&rdquo; <em>ROS 2 Documentation: Jazzy</em>. Available: <a href="https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html</a>.</li>
-                                <li id="ref-15">ros2_control developers, &ldquo;diff_drive_controller,&rdquo; <em>ros2_control Documentation: Jazzy</em>. Available: <a href="https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html" target="_blank" rel="noopener noreferrer">control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html</a>.</li>
+                                <li id="ref-14">Python Software Foundation, &ldquo;9. Classes,&rdquo; <em>The Python Tutorial</em>. Available: <a href="https://docs.python.org/3/tutorial/classes.html" target="_blank" rel="noopener noreferrer">docs.python.org/3/tutorial/classes.html</a>.</li>
+                                <li id="ref-15">Open Robotics, &ldquo;Writing a simple publisher and subscriber (Python),&rdquo; <em>ROS 2 Documentation: Jazzy</em>. Available: <a href="https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html" target="_blank" rel="noopener noreferrer">docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Writing-A-Simple-Py-Publisher-And-Subscriber.html</a>.</li>
+                                <li id="ref-16">ros2_control developers, &ldquo;diff_drive_controller,&rdquo; <em>ros2_control Documentation: Jazzy</em>. Available: <a href="https://control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html" target="_blank" rel="noopener noreferrer">control.ros.org/jazzy/doc/ros2_controllers/diff_drive_controller/doc/userdoc.html</a>.</li>
                             </ol>
 
                             <!-- Footer Navigation -->
@@ -595,9 +641,9 @@ ros2 run my_robot_controller pose_subscriber</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
-            <script src="assets/js/course-data.js?v=d856948c" defer></script>
-            <script src="assets/js/glossary-data.js?v=4c698285" defer></script>
-            <script src="assets/js/learning.js?v=e1757e02" defer></script>
+            <script src="assets/js/course-data.js?v=68812e1b" defer></script>
+            <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
+            <script src="assets/js/learning.js?v=ea4efb7b" defer></script>
             <script src="assets/js/widgets.js?v=7e8c5a87" defer></script>
 
     </body>

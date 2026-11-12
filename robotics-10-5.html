@@ -1,0 +1,768 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 10.5 Lab: Send a Navigation Goal to Nav2
+-->
+<html lang="en">
+    <head>
+        <title>10.5 Lab: Send a Navigation Goal to Nav2 — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Install ROS 2 and Nav2 without sudo, start Nav2 with its loopback simulator, and send the robot a goal from the command line and from Python." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-10-5.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="10.5 Lab: Send a Navigation Goal to Nav2 — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="Install ROS 2 and Nav2 without sudo, start Nav2 with its loopback simulator, and send the robot a goal from the command line and from Python." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-10-5.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="10.5 Lab: Send a Navigation Goal to Nav2, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="10.5 Lab: Send a Navigation Goal to Nav2 — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="Install ROS 2 and Nav2 without sudo, start Nav2 with its loopback simulator, and send the robot a goal from the command line and from Python." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
+        <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=3f61826b" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+        <script type="application/ld+json" id="lesson-ld">
+{
+            "@context": "https://schema.org",
+            "@type": "LearningResource",
+            "name": "10.5 Lab: Send a Navigation Goal to Nav2",
+            "url": "https://g34rmeister.github.io/robotics-10-5.html",
+            "description": "Install ROS 2 and Nav2 without sudo, start Nav2 with its loopback simulator, and send the robot a goal from the command line and from Python.",
+            "inLanguage": "en",
+            "learningResourceType": "Lesson",
+            "educationalLevel": "Beginner",
+            "timeRequired": "PT25M",
+            "teaches": [
+                "loopback simulator",
+                "initial pose",
+                "goal tolerance",
+                "feedback message",
+                "user space",
+                "channel"
+            ],
+            "isPartOf": {
+                "@type": "Course",
+                "name": "robOSStics",
+                "url": "https://g34rmeister.github.io/robotics.html"
+            },
+            "author": {
+                "@type": "Person",
+                "name": "Gerald Lê"
+            },
+            "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home" aria-hidden="true"></i> Course Home</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-mobile.html" aria-current="page"><span class="nav-menu-num">10</span> Mobile</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">11</span> Capstone</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle" aria-hidden="true"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right" aria-hidden="true"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" aria-label="Search the course" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" aria-label="Search the course (menu)" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home" aria-hidden="true"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open" aria-hidden="true"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot" aria-hidden="true"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch" aria-hidden="true"></i> Open Source</a>
+                    <a href="robotics-ros.html"><i class="fas fa-project-diagram" aria-hidden="true"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale" aria-hidden="true"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt" aria-hidden="true"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye" aria-hidden="true"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired" aria-hidden="true"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools" aria-hidden="true"></i> Maintenance</a>
+                    <a href="robotics-mobile.html" class="active" aria-current="page"><i class="fas fa-route" aria-hidden="true"></i> Mobile</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered" aria-hidden="true"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle" aria-hidden="true"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right" aria-hidden="true"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left" aria-hidden="true"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+            <main id="main">
+                <div class="robotics-article-container">
+
+                    <header class="robotics-article-masthead">
+                        <nav class="article-breadcrumb-bar" aria-label="Breadcrumb">
+                                <a href="robotics.html" class="article-breadcrumb-link">Course Home</a>
+                                <span class="article-breadcrumb-divider" aria-hidden="true">/</span>
+                                <a href="robotics-mobile.html">Chapter 10 &middot; Mobile Robots and Navigation</a>
+                                <span class="article-breadcrumb-divider" aria-hidden="true">/</span>
+                                <span aria-current="page">10.5</span>
+                            </nav>
+
+                        <h1 class="robotics-article-headline">10.5 Lab: Send a Navigation Goal to Nav2</h1>
+
+                        <div class="robotics-article-meta-bar">
+                            <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                        </div>
+                        <nav class="lesson-quicknav" aria-label="Lesson position and previous or next lesson">
+                                <span class="lesson-quicknav-pos">Chapter 10, lesson 5 of 5</span>
+                                <a class="lesson-quicknav-prev" href="robotics-10-4.html"><span aria-hidden="true">&larr;</span> Previous<span class="sr-only">: 10.4 Behavior Trees, Actions and Lifecycle Nodes</span></a>
+                                <a class="lesson-quicknav-next" href="robotics-capstone.html">Next<span class="sr-only">: Chapter 11: Capstone Projects</span> <span aria-hidden="true">&rarr;</span></a>
+                            </nav>
+                    </header>
+
+                    <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Why this lab</h2>
+                        <p>
+                            In <a href="robotics-10-1.html">lesson 10.1</a> we studied the coordinate frames and odometry transforms that locate a mobile robot. In <a href="robotics-10-2.html">lesson 10.2</a> we examined how Nav2 represents obstacles with static costmap layers and costmap filters. In <a href="robotics-10-3.html">lesson 10.3</a> we looked at the dedicated task servers for global planning, local path following, trajectory smoothing, and recovery behaviors. In <a href="robotics-10-4.html">lesson 10.4</a> we followed how behavior trees orchestrate those servers and how lifecycle nodes manage their startup order.
+                        </p>
+                        <p>
+                            Throughout those four lessons, the concepts remained theoretical. In this lesson you run those components for the first time. Readers who completed the hands-on exercises in <a href="robotics-4-3.html">lesson 4.3</a> and <a href="robotics-4-4.html">lesson 4.4</a> already know how to start ROS 2 nodes, list topics, and inspect communication flows.
+                        </p>
+                        <p>
+                            Many people learn robotics on a laptop, with no robot. Nav2 has a simulator for exactly that case: its loopback simulator lets you test navigation without starting a compute-heavy process such as Gazebo or Isaac Sim.<sup><a href="#ref-1">[1]</a></sup> In this lab you start Nav2 with that simulator, look at the servers it runs, and send the simulated robot a goal, first from the terminal and then from a short Python program.
+                        </p>
+
+                        <h2 class="article-section-title">02. What you need and how to install it</h2>
+                        <p>
+                            To complete this lab you need a computer running Linux on the x86-64 architecture, several gigabytes of free disk space, and standard user permissions. You do not need root access or sudo privileges. The practice transcript in this lesson was recorded on an Ubuntu 26.04.1 LTS system running micromamba 2.10.0 and Python 3.14.10.
+                        </p>
+                        <p>
+                            This lab installs ROS 2 and Nav2 from RoboStack, a project that packages ROS for the conda family of package managers. RoboStack packages can be installed with Pixi, Micromamba or conda.<sup><a href="#ref-2">[2]</a></sup> RoboStack recommends Pixi for new installations.<sup><a href="#ref-2">[2]</a></sup> This lab uses micromamba because that is what was tested. A channel is an online location that a package manager downloads packages from. The commands below use two channels: <code>conda-forge</code> for general software and <code>robostack-lyrical</code> for ROS 2 Lyrical.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            Micromamba is a fully statically linked, self-contained executable.<sup><a href="#ref-4">[4]</a></sup> In other words, it is a single program file that needs nothing else installed. It keeps its environments under a folder named by the <code>MAMBA_ROOT_PREFIX</code> variable.<sup><a href="#ref-4">[4]</a></sup> An environment is a folder that holds its own set of packages, separate from the rest of the system. Installing in user space means installing only inside your own home folder, with no administrator rights. The commands below put micromamba and the environment in one folder, <code>~/robosstics-lab</code>, and deleting that folder removes them again.
+                        </p>
+                        <p>
+                            RoboStack&rsquo;s micromamba page gives two cautions.<sup><a href="#ref-3">[3]</a></sup> Do not install ROS packages in the <code>base</code> environment. And do not source a system ROS install (for example one from <code>/opt/ros</code>) in the same terminal, because the paths it sets conflict with the environment.<sup><a href="#ref-3">[3]</a></sup> Use a separate, named environment, as the commands below do.
+                        </p>
+                        <p>
+                            This lab was not tested with the apt install from <a href="robotics-4-3.html">lesson 4.3</a>. The same <code>ros2</code> commands should work there once the Nav2 packages are installed, but that route was not run. If you already have ROS 2 from 4.3, keep it out of the terminals you use for this lab, as the caution above says.
+                        </p>
+                        <p>
+                            To install micromamba and create the Nav2 environment, open a terminal and execute the following commands. On a fresh computer, downloading the packages requires several gigabytes of network transfer:
+                        </p>
+                        <pre class="article-code"><code>$ mkdir -p ~/robosstics-lab
+$ cd ~/robosstics-lab
+$ curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bin/micromamba
+$ export MAMBA_ROOT_PREFIX=~/robosstics-lab/root
+$ eval "$(~/robosstics-lab/bin/micromamba shell hook -s bash)"
+$ micromamba create -y -n nav2 -c conda-forge -c robostack-lyrical ros-lyrical-ros-base ros-lyrical-nav2-bringup ros-lyrical-nav2-loopback-sim ros-lyrical-nav2-simple-commander ros-lyrical-nav2-minimal-tb3-sim
+$ micromamba activate nav2
+$ echo $ROS_DISTRO
+lyrical
+$ ros2 pkg list | grep -c nav2
+36</code></pre>
+                        <p>
+                            The first two commands make a folder for the lab and move into it. The <code>export</code> line tells micromamba where to keep its environments, and the <code>eval</code> line makes the <code>micromamba</code> command available in this terminal. <code>micromamba activate nav2</code> then switches the terminal to the new environment. <code>echo $ROS_DISTRO</code> prints <code>lyrical</code>, and the last command counts the installed packages whose names contain &ldquo;nav2&rdquo;. It printed 36. In the recorded run the create command took 11 seconds, because the packages were already in micromamba&rsquo;s download cache from an earlier install. A first install downloads several gigabytes. In the recorded runs the real folder was <code>~/.local/share/robosstics-lab</code>, shown here as <code>~/robosstics-lab</code>, and two extra variables were set, <code>ROS_DOMAIN_ID=77</code> and <code>ROS_LOCALHOST_ONLY=1</code>. <a href="robotics-4-1.html">4.1</a> explains what a domain ID is.
+                        </p>
+                        <p>
+                            A new terminal does not know about micromamba yet. A plain <code>micromamba activate nav2</code> there fails with &ldquo;command not found&rdquo;. In every new terminal, run these three lines first:
+                        </p>
+                        <pre class="article-code"><code>$ export MAMBA_ROOT_PREFIX=~/robosstics-lab/root
+$ eval "$(~/robosstics-lab/bin/micromamba shell hook -s bash)"
+$ micromamba activate nav2</code></pre>
+                        <p>
+                            The lesson calls this &ldquo;activating the environment&rdquo; from here on.
+                        </p>
+
+                        <h2 class="article-section-title">03. What the loopback simulator is</h2>
+                        <p>
+                            The loopback simulator replaces both robot hardware and physics simulators such as Gazebo, Bullet or Isaac Sim.<sup><a href="#ref-1">[1]</a></sup> It works out the robot&rsquo;s odometry from the velocity that Nav2 commands, which makes it a perfect &ldquo;frictionless plane&rdquo; simulation.<sup><a href="#ref-1">[1]</a></sup> The robot moves exactly as commanded, with no wheel slip and no motor dynamics.
+                        </p>
+                        <p>
+                            Its README lists what it is good for: testing behaviors and higher-level systems without worrying about localization accuracy or system dynamics, and running on a computer that could not run a heavy simulator.<sup><a href="#ref-1">[1]</a></sup> That is a good fit for a first run, where the goal is to see Nav2&rsquo;s parts work together, not to tune a real robot.
+                        </p>
+                        <p>
+                            Specifically, the loopback simulator provides three core capabilities:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">The map to odom transform.</span> It stands in for global localization (10.1), so no AMCL is needed.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">The odom to base_link transform and odometry.</span> It publishes odometry on the <code>odom</code> topic and both transforms on <code>tf</code>.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">The initial pose.</span> It listens on the standard <code>/initialpose</code> topic, so you can place the robot anywhere on the map.<sup><a href="#ref-1">[1]</a></sup></li>
+                        </ul>
+                        <p>
+                            It does not simulate real sensors. It can publish a laser scan computed from the static map, to keep the collision monitor fed.<sup><a href="#ref-1">[1]</a></sup> The launch log of this lab shows that scan being switched on (&ldquo;Laser scan will be populated using map data&rdquo;). The README still says the global (and probably the local) costmap must include the static layer from 10.2 so that the robot avoids obstacles.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            These are the frames from <a href="robotics-10-1.html">10.1</a>. The map frame is fixed to the world, odom moves smoothly with the robot, and base_link is the robot itself. On a real robot, the map to odom link comes from localization and the odom to base_link link from odometry. Here the loopback simulator publishes both.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">04. Start Nav2</h2>
+                        <p>
+                            Running this lab requires two separate terminal windows. Terminal 1 runs the navigation bringup launch file and displays system logging output. Terminal 2 is your command console where you inspect node lifecycles, query coordinate frames, and dispatch navigation requests.
+                        </p>
+                        <p>
+                            In Terminal 1, activate the environment with the three lines from Section 02, then launch Nav2 with the loopback simulator:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 launch nav2_bringup tb3_loopback_simulation_launch.py use_rviz:=False</code></pre>
+                        <p>
+                            The launch file has a <code>use_rviz</code> argument, &ldquo;Whether to start RVIZ&rdquo;, and its default is <code>True</code>.<sup><a href="#ref-5">[5]</a></sup> Setting <code>use_rviz:=False</code> tells the launch script not to start the RViz graphical visualizer. This option is helpful when working over SSH or in an environment without a display monitor. On a desktop with a screen you can leave <code>use_rviz:=False</code> out to watch the robot in RViz. The recorded runs had no display, so that part was not tested here.
+                        </p>
+                        <p>
+                            By default the launch file loads the map <code>tb3_sandbox.yaml</code>.<sup><a href="#ref-5">[5]</a></sup> It also starts all Nav2 servers inside one process: the <code>use_composition</code> argument defaults to <code>True</code>.<sup><a href="#ref-5">[5]</a></sup> The nav2_bringup README explains that composed bringup puts all Nav2 nodes in a single process.<sup><a href="#ref-6">[6]</a></sup> These are selected lines that Terminal 1 printed during startup:
+                        </p>
+                        <pre class="article-code"><code>[loopback_simulator]: Configuring
+[lifecycle_manager_nav2]: Creating
+[lifecycle_manager_nav2]: Creating and initializing lifecycle publishers
+[lifecycle_manager_nav2]: Creating and initializing lifecycle service clients
+[loopback_simulator]: Activating
+[loopback_simulator]: Sim clock publisher started (resolution: 0.010s, speed: 1.00x)
+[loopback_simulator]: Creating bond (loopback_simulator) to lifecycle manager.
+[loopback_simulator]: Loopback simulator activated
+[lifecycle_manager_nav2]: Creating and initializing lifecycle service servers
+[lifecycle_manager_nav2]: Starting managed nodes bringup...
+[lifecycle_manager_nav2]: Configuring map_server
+[lifecycle_manager_nav2]: Configuring controller_server
+[lifecycle_manager_nav2]: Configuring smoother_server
+[loopback_simulator]: Map server returned empty/invalid map (0x0, res=0.000), will retry
+[lifecycle_manager_nav2]: Configuring planner_server
+[lifecycle_manager_nav2]: Configuring route_server
+[lifecycle_manager_nav2]: Configuring behavior_server
+[lifecycle_manager_nav2]: Configuring velocity_smoother
+[lifecycle_manager_nav2]: Configuring collision_monitor
+[lifecycle_manager_nav2]: Configuring bt_navigator
+[loopback_simulator]: Map server returned empty/invalid map (0x0, res=0.000), will retry
+[lifecycle_manager_nav2]: Configuring waypoint_follower
+[lifecycle_manager_nav2]: Configuring docking_server
+[lifecycle_manager_nav2]: Configuring following_server
+[lifecycle_manager_nav2]: Activating map_server
+[loopback_simulator]: Laser scan will be populated using map data
+[lifecycle_manager_nav2]: Server map_server connected with bond.
+[lifecycle_manager_nav2]: Activating controller_server
+[lifecycle_manager_nav2]: Server controller_server connected with bond.
+[lifecycle_manager_nav2]: Activating smoother_server
+[lifecycle_manager_nav2]: Server smoother_server connected with bond.
+[lifecycle_manager_nav2]: Activating planner_server</code></pre>
+                        <p>
+                            This is the lifecycle from <a href="robotics-10-4.html">10.4</a> in action. The node <code>lifecycle_manager_nav2</code> first configures every server, which moves it from unconfigured to inactive. Then it activates them one at a time: <code>map_server</code>, <code>controller_server</code>, <code>smoother_server</code>, then <code>planner_server</code>.
+                        </p>
+                        <p>
+                            Notice that startup pauses at <code>Activating planner_server</code>. The launch system stops and waits before bringing up the remaining nodes.
+                        </p>
+
+                        <h2 class="article-section-title">05. Tell Nav2 where the robot is</h2>
+                        <p>
+                            An initial pose is the starting position and orientation that defines where a robot is located on a navigation map. In this lab the loopback simulator needs one before it can tell the rest of Nav2 where the robot is.
+                        </p>
+                        <p>
+                            The loopback simulator takes the starting pose from the <code>/initialpose</code> topic.<sup><a href="#ref-1">[1]</a></sup> Until a pose arrives, Terminal 1 repeats a message from the global costmap: &ldquo;Timed out waiting for transform from base_link to map&rdquo;. The planner server cannot finish activating without that transform, so bringup waits.
+                        </p>
+                        <p>
+                            Do not wait too long. In one exploratory run the pose was published too late. Bringup gave up 60.5 seconds after &ldquo;Activating planner_server&rdquo;, with these lines:
+                        </p>
+                        <pre class="article-code"><code>[component_container-3] [ERROR] [1794446258.436573106] [global_costmap.global_costmap]: Failed to activate global_costmap because transform from base_link to map did not become available before timeout
+[component_container-3] [ERROR] [1794446258.437254582] [lifecycle_manager_nav2]: Failed to change state for node: planner_server
+[component_container-3] [ERROR] [1794446258.437270740] [lifecycle_manager_nav2]: Failed to bring up all requested nodes. Aborting bringup.</code></pre>
+                        <p>
+                            Following this timeout, the nodes remained in the inactive state and the entire stack had to be stopped and restarted.
+                        </p>
+                        <p>
+                            Where you put the robot matters. In an exploratory run the robot was placed at x = 0, y = 0, and that did not work: one goal was reported as succeeded although the robot had not moved, and another failed with planner error code 208 (&ldquo;Failed to create plan&rdquo;). A start at x = &minus;2.0 m, y = &minus;0.5 m worked in every run, so the lab uses it.
+                        </p>
+                        <p>
+                            Open Terminal 2, activate the environment there too (the same three lines), and publish the initial pose on <code>/initialpose</code>:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 topic pub --once /initialpose geometry_msgs/msg/PoseWithCovarianceStamped "{header: {frame_id: map}, pose: {pose: {position: {x: -2.0, y: -0.5}, orientation: {w: 1.0}}}}"
+publisher: beginning loop
+publishing #1: geometry_msgs.msg.PoseWithCovarianceStamped(header=std_msgs.msg.Header(stamp=builtin_interfaces.msg.Time(sec=0, nanosec=0), frame_id='map'), pose=geometry_msgs.msg.PoseWithCovariance(pose=geometry_msgs.msg.Pose(position=geometry_msgs.msg.Point(x=-2.0, y=-0.5, z=0.0), orientation=geometry_msgs.msg.Quaternion(x=0.0, y=0.0, z=0.0, w=1.0)), covariance=array([0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
+...</code></pre>
+                        <p>
+                            As soon as this message is sent, Terminal 1 resumes and prints:
+                        </p>
+                        <pre class="article-code"><code>[loopback_simulator]: Received initial pose!
+[lifecycle_manager_nav2]: Managed nodes are active</code></pre>
+                        <p>
+                            The loopback simulator has received the coordinates, the transform tree is online, and the lifecycle manager has brought all navigation servers to the active state.
+                        </p>
+
+                        <h2 class="article-section-title">06. Look before you drive</h2>
+                        <p>
+                            Before commanding motion, inspect the state of the system in Terminal 2. First, verify the lifecycle state of the servers using <code>ros2 lifecycle get</code>:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 lifecycle get /planner_server
+Node not found
+$ ros2 lifecycle get /controller_server
+active [3]
+$ ros2 lifecycle get /bt_navigator
+active [3]</code></pre>
+                        <p>
+                            In one of the two recorded runs, the first <code>ros2 lifecycle get</code>, made right after bringup, printed <code>Node not found</code>, while the next two commands printed <code>active [3]</code>. If you see <code>Node not found</code> right after startup, wait a few seconds and run the command again. In the other run, all three printed <code>active [3]</code> at once.
+                        </p>
+                        <p>
+                            Next, list the action servers available across the system:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 action list
+/assisted_teleop
+/backup
+/compute_and_track_route
+/compute_path_through_poses
+/compute_path_to_pose
+/compute_route
+/dock_robot
+/drive_on_heading
+/follow_gps_waypoints
+/follow_object
+/follow_path
+/follow_waypoints
+/navigate_through_poses
+/navigate_to_pose
+/smooth_path
+/spin
+/undock_robot
+/wait</code></pre>
+                        <p>
+                            That is 18 actions. Several of them belong to servers you met in <a href="robotics-10-3.html">10.3</a> and <a href="robotics-10-4.html">10.4</a>:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Navigation:</span> <code>/navigate_to_pose</code> and <code>/navigate_through_poses</code> are the actions you send whole navigation tasks to (10.4).</li>
+                            <li class="article-spec-item"><span class="spec-label">Planning:</span> <code>/compute_path_to_pose</code> and <code>/compute_path_through_poses</code> ask the planner for a path, and <code>/compute_route</code> asks the route server (10.3).</li>
+                            <li class="article-spec-item"><span class="spec-label">Control:</span> <code>/follow_path</code> asks the controller to follow a path (10.3).</li>
+                            <li class="article-spec-item"><span class="spec-label">Smoothing:</span> <code>/smooth_path</code> asks the smoother to improve a path (10.3).</li>
+                            <li class="article-spec-item"><span class="spec-label">Behaviors:</span> <code>/spin</code>, <code>/backup</code> and <code>/wait</code> match the behavior plugins loaded by the behavior server in the default parameters (<code>spin</code>, <code>backup</code>, <code>drive_on_heading</code>, <code>assisted_teleop</code> and <code>wait</code>).<sup><a href="#ref-7">[7]</a></sup> These are the recovery behaviors of 10.3.</li>
+                        </ul>
+                        <p>
+                            Finally, inspect the current coordinate transform between the map and the robot base:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 run tf2_ros tf2_echo map base_link
+At time 12.400043765
+- Translation: [-2.000, -0.500, 0.010]
+- Rotation: in Quaternion (xyzw) [0.000, 0.000, 0.000, 1.000]
+- Rotation: in RPY (radian) [0.000, -0.000, 0.000]</code></pre>
+                        <p>
+                            Press Ctrl+C to stop the echo after the first reading. The robot base is situated at x = -2.000, y = -0.500, and z = 0.010 meters, matching our published initial pose.
+                        </p>
+
+                        <h2 class="article-section-title">07. Send a goal from the command line</h2>
+                        <p>
+                            A feedback message is a periodic status update published by an action server while executing a long-running request. Goal tolerance is the allowable spatial and angular margin of error within which a robot is considered to have arrived at its destination.
+                        </p>
+                        <p>
+                            Send a navigation goal requesting the robot to travel to x = 1.5 meters and y = -0.5 meters on the map. The <code>--feedback</code> flag tells the CLI tool to print feedback messages as they arrive from the BT Navigator:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose "{pose: {header: {frame_id: map}, pose: {position: {x: 1.5, y: -0.5}, orientation: {w: 1.0}}}}" --feedback</code></pre>
+                        <p>
+                            Here is the output recorded during the run, showing the initial goal acceptance, the first feedback message, a summary cut, the final feedback message, and the result:
+                        </p>
+                        <pre class="article-code"><code>Waiting for an action server to become available...
+Sending goal:
+     pose:
+  header:
+    stamp:
+      sec: 0
+      nanosec: 0
+    frame_id: map
+  pose:
+    position:
+      x: 1.5
+      y: -0.5
+      z: 0.0
+    orientation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+behavior_tree: ''
+
+Goal accepted with ID: 80243a0de4074849b72744d20669e5f7
+
+Feedback:
+    current_pose:
+  header:
+    stamp:
+      sec: 20
+      nanosec: 480072615
+    frame_id: map
+  pose:
+    position:
+      x: -2.0
+      y: -0.5
+      z: 0.01
+    orientation:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      w: 1.0
+navigation_time:
+  sec: 0
+  nanosec: 0
+estimated_time_remaining:
+  sec: 0
+  nanosec: 0
+number_of_recoveries: 0
+distance_remaining: 0.0
+position_tracking_error: 0.0
+heading_tracking_error: 0.0
+
+... (more feedback messages) ...
+909 feedback messages in total
+Feedback:
+    current_pose:
+  header:
+    stamp:
+      sec: 29
+      nanosec: 550130706
+    frame_id: map
+  pose:
+    position:
+      x: 1.2786842814866448
+      y: -0.5914692497653269
+      z: 0.01
+    orientation:
+      x: 0.0
+      y: 0.0
+      z: 0.018585854331627693
+      w: 0.9998272680912255
+navigation_time:
+  sec: 9
+  nanosec: 80059349
+estimated_time_remaining:
+  sec: 1
+  nanosec: 148031688
+number_of_recoveries: 0
+distance_remaining: 0.2664209008216858
+position_tracking_error: 0.009302062913775444
+heading_tracking_error: -0.012572391889989376
+
+Result:
+    error_code: 0
+error_msg: ''
+
+Goal finished with status: SUCCEEDED</code></pre>
+                        <p>
+                            The fields of a feedback message come from the action&rsquo;s definition, which lists their names and types.<sup><a href="#ref-8">[8]</a></sup> Here is what each one showed in this run:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">current_pose:</span> where the robot is, in the map frame.</li>
+                            <li class="article-spec-item"><span class="spec-label">navigation_time:</span> how long the robot has been navigating: 9.08 seconds in the last message.</li>
+                            <li class="article-spec-item"><span class="spec-label">estimated_time_remaining:</span> Nav2&rsquo;s estimate of the time left: about 1.15 seconds in the last message.</li>
+                            <li class="article-spec-item"><span class="spec-label">number_of_recoveries:</span> how many recovery behaviors ran. It stayed at 0.</li>
+                            <li class="article-spec-item"><span class="spec-label">distance_remaining:</span> the distance left to the goal: 0.0 in the very first message, then 3.55 m, falling to 0.27 m in the last message.</li>
+                            <li class="article-spec-item"><span class="spec-label">position_tracking_error:</span> about 0.009 in the last message, and never above 0.021 during the run.</li>
+                            <li class="article-spec-item"><span class="spec-label">heading_tracking_error:</span> about −0.013 in the last message. Its largest size during the run was 0.154.</li>
+                        </ul>
+                        <p>
+                            When the move finished, the server returned <code>error_code: 0</code> with status <code>SUCCEEDED</code>. Check the resulting position with <code>tf2_echo</code>:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 run tf2_ros tf2_echo map base_link
+At time 31.77976
+- Translation: [1.292, -0.591, 0.010]
+- Rotation: in Quaternion (xyzw) [0.000, 0.000, 0.018, 1.000]
+- Rotation: in RPY (radian) [0.000, -0.000, 0.036]</code></pre>
+                        <p>
+                            The target coordinates were (1.5, -0.5). The robot came to a stop at (1.292, -0.591). Calculating the Euclidean distance between the requested goal and the stopped position yields:
+                        </p>
+                        <p>
+                            $$\sqrt{(1.5 - 1.292)^2 + (-0.5 - (-0.591))^2} = \sqrt{0.208^2 + 0.091^2} = 0.227\text{ m}$$
+                        </p>
+                        <p>
+                            Why did the action declare success when the robot stopped 0.23 meters short of the destination coordinate? The default Nav2 parameters define a general_goal_checker within the controller server that configures an xy_goal_tolerance of 0.25 meters and a yaw_goal_tolerance of 0.25 radians.<sup><a href="#ref-7">[7]</a></sup> Because the final distance of 0.227 meters is within the configured 0.25-meter tolerance threshold, the controller goal checker marks the task complete. In the other recorded run, the move completed after 900 feedback messages with an end translation of (1.293, -0.591), which similarly falls within the tolerance boundary.
+                        </p>
+
+                        <h2 class="article-section-title">08. The same task from Python</h2>
+                        <p>
+                            The <code>nav2_simple_commander</code> package gives Python users &ldquo;navigation as a library&rdquo;.<sup><a href="#ref-9">[9]</a></sup> Its API handles the ROS 2 and action server details for you, so you can focus on your application.<sup><a href="#ref-9">[9]</a></sup> You create a <code>BasicNavigator</code> and call its methods instead of writing an action client yourself.
+                        </p>
+                        <p>
+                            Create a script named <code>go_to_goal.py</code> with the following content:
+                        </p>
+                        <pre class="article-code"><code>"""Send one navigation goal to Nav2 and print its progress.
+
+Start Nav2 first (see the lesson). This script sends the robot back to
+where it started, at x = -2.0, y = -0.5 on the tb3_sandbox map.
+"""
+from geometry_msgs.msg import PoseStamped
+from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+import rclpy
+
+
+def main():
+    rclpy.init()
+    navigator = BasicNavigator()
+
+    # The loopback simulator has no AMCL. This value of localizer makes
+    # waitUntilNav2Active() skip the localizer check and wait only for
+    # bt_navigator.
+    navigator.waitUntilNav2Active(localizer='robot_localization')
+
+    goal = PoseStamped()
+    goal.header.frame_id = 'map'
+    goal.header.stamp = navigator.get_clock().now().to_msg()
+    goal.pose.position.x = -2.0
+    goal.pose.position.y = -0.5
+    goal.pose.orientation.w = 1.0
+
+    task = navigator.goToPose(goal)
+    last_second = -1
+    while not navigator.isTaskComplete(task=task):
+        feedback = navigator.getFeedback(task=task)
+        # Print once per second of navigation time, not on every loop.
+        if feedback and feedback.navigation_time.sec != last_second:
+            last_second = feedback.navigation_time.sec
+            print('{:2d} s: {:.2f} m to go'.format(
+                last_second, feedback.distance_remaining))
+
+    result = navigator.getResult()
+    if result == TaskResult.SUCCEEDED:
+        print('Goal succeeded!')
+    elif result == TaskResult.CANCELED:
+        print('Goal was canceled!')
+    elif result == TaskResult.FAILED:
+        print('Goal failed!')
+
+    navigator.destroy_node()
+    rclpy.shutdown()
+
+
+if __name__ == '__main__':
+    main()</code></pre>
+                        <p>
+                            Execute the script in Terminal 2:
+                        </p>
+                        <pre class="article-code"><code>$ python3 go_to_goal.py
+[INFO] [1794447005.585167577] [basic_navigator]: Nav2 is ready for use!
+[INFO] [1794447005.585782045] [basic_navigator]: Navigating to goal: -2.0 -0.5...
+ 0 s: 3.33 m to go
+ 1 s: 3.20 m to go
+ 2 s: 2.95 m to go
+ 3 s: 2.70 m to go
+ 4 s: 2.65 m to go
+ 5 s: 2.60 m to go
+ 6 s: 2.32 m to go
+ 7 s: 1.85 m to go
+ 8 s: 1.42 m to go
+ 9 s: 0.92 m to go
+10 s: 0.52 m to go
+11 s: 0.25 m to go
+12 s: 0.15 m to go
+13 s: 0.15 m to go
+14 s: 0.07 m to go
+Goal succeeded!
+$ ros2 run tf2_ros tf2_echo map base_link
+At time 56.230141789
+- Translation: [-1.961, -0.517, 0.010]
+- Rotation: in Quaternion (xyzw) [0.000, 0.000, -0.110, -0.994]
+- Rotation: in RPY (radian) [-0.000, -0.000, 0.221]</code></pre>
+                        <p>
+                            Let us walk through the script step by step:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Start:</span> <code>rclpy.init()</code> starts the ROS 2 client library, and <code>BasicNavigator()</code> creates the navigator node. The first output line, <code>bt_navigator/get_state service not available, waiting...</code>, is normal while the script connects.</li>
+                            <li class="article-spec-item"><span class="spec-label">Wait for Nav2:</span> <code>waitUntilNav2Active()</code> waits until Nav2 is ready. By default it expects AMCL as the localizer: it waits for the AMCL node, then keeps setting the initial pose until AMCL reports a pose.<sup><a href="#ref-10">[10]</a></sup> This lab runs no AMCL node, because the loopback simulator replaces it, so the script does not use the default. With <code>localizer=&#39;robot_localization&#39;</code>, the method skips both localizer checks and waits only for <code>bt_navigator</code>.<sup><a href="#ref-10">[10]</a></sup> The name is misleading here: nothing in this lab uses the robot_localization package. It is simply the value that turns those checks off.</li>
+                            <li class="article-spec-item"><span class="spec-label">The goal:</span> A <code>PoseStamped</code> message holds the goal: back to (−2.0, −0.5) in the map frame. <code>goToPose(goal)</code> sends it to the BT Navigator and returns a task that the loop below checks.</li>
+                            <li class="article-spec-item"><span class="spec-label">Progress:</span> The loop runs until <code>isTaskComplete(task=task)</code> is true. <code>getFeedback()</code> returns the latest feedback message. The loop runs many times per second, so the script prints only when the whole number of seconds in <code>navigation_time</code> changes.</li>
+                            <li class="article-spec-item"><span class="spec-label">Completion and cleanup:</span> Once the task finishes, <code>navigator.getResult()</code> evaluates the final outcome against the <code>TaskResult</code> enumeration. Finally, <code>navigator.destroy_node()</code> and <code>rclpy.shutdown()</code> terminate the ROS client cleanly.</li>
+                        </ul>
+                        <p>
+                            The final <code>tf2_echo</code> reading puts the robot at (−1.961, −0.517), about 0.04 m from the goal.
+                        </p>
+                        <p>
+                            In Nav2's example navigation script, the demo sets an initial pose explicitly and includes timeout logic to illustrate task cancellation as well as destination updates to illustrate task preemption.<sup><a href="#ref-11">[11]</a></sup> Our practice script leaves out cancellation thresholds and in-flight preemption to provide the most direct possible demonstration of sending a goal and monitoring its completion.
+                        </p>
+
+                        <h2 class="article-section-title">09. Stop Nav2</h2>
+                        <p>
+                            When you finish your navigation experiments, shut down the running processes cleanly.
+                        </p>
+                        <p>
+                            In Terminal 1, press Ctrl+C. Nav2 and the loopback simulator shut down.
+                        </p>
+                        <p>
+                            The <code>ros2</code> command-line tools start a background process, the ROS 2 daemon, the first time you use them. In the recorded runs it kept running after Nav2 had stopped. To stop it too, run this in Terminal 2:
+                        </p>
+                        <pre class="article-code"><code>$ ros2 daemon stop
+The daemon has been stopped</code></pre>
+                        <p>
+                            Nothing from the lab is running now.
+                        </p>
+
+                        <h2 class="article-section-title">10. From here to a contribution</h2>
+                        <p>
+                            Every step in this lab used standard Nav2 packages and official documentation. As you progress in robotics, you will frequently install community packages, run developer launch files, and test example scripts. Open-source documentation is written and updated by community contributors, and discrepancies occasionally emerge between project guides and released code.
+                        </p>
+                        <p>
+                            Consider the launch command in the loopback simulator README. The package README instructs users to run <code>ros2 launch nav2_bringup tb3_loopback_simulation.launch.py</code>. However, when inspecting the installed package files in the current release, the launch script is named <code>tb3_loopback_simulation_launch.py</code> with an underscore instead of a period before launch. The command from the README cannot find that file. Listing the package&rsquo;s launch folder shows the real name: <code>ls $(ros2 pkg prefix nav2_bringup)/share/nav2_bringup/launch</code>.
+                        </p>
+                        <p>
+                            A mismatch like this one, between a project&rsquo;s documentation and what it installs, is the kind of small, checkable problem that makes a good first contribution. <a href="robotics-3-5.html">3.5</a> shows how the Nav2 project takes contributions, and <a href="robotics-4-10.html">4.10</a> shows how to write a bug report a maintainer can act on: what you ran, what you expected, what you saw, and your versions. Before you report anything, search the project&rsquo;s issues, because someone may already have reported it. The <a href="robotics-oss-map.html#nav2">Nav2 entry on the Open-Source Map</a> links the repository and its issue tracker.
+                        </p>
+
+                        <div class="article-callout try-it">
+                            <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                            <ol>
+                                <li>Send a navigation goal from the command line to x = 0.0 m, y = &minus;0.5 m. That spot lies between the start and the goal of Section 07, on ground the robot has already driven over. After the action reports success, execute <code>ros2 run tf2_ros tf2_echo map base_link</code>, calculate the Euclidean distance between your goal coordinates and the reported translation, and verify that the distance falls within the 0.25-meter goal tolerance.</li>
+                                <li>In a fresh terminal session, launch the loopback simulation without publishing to <code>/initialpose</code>. Observe how Terminal 1 halts at "Activating planner_server" and records an error from <code>global_costmap</code> approximately 60 seconds later. Run <code>ros2 lifecycle get /planner_server</code> to confirm that the planner remains inactive.</li>
+                                <li>Modify <code>go_to_goal.py</code> so that the feedback loop prints <code>feedback.estimated_time_remaining.sec</code> along with distance remaining. Run the script and watch how the estimate changes as the robot moves.</li>
+                                <li>Run <code>ros2 action list</code> in Terminal 2 and pick an action other than <code>/navigate_to_pose</code>, such as <code>/spin</code> or <code>/backup</code>. Consult <a href="robotics-10-3.html">lesson 10.3</a> to identify which navigation server hosts that action and what task it performs during robot operation.</li>
+                            </ol>
+                        </div>
+
+                        <h2 class="article-section-title">11. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why does the loopback simulation pause at &ldquo;Activating planner_server&rdquo; until an initial pose is published on <code>/initialpose</code>?<details class="check-answer"><summary>Show answer</summary><p>The global costmap inside the planner server requires an active coordinate transform from <code>base_link</code> to <code>map</code> before it can activate. Until an initial pose is published, the loopback simulator does not publish the <code>map</code> to <code>odom</code> transform, causing costmap activation to wait. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                            <li class="article-spec-item">Why did the command-line goal report success even though the robot stopped 0.23 meters away from the exact target coordinate?<details class="check-answer"><summary>Show answer</summary><p>In <code>nav2_params.yaml</code>, the controller server&rsquo;s <code>general_goal_checker</code> specifies an <code>xy_goal_tolerance</code> of 0.25 meters. Because the final distance of 0.227 meters is within this 0.25-meter threshold, the goal checker declares that the destination has been reached. <span class="check-answer-src">(Section 07)</span></p></details></li>
+                            <li class="article-spec-item">Why does <code>go_to_goal.py</code> pass <code>localizer='robot_localization'</code> to <code>navigator.waitUntilNav2Active()</code>?<details class="check-answer"><summary>Show answer</summary><p>By default, <code>waitUntilNav2Active()</code> expects AMCL as the localizer and waits for an <code>amcl_pose</code> message. Because the loopback simulator replaces AMCL and provides the <code>map</code> to <code>odom</code> transform directly, setting <code>localizer='robot_localization'</code> tells the navigator to bypass AMCL checks and wait only for the <code>bt_navigator</code> node. <span class="check-answer-src">(Section 08)</span></p></details></li>
+                            <li class="article-spec-item">What happens if an initial pose is not published within approximately 60 seconds of starting Nav2?<details class="check-answer"><summary>Show answer</summary><p>The global costmap times out while waiting for the transform from <code>base_link</code> to <code>map</code>. The lifecycle manager logs an error and aborts bringup, leaving the navigation servers in an inactive state until Nav2 is restarted. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                        </ul>
+
+                            <!-- oss-note -->
+                            <div class="article-callout oss-note">
+                                <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>
+                                <p>Projects used or discussed here: <a href="robotics-oss-map.html#nav2">Nav2</a>. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows its licence, where the code lives and how to make a first contribution.</p>
+                            </div>
+                            <!-- /oss-note -->
+
+                        <h2 class="article-section-title">12. References</h2>
+                        <p class="references-note">Source check (November 2026): 11 of 11 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-5.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">Nav2 developers, &ldquo;Nav2 Loopback Simulation,&rdquo; nav2_loopback_sim README, ros-navigation/navigation2 repository, lyrical branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_loopback_sim/README.md" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_loopback_sim/README.md</a></li>
+                            <li id="ref-2">RoboStack, &ldquo;Getting Started.&rdquo; <a href="https://robostack.github.io/GettingStarted.html" target="_blank" rel="noopener noreferrer">https://robostack.github.io/GettingStarted.html</a></li>
+                            <li id="ref-3">RoboStack, &ldquo;Install RoboStack packages with micromamba.&rdquo; <a href="https://robostack.github.io/micromamba.html" target="_blank" rel="noopener noreferrer">https://robostack.github.io/micromamba.html</a></li>
+                            <li id="ref-4">mamba developers, &ldquo;Micromamba Installation,&rdquo; mamba documentation. <a href="https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html" target="_blank" rel="noopener noreferrer">https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html</a></li>
+                            <li id="ref-5">Nav2 developers, tb3_loopback_simulation_launch.py, nav2_bringup package, ros-navigation/navigation2 repository, lyrical branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/launch/tb3_loopback_simulation_launch.py" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/launch/tb3_loopback_simulation_launch.py</a></li>
+                            <li id="ref-6">Nav2 developers, nav2_bringup README, same repository and branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/README.md" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/README.md</a></li>
+                            <li id="ref-7">Nav2 developers, nav2_params.yaml, nav2_bringup package, ros-navigation/navigation2 repository, lyrical branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/params/nav2_params.yaml" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/params/nav2_params.yaml</a></li>
+                            <li id="ref-8">Nav2 developers, NavigateToPose.action, nav2_msgs package, ros-navigation/navigation2 repository, lyrical branch. Available: <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_msgs/action/NavigateToPose.action" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/lyrical/nav2_msgs/action/NavigateToPose.action</a>.</li>
+                            <li id="ref-9">Nav2 developers, nav2_simple_commander README, same repository and branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_simple_commander/README.md" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_simple_commander/README.md</a></li>
+                            <li id="ref-10">Nav2 developers, robot_navigator.py, nav2_simple_commander package, same repository and branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_simple_commander/nav2_simple_commander/robot_navigator.py" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_simple_commander/nav2_simple_commander/robot_navigator.py</a></li>
+                            <li id="ref-11">Nav2 developers, example_nav_to_pose.py, nav2_simple_commander package, same repository and branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_simple_commander/nav2_simple_commander/example_nav_to_pose.py" target="_blank" rel="noopener noreferrer">https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_simple_commander/nav2_simple_commander/example_nav_to_pose.py</a></li>
+                        </ol>
+
+                        <!-- Footer Navigation -->
+                        <div class="article-footer-nav">
+                                <a href="robotics-10-4.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&larr; Previous</span>
+                                    <span class="article-nav-target">10.4 Behavior Trees, Actions and Lifecycle Nodes</span>
+                                </a>
+                                <a href="robotics-capstone.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter &rarr;</span>
+                                    <span class="article-nav-target">Chapter 11: Capstone Projects</span>
+                                </a>
+                            </div>
+
+                    </article>
+
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer id="footer">
+                <div class="container">
+                    <div id="copyright">
+                        <ul class="menu">
+                            <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
+                            <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
+                            <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+
+        </div>
+
+        <!-- Scripts -->
+        <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
+        <script src="assets/js/course-data.js?v=68812e1b" defer></script>
+        <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
+        <script src="assets/js/learning.js?v=ea4efb7b" defer></script>
+
+    </body>
+</html>

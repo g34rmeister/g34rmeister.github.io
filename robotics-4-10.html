@@ -1,0 +1,555 @@
+<!DOCTYPE HTML>
+<!--
+    Gerald Lê | Personal Developer Portfolio
+    robOSStics: 4.10 Lab: From a Failing Test to a Bug Report
+-->
+<html lang="en">
+    <head>
+        <title>4.10 Lab: From a Failing Test to a Bug Report — Gerald Lê | robOSStics @ LSU</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="Build a small Python package with colcon, run its tests, find and fix a seeded bug, and write the bug report a ROS 2 maintainer can act on. No ROS 2 install needed." />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
+        <meta name="color-scheme" content="dark light" />
+        <meta name="theme-color" content="#ffffff" />
+        <meta name="author" content="Gerald Lê" />
+        <link rel="canonical" href="https://g34rmeister.github.io/robotics-4-10.html" />
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="Gerald Lê — Portfolio" />
+        <meta property="og:title" content="4.10 Lab: From a Failing Test to a Bug Report — Gerald Lê | robOSStics @ LSU" />
+        <meta property="og:description" content="Build a small Python package with colcon, run its tests, find and fix a seeded bug, and write the bug report a ROS 2 maintainer can act on. No ROS 2 install needed." />
+        <meta property="og:url" content="https://g34rmeister.github.io/robotics-4-10.html" />
+        <meta property="og:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <meta property="og:image:alt" content="4.10 Lab: From a Failing Test to a Bug Report, part of robOSStics by Gerald Lê" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="4.10 Lab: From a Failing Test to a Bug Report — Gerald Lê | robOSStics @ LSU" />
+        <meta name="twitter:description" content="Build a small Python package with colcon, run its tests, find and fix a seeded bug, and write the bug report a ROS 2 maintainer can act on. No ROS 2 install needed." />
+        <meta name="twitter:image" content="https://g34rmeister.github.io/images/website.webp" />
+        <link rel="icon" type="image/svg+xml" href="images/logo.svg" />
+        <link rel="manifest" href="site.webmanifest" />
+        <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
+        <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=3f61826b" />
+        <script>
+            (function() {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'dark' || saved === 'light') {
+                    document.documentElement.setAttribute('data-theme', saved);
+                } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                }
+            })();
+        </script>
+        <script type="application/ld+json" id="lesson-ld">
+{
+            "@context": "https://schema.org",
+            "@type": "LearningResource",
+            "name": "4.10 Lab: From a Failing Test to a Bug Report",
+            "url": "https://g34rmeister.github.io/robotics-4-10.html",
+            "description": "Build a small Python package with colcon, run its tests, find and fix a seeded bug, and write the bug report a ROS 2 maintainer can act on. No ROS 2 install needed.",
+            "inLanguage": "en",
+            "learningResourceType": "Lesson",
+            "educationalLevel": "Beginner",
+            "timeRequired": "PT16M",
+            "teaches": [
+                "assertion",
+                "linter",
+                "regression",
+                "stack trace",
+                "test",
+                "virtual environment"
+            ],
+            "isPartOf": {
+                "@type": "Course",
+                "name": "robOSStics",
+                "url": "https://g34rmeister.github.io/robotics.html"
+            },
+            "author": {
+                "@type": "Person",
+                "name": "Gerald Lê"
+            },
+            "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+        </script>
+    </head>
+    <body class="is-preload">
+        <a class="skip-link" href="#main">Skip to content</a>
+        <div id="page-wrapper">
+
+            <!-- Course Navbar -->
+            <nav class="thesis-navbar" aria-label="Course Navigation">
+                <div class="thesis-navbar-inner">
+                    <a href="robotics.html" class="thesis-brand" title="robOSStics">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </a>
+                    <ul class="thesis-nav-links">
+                        <li><a href="robotics.html"><i class="fas fa-home" aria-hidden="true"></i> Course Home</a></li>
+                        <li class="nav-chapters">
+                            <details class="nav-menu">
+                                <summary class="active">Chapters</summary>
+                                <ul class="nav-menu-list">
+                                    <li><a href="robotics-intro.html"><span class="nav-menu-num">1</span> Intro</a></li>
+                                    <li><a href="robotics-programming.html"><span class="nav-menu-num">2</span> Programming</a></li>
+                                    <li><a href="robotics-oss.html"><span class="nav-menu-num">3</span> Open Source</a></li>
+                                    <li><a href="robotics-ros.html" aria-current="page"><span class="nav-menu-num">4</span> ROS</a></li>
+                                    <li><a href="robotics-ethics.html"><span class="nav-menu-num">5</span> Ethics</a></li>
+                                    <li><a href="robotics-control.html"><span class="nav-menu-num">6</span> Control</a></li>
+                                    <li><a href="robotics-vision.html"><span class="nav-menu-num">7</span> Vision</a></li>
+                                    <li><a href="robotics-networks.html"><span class="nav-menu-num">8</span> Networks</a></li>
+                                    <li><a href="robotics-maintenance.html"><span class="nav-menu-num">9</span> Maintenance</a></li>
+                                    <li><a href="robotics-mobile.html"><span class="nav-menu-num">10</span> Mobile</a></li>
+                                    <li><a href="robotics-capstone.html"><span class="nav-menu-num">11</span> Capstone</a></li>
+                                </ul>
+                            </details>
+                        </li>
+                        <li><a href="robotics-quiz.html"><i class="fas fa-question-circle" aria-hidden="true"></i> Quizzes</a></li>
+                        <li><a href="robotics.html#thesis-cite"><i class="fas fa-quote-right" aria-hidden="true"></i> Cite</a></li>
+                    </ul>
+                    <div class="thesis-nav-actions">
+                        <!-- nav-search -->
+                        <div class="nav-search" role="search" aria-label="Search the course" hidden>
+                            <label class="sr-only" for="nav-search-input">Search lessons and glossary terms (press / to focus)</label>
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                            <input type="search" id="nav-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="nav-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                            <ul class="nav-search-results" id="nav-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                            <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                        </div>
+                        <!-- /nav-search -->
+                        <a href="index.html" class="thesis-return-btn" title="Return to Gerald Lê's personal portfolio">
+                            <span class="thesis-return-text">Main Portfolio</span> <i class="fas fa-external-link-alt"></i>
+                        </a>
+                        <button type="button" class="thesis-theme-toggle" id="thesis-theme-btn" aria-label="Toggle Light/Dark Theme">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                        <button type="button" class="thesis-mobile-toggle" id="thesis-mobile-btn" aria-label="Open Navigation Menu">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Mobile Navigation Drawer -->
+            <div class="thesis-mobile-drawer" id="thesis-mobile-drawer" aria-hidden="true">
+                <div class="thesis-drawer-header">
+                    <div class="thesis-brand">
+                        <span class="thesis-brand-emblem"><i class="fas fa-microchip"></i></span>
+                        <div class="thesis-brand-text">
+                            <span class="thesis-brand-title">robOSStics</span>
+                            <span class="thesis-brand-sub">Learn to program robots</span>
+                        </div>
+                    </div>
+                    <button type="button" class="thesis-drawer-close" id="thesis-drawer-close" aria-label="Close Menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <!-- drawer-search -->
+                <div class="nav-search nav-search-drawer" role="search" aria-label="Search the course (menu)" hidden>
+                    <label class="sr-only" for="drawer-search-input">Search lessons and glossary terms (press / to focus)</label>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="search" id="drawer-search-input" class="nav-search-input" placeholder="Search" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="drawer-search-list" aria-autocomplete="list" aria-keyshortcuts="/">
+                    <ul class="nav-search-results" id="drawer-search-list" role="listbox" aria-label="Search results" hidden></ul>
+                    <p class="nav-search-status sr-only" role="status" aria-live="polite"></p>
+                </div>
+                <!-- /drawer-search -->
+                <div class="thesis-drawer-links">
+                    <a href="robotics.html"><i class="fas fa-home" aria-hidden="true"></i> Course Home</a>
+                    <a href="robotics-intro.html"><i class="fas fa-book-open" aria-hidden="true"></i> Intro</a>
+                    <a href="robotics-programming.html"><i class="fas fa-robot" aria-hidden="true"></i> Programming</a>
+                    <a href="robotics-oss.html"><i class="fas fa-code-branch" aria-hidden="true"></i> Open Source</a>
+                    <a href="robotics-ros.html" class="active" aria-current="page"><i class="fas fa-project-diagram" aria-hidden="true"></i> ROS</a>
+                    <a href="robotics-ethics.html"><i class="fas fa-balance-scale" aria-hidden="true"></i> Ethics</a>
+                    <a href="robotics-control.html"><i class="fas fa-bolt" aria-hidden="true"></i> Control</a>
+                    <a href="robotics-vision.html"><i class="fas fa-eye" aria-hidden="true"></i> Vision</a>
+                    <a href="robotics-networks.html"><i class="fas fa-network-wired" aria-hidden="true"></i> Networks</a>
+                    <a href="robotics-maintenance.html"><i class="fas fa-tools" aria-hidden="true"></i> Maintenance</a>
+                    <a href="robotics-mobile.html"><i class="fas fa-route" aria-hidden="true"></i> Mobile</a>
+                    <a href="robotics-capstone.html"><i class="fas fa-flag-checkered" aria-hidden="true"></i> Capstone</a>
+                    <a href="robotics-quiz.html"><i class="fas fa-question-circle" aria-hidden="true"></i> Quizzes</a>
+                    <a href="robotics.html#thesis-cite"><i class="fas fa-quote-right" aria-hidden="true"></i> Citation (BibTeX)</a>
+                    <a href="index.html" class="drawer-return"><i class="fas fa-arrow-left" aria-hidden="true"></i> Return to Main Portfolio</a>
+                </div>
+                <div class="thesis-drawer-footer">
+                    <button type="button" class="thesis-drawer-theme-btn" id="thesis-drawer-theme-btn">
+                        <span><i class="fas fa-adjust"></i> Theme</span>
+                        <span id="thesis-drawer-theme-label"><i class="fas fa-moon"></i> Dark</span>
+                    </button>
+                </div>
+            </div>
+            <div class="thesis-drawer-backdrop" id="thesis-drawer-backdrop"></div>
+
+            <!-- Main -->
+                <main id="main">
+                    <div class="robotics-article-container">
+
+                        <header class="robotics-article-masthead">
+                            <nav class="article-breadcrumb-bar" aria-label="Breadcrumb">
+                                <a href="robotics.html" class="article-breadcrumb-link">Course Home</a>
+                                <span class="article-breadcrumb-divider" aria-hidden="true">/</span>
+                                <a href="robotics-ros.html">Chapter 4 &middot; Robot Operating System (ROS)</a>
+                                <span class="article-breadcrumb-divider" aria-hidden="true">/</span>
+                                <span aria-current="page">4.10</span>
+                            </nav>
+
+                            <h1 class="robotics-article-headline">4.10 Lab: From a Failing Test to a Bug Report</h1>
+
+                            <div class="robotics-article-meta-bar">
+                                <span class="article-meta-item"><i class="far fa-user"></i> Gerald L&ecirc;</span>
+                            </div>
+                            <nav class="lesson-quicknav" aria-label="Lesson position and previous or next lesson">
+                                <span class="lesson-quicknav-pos">Chapter 4, lesson 10 of 10</span>
+                                <a class="lesson-quicknav-prev" href="robotics-4-9.html"><span aria-hidden="true">&larr;</span> Previous<span class="sr-only">: 4.9 ROS-Industrial and Vendor Drivers</span></a>
+                                <a class="lesson-quicknav-next" href="robotics-ethics.html">Next<span class="sr-only">: Chapter 5: Ethics</span> <span aria-hidden="true">&rarr;</span></a>
+                            </nav>
+                        </header>
+
+                        <article class="robotics-article-body">
+
+                        <h2 class="article-section-title">01. Why this lab</h2>
+                        <p>
+                            In <a href="robotics-3-4.html">lesson 3.4</a> you made your first pull request to fix a documentation typo. In <a href="robotics-4-6.html">lesson 4.6</a> you created a ROS 2 package from scratch, declared dependencies, and ran a node. This lab bridges the gap between those two milestones. In open-source robotics projects, you often download another developer's package and run automated checks. What should you do when a test fails?
+                        </p>
+                        <p>
+                            A newcomer might decide that the code is broken beyond repair, or give up. Experienced contributors do something else: they run the checks, read what the checks report, fix the mistake and share what they found. In this lab you run the tests of a small robot arm package, read a test failure, trace it to a wrong trigonometric formula, confirm a one-line fix, and write a bug report that a maintainer can act on.
+                        </p>
+
+                        <h2 class="article-section-title">02. What you need</h2>
+                        <p>
+                            To run this lab you need Python 3, a virtual environment, and colcon installed with pip. A virtual environment is a folder that keeps one project&rsquo;s Python packages separate from the rest of the system. The colcon documentation gives the pip command used below and says it assumes a virtual environment with Python 3.5 or higher.<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <p>
+                            This lab requires no ROS 2 installation on your computer. The package is written in standard Python, and colcon is a general build tool that builds and tests pure Python packages without any robotics libraries present. If you later work on a computer with a full ROS 2 installation, as introduced in <a href="robotics-4-3.html">lesson 4.3</a>, the exact same colcon workflow and commands apply. The lab transcript below was produced on an Ubuntu 26.04 machine running Python 3.14 with colcon-core 0.21.3 installed from pip.
+                        </p>
+                        <p>
+                            Set up the environment and an empty workspace with these commands. They are the ones used to produce the transcript in this lesson:
+                        </p>
+                        <pre class="article-code"><code>$ python3 -m venv venv
+$ . venv/bin/activate
+$ pip install -U colcon-common-extensions pytest
+$ mkdir -p ws/src</code></pre>
+                        <p>
+                            After you have created the package files from Section 03, change into <code>ws</code> and run every colcon command from there.
+                        </p>
+
+                        <h2 class="article-section-title">03. The package</h2>
+                        <p>
+                            The practice package for this lab is called <code>two_link</code>. It computes the forward kinematics of the planar two-link arm from lesson <a href="robotics-1-4.html">1.4</a>: given the two link lengths and the two joint angles, it returns where the tip of the arm is. Create these four files inside <code>ws/src/two_link</code>. The file <code>two_link/__init__.py</code> is empty. It only tells Python that the folder is a package.
+                        </p>
+                        <pre class="article-code"><code>ws/src/two_link/
+├── setup.py
+├── tests/
+│   └── test_kinematics.py
+└── two_link/
+    ├── __init__.py
+    └── kinematics.py</code></pre>
+                        <p>
+                            The ROS 2 testing tutorial says that test code goes in a folder named <code>tests</code> in the root of the package.<sup><a href="#ref-2">[2]</a></sup> Any file with tests that should run must be named <code>test_FOO.py</code>, where FOO can be anything.<sup><a href="#ref-2">[2]</a></sup> The file <code>setup.py</code> must also declare a test dependency on <code>pytest</code> inside <code>extras_require</code>.<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <p>
+                            Here is the complete content of <code>setup.py</code>. It configures package metadata and specifies that pytest is required to run tests:
+                        </p>
+                        <pre class="article-code"><code>from setuptools import find_packages, setup
+
+setup(
+    name='two_link',
+    version='0.0.1',
+    packages=find_packages(exclude=['tests']),
+    install_requires=['setuptools'],
+    extras_require={
+        'test': ['pytest'],
+    },
+)</code></pre>
+                        <p>
+                            Here is <code>two_link/kinematics.py</code>. It defines the <code>forward()</code> function, which takes link lengths and joint angles in degrees, converts the angles to radians, and computes the coordinates of the tool tip:
+                        </p>
+                        <pre class="article-code"><code>import math
+
+
+def forward(l1, l2, theta1_deg, theta2_deg):
+    """Return (x, y) of the tip of a planar two-link arm. Angles in degrees."""
+    t1 = math.radians(theta1_deg)
+    t2 = math.radians(theta2_deg)
+    x = l1 * math.cos(t1) + l2 * math.cos(t1 + t2)
+    y = l1 * math.sin(t1) + l2 * math.sin(t2)
+    return x, y</code></pre>
+                        <p>
+                            Here is <code>tests/test_kinematics.py</code>. It defines two tests that check the output of <code>forward()</code> against expected coordinates. A test is an automated check that runs a function with specific inputs and checks whether the result matches expectations. An assertion is a statement in a test that checks if a condition is true, raising an error if the condition is false:
+                        </p>
+                        <pre class="article-code"><code>import pytest
+
+from two_link.kinematics import forward
+
+
+def test_straight_arm():
+    x, y = forward(0.5, 0.3, 0, 0)
+    assert x == pytest.approx(0.8)
+    assert y == pytest.approx(0.0)
+
+
+def test_elbow_bent():
+    x, y = forward(0.5, 0.3, 90, -90)
+    assert x == pytest.approx(0.3)
+    assert y == pytest.approx(0.5)</code></pre>
+
+                        <h2 class="article-section-title">04. Build and run the tests</h2>
+                        <p>
+                            You run colcon from the root of the workspace, which here is the <code>ws</code> folder. The ROS 2 documentation says that sourcing the workspace before testing should not be necessary, because <code>colcon test</code> makes sure the tests run with the right environment and can reach their dependencies.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            First, build the package with <code>colcon build</code>, then run the test suite with <code>colcon test</code>:
+                        </p>
+                        <pre class="article-code"><code>$ colcon build
+Starting &gt;&gt;&gt; two_link
+Finished &lt;&lt;&lt; two_link [0.36s]
+
+Summary: 1 package finished [0.50s]
+$ colcon test
+Finished &lt;&lt;&lt; two_link [0.26s]	[ with test failures ]
+
+Summary: 1 package finished [0.42s]
+  1 package had test failures: two_link</code></pre>
+                        <p>
+                            The build succeeded, but <code>colcon test</code> reported that <code>two_link</code> had test failures. Notice that <code>colcon test</code> does not print the failure details. The command line testing guide explains that to see the exact test cases which fail, you use the verbose flag.<sup><a href="#ref-3">[3]</a></sup> Run <code>colcon test-result --all --verbose</code> to see the full failure report:
+                        </p>
+                        <pre class="article-code"><code>$ colcon test-result --all --verbose
+build/two_link/pytest.xml: 2 tests, 0 errors, 1 failure, 0 skipped
+- two_link.tests.test_kinematics test_elbow_bent
+  &lt;&lt;&lt; failure message
+    assert 0.2 == 0.5 &plusmn; 5.0e-07
+      
+      comparison failed
+      Obtained: 0.2
+      Expected: 0.5 &plusmn; 5.0e-07
+  &gt;&gt;&gt;
+
+Summary: 2 tests, 0 errors, 1 failure, 0 skipped</code></pre>
+
+                        <h2 class="article-section-title">05. Read the failure</h2>
+                        <p>
+                            Let us walk through the failure output line by line. The first line indicates that colcon parsed <code>build/two_link/pytest.xml</code>, recording two tests, zero unhandled execution errors, one failure, and zero skipped tests. The next line names the exact failing test function: <code>test_elbow_bent</code> in the <code>two_link.tests.test_kinematics</code> module.
+                        </p>
+                        <p>
+                            Inside the failure block, pytest shows the failed assertion: <code>assert 0.2 == 0.5 &plusmn; 5.0e-07</code>. The comparison failed because the function returned an obtained value of <code>0.2</code>, whereas the expected value was <code>0.5</code> within a tolerance of <code>5.0e-07</code>. A stack trace is a diagnostic report showing the sequence of function calls that ran up to the moment of a failure. Here, the failure points directly to the assertion on the y-coordinate inside <code>test_elbow_bent</code>.
+                        </p>
+                        <p>
+                            Now let us calculate the correct kinematics by hand. In <code>test_elbow_bent</code>, the arm parameters are length L1 = 0.5, length L2 = 0.3, shoulder angle θ1 = 90 degrees, and elbow angle θ2 = -90 degrees.
+                        </p>
+                        <p>
+                            Link 1 starts at the base origin (0, 0) and points straight up along the positive y-axis at 90 degrees. The elbow position is x1 = 0.5 &middot; cos(90&deg;) = 0.0, and y1 = 0.5 &middot; sin(90&deg;) = 0.5.
+                        </p>
+                        <p>
+                            Link 2 is attached to the elbow. Its orientation relative to the global world frame is the sum of both joint angles: θ1 + θ2 = 90&deg; + (-90&deg;) = 0&deg;. Because this total angle is 0 degrees, link 2 points horizontally to the right, parallel to the positive x-axis. The tip coordinates are:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Correct x:</span> 0.5 &middot; cos(90&deg;) + 0.3 &middot; cos(90&deg; - 90&deg;) = 0.0 + 0.3 &middot; cos(0&deg;) = 0.3.</li>
+                            <li class="article-spec-item"><span class="spec-label">Correct y:</span> 0.5 &middot; sin(90&deg;) + 0.3 &middot; sin(90&deg; - 90&deg;) = 0.5 &middot; 1.0 + 0.3 &middot; sin(0&deg;) = 0.5 + 0.0 = 0.5.</li>
+                        </ul>
+                        <p>
+                            Now look at line 9 of <code>two_link/kinematics.py</code>:
+                        </p>
+                        <pre class="article-code"><code>y = l1 * math.sin(t1) + l2 * math.sin(t2)</code></pre>
+                        <p>
+                            The buggy line computes 0.5 &middot; sin(90&deg;) + 0.3 &middot; sin(-90&deg;) = 0.5 &middot; 1.0 + 0.3 &middot; (-1.0) = 0.5 - 0.3 = 0.2. It took the sine of <code>t2</code> alone instead of the sine of <code>t1 + t2</code>.
+                        </p>
+                        <p>
+                            Why did the first test, <code>test_straight_arm</code>, pass? In that test, θ1 = 0 degrees and θ2 = 0 degrees. When θ1 is 0, the sum t1 + t2 equals 0 + t2 = t2. Therefore, whenever θ1 is 0, the buggy formula produces the exact same numerical result as the correct formula. The bug was completely hidden when testing only a fully extended horizontal arm.
+                        </p>
+
+                        <h2 class="article-section-title">06. Fix it and test again</h2>
+                        <p>
+                            To fix the bug, edit line 9 of <code>two_link/kinematics.py</code> so that it adds the two angles together, matching the x-coordinate line above it:
+                        </p>
+                        <pre class="article-code"><code>y = l1 * math.sin(t1) + l2 * math.sin(t1 + t2)</code></pre>
+                        <p>
+                            Save the file, then rebuild and test the package again:
+                        </p>
+                        <pre class="article-code"><code>$ colcon build
+Finished &lt;&lt;&lt; two_link [0.37s]
+
+Summary: 1 package finished [0.50s]
+$ colcon test
+Finished &lt;&lt;&lt; two_link [0.25s]
+
+Summary: 1 package finished [0.41s]
+$ colcon test-result --all --verbose
+build/two_link/pytest.xml: 2 tests, 0 errors, 0 failures, 0 skipped
+
+Summary: 2 tests, 0 errors, 0 failures, 0 skipped</code></pre>
+                        <p>
+                            Both tests pass with zero failures. A regression is an unintended software bug introduced into code that previously worked correctly. Re-running the test suite ensures that fixing the bent-arm calculation did not break the straight-arm case.
+                        </p>
+                        <p>
+                            When developing in large repositories, you often want to run a single test rather than the entire test suite. The Python testing tutorial explains that you can specify arguments to the pytest framework from the command line with the --pytest-args flag.<sup><a href="#ref-2">[2]</a></sup> The transcript demonstrates filtering for a specific test function by name with the <code>-k</code> option:
+                        </p>
+                        <pre class="article-code"><code>$ colcon test --packages-select two_link --pytest-args -k test_straight_arm
+Finished &lt;&lt;&lt; two_link [0.25s]
+
+Summary: 1 package finished [0.42s]
+$ colcon test-result --all
+build/two_link/pytest.xml: 1 test, 0 errors, 0 failures, 0 skipped
+
+Summary: 1 test, 0 errors, 0 failures, 0 skipped</code></pre>
+                        <p>
+                            To see the pytest output while the tests run, the tutorial gives one more flag: <code>colcon test --event-handlers console_cohesion+</code>.<sup><a href="#ref-2">[2]</a></sup> With the bug still in place, this run printed pytest&rsquo;s own summary with one failed and one passed test. It is not shown in the transcript above.
+                        </p>
+
+                        <h2 class="article-section-title">07. In a real ROS 2 package</h2>
+                        <p>
+                            In a real ROS 2 package, tests are not the only automated check. A linter is a tool that reads source code without running it and reports style errors, formatting problems and likely bugs. ROS 2 has a family of them called <code>ament_lint</code>. All <code>ament_lint</code> tools accept files or directories, analyze them, and generate reports.<sup><a href="#ref-4">[4]</a></sup> The documentation lists <code>ament_copyright</code> to check or add copyright and license notices, <code>ament_flake8</code> for Python linting, <code>ament_cppcheck</code> for C++ static analysis, <code>ament_cpplint</code> for C++ style checks, and <code>ament_uncrustify</code> to check and reformat C++ code with <code>--reformat</code>.<sup><a href="#ref-4">[4]</a></sup> It names <code>ament_pep257</code> among other useful tools.<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <p>
+                            The same page says these command-line programs help people write code that meets the ROS 2 coding standards, and it recommends that ROS developers get to know the tools and use them before submitting pull requests.<sup><a href="#ref-4">[4]</a></sup> For a contributor this means one more step before a pull request: run the linters the project uses, and fix what they report.
+                        </p>
+
+                        <h2 class="article-section-title">08. Write the bug report</h2>
+                        <p>
+                            The official issue reporting guide explains that you can report code issues in the ROS repository for the package where the error occurred.<sup><a href="#ref-5">[5]</a></sup> This is generally the last file listed in the stack trace. Core ROS 2 packages live in repositories under the <code>ros2</code> organization on GitHub, while binary packages listed on the ROS Index link to their corresponding source repositories. Documentation issues belong in the <code>ros2_documentation</code> tracker, and issues with an unclear destination can be opened in the top-level <code>ros2/ros2</code> repository.
+                        </p>
+                        <p>
+                            Before opening an issue, the guide asks you to check whether someone has already reported it: search across the <code>ros2</code> and <code>ament</code> GitHub organizations, and check the Robotics Stack Exchange.<sup><a href="#ref-5">[5]</a></sup> If nothing matches, open a new issue and give it a descriptive title.<sup><a href="#ref-5">[5]</a></sup> A title such as &ldquo;kinematics broken&rdquo; does not help. Say what fails and under what condition.
+                        </p>
+                        <p>
+                            Then fill in the fields of the issue template. The guide asks for your environment, the steps and commands that lead to the problem, the exact output, and any troubleshooting you have already tried.<sup><a href="#ref-5">[5]</a></sup> A maintainer who can repeat your steps and see the same failure can start on a fix at once.
+                        </p>
+                        <p>
+                            Below is an example bug report for the bug fixed in this lab. This report is an educational example about our practice package, not an issue for any real upstream project:
+                        </p>
+                        <div class="article-callout">
+                            <div class="article-callout-header"><i class="fas fa-bug"></i> Example bug report (practice package)</div>
+                            <p><strong>Title:</strong> two_link: forward kinematics y-coordinate uses theta2 instead of theta1 + theta2</p>
+                            <p><strong>Description:</strong></p>
+                            <p>
+                                In <code>two_link/kinematics.py</code>, the <code>forward()</code> function calculates the y-coordinate of the arm tip using <code>math.sin(t2)</code> instead of <code>math.sin(t1 + t2)</code>. This causes incorrect tip coordinates whenever θ1 is non-zero.
+                            </p>
+                            <p><strong>Steps to reproduce:</strong></p>
+                            <ol>
+                                <li>Clone the <code>two_link</code> package into a colcon workspace.</li>
+                                <li>Run <code>colcon test --packages-select two_link</code>.</li>
+                                <li>Run <code>colcon test-result --all --verbose</code>.</li>
+                            </ol>
+                            <p><strong>Expected behavior:</strong></p>
+                            <p>
+                                For L1 = 0.5, L2 = 0.3, θ1 = 90&deg;, and θ2 = -90&deg;, the arm tip should be at x = 0.3 and y = 0.5. The test <code>test_elbow_bent</code> should pass.
+                            </p>
+                            <p><strong>Actual behavior:</strong></p>
+                            <p>
+                                The test fails with the following assertion failure:
+                            </p>
+                            <pre class="article-code"><code>build/two_link/pytest.xml: 2 tests, 0 errors, 1 failure, 0 skipped
+- two_link.tests.test_kinematics test_elbow_bent
+  &lt;&lt;&lt; failure message
+    assert 0.2 == 0.5 &plusmn; 5.0e-07
+      
+      comparison failed
+      Obtained: 0.2
+      Expected: 0.5 &plusmn; 5.0e-07
+  &gt;&gt;&gt;</code></pre>
+                            <p><strong>Environment:</strong></p>
+                            <p>
+                                OS: Ubuntu 26.04 LTS, Python: 3.14, colcon-core: 0.21.3, pytest: 9.2.0.
+                            </p>
+                            <p><strong>Proposed fix:</strong></p>
+                            <p>
+                                Change line 9 of <code>two_link/kinematics.py</code> from <code>y = l1 * math.sin(t1) + l2 * math.sin(t2)</code> to <code>y = l1 * math.sin(t1) + l2 * math.sin(t1 + t2)</code>.
+                            </p>
+                        </div>
+
+                        <h2 class="article-section-title">09. From report to pull request</h2>
+                        <p>
+                            Once you have identified a bug and confirmed a working fix with tests, you can propose the fix to the project. The contribution guidelines in ROS projects recommend several practices for newcomers making their first code pull request:
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><span class="spec-label">Scope and focus:</span> The pull request guidelines advise contributors to limit each pull request to a single, well-defined change.<sup><a href="#ref-6">[6]</a></sup> Keep your patch small and avoid incidental changes like reformatting unrelated lines.</li>
+                            <li class="article-spec-item"><span class="spec-label">Fork and branch:</span> Make your changes on a development branch taken from the <code>rolling</code> branch, in your fork of the target repository.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Keep generated files out:</span> ROS 2 workspaces generate build artifacts that should generally not be committed to source control.<sup><a href="#ref-7">[7]</a></sup> That covers the <code>build/</code>, <code>install/</code> and <code>log/</code> folders that colcon created in this lab, and Python&rsquo;s temporary files such as <code>__pycache__/</code> and <code>*.pyc</code>.<sup><a href="#ref-7">[7]</a></sup> A <code>.gitignore</code> file in the repository tells git to leave them out.<sup><a href="#ref-7">[7]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Link the issue:</span> In the pull request description, include the ID of the issue your change fixes, in the format <code>Fixes #(issue)</code>.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Say what you are doing:</span> Comment on the issue to let others know that you are working on it.<sup><a href="#ref-8">[8]</a></sup> When you create the pull request, select the &ldquo;Allow edits by maintainers&rdquo; checkbox, which helps maintainers make small changes directly when needed.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Responding to review:</span> Reviewers comment on the pull request on GitHub. Answer in the same thread and add commits to your branch for the changes they ask for. The guide says to aim to reply to review comments within one week, so that you and the reviewers do not lose the context of the change.<sup><a href="#ref-6">[6]</a></sup></li>
+                        </ul>
+                        <p>
+                            To review the open-source etiquette covered earlier in the course, revisit <a href="robotics-3-2.html">lesson 3.2</a> on how community collaboration works and <a href="robotics-3-5.html">lesson 3.5</a> on contributing to Nav2. To explore active robotics projects and their issue trackers, visit the <a href="robotics-oss-map.html">Robotics Open-Source Map</a>.
+                        </p>
+
+                        <div class="article-callout try-it">
+                            <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                            <ol>
+                                <li>Add a third test function called <code>test_straight_up()</code> to <code>tests/test_kinematics.py</code> for θ1 = 0 degrees and θ2 = 90 degrees with link lengths 0.5 and 0.3. Calculate the expected x and y tip coordinates by hand first, write the assertions with <code>pytest.approx</code>, and run <code>colcon test</code> to verify your calculation.</li>
+                                <li>In <code>two_link/kinematics.py</code>, break the x-coordinate formula on purpose by changing <code>math.cos(t1 + t2)</code> to <code>math.cos(t2)</code>. Predict which of your three tests will pass and which will fail before running the test command, then verify your prediction using <code>colcon test-result --all --verbose</code>.</li>
+                                <li>Draft a complete bug report for that second bug using the bug report format from Section 08. Include clear steps to reproduce, the failing pytest assertion, and the proposed code change.</li>
+                                <li>Open the <a href="robotics-oss-map.html">Robotics Open-Source Map</a>, select one project (such as ROS 2 or Nav2), and navigate to its GitHub repository. Locate the issues tab, search for the <code>good first issue</code> label, and inspect how community members report bugs and claim tasks.</li>
+                            </ol>
+                        </div>
+
+                        <h2 class="article-section-title">10. Check your understanding</h2>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">Why can colcon build and test the <code>two_link</code> package without a ROS 2 installation on your computer?<details class="check-answer"><summary>Show answer</summary><p>The <code>two_link</code> package is a pure Python package using standard setuptools and pytest. Colcon is a general build tool that builds and tests standard Python packages without requiring ROS 2 client libraries or middleware. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">What folder name and file naming pattern does colcon require for pytest test discovery in an <code>ament_python</code> package?<details class="check-answer"><summary>Show answer</summary><p>Test files must be placed in a directory named <code>tests</code> at the package root, and test files must match the pattern <code>test_FOO.py</code> where <code>FOO</code> can be any name. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">Why did the original bug in <code>kinematics.py</code> fail to trigger in <code>test_straight_arm</code>?<details class="check-answer"><summary>Show answer</summary><p>In <code>test_straight_arm</code>, θ1 is 0 degrees. When θ1 is 0, the sum t1 + t2 equals t2, so <code>math.sin(t2)</code> produces the exact same numerical result as <code>math.sin(t1 + t2)</code>. The bug only produces an error when θ1 is non-zero. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                            <li class="article-spec-item">Which generated files and folders should generally not be committed to a git repository?<details class="check-answer"><summary>Show answer</summary><p>Workspace build artifacts including the <code>build/</code>, <code>install/</code>, and <code>log/</code> directories, as well as Python bytecode files such as <code>__pycache__/</code> and <code>*.pyc</code> files, should generally not be committed to source control. <span class="check-answer-src">(Section 09)</span></p></details></li>
+                        </ul>
+
+                            <!-- oss-note -->
+                            <div class="article-callout oss-note">
+                                <div class="article-callout-header"><i class="fas fa-code-branch"></i> Open source in this lesson</div>
+                                <p>Projects used or discussed here: <a href="robotics-oss-map.html#colcon">colcon</a>. The <a href="robotics-oss-map.html">Robotics Open-Source Map</a> shows its licence, where the code lives and how to make a first contribution.</p>
+                            </div>
+                            <!-- /oss-note -->
+
+                        <h2 class="article-section-title">11. References</h2>
+                        <p class="references-note">Source check (November 2026): 8 of 8 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-4-10.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <ol class="article-spec-list">
+                            <li id="ref-1">colcon developers, &ldquo;Installation,&rdquo; colcon documentation. <a href="https://colcon.readthedocs.io/en/released/user/installation.html" target="_blank" rel="noopener noreferrer">https://colcon.readthedocs.io/en/released/user/installation.html</a></li>
+                            <li id="ref-2">Open Robotics, &ldquo;Writing Basic Tests with Python,&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Debugging/Testing/Python.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/Developer-Tools/Debugging/Testing/Python.html</a></li>
+                            <li id="ref-3">Open Robotics, &ldquo;Running Tests in ROS 2 from the Command Line,&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Debugging/Testing/CLI.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/Developer-Tools/Debugging/Testing/CLI.html</a></li>
+                            <li id="ref-4">Open Robotics, &ldquo;Using ament Lint CLI Utilities,&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/Developer-Tools/Build/Ament-Lint-For-Clean-Code.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/Developer-Tools/Build/Ament-Lint-For-Clean-Code.html</a></li>
+                            <li id="ref-5">Open Robotics, &ldquo;Reporting an issue,&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing/Reporting-an-issue.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing/Reporting-an-issue.html</a></li>
+                            <li id="ref-6">Open Robotics, &ldquo;Making a pull request (PR),&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing/Making-a-PR.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing/Making-a-PR.html</a></li>
+                            <li id="ref-7">Open Robotics, &ldquo;Source control best practices,&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing/Contributing-to-code/Source-Control-Best-Practices.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing/Contributing-to-code/Source-Control-Best-Practices.html</a></li>
+                            <li id="ref-8">Open Robotics, &ldquo;Contributing to ROS,&rdquo; ROS 2 Documentation: Lyrical (source: ros2_documentation, lyrical branch). <a href="https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing.html" target="_blank" rel="noopener noreferrer">https://docs.ros.org/en/lyrical/The-ROS2-Project/Contributing.html</a></li>
+                        </ol>
+
+                            <!-- Footer Navigation -->
+                            <div class="article-footer-nav">
+                                <a href="robotics-4-9.html" class="article-nav-card">
+                                    <span class="article-nav-dir">&larr; Previous</span>
+                                    <span class="article-nav-target">4.9 ROS-Industrial and Vendor Drivers</span>
+                                </a>
+                                <a href="robotics-ethics.html" class="article-nav-card" style="text-align: right;">
+                                    <span class="article-nav-dir">Next chapter &rarr;</span>
+                                    <span class="article-nav-target">Chapter 5: Ethics</span>
+                                </a>
+                            </div>
+
+                        </article>
+
+                    </div>
+                </main>
+
+            <!-- Footer -->
+                <footer id="footer">
+                    <div class="container">
+                        <div id="copyright">
+                            <ul class="menu">
+                                <li>© Gerald Lê, last updated <span data-build-date>November 2026</span>.</li>
+                                <li>Design: <a href="https://html5up.net">HTML5 UP</a>.</li>
+                                <li>Course text: <a href="https://creativecommons.org/licenses/by-sa/4.0/" rel="license">CC BY-SA 4.0</a>; code: <a href="https://github.com/g34rmeister/g34rmeister.github.io/blob/main/LICENSE">Apache 2.0</a>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+
+        <!-- Scripts -->
+            <script src="assets/js/robotics.js?v=6f90cc4d" defer></script>
+            <script src="assets/js/course-data.js?v=68812e1b" defer></script>
+            <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
+            <script src="assets/js/learning.js?v=ea4efb7b" defer></script>
+
+    </body>
+</html>

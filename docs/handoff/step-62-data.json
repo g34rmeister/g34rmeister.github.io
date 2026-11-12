@@ -1,0 +1,136 @@
+{
+  "objectives": [
+    "Install ROS 2 and Nav2 packages in user space without administrator privileges using micromamba.",
+    "Start Nav2 with the loopback simulator and initialize the robot pose on the map.",
+    "Send a navigation goal to the BT Navigator from the command line and inspect feedback messages.",
+    "Write a Python script using the Nav2 Simple Commander to navigate to a goal and track progress."
+  ],
+  "keyTerms": [
+    "user space",
+    "channel",
+    "environment",
+    "initial pose",
+    "goal tolerance",
+    "feedback message"
+  ],
+  "glossary": {
+    "user space": "The memory and filesystem area where ordinary user applications run without system administrator permissions. Running software in user space isolates dependencies and avoids modifying system-wide libraries.",
+    "channel": "An online repository location where a package manager searches for and downloads software packages. RoboStack provides dedicated conda channels for ROS 2 distributions.",
+    "environment": "An isolated software installation directory that keeps packages and dependencies separated from the rest of the operating system. In conda and micromamba, each environment can maintain its own specific set of libraries without version conflicts.",
+    "initial pose": "The starting position and orientation that defines where a robot is located on a navigation map. Nav2 requires an initial pose to establish the coordinate transformation between the map and the robot base.",
+    "goal tolerance": "The allowable spatial and angular margin of error within which a robot is considered to have arrived at its destination. In Nav2, the controller goal checker evaluates this tolerance before declaring a navigation task successful.",
+    "feedback message": "A periodic status update published by an action server while executing a long-running request. In Nav2, feedback messages report metrics including current position, distance remaining, and estimated time of arrival."
+  },
+  "keyPoints": [
+    "The Nav2 loopback simulator provides map to odom and odom to base_link transforms to test navigation without physical robot hardware or physics engines.",
+    "Nav2 lifecycle nodes configure and activate in sequence, pausing at the planner server until an initial pose is published on the /initialpose topic.",
+    "A navigation goal succeeds once the robot arrives within the configured xy and yaw goal tolerances of the controller goal checker.",
+    "The Nav2 Simple Commander provides a Python library API to command robot navigation and monitor task progress without writing raw ROS 2 action clients."
+  ],
+  "quiz": [
+    {
+      "lesson": "10-5",
+      "question": "Why does Nav2 pause at 'Activating planner_server' during bringup with the loopback simulator?",
+      "choices": [
+        "It is waiting for an initial pose to be published on /initialpose",
+        "The static map failed to load from disk",
+        "The robot reached its destination",
+        "The Python simple commander was not started"
+      ],
+      "answer": 0,
+      "explanation": "The global costmap inside planner_server requires a transform from base_link to map, which is only published after an initial pose is received."
+    },
+    {
+      "lesson": "10-5",
+      "question": "What parameter allows the command-line navigation goal to succeed at 0.23 meters from the target coordinates?",
+      "choices": [
+        "xy_goal_tolerance set to 0.25 meters in nav2_params.yaml",
+        "distance_remaining set to 1.0 meters",
+        "update_duration set to 0.01 seconds",
+        "speed_factor set to 2.0"
+      ],
+      "answer": 0,
+      "explanation": "The general_goal_checker in nav2_params.yaml specifies an xy_goal_tolerance of 0.25 meters, so 0.23 meters is accepted as reached."
+    },
+    {
+      "lesson": "10-5",
+      "question": "Why does the lab's Python navigation script pass localizer='robot_localization' to waitUntilNav2Active()?",
+      "choices": [
+        "To bypass the AMCL localization check since the loopback simulator provides the map to odom transform",
+        "To force the robot to execute recovery behaviors",
+        "To activate an external GPS sensor",
+        "To disable lifecycle management"
+      ],
+      "answer": 0,
+      "explanation": "The loopback simulator replaces AMCL by providing the map to odom transform directly, so localizer='robot_localization' skips the check for an AMCL node."
+    }
+  ],
+  "claims": [
+    {
+      "ref": 1,
+      "file": "robostack_GettingStarted.mdx",
+      "claim": "The RoboStack project provides binary packages for ROS 2 distributions that can be installed using package managers including Pixi, Micromamba, or conda.",
+      "quote": "You can install RoboStack packages using either [Pixi](https://pixi.sh/), [Micromamba](/micromamba.html), or [conda](/conda.html)."
+    },
+    {
+      "ref": 2,
+      "file": "mamba_micromamba-installation.txt",
+      "claim": "The micromamba tool is a standalone, statically linked executable that manages packages and isolated software environments under a designated prefix directory without requiring root privileges.",
+      "quote": "micromamba is a fully statically-linked, self-contained, executable. This means that the base environment is completely empty."
+    },
+    {
+      "ref": 3,
+      "file": "robostack_micromamba.mdx",
+      "claim": "The RoboStack documentation emphasizes two important cautions: users must not install ROS packages directly into the base environment, and users must avoid sourcing an existing apt-installed system ROS environment because conflicting Python search paths will disrupt the conda environment.",
+      "quote": "Make sure to _not_ install the ROS packages in your base environment as this leads to issues down the track."
+    },
+    {
+      "ref": 4,
+      "file": "nav2_loopback_sim_README.md",
+      "claim": "The Nav2 loopback simulator is a standalone simulation package that replaces physical robot hardware and complex physics engines such as Gazebo or Isaac Sim with a frictionless-plane model driven directly by commanded velocity messages.",
+      "quote": "The Nav2 loopback simulator is a standalone simulator to create a \"loopback\" for non-physical simulation to replace robot hardware, physics simulators (Gazebo, Bullet, Isaac Sim, etc)."
+    },
+    {
+      "ref": 5,
+      "file": "docs_configuring_loopback_sim.md",
+      "claim": "The Nav2 documentation describes the loopback simulator as a stand-alone simulation tool that allows developers to test navigation behaviors, autonomy logic, and multi-robot setups on a computer without running resource-heavy physics processes.",
+      "quote": "The `nav2_loopback_sim` is a stand-alone simulator to create a \"loopback\" for non-physical simulation to replace robot hardware, physics simulators (Gazebo, Bullet, Isaac Sim, etc)."
+    },
+    {
+      "ref": 6,
+      "file": "nav2_bringup_launch_tb3_loopback_simulation_launch.py",
+      "claim": "The launch script defines a use_rviz argument that defaults to true, which can be set to false when operating on a headless system without a graphical user interface.",
+      "quote": "'use_rviz', default_value='True', description='Whether to start RVIZ'"
+    },
+    {
+      "ref": 7,
+      "file": "nav2_bringup_README.md",
+      "claim": "The nav2_bringup package provides reference launch architectures for Nav2, including options to compose all navigation server nodes into a single container process.",
+      "quote": "The `nav2_bringup` package is an example bringup system for Nav2 applications."
+    },
+    {
+      "ref": 8,
+      "file": "nav2_bringup_params_nav2_params.yaml",
+      "claim": "The default Nav2 parameters define a general_goal_checker within the controller server that configures an xy_goal_tolerance of 0.25 meters and a yaw_goal_tolerance of 0.25 radians.",
+      "quote": "general_goal_checker:\n      stateful: true\n      plugin: \"nav2_controller::SimpleGoalChecker\"\n      xy_goal_tolerance: 0.25\n      yaw_goal_tolerance: 0.25"
+    },
+    {
+      "ref": 9,
+      "file": "nav2_simple_commander_README.md",
+      "claim": "The nav2_simple_commander package provides a high-level Python API designed to deliver navigation as a library capability for Python applications.",
+      "quote": "The goal of this package is to provide a \"navigation as a library\" capability to Python3 users."
+    },
+    {
+      "ref": 10,
+      "file": "nav2_simple_commander_robot_navigator.py",
+      "claim": "When localizer is set to robot_localization, the waitUntilNav2Active method bypasses the checks for AMCL and its initial pose callback, waiting only for the bt_navigator node to reach the active state.",
+      "quote": "if localizer != 'robot_localization':  # non-lifecycle node\n            self._waitForNodeToActivate(localizer)\n        if localizer == 'amcl':\n            self._waitForInitialPose()\n        self._waitForNodeToActivate(navigator)"
+    },
+    {
+      "ref": 11,
+      "file": "nav2_simple_commander_nav2_simple_commander_example_nav_to_pose.py",
+      "claim": "In Nav2's example navigation script, the demo sets an initial pose explicitly and includes timeout logic to illustrate task cancellation as well as destination updates to illustrate task preemption.",
+      "quote": "# Some navigation timeout to demo cancellation\n            if Duration.from_msg(feedback.navigation_time) > Duration(seconds=600.0):\n                navigator.cancelTask()"
+    }
+  ]
+}

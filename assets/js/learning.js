@@ -478,7 +478,8 @@
 			uses[n].forEach(function (sup, k) {
 				wrap.appendChild(el('a', {
 					href: '#' + sup.id,
-					'aria-label': 'Back to where reference ' + n + ' is cited' + (uses[n].length > 1 ? ' (use ' + (k + 1) + ' of ' + uses[n].length + ')' : ''),
+					// The label starts with the visible number so speech-input users can say what they see (WCAG 2.5.3).
+					'aria-label': (uses[n].length > 1 ? (k + 1) + ' of ' + uses[n].length + ': back' : 'Back') + ' to where reference ' + n + ' is cited',
 					title: 'Back to the text',
 					html: uses[n].length > 1 ? '&uarr;' + (k + 1) : '&uarr;'
 				}));
