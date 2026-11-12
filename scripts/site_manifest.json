@@ -12,7 +12,7 @@
     "1-3": "The main types of robots: industrial arms, cobots, mobile robots, SCARA robots and autonomous guided vehicles.",
     "1-4": "The skills worth having before starting robotics: Python, C++, some math, the right learning mentality, assembly language and networking basics.",
     "1-5": "Where robots are used: in production, in interaction with people, in scientific exploration and in protecting human lives.",
-    "1-6": "How an industrial arm is built: joints, degrees of freedom, the work envelope, coordinate frames, the tool center point, and how a controller interpolates joint and straight-line moves.",
+    "1-6": "How an industrial arm is built: joints, degrees of freedom, the work envelope, coordinate frames, and the tool center point. It also explains how a controller interpolates joint and straight-line moves.",
     "1-7": "What turns a robot arm into a working cell: components, safeguarding and light-curtain distance, PLC-robot handshakes, integrator roles with FAT and SAT, three typical cells, cycle time and cost."
    }
   },
@@ -20,16 +20,16 @@
    "nav": "Programming",
    "icon": "fa-robot",
    "featuredTitle": "From the teach pendant to the digital twin",
-   "featuredDesc": "How industrial robots are programmed: online or offline, in environments like RobotStudio and PolyScope, in vendor languages, and with vendor-agnostic ROS.",
+   "featuredDesc": "How industrial robots are programmed: online or offline, in environments like RobotStudio and PolyScope, in vendor languages, and with ROS, which works across vendors.",
    "blurbs": {
     "2-1": "The two ways industrial robots are programmed: offline in simulation software, and online with a teach pendant or by hand guiding.",
     "2-2": "Two widely used robot programming environments: ABB RobotStudio for offline programming and simulation, and Universal Robots PolyScope for cobots.",
     "2-3": "Industrial robot languages: Universal Robots&#x27; URScript, ABB&#x27;s RAPID, and RRL.",
-    "2-4": "Why ROS exists: a common, vendor-agnostic layer for programming robots from different makers.",
+    "2-4": "Why ROS exists: a common layer for programming robots from different makers.",
     "2-5": "How to choose and size grippers, mount them and set payload, and program the digital I/O that opens a gripper, confirms a grip and talks to a PLC, in URScript and RAPID.",
     "2-6": "Build a complete pick-and-place cycle in URSim (and RobotStudio): TCP and payload, a three-point fixture frame, approach offsets, exact stops at the grip, and re-teaching only three points when the fixture moves.",
     "2-7": "How robot programs are organized (RAPID modules and routines, URScript functions and threads) and how they recover from errors such as a missed pick, with a 3 by 3 palletizing loop.",
-    "2-8": "How robots use cameras to pick parts that are not in a fixed place: 2D versus 3D guidance, camera mounting, lens and hand-eye calibration, and the frame-shift math that turns a vision result into a correct pick."
+    "2-8": "How robots use cameras to pick parts that are not in a fixed place: 2D versus 3D guidance, camera mounting, lens and hand-eye calibration, and frame-shift math."
    }
   },
   "3": {
@@ -58,8 +58,9 @@
     "4-5": "The ROS tools you will use most: RViz, Gazebo and popular ROS packages.",
     "4-6": "Build a ROS 2 Lyrical Python package from scratch: workspaces and overlays, ros2 pkg create, setup.py and package.xml, rosdep, colcon, and a timer-driven node that drives Turtlesim in a square.",
     "4-7": "Start many ROS 2 nodes with one command: Python and XML launch files, namespaces, remapping, launch arguments, and YAML parameter files on Lyrical Luth.",
-    "4-8": "Plan and execute arm motions with MoveIt 2 on ROS 2 Lyrical: URDF and SRDF, ros2_control mock hardware, move_group, OMPL and Pilz PTP/LIN, and a UR5e in RViz.",
-    "4-9": "How ROS 2 drives real industrial arms: ROS-Industrial, the common driver pattern, and the UR, ABB, FANUC, KUKA and Yaskawa drivers, with real-time and safety limits."
+    "4-8": "Plan and execute arm motions with MoveIt 2 on ROS 2 Lyrical. The lesson covers URDF and SRDF, ros2_control mock hardware, move_group, OMPL and Pilz PTP/LIN, and a UR5e in RViz.",
+    "4-9": "How ROS 2 drives real industrial arms: ROS-Industrial, the common driver pattern, and the UR, ABB, FANUC, KUKA and Yaskawa drivers, with real-time and safety limits.",
+    "4-10": "Build a small Python package with colcon, run its tests, find and fix a seeded bug, and write the bug report a ROS 2 maintainer can act on. No ROS 2 install needed."
    }
   },
   "5": {
@@ -104,7 +105,7 @@
     "7-3": "Core 2D image processing: color space conversion, histograms and contrast equalization, global, Otsu and adaptive thresholding, contours, moments, blobs, Canny edge detection, and template matching.",
     "7-4": "3D perception for robotics: direct sensing versus 2D inference, stereo disparity geometry, point cloud filtering with PCL (PassThrough, VoxelGrid, outliers), RANSAC planes, Euclidean clustering, and bin picking.",
     "7-5": "Automated inspection and measurement: optical resolution and the Nyquist limit, telecentric gauging, lens distortion calibration, presence verification, and 1D/2D barcode quality.",
-    "7-6": "Build a ROS 2 camera pipeline in Python: sensor_msgs/Image and CameraInfo, optical frames, image_transport, cv_bridge conversion, and real-time OpenCV edge processing; runs without a camera using cam2image test images."
+    "7-6": "Build a ROS 2 camera pipeline in Python using sensor_msgs/Image and CameraInfo, optical frames, image_transport, cv_bridge conversion, and real-time OpenCV edge processing. The pipeline runs without a camera using cam2image test images."
    }
   },
   "8": {
@@ -139,12 +140,13 @@
    "nav": "Mobile",
    "icon": "fa-route",
    "featuredTitle": "Robots that drive",
-   "featuredDesc": "How a mobile robot finds its position, sees obstacles, plans and follows a path, and recovers when it gets stuck, following the open-source Nav2 project.",
+   "featuredDesc": "How a mobile robot finds its position, sees obstacles, plans and follows a path, and recovers when stuck, following the open-source Nav2 project.",
    "blurbs": {
     "10-1": "The map, odom and base_link frames from REP 105, why odometry drifts, and how localization or SLAM corrects it.",
     "10-2": "Costmap cells, layers and inflation, the robot footprint, and costmap filters such as keep-out zones and speed limits.",
     "10-3": "The Nav2 servers that plan a path, smooth it, follow it and recover when the robot gets stuck, plus waypoint following.",
-    "10-4": "How a navigation request travels through the NavigateToPose action and the behavior tree, and how lifecycle nodes start and stop in order."
+    "10-4": "How a navigation request travels through the NavigateToPose action and the behavior tree, and how lifecycle nodes start and stop in order.",
+    "10-5": "Install ROS 2 and Nav2 without sudo, start Nav2 with its loopback simulator, and send the robot a goal from the command line and from Python."
    }
   },
   "11": {
@@ -156,7 +158,7 @@
     "11-1": "Capstone project: build a simulated pick-and-place work cell in URSim or ABB RobotStudio with gripper I/O, a safety configuration and a FAT-style test sheet, graded by milestones and a four-level rubric.",
     "11-2": "Capstone project: build a pick-and-place task for a simulated UR5e with ROS 2, MoveIt 2 and the MoveIt Task Constructor on mock hardware or Gazebo, with milestones, tests and a rubric.",
     "11-3": "Capstone project: build an Arduino speed-controlled wheel with a quadrature encoder, H-bridge driver, PID loop and a state machine with ramps and a FAULT state, with milestones, safety and a rubric.",
-    "11-4": "Capstone project: an open-source ROS 2 cell monitor that reads robot state, packed Modbus handshake bits and a camera check from stand-in servers, keeps a maintenance log, and ends with a real pull request. No hardware needed."
+    "11-4": "Capstone project: build an open-source ROS 2 cell monitor using stand-in servers. It reads robot state, packed Modbus handshake bits and a camera check, while keeping a maintenance log. The project ends with a real pull request, with no hardware needed."
    }
   }
  },
@@ -198,7 +200,8 @@
     "10-1",
     "10-2",
     "10-3",
-    "10-4"
+    "10-4",
+    "10-5"
    ]
   },
   {
@@ -273,7 +276,8 @@
    "lessons": [
     "4-3",
     "4-4",
-    "4-6"
+    "4-6",
+    "4-10"
    ]
   },
   {

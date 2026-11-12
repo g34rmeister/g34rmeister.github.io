@@ -1,0 +1,79 @@
+[
+ {
+  "ref": 1,
+  "status": "verified",
+  "claim": "Replaces hardware and physics simulators, frictionless-plane odometry from commanded velocity, uses (testing without localization accuracy or dynamics, no compute-heavy Gazebo or Isaac Sim), provides map->odom and odom->base_link, accepts /initialpose, publishes odom, tf and a scan from the static map, StaticLayer note",
+  "evidence": "It computes the robot's odometry based on the command velocity's output request to create a perfect 'frictionless plane'-style simulation",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_loopback_sim_README.md"
+ },
+ {
+  "ref": 2,
+  "status": "verified",
+  "claim": "RoboStack packages install with Pixi, Micromamba or conda; Pixi recommended for new installations",
+  "evidence": "You can install RoboStack packages using either",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/robostack_GettingStarted.mdx"
+ },
+ {
+  "ref": 3,
+  "status": "verified",
+  "claim": "Channels conda-forge and robostack-lyrical, the create command for Lyrical, the two cautions (no ROS packages in base, do not source the system ROS environment)",
+  "evidence": "micromamba create -n ros_env -c conda-forge -c robostack-lyrical ros-lyrical-desktop",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/robostack_micromamba.mdx"
+ },
+ {
+  "ref": 4,
+  "status": "verified",
+  "claim": "micromamba is a statically linked, self-contained executable; environments under MAMBA_ROOT_PREFIX; manual install command with tar",
+  "evidence": "micromamba is a fully statically-linked, self-contained, executable.",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/mamba_micromamba-installation.txt"
+ },
+ {
+  "ref": 5,
+  "status": "verified",
+  "claim": "Default map tb3_sandbox.yaml, use_composition default True, use_rviz described as Whether to start RVIZ with default True",
+  "evidence": "Whether to start RVIZ",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_bringup_launch_tb3_loopback_simulation_launch.py"
+ },
+ {
+  "ref": 6,
+  "status": "verified",
+  "claim": "Composed bringup puts all Nav2 nodes in a single process",
+  "evidence": "It can be used to compose all Nav2 nodes in a single p",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_bringup_README.md"
+ },
+ {
+  "ref": 7,
+  "status": "verified",
+  "claim": "general_goal_checker xy_goal_tolerance 0.25 and yaw_goal_tolerance 0.25; behavior_server plugins spin, backup, drive_on_heading, assisted_teleop, wait",
+  "evidence": "xy_goal_tolerance: 0.25",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_bringup_params_nav2_params.yaml"
+ },
+ {
+  "ref": 8,
+  "status": "verified",
+  "claim": "Feedback fields current_pose, navigation_time, estimated_time_remaining, number_of_recoveries, distance_remaining, position_tracking_error, heading_tracking_error",
+  "evidence": "float32 distance_remaining",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_msgs_action_NavigateToPose.action"
+ },
+ {
+  "ref": 9,
+  "status": "verified",
+  "claim": "navigation as a library for Python users; API handles the ROS 2 and action server details",
+  "evidence": "The goal of this package is to provide a \"navigation as a library\" capability to Python3 users.",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_simple_commander_README.md"
+ },
+ {
+  "ref": 10,
+  "status": "verified",
+  "claim": "waitUntilNav2Active defaults to localizer amcl, waits for the localizer node and for the initial pose (amcl_pose); robot_localization skips both and it waits for bt_navigator",
+  "evidence": "if localizer != 'robot_localization':  # non-lifecycle node",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_simple_commander_robot_navigator.py"
+ },
+ {
+  "ref": 11,
+  "status": "verified",
+  "claim": "The example sets an initial pose, cancels after a timeout and changes the goal mid-run (preemption)",
+  "evidence": "# Some navigation request change to demo preemption",
+  "note": "Checked by Claude (Opus) against the lyrical-branch file saved in research_notes/nav2-lab/sources/nav2_simple_commander_nav2_simple_commander_example_nav_to_pose.py"
+ }
+]

@@ -157,7 +157,7 @@ const viewports = [
     await pg.goto(base + 'robotics-4-4.html', { waitUntil: 'networkidle' });
     const w = await pg.evaluate(() => ({
       crumb: !!document.querySelector('nav[aria-label="Breadcrumb"] [aria-current="page"]'),
-      quick: /lesson 4 of 9/.test((document.querySelector('.lesson-quicknav') || {}).textContent || '') && document.querySelectorAll('.lesson-quicknav a').length === 2,
+      quick: /lesson 4 of \d+/.test((document.querySelector('.lesson-quicknav') || {}).textContent || '') && document.querySelectorAll('.lesson-quicknav a').length === 2,
       back: document.querySelectorAll('li[id^="ref-"] .ref-backlinks a').length > 0,
       icons: document.querySelectorAll('i.fas:not([aria-hidden]), i.far:not([aria-hidden]), i.fab:not([aria-hidden])').length,
       navCurrent: !!document.querySelector('.nav-menu-list a[aria-current="page"]')
