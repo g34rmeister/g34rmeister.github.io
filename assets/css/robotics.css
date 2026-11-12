@@ -1640,3 +1640,28 @@ input[type="range"] { min-height: 24px; }
 @media (hover: none) { .article-code:has(.code-copy) { padding-top: 40px; } }
 /* No empty line under the last item of a callout list. */
 .article-callout > ul:last-child, .article-callout > p:last-child { margin-bottom: 2px; }
+
+/* Appearance tuning, 2026-11-11 */
+/* References: smaller, like a footnote list, so the lesson ends lightly. */
+.robotics-article-body ol:has(> li[id^="ref-"]) { font-size: 14px; line-height: 1.55; }
+.robotics-article-body ol:has(> li[id^="ref-"]) > li { margin-bottom: 6px; }
+/* Back-to-text arrows: quiet until pointed at. The 24px target size stays. */
+.ref-backlinks { margin-left: 4px; }
+main .ref-backlinks a:not([class]) { min-width: 24px; font-weight: 400; font-size: 12px; color: var(--wp-text-muted); text-decoration: none; }
+main .ref-backlinks a:not([class]):hover, main .ref-backlinks a:not([class]):focus-visible { color: var(--wp-link); text-decoration: underline; }
+/* Check yourself: one box, not boxes inside a box. The answer colour still shows on the left edge. */
+.self-check .quiz-question { background: var(--wp-bg); border-left-width: 1px; }
+.self-check .quiz-question.is-right, .self-check .quiz-question.is-wrong { border-left-width: 4px; }
+@media screen and (max-width: 736px) {
+	.self-check.article-callout { padding: 8px 10px; border-left-width: 4px; }
+	.self-check .quiz-question { padding: 8px 10px 10px; }
+}
+/* Terminal blocks: the "$" prompt is dimmed and not selected when copying by hand, commands stand out from their output. */
+.code-prompt { color: var(--wp-text-muted); user-select: none; -webkit-user-select: none; }
+.code-cmd { font-weight: 700; }
+.code-out { color: var(--wp-text-muted); }
+/* Glossary letter index */
+.glossary-letters { display: flex; flex-wrap: wrap; gap: 2px 4px; margin: 4px 0 12px; font-size: 14px; }
+.glossary-letters a { display: inline-block; min-width: 26px; min-height: 26px; line-height: 26px; text-align: center; text-decoration: none; border: 1px solid var(--wp-border-light); }
+.glossary-letters a:hover, .glossary-letters a:focus-visible { border-color: var(--wp-link); text-decoration: underline; }
+.glossary-list dt { scroll-margin-top: 70px; }

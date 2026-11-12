@@ -549,6 +549,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const text = (pre.querySelector('code') || pre).textContent;
             const commands = text.split('\n').filter((l) => l.startsWith('$ ')).map((l) => l.slice(2));
             const label = commands.length ? 'Copy commands' : 'Copy';
+            const code = pre.querySelector('code') || pre;
+            if (commands.length && !code.children.length) {
+                // Mark prompts, commands and output so CSS can tell them apart. Plain text only: blocks with markup are left as they are.
+                code.replaceChildren(...text.split('\n').flatMap((line, i, all) => {
+                    const parts = [];
+                    if (line.startsWith('$ ')) {
+                        const p = document.createElement('span'); p.className = 'code-prompt'; p.setAttribute('aria-hidden', 'true'); p.textContent = '$ ';
+                        const c = document.createElement('span'); c.className = 'code-cmd'; c.textContent = line.slice(2);
+                        parts.push(p, c);
+                    } else if (line) {
+                        const o = document.createElement('span'); o.className = 'code-out'; o.textContent = line;
+                        parts.push(o);
+                    }
+                    if (i < all.length - 1) parts.push(document.createTextNode('\n'));
+                    return parts;
+                }));
+            }
             const btn = document.createElement('button');
             btn.type = 'button';
             btn.className = 'code-copy';
