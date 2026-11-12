@@ -114,7 +114,6 @@ a:hover {
 }
 /* Links inside running text: not told apart from the text by colour alone (WCAG 1.4.1) */
 main :is(p, li, td, th, dd, figcaption) a:not([class]),
-.article-breadcrumb-link,
 .glossary-pop a,
 .quiz-feedback a {
 	text-decoration: underline;
@@ -616,7 +615,6 @@ body.thesis-drawer-open .thesis-drawer-backdrop {
 	font-size: 14px;
 }
 .hub-quicklinks a { padding: 2px 0; }
-.
 
 .robotics-container {
 	max-width: var(--wp-content);
@@ -1412,7 +1410,7 @@ ol.article-spec-list { list-style: decimal; }
 .course-resume { margin: 0; }
 .glossary-list dt { margin-top: 12px; font-weight: 700; }
 .glossary-list dd { margin: 2px 0 0 0; }
-.glossary-list dd a { font-size: 13px; }
+.glossary-list dd a { font-size: inherit; }
 .glossary-filter { width: 100%; max-width: 360px; padding: 6px 8px; margin: 4px 0 8px; font: inherit; color: var(--wp-text); background: var(--wp-bg); border: 1px solid var(--wp-border); }
 @media screen and (max-width: 736px) {
 	.widget-control { grid-template-columns: 1fr 56px; }
@@ -1603,3 +1601,42 @@ input[type="range"] { min-height: 24px; }
 .article-meta-item.chapter-progress-pill::before { content: none; }
 .article-meta-item.chapter-progress-pill { margin-left: 10px; }
 @media (max-width: 1199px) { .lesson-bottom-next { flex: 0 1 420px; margin-left: auto; gap: 6px; } }
+
+/* Design review, 2026-11-11 */
+/* Body text at the browser default size: about 85 characters per line in the 680px column instead of 92. */
+.robotics-article-body { font-size: 16px; }
+.article-callout p { font-size: 15px; }
+/* An inline command that wraps keeps its box on both lines. */
+.robotics-article-body code { -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+/* Breadcrumb links underline on hover and focus, like the other navigation links. */
+.article-breadcrumb-bar a { text-decoration: none; }
+.article-breadcrumb-bar a:hover, .article-breadcrumb-bar a:focus-visible { text-decoration: underline; }
+/* Below 1200px the fixed bottom bar already has Previous and Next, so the header keeps only the position. */
+@media screen and (max-width: 1199px) { .lesson-quicknav a { display: none; } }
+/* Phones: shorter start cards so the chapter list is closer. */
+@media screen and (max-width: 736px) {
+	.hub-start-card { padding: 10px 12px; gap: 2px; }
+	.hub-start-desc { display: none; }
+	.hub-start-name { font-size: 17px; }
+}
+/* Copy button on code blocks */
+.article-code { position: relative; }
+.code-copy {
+	position: absolute; top: 6px; right: 6px;
+	min-height: 28px; padding: 2px 10px;
+	font: 600 12px/1.4 var(--wp-sans, sans-serif);
+	color: var(--wp-text); background: var(--wp-bg); border: 1px solid var(--wp-border); border-radius: 2px;
+	cursor: pointer; opacity: 0.85;
+}
+.code-copy:hover, .code-copy:focus-visible { opacity: 1; border-color: var(--wp-link); }
+.code-copy:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
+@media print { .code-copy { display: none; } }
+/* With a mouse the button appears on hover or keyboard focus, so it never hides the first line while reading.
+   On touch screens it is always shown, and the block gets room for it. */
+@media (hover: hover) {
+	.code-copy { opacity: 0; }
+	.article-code:hover .code-copy, .code-copy:focus-visible { opacity: 1; }
+}
+@media (hover: none) { .article-code:has(.code-copy) { padding-top: 40px; } }
+/* No empty line under the last item of a callout list. */
+.article-callout > ul:last-child, .article-callout > p:last-child { margin-bottom: 2px; }

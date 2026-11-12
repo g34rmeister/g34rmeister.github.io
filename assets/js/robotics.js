@@ -541,6 +541,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     initA11yHelpers();
 
+    // 12. Copy button on code blocks. When a block shows a terminal session ("$ command" lines followed by
+    // output), the button copies only the commands, without the prompt; otherwise it copies the whole block.
+    function initCodeCopy() {
+        if (!navigator.clipboard) return;
+        document.querySelectorAll('pre.article-code').forEach((pre) => {
+            const text = (pre.querySelector('code') || pre).textContent;
+            const commands = text.split('\n').filter((l) => l.startsWith('$ ')).map((l) => l.slice(2));
+            const label = commands.length ? 'Copy commands' : 'Copy';
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'code-copy';
+            btn.textContent = label;
+            btn.addEventListener('click', () => {
+                navigator.clipboard.writeText(commands.length ? commands.join('\n') : text.replace(/\n$/, '')).then(() => {
+                    btn.textContent = 'Copied';
+                    window.setTimeout(() => { btn.textContent = label; }, 1600);
+                }).catch(() => { btn.textContent = 'Copy failed'; });
+            });
+            pre.appendChild(btn);
+        });
+    }
+    initCodeCopy();
+
     // 11. "Contents" shortcut on narrow screens, where the side contents panel is hidden: appears once the
     // reader is past the in-page contents list and jumps back to it.
 });

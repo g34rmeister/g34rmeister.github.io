@@ -133,8 +133,10 @@ const viewports = [
       await hp.goto(base + 'robotics.html', { waitUntil: 'networkidle' });
       const hub = await hp.evaluate(() => ({ open: document.querySelectorAll('.hltv-chapter-block:not(.is-collapsed)').length,
         pills: document.querySelectorAll('.chapter-progress-pill').length, blocks: document.querySelectorAll('.hltv-chapter-block').length,
-        cards: document.querySelectorAll('.hub-start:not([hidden]) .hub-start-card').length }));
-      if (hub.open !== 1 || hub.pills !== hub.blocks || hub.cards !== 3) { console.error(`FAIL: hub layout ${JSON.stringify(hub)}`); totalErrors++; }
+        cards: document.querySelectorAll('.hub-start:not([hidden]) .hub-start-card').length,
+        // The chapter list sits in a centred column: a dropped .robotics-container rule once let it run edge to edge.
+        gutter: Math.round(document.querySelector('.robotics-container').getBoundingClientRect().left) }));
+      if (hub.open !== 1 || hub.pills !== hub.blocks || hub.cards !== 3 || hub.gutter < 40) { console.error(`FAIL: hub layout ${JSON.stringify(hub)}`); totalErrors++; }
       else console.log('PASS: hub opens one chapter, labels every chapter and shows three start cards to a new visitor');
       await hp.setViewportSize({ width: 375, height: 760 });
       await hp.goto(base + 'robotics-4-4.html', { waitUntil: 'networkidle' });
