@@ -1112,7 +1112,17 @@
 				r.dt.hidden = !show; r.dd.hidden = !show;
 			});
 		});
-		root.replaceChildren(el('p', { text: terms.length + ' terms used in the course. Each one links to the lessons that use it.' }), filter, dl);
+		// Letter index: one link per starting letter, to the first term with that letter. Terms that start with a symbol or digit go under "#".
+		var letters = el('nav', { 'class': 'glossary-letters', 'aria-label': 'Glossary letters' });
+		var seen = {};
+		terms.forEach(function (t) {
+			var c = t.charAt(0).toUpperCase();
+			var key = /[A-Z]/.test(c) ? c : '#';
+			if (seen[key]) return;
+			seen[key] = true;
+			letters.appendChild(el('a', { href: '#' + termSlug(t), text: key, 'aria-label': key === '#' ? 'Terms that start with a symbol' : 'Terms starting with ' + key }));
+		});
+		root.replaceChildren(el('p', { text: terms.length + ' terms used in the course. Each one links to the lessons that use it.' }), filter, letters, dl);
 		if (location.hash) {
 			var target = document.getElementById(location.hash.slice(1));
 			if (target) target.scrollIntoView();

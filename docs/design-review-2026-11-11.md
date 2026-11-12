@@ -28,10 +28,18 @@ Reviewed by Claude from browser screenshots of the hub, a chapter page, lessons 
 1. **Page weight.** Every course page loads `fontawesome-all.min.css` (59 KB plus its font files) for about 20 icons, `main.css` (60 KB, the portfolio theme) and, on lessons, `course-data.js` (104 KB) and `glossary-data.js` (96 KB). Options: an icon subset or inline SVG; load glossary data on first tooltip; split course data per chapter. Expected saving: roughly 250 KB per first visit. Needs care because `site_sync.py` hashes these files.
 2. **Phone navbar.** The top bar scrolls away on phones (it is sticky from tablet width up). With the bottom bar this is defensible, but the search box is then only reachable by scrolling up. A search button in the bottom bar would fix that.
 3. **Wide screens.** At 1280 px and up, about 300 px to the right of the column is empty. Candidates: the chapter's lesson list (item 3 of the 2026-11-10 mockups, still waiting for a yes) or key terms for the section in view.
-4. **Code blocks.** Commands and their output share one grey box. Styling prompt lines differently (or splitting command and output) would make labs easier to scan. This means touching 225 blocks or adding a small parser, so it was left.
-5. **Glossary.** 548 terms in one list with a filter box. A letter index (A to Z jump links) would help browsing on phones.
+4. ~~**Code blocks.**~~ Done in the appearance round: prompts dimmed, commands bold, output muted.
+5. ~~**Glossary.**~~ Done in the appearance round: a letter index above the list.
 6. **Hub.** A returning reader sees "Continue" but the three start cards disappear after the first completed lesson; the open-source track is then only in the quick links. A persistent, small "Tracks" line would keep it findable.
 7. **Reading progress.** Item 5 of the 2026-11-10 mockups (a progress bar) is still open.
 
 ## How to re-run
 `npm install playwright@1.56.0 @axe-core/playwright` in a scratch folder with `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1`, then `NODE_PATH=<folder>/node_modules AXE_PATH=<folder>/node_modules/axe-core/axe.min.js node scripts/test_playwright.js` and `node scripts/test_widgets.js "$PWD" <output folder>`.
+
+## Appearance round (same day, PR after #27)
+| Finding | Change |
+|---|---|
+| Reference lists were set at body size with bold, underlined back-arrows on every entry, so each lesson ended in a heavy block. | 14 px reference text; back-arrows 12 px, muted, underlined only on hover or focus (24 px targets kept). |
+| "Check yourself" put grey boxes inside a grey box with two thick left borders, which narrowed questions on phones. | Questions sit on the page background with a thin border; the thick coloured edge appears only after answering. Thinner frame on phones. |
+| Terminal blocks showed commands and output alike. | The `$` is dimmed and skipped when selecting by hand, commands are bold, output is muted (plain-text blocks only). |
+| No way to browse 548 glossary terms by letter. | A letter index above the list (25 links, "#" for terms starting with a symbol). |
