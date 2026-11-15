@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT3M",
+            "timeRequired": "PT12M",
             "teaches": [
                 "planner",
                 "controller",
@@ -210,12 +210,9 @@
 
                     <article class="robotics-article-body">
 
-                        <h2 class="article-section-title">01. Servers that host plugins</h2>
+                        <h2 class="article-section-title">01. Task servers and costmap layers</h2>
                         <p>
-                            Planners and controllers are at the heart of a navigation task.<sup><a href="#ref-1">[1]</a></sup> Nav2 runs them inside action servers. Five of its action servers are the planner, behavior, smoother, route and controller servers, which host the algorithm plugins that do the work.<sup><a href="#ref-1">[1]</a></sup>
-                        </p>
-                        <p>
-                            The planner, smoother and controller servers are configured at runtime with the names and types of the algorithms to use.<sup><a href="#ref-1">[1]</a></sup> For example, the DWB controller can be given the name <code>FollowPath</code>, and all of its parameters then sit under <code>FollowPath.&lt;param&gt;</code>.<sup><a href="#ref-1">[1]</a></sup> <a href="robotics-3-5.html">3.5</a> described the same plugin structure from a contributor&rsquo;s side.
+                            Planners and controllers are at the heart of a mobile navigation stack.<sup><a href="#ref-1">[1]</a></sup> In Nav2, navigation tasks are orchestrated across dedicated action servers: the planner, smoother, route, controller, and behavior servers.<sup><a href="#ref-1">[1]</a></sup> Rather than hardcoding navigation logic into a single monolithic loop, each server hosts pluginlib plugins configured dynamically at runtime.<sup><a href="#ref-1">[1]</a></sup> For example, a controller plugin might be given the alias <code>FollowPath</code> in ROS 2 parameters, with all its tuning values residing under the <code>FollowPath.&lt;param&gt;</code> namespace.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <figure class="lesson-diagram">
                             <svg viewBox="0 0 400 164" role="img" aria-label="Three boxes in a row: the planner computes a path from a goal pose, the smoother refines the path, and the controller follows it and outputs a control effort. Below them, a behavior server box is linked by dashed lines to the planner and the controller for recoveries when something fails" xmlns="http://www.w3.org/2000/svg">
@@ -223,48 +220,322 @@
                             </svg>
                             <figcaption>Four of Nav2&rsquo;s task servers. Each one hosts plugins, so the algorithm inside a box can be swapped.<sup><a href="#ref-1">[1]</a></sup></figcaption>
                         </figure>
-
-                        <h2 class="article-section-title">02. Planners</h2>
                         <p>
-                            A planner computes a path that completes some objective function, and it has access to the global environmental representation (<a href="robotics-10-2.html">10.2</a>).<sup><a href="#ref-1">[1]</a></sup> In Nav2 its general task is to compute a valid, and potentially optimal, path from the current pose to a goal pose.<sup><a href="#ref-1">[1]</a></sup> Planners can also be written to compute complete-coverage paths, or paths along sparse or predefined routes.<sup><a href="#ref-1">[1]</a></sup>
+                            Both the global planner and local controller rely on an environmental representation provided by <code>nav2_costmap_2d</code>.<sup><a href="#ref-1">[1]</a></sup> A costmap is a regular 2D grid where each cell holds an 8-bit cost value from 0 (free space) to 254 (lethal collision) or 255 (unknown space).<sup><a href="#ref-2">[2]</a></sup> To aggregate heterogeneous sensors without conflicting data formats, Nav2 organizes costmaps as a layered stack of plugin plugins:<sup><a href="#ref-2">[2]</a>, <a href="#ref-3">[3]</a></sup>
                         </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">
+                                <strong>StaticLayer (<code>nav2_costmap_2d::StaticLayer</code>):</strong> Subscribes to the <code>/map</code> topic published by a SLAM node or <code>map_server</code>. It populates the baseline grid with permanent architectural features (walls, columns, safety barriers) and resizes the master costmap to match the building geometry.<sup><a href="#ref-3">[3]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>ObstacleLayer (<code>nav2_costmap_2d::ObstacleLayer</code>):</strong> Subscribes directly to live sensor feeds such as 2D LiDAR <code>sensor_msgs/msg/LaserScan</code> or 3D <code>sensor_msgs/msg/PointCloud2</code>. Using 2D Bresenham raycasting, it clears free space along beam rays up to <code>raytrace_max_range</code> (typically 3.0&nbsp;m) and marks lethal obstacles up to <code>obstacle_max_range</code> (typically 2.5&nbsp;m) within the designated height window <code>[min_obstacle_height, max_obstacle_height]</code>. For 3D volumetric clearance, Nav2 provides <code>VoxelLayer</code> and <code>SpatioTemporalVoxelLayer</code>.<sup><a href="#ref-3">[3]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>InflationLayer (<code>nav2_costmap_2d::InflationLayer</code>):</strong> Operates as the final step across all obstacle layers. It does not mark new sensor obstacles; instead, it propagates an exponential cost decay field outward from every lethal cell to ensure the robot maintains safe clearance.<sup><a href="#ref-2">[2]</a></sup>
+                            </li>
+                        </ul>
+                        <p>
+                            The cell cost computed by the InflationLayer follows a strict mathematical piecewise formulation based on distance <code>d</code> from the nearest lethal obstacle:<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <div class="article-callout key-formula">
+                            <div class="article-callout-header"><i class="fas fa-calculator"></i> Nav2 Inflation Cost Formula</div>
+                            <p>
+                                When <code>d = 0</code>, the cell is an obstacle: <code>cost = 254</code> (<code>LETHAL_OBSTACLE</code>).<br>
+                                When <code>d &le; r<sub>inscribed</sub></code>, the robot is in guaranteed collision regardless of orientation: <code>cost = 253</code> (<code>INSCRIBED_INFLATED_OBSTACLE</code>).<br>
+                                When <code>r<sub>inscribed</sub> &lt; d &le; r<sub>inflation</sub></code>, costs decay exponentially:
+                            </p>
+                            <pre class="article-code"><code>cost = (INSCRIBED_INFLATED_OBSTACLE - 1) * exp(-cost_scaling_factor * (d - r_inscribed))</code></pre>
+                            <p>
+                                When <code>d &gt; r<sub>inflation</sub></code>, the cell is completely clear: <code>cost = 0</code> (<code>FREE_SPACE</code>).
+                            </p>
+                        </div>
+                        <p>
+                            Here <code>r<sub>inscribed</sub></code> is the radius of the largest circle fitting entirely inside the robot&rsquo;s footprint (configured as <code>robot_radius</code> or derived from polygon vertices).<sup><a href="#ref-2">[2]</a></sup> The parameter <code>cost_scaling_factor</code> (typically 3.0 in local costmaps, 10.0 default) controls the steepness of the penalty gradient: a large scaling factor produces a sharp cliff that drops to zero quickly, allowing the robot to pass through narrow corridors, while a smaller scaling factor creates a wide repulsive potential that pulls paths toward the open centerline of aisles.<sup><a href="#ref-2">[2]</a>, <a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            In production systems, Nav2 instantiates two distinct costmaps configured via YAML parameters:<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <pre class="article-code"><code># Excerpt from nav2_params.yaml
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.22
+      resolution: 0.05
+      track_unknown_space: true
+      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      static_layer:
+        plugin: "nav2_costmap_2d::StaticLayer"
+        map_subscribe_transient_local: true
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        enabled: true
+        observation_sources: scan
+        scan:
+          topic: scan
+          max_obstacle_height: 2.0
+          clearing: true
+          marking: true
+          data_type: "LaserScan"
+          raytrace_max_range: 3.0
+          obstacle_max_range: 2.5
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.70
+
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: odom
+      robot_base_frame: base_link
+      rolling_window: true
+      width: 3
+      height: 3
+      resolution: 0.05
+      robot_radius: 0.22
+      plugins: ["voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.70</code></pre>
+                        <p>
+                            Notice the design contrast: the <strong>global_costmap</strong> uses the fixed <code>map</code> frame, includes the <code>static_layer</code>, and updates at 1&nbsp;Hz to cover the entire building for long-range planning. The <strong>local_costmap</strong> operates in the continuous <code>odom</code> frame, enables <code>rolling_window: true</code> (a 3&times;3&nbsp;m sliding grid centered on the robot base), updates at 5&nbsp;Hz directly from sensor voxels, and discards stale static information for reactive obstacle avoidance.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+
+                        <h2 class="article-section-title">02. Global path planners</h2>
+                        <p>
+                            The planner server computes an obstacle-free, kinematically valid path from the robot&rsquo;s current pose to a target goal pose using the global costmap.<sup><a href="#ref-1">[1]</a></sup> Nav2 supports multiple swappable planner plugins:<sup><a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">
+                                <strong>NavFn Planner (<code>nav2_navfn_planner::NavfnPlanner</code>):</strong> The legacy ROS navigation mainstay. It computes a global navigation function using Dijkstra&rsquo;s wave-front propagation or 2D A* over the grid. It assumes the robot is a holonomic point mass. While computationally fast (~100&ndash;150&nbsp;ms on large maps), it produces paths with angular discontinuities and tends to cut corners closely around obstacles, requiring aggressive downstream path smoothing.<sup><a href="#ref-1">[1]</a>, <a href="#ref-4">[4]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Smac Planner 2D (<code>nav2_smac_planner::SmacPlanner2D</code>):</strong> A modern, cost-aware 2D A* implementation on 4- or 8-connected grid graphs. Unlike naive search, it includes a <code>cost_travel_multiplier</code> parameter (default 2.0) that penalizes traveling through inflated costmap cells, naturally guiding the robot down corridor centerlines. It features built-in multi-resolution costmap downsampling (e.g. searching a 5&nbsp;cm grid at 10&nbsp;cm via <code>downsampling_factor: 2</code>) and an integrated conjugate gradient smoother. Ideal for circular differential-drive and omnidirectional robots.<sup><a href="#ref-4">[4]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Smac Planner Hybrid-A* (<code>nav2_smac_planner::SmacPlannerHybrid</code>):</strong> A kinematically feasible SE(2) path planner for non-holonomic, car-like (Ackermann) and industrial mobile robots constrained by a physical <code>minimum_turning_radius</code> (e.g., 0.4&nbsp;m). It discretizes headings into angular quantization bins (typically 72 bins, yielding 5&deg; resolution). It generates curvature-continuous trajectories using Dubins or Reeds-Shepp motion models, supports bidirectional search with a configurable <code>reverse_penalty</code>, and executes frequent analytic expansions to snap directly to the target pose once within heuristic distance.<sup><a href="#ref-4">[4]</a></sup>
+                            </li>
+                        </ul>
+                        <div class="table-wrapper">
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Planner Plugin</th>
+                                        <th scope="col">State Space</th>
+                                        <th scope="col">Kinematic Feasibility</th>
+                                        <th scope="col">Reversing Support</th>
+                                        <th scope="col">Key Tuning Parameters</th>
+                                        <th scope="col">Typical Drivetrain</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>NavFn</strong></td>
+                                        <td>2D Grid (x, y)</td>
+                                        <td>No (point mass)</td>
+                                        <td>No</td>
+                                        <td><code>tolerance</code>, <code>use_astar</code></td>
+                                        <td>Differential, Omnidirectional</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Smac 2D</strong></td>
+                                        <td>2D Grid (x, y)</td>
+                                        <td>No (cost-aware grid)</td>
+                                        <td>No</td>
+                                        <td><code>cost_travel_multiplier</code>, <code>downsampling_factor</code></td>
+                                        <td>Differential, Omnidirectional</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Smac Hybrid-A*</strong></td>
+                                        <td>SE(2) (x, y, &theta;)</td>
+                                        <td>Yes (curvature bounded)</td>
+                                        <td>Yes (Reeds-Shepp)</td>
+                                        <td><code>minimum_turning_radius</code>, <code>reverse_penalty</code>, <code>angle_quantization_bins</code></td>
+                                        <td>Ackermann, Car-like, Industrial AMRs</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>
+                            To configure a planner in <code>nav2_params.yaml</code>:<sup><a href="#ref-3">[3]</a>, <a href="#ref-4">[4]</a></sup>
+                        </p>
+                        <pre class="article-code"><code>planner_server:
+  ros__parameters:
+    expected_planner_frequency: 20.0
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_smac_planner::SmacPlanner2D"
+      tolerance: 0.125
+      downsample_costmap: false
+      allow_unknown: true
+      max_iterations: 1000000
+      max_planning_time: 2.0
+      cost_travel_multiplier: 2.0
+      smoother:
+        max_iterations: 1000
+        w_smooth: 0.3
+        w_data: 0.2
+        tolerance: 1.0e-10</code></pre>
 
                         <h2 class="article-section-title">03. Smoothers and the route server</h2>
                         <p>
-                            A smoother receives a path and returns an improved version. Smoothers typically reduce path raggedness and smooth abrupt rotations, and they can also increase the distance from obstacles and high-cost areas.<sup><a href="#ref-1">[1]</a></sup>
+                            A smoother receives a planned path and returns an improved version. Smoothers typically reduce path raggedness, smooth abrupt rotations, and increase distance from high-cost obstacles using gradient-based optimization algorithms like <code>SimpleSmoother</code> or <code>SavitzkyGolaySmoother</code>.<sup><a href="#ref-1">[1]</a></sup> When paired with non-holonomic planners such as Hybrid-A*, smoothers respect cusp points where the robot shifts between forward and reverse gears via <code>enforce_path_inversion: true</code>.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
                         <p>
-                            The route server is a specialized planner. It computes a route through a predefined navigation graph, not through the free-space costmap.<sup><a href="#ref-1">[1]</a></sup> The graph can represent lanes, areas the robot is allowed to navigate, or a teach-and-repeat route.<sup><a href="#ref-1">[1]</a></sup>
+                            The route server is a specialized planner. It computes a route through a predefined navigation graph, not through the free-space costmap.<sup><a href="#ref-1">[1]</a></sup> The graph can represent designated warehouse aisles, virtual highway lanes, or teach-and-repeat paths, scored by plugins like <code>DistanceScorer</code> and <code>CostmapScorer</code>.<sup><a href="#ref-1">[1]</a>, <a href="#ref-3">[3]</a></sup>
                         </p>
 
-                        <h2 class="article-section-title">04. Controllers</h2>
+                        <h2 class="article-section-title">04. Local trajectory controllers</h2>
                         <p>
-                            Controllers, known as local planners in ROS 1, follow the globally computed path or complete a local task.<sup><a href="#ref-1">[1]</a></sup> A controller uses the local environmental representation to compute feasible control efforts for the base, and many controllers project the robot forward in space at each update.<sup><a href="#ref-1">[1]</a></sup> Following a path is the usual job, but controllers can also be written to dock with a charging station or board an elevator.<sup><a href="#ref-1">[1]</a></sup>
+                            While global planners operate periodically at 1&ndash;2&nbsp;Hz over whole maps, controllers (historically termed &ldquo;local planners&rdquo; in ROS 1) execute in a tight real-time control loop at 20&ndash;50&nbsp;Hz.<sup><a href="#ref-1">[1]</a></sup> A controller evaluates the local costmap, inspects current robot odometry, and outputs feasible velocity commands (<code>geometry_msgs/msg/Twist</code> on <code>cmd_vel</code>) to track the path while dodging dynamic obstacles.<sup><a href="#ref-1">[1]</a></sup> Nav2 features three premier controller architectures:<sup><a href="#ref-5">[5]</a>, <a href="#ref-6">[6]</a>, <a href="#ref-7">[7]</a></sup>
                         </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">
+                                <strong>DWB Controller (<code>dwb_core::DWBLocalPlanner</code>):</strong> An extensible, modular reimplementation of the Dynamic Window Approach (DWA). At each tick, it discretely samples reachable velocity pairs <code>(v<sub>x</sub>, v<sub>y</sub>, &omega;)</code> within the robot&rsquo;s acceleration limits (<code>acc_lim_x</code>, <code>acc_lim_theta</code>) and forward-simulates short trajectory arcs over <code>sim_time</code> (typically 1.7&nbsp;s). Each trajectory is scored against a customizable array of critic plugins:<sup><a href="#ref-5">[5]</a></sup>
+                                <ul>
+                                    <li><code>ObstacleFootprintCritic</code> / <code>BaseObstacleCritic</code>: Discards or heavily penalizes rollouts colliding with obstacles or entering inflated cost zones.</li>
+                                    <li><code>PathAlignCritic</code> and <code>PathDistCritic</code>: Scores alignment with the path heading and minimizes lateral offset from the planned path.</li>
+                                    <li><code>GoalAlignCritic</code> and <code>GoalDistCritic</code>: Pulls the robot directly toward the final goal pose when within sight.</li>
+                                    <li><code>RotateToGoalCritic</code>: Guides in-place rotation to match the target orientation once within spatial tolerance.</li>
+                                    <li><code>OscillationCritic</code>: Penalizes rapid directional flipping that causes robots to jitter in tight doorways.</li>
+                                </ul>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Regulated Pure Pursuit (<code>nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController</code>):</strong> A geometric tracking algorithm designed specifically for industrial service robots and AMRs. Rather than brute-force velocity sampling, it computes the exact circular arc required to steer the robot toward a lookahead point (&ldquo;carrot&rdquo;) placed on the path at distance <code>L = clamp(v &middot; t<sub>lookahead</sub>, L<sub>min</sub>, L<sub>max</sub>)</code>.<sup><a href="#ref-6">[6]</a></sup> Crucially, it introduces three adaptive regulation mechanisms:<sup><a href="#ref-6">[6]</a></sup>
+                                <ul>
+                                    <li><strong>Curvature Regulation:</strong> Automatically decelerates the linear velocity around sharp curves (when path turning radius drops below <code>regulated_linear_scaling_min_radius</code>), preventing high-speed centrifugal skidding.</li>
+                                    <li><strong>Cost Proximity Regulation:</strong> Scales linear speed down as the robot approaches high-cost obstacles within <code>cost_scaling_dist</code>, granting sensors more integration time in tight corridors.</li>
+                                    <li><strong>Approach Velocity Scaling:</strong> Linearly ramps speed down to <code>min_approach_linear_velocity</code> over <code>approach_velocity_scaling_dist</code> to achieve clean, overshoot-free stops.</li>
+                                </ul>
+                                It verifies safety by projecting the robot footprint forward along the lookahead arc up to <code>max_allowed_time_to_collision_up_to_carrot</code>, halting immediately if a collision is imminent.<sup><a href="#ref-6">[6]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>MPPI Controller (<code>nav2_mppi_controller::MPPIController</code>):</strong> Model Predictive Path Integral controller, an advanced stochastic Model Predictive Control (MPC) algorithm. Unlike traditional gradient-based MPC, MPPI does not require objective functions to be convex or mathematically differentiable.<sup><a href="#ref-7">[7]</a></sup> At each control cycle, it applies Gaussian perturbations to the previous optimal control sequence to generate a large batch (e.g. 1000&ndash;2000) of candidate rollouts across a prediction horizon (<code>time_steps: 56</code> with <code>model_dt: 0.05</code> yielding 2.8&nbsp;seconds). These rollouts are forward-simulated through kinematically verified motion models (<code>DiffDrive</code>, <code>Omni</code>, <code>Ackermann</code>) and scored by critic plugins. The optimal control is computed as a softmax-weighted sum across the batch, running effortlessly at 30&ndash;100+&nbsp;Hz on modern multi-core CPUs.<sup><a href="#ref-7">[7]</a></sup>
+                            </li>
+                        </ul>
+                        <div class="table-wrapper">
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Controller</th>
+                                        <th scope="col">Core Tracking Principle</th>
+                                        <th scope="col">Prediction Horizon</th>
+                                        <th scope="col">Obstacle Avoidance Strategy</th>
+                                        <th scope="col">Compute Profile</th>
+                                        <th scope="col">Key Tuning Parameters</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>DWB</strong></td>
+                                        <td>Discrete velocity space grid sampling (DWA)</td>
+                                        <td>Short arc (1.5&ndash;2.0&nbsp;s)</td>
+                                        <td>Critic scoring (rejects colliding velocity pairs)</td>
+                                        <td>Low&ndash;Moderate</td>
+                                        <td><code>sim_time</code>, <code>vx_samples</code>, <code>critics.*.scale</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Regulated Pure Pursuit (RPP)</strong></td>
+                                        <td>Geometric carrot pursuit with adaptive velocity scaling</td>
+                                        <td>Lookahead distance (0.3&ndash;1.0&nbsp;m)</td>
+                                        <td>Forward collision checks along lookahead arc</td>
+                                        <td>Minimal (lightweight)</td>
+                                        <td><code>lookahead_time</code>, <code>cost_scaling_dist</code>, <code>regulated_linear_scaling_min_radius</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>MPPI</strong></td>
+                                        <td>Stochastic sampling and softmax path-integral optimization</td>
+                                        <td>Multi-step trajectory (2.0&ndash;4.0&nbsp;s, 56 steps)</td>
+                                        <td>Trajectory scoring across batch (1000+ rollouts)</td>
+                                        <td>High (multi-threaded SIMD)</td>
+                                        <td><code>batch_size</code>, <code>time_steps</code>, <code>model_dt</code>, <code>temperature</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>
+                            Here is an example YAML snippet configuring the controller server:<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <pre class="article-code"><code>controller_server:
+  ros__parameters:
+    controller_frequency: 20.0
+    costmap_update_timeout: 0.30
+    failure_tolerance: 0.3
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["general_goal_checker"]
+    controller_plugins: ["FollowPath"]
+
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 10.0
+
+    general_goal_checker:
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.25
+      yaw_goal_tolerance: 0.25
+      stateful: true
+
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      desired_linear_vel: 0.5
+      lookahead_dist: 0.6
+      min_lookahead_dist: 0.3
+      max_lookahead_dist: 0.9
+      lookahead_time: 1.5
+      rotate_to_heading_angular_vel: 1.8
+      use_velocity_scaled_lookahead_dist: true
+      min_approach_linear_velocity: 0.05
+      approach_velocity_scaling_dist: 0.6
+      use_regulated_linear_velocity_scaling: true
+      use_cost_regulated_linear_velocity_scaling: true
+      cost_scaling_dist: 0.6
+      regulated_linear_scaling_min_radius: 0.9
+      regulated_linear_scaling_min_speed: 0.25
+      use_collision_detection: true
+      max_allowed_time_to_collision_up_to_carrot: 1.0</code></pre>
 
                         <h2 class="article-section-title">05. Behaviors and recovery</h2>
                         <p>
-                            Recovery behaviors deal with unknown or failure conditions and handle them autonomously.<sup><a href="#ref-1">[1]</a></sup> If a perception fault fills the costmap with fake obstacles, a clear-costmap recovery lets the robot move again. If the robot is stuck, backing up or spinning in place, where that is permissible, can move it into free space.<sup><a href="#ref-1">[1]</a></sup> After a total failure, a recovery can call an operator&rsquo;s attention for help.<sup><a href="#ref-1">[1]</a></sup>
+                            Recovery behaviors deal with unknown or failure conditions and handle them autonomously.<sup><a href="#ref-1">[1]</a></sup> In Nav2, the <code>behavior_server</code> hosts modular behavior plugins that share costmaps and TF buffers without duplicating expensive memory instances:<sup><a href="#ref-1">[1]</a>, <a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><strong>ClearCostmap:</strong> Flushes accumulated sensor artifacts or ghost obstacles from costmaps when dynamic obstructions have moved or perception filters misbehaved.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item"><strong>Spin:</strong> Rotates the robot in place (e.g. 1.57 or 3.14&nbsp;rad) to clear sensor blind spots and recalculate valid free-space paths.<sup><a href="#ref-1">[1]</a>, <a href="#ref-3">[3]</a></sup></li>
+                            <li class="article-spec-item"><strong>BackUp:</strong> Reverses a designated distance (e.g. 0.30&nbsp;m) at low speed to extract the robot from tight cul-de-sacs or doorway bottlenecks.<sup><a href="#ref-1">[1]</a>, <a href="#ref-3">[3]</a></sup></li>
+                            <li class="article-spec-item"><strong>Wait:</strong> Pauses execution for a configurable duration (e.g. 5.0&nbsp;s) to allow transient obstacles, such as pedestrians or forklifts, to clear the aisle.<sup><a href="#ref-1">[1]</a>, <a href="#ref-3">[3]</a></sup></li>
+                        </ul>
+                        <p>
+                            If autonomous recovery routines fail, a final recovery handler can trigger remote operator alerts via SMS, Slack, or factory SCADA systems.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">06. Waypoints and fleets</h2>
                         <p>
-                            The <code>nav2_waypoint_follower</code> sends the robot to several destinations and has a plugin interface for a task at each one, such as taking a picture, picking up a box or waiting for user input.<sup><a href="#ref-1">[1]</a></sup> Nav2 describes two schools of thought for fleets: a dumb robot with a smart centralized dispatcher, or a smart robot with a dumb one.<sup><a href="#ref-1">[1]</a></sup> In the first, a request to the waypoint follower is one unit of work, such as one pick in a warehouse, after which the robot returns to the dispatcher for its next task.<sup><a href="#ref-1">[1]</a></sup>
+                            The <code>nav2_waypoint_follower</code> sends the robot to several destinations and has a plugin interface for a task at each one, such as taking a picture, picking up a box or waiting for user input.<sup><a href="#ref-1">[1]</a></sup> Nav2 describes two schools of thought for fleets: a dumb robot with a smart centralized dispatcher, or a smart robot with a dumb one.<sup><a href="#ref-1">[1]</a></sup> In the first, a request to the waypoint follower is one unit of work, such as one pick in a warehouse, after which the robot returns to the dispatcher for its next task.<sup><a href="#ref-1">[1]</a></sup> In the second, the robot runs its own high-level mission behavior tree, managing battery levels, docking, and multi-step tasks locally.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">07. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">What is the general task of a planner in Nav2, and which environmental representation does it use?<details class="check-answer"><summary>Show answer</summary><p>A planner computes a valid, and potentially optimal, path from the current pose to a goal pose. It has access to the global environmental representation. <span class="check-answer-src">(Section 02)</span></p></details></li>
-                            <li class="article-spec-item">How does the route server differ from an ordinary planner?<details class="check-answer"><summary>Show answer</summary><p>The route server is a specialized planner. It computes a route through a predefined navigation graph, not through the free-space costmap. The graph can represent lanes, areas the robot is allowed to navigate, or a teach-and-repeat route. <span class="check-answer-src">(Section 03)</span></p></details></li>
-                            <li class="article-spec-item">Give two examples of recovery behaviors and the problem each one solves.<details class="check-answer"><summary>Show answer</summary><p>A clear-costmap recovery fixes a perception fault that fills the costmap with fake obstacles, so the robot can move again. Backing up or spinning in place, where that is permissible, helps when the robot is stuck by moving it into free space. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                            <li class="article-spec-item">What is the role of each layer in Nav2&rsquo;s standard costmap stack (StaticLayer, ObstacleLayer, InflationLayer), and what cost is assigned to cells within the inscribed radius?<details class="check-answer"><summary>Show answer</summary><p>StaticLayer loads permanent architectural geometry from <code>/map</code>; ObstacleLayer processes live 2D/3D sensor feeds using raycasting to clear free space and mark occupied obstacles; InflationLayer propagates an exponential cost decay field outward from obstacles. Any cell within the robot&rsquo;s inscribed radius receives a cost of 253 (<code>INSCRIBED_INFLATED_OBSTACLE</code>), signifying that any robot rotation at that cell is a guaranteed collision. <span class="check-answer-src">(Section 01)</span></p></details></li>
+                            <li class="article-spec-item">How does the <code>cost_scaling_factor</code> parameter affect path planning around obstacles?<details class="check-answer"><summary>Show answer</summary><p>It controls the exponential decay rate. A larger scaling factor causes cost to drop steeply with distance, allowing the planner to route closer to obstacles and through narrower doorways; a smaller scaling factor creates a gradual cost slope across the inflation radius, strongly repelling paths toward the centerline of corridors. <span class="check-answer-src">(Section 01)</span></p></details></li>
+                            <li class="article-spec-item">How do NavFn, Smac 2D, and Smac Hybrid-A* differ in kinematic feasibility and robot compatibility?<details class="check-answer"><summary>Show answer</summary><p>NavFn plans via 2D Dijkstra/A* assuming a circular point mass (fast but cuts corners and lacks kinematic feasibility); Smac 2D is a cost-aware 2D A* planner that uses a cost travel multiplier to stay centered in aisles for differential/omnidirectional bases; Smac Hybrid-A* plans in SE(2) space (x, y, &theta;) with minimum turning radius and Reeds-Shepp reversing constraints, ensuring kinematically feasible trajectories for car-like (Ackermann) and non-holonomic vehicles. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">What are the primary operational differences between DWB, Regulated Pure Pursuit, and MPPI controllers?<details class="check-answer"><summary>Show answer</summary><p>DWB discretely samples achievable velocity pairs and scores short forward arcs using weighted critic plugins; Regulated Pure Pursuit geometrically pursues a carrot on the path while adaptively regulating linear speed for curvature, obstacle proximity, and goal approach; MPPI stochastically samples large batches (1000+ rollouts) across a multi-second prediction horizon and optimizes control via softmax weighting, excelling at high speeds and complex vehicle kinematics. <span class="check-answer-src">(Section 04)</span></p></details></li>
+                            <li class="article-spec-item">How does the route server differ from a standard costmap planner?<details class="check-answer"><summary>Show answer</summary><p>The route server computes a route through a predefined topological navigation graph (such as designated warehouse aisles, AGV guide paths, or virtual road networks) rather than searching through the unconstrained free-space costmap grid. <span class="check-answer-src">(Section 03)</span></p></details></li>
                         </ul>
 
                         <div class="article-callout try-it">
                             <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                             <ol>
-                                <li>For each job, name the Nav2 server that does it. First: finding a way across the building. Second: steering around a cart that has just been left in the aisle. Third: freeing the robot after its costmap fills with obstacles that are not there.</li>
-                                <li>A site wants its robots to drive only along marked lanes. Which server fits, and what does it need that a free-space planner does not?</li>
-                                <li>A warehouse dispatcher already knows every robot&rsquo;s pose, battery level and task. Which of the two fleet approaches is this, and what does one request to the waypoint follower stand for?</li>
+                                <li>You are commissioning an Ackermann-steered autonomous industrial tugger with a 1.2&nbsp;m minimum turning radius in a manufacturing plant. Which global planner and which local controller should you select, and which specific kinematic parameters must you configure?</li>
+                                <li>A differential-drive AMR struggles to navigate through a narrow 1.0&nbsp;m doorway between warehouse aisles because the global planner treats the passage as impassable. The robot&rsquo;s inscribed radius is 0.3&nbsp;m. Which costmap parameter should you tune in <code>nav2_params.yaml</code>, and should you increase or decrease it?</li>
+                                <li>A mobile delivery robot in a hospital corridor must navigate smoothly around oncoming medical carts without jerky, abrupt stops. Contrast how Regulated Pure Pursuit&rsquo;s cost proximity regulation and MPPI&rsquo;s stochastic batch rollouts handle this dynamic obstacle encounter.</li>
                             </ol>
                         </div>
 
@@ -276,9 +547,15 @@
                             <!-- /oss-note -->
 
                         <h2 class="article-section-title">08. References</h2>
-                        <p class="references-note">Source check (November 2026): 1 of 1 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-3.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <p class="references-note">Source check (November 2026): 7 of 7 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-3.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                         <ol class="article-spec-list">
                             <li id="ref-1">Nav2, &ldquo;Navigation Servers.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md</a>.</li>
+                            <li id="ref-2">Nav2, &ldquo;Inflation Layer Parameters.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/core_servers/costmap_2d/costmap_plugins/inflation.md</a>.</li>
+                            <li id="ref-3">Nav2 developers, &ldquo;nav2_params.yaml,&rdquo; nav2_bringup package, lyrical branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/params/nav2_params.yaml" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/lyrical/nav2_bringup/params/nav2_params.yaml</a>.</li>
+                            <li id="ref-4">Nav2, &ldquo;Smac Planner.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/planners_plugins/smac/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/planners_plugins/smac/index.md</a>.</li>
+                            <li id="ref-5">Nav2, &ldquo;DWB Controller.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/controller_plugins/dwb_controller/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/controller_plugins/dwb_controller/index.md</a>.</li>
+                            <li id="ref-6">Nav2, &ldquo;Regulated Pure Pursuit.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/controller_plugins/configuring_regulated_pp.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/controller_plugins/configuring_regulated_pp.md</a>.</li>
+                            <li id="ref-7">Nav2, &ldquo;Model Predictive Path Integral Controller.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/controller_plugins/mppi_controller/configuring_mppic.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/configuration_and_development/configuration_guide/controller_plugins/mppi_controller/configuring_mppic.md</a>.</li>
                         </ol>
 
 
@@ -316,7 +593,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-        <script src="assets/js/course-data.js?v=f7abda2d" defer></script>
+        <script src="assets/js/course-data.js?v=6002944a" defer></script>
         <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
         <script src="assets/js/learning.js?v=42e08602" defer></script>
 
