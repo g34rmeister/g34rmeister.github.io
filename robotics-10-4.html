@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT3M",
+            "timeRequired": "PT10M",
             "teaches": [
                 "action server",
                 "NavigateToPose",
@@ -211,26 +211,170 @@
 
                         <h2 class="article-section-title">01. Actions: asking for a long task</h2>
                         <p>
-                            Driving across a building takes time, so Nav2 is built on ROS 2 actions. Action servers are a common way to control long-running tasks: a client requests a task, the server provides feedback while it runs, and a result comes back at the end.<sup><a href="#ref-1">[1]</a></sup> For navigation, the request may be a position. The feedback may be the time spent navigating and the distance to the goal, and the result is a boolean for success.<sup><a href="#ref-1">[1]</a></sup>
+                            Driving an autonomous mobile robot across a warehouse or factory takes time, during which obstacles may move, paths may require replanning, or operators may need to abort the mission.<sup><a href="#ref-1">[1]</a></sup> Because synchronous ROS 2 services would block the client thread and cannot report intermediate progress, Nav2 is architected around ROS 2 actions.<sup><a href="#ref-1">[1]</a></sup> An action server manages a long-running, asynchronous, and preemptible task: a client dispatches a goal, the server periodically streams feedback during execution, and the server returns a final result status upon completion.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
-                            A client application reaches Nav2 through a <code>NavigateToPose</code> action, which goes to the BT Navigator. The BT Navigator in turn uses actions to ask the smaller servers for plans, control efforts and recoveries.<sup><a href="#ref-1">[1]</a></sup> Each server has its own <code>.action</code> type in <code>nav2_msgs</code>.<sup><a href="#ref-1">[1]</a></sup>
+                            A client application initiates navigation by calling the <code>NavigateToPose</code> action hosted by Nav2&rsquo;s BT Navigator server:<sup><a href="#ref-1">[1]</a>, <a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <div class="table-wrapper">
+                            <table class="article-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Action Component</th>
+                                        <th scope="col">Field Name</th>
+                                        <th scope="col">Data Type</th>
+                                        <th scope="col">Functional Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Goal</strong></td>
+                                        <td><code>pose</code><br><code>behavior_tree</code></td>
+                                        <td><code>geometry_msgs/PoseStamped</code><br><code>string</code></td>
+                                        <td>The target 3D coordinate pose and frame (typically <code>map</code>), plus an optional path to a custom behavior tree XML file.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Feedback</strong></td>
+                                        <td><code>current_pose</code><br><code>navigation_time</code><br><code>estimated_time_remaining</code><br><code>distance_remaining</code><br><code>number_of_recoveries</code><br><code>position_tracking_error</code></td>
+                                        <td><code>geometry_msgs/PoseStamped</code><br><code>builtin_interfaces/Duration</code><br><code>builtin_interfaces/Duration</code><br><code>float32</code><br><code>int16</code><br><code>float32</code></td>
+                                        <td>Streaming metrics published at runtime (e.g. 10&ndash;20&nbsp;Hz) enabling clients to track live progress, observe recovery counts, and monitor path following precision.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Result</strong></td>
+                                        <td><code>result</code><br><code>error_code</code><br><code>error_msg</code></td>
+                                        <td><code>std_msgs/Empty</code><br><code>uint16</code><br><code>string</code></td>
+                                        <td>Completion status (<code>SUCCEEDED</code>, <code>ABORTED</code>, <code>CANCELED</code>) accompanied by diagnostic error codes.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>
+                            You can dispatch a navigation goal and monitor its streaming feedback directly from the ROS 2 command-line interface:<sup><a href="#ref-2">[2]</a></sup>
+                        </p>
+                        <pre class="article-code"><code>$ ros2 action send_goal /navigate_to_pose nav2_msgs/action/NavigateToPose \
+  "{pose: {header: {frame_id: map}, pose: {position: {x: 1.5, y: -0.5}, orientation: {w: 1.0}}}}" \
+  --feedback</code></pre>
+                        <p>
+                            The <strong>BT Navigator</strong> (<code>bt_navigator</code>) acts as the central coordinator. Rather than directly computing trajectories or moving wheel motors, it loads an XML behavior tree and populates the goal pose into a shared blackboard. As the tree ticks, individual behavior tree nodes act as internal action clients that dispatch sub-tasks to the dedicated task servers described in <a href="robotics-10-3.html">10.3</a>: <code>/compute_path_to_pose</code> on the planner server, <code>/follow_path</code> on the controller server, and recovery actions like <code>/spin</code> or <code>/backup</code> on the behavior server.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
 
-                        <h2 class="article-section-title">02. Behavior trees decide what happens next</h2>
+                        <h2 class="article-section-title">02. Behavior trees: architecture and node semantics</h2>
                         <p>
-                            A behavior tree is a tree structure of tasks to be completed.<sup><a href="#ref-2">[2]</a></sup> Nav2&rsquo;s documentation contrasts it with a finite state machine (<a href="robotics-6-7.html">6.7 State Machines</a>), which may have dozens of states and hundreds of transitions.<sup><a href="#ref-2">[2]</a></sup> With a tree, basic primitives can be created once and reused for many behaviors.<sup><a href="#ref-2">[2]</a></sup>
+                            Traditional mobile robot control often relied on Finite State Machines (FSMs, <a href="robotics-6-7.html">6.7</a>). In an FSM, adding a new recovery action or sensor condition requires adding transitions across dozens of existing states, leading to exponential transition explosion (<code>O(N<sup>2</sup>)</code> complexity) and brittle spaghetti code.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            Nav2 uses BehaviorTree.CPP V4 as its library. Node plugins are assembled into a tree inside the BT Navigator, and the tree itself is read from an XML file.<sup><a href="#ref-2">[2]</a></sup> When the tree ticks one of those nodes, the node calls the matching action server from <a href="robotics-10-3.html">10.3</a>.<sup><a href="#ref-3">[3]</a></sup>
+                            Nav2 replaces monolithic state machines with <strong>Behavior Trees</strong> powered by the BehaviorTree.CPP V4 library.<sup><a href="#ref-4">[4]</a></sup> In a behavior tree, control logic is represented as a directed hierarchical tree of reusable nodes. Execution is driven by ticking the root node at a fixed frequency (typically 10&ndash;100&nbsp;Hz). Every node in the tree returns one of three status codes upon each tick:<sup><a href="#ref-4">[4]</a>, <a href="#ref-5">[5]</a></sup>
                         </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item"><strong>SUCCESS:</strong> The node completed its objective successfully.</li>
+                            <li class="article-spec-item"><strong>FAILURE:</strong> The node encountered an unrecoverable error or its condition was not met.</li>
+                            <li class="article-spec-item"><strong>RUNNING:</strong> The node is actively executing an asynchronous task across multiple ticks.</li>
+                        </ul>
                         <p>
-                            The library can load subtrees, so the whole Nav2 tree can be used as a single node in a higher-level tree.<sup><a href="#ref-2">[2]</a></sup> The documentation also points out that keeping the application logic in the tree, with independent task servers, allows formal analysis.<sup><a href="#ref-2">[2]</a></sup>
+                            BehaviorTree.CPP defines four fundamental node categories:<sup><a href="#ref-5">[5]</a></sup>
+                        </p>
+                        <ul class="article-spec-list">
+                            <li class="article-spec-item">
+                                <strong>Action Nodes:</strong> Leaf nodes that perform actual work. In Nav2, action nodes typically wrap ROS 2 action or service clients. Examples include <code>ComputePathToPose</code> (queries the planner server), <code>FollowPath</code> (queries the controller server), <code>Spin</code>, <code>Wait</code>, <code>BackUp</code>, and <code>ClearEntireCostmap</code>. They return <code>RUNNING</code> while the server works, and resolve to <code>SUCCESS</code> or <code>FAILURE</code> when the sub-task completes.<sup><a href="#ref-5">[5]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Condition Nodes:</strong> Leaf nodes that inspect system status without executing motor commands or blocking. They evaluate instantaneous state and return <code>SUCCESS</code> or <code>FAILURE</code> immediately; they <em>never</em> return <code>RUNNING</code>. Examples include <code>GoalUpdated</code> (detects if an operator published a new destination), <code>IsGoalNearby</code> (checks Euclidean distance to goal), and <code>WouldAPlannerRecoveryHelp</code>.<sup><a href="#ref-5">[5]</a></sup>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Control Nodes:</strong> Internal branching nodes that have one or more children and define their execution order:<sup><a href="#ref-5">[5]</a></sup>
+                                <ul>
+                                    <li><code>Sequence</code>: Ticks children sequentially from left to right. If any child returns <code>FAILURE</code>, the sequence halts and returns <code>FAILURE</code>. It returns <code>SUCCESS</code> only when all children have succeeded.</li>
+                                    <li><code>PipelineSequence</code>: A specialized Nav2 control node. Unlike standard Sequence (which only ticks the current running child), <code>PipelineSequence</code> re-ticks preceding running children on every tick. This enables concurrent planning and tracking: the planner continuously updates the path ahead while the controller simultaneously drives the robot.</li>
+                                    <li><code>RecoveryNode</code>: Has exactly two children: a primary action and a recovery action. It ticks the first child; if it fails, it ticks the second child. It retries this loop up to <code>number_of_retries</code> before returning <code>FAILURE</code>.</li>
+                                    <li><code>RoundRobin</code>: Ticks its children in cyclical order across successive recovery cycles, ensuring alternative recovery behaviors (clearing costmaps, spinning, backing up) are attempted in turn.</li>
+                                    <li><code>Fallback</code> (Selector): Ticks children in sequence until one returns <code>SUCCESS</code>. It returns <code>FAILURE</code> only if every child fails.</li>
+                                </ul>
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Decorator Nodes:</strong> Wrapper nodes that have exactly one child and modify its execution behavior. Examples include <code>RateController</code> (throttles child ticking to a fixed frequency, e.g. <code>hz="1.0"</code> for 1&nbsp;Hz replanning) and <code>Inverter</code> (inverts <code>SUCCESS</code> to <code>FAILURE</code> and vice versa).<sup><a href="#ref-5">[5]</a></sup>
+                            </li>
+                        </ul>
+                        <p>
+                            Nodes exchange data through the <strong>Blackboard</strong>: a key-value memory space where ports written by one node (e.g. <code>path="{path}"</code> produced by <code>ComputePathToPose</code>) can be read by another (e.g. <code>path="{path}"</code> consumed by <code>FollowPath</code>) without coupling their internal implementations.<sup><a href="#ref-5">[5]</a>, <a href="#ref-6">[6]</a></sup>
                         </p>
 
-                        <h2 class="article-section-title">03. Lifecycle nodes: starting and stopping in order</h2>
+                        <h2 class="article-section-title">03. Concrete Nav2 Behavior Tree walkthrough</h2>
                         <p>
-                            All of Nav2&rsquo;s servers are lifecycle (managed) nodes: nodes with state machine transitions for bringup and teardown.<sup><a href="#ref-1">[1]</a></sup> This helps a ROS system behave deterministically at startup and shutdown.<sup><a href="#ref-1">[1]</a></sup>
+                            Nav2 stores behavior trees in XML files parsed at runtime. Here is the canonical default tree, <code>navigate_to_pose_w_replanning_and_recovery.xml</code>, used by the BT Navigator:<sup><a href="#ref-6">[6]</a></sup>
+                        </p>
+                        <pre class="article-code"><code>&lt;root BTCPP_format="4" main_tree_to_execute="NavigateToPoseWReplanningAndRecovery"&gt;
+  &lt;BehaviorTree ID="NavigateToPoseWReplanningAndRecovery"&gt;
+    &lt;RecoveryNode number_of_retries="6" name="NavigateRecovery"&gt;
+      &lt;PipelineSequence name="NavigateWithReplanning"&gt;
+        &lt;RateController hz="1.0"&gt;
+          &lt;RecoveryNode number_of_retries="1" name="ComputePathToPose"&gt;
+            &lt;Fallback name="FallbackComputePathToPose"&gt;
+              &lt;ReactiveSequence name="CheckIfNewPathNeeded"&gt;
+                &lt;Inverter&gt;
+                  &lt;GlobalUpdatedGoal/&gt;
+                &lt;/Inverter&gt;
+                &lt;IsGoalNearby path="{path}" proximity_threshold="4.0" max_robot_pose_search_dist="1.5"/&gt;
+                &lt;TruncatePathLocal input_path="{path}" output_path="{remaining_path}" distance_forward="-1" distance_backward="0.0"/&gt;
+                &lt;ValidatePath path="{remaining_path}"/&gt;
+              &lt;/ReactiveSequence&gt;
+              &lt;ComputePathToPose goal="{goal}" path="{path}" planner_id="{selected_planner}" error_code_id="{compute_path_error_code}"/&gt;
+            &lt;/Fallback&gt;
+            &lt;Sequence&gt;
+              &lt;WouldAPlannerRecoveryHelp error_code="{compute_path_error_code}"/&gt;
+              &lt;ClearEntireCostmap name="ClearGlobalCostmap-Context" service_name="global_costmap/clear_entirely_global_costmap"/&gt;
+            &lt;/Sequence&gt;
+          &lt;/RecoveryNode&gt;
+        &lt;/RateController&gt;
+        &lt;RecoveryNode number_of_retries="1" name="FollowPath"&gt;
+          &lt;FollowPath path="{path}" controller_id="{selected_controller}" error_code_id="{follow_path_error_code}"/&gt;
+          &lt;Sequence&gt;
+            &lt;WouldAControllerRecoveryHelp error_code="{follow_path_error_code}"/&gt;
+            &lt;ClearEntireCostmap name="ClearLocalCostmap-Context" service_name="local_costmap/clear_entirely_local_costmap"/&gt;
+          &lt;/Sequence&gt;
+        &lt;/RecoveryNode&gt;
+      &lt;/PipelineSequence&gt;
+      &lt;Sequence&gt;
+        &lt;Fallback&gt;
+          &lt;WouldAControllerRecoveryHelp error_code="{follow_path_error_code}"/&gt;
+          &lt;WouldAPlannerRecoveryHelp error_code="{compute_path_error_code}"/&gt;
+        &lt;/Fallback&gt;
+        &lt;ReactiveFallback name="RecoveryFallback"&gt;
+          &lt;GoalUpdated/&gt;
+          &lt;RoundRobin name="RecoveryActions"&gt;
+            &lt;Sequence name="ClearingActions"&gt;
+              &lt;ClearEntireCostmap name="ClearLocalCostmap-Subtree" service_name="local_costmap/clear_entirely_local_costmap"/&gt;
+              &lt;ClearEntireCostmap name="ClearGlobalCostmap-Subtree" service_name="global_costmap/clear_entirely_global_costmap"/&gt;
+            &lt;/Sequence&gt;
+            &lt;Spin spin_dist="1.57" error_code_id="{spin_error_code}"/&gt;
+            &lt;Wait wait_duration="5.0" error_code_id="{wait_error_code}"/&gt;
+            &lt;BackUp backup_dist="0.30" backup_speed="0.15" error_code_id="{backup_error_code}"/&gt;
+          &lt;/RoundRobin&gt;
+        &lt;/ReactiveFallback&gt;
+      &lt;/Sequence&gt;
+    &lt;/RecoveryNode&gt;
+  &lt;/BehaviorTree&gt;
+&lt;/root&gt;</code></pre>
+                        <p>
+                            Let us dissect how this XML tree operates in practice during a real mission:<sup><a href="#ref-5">[5]</a>, <a href="#ref-6">[6]</a></sup>
+                        </p>
+                        <ol class="article-spec-list">
+                            <li class="article-spec-item">
+                                <strong>Top-level Recovery Loop:</strong> The root element is a <code>RecoveryNode</code> named <code>NavigateRecovery</code> with <code>number_of_retries="6"</code>. Its first child is the entire operational navigation pipeline (<code>NavigateWithReplanning</code>). Its second child is the system recovery subtree executed if the navigation pipeline fails.
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Continuous Pipelined Replanning:</strong> Inside <code>NavigateWithReplanning</code>, a <code>PipelineSequence</code> controls two concurrent actions. First, <code>RateController hz="1.0"</code> throttles the planner: once every second, it checks if an existing path remains valid, and if not, calls <code>ComputePathToPose</code> to update the <code>{path}</code> on the blackboard. Second, <code>FollowPath</code> runs concurrently, reading <code>{path}</code> and dispatching velocity commands to the base.
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Contextual Server Recoveries:</strong> If <code>ComputePathToPose</code> or <code>FollowPath</code> fails, their local <code>RecoveryNode</code> intercepts the failure and attempts a quick contextual recovery (e.g. <code>ClearEntireCostmap</code>) before escalating up the tree.
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Escalating Recovery Subtree:</strong> If contextual fixes fail and <code>NavigateWithReplanning</code> returns <code>FAILURE</code>, the second branch of <code>NavigateRecovery</code> executes. <code>RoundRobin</code> attempts progressively more assertive actions: first clearing both local and global costmaps, then spinning 90 degrees (<code>1.57</code>&nbsp;rad) to clear sensor blind spots, waiting 5.0&nbsp;seconds for dynamic obstacles to walk away, and backing up 0.30&nbsp;meters out of tight corners.
+                            </li>
+                        </ol>
+
+                        <h2 class="article-section-title">04. Lifecycle nodes: starting and stopping in order</h2>
+                        <p>
+                            In complex distributed robotics stacks, nodes that start processing sensor feeds before parameters load or before coordinate transforms are established cause race conditions and sudden crashes. To achieve deterministic startup and shutdown, all Nav2 servers are implemented as <strong>managed lifecycle nodes</strong> following ROS 2 lifecycle state machine standards (REP 124).<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <figure class="lesson-diagram">
                             <svg viewBox="0 0 400 168" role="img" aria-label="Lifecycle states in a row: unconfigured, inactive and active. Configure moves a node from unconfigured to inactive and activate moves it to active; deactivate and clean up go back the other way. From unconfigured, shutting down leads to the finalized state" xmlns="http://www.w3.org/2000/svg">
@@ -238,34 +382,63 @@
                             </svg>
                             <figcaption>The lifecycle states Nav2&rsquo;s servers move through at startup and shutdown.<sup><a href="#ref-1">[1]</a></sup></figcaption>
                         </figure>
+                        <p>
+                            A lifecycle node transitions through four primary states:<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">A node starts in the <strong>unconfigured</strong> state. Only its constructor has run, and that should not set up ROS networking or read parameters.<sup><a href="#ref-1">[1]</a></sup></li>
-                            <li class="article-spec-item">Configuring moves it to <strong>inactive</strong>. The <code>on_configure()</code> method sets up the parameters and the ROS networking interfaces.<sup><a href="#ref-1">[1]</a></sup></li>
-                            <li class="article-spec-item">Activating, through <code>on_activate()</code>, switches the networking interfaces on, and the node starts processing information.<sup><a href="#ref-1">[1]</a></sup></li>
-                            <li class="article-spec-item">To shut down, the node goes through deactivating, cleaning up and shutting down, and ends in the <strong>finalized</strong> state.<sup><a href="#ref-1">[1]</a></sup></li>
+                            <li class="article-spec-item">
+                                <strong>Unconfigured:</strong> The node has been instantiated in memory by its C++ constructor. However, the constructor must <em>never</em> read ROS parameters or declare communication interfaces.
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Inactive:</strong> Triggered by the <code>configure</code> transition executing <code>on_configure()</code>. The node declares parameters, allocates internal buffers, subscribes to static maps and sensor topics, and loads plugin algorithms. Crucially, the node is dormant: it does not process callbacks, publish transforms, or output velocity commands.
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Active:</strong> Triggered by the <code>activate</code> transition executing <code>on_activate()</code>. The node activates its lifecycle publishers, enables execution timers, and begins real-time navigation processing.
+                            </li>
+                            <li class="article-spec-item">
+                                <strong>Finalized:</strong> Triggered by the <code>shutdown</code> transition. Dynamic resources are freed, threads are terminated, and the node is safely destroyed.
+                            </li>
                         </ul>
                         <p>
-                            The transitions are driven by the launch system or by Nav2&rsquo;s lifecycle manager.<sup><a href="#ref-1">[1]</a></sup> <a href="robotics-4-7.html">4.7 Launch Files and Parameters</a> covers launch files.
+                            Instead of relying on random OS thread scheduling, the <strong>Nav2 Lifecycle Manager</strong> (<code>nav2_lifecycle_manager</code>) coordinates transitions across all servers in strict dependency order: <code>map_server</code> &rarr; costmaps &rarr; <code>planner_server</code> &rarr; <code>controller_server</code> &rarr; <code>bt_navigator</code>. Each managed node maintains a <code>bond</code> connection with the lifecycle manager. If any critical server crashes, the bond breaks, triggering the lifecycle manager to gracefully deactivate the entire navigation stack to prevent runaway robots.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
-
-                        <h2 class="article-section-title">04. Where to go next</h2>
                         <p>
-                            To see these parts run, do the lab in <a href="robotics-10-5.html">10.5 Lab: Send a Navigation Goal to Nav2</a>, which starts Nav2 with a simulated robot and sends it a goal. Nav2&rsquo;s own concept pages, which this chapter follows, are grouped under the same five headings: ROS 2, behavior trees, navigation servers, state estimation and environmental representation.<sup><a href="#ref-4">[4]</a></sup> To contribute to Nav2 itself, go back to <a href="robotics-3-5.html">3.5 Case Study: Contributing to Nav2</a>, which lists the contribution steps and will read differently now that you know the parts. <a href="robotics-4-10.html">4.10</a> shows how to run a project&rsquo;s tests and write a bug report before you propose a code change.
+                            You can inspect and control the lifecycle state of any Nav2 server using the ROS 2 command line:<sup><a href="#ref-1">[1]</a></sup>
+                        </p>
+                        <pre class="article-code"><code># Query current state of managed nodes
+$ ros2 lifecycle get /planner_server
+active [3]
+
+$ ros2 lifecycle get /controller_server
+active [3]
+
+$ ros2 lifecycle get /bt_navigator
+active [3]
+
+# Transition a node into inactive state for maintenance or tuning
+$ ros2 lifecycle set /planner_server deactivate
+Transitioning successful</code></pre>
+
+                        <h2 class="article-section-title">05. Where to go next</h2>
+                        <p>
+                            To see these parts run in a live environment, proceed to <a href="robotics-10-5.html">10.5 Lab: Send a Navigation Goal to Nav2</a>, which boots Nav2 with the loopback simulator, transitions managed nodes into the active state, and dispatches real navigation goals. Nav2&rsquo;s architectural concepts are structured under five core headings: ROS 2, behavior trees, navigation servers, state estimation, and environmental representation.<sup><a href="#ref-7">[7]</a></sup> To contribute upstream plugins or documentation to Nav2, revisit <a href="robotics-3-5.html">3.5 Case Study: Contributing to Nav2</a>, which details Developer Certificate of Origin (DCO) sign-off requirements and pull request guidelines. <a href="robotics-4-10.html">4.10</a> demonstrates how to execute colcon test suites and write structured bug reports.
                         </p>
 
-                        <h2 class="article-section-title">05. Check your understanding</h2>
+                        <h2 class="article-section-title">06. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">What three things pass between an action client and an action server during a navigation task?<details class="check-answer"><summary>Show answer</summary><p>A request (for navigation, a position), feedback while the task runs (for navigation, the time spent navigating and the distance to the goal), and a result at the end (for navigation, a boolean for success). <span class="check-answer-src">(Section 01)</span></p></details></li>
-                            <li class="article-spec-item">Why does Nav2 use a behavior tree in place of one large finite state machine?<details class="check-answer"><summary>Show answer</summary><p>Nav2&rsquo;s documentation contrasts a behavior tree with a finite state machine, which may have dozens of states and hundreds of transitions. With a tree, basic primitives can be created once and reused for many behaviors. <span class="check-answer-src">(Section 02)</span></p></details></li>
-                            <li class="article-spec-item">In which lifecycle state is a node right after its constructor runs, and which two transitions bring it to the state where it processes information?<details class="check-answer"><summary>Show answer</summary><p>It is in the unconfigured state. Configuring (which runs <code>on_configure()</code>) moves it to inactive, and activating (through <code>on_activate()</code>) switches the networking interfaces on so the node starts processing information. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">Why does Nav2 use ROS 2 Actions instead of ROS 2 Services to handle navigation missions?<details class="check-answer"><summary>Show answer</summary><p>Navigation is a long-running, asynchronous, and preemptible task. Services block the client synchronously and cannot stream intermediate feedback (distance remaining, estimated time, tracking error) or accept goal cancellation requests while in transit. <span class="check-answer-src">(Section 01)</span></p></details></li>
+                            <li class="article-spec-item">In BehaviorTree.CPP V4, how does a Condition node differ from an Action node?<details class="check-answer"><summary>Show answer</summary><p>An Action node executes work (often calling an action server or service) and can return RUNNING over multiple ticks before completing. A Condition node inspects instantaneous state without blocking or performing work, immediately returning SUCCESS or FAILURE, and never returns RUNNING. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">What makes <code>PipelineSequence</code> uniquely suited for Nav2 compared to a standard <code>Sequence</code> node?<details class="check-answer"><summary>Show answer</summary><p>A standard Sequence only ticks the current running child. A PipelineSequence re-ticks previous running children on every tick, allowing the global planner to continuously replan the path ahead at a fixed rate while the local controller concurrently executes motion tracking. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">What sequence of recovery actions does the default Nav2 Behavior Tree execute if continuous replanning fails?<details class="check-answer"><summary>Show answer</summary><p>Through a RoundRobin control node, it executes an escalating series of recovery behaviors: first clearing both local and global costmaps, then spinning in place (1.57 rad), waiting 5.0 seconds for dynamic obstacles to clear, and backing up 0.30 meters. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">In which lifecycle state does a node configure its parameters and allocate subscriptions, and can it publish velocity commands in that state?<details class="check-answer"><summary>Show answer</summary><p>In the Inactive state (via <code>on_configure()</code>). It cannot publish velocity commands or process active callbacks until it undergoes the activate transition to the Active state. <span class="check-answer-src">(Section 04)</span></p></details></li>
                         </ul>
 
                         <div class="article-callout try-it">
                             <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                             <ol>
-                                <li>A navigation goal is sent, the planner finds a path, and the controller starts to follow it. List every action involved, from the client application down to the task servers.</li>
-                                <li>Sketch a small behavior tree for &ldquo;go to the charger&rdquo; that uses the whole Nav2 tree as one of its nodes. Which feature of the library makes that possible?</li>
-                                <li>A server&rsquo;s parameters are read in its constructor. Which rule from this lesson does that break, and in which method should that work be done?</li>
+                                <li>A custom AMR needs to navigate to a pallet, pause for 10&nbsp;seconds while an automated conveyor loads a box, and then navigate to a shipping dock. Sketch a BehaviorTree.CPP XML structure combining <code>NavigateToPose</code>, <code>Wait</code>, and <code>Sequence</code> nodes to achieve this workflow.</li>
+                                <li>Open a terminal in a system running Nav2. Use <code>ros2 lifecycle get</code> to inspect the state of <code>/bt_navigator</code>. Then, issue a transition command using <code>ros2 lifecycle set</code> to deactivate and reactivate the node. What happens to the node&rsquo;s bond connection?</li>
+                                <li>During a navigation run, an obstacle suddenly blocks an aisle and the planner server aborts with an error. Trace the exact sequence of behavior tree node ticks from the failing <code>ComputePathToPose</code> action node up to the <code>RecoveryActions</code> RoundRobin subtree.</li>
                             </ol>
                         </div>
 
@@ -276,13 +449,16 @@
                             </div>
                             <!-- /oss-note -->
 
-                        <h2 class="article-section-title">06. References</h2>
-                        <p class="references-note">Source check (November 2026): 4 of 4 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
+                        <h2 class="article-section-title">07. References</h2>
+                        <p class="references-note">Source check (November 2026): 7 of 7 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-10-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                         <ol class="article-spec-list">
                             <li id="ref-1">Nav2, &ldquo;ROS 2&rdquo; (navigation concepts). <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/ros2.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/ros2.md</a>.</li>
-                            <li id="ref-2">Nav2, &ldquo;Behavior Trees.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md</a>.</li>
+                            <li id="ref-2">Nav2 developers, &ldquo;NavigateToPose.action,&rdquo; nav2_msgs package, lyrical branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_msgs/action/NavigateToPose.action" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/lyrical/nav2_msgs/action/NavigateToPose.action</a>.</li>
                             <li id="ref-3">Nav2, &ldquo;Navigation Servers.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/navigation_servers.md</a>.</li>
-                            <li id="ref-4">Nav2, &ldquo;Navigation Concepts.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md</a>.</li>
+                            <li id="ref-4">Nav2, &ldquo;Behavior Trees.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/behavior_trees.md</a>.</li>
+                            <li id="ref-5">Nav2, &ldquo;Introduction To Nav2 Specific Nodes.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/nav2_behavior_trees/nav2_specific_nodes/nav2_specific_nodes.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/nav2_behavior_trees/nav2_specific_nodes/nav2_specific_nodes.md</a>.</li>
+                            <li id="ref-6">Nav2 developers, &ldquo;navigate_to_pose_w_replanning_and_recovery.xml,&rdquo; nav2_bt_navigator package, lyrical branch. <a href="https://github.com/ros-navigation/navigation2/blob/lyrical/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/navigation2/blob/lyrical/nav2_bt_navigator/behavior_trees/navigate_to_pose_w_replanning_and_recovery.xml</a>.</li>
+                            <li id="ref-7">Nav2, &ldquo;Navigation Concepts.&rdquo; <a href="https://github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md" target="_blank" rel="noopener noreferrer">github.com/ros-navigation/docs.nav2.org/blob/rolling/docs/getting_started/navigation_concepts/index.md</a>.</li>
                         </ol>
 
 
@@ -320,7 +496,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-        <script src="assets/js/course-data.js?v=f7abda2d" defer></script>
+        <script src="assets/js/course-data.js?v=6002944a" defer></script>
         <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
         <script src="assets/js/learning.js?v=42e08602" defer></script>
 
