@@ -1412,9 +1412,37 @@ ol.article-spec-list { list-style: decimal; }
 .glossary-list dd { margin: 2px 0 0 0; }
 .glossary-list dd a { font-size: inherit; }
 .glossary-filter { width: 100%; max-width: 360px; padding: 6px 8px; margin: 4px 0 8px; font: inherit; color: var(--wp-text); background: var(--wp-bg); border: 1px solid var(--wp-border); }
+/* 3D widgets (robot-arm-3d, amr-frames-3d) */
+.w3d-canvas {
+	--w3d-x: #d92b2b; --w3d-y: #2b8a3e; --w3d-z: #1864ab;
+	--w3d-beam: rgba(8, 145, 178, 0.3); --w3d-hit: #0891b2; --w3d-shadow: #202122;
+	background: var(--wp-bg); border: 1px solid var(--wp-border-light); border-radius: 4px;
+	user-select: none; -webkit-user-select: none; overflow: hidden;
+}
+[data-theme="dark"] .w3d-canvas {
+	--w3d-x: #ff6b6b; --w3d-y: #69db7c; --w3d-z: #74c0fc;
+	--w3d-beam: rgba(34, 211, 238, 0.28); --w3d-hit: #22d3ee; --w3d-shadow: #000;
+}
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) .w3d-canvas {
+		--w3d-x: #ff6b6b; --w3d-y: #69db7c; --w3d-z: #74c0fc;
+		--w3d-beam: rgba(34, 211, 238, 0.28); --w3d-hit: #22d3ee; --w3d-shadow: #000;
+	}
+}
+.w3d-canvas:focus-visible { outline: 3px solid var(--wp-link); outline-offset: 2px; }
+.w3d-shadow { fill: var(--w3d-shadow); stroke: var(--w3d-shadow); opacity: 0.14; }
+.w3d-label { paint-order: stroke; stroke: var(--wp-bg); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
+.w3d-handle { fill: none; stroke: var(--wp-gold-text); stroke-width: 2; stroke-dasharray: 4 3; pointer-events: none; }
+.w3d-handle-active { stroke-width: 3; stroke-dasharray: none; }
+.w3d-view, .w3d-jog { align-items: center; }
+.w3d-view-label { font-size: 13px; font-weight: 700; color: var(--wp-text-muted); min-width: 4.5em; }
+.w3d-hold { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.w3d-hint { margin-top: 0; }
 @media screen and (max-width: 736px) {
 	.widget-control { grid-template-columns: 1fr 56px; }
 	.widget-control label { grid-column: 1 / -1; }
+	.widget-check { grid-template-columns: auto 1fr; }
+	.widget-check label { grid-column: auto; }
 }
 
 /* ==========================================================================

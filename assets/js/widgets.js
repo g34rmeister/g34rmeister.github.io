@@ -4540,898 +4540,1111 @@
 	}
 
 /* ==========================================================================
-   3D Robotics Visualizations: Robot Arm Kinematics & AMR Frame Transforms
+   3D engine for robot-arm-3d (1.3) and amr-frames-3d (10.1). No libraries: a perspective
+   camera, painter's sort per solid with back-face culling, and fixed layers (floor, shadows,
+   solids, labels). The camera is always above the floor, so nothing drawn on the floor can
+   cover a solid, and labels are placed last so they stay readable.
    ========================================================================== */
 
 var DEG2RAD = Math.PI / 180;
-
-function createCamera3D(target, dist, focal, az, el) {
-	return {
-		target: target || [0, 0, 0],
-		dist: dist || 2.4,
-		focal: focal || 400,
-		azimuth: az || 35,
-		elevation: el || 28
-	};
-}
-
-function projectPoint3D(p, cam, width, height) {
-	var az = cam.azimuth * DEG2RAD, el = cam.elevation * DEG2RAD;
-	var cosAz = Math.cos(az), sinAz = Math.sin(az);
-	var cosEl = Math.cos(el), sinEl = Math.sin(el);
-
-	var dx = p[0] - cam.target[0];
-	var dy = p[1] - cam.target[1];
-	var dz = p[2] - cam.target[2];
-
-	var rx = dx * cosAz + dy * sinAz;
-	var ry = -dx * sinAz + dy * cosAz;
-	var rz = dz;
-
-	var cx = rx;
-	var cy = -ry * sinEl + rz * cosEl;
-	var cz = ry * cosEl + rz * sinEl + cam.dist;
-
-	if (cz < 0.05) cz = 0.05;
-
-	var u = width * 0.5 + (cam.focal * cx) / cz;
-	var v = height * 0.5 - (cam.focal * cy) / cz;
-	return { u: u, v: v, depth: cz };
-}
+var REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
 function add3(a, b) { return [a[0] + b[0], a[1] + b[1], a[2] + b[2]]; }
 function sub3(a, b) { return [a[0] - b[0], a[1] - b[1], a[2] - b[2]]; }
-function scale3(v, s) { return [v[0] * s, v[1] * s, v[2] * s]; }
+function scale3(v, k) { return [v[0] * k, v[1] * k, v[2] * k]; }
 function dot3(a, b) { return a[0] * b[0] + a[1] * b[1] + a[2] * b[2]; }
 function cross3(a, b) { return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]; }
+function lerp3(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]; }
 function norm3(v) {
 	var len = Math.hypot(v[0], v[1], v[2]);
-	return len > 1e-6 ? [v[0] / len, v[1] / len, v[2] / len] : [0, 0, 1];
+	return len > 1e-9 ? [v[0] / len, v[1] / len, v[2] / len] : [0, 0, 1];
 }
+function wrapDeg(a) { a = ((a + 180) % 360 + 360) % 360 - 180; return a; }
+function wrapRad(a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
+function clampN(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function signed(v, digits) { return (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(digits); }
 
 function shadeHex(hex, factor) {
 	if (!hex || hex.charAt(0) !== '#') return hex;
 	var c = hex.slice(1);
 	if (c.length === 3) c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
 	var num = parseInt(c, 16);
-	var r = Math.min(255, Math.max(0, Math.round(((num >> 16) & 255) * factor)));
-	var g = Math.min(255, Math.max(0, Math.round(((num >> 8) & 255) * factor)));
-	var b = Math.min(255, Math.max(0, Math.round((num & 255) * factor)));
+	var r = clampN(Math.round(((num >> 16) & 255) * factor), 0, 255);
+	var g = clampN(Math.round(((num >> 8) & 255) * factor), 0, 255);
+	var b = clampN(Math.round((num & 255) * factor), 0, 255);
 	return 'rgb(' + r + ',' + g + ',' + b + ')';
 }
 
-function attachOrbitControls(svg, cam, onUpdate, azSlider, elSlider) {
-	var dragging = false, startX = 0, startY = 0, startAz = cam.azimuth, startEl = cam.elevation;
-	svg.style.cursor = 'grab';
-	svg.style.touchAction = 'none';
-
-	function onDown(e) {
-		dragging = true;
-		startX = e.clientX;
-		startY = e.clientY;
-		startAz = cam.azimuth;
-		startEl = cam.elevation;
-		svg.style.cursor = 'grabbing';
-		if (svg.setPointerCapture) { try { svg.setPointerCapture(e.pointerId); } catch (_) {} }
-	}
-	function onMove(e) {
-		if (!dragging) return;
-		var dx = e.clientX - startX, dy = e.clientY - startY;
-		var newAz = (startAz + dx * 0.5 + 360) % 360;
-		if (newAz > 180) newAz -= 360;
-		var newEl = Math.max(10, Math.min(85, startEl - dy * 0.4));
-		cam.azimuth = Math.round(newAz);
-		cam.elevation = Math.round(newEl);
-		if (azSlider) { azSlider.input.value = cam.azimuth; azSlider.out.textContent = cam.azimuth + '°'; }
-		if (elSlider) { elSlider.input.value = cam.elevation; elSlider.out.textContent = cam.elevation + '°'; }
-		onUpdate();
-	}
-	function onUp(e) {
-		if (!dragging) return;
-		dragging = false;
-		svg.style.cursor = 'grab';
-		if (svg.releasePointerCapture) { try { svg.releasePointerCapture(e.pointerId); } catch (_) {} }
-	}
-	svg.addEventListener('pointerdown', onDown);
-	svg.addEventListener('pointermove', onMove);
-	svg.addEventListener('pointerup', onUp);
-	svg.addEventListener('pointercancel', onUp);
+/* True when the widget sits on a dark background (either the dark theme or the OS setting). */
+function isDarkWidget(node) {
+	var bg = getComputedStyle(node).getPropertyValue('--wp-bg-subtle').trim();
+	var m = /^#([0-9a-f]{6})$/i.exec(bg);
+	if (!m) return false;
+	var n = parseInt(m[1], 16);
+	return ((n >> 16) & 255) * 0.299 + ((n >> 8) & 255) * 0.587 + (n & 255) * 0.114 < 110;
 }
 
-function render3DScene(svg, items) {
-	items.sort(function (a, b) { return b.depth - a.depth; });
-	svg.replaceChildren();
-	for (var i = 0; i < items.length; i++) {
-		svg.appendChild(items[i].render());
-	}
+function createCamera3D(target, dist, focal, az, el) {
+	var cam = { target: target.slice(), dist: dist, focal: focal, azimuth: az, elevation: el,
+		minDist: dist * 0.45, maxDist: dist * 2.2, minEl: 5, maxEl: 89 };
+	cam.home = { azimuth: az, elevation: el, dist: dist };
+	return cam;
 }
 
-function push3DLine(p1, p2, cam, w, h, attrs, scene) {
-	var pr1 = projectPoint3D(p1, cam, w, h);
-	var pr2 = projectPoint3D(p2, cam, w, h);
-	var depth = (pr1.depth + pr2.depth) * 0.5;
-	scene.push({
-		depth: depth,
-		render: function () {
-			return s('line', Object.assign({
-				x1: pr1.u.toFixed(1), y1: pr1.v.toFixed(1),
-				x2: pr2.u.toFixed(1), y2: pr2.v.toFixed(1)
-			}, attrs));
-		}
+/* Camera axes in world coordinates. Azimuth turns about world Z; elevation lifts the camera
+   above the floor and tilts it down towards the target. */
+function cameraBasis(cam) {
+	var key = cam.azimuth + ',' + cam.elevation + ',' + cam.dist + ',' + cam.target.join(',');
+	if (cam.b && cam.b.key === key) return cam.b;
+	var a = cam.azimuth * DEG2RAD, e = cam.elevation * DEG2RAD;
+	var ca = Math.cos(a), sa = Math.sin(a), ce = Math.cos(e), se = Math.sin(e);
+	var forward = [-sa * ce, ca * ce, -se];
+	cam.b = {
+		key: key,
+		right: [ca, sa, 0],
+		up: [-sa * se, ca * se, ce],
+		forward: forward,
+		pos: sub3(cam.target, scale3(forward, cam.dist))
+	};
+	return cam.b;
+}
+
+function projectPoint3D(p, cam, W, H) {
+	var b = cameraBasis(cam), d = sub3(p, cam.target);
+	var cz = dot3(d, b.forward) + cam.dist;
+	if (cz < 0.05) cz = 0.05;
+	return { u: W * 0.5 + cam.focal * dot3(d, b.right) / cz, v: H * 0.5 - cam.focal * dot3(d, b.up) / cz, depth: cz };
+}
+
+/* The world point on the horizontal plane z = z0 under a viewBox pixel, or null if the ray misses it. */
+function unprojectToPlane(u, v, cam, W, H, z0) {
+	var b = cameraBasis(cam);
+	var dir = add3(b.forward, add3(scale3(b.right, (u - W * 0.5) / cam.focal), scale3(b.up, -(v - H * 0.5) / cam.focal)));
+	if (Math.abs(dir[2]) < 1e-6) return null;
+	var t = ((z0 || 0) - b.pos[2]) / dir[2];
+	return t > 0 ? add3(b.pos, scale3(dir, t)) : null;
+}
+
+/* Screen-plane drag (viewBox pixels) to a world displacement at a given depth. */
+function screenDeltaToWorld(du, dv, depth, cam) {
+	var b = cameraBasis(cam), k = depth / cam.focal;
+	return add3(scale3(b.right, du * k), scale3(b.up, -dv * k));
+}
+
+function newScene3D(cam, W, H, light) {
+	return { cam: cam, W: W, H: H, light: light, floor: [], shadow: [], items: [], labels: [] };
+}
+
+function pr3(sc, p) { return projectPoint3D(p, sc.cam, sc.W, sc.H); }
+
+/* layer: 'floor' (drawn first, in order), 'shadow', or default (depth-sorted solids). */
+function line3D(sc, p1, p2, attrs, layer) {
+	var a = pr3(sc, p1), b = pr3(sc, p2);
+	var node = s('line', Object.assign({ x1: a.u.toFixed(1), y1: a.v.toFixed(1), x2: b.u.toFixed(1), y2: b.v.toFixed(1) }, attrs));
+	if (layer === 'floor') sc.floor.push(node);
+	else sc.items.push({ depth: (a.depth + b.depth) * 0.5 + ((attrs && attrs.depthBias) || 0), nodes: [node] });
+}
+
+function polyline3D(sc, points, attrs, layer) {
+	if (points.length < 2) return;
+	var str = points.map(function (p) { var q = pr3(sc, p); return q.u.toFixed(1) + ',' + q.v.toFixed(1); }).join(' ');
+	var node = s('polyline', Object.assign({ points: str, fill: 'none' }, attrs));
+	(layer === 'shadow' ? sc.shadow : sc.floor).push(node);
+}
+
+function dot3D(sc, p, r, attrs, depthBias) {
+	var q = pr3(sc, p);
+	sc.items.push({ depth: q.depth + (depthBias || 0), nodes: [s('circle', Object.assign({ cx: q.u.toFixed(1), cy: q.v.toFixed(1), r: r }, attrs))] });
+}
+
+/* One face. Returns an SVG node, or null when culled (facing away from the camera). */
+function face3D(sc, pts, fill, opts) {
+	opts = opts || {};
+	var n = norm3(cross3(sub3(pts[1], pts[0]), sub3(pts[2], pts[0])));
+	if (opts.cull && dot3(n, sub3(cameraBasis(sc.cam).pos, pts[0])) <= 0) return null;
+	var col = fill;
+	if (sc.light && fill && fill.charAt(0) === '#' && opts.shade !== false) {
+		col = shadeHex(fill, 0.5 + 0.55 * Math.max(0, dot3(n, sc.light)) + (opts.boost || 0));
+	}
+	var str = pts.map(function (p) { var q = pr3(sc, p); return q.u.toFixed(1) + ',' + q.v.toFixed(1); }).join(' ');
+	var a = { points: str, fill: col };
+	if (opts.solid) { a.stroke = col; a['stroke-width'] = '0.8'; a['stroke-linejoin'] = 'round'; }
+	return s('polygon', Object.assign(a, opts.attrs || {}));
+}
+
+/* A convex solid: its visible faces are pushed as one depth-sorted group. */
+function solid3D(sc, faces, fill, centre, opts) {
+	opts = opts || {};
+	var wire = !!opts.attrs;
+	var nodes = [];
+	faces.forEach(function (f) {
+		var node = face3D(sc, f.pts, f.fill || fill, { cull: !wire, solid: !wire, boost: f.boost, attrs: opts.attrs, shade: !wire });
+		if (node) nodes.push(node);
 	});
+	if (nodes.length) sc.items.push({ depth: pr3(sc, centre).depth + (opts.depthBias || 0), nodes: nodes });
 }
 
-function push3DPoly(points3D, cam, w, h, baseFill, attrs, scene, lightVec) {
-	var projected = [], totalDepth = 0;
-	for (var i = 0; i < points3D.length; i++) {
-		var pr = projectPoint3D(points3D[i], cam, w, h);
-		projected.push(pr);
-		totalDepth += pr.depth;
-	}
-	var avgDepth = totalDepth / points3D.length;
-
-	var fill = baseFill;
-	if (lightVec && points3D.length >= 3) {
-		var v1 = sub3(points3D[1], points3D[0]);
-		var v2 = sub3(points3D[2], points3D[0]);
-		var n = norm3(cross3(v1, v2));
-		var diffuse = Math.max(0, dot3(n, lightVec));
-		fill = shadeHex(baseFill, 0.45 + 0.55 * diffuse);
-	}
-
-	var ptsStr = projected.map(function (p) { return p.u.toFixed(1) + ',' + p.v.toFixed(1); }).join(' ');
-	scene.push({
-		depth: avgDepth,
-		render: function () {
-			return s('polygon', Object.assign({ points: ptsStr, fill: fill }, attrs || {}));
-		}
-	});
-}
-
-function push3DBox(center, size, yawRad, cam, w, h, baseFill, scene, lightVec, attrs) {
+function boxFaces(center, size, yawRad) {
 	var hx = size[0] * 0.5, hy = size[1] * 0.5, hz = size[2] * 0.5;
-	var cosY = Math.cos(yawRad || 0), sinY = Math.sin(yawRad || 0);
-
-	function tf(lx, ly, lz) {
-		var rx = lx * cosY - ly * sinY;
-		var ry = lx * sinY + ly * cosY;
-		return [center[0] + rx, center[1] + ry, center[2] + lz];
-	}
-
+	var c = Math.cos(yawRad || 0), sn = Math.sin(yawRad || 0);
+	function tf(lx, ly, lz) { return [center[0] + lx * c - ly * sn, center[1] + lx * sn + ly * c, center[2] + lz]; }
 	var p0 = tf(-hx, -hy, -hz), p1 = tf(hx, -hy, -hz), p2 = tf(hx, hy, -hz), p3 = tf(-hx, hy, -hz);
 	var p4 = tf(-hx, -hy, hz), p5 = tf(hx, -hy, hz), p6 = tf(hx, hy, hz), p7 = tf(-hx, hy, hz);
-
-	var faces = [
-		[p0, p3, p2, p1], // bottom
-		[p4, p5, p6, p7], // top
-		[p0, p1, p5, p4], // front
-		[p2, p3, p7, p6], // back
-		[p3, p0, p4, p7], // left
-		[p1, p2, p6, p5]  // right
-	];
-
-	for (var f = 0; f < faces.length; f++) {
-		push3DPoly(faces[f], cam, w, h, baseFill, attrs, scene, lightVec);
-	}
+	return {
+		faces: [
+			{ pts: [p0, p3, p2, p1] }, { pts: [p4, p5, p6, p7], boost: 0.06 },
+			{ pts: [p0, p1, p5, p4] }, { pts: [p2, p3, p7, p6] },
+			{ pts: [p3, p0, p4, p7] }, { pts: [p1, p2, p6, p5] }
+		],
+		footprint: [p0, p1, p2, p3]
+	};
 }
 
-function push3DCylinder(pBase, pTop, radius, cam, w, h, baseFill, scene, lightVec, segments, attrs) {
-	var nSeg = segments || 10;
-	var axis = sub3(pTop, pBase);
-	var height = Math.hypot(axis[0], axis[1], axis[2]);
-	var zAxis = norm3(axis);
-	var up = Math.abs(zAxis[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
-	var xAxis = norm3(cross3(up, zAxis));
-	var yAxis = norm3(cross3(zAxis, xAxis));
+function box3D(sc, center, size, yawRad, fill, opts) {
+	var bx = boxFaces(center, size, yawRad);
+	solid3D(sc, bx.faces, fill, center, opts);
+	if (opts && opts.shadow) shadowPoly3D(sc, bx.footprint);
+}
 
-	var bottomPts = [], topPts = [];
+/* A box whose local axes are given (for parts that follow the tool frame). */
+function orientedBox3D(sc, center, half, ax, fill) {
+	function tf(a, b, c) { return add3(center, add3(scale3(ax.x, a * half[0]), add3(scale3(ax.y, b * half[1]), scale3(ax.z, c * half[2])))); }
+	var p0 = tf(-1, -1, -1), p1 = tf(1, -1, -1), p2 = tf(1, 1, -1), p3 = tf(-1, 1, -1);
+	var p4 = tf(-1, -1, 1), p5 = tf(1, -1, 1), p6 = tf(1, 1, 1), p7 = tf(-1, 1, 1);
+	solid3D(sc, [{ pts: [p0, p3, p2, p1] }, { pts: [p4, p5, p6, p7] }, { pts: [p0, p1, p5, p4] },
+		{ pts: [p2, p3, p7, p6] }, { pts: [p3, p0, p4, p7] }, { pts: [p1, p2, p6, p5] }], fill, center);
+}
+
+function cylinder3D(sc, pBase, pTop, radius, fill, opts) {
+	opts = opts || {};
+	var nSeg = opts.segments || 14;
+	var zAxis = norm3(sub3(pTop, pBase));
+	var upv = Math.abs(zAxis[2]) < 0.9 ? [0, 0, 1] : [1, 0, 0];
+	var xAxis = norm3(cross3(upv, zAxis)), yAxis = cross3(zAxis, xAxis);
+	var bottom = [], top = [];
 	for (var i = 0; i < nSeg; i++) {
 		var th = (i / nSeg) * 2 * Math.PI;
-		var c = Math.cos(th) * radius, sAng = Math.sin(th) * radius;
-		var radial = add3(scale3(xAxis, c), scale3(yAxis, sAng));
-		bottomPts.push(add3(pBase, radial));
-		topPts.push(add3(pTop, radial));
+		var radial = add3(scale3(xAxis, Math.cos(th) * radius), scale3(yAxis, Math.sin(th) * radius));
+		bottom.push(add3(pBase, radial));
+		top.push(add3(pTop, radial));
 	}
-
-	// Side quads
+	var faces = [];
 	for (var j = 0; j < nSeg; j++) {
-		var next = (j + 1) % nSeg;
-		var quad = [bottomPts[j], bottomPts[next], topPts[next], topPts[j]];
-		push3DPoly(quad, cam, w, h, baseFill, attrs, scene, lightVec);
+		var k = (j + 1) % nSeg;
+		faces.push({ pts: [bottom[j], bottom[k], top[k], top[j]] });
 	}
-	// Top disk
-	push3DPoly(topPts, cam, w, h, shadeHex(baseFill, 1.15), attrs, scene, lightVec);
-	// Bottom disk
-	push3DPoly(bottomPts.slice().reverse(), cam, w, h, shadeHex(baseFill, 0.75), attrs, scene, lightVec);
+	faces.push({ pts: top, boost: 0.08 });
+	faces.push({ pts: bottom.slice().reverse() });
+	solid3D(sc, faces, fill, lerp3(pBase, pTop, 0.5), opts);
+	if (opts.shadow) {
+		if (Math.abs(zAxis[2]) > 0.95) shadowPoly3D(sc, bottom);
+		else shadowSegment3D(sc, pBase, pTop, radius);
+	}
 }
 
-function push3DAxes(origin, rotMatrix, length, cam, w, h, frameName, scene) {
-	var rx = (rotMatrix && rotMatrix.x) ? rotMatrix.x : [1, 0, 0];
-	var ry = (rotMatrix && rotMatrix.y) ? rotMatrix.y : [0, 1, 0];
-	var rz = (rotMatrix && rotMatrix.z) ? rotMatrix.z : [0, 0, 1];
+/* Shadows: straight down onto the floor, merged into one translucent layer. */
+function shadowPoly3D(sc, pts) {
+	var str = pts.map(function (p) { var q = pr3(sc, [p[0], p[1], 0]); return q.u.toFixed(1) + ',' + q.v.toFixed(1); }).join(' ');
+	sc.shadow.push(s('polygon', { points: str }));
+}
+function shadowSegment3D(sc, p1, p2, radius) {
+	var a = pr3(sc, [p1[0], p1[1], 0]), b = pr3(sc, [p2[0], p2[1], 0]);
+	var wpx = 2 * radius * sc.cam.focal / ((a.depth + b.depth) * 0.5);
+	sc.shadow.push(s('line', { x1: a.u.toFixed(1), y1: a.v.toFixed(1), x2: b.u.toFixed(1), y2: b.v.toFixed(1),
+		'stroke-width': wpx.toFixed(1), 'stroke-linecap': 'round' }));
+}
 
-	var pX = add3(origin, scale3(rx, length));
-	var pY = add3(origin, scale3(ry, length));
-	var pZ = add3(origin, scale3(rz, length));
+/* Labels are placed after all geometry, nudged so they do not overlap, with a halo. */
+function label3D(sc, p, text, opts) {
+	opts = opts || {};
+	var q = pr3(sc, p);
+	sc.labels.push({ u: q.u + (opts.dx || 0), v: q.v + (opts.dy === undefined ? -6 : opts.dy), text: text,
+		fill: opts.fill || 'var(--wp-text, #202122)', size: opts.size || 11, mono: opts.mono !== false, weight: opts.weight || '700' });
+}
 
-	// X (Red)
-	push3DLine(origin, pX, cam, w, h, { stroke: '#e03131', 'stroke-width': '3', 'stroke-linecap': 'round' }, scene);
-	// Y (Green)
-	push3DLine(origin, pY, cam, w, h, { stroke: '#2f9e44', 'stroke-width': '3', 'stroke-linecap': 'round' }, scene);
-	// Z (Blue)
-	push3DLine(origin, pZ, cam, w, h, { stroke: '#1971c2', 'stroke-width': '3', 'stroke-linecap': 'round' }, scene);
-
-	var prOrg = projectPoint3D(origin, cam, w, h);
-	scene.push({
-		depth: prOrg.depth - 0.02,
-		render: function () {
-			var g = s('g', {});
-			var circ = s('circle', {
-				cx: prOrg.u.toFixed(1), cy: prOrg.v.toFixed(1), r: '4',
-				fill: 'var(--wp-bg, #ffffff)', stroke: 'var(--wp-text, #202122)', 'stroke-width': '1.5'
-			});
-			g.appendChild(circ);
-			if (frameName) {
-				var txt = s('text', {
-					x: (prOrg.u + 6).toFixed(1), y: (prOrg.v - 6).toFixed(1),
-					fill: 'var(--wp-text, #202122)', 'font-size': '11px',
-					'font-family': 'var(--wp-mono, monospace)', 'font-weight': 'bold'
-				});
-				txt.textContent = frameName;
-				g.appendChild(txt);
-			}
-			return g;
+/* An RGB tripod (X red, Y green, Z blue) with arrowheads, an origin dot and a frame name. */
+function axes3D(sc, origin, R, len, name) {
+	R = R || { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] };
+	var o = pr3(sc, origin);
+	[['x', 'var(--w3d-x, #d92b2b)'], ['y', 'var(--w3d-y, #2b8a3e)'], ['z', 'var(--w3d-z, #1864ab)']].forEach(function (ax) {
+		var tip = add3(origin, scale3(R[ax[0]], len)), t = pr3(sc, tip);
+		var du = t.u - o.u, dv = t.v - o.v, l = Math.hypot(du, dv);
+		var nodes = [s('line', { x1: o.u.toFixed(1), y1: o.v.toFixed(1), x2: t.u.toFixed(1), y2: t.v.toFixed(1),
+			stroke: ax[1], 'stroke-width': '2.5', 'stroke-linecap': 'round' })];
+		if (l > 8) {
+			var ux = du / l, uy = dv / l, bx = t.u - ux * 7, by = t.v - uy * 7;
+			nodes.push(s('polygon', { fill: ax[1], points: [t.u + ux * 2, t.v + uy * 2, bx - uy * 3.5, by + ux * 3.5, bx + uy * 3.5, by - ux * 3.5]
+				.map(function (n) { return n.toFixed(1); }).join(' ') }));
 		}
+		sc.items.push({ depth: (o.depth + t.depth) * 0.5 - 0.001, nodes: nodes });
 	});
+	sc.items.push({ depth: o.depth - 0.002, nodes: [s('circle', { cx: o.u.toFixed(1), cy: o.v.toFixed(1), r: '3.5',
+		fill: 'var(--wp-bg, #fff)', stroke: 'var(--wp-text, #202122)', 'stroke-width': '1.5' })] });
+	if (name) label3D(sc, origin, name, { dx: 7, dy: -7 });
+}
 
-	[['X', pX, '#e03131'], ['Y', pY, '#2f9e44'], ['Z', pZ, '#1971c2']].forEach(function (lbl) {
-		var pr = projectPoint3D(lbl[1], cam, w, h);
-		scene.push({
-			depth: pr.depth - 0.02,
-			render: function () {
-				var txt = s('text', {
-					x: (pr.u + 2).toFixed(1), y: (pr.v - 2).toFixed(1),
-					fill: lbl[2], 'font-size': '10px',
-					'font-family': 'var(--wp-sans, sans-serif)', 'font-weight': 'bold'
-				});
-				txt.textContent = lbl[0];
-				return txt;
-			}
+function renderScene3D(svg, sc) {
+	var frag = document.createDocumentFragment();
+	sc.floor.forEach(function (n) { frag.appendChild(n); });
+	if (sc.shadow.length) {
+		var g = s('g', { 'class': 'w3d-shadow', 'aria-hidden': 'true' });
+		sc.shadow.forEach(function (n) { g.appendChild(n); });
+		frag.appendChild(g);
+	}
+	sc.items.sort(function (a, b) { return b.depth - a.depth; });
+	sc.items.forEach(function (it) { it.nodes.forEach(function (n) { frag.appendChild(n); }); });
+	var placed = [];
+	sc.labels.forEach(function (lb) {
+		var wpx = lb.text.length * lb.size * (lb.mono ? 0.62 : 0.56), x = clampN(lb.u, 2, sc.W - wpx - 2), best = null;
+		[0, -13, 13, -26, 26, -39].some(function (off) {
+			var y = clampN(lb.v + off, lb.size + 2, sc.H - 3), box = [x - 1, y - lb.size, x + wpx + 1, y + 3];
+			var hit = placed.some(function (p) { return box[0] < p[2] && box[2] > p[0] && box[1] < p[3] && box[3] > p[1]; });
+			if (!best || !hit) best = { y: y, box: box };
+			return !hit;
+		});
+		placed.push(best.box);
+		var tn = s('text', { x: x.toFixed(1), y: best.y.toFixed(1), fill: lb.fill, 'font-size': lb.size + 'px',
+			'font-weight': lb.weight, 'font-family': lb.mono ? 'var(--wp-mono, monospace)' : 'var(--wp-sans, sans-serif)', 'class': 'w3d-label' });
+		tn.textContent = lb.text;
+		frag.appendChild(tn);
+	});
+	svg.replaceChildren(frag);
+}
+
+function floorGrid3D(sc, xMin, xMax, yMin, yMax, step) {
+	var attrs = { stroke: 'var(--wp-border-light, #c8ccd1)', 'stroke-width': '1', opacity: '0.7' };
+	for (var x = xMin; x <= xMax + 1e-6; x += step) line3D(sc, [x, yMin, 0], [x, yMax, 0], attrs, 'floor');
+	for (var y = yMin; y <= yMax + 1e-6; y += step) line3D(sc, [xMin, y, 0], [xMax, y, 0], attrs, 'floor');
+}
+
+/* Draws at most once per animation frame however many inputs fire. */
+function frameScheduler(fn) {
+	var pending = false;
+	return function () {
+		if (pending) return;
+		pending = true;
+		requestAnimationFrame(function () { pending = false; fn(); });
+	};
+}
+
+function syncCameraSliders(cam, ctl) {
+	if (ctl.az) { ctl.az.input.value = Math.round(cam.azimuth); ctl.az.out.textContent = Math.round(cam.azimuth) + '°'; }
+	if (ctl.el) { ctl.el.input.value = Math.round(cam.elevation); ctl.el.out.textContent = Math.round(cam.elevation) + '°'; }
+}
+
+function tweenCamera(cam, to, redraw, ctl) {
+	if (cam.tween) cancelAnimationFrame(cam.tween);
+	var from = { az: cam.azimuth, el: cam.elevation, d: cam.dist };
+	var dAz = wrapDeg(to.azimuth - from.az), dEl = to.elevation - from.el, dD = (to.dist || from.d) - from.d;
+	var t0 = null, dur = REDUCED_MOTION ? 0 : 380;
+	function step(ts) {
+		if (t0 === null) t0 = ts;
+		var k = dur ? Math.min(1, (ts - t0) / dur) : 1, e = 0.5 - 0.5 * Math.cos(k * Math.PI);
+		cam.azimuth = wrapDeg(from.az + dAz * e);
+		cam.elevation = from.el + dEl * e;
+		cam.dist = from.d + dD * e;
+		syncCameraSliders(cam, ctl);
+		redraw();
+		cam.tween = k < 1 ? requestAnimationFrame(step) : null;
+	}
+	cam.tween = requestAnimationFrame(step);
+}
+
+function zoomCamera(cam, factor) { cam.dist = clampN(cam.dist * factor, cam.minDist, cam.maxDist); }
+
+/* Mouse, touch and keyboard camera control for a 3D SVG.
+   ctl: { az, el: camera sliders; onPointerDown(pt, e) -> drag handler {move, up, cursor} or null;
+          hover(pt) -> cursor or null; onTap(pt); onKey(e, down) -> true if handled; home: view to reset to } */
+function orbitControls(svg, cam, redraw, ctl) {
+	var vb = svg.viewBox.baseVal, W = vb.width, H = vb.height;
+	var pointers = {}, drag = null, pinch = null;
+	svg.setAttribute('tabindex', '0');
+	svg.style.touchAction = 'none';
+	svg.style.cursor = 'grab';
+	function toView(e) {
+		var r = svg.getBoundingClientRect();
+		return { x: (e.clientX - r.left) * W / (r.width || W), y: (e.clientY - r.top) * H / (r.height || H) };
+	}
+	function changed() { syncCameraSliders(cam, ctl); redraw(); }
+	function pinchSpan() { var ids = Object.keys(pointers), a = pointers[ids[0]], b = pointers[ids[1]]; return Math.hypot(a.x - b.x, a.y - b.y); }
+	svg.addEventListener('pointerdown', function (e) {
+		if (e.button) return;
+		if (cam.tween) { cancelAnimationFrame(cam.tween); cam.tween = null; }
+		var pt = toView(e);
+		pointers[e.pointerId] = pt;
+		try { svg.setPointerCapture(e.pointerId); } catch (_) { /* not capturable */ }
+		var n = Object.keys(pointers).length;
+		if (n === 2) {
+			if (drag && drag.handler && drag.handler.up) drag.handler.up();
+			drag = null;
+			pinch = { span: Math.max(10, pinchSpan()), dist: cam.dist };
+			return;
+		}
+		if (n > 2) return;
+		var handler = ctl.onPointerDown ? ctl.onPointerDown(pt, e) : null;
+		drag = { x: pt.x, y: pt.y, az: cam.azimuth, el: cam.elevation, handler: handler, moved: false };
+		svg.style.cursor = handler ? (handler.cursor || 'move') : 'grabbing';
+		e.preventDefault();
+	});
+	svg.addEventListener('pointermove', function (e) {
+		var pt = toView(e);
+		if (pointers[e.pointerId]) pointers[e.pointerId] = pt;
+		if (pinch) {
+			if (Object.keys(pointers).length < 2) return;
+			cam.dist = clampN(pinch.dist * pinch.span / Math.max(10, pinchSpan()), cam.minDist, cam.maxDist);
+			changed();
+			return;
+		}
+		if (!drag) { if (ctl.hover && e.pointerType === 'mouse') svg.style.cursor = ctl.hover(pt) || 'grab'; return; }
+		var dx = pt.x - drag.x, dy = pt.y - drag.y;
+		if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+		if (drag.handler) { drag.handler.move(pt, e); return; }
+		cam.azimuth = wrapDeg(drag.az - dx * 0.5);
+		cam.elevation = clampN(drag.el + dy * 0.4, cam.minEl, cam.maxEl);
+		changed();
+	});
+	function end(e) {
+		if (!pointers[e.pointerId]) return;
+		var pt = toView(e);
+		delete pointers[e.pointerId];
+		try { svg.releasePointerCapture(e.pointerId); } catch (_) { /* already released */ }
+		if (pinch) { if (Object.keys(pointers).length < 2) pinch = null; return; }
+		if (drag) {
+			if (drag.handler) { if (drag.handler.up) drag.handler.up(pt, e); }
+			else if (!drag.moved && e.type === 'pointerup' && ctl.onTap) ctl.onTap(pt, e);
+		}
+		drag = null;
+		svg.style.cursor = 'grab';
+	}
+	svg.addEventListener('pointerup', end);
+	svg.addEventListener('pointercancel', end);
+	// Ctrl/Cmd + wheel (and trackpad pinch, which browsers send as Ctrl + wheel) zooms; a plain wheel still scrolls the page.
+	svg.addEventListener('wheel', function (e) {
+		if (!(e.ctrlKey || e.metaKey)) return;
+		e.preventDefault();
+		zoomCamera(cam, Math.exp(clampN(e.deltaY, -60, 60) * 0.006));
+		changed();
+	}, { passive: false });
+	svg.addEventListener('keydown', function (e) {
+		if (e.altKey || e.ctrlKey || e.metaKey) return;
+		if (ctl.onKey && ctl.onKey(e, true)) { e.preventDefault(); return; }
+		var k = e.key, step = e.shiftKey ? 15 : 5;
+		if (k === 'ArrowLeft') cam.azimuth = wrapDeg(cam.azimuth + step);
+		else if (k === 'ArrowRight') cam.azimuth = wrapDeg(cam.azimuth - step);
+		else if (k === 'ArrowUp') cam.elevation = clampN(cam.elevation + step, cam.minEl, cam.maxEl);
+		else if (k === 'ArrowDown') cam.elevation = clampN(cam.elevation - step, cam.minEl, cam.maxEl);
+		else if (k === '+' || k === '=') zoomCamera(cam, 1 / 1.15);
+		else if (k === '-' || k === '_') zoomCamera(cam, 1.15);
+		else if (k === '0' || k === 'Home') { tweenCamera(cam, cam.home, redraw, ctl); e.preventDefault(); return; }
+		else return;
+		e.preventDefault();
+		changed();
+	});
+	svg.addEventListener('keyup', function (e) { if (ctl.onKey && ctl.onKey(e, false)) e.preventDefault(); });
+	svg.addEventListener('blur', function () { if (ctl.onBlur) ctl.onBlur(); });
+	[ctl.az, ctl.el].forEach(function (sl, i) {
+		if (!sl) return;
+		sl.input.addEventListener('input', function () {
+			if (cam.tween) { cancelAnimationFrame(cam.tween); cam.tween = null; }
+			if (i === 0) cam.azimuth = Number(sl.input.value); else cam.elevation = Number(sl.input.value);
+			sl.out.textContent = sl.input.value + '°';
+			redraw();
 		});
 	});
 }
 
-/* ---------- 3D Articulated Robot Arm Kinematics Widget ---------- */
-
-function initRobotArm3D(root) {
-	var az = slider('Camera azimuth', 'arm3d-az', -180, 180, 1, 35, '°');
-	var el = slider('Camera elevation', 'arm3d-el', 10, 85, 1, 28, '°');
-	var j1 = slider('Joint 1 Waist θ1', 'arm3d-j1', -170, 170, 1, 25, '°');
-	var j2 = slider('Joint 2 Shoulder θ2', 'arm3d-j2', -60, 90, 1, 35, '°');
-	var j3 = slider('Joint 3 Elbow θ3', 'arm3d-j3', -90, 100, 1, -35, '°');
-	var j4 = slider('Joint 4 Wrist Pitch θ4', 'arm3d-j4', -100, 100, 1, 10, '°');
-	var j5 = slider('Joint 5 Wrist Roll θ5', 'arm3d-j5', -180, 180, 1, 0, '°');
-
-	var W = 560, H = 360;
-	var svg = plotFrame(W, H, 'Interactive 3D articulated robot arm kinematics simulator showing 3D joints, reach envelope and coordinate frames');
-	svg.style.overflow = 'hidden';
-	svg.style.maxWidth = '100%';
-
-	var cam = createCamera3D([0, 0, 0.35], 2.2, 420, 35, 28);
-	var lightVec = norm3([0.45, -0.4, 0.8]);
-
-	var trail = [];
-	var animTimer = null;
-
-	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
-	var statusAlert = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
-
-	function forwardKinematics(t1, t2, t3, t4, t5) {
-		var L0 = 0.14, L1 = 0.32, L2 = 0.28, L3 = 0.10, L4 = 0.08;
-		var q1 = t1 * DEG2RAD, q2 = t2 * DEG2RAD, q3 = t3 * DEG2RAD, q4 = t4 * DEG2RAD, q5 = t5 * DEG2RAD;
-
-		var r0 = 0, z0 = L0;
-		var r1 = r0 + L1 * Math.sin(q2);
-		var z1 = z0 + L1 * Math.cos(q2);
-
-		var q23 = q2 + q3;
-		var r2 = r1 + L2 * Math.sin(q23);
-		var z2 = z1 + L2 * Math.cos(q23);
-
-		var q234 = q23 + q4;
-		var r3 = r2 + L3 * Math.sin(q234);
-		var z3 = z2 + L3 * Math.cos(q234);
-
-		var rTcp = r3 + L4 * Math.sin(q234);
-		var zTcp = z3 + L4 * Math.cos(q234);
-
-		function to3D(r, z) {
-			return [r * Math.cos(q1), r * Math.sin(q1), z];
-		}
-
-		var pBase = [0, 0, 0];
-		var pShoulder = [0, 0, L0];
-		var pElbow = to3D(r1, z1);
-		var pWrist = to3D(r2, z2);
-		var pFlange = to3D(r3, z3);
-		var pTcp = to3D(rTcp, zTcp);
-
-		var toolZ = norm3([Math.sin(q234) * Math.cos(q1), Math.sin(q234) * Math.sin(q1), Math.cos(q234)]);
-		var pitchVec = norm3([Math.cos(q234) * Math.cos(q1), Math.cos(q234) * Math.sin(q1), -Math.sin(q234)]);
-		var sideVec = [-Math.sin(q1), Math.cos(q1), 0];
-		var toolX = norm3(add3(scale3(pitchVec, Math.cos(q5)), scale3(sideVec, Math.sin(q5))));
-		var toolY = norm3(cross3(toolZ, toolX));
-
-		var reachDist = Math.hypot(pTcp[0], pTcp[1], pTcp[2]);
-		var maxReach = L0 + L1 + L2 + L3 + L4;
-
-		return {
-			base: pBase, shoulder: pShoulder, elbow: pElbow, wrist: pWrist, flange: pFlange, tcp: pTcp,
-			toolAxes: { x: toolX, y: toolY, z: toolZ },
-			reach: reachDist,
-			maxReach: maxReach,
-			pitchDeg: Math.round(q234 / DEG2RAD),
-			yawDeg: Math.round(t1),
-			rollDeg: Math.round(t5)
-		};
-	}
-
-	function setJoints(angles) {
-		if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
-		j1.input.value = angles[0]; j1.out.textContent = angles[0] + '°';
-		j2.input.value = angles[1]; j2.out.textContent = angles[1] + '°';
-		j3.input.value = angles[2]; j3.out.textContent = angles[2] + '°';
-		j4.input.value = angles[3]; j4.out.textContent = angles[3] + '°';
-		j5.input.value = angles[4]; j5.out.textContent = angles[4] + '°';
-		draw();
-	}
-
-	function playCycle() {
-		if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
-		var keyframes = [
-			[0, 20, -20, 0, 0],
-			[45, 40, -35, -10, 0],
-			[45, 20, -20, -10, 0],
-			[-45, 20, -20, -10, 45],
-			[-45, 42, -32, -10, 90],
-			[-45, 20, -20, 0, 90],
-			[0, 20, -20, 0, 0]
-		];
-		var seg = 0, progress = 0;
-		function step() {
-			progress += 0.035;
-			if (progress >= 1) {
-				progress = 0;
-				seg++;
-				if (seg >= keyframes.length - 1) {
-					setJoints(keyframes[keyframes.length - 1]);
-					return;
-				}
-			}
-			var from = keyframes[seg], to = keyframes[seg + 1];
-			// Smooth cosine easing
-			var ease = 0.5 - 0.5 * Math.cos(progress * Math.PI);
-			var current = [];
-			for (var k = 0; k < 5; k++) {
-				current.push(Math.round(from[k] + (to[k] - from[k]) * ease));
-			}
-			j1.input.value = current[0]; j1.out.textContent = current[0] + '°';
-			j2.input.value = current[1]; j2.out.textContent = current[1] + '°';
-			j3.input.value = current[2]; j3.out.textContent = current[2] + '°';
-			j4.input.value = current[3]; j4.out.textContent = current[3] + '°';
-			j5.input.value = current[4]; j5.out.textContent = current[4] + '°';
-			draw();
-			animTimer = requestAnimationFrame(step);
-		}
-		animTimer = requestAnimationFrame(step);
-	}
-
-	function draw() {
-		cam.azimuth = Number(az.input.value);
-		cam.elevation = Number(el.input.value);
-		az.out.textContent = cam.azimuth + '°';
-		el.out.textContent = cam.elevation + '°';
-
-		var t1Val = Number(j1.input.value);
-		var t2Val = Number(j2.input.value);
-		var t3Val = Number(j3.input.value);
-		var t4Val = Number(j4.input.value);
-		var t5Val = Number(j5.input.value);
-
-		j1.out.textContent = t1Val + '°';
-		j2.out.textContent = t2Val + '°';
-		j3.out.textContent = t3Val + '°';
-		j4.out.textContent = t4Val + '°';
-		j5.out.textContent = t5Val + '°';
-
-		var fk = forwardKinematics(t1Val, t2Val, t3Val, t4Val, t5Val);
-
-		// Maintain trajectory trail
-		trail.push(fk.tcp);
-		if (trail.length > 25) trail.shift();
-
-		var scene = [];
-
-		// 1. Floor grid (Z = 0)
-		var gridExtent = 0.8, stepGrid = 0.2;
-		for (var gx = -gridExtent; gx <= gridExtent + 1e-4; gx += stepGrid) {
-			push3DLine([gx, -gridExtent, 0], [gx, gridExtent, 0], cam, W, H, {
-				stroke: 'var(--wp-border-light, #c8ccd1)', 'stroke-width': '1', opacity: '0.45'
-			}, scene);
-		}
-		for (var gy = -gridExtent; gy <= gridExtent + 1e-4; gy += stepGrid) {
-			push3DLine([-gridExtent, gy, 0], [gridExtent, gy, 0], cam, W, H, {
-				stroke: 'var(--wp-border-light, #c8ccd1)', 'stroke-width': '1', opacity: '0.45'
-			}, scene);
-		}
-
-		// Outer reach boundary circle on floor
-		var nCircle = 32, reachRadius = 0.78;
-		for (var c = 0; c < nCircle; c++) {
-			var th1 = (c / nCircle) * 2 * Math.PI, th2 = ((c + 1) / nCircle) * 2 * Math.PI;
-			var cp1 = [Math.cos(th1) * reachRadius, Math.sin(th1) * reachRadius, 0];
-			var cp2 = [Math.cos(th2) * reachRadius, Math.sin(th2) * reachRadius, 0];
-			push3DLine(cp1, cp2, cam, W, H, {
-				stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', opacity: '0.6'
-			}, scene);
-		}
-
-		// 2. Base Coordinate Frame {Base} at (0, 0, 0)
-		push3DAxes([0, 0, 0], { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] }, 0.16, cam, W, H, '{base}', scene);
-
-		// 3. Robot Links & Joints (shaded 3D cylinders & boxes)
-		// Base Pedestal
-		push3DCylinder([0, 0, 0], [0, 0, 0.14], 0.13, cam, W, H, '#461d7c', scene, lightVec, 12, { stroke: 'none' });
-
-		// Shoulder knuckle
-		var shoulderAxis = [-Math.sin(t1Val * DEG2RAD), Math.cos(t1Val * DEG2RAD), 0];
-		var shP1 = add3(fk.shoulder, scale3(shoulderAxis, -0.08));
-		var shP2 = add3(fk.shoulder, scale3(shoulderAxis, 0.08));
-		push3DCylinder(shP1, shP2, 0.065, cam, W, H, '#6b3fa8', scene, lightVec, 10, { stroke: 'none' });
-
-		// Upper arm link (shoulder to elbow)
-		push3DCylinder(fk.shoulder, fk.elbow, 0.05, cam, W, H, '#461d7c', scene, lightVec, 10, { stroke: 'none' });
-
-		// Elbow knuckle
-		var elP1 = add3(fk.elbow, scale3(shoulderAxis, -0.07));
-		var elP2 = add3(fk.elbow, scale3(shoulderAxis, 0.07));
-		push3DCylinder(elP1, elP2, 0.055, cam, W, H, '#6b3fa8', scene, lightVec, 10, { stroke: 'none' });
-
-		// Forearm link (elbow to wrist)
-		push3DCylinder(fk.elbow, fk.wrist, 0.042, cam, W, H, '#461d7c', scene, lightVec, 10, { stroke: 'none' });
-
-		// Wrist knuckle
-		push3DCylinder(fk.wrist, fk.flange, 0.035, cam, W, H, '#6b3fa8', scene, lightVec, 8, { stroke: 'none' });
-
-		// Tool Flange disk
-		var flP2 = add3(fk.flange, scale3(fk.toolAxes.z, 0.02));
-		push3DCylinder(fk.flange, flP2, 0.04, cam, W, H, '#3f4449', scene, lightVec, 10, { stroke: 'none' });
-
-		// Gripper Base & Jaws
-		var grCenter = add3(fk.flange, scale3(fk.toolAxes.z, 0.04));
-		push3DBox(grCenter, [0.05, 0.03, 0.03], t1Val * DEG2RAD, cam, W, H, '#27292d', scene, lightVec);
-
-		// Gripper left and right fingers
-		var fingerOffset = scale3(fk.toolAxes.y, 0.025);
-		var f1 = add3(grCenter, fingerOffset);
-		var f2 = sub3(grCenter, fingerOffset);
-		var fLen = scale3(fk.toolAxes.z, 0.04);
-		push3DLine(f1, add3(f1, fLen), cam, W, H, { stroke: '#d97706', 'stroke-width': '4', 'stroke-linecap': 'round' }, scene);
-		push3DLine(f2, add3(f2, fLen), cam, W, H, { stroke: '#d97706', 'stroke-width': '4', 'stroke-linecap': 'round' }, scene);
-
-		// Workpiece held at TCP
-		push3DBox(fk.tcp, [0.035, 0.035, 0.035], t1Val * DEG2RAD, cam, W, H, '#fdd023', scene, lightVec);
-
-		// 4. Tool Coordinate Frame {Tool} at TCP
-		push3DAxes(fk.tcp, fk.toolAxes, 0.12, cam, W, H, '{tool}', scene);
-
-		// 5. Motion Trail of TCP
-		for (var tr = 1; tr < trail.length; tr++) {
-			var alpha = (tr / trail.length) * 0.7 + 0.3;
-			push3DLine(trail[tr - 1], trail[tr], cam, W, H, {
-				stroke: 'var(--wp-link, #461d7c)', 'stroke-width': '2',
-				'stroke-dasharray': '3 2', opacity: alpha.toFixed(2)
-			}, scene);
-		}
-
-		render3DScene(svg, scene);
-
-		// Readout text formatting
-		var xStr = (fk.tcp[0] >= 0 ? '+' : '') + fk.tcp[0].toFixed(3);
-		var yStr = (fk.tcp[1] >= 0 ? '+' : '') + fk.tcp[1].toFixed(3);
-		var zStr = (fk.tcp[2] >= 0 ? '+' : '') + fk.tcp[2].toFixed(3);
-		var reachPct = Math.round((fk.reach / fk.maxReach) * 100);
-
-		readout.textContent = 'TCP Pose: X = ' + xStr + ' m, Y = ' + yStr + ' m, Z = ' + zStr +
-			' m | Reach R = ' + fk.reach.toFixed(3) + ' m (' + reachPct + '% of max ' + fk.maxReach.toFixed(2) + ' m)';
-
-		// Singularity and orientation analysis
-		var isReachSingularity = (fk.reach > fk.maxReach * 0.94);
-		var isWristSingularity = (Math.hypot(fk.tcp[0], fk.tcp[1]) < 0.08);
-
-		if (isReachSingularity) {
-			statusAlert.textContent = '⚠️ Boundary Singularity: Arm near maximum reach. Radial outward velocity is zero; Jacobian determinant approaches 0.';
-		} else if (isWristSingularity) {
-			statusAlert.textContent = '⚠️ Wrist/Waist Singularity: Tool aligned directly above vertical rotation axis. Infinite base velocity required to traverse centerline.';
-		} else {
-			statusAlert.textContent = 'Orientation: pitch = ' + fk.pitchDeg + '°, yaw = ' + fk.yawDeg +
-				'°, roll = ' + fk.rollDeg + '°. Coordinate frames {base} and {tool} connected via forward kinematics chain.';
-		}
-	}
-
-	attachOrbitControls(svg, cam, draw, az, el);
-	[az, el, j1, j2, j3, j4, j5].forEach(function (c) { c.input.addEventListener('input', draw); });
-
-	var bHome = button('Home Pose', function () { setJoints([0, 20, -20, 0, 0]); }, 'Move arm to vertical home pose');
-	var bPick = button('Pick Pose', function () { setJoints([40, 45, -35, -10, 0]); }, 'Move arm to pick position');
-	var bPlace = button('Place Pose', function () { setJoints([-45, 40, -30, -10, 90]); }, 'Move arm to place position');
-	var bReach = button('Reach Limit', function () { setJoints([0, 65, 0, 0, 0]); }, 'Demonstrate boundary singularity');
-	var bOverhead = button('Overhead Singularity', function () { setJoints([0, 0, 0, 0, 0]); }, 'Demonstrate wrist alignment singularity');
-	var bAnimate = button('Animate MoveJ Cycle', playCycle, 'Play automated smooth pick-and-place trajectory');
-	var bResetView = button('Reset Camera', function () {
-		cam.azimuth = 35; cam.elevation = 28;
-		az.input.value = 35; az.out.textContent = '35°';
-		el.input.value = 28; el.out.textContent = '28°';
-		draw();
-	}, 'Reset camera view angle');
-
-	var controlRows = [
-		h('div', { 'class': 'widget-buttons' }, [bHome, bPick, bPlace, bReach, bOverhead, bAnimate, bResetView]),
-		az.row, el.row, j1.row, j2.row, j3.row, j4.row, j5.row,
-		svg, readout, statusAlert
-	];
-
-	root.replaceChildren(frame('3D Articulated Robot Arm Kinematics & Coordinate Frames', controlRows));
-	draw();
+/* "View: Iso Front Side Top  Zoom + −" row. presets: [[label, azimuth, elevation, aria-label]]. */
+function viewButtons3D(cam, redraw, ctl, presets) {
+	var row = h('div', { 'class': 'widget-buttons w3d-view', role: 'group', 'aria-label': 'Camera view' }, [
+		h('span', { 'class': 'w3d-view-label', text: 'View' })
+	]);
+	presets.forEach(function (p) {
+		row.appendChild(button(p[0], function () { tweenCamera(cam, { azimuth: p[1], elevation: p[2], dist: cam.home.dist }, redraw, ctl); }, p[3]));
+	});
+	row.appendChild(button('Zoom +', function () { zoomCamera(cam, 1 / 1.25); redraw(); }, 'Zoom in'));
+	row.appendChild(button('Zoom −', function () { zoomCamera(cam, 1.25); redraw(); }, 'Zoom out'));
+	return row;
 }
 
-/* ---------- 3D Autonomous Mobile Robot (AMR) & REP 105 Widget ---------- */
+/* A button that repeats while held (mouse or touch); Enter or Space runs it once. */
+function holdButton(text, fn, label, onRelease) {
+	var b = button(text, function (e) { if (e.detail === 0) { fn(true); if (onRelease) onRelease(); } }, label);
+	b.classList.add('w3d-hold');
+	var t1 = null, t2 = null, held = false;
+	function stop() {
+		clearTimeout(t1); clearInterval(t2); t1 = t2 = null;
+		if (held && onRelease) onRelease();
+		held = false;
+	}
+	b.addEventListener('pointerdown', function (e) {
+		if (e.button) return;
+		stop();
+		held = true;
+		fn(false);
+		t1 = setTimeout(function () { t2 = setInterval(function () { fn(false); }, 45); }, 300);
+	});
+	['pointerup', 'pointerleave', 'pointercancel', 'blur'].forEach(function (ev) { b.addEventListener(ev, stop); });
+	b.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+	return b;
+}
 
-function initAmrFrames3D(root) {
-	var az = slider('Camera azimuth', 'amr3d-az', -180, 180, 1, 40, '°');
-	var el = slider('Camera elevation', 'amr3d-el', 15, 85, 1, 32, '°');
-	var slipSlider = slider('Wheel slip / odometry drift', 'amr3d-slip', 0, 25, 1, 12, '%');
+function checkRow3D(id, text, checked) {
+	var input = h('input', { type: 'checkbox', id: id });
+	input.checked = !!checked;
+	return { input: input, row: h('div', { 'class': 'widget-control widget-check' }, [input, h('label', { 'for': id, text: text })]) };
+}
 
-	var cbLidar = h('input', { type: 'checkbox', id: 'amr3d-cblidar', checked: true });
-	var cbRow = h('div', { 'class': 'widget-control widget-check' }, [
-		cbLidar, h('label', { 'for': 'amr3d-cblidar', text: 'Show 3D LiDAR laser beams and obstacle point cloud reflections' })
-	]);
+/* ---------- 3D articulated robot arm (lesson 1.3) ---------- */
 
-	var W = 560, H = 360;
-	var svg = plotFrame(W, H, 'Interactive 3D AMR mobile robot and coordinate frames simulator showing LiDAR, odometry drift and REP 105 transforms');
-	svg.style.overflow = 'hidden';
-	svg.style.maxWidth = '100%';
+function initRobotArm3D(root) {
+	var L0 = 0.14, L1 = 0.32, L2 = 0.28, L3 = 0.10, L4 = 0.08, LT = L3 + L4, REACH = L1 + L2 + LT;
+	var LIM = [[-170, 170], [-60, 90], [-90, 100], [-100, 100], [-180, 180]];
+	var JNAME = ['J1 waist', 'J2 shoulder', 'J3 elbow', 'J4 wrist pitch', 'J5 wrist roll'];
+	var labels = ['Joint 1 Waist θ1', 'Joint 2 Shoulder θ2', 'Joint 3 Elbow θ3', 'Joint 4 Wrist Pitch θ4', 'Joint 5 Wrist Roll θ5'];
+	var q = [25, 35, -35, 10, 0];
+	var js = q.map(function (v, i) { return slider(labels[i], 'arm3d-j' + (i + 1), LIM[i][0], LIM[i][1], 1, v, '°'); });
+	var az = slider('Camera azimuth', 'arm3d-az', -180, 180, 1, 35, '°');
+	var el = slider('Camera elevation', 'arm3d-el', 5, 89, 1, 24, '°');
+	var cbEnv = checkRow3D('arm3d-env', 'Show the reach envelope in the arm’s plane', true);
 
-	var cam = createCamera3D([0, 0, 0.2], 3.8, 380, 40, 32);
-	var lightVec = norm3([0.45, -0.4, 0.8]);
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 360 : 380;
+	var svg = plotFrame(W, H, 'Interactive 3D model of a five-axis articulated robot arm with its base and tool coordinate frames. Drag the gripper handle to move the tool, or drag elsewhere to orbit the camera.');
+	svg.classList.add('w3d-canvas');
+	var cam = createCamera3D([0.05, 0, 0.3], 2.1, narrow ? 460 : 500, 35, 24);
+	var light = norm3([0.4, -0.5, 0.85]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
 
-	// Ground truth robot pose in map frame: [x, y, yaw]
-	var robotG = { x: 0.0, y: 0.0, yaw: 0.0 };
-	// Odometry reported pose in odom frame: [x, y, yaw]
-	var robotO = { x: 0.0, y: 0.0, yaw: 0.0 };
-	// Map to Odom transform: [x, y, yaw]
-	var mapToOdom = { x: 0.0, y: 0.0, yaw: 0.0 };
+	var trail = [], points = [], anim = null, note = '', jogFrame = 'base', dragging = false;
+	var readout = h('p', { 'class': 'widget-readout' });
+	var program = h('p', { 'class': 'widget-readout' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
 
-	var obstacles = [
-		{ type: 'box', minX: 1.2, maxX: 2.0, minY: 0.8, maxY: 1.6, zMin: 0, zMax: 0.8, fill: '#b45309' },
-		{ type: 'cyl', cx: -1.4, cy: -0.9, r: 0.35, zMin: 0, zMax: 1.0, fill: '#0369a1' },
-		{ type: 'box', minX: -0.3, maxX: 1.3, minY: -1.6, maxY: -1.2, zMin: 0, zMax: 0.65, fill: '#c2410c' }
-	];
-
-	var animTimer = null;
-	var transformReadout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
-	var statusReadout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
-
-	function rayBox2D(ox, oy, dx, dy, minX, maxX, minY, maxY) {
-		var tmin = -Infinity, tmax = Infinity;
-		if (Math.abs(dx) > 1e-6) {
-			var t1 = (minX - ox) / dx, t2 = (maxX - ox) / dx;
-			tmin = Math.max(tmin, Math.min(t1, t2));
-			tmax = Math.min(tmax, Math.max(t1, t2));
-		} else if (ox < minX || ox > maxX) return Infinity;
-		if (Math.abs(dy) > 1e-6) {
-			var t1 = (minY - oy) / dy, t2 = (maxY - oy) / dy;
-			tmin = Math.max(tmin, Math.min(t1, t2));
-			tmax = Math.min(tmax, Math.max(t1, t2));
-		} else if (oy < minY || oy > maxY) return Infinity;
-		if (tmax >= tmin && tmin > 0) return tmin;
-		return Infinity;
+	function fk(a) {
+		var q1 = a[0] * DEG2RAD, q2 = a[1] * DEG2RAD, q23 = q2 + a[2] * DEG2RAD, phi = q23 + a[3] * DEG2RAD, q5 = a[4] * DEG2RAD;
+		var c1 = Math.cos(q1), s1 = Math.sin(q1);
+		function at(r, z) { return [r * c1, r * s1, z]; }
+		var r1 = L1 * Math.sin(q2), z1 = L0 + L1 * Math.cos(q2);
+		var r2 = r1 + L2 * Math.sin(q23), z2 = z1 + L2 * Math.cos(q23);
+		var r3 = r2 + L3 * Math.sin(phi), z3 = z2 + L3 * Math.cos(phi);
+		var toolZ = [Math.sin(phi) * c1, Math.sin(phi) * s1, Math.cos(phi)];
+		var pitchV = [Math.cos(phi) * c1, Math.cos(phi) * s1, -Math.sin(phi)], side = [-s1, c1, 0];
+		var toolX = norm3(add3(scale3(pitchV, Math.cos(q5)), scale3(side, Math.sin(q5))));
+		return {
+			shoulder: [0, 0, L0], elbow: at(r1, z1), wrist: at(r2, z2), flange: at(r3, z3),
+			tcp: at(r3 + L4 * Math.sin(phi), z3 + L4 * Math.cos(phi)),
+			tool: { x: toolX, y: cross3(toolZ, toolX), z: toolZ },
+			rWrist: r2, pitch: phi / DEG2RAD, side: side
+		};
 	}
 
-	function rayCircle2D(ox, oy, dx, dy, cx, cy, r) {
-		var vx = cx - ox, vy = cy - oy;
-		var tproj = vx * dx + vy * dy;
-		if (tproj <= 0) return Infinity;
-		var d2 = (vx * vx + vy * vy) - (tproj * tproj);
-		if (d2 > r * r) return Infinity;
-		var thit = tproj - Math.sqrt(r * r - d2);
-		return thit > 0 ? thit : Infinity;
+	/* Inverse kinematics for a TCP position with the tool pitch (θ2+θ3+θ4) and roll θ5 held.
+	   Tries both waist directions and both elbow solutions and keeps the one nearest the current joints. */
+	function ik(t, pitchDeg, roll, cur) {
+		var yaw0 = Math.atan2(t[1], t[0]) / DEG2RAD, rr = Math.hypot(t[0], t[1]), best = null, why = 'the point is out of reach';
+		[[yaw0, rr], [yaw0 + 180, -rr]].forEach(function (c) {
+			var y = wrapDeg(c[0]);
+			if (Math.abs(y + 360 - cur[0]) < Math.abs(y - cur[0])) y += 360;
+			else if (Math.abs(y - 360 - cur[0]) < Math.abs(y - cur[0])) y -= 360;
+			// The pitch is measured in the arm's plane, which flips over when the waist turns half a turn.
+			var ph = (Math.cos((y - cur[0]) * DEG2RAD) >= 0 ? pitchDeg : -pitchDeg) * DEG2RAD, rw = c[1] - LT * Math.sin(ph), zw = t[2] - L0 - LT * Math.cos(ph);
+			var D = (rw * rw + zw * zw - L1 * L1 - L2 * L2) / (2 * L1 * L2);
+			if (Math.abs(D) > 1) return;
+			[cur[2] <= 0 ? -1 : 1, cur[2] <= 0 ? 1 : -1].forEach(function (sg) {
+				var q3 = sg * Math.acos(D);
+				var q2 = Math.atan2(rw, zw) - Math.atan2(L2 * Math.sin(q3), L1 + L2 * Math.cos(q3));
+				var sol = [y, q2 / DEG2RAD, q3 / DEG2RAD, wrapDeg((ph - q2 - q3) / DEG2RAD), roll];
+				for (var k = 0; k < 4; k++) {
+					if (sol[k] < LIM[k][0] || sol[k] > LIM[k][1]) { why = JNAME[k] + ' would pass its limit'; return; }
+				}
+				var cost = 0;
+				for (var m = 0; m < 4; m++) cost += Math.abs(sol[m] - cur[m]);
+				if (!best || cost < best.cost) best = { q: sol, cost: cost };
+			});
+		});
+		return best ? { q: best.q } : { err: why };
 	}
 
-	function driveStep(dist, turnDeg) {
-		if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
-		var slip = Number(slipSlider.input.value) / 100;
-		var turnRad = turnDeg * DEG2RAD;
-
-		// Odometry integrates commanded motion without knowing slip
-		robotO.x += dist * Math.cos(robotO.yaw);
-		robotO.y += dist * Math.sin(robotO.yaw);
-		robotO.yaw += turnRad;
-
-		// Actual robot experiences slip (reduced distance, slight angular deviation)
-		var actualDist = dist * (1 - slip);
-		var actualTurn = turnRad * (1 + slip * 0.25);
-		robotG.x += actualDist * Math.cos(robotG.yaw);
-		robotG.y += actualDist * Math.sin(robotG.yaw);
-		robotG.yaw += actualTurn;
-
-		// Keep in room bounds
-		robotG.x = Math.max(-2.2, Math.min(2.2, robotG.x));
-		robotG.y = Math.max(-1.7, Math.min(1.7, robotG.y));
-
-		draw();
-	}
-
-	function driveCircuit() {
-		if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
-		var steps = [
-			{ dist: 0.05, turn: 0, count: 20 },
-			{ dist: 0.02, turn: 4.5, count: 20 },
-			{ dist: 0.05, turn: 0, count: 20 },
-			{ dist: 0.02, turn: 4.5, count: 20 }
-		];
-		var seg = 0, iter = 0;
-		function step() {
-			var cmd = steps[seg];
-			driveStep(cmd.dist, cmd.turn);
-			iter++;
-			if (iter >= cmd.count) {
-				iter = 0;
-				seg++;
-				if (seg >= steps.length) return;
-			}
-			animTimer = requestAnimationFrame(step);
+	function setQ(a, mode) {
+		for (var i = 0; i < 5; i++) {
+			q[i] = a[i];
+			js[i].input.value = Math.round(a[i]);
+			js[i].out.textContent = Math.round(a[i]) + '°';
 		}
-		animTimer = requestAnimationFrame(step);
+		var p = fk(q).tcp, last = trail[trail.length - 1];
+		if (!last || Math.hypot(p[0] - last.p[0], p[1] - last.p[1], p[2] - last.p[2]) > 0.004) {
+			trail.push({ p: p, mode: mode || 'manual' });
+			if (trail.length > 260) trail.shift();
+		}
+		redraw();
 	}
 
-	function runAmclLocalization() {
-		// AMCL matches LiDAR scan to map: solves mapToOdom = robotG ⊖ robotO
-		var cosO = Math.cos(robotO.yaw), sinO = Math.sin(robotO.yaw);
-		mapToOdom.yaw = robotG.yaw - robotO.yaw;
-		mapToOdom.x = robotG.x - (robotO.x * Math.cos(mapToOdom.yaw) - robotO.y * Math.sin(mapToOdom.yaw));
-		mapToOdom.y = robotG.y - (robotO.x * Math.sin(mapToOdom.yaw) + robotO.y * Math.cos(mapToOdom.yaw));
-		draw();
+	function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
+
+	function moveTcpTo(target, mode) {
+		var f = fk(q), r = ik(target, f.pitch, q[4], q);
+		if (r.err) { note = 'Cannot move there: ' + r.err + '.'; redraw(); return false; }
+		var dJ1 = Math.abs(r.q[0] - q[0]);
+		if (dJ1 > 12) {
+			note = 'J1 had to turn ' + Math.round(dJ1) + '° for a ' + Math.round(Math.hypot.apply(null, sub3(target, f.tcp)) * 1000) +
+				' mm move: the wrist is close to the J1 axis (a shoulder singularity).';
+		} else if (note.indexOf('Cannot') === 0) note = '';
+		setQ(r.q, mode);
+		return true;
 	}
 
-	function resetRobot() {
-		if (animTimer) { cancelAnimationFrame(animTimer); animTimer = null; }
-		robotG = { x: 0.0, y: 0.0, yaw: 0.0 };
-		robotO = { x: 0.0, y: 0.0, yaw: 0.0 };
-		mapToOdom = { x: 0.0, y: 0.0, yaw: 0.0 };
-		draw();
+	function jog(axis, sign) {
+		stopAnim();
+		var f = fk(q), dir = jogFrame === 'tool' ? f.tool[axis] : { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] }[axis];
+		moveTcpTo(add3(f.tcp, scale3(dir, 0.01 * sign)), 'manual');
+	}
+
+	/* Motion playback. MoveJ interpolates joints; MoveL interpolates the TCP along a straight line. */
+	function play(targets, mode, done) {
+		stopAnim();
+		if (!targets.length) return;
+		if (mode !== 'manual') trail = [];
+		var idx = 0, start = q.slice(), t0 = null, dur = 0, startF = null, endF = null;
+		function begin() {
+			start = q.slice();
+			var goal = targets[idx];
+			if (mode === 'movel') {
+				startF = fk(start); endF = fk(goal);
+				dur = Math.max(0.35, Math.hypot.apply(null, sub3(endF.tcp, startF.tcp)) / 0.35);
+			} else {
+				var dmax = 0;
+				for (var k = 0; k < 5; k++) dmax = Math.max(dmax, Math.abs(goal[k] - start[k]));
+				dur = Math.max(0.3, dmax / 90);
+			}
+			if (REDUCED_MOTION) dur = 0.001;
+			t0 = null;
+		}
+		function step(ts) {
+			if (t0 === null) t0 = ts;
+			var k = Math.min(1, (ts - t0) / 1000 / dur), e = 0.5 - 0.5 * Math.cos(k * Math.PI), goal = targets[idx];
+			if (mode === 'movel') {
+				var pos = lerp3(startF.tcp, endF.tcp, e);
+				var r = ik(pos, startF.pitch + (endF.pitch - startF.pitch) * e, start[4] + (goal[4] - start[4]) * e, q);
+				if (r.err) {
+					note = 'MoveL stopped between ' + (idx ? 'P' + idx : 'the start') + ' and P' + (idx + 1) + ': ' + r.err +
+						' on the straight line. MoveJ would still get there, along a curved path.';
+					anim = null; redraw(); return;
+				}
+				setQ(r.q, mode);
+			} else {
+				setQ(start.map(function (v, j) { return v + (goal[j] - v) * e; }), mode);
+			}
+			if (k >= 1) {
+				idx++;
+				if (idx >= targets.length) { anim = null; if (done) done(); redraw(); return; }
+				begin();
+			}
+			anim = requestAnimationFrame(step);
+		}
+		begin();
+		anim = requestAnimationFrame(step);
+	}
+
+	function playProgram(mode) {
+		if (!points.length) { note = 'Teach at least one point first: move the arm, then press “Teach point”.'; redraw(); return; }
+		note = '';
+		play(points.map(function (p) { return p.slice(); }), mode, function () {
+			note = (mode === 'movel' ? 'MoveL' : 'MoveJ') + ' finished. The ' + (mode === 'movel' ? 'gold' : 'purple') +
+				' trail is the path the TCP took' + (mode === 'movel' ? ': straight between points.' : ': joints move together, so the tool path curves.');
+		});
+	}
+
+	function updateProgram() {
+		program.textContent = points.length ? 'Program: ' + points.map(function (p, i) { return 'P' + (i + 1); }).join(' → ') +
+			' (' + points.length + ' of 6 points)' : 'Program: empty. Move the arm and press “Teach point” to record a pose.';
 	}
 
 	function draw() {
-		cam.azimuth = Number(az.input.value);
-		cam.elevation = Number(el.input.value);
-		az.out.textContent = cam.azimuth + '°';
-		el.out.textContent = cam.elevation + '°';
-		slipSlider.out.textContent = slipSlider.input.value + '%';
+		var dark = isDarkWidget(svg);
+		var C = dark ? { link: '#8f6ad6', knuckle: '#b197e6', base: '#6c4bb0', grip: '#9aa1a8', flange: '#c3c8cd' }
+			: { link: '#5b2a9e', knuckle: '#7d52c0', base: '#3d1a6e', grip: '#3f4449', flange: '#6b7176' };
+		var f = fk(q), sc = newScene3D(cam, W, H, light);
 
-		var scene = [];
+		floorGrid3D(sc, -0.8, 0.8, -0.8, 0.8, 0.2);
+		var floorR = Math.sqrt(REACH * REACH - L0 * L0), ring = [];
+		for (var c = 0; c <= 48; c++) ring.push([Math.cos(c / 48 * 2 * Math.PI) * floorR, Math.sin(c / 48 * 2 * Math.PI) * floorR, 0]);
+		polyline3D(sc, ring, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.5', 'stroke-dasharray': '5 4', opacity: '0.8' });
+		label3D(sc, [floorR * Math.cos(-0.6), floorR * Math.sin(-0.6), 0], 'reach ' + REACH.toFixed(2) + ' m', { fill: 'var(--wp-gold-text, #6b5200)', size: 10, weight: '400', dy: 12 });
 
-		// 1. Warehouse Floor Grid (Z = 0)
-		var xBound = 2.6, yBound = 2.0, stepGrid = 0.4;
-		for (var gx = -xBound; gx <= xBound + 1e-4; gx += stepGrid) {
-			push3DLine([gx, -yBound, 0], [gx, yBound, 0], cam, W, H, {
-				stroke: 'var(--wp-border-light, #c8ccd1)', 'stroke-width': '1', opacity: '0.45'
-			}, scene);
-		}
-		for (var gy = -yBound; gy <= yBound + 1e-4; gy += stepGrid) {
-			push3DLine([-xBound, gy, 0], [xBound, gy, 0], cam, W, H, {
-				stroke: 'var(--wp-border-light, #c8ccd1)', 'stroke-width': '1', opacity: '0.45'
-			}, scene);
-		}
-
-		// Perimeter boundary walls
-		var wallCorners = [
-			[-xBound, -yBound, 0], [xBound, -yBound, 0],
-			[xBound, yBound, 0], [-xBound, yBound, 0]
-		];
-		for (var wc = 0; wc < 4; wc++) {
-			var w1 = wallCorners[wc], w2 = wallCorners[(wc + 1) % 4];
-			push3DLine(w1, w2, cam, W, H, { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '2' }, scene);
-			push3DLine(add3(w1, [0, 0, 0.4]), add3(w2, [0, 0, 0.4]), cam, W, H, { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '1.5' }, scene);
-			push3DLine(w1, add3(w1, [0, 0, 0.4]), cam, W, H, { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '1.5' }, scene);
-		}
-
-		// 2. Obstacles in Warehouse
-		for (var ob = 0; ob < obstacles.length; ob++) {
-			var item = obstacles[ob];
-			if (item.type === 'box') {
-				var cx = (item.minX + item.maxX) * 0.5;
-				var cy = (item.minY + item.maxY) * 0.5;
-				var cz = (item.zMin + item.zMax) * 0.5;
-				var sx = item.maxX - item.minX;
-				var sy = item.maxY - item.minY;
-				var sz = item.zMax - item.zMin;
-				push3DBox([cx, cy, cz], [sx, sy, sz], 0, cam, W, H, item.fill, scene, lightVec, { stroke: 'none' });
-			} else if (item.type === 'cyl') {
-				push3DCylinder([item.cx, item.cy, item.zMin], [item.cx, item.cy, item.zMax], item.r, cam, W, H, item.fill, scene, lightVec, 12, { stroke: 'none' });
+		if (cbEnv.input.checked) {
+			// The outer limit of the TCP in the arm's current vertical plane: an arc of radius REACH about the shoulder.
+			var arc = [], c1 = Math.cos(q[0] * DEG2RAD), s1 = Math.sin(q[0] * DEG2RAD);
+			for (var a = -60; a <= 180; a += 8) {
+				var ang = a * DEG2RAD, r = REACH * Math.sin(ang), z = L0 + REACH * Math.cos(ang);
+				if (z >= 0) arc.push([r * c1, r * s1, z]);
+			}
+			for (var i2 = 1; i2 < arc.length; i2++) {
+				line3D(sc, arc[i2 - 1], arc[i2], { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.2', 'stroke-dasharray': '3 4', opacity: '0.75' });
 			}
 		}
 
-		// 3. Coordinate Frame: {map} at (0, 0, 0)
-		push3DAxes([0, 0, 0], { x: [1, 0, 0], y: [0, 1, 0], z: [0, 0, 1] }, 0.28, cam, W, H, '{map}', scene);
+		cylinder3D(sc, [0, 0, 0], [0, 0, L0], 0.13, C.base, { segments: 20, shadow: true });
+		axes3D(sc, [0, 0, 0.002], null, 0.3, '{base}');
+		var shAxis = f.side;
+		cylinder3D(sc, add3(f.shoulder, scale3(shAxis, -0.08)), add3(f.shoulder, scale3(shAxis, 0.08)), 0.065, C.knuckle, { shadow: true });
+		cylinder3D(sc, f.shoulder, f.elbow, 0.048, C.link, { shadow: true });
+		cylinder3D(sc, add3(f.elbow, scale3(shAxis, -0.065)), add3(f.elbow, scale3(shAxis, 0.065)), 0.054, C.knuckle, { shadow: true });
+		cylinder3D(sc, f.elbow, f.wrist, 0.04, C.link, { shadow: true });
+		cylinder3D(sc, add3(f.wrist, scale3(shAxis, -0.045)), add3(f.wrist, scale3(shAxis, 0.045)), 0.04, C.knuckle, { segments: 12 });
+		cylinder3D(sc, f.wrist, f.flange, 0.032, C.knuckle, { segments: 12, shadow: true });
+		cylinder3D(sc, f.flange, add3(f.flange, scale3(f.tool.z, 0.016)), 0.042, C.flange, { segments: 14 });
+		var gc = add3(f.flange, scale3(f.tool.z, 0.032));
+		orientedBox3D(sc, gc, [0.02, 0.04, 0.016], f.tool, C.grip);
+		[-1, 1].forEach(function (sg) {
+			orientedBox3D(sc, add3(add3(gc, scale3(f.tool.y, 0.03 * sg)), scale3(f.tool.z, 0.034)), [0.012, 0.006, 0.024], f.tool, '#d97706');
+		});
 
-		// 4. Coordinate Frame: {odom} (origin of odom frame in map coordinates)
-		var cosM2O = Math.cos(mapToOdom.yaw), sinM2O = Math.sin(mapToOdom.yaw);
-		var odomOrg = [mapToOdom.x, mapToOdom.y, 0.01];
-		var odomAxes = {
-			x: [cosM2O, sinM2O, 0],
-			y: [-sinM2O, cosM2O, 0],
-			z: [0, 0, 1]
-		};
-		// Only draw {odom} if separated from {map} by more than 2 cm or 2 deg
-		var hasDrift = Math.hypot(mapToOdom.x, mapToOdom.y) > 0.02 || Math.abs(mapToOdom.yaw) > 0.03;
-		if (hasDrift) {
-			push3DAxes(odomOrg, odomAxes, 0.22, cam, W, H, '{odom}', scene);
-		}
-
-		// 5. Dead-Reckoning Ghost AMR (where raw odometry assumes the robot is)
-		// Pose of ghost in map: T_map_odom ⊕ T_odom_base
-		var ghostYaw = robotO.yaw + mapToOdom.yaw;
-		var ghostX = mapToOdom.x + (robotO.x * cosM2O - robotO.y * sinM2O);
-		var ghostY = mapToOdom.y + (robotO.x * sinM2O + robotO.y * cosM2O);
-		var driftDist = Math.hypot(robotG.x - ghostX, robotG.y - ghostY);
-
-		if (driftDist > 0.03) {
-			// Draw ghost robot chassis as dashed wireframe
-			push3DBox([ghostX, ghostY, 0.10], [0.68, 0.46, 0.18], ghostYaw, cam, W, H, 'none', scene, null, {
-				stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', fill: 'var(--wp-gold-soft, rgba(253,208,35,0.12))'
+		// Taught points and the TCP trail
+		points.forEach(function (p, i) {
+			var tp = fk(p).tcp;
+			dot3D(sc, tp, 4.5, { fill: 'var(--wp-gold-soft, #fff8d6)', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '2' });
+			label3D(sc, tp, 'P' + (i + 1), { dx: 6, dy: 12, fill: 'var(--wp-gold-text, #6b5200)', size: 11 });
+		});
+		for (var t = 1; t < trail.length; t++) {
+			var md = trail[t].mode;
+			line3D(sc, trail[t - 1].p, trail[t].p, {
+				stroke: md === 'movel' ? 'var(--wp-gold-text, #6b5200)' : 'var(--wp-link, #461d7c)',
+				'stroke-width': md === 'manual' ? '1.5' : '2.5', 'stroke-dasharray': md === 'manual' ? '3 3' : 'none',
+				opacity: (0.25 + 0.75 * t / trail.length).toFixed(2), 'stroke-linecap': 'round'
 			});
 		}
 
-		// 6. Physical AMR (Ground Truth in Map)
-		var rYaw = robotG.yaw;
-		var cosR = Math.cos(rYaw), sinR = Math.sin(rYaw);
-		var rBase = [robotG.x, robotG.y, 0];
-		var rCenter = [robotG.x, robotG.y, 0.11];
-
-		// Chassis
-		push3DBox(rCenter, [0.68, 0.46, 0.18], rYaw, cam, W, H, '#461d7c', scene, lightVec, { stroke: 'none' });
-
-		// Wheels (left and right)
-		var leftWheelHub = [robotG.x - 0.25 * sinR, robotG.y + 0.25 * cosR, 0.08];
-		var rightWheelHub = [robotG.x + 0.25 * sinR, robotG.y - 0.25 * cosR, 0.08];
-		push3DBox(leftWheelHub, [0.18, 0.05, 0.16], rYaw, cam, W, H, '#27292d', scene, lightVec);
-		push3DBox(rightWheelHub, [0.18, 0.05, 0.16], rYaw, cam, W, H, '#27292d', scene, lightVec);
-
-		// Front Direction Chevron Arrow
-		var chevTip = [robotG.x + 0.28 * cosR, robotG.y + 0.28 * sinR, 0.205];
-		var chevL = [robotG.x + 0.16 * cosR - 0.10 * sinR, robotG.y + 0.16 * sinR + 0.10 * cosR, 0.205];
-		var chevR = [robotG.x + 0.16 * cosR + 0.10 * sinR, robotG.y + 0.16 * sinR - 0.10 * cosR, 0.205];
-		push3DPoly([chevTip, chevL, chevR], cam, W, H, '#fdd023', { stroke: 'none' }, scene, null);
-
-		// Sensor Mast
-		var mastBase = [robotG.x, robotG.y, 0.20];
-		var mastTop = [robotG.x, robotG.y, 0.28];
-		push3DCylinder(mastBase, mastTop, 0.035, cam, W, H, '#72777d', scene, lightVec, 8, { stroke: 'none' });
-
-		// 3D LiDAR Puck atop mast
-		var lidarPuckTop = [robotG.x, robotG.y, 0.35];
-		push3DCylinder(mastTop, lidarPuckTop, 0.07, cam, W, H, '#1b1f24', scene, lightVec, 12, { stroke: 'none' });
-
-		// Coordinate Frame: {base_link}
-		var baseAxes = {
-			x: [cosR, sinR, 0],
-			y: [-sinR, cosR, 0],
-			z: [0, 0, 1]
-		};
-		push3DAxes(rBase, baseAxes, 0.24, cam, W, H, '{base_link}', scene);
-
-		// Coordinate Frame: {lidar_link} (at sensor center)
-		var lidarOrigin = [robotG.x, robotG.y, 0.315];
-		push3DAxes(lidarOrigin, baseAxes, 0.16, cam, W, H, '{lidar_link}', scene);
-
-		// 7. 3D LiDAR Laser Beams & Point Cloud
-		if (cbLidar.checked) {
-			var numBeams = 32;
-			for (var b = 0; b < numBeams; b++) {
-				var beamAngle = rYaw + (b / numBeams) * 2 * Math.PI;
-				var bdx = Math.cos(beamAngle), bdy = Math.sin(beamAngle);
-				var minDist = 4.0;
-
-				// Walls
-				var dWall = rayBox2D(robotG.x, robotG.y, bdx, bdy, -xBound, xBound, -yBound, yBound);
-				if (dWall < minDist) minDist = dWall;
-
-				// Obstacles
-				for (var oj = 0; oj < obstacles.length; oj++) {
-					var obs = obstacles[oj];
-					var od = obs.type === 'box' ? rayBox2D(robotG.x, robotG.y, bdx, bdy, obs.minX, obs.maxX, obs.minY, obs.maxY)
-					                            : rayCircle2D(robotG.x, robotG.y, bdx, bdy, obs.cx, obs.cy, obs.r);
-					if (od < minDist) minDist = od;
-				}
-
-				var hitPoint = [robotG.x + minDist * bdx, robotG.y + minDist * bdy, 0.315];
-
-				// Laser beam line
-				push3DLine(lidarOrigin, hitPoint, cam, W, H, {
-					stroke: 'rgba(0, 229, 255, 0.32)', 'stroke-width': '1'
-				}, scene);
-
-				// Reflection point cloud dot
-				var prHit = projectPoint3D(hitPoint, cam, W, H);
-				scene.push({
-					depth: prHit.depth - 0.015,
-					render: function () {
-						return s('circle', {
-							cx: prHit.u.toFixed(1), cy: prHit.v.toFixed(1), r: '2.5',
-							fill: '#00e5ff', stroke: '#0284c7', 'stroke-width': '0.75'
-						});
-					}
-				});
-			}
+		axes3D(sc, f.tcp, f.tool, 0.14, '{tool}');
+		var tcpPr = pr3(sc, f.tcp);
+		if (!anim) {
+			sc.items.push({ depth: tcpPr.depth - 0.01, nodes: [s('circle', { cx: tcpPr.u.toFixed(1), cy: tcpPr.v.toFixed(1), r: dragging ? '15' : '12',
+				'class': 'w3d-handle' + (dragging ? ' w3d-handle-active' : '') })] });
 		}
+		renderScene3D(svg, sc);
 
-		render3DScene(svg, scene);
+		readout.textContent = 'TCP in {base}: X ' + signed(f.tcp[0], 3) + ' m, Y ' + signed(f.tcp[1], 3) + ' m, Z ' + signed(f.tcp[2], 3) +
+			' m | tool pitch ' + Math.round(f.pitch) + '°, roll ' + Math.round(q[4]) + '° | ' +
+			Math.round(Math.hypot.apply(null, sub3(f.tcp, f.shoulder)) / REACH * 100) + '% of reach';
 
-		// Readout updates
-		var gXStr = (robotG.x >= 0 ? '+' : '') + robotG.x.toFixed(2);
-		var gYStr = (robotG.y >= 0 ? '+' : '') + robotG.y.toFixed(2);
-		var gYawStr = Math.round(robotG.yaw / DEG2RAD) + '°';
-
-		var oXStr = (robotO.x >= 0 ? '+' : '') + robotO.x.toFixed(2);
-		var oYStr = (robotO.y >= 0 ? '+' : '') + robotO.y.toFixed(2);
-		var oYawStr = Math.round(robotO.yaw / DEG2RAD) + '°';
-
-		var m2oX = (mapToOdom.x >= 0 ? '+' : '') + mapToOdom.x.toFixed(2);
-		var m2oY = (mapToOdom.y >= 0 ? '+' : '') + mapToOdom.y.toFixed(2);
-		var m2oYaw = Math.round(mapToOdom.yaw / DEG2RAD) + '°';
-
-		transformReadout.textContent = 'REP 105 Tree: T(map→odom) = [' + m2oX + 'm, ' + m2oY + 'm, ' + m2oYaw + '] | ' +
-			'T(odom→base_link) = [' + oXStr + 'm, ' + oYStr + 'm, ' + oYawStr + '] | T(base→lidar) = [0.00, 0.00, +0.28m]';
-
-		var driftCm = Math.round(driftDist * 100);
-		if (driftDist > 0.03) {
-			statusReadout.textContent = '⚠️ Odometry Drift: Wheel slip caused ' + driftCm +
-				' cm error between real robot and ghost odom frame. Click "Run AMCL Global Localization" to correct map→odom!';
+		var msg;
+		if (Math.abs(f.rWrist) < 0.03) {
+			msg = '⚠️ Shoulder singularity: the wrist centre is on the J1 axis, so a small sideways move can need a large, fast J1 turn. Try jogging Y here.';
+		} else if (Math.abs(q[2]) < 5) {
+			msg = '⚠️ Elbow (boundary) singularity: the upper arm and forearm are in line, so the wrist cannot move further out along the arm. The Jacobian loses rank here.';
 		} else {
-			statusReadout.textContent = 'Ground truth pose in {map}: X = ' + gXStr + ' m, Y = ' + gYStr + ' m, heading = ' + gYawStr +
-				'. Smooth odometry operates in {odom}; AMCL updates map→odom with discrete jumps to cancel slip.';
+			msg = 'Pose OK. {tool} follows {base} through the joint chain (forward kinematics); dragging the handle or jogging solves it backwards (inverse kinematics).';
 		}
+		if (note) msg = note + ' ' + (msg.charAt(0) === '⚠' ? msg : '');
+		if (status.textContent !== msg.trim()) status.textContent = msg.trim();
 	}
 
-	attachOrbitControls(svg, cam, draw, az, el);
-	[az, el, slipSlider].forEach(function (c) { c.input.addEventListener('input', draw); });
-	cbLidar.addEventListener('change', draw);
+	orbitControls(svg, cam, redraw, Object.assign(ctl, {
+		hover: function (pt) { var p = projectPoint3D(fk(q).tcp, cam, W, H); return Math.hypot(pt.x - p.u, pt.y - p.v) < 18 ? 'move' : null; },
+		onPointerDown: function (pt) {
+			var f0 = fk(q), p = projectPoint3D(f0.tcp, cam, W, H);
+			if (Math.hypot(pt.x - p.u, pt.y - p.v) > 20) return null;
+			stopAnim();
+			dragging = true;
+			var start = f0.tcp;
+			return {
+				cursor: 'move',
+				move: function (pt2) { moveTcpTo(add3(start, screenDeltaToWorld(pt2.x - pt.x, pt2.y - pt.y, p.depth, cam)), 'manual'); },
+				up: function () { dragging = false; redraw(); }
+			};
+		},
+		onKey: function (e, down) {
+			if (!down) return false;
+			var map = { a: ['y', 1], d: ['y', -1], w: ['x', 1], s: ['x', -1], r: ['z', 1], f: ['z', -1] }, m = map[e.key.toLowerCase()];
+			if (!m) return false;
+			jog(m[0], m[1]);
+			return true;
+		}
+	}));
 
-	var bFwd = button('Drive Forward (+0.8 m)', function () { driveStep(0.8, 0); }, 'Drive AMR forward');
-	var bRev = button('Reverse (-0.5 m)', function () { driveStep(-0.5, 0); }, 'Drive AMR backward');
-	var bLeft = button('Turn Left (+45°)', function () { driveStep(0, 45); }, 'Rotate AMR left');
-	var bRight = button('Turn Right (-45°)', function () { driveStep(0, -45); }, 'Rotate AMR right');
-	var bLoop = button('Drive Delivery Circuit', driveCircuit, 'Simulate warehouse delivery circuit with wheel slip');
-	var bAmcl = button('Run AMCL Global Localization (REP 105)', runAmclLocalization, 'Match LiDAR point cloud and update map-to-odom transform');
-	var bReset = button('Reset to Origin', resetRobot, 'Reset AMR pose and odometry');
-	var bResetView = button('Reset Camera', function () {
-		cam.azimuth = 40; cam.elevation = 32;
-		az.input.value = 40; az.out.textContent = '40°';
-		el.input.value = 32; el.out.textContent = '32°';
-		draw();
-	}, 'Reset camera angle');
+	js.forEach(function (sl, i) {
+		sl.input.addEventListener('input', function () {
+			stopAnim(); note = '';
+			var a = q.slice(); a[i] = Number(sl.input.value);
+			setQ(a, 'manual');
+		});
+	});
+	cbEnv.input.addEventListener('change', redraw);
 
-	var controlRows = [
-		h('div', { 'class': 'widget-buttons' }, [bFwd, bRev, bLeft, bRight, bLoop, bAmcl, bReset, bResetView]),
-		az.row, el.row, slipSlider.row, cbRow,
-		svg, transformReadout, statusReadout
-	];
+	function preset(text, a, aria) {
+		return button(text, function () { note = ''; play([a], 'movej'); }, aria);
+	}
+	var presets = h('div', { 'class': 'widget-buttons' }, [
+		preset('Home pose', [0, 20, -20, 0, 0], 'Move the arm to its home pose'),
+		preset('Pick pose', [40, 45, -35, -10, 0], 'Move the arm to a pick pose'),
+		preset('Place pose', [-45, 40, -30, -10, 90], 'Move the arm to a place pose'),
+		preset('Reach limit', [0, 65, 0, 0, 0], 'Stretch the arm out to show the elbow (boundary) singularity'),
+		preset('Overhead', [0, -25, 54, -29, 0], 'Put the wrist over the base to show the shoulder singularity')
+	]);
 
-	root.replaceChildren(frame('3D AMR, 3D LiDAR & REP 105 Coordinate Transforms', controlRows));
+	var jogRow = h('div', { 'class': 'widget-buttons w3d-jog', role: 'group', 'aria-label': 'Jog the tool in a straight line' }, [
+		h('span', { 'class': 'w3d-view-label', text: 'Jog TCP' })
+	]);
+	var frameBtn = button('Frame: {base}', function () {
+		jogFrame = jogFrame === 'base' ? 'tool' : 'base';
+		frameBtn.textContent = 'Frame: {' + jogFrame + '}';
+		frameBtn.setAttribute('aria-pressed', jogFrame === 'tool' ? 'true' : 'false');
+	}, 'Switch the jog frame between base and tool');
+	frameBtn.setAttribute('aria-pressed', 'false');
+	jogRow.appendChild(frameBtn);
+	[['x', -1], ['x', 1], ['y', -1], ['y', 1], ['z', -1], ['z', 1]].forEach(function (j) {
+		var txt = j[0].toUpperCase() + (j[1] > 0 ? '+' : '−');
+		jogRow.appendChild(holdButton(txt, function () { jog(j[0], j[1]); }, 'Jog the TCP 1 cm along ' + txt + ' (hold to repeat)'));
+	});
+
+	var progRow = h('div', { 'class': 'widget-buttons' }, [
+		button('Teach point', function () {
+			if (points.length >= 6) points.shift();
+			points.push(q.slice()); note = 'Taught P' + points.length + '.'; updateProgram(); redraw();
+		}, 'Record the current pose as the next program point'),
+		button('Play MoveJ', function () { playProgram('movej'); }, 'Play the taught points with joint interpolation'),
+		button('Play MoveL', function () { playProgram('movel'); }, 'Play the taught points with straight-line tool motion'),
+		button('Demo program', function () {
+			// Tool pointing down: approach, pick, lift, approach, place (solved with the same IK as the jog buttons).
+			var seed = [30, 30, 70, 80, 0], prog = [];
+			[[0.42, 0.26, 0.24, 0], [0.42, 0.26, 0.10, 0], [0.42, 0.26, 0.24, 0], [0.30, -0.40, 0.24, 90], [0.30, -0.40, 0.12, 90]].some(function (c) {
+				var r = { err: 1 };
+				[180, 165, 150].some(function (pitch) { r = ik([c[0], c[1], c[2]], pitch, c[3], seed); return !r.err; });
+				if (r.err) { prog = null; return true; }
+				prog.push(r.q); seed = r.q;
+				return false;
+			});
+			points = prog || [[45, 40, -35, -10, 0], [45, 20, -20, -10, 0], [-45, 20, -20, -10, 45], [-45, 42, -32, -10, 90]];
+			updateProgram(); note = 'Loaded a pick-and-place (approach, pick, lift, approach, place). Play it as MoveJ, then as MoveL, and compare the trails.'; redraw();
+		}, 'Load a five-point pick-and-place program'),
+		button('Clear points', function () { points = []; trail = []; note = ''; updateProgram(); redraw(); }, 'Delete the taught points and the trail')
+	]);
+
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag the ringed gripper to move the tool; drag anywhere else to orbit. Pinch or Ctrl + scroll to zoom. With the view focused: arrow keys orbit, + and − zoom, 0 resets, W/S jog X, A/D jog Y, R/F jog Z.' });
+
+	updateProgram();
+	root.replaceChildren(frame('3D articulated robot arm: joints, frames and jogging', [
+		presets, svg, hint, readout, status,
+		viewButtons3D(cam, redraw, ctl, [['Iso', 35, 24, 'Isometric view'], ['Front', 90, 8, 'View from the front of the arm'],
+			['Side', 0, 8, 'View from the side of the arm'], ['Top', 0, 89, 'View from above']]),
+		jogRow, progRow, program,
+		js[0].row, js[1].row, js[2].row, js[3].row, js[4].row, cbEnv.row, az.row, el.row
+	]));
 	draw();
 }
 
+/* ---------- 3D AMR with LiDAR, odometry drift and REP 105 frames (lesson 10.1) ---------- */
+
+function initAmrFrames3D(root) {
+	var az = slider('Camera azimuth', 'amr3d-az', -180, 180, 1, 30, '°');
+	var el = slider('Camera elevation', 'amr3d-el', 5, 89, 1, 42, '°');
+	var slip = slider('Wheel slip / odometry drift', 'amr3d-slip', 0, 25, 1, 12, '%');
+	var cbLidar = checkRow3D('amr3d-cblidar', 'Show LiDAR beams and hits', true);
+	var cbRviz = checkRow3D('amr3d-cbrviz', 'Also draw the scan at the estimated pose, as RViz would (gold)', false);
+	var cbAmcl = checkRow3D('amr3d-cbamcl', 'Keep AMCL running (corrects map → odom about once a second while driving)', false);
+	var cbFollow = checkRow3D('amr3d-cbfollow', 'Camera follows the robot', false);
+
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 340 : 380;
+	var XB = 2.6, YB = 2.0, ROBOT_R = 0.38, LIDAR_Z = 0.315;
+	var svg = plotFrame(W, H, 'Interactive 3D warehouse with a mobile robot, its LiDAR scan, an odometry ghost and the map, odom, base_link and lidar_link frames. Click the floor to send a goal; drag to orbit the camera.');
+	svg.classList.add('w3d-canvas');
+	var cam = createCamera3D([0, 0, 0.2], 6.4, narrow ? 350 : 470, 30, 42);
+	var light = norm3([0.4, -0.5, 0.85]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
+
+	var obstacles = [
+		{ type: 'box', minX: 1.2, maxX: 2.0, minY: 0.8, maxY: 1.6, h: 0.8, fill: '#b45309', name: 'shelf' },
+		{ type: 'cyl', cx: -1.4, cy: -0.9, r: 0.35, h: 1.0, fill: '#0369a1', name: 'column' },
+		{ type: 'box', minX: -0.3, maxX: 1.3, minY: -1.6, maxY: -1.2, h: 0.65, fill: '#c2410c', name: 'pallet rack' }
+	];
+	var truth, odom, m2o, trailT, trailE, goal, route, blocked, uncert, amclClock, loop, lastTs, cmd, burst, note;
+	var keys = {};
+
+	var tfReadout = h('p', { 'class': 'widget-readout' });
+	var poseReadout = h('p', { 'class': 'widget-readout' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+
+	function reset() {
+		truth = { x: 0, y: 0, yaw: 0 }; odom = { x: 0, y: 0, yaw: 0 }; m2o = { x: 0, y: 0, yaw: 0 };
+		trailT = [[0, 0]]; trailE = [[0, 0]]; goal = null; route = []; blocked = ''; uncert = 0.03; amclClock = 0;
+		cmd = { v: 0, w: 0 }; burst = 0; note = '';
+	}
+	reset();
+
+	function compose(a, b) {
+		var c = Math.cos(a.yaw), sn = Math.sin(a.yaw);
+		return { x: a.x + b.x * c - b.y * sn, y: a.y + b.x * sn + b.y * c, yaw: wrapRad(a.yaw + b.yaw) };
+	}
+	function estimate() { return compose(m2o, odom); }
+
+	function collides(x, y) {
+		if (Math.abs(x) > XB - ROBOT_R || Math.abs(y) > YB - ROBOT_R) return 'the wall';
+		for (var i = 0; i < obstacles.length; i++) {
+			var o = obstacles[i];
+			if (o.type === 'box') {
+				var dx = Math.max(o.minX - x, 0, x - o.maxX), dy = Math.max(o.minY - y, 0, y - o.maxY);
+				if (Math.hypot(dx, dy) < ROBOT_R) return 'the ' + o.name;
+			} else if (Math.hypot(x - o.cx, y - o.cy) < o.r + ROBOT_R) return 'the ' + o.name;
+		}
+		return '';
+	}
+
+	function amcl() {
+		// Idealised: the scan match recovers the true pose exactly. Real AMCL leaves a small residual error.
+		var c = Math.cos(truth.yaw - odom.yaw), sn = Math.sin(truth.yaw - odom.yaw);
+		m2o = { yaw: wrapRad(truth.yaw - odom.yaw), x: truth.x - (odom.x * c - odom.y * sn), y: truth.y - (odom.x * sn + odom.y * c) };
+		uncert = 0.03; amclClock = 0;
+		trailE.push(null, [truth.x, truth.y]);
+	}
+
+	/* One physics step: odometry integrates the command; the real robot slips. */
+	function integrate(v, w, dt) {
+		var sl = Number(slip.input.value) / 100;
+		var o = { x: odom.x + v * dt * Math.cos(odom.yaw + w * dt / 2), y: odom.y + v * dt * Math.sin(odom.yaw + w * dt / 2), yaw: wrapRad(odom.yaw + w * dt) };
+		var vt = v * (1 - sl), wt = w * (1 + sl * 0.25);
+		var t = { x: truth.x + vt * dt * Math.cos(truth.yaw + wt * dt / 2), y: truth.y + vt * dt * Math.sin(truth.yaw + wt * dt / 2), yaw: wrapRad(truth.yaw + wt * dt) };
+		var hit = collides(t.x, t.y);
+		if (hit && !collides(truth.x, truth.y)) {
+			blocked = 'Stopped: the real robot would hit ' + hit + '.' + (Math.hypot(m2o.x, m2o.y) < 0.01 && driftError() > 0.05 ? ' Its odometry thinks it is somewhere else, so try AMCL.' : '');
+			goal = null; route = []; cmd = { v: 0, w: 0 }; burst = 0; keys = {};
+			return false;
+		}
+		odom = o; truth = t;
+		var e = estimate(), lt = trailT[trailT.length - 1], le = trailE[trailE.length - 1];
+		if (!lt || Math.hypot(t.x - lt[0], t.y - lt[1]) > 0.03) { trailT.push([t.x, t.y]); if (trailT.length > 500) trailT.shift(); }
+		if (!le || Math.hypot(e.x - le[0], e.y - le[1]) > 0.03) { trailE.push([e.x, e.y]); if (trailE.length > 500) trailE.shift(); }
+		uncert = Math.min(0.6, uncert + (Math.abs(v) + Math.abs(w) * 0.2) * dt * (0.02 + sl * 0.6));
+		if (cbAmcl.input.checked && (v || w)) { amclClock += dt; if (amclClock >= 1) amcl(); }
+		return true;
+	}
+
+	function driftError() { var e = estimate(); return Math.hypot(truth.x - e.x, truth.y - e.y); }
+
+	/* Goal following uses the ESTIMATED pose, as a real navigation stack does. */
+	function followGoal() {
+		if (!goal) return { v: 0, w: 0 };
+		var e = estimate(), dx = goal.x - e.x, dy = goal.y - e.y, d = Math.hypot(dx, dy);
+		if (d < 0.04) {
+			var miss = Math.round(Math.hypot(goal.x - truth.x, goal.y - truth.y) * 100);
+			if (route.length) { goal = route.shift(); return { v: 0, w: 0 }; }
+			goal = null;
+			note = 'Arrived, according to the estimated pose. The real robot is ' + miss + ' cm from the goal' +
+				(miss > 4 ? ': that gap is odometry drift. Run AMCL and send the goal again.' : '.');
+			return { v: 0, w: 0 };
+		}
+		var err = wrapRad(Math.atan2(dy, dx) - e.yaw);
+		if (Math.abs(err) > 0.2) return { v: 0, w: clampN(3 * err, -1.4, 1.4) };
+		return { v: Math.min(0.55, 1.4 * d), w: clampN(2.5 * err, -1.4, 1.4) };
+	}
+
+	function teleopCmd() {
+		var v = 0, w = 0;
+		if (keys.w) v += 0.5; if (keys.s) v -= 0.35; if (keys.a) w += 1.1; if (keys.d) w -= 1.1;
+		if (v || w) return { v: v, w: w };
+		return cmd;
+	}
+
+	function tick(ts) {
+		var dt = lastTs === null ? 0.016 : Math.min(0.05, (ts - lastTs) / 1000);
+		lastTs = ts;
+		var c = teleopCmd();
+		if (!(c.v || c.w) && goal) c = followGoal();
+		if (burst > 0) { burst -= dt; if (burst <= 0) { cmd = { v: 0, w: 0 }; } }
+		if (c.v || c.w) { if (integrate(c.v, c.w, dt)) blocked = ''; }
+		draw();
+		if (goal || c.v || c.w || keys.w || keys.s || keys.a || keys.d) loop = requestAnimationFrame(tick);
+		else loop = null;
+	}
+	function run() { if (!loop) { lastTs = null; loop = requestAnimationFrame(tick); } }
+
+	function lidarScan(n) {
+		var hits = [];
+		for (var b = 0; b < n; b++) {
+			var ang = truth.yaw + (b / n) * 2 * Math.PI, dx = Math.cos(ang), dy = Math.sin(ang), best = 6;
+			// Room walls (from inside)
+			[[(XB - truth.x) / dx, dx > 0], [(-XB - truth.x) / dx, dx < 0], [(YB - truth.y) / dy, dy > 0], [(-YB - truth.y) / dy, dy < 0]]
+				.forEach(function (c) { if (c[1] && c[0] > 0 && c[0] < best) best = c[0]; });
+			obstacles.forEach(function (o) {
+				var t = Infinity;
+				if (o.type === 'box') {
+					var t1 = (o.minX - truth.x) / dx, t2 = (o.maxX - truth.x) / dx, t3 = (o.minY - truth.y) / dy, t4 = (o.maxY - truth.y) / dy;
+					var tmin = Math.max(Math.min(t1, t2), Math.min(t3, t4)), tmax = Math.min(Math.max(t1, t2), Math.max(t3, t4));
+					if (tmax >= tmin && tmin > 0) t = tmin;
+				} else {
+					var vx = o.cx - truth.x, vy = o.cy - truth.y, tp = vx * dx + vy * dy, d2 = vx * vx + vy * vy - tp * tp;
+					if (tp > 0 && d2 < o.r * o.r) t = tp - Math.sqrt(o.r * o.r - d2);
+				}
+				if (t < best) best = t;
+			});
+			hits.push({ rel: ang - truth.yaw, range: best });
+		}
+		return hits;
+	}
+
+	function robotModel(sc, pose, ghost, dark) {
+		var c = Math.cos(pose.yaw), sn = Math.sin(pose.yaw);
+		if (ghost) {
+			box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, 'none', { attrs: {
+				fill: 'var(--wp-gold-soft, #fff8d6)', 'fill-opacity': '0.25', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.2', 'stroke-dasharray': '4 3' }, depthBias: -0.05 });
+			return;
+		}
+		box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, dark ? '#7c55c4' : '#4a2185', { shadow: true });
+		[1, -1].forEach(function (sg) {
+			var hub = [pose.x - 0.25 * sn * sg, pose.y + 0.25 * c * sg, 0.08];
+			cylinder3D(sc, add3(hub, [-0.03 * sn * sg, 0.03 * c * sg, 0]), add3(hub, [0.03 * sn * sg, -0.03 * c * sg, 0]), 0.08, '#2b2f33', { segments: 12 });
+		});
+		var tip = [pose.x + 0.3 * c, pose.y + 0.3 * sn, 0.202], l = [pose.x + 0.14 * c - 0.11 * sn, pose.y + 0.14 * sn + 0.11 * c, 0.202],
+			r = [pose.x + 0.14 * c + 0.11 * sn, pose.y + 0.14 * sn - 0.11 * c, 0.202];
+		var chev = face3D(sc, [tip, l, r], '#fdd023', { shade: false });
+		sc.items.push({ depth: pr3(sc, [pose.x, pose.y, 0.2]).depth - 0.02, nodes: [chev] });
+		cylinder3D(sc, [pose.x, pose.y, 0.2], [pose.x, pose.y, 0.28], 0.035, '#72777d', { segments: 10 });
+		cylinder3D(sc, [pose.x, pose.y, 0.28], [pose.x, pose.y, 0.35], 0.07, '#1b1f24', { segments: 16 });
+	}
+
+	function draw() {
+		var dark = isDarkWidget(svg);
+		if (cbFollow.input.checked) cam.target = [truth.x, truth.y, 0.2];
+		else cam.target = [0, 0, 0.2];
+		var sc = newScene3D(cam, W, H, light), e = estimate();
+
+		floorGrid3D(sc, -XB, XB, -YB, YB, 0.4);
+		var corners = [[-XB, -YB], [XB, -YB], [XB, YB], [-XB, YB]];
+		corners.forEach(function (p, i) {
+			var nx = corners[(i + 1) % 4];
+			line3D(sc, [p[0], p[1], 0], [nx[0], nx[1], 0], { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '2' }, 'floor');
+			line3D(sc, [p[0], p[1], 0.4], [nx[0], nx[1], 0.4], { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '1.5' });
+			line3D(sc, [p[0], p[1], 0], [p[0], p[1], 0.4], { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '1.5' });
+		});
+
+		// Paths on the floor: true (purple) and estimated (gold, dashed); breaks where AMCL jumped.
+		function pathSegs(list, attrs) {
+			var seg = [];
+			list.concat([null]).forEach(function (p) {
+				if (p) seg.push([p[0], p[1], 0.003]);
+				else { polyline3D(sc, seg, attrs); seg = []; }
+			});
+		}
+		pathSegs(trailT, { stroke: 'var(--wp-link, #461d7c)', 'stroke-width': '2', opacity: '0.75', 'stroke-linejoin': 'round' });
+		pathSegs(trailE, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '2', 'stroke-dasharray': '5 4', opacity: '0.9' });
+
+		// Estimate uncertainty (illustrative)
+		var ring = [];
+		for (var k = 0; k <= 36; k++) ring.push([e.x + Math.cos(k / 36 * 2 * Math.PI) * (uncert + 0.36), e.y + Math.sin(k / 36 * 2 * Math.PI) * (uncert + 0.36), 0.004]);
+		polyline3D(sc, ring, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1', opacity: '0.6' });
+
+		obstacles.forEach(function (o) {
+			if (o.type === 'box') {
+				box3D(sc, [(o.minX + o.maxX) / 2, (o.minY + o.maxY) / 2, o.h / 2], [o.maxX - o.minX, o.maxY - o.minY, o.h], 0, o.fill, { shadow: true });
+			} else {
+				cylinder3D(sc, [o.cx, o.cy, 0], [o.cx, o.cy, o.h], o.r, o.fill, { segments: 20, shadow: true });
+			}
+		});
+
+		if (goal || route.length) {
+			[goal].concat(route).forEach(function (g, i) {
+				if (!g) return;
+				var gi = [];
+				for (var k2 = 0; k2 <= 24; k2++) gi.push([g.x + Math.cos(k2 / 24 * 2 * Math.PI) * 0.1, g.y + Math.sin(k2 / 24 * 2 * Math.PI) * 0.1, 0.004]);
+				polyline3D(sc, gi, { stroke: '#2b8a3e', 'stroke-width': '2.5' });
+				line3D(sc, [g.x, g.y, 0], [g.x, g.y, 0.45], { stroke: '#2b8a3e', 'stroke-width': '2' });
+				if (i === 0) label3D(sc, [g.x, g.y, 0.45], 'goal', { fill: 'var(--w3d-y, #2b8a3e)', size: 11, mono: false });
+			});
+		}
+
+		axes3D(sc, [0, 0, 0.004], null, 0.45, '{map}');
+		if (Math.hypot(m2o.x, m2o.y) > 0.02 || Math.abs(m2o.yaw) > 0.03) {
+			var cm = Math.cos(m2o.yaw), sm = Math.sin(m2o.yaw);
+			axes3D(sc, [m2o.x, m2o.y, 0.006], { x: [cm, sm, 0], y: [-sm, cm, 0], z: [0, 0, 1] }, 0.35, '{odom}');
+		}
+
+		var drift = driftError();
+		if (drift > 0.03) robotModel(sc, e, true, dark);
+		robotModel(sc, truth, false, dark);
+		var cr = Math.cos(truth.yaw), sr = Math.sin(truth.yaw), R = { x: [cr, sr, 0], y: [-sr, cr, 0], z: [0, 0, 1] };
+		axes3D(sc, [truth.x, truth.y, 0.005], R, 0.3, '{base_link}');
+		axes3D(sc, [truth.x, truth.y, LIDAR_Z], R, 0.2, '{lidar_link}');
+
+		if (cbLidar.input.checked || cbRviz.input.checked) {
+			var hits = lidarScan(48), lo = [truth.x, truth.y, LIDAR_Z];
+			hits.forEach(function (hb) {
+				if (cbLidar.input.checked) {
+					var hp = [truth.x + hb.range * Math.cos(truth.yaw + hb.rel), truth.y + hb.range * Math.sin(truth.yaw + hb.rel), LIDAR_Z];
+					line3D(sc, lo, hp, { stroke: 'var(--w3d-beam, rgba(8,145,178,0.3))', 'stroke-width': '1' });
+					dot3D(sc, hp, 2.4, { fill: 'var(--w3d-hit, #0891b2)' }, -0.01);
+				}
+				if (cbRviz.input.checked) {
+					dot3D(sc, [e.x + hb.range * Math.cos(e.yaw + hb.rel), e.y + hb.range * Math.sin(e.yaw + hb.rel), LIDAR_Z], 2.4,
+						{ fill: '#f59f00', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '0.6' }, -0.012);
+				}
+			});
+		}
+		renderScene3D(svg, sc);
+
+		function pose(p) { return '(' + signed(p.x, 2) + ', ' + signed(p.y, 2) + ' m, ' + Math.round(p.yaw / DEG2RAD) + '°)'; }
+		tfReadout.textContent = 'TF tree: map → odom ' + pose(m2o) + ' → base_link ' + pose(odom) + ' → lidar_link (0, 0, +' + LIDAR_Z.toFixed(2) + ' m)';
+		poseReadout.textContent = 'Estimated pose (map → base_link) ' + pose(e) + ' | true pose ' + pose(truth) + ' | error ' +
+			Math.round(drift * 100) + ' cm, ' + Math.abs(Math.round(wrapRad(truth.yaw - e.yaw) / DEG2RAD)) + '°';
+
+		var msg = blocked || note;
+		if (!msg) {
+			if (drift > 0.03) msg = '⚠️ Odometry drift: the gold ghost is where odometry puts the robot, away from the real one' +
+				' (the error is in the line above). Turn on the RViz scan to see it miss the walls, then press “Run AMCL”.';
+			else msg = 'Odometry and the real robot agree. Click the floor to send a goal, hold the drive buttons, or raise the wheel slip and drive.';
+		}
+		if (status.textContent !== msg) status.textContent = msg;
+	}
+
+	orbitControls(svg, cam, redraw, Object.assign(ctl, {
+		onTap: function (pt) {
+			var p = unprojectToPlane(pt.x, pt.y, cam, W, H, 0);
+			if (!p || Math.abs(p[0]) > XB || Math.abs(p[1]) > YB) return;
+			var hit = collides(p[0], p[1]);
+			if (hit) { note = 'That goal is too close to ' + hit + ' for the robot to fit.'; blocked = ''; redraw(); return; }
+			goal = { x: p[0], y: p[1] }; route = []; note = ''; blocked = '';
+			run();
+		},
+		onKey: function (ev, down) {
+			var k = ev.key.toLowerCase();
+			if ('wasd'.indexOf(k) < 0 || k.length !== 1) return false;
+			if (down) { keys[k] = true; goal = null; route = []; note = ''; run(); } else keys[k] = false;
+			return true;
+		},
+		onBlur: function () { keys = {}; }
+	}));
+	[slip].forEach(function (c) { c.input.addEventListener('input', function () { slip.out.textContent = slip.input.value + '%'; }); });
+	[cbLidar, cbRviz, cbAmcl, cbFollow].forEach(function (c) { c.input.addEventListener('change', redraw); });
+
+	function drive(v, w, label) {
+		return holdButton(label, function (once) {
+			goal = null; route = []; note = '';
+			cmd = { v: v, w: w };
+			if (once) burst = 0.5;
+			run();
+		}, 'Drive: ' + label + ' (hold)', function () { if (burst <= 0) cmd = { v: 0, w: 0 }; });
+	}
+	var driveRow = h('div', { 'class': 'widget-buttons w3d-jog', role: 'group', 'aria-label': 'Drive the robot' }, [
+		h('span', { 'class': 'w3d-view-label', text: 'Drive' }),
+		drive(0.5, 0, '▲ Forward'), drive(-0.35, 0, '▼ Back'), drive(0, 1.1, '↶ Left'), drive(0, -1.1, '↷ Right')
+	]);
+	var actRow = h('div', { 'class': 'widget-buttons' }, [
+		button('Delivery circuit', function () {
+			var pts = [[1.0, -0.6], [1.0, 0.2], [-0.9, 0.6], [-0.7, -0.4], [0, 0]].map(function (p) { return { x: p[0], y: p[1] }; });
+			goal = pts.shift(); route = pts; note = ''; blocked = ''; run();
+		}, 'Drive a five-waypoint delivery loop using the estimated pose'),
+		button('Run AMCL (correct map → odom)', function () { amcl(); note = 'AMCL matched the scan to the map and moved {odom}: map → odom jumped, odom → base_link did not.'; redraw(); },
+			'Match the LiDAR scan to the map and update the map-to-odom transform'),
+		button('Reset to origin', function () { reset(); if (loop) { cancelAnimationFrame(loop); loop = null; } redraw(); }, 'Reset the robot, odometry and map-to-odom')
+	]);
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Click the floor to send a goal (the robot steers by its estimated pose). Drag to orbit; pinch or Ctrl + scroll to zoom. With the view focused: W A S D drive, arrow keys orbit, + and − zoom, 0 resets.' });
+
+	root.replaceChildren(frame('3D AMR, LiDAR and REP 105 frames', [
+		driveRow, actRow, svg, hint, tfReadout, poseReadout, status,
+		viewButtons3D(cam, redraw, ctl, [['Iso', 30, 42, 'Isometric view'], ['Low', 30, 14, 'Low view across the floor'],
+			['Top', 0, 89, 'View from above, like RViz']]),
+		slip.row, cbAmcl.row, cbLidar.row, cbRviz.row, cbFollow.row, az.row, el.row
+	]));
+	draw();
+}
 
 	var INIT = {
 		pwm: initPwm,
