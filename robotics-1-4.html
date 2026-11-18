@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=d9f1aa24" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=8674bf59" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT13M",
+            "timeRequired": "PT16M",
             "teaches": [
                 "enabling device",
                 "lockout/tagout",
@@ -216,8 +216,19 @@
 
                         <article class="robotics-article-body">
 
+                            <div class="article-callout start-here">
+                                <div class="article-callout-header"><i class="fas fa-flag" aria-hidden="true"></i> Start here</div>
+                                <p>This lesson lists what is useful to know before the rest of the course, and safety comes first. You do not need to master any of it before you begin. The course teaches what it needs as it goes. The safety rules matter most because real robot arms are strong and fast. On a first read, skim the math, networking, and assembly sections and come back to them when a later lesson asks.</p>
+                                <ul>
+                                    <li>You will learn the three essential safety rules for working near an industrial robot arm.</li>
+                                    <li>You will learn where Python, C++, and vendor languages fit into robotics programming.</li>
+                                    <li>You will learn how basic math and physics connect to the motion of a two-link robot arm.</li>
+                                    <li>You will learn how to choose a practical learning path using simulators and free tools.</li>
+                                </ul>
+                            </div>
+
                             <p>
-                                You do not need to be an expert in anything before starting this course. The free textbook Modern Robotics expects only first-year physics, some linear algebra, basic differential equations and &ldquo;only basic programming skills.&rdquo;<sup><a href="#ref-1">[1]</a></sup> This lesson walks through what is worth having, why, and where to learn it for free. It starts with the one thing that is not optional: safety.
+                                You do not need to be an expert in anything before starting this course. Each section below explains why a skill helps and where this course teaches it. The free textbook Modern Robotics expects only first-year physics, some linear algebra, basic differential equations and &ldquo;only basic programming skills.&rdquo;<sup><a href="#ref-1">[1]</a></sup> Those advanced subjects are for later textbook chapters. For this course, school algebra is enough to start. This lesson walks through what is worth having, why, and where to learn it for free. It starts with the one thing that is not optional: safety.
                             </p>
 
                             <h2 class="article-section-title">01. Safety first: before you touch a real robot</h2>
@@ -241,16 +252,17 @@
                                 <li class="article-spec-item"><span class="spec-label">Enabling device:</span> typically a 3-position switch on the teach pendant that must be held in the center (ON) position for the robot to move while you program it.</li>
                                 <li class="article-spec-item"><span class="spec-label">Lockout/tagout:</span> before servicing, hazardous energy must be controlled under OSHA rule 29 CFR 1910.147 (lockout/tagout) or 1910.333. You lock the power off and tag it so nobody can turn it back on while you work.</li>
                             </ul>
+                            <p class="plain-words"><strong>In plain words:</strong> the teach pendant is the handheld unit you use to jog, teach and test the robot (lesson <a href="robotics-1-7.html">1.7</a> shows it in a full cell). While you teach, the robot moves slowly, and it can move only while you hold the enabling switch in its center position. Before you service the robot, its power is locked off and tagged.</p>
                             <p>
                                 OSHA also says that anyone who programs, operates or maintains a robot should receive adequate safety training before being assigned. It adds that removing or engineering away a hazard is preferred over relying on rules and protective equipment.<sup><a href="#ref-2">[2]</a></sup> The main international standard is ISO 10218, revised in 2025. The new edition makes functional safety requirements more explicit, absorbs the cobot guidance from ISO/TS 15066, and adds cybersecurity requirements as they relate to safety.<sup><a href="#ref-3">[3]</a></sup> Its collaborative modes were introduced in <a href="robotics-1-3.html">1.3 Types of Robots</a>.
                             </p>
 
                             <h2 class="article-section-title">02. Python</h2>
                             <p>
-                                Python is widely used in robotics for scripting, testing and higher-level logic, and it is one of the two main languages used with <a href="robotics-ros.html">ROS</a>. ROS 2 provides <code>rclpy</code>, its Python client library, which lets you create nodes, publishers and subscriptions with ordinary Python types. The ROS 2 documentation favors Python where &ldquo;it makes prototyping iterations faster.&rdquo;<sup><a href="#ref-4">[4]</a></sup>
+                                Python is widely used in robotics for scripting, testing and higher-level logic, and it is one of the two main languages used with <a href="robotics-ros.html">ROS</a> (free robot software introduced in Chapter 4). ROS 2 provides <code>rclpy</code>, its Python client library (the software tools that let Python talk to ROS), which lets you create nodes, publishers and subscriptions with ordinary Python types. You will meet nodes and publishers in Chapter 4. For now, you only need to know that Python is used. The ROS 2 documentation favors Python where &ldquo;it makes prototyping iterations faster.&rdquo;<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                The Universal Robots language URScript has Python-like syntax, but it is still a vendor language, not Python. It runs on the robot&rsquo;s controller, not in a normal Python interpreter.
+                                The Universal Robots language URScript has Python-like syntax, but it is still a vendor language (the robot maker&rsquo;s own programming language), not Python. It runs on the robot&rsquo;s controller, not in a normal Python interpreter (the program that runs Python code).
                             </p>
                             <ul class="article-spec-list">
                                 <li><a href="https://docs.python.org/3/tutorial/" target="_blank" rel="noopener noreferrer">The Python Tutorial (python.org)</a></li>
@@ -261,7 +273,7 @@
                                 C++ is the other main ROS language. Its client library, <code>rclcpp</code>, is the C++ interface for the same jobs: nodes, publishers and subscriptions. The ROS 2 documentation suggests that nodes where efficiency matters &ldquo;might be better implemented in C++.&rdquo; Both <code>rclcpp</code> and <code>rclpy</code> are built on a shared C library, <code>rcl</code>, so they behave the same way.<sup><a href="#ref-4">[4]</a></sup>
                             </p>
                             <p>
-                                The Arduino language is also based on C/C++,<sup><a href="#ref-5">[5]</a></sup> so what you learn here carries straight over to the microcontroller lessons in Chapter 6.
+                                The Arduino language is also based on C/C++,<sup><a href="#ref-5">[5]</a></sup> so what you learn here carries straight over to the microcontroller lessons in Chapter 6. An Arduino is a small, cheap programmable board used for robot electronics, taught in <a href="robotics-6-1.html">lesson 6.1</a>.
                             </p>
                             <ul class="article-spec-list">
                                 <li><a href="https://www.learncpp.com/" target="_blank" rel="noopener noreferrer">LearnCpp.com</a></li>
@@ -272,15 +284,16 @@
                                 Industrial arms are usually programmed in their maker&rsquo;s own language: ABB uses RAPID, Comau PDL2, FANUC Karel, Kawasaki AS, KUKA KRL, St&auml;ubli VAL3 and Yaskawa Inform. VAL, used on Unimate robots, was one of the first robot languages. With over 30 robot manufacturers, there are roughly as many languages, and none of them is a common standard.<sup><a href="#ref-6">[6]</a></sup>
                             </p>
                             <p>
-                                A typical first FANUC course covers the teach pendant and jogging (moving the arm by hand with buttons). It also covers frames, motion types, material handling programs, input/output (I/O) signals, and backup and restore.<sup><a href="#ref-7">[7]</a></sup> Once you understand points, frames and moves in one language, the next one is much easier. Lesson <a href="robotics-2-3.html">2.3 Common Programming Languages</a> compares them.
+                                A typical first FANUC course covers the teach pendant and jogging (moving the arm by hand with buttons). It also covers frames, motion types, material handling programs, input/output (I/O) signals, and backup and restore.<sup><a href="#ref-7">[7]</a></sup> You will meet coordinate frames in <a href="robotics-1-6.html">lesson 1.6</a> and motion types throughout Chapter 2. They are standard first topics for every robot programmer. Once you understand points, frames and moves in one language, the next one is much easier. Lesson <a href="robotics-2-3.html">2.3 Common Programming Languages</a> compares them.
                             </p>
                             <p>
                                 You can practice without a robot. Universal Robots provides an emulator, URSim, for testing programs offline.<sup><a href="#ref-8">[8]</a></sup> Offline programming tools such as RoboDK do the same for many brands, as an alternative to programming on the teach pendant.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">05. Math</h2>
+                            <p class="optional-note"><i class="fas fa-route" aria-hidden="true"></i> <strong>Optional on first reading.</strong> This section previews the math behind robot arm motion. You can safely skim the formulas for now, and <a href="robotics-6-10.html">lesson 6.10</a> returns to them when you need them.</p>
                             <p>
-                                Modern Robotics lists its math prerequisites as linear algebra, including matrix operations, and basic linear ordinary differential equations.<sup><a href="#ref-1">[1]</a></sup> In practice that means four topics:
+                                You do not need to use all of this at once. This list explains what each topic is for, but matrices and calculus are not needed for week one. Modern Robotics lists its math prerequisites as linear algebra, including matrix operations, and basic linear ordinary differential equations.<sup><a href="#ref-1">[1]</a></sup> In practice that means four topics:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Trigonometry:</span> sines and cosines turn joint angles into positions.</li>
@@ -289,11 +302,12 @@
                                 <li class="article-spec-item"><span class="spec-label">Basic differential equations:</span> how a system changes over time, which you need for robot dynamics.</li>
                             </ul>
                             <p>
-                                <span class="spec-label">Worked example: a two-link arm.</span> This is our own worked example, the standard first exercise in forward kinematics (working out where the tool is from the joint angles). Picture a flat arm with two links of length L1 and L2. The first joint is at angle &theta;1 from the x-axis, and the second joint bends by &theta;2 relative to the first link. The tip of the arm is at:
+                                <span class="spec-label">Worked example: a two-link arm.</span> This is our own worked example, the standard first exercise in forward kinematics (working out where the tool is from the joint angles). Picture a flat arm with two links of length L1 and L2. Think of your arm lying flat on a table. Your upper arm and forearm are the two links, while your shoulder and elbow are the joints. The first joint is at angle &theta;1 from the x-axis, and the second joint bends by &theta;2 relative to the first link. The tip of the arm is at:
                             </p>
                             <pre class="article-code"><code>x = L1&middot;cos(&theta;1) + L2&middot;cos(&theta;1 + &theta;2)
 y = L1&middot;sin(&theta;1) + L2&middot;sin(&theta;1 + &theta;2)
 &phi; = &theta;1 + &theta;2      (the direction the tip points)</code></pre>
+                            <p class="plain-words"><strong>In plain words:</strong> L1 and L2 are the lengths of the two arm sections. The angles &theta;1 and &theta;2 describe how much each joint turns. The letters x and y mark where the tip lands on the table. With both links at 1 m, bending 30&deg; then 60&deg; places the tip at x = 0.866 m and y = 1.5 m.</p>
                             <p>
                                 Try it with L1 = L2 = 1 m, &theta;1 = 30&deg; and &theta;2 = 60&deg;. Then x = 0.866 + cos 90&deg; = 0.866 m, and y = 0.5 + sin 90&deg; = 1.5 m. In Python:
                             </p>
@@ -305,7 +319,7 @@ x = L1 * cos(t1) + L2 * cos(t1 + t2)
 y = L1 * sin(t1) + L2 * sin(t1 + t2)
 print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                             <p>
-                                This one example uses every topic above. Trigonometry gives the formula. With matrices, you get the same answer by multiplying a rotation and a translation for each link. Differentiating x and y with respect to time gives the arm&rsquo;s velocity, which leads to a matrix called the Jacobian (a matrix mapping joint velocities to tool velocities). Lesson <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a> builds on this with joints, frames and kinematics.
+                                This one example uses every topic above. Trigonometry gives the formula. With matrices, you get the same answer by multiplying a rotation and a translation for each link. Differentiating x and y with respect to time gives the arm&rsquo;s velocity, which leads to a matrix called the Jacobian (a matrix mapping joint velocities to tool velocities). Lesson <a href="robotics-1-6.html">1.6 Robot Anatomy and Coordinate Frames</a> builds on this with joints, frames and kinematics. This worked example is a preview. Lesson <a href="robotics-1-6.html">1.6</a> explains frames step by step, and <a href="robotics-6-10.html">lesson 6.10</a> covers the Jacobian matrix in full detail.
                             </p>
                             <p>
                                 Free resources:
@@ -318,24 +332,25 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
 
                             <h2 class="article-section-title">06. Physics and electronics basics</h2>
                             <p>
-                                Modern Robotics expects &ldquo;freshman-level physics, including f = ma&rdquo;: force equals mass times acceleration.<sup><a href="#ref-1">[1]</a></sup> That is what tells you how hard a motor must push to speed up an arm. A related idea is torque, the turning effect of a force, which grows with the distance from the joint. It follows that a load held far out on a stretched arm is harder on the joints than the same load held close in.
+                                Modern Robotics expects &ldquo;freshman-level physics, including f = ma&rdquo;: force equals mass times acceleration.<sup><a href="#ref-1">[1]</a></sup> In words, the heavier an arm and the faster you want it to speed up, the harder its motor must push. That is what tells you how hard a motor must push to speed up an arm. A related idea is torque, the turning effect of a force, which grows with the distance from the joint. Think of using a wrench, where a longer handle makes it easier to turn a tight bolt. It follows that a load held far out on a stretched arm is harder on the joints than the same load held close in.
                             </p>
                             <p>
                                 For electronics, start with Ohm&rsquo;s law: voltage equals current times resistance (E = IR, often written V = IR).<sup><a href="#ref-11">[11]</a></sup> From there you can learn how motors, encoders and switches connect to a controller. The course covers <a href="robotics-6-2.html">PWM</a> and <a href="robotics-6-3.html">encoders</a> in Chapter 6.
                             </p>
+                            <p class="plain-words"><strong>In plain words:</strong> think of electricity like water flowing in a pipe. Voltage is the pressure pushing the water, current is the rate of flow, and resistance is how narrow the pipe is.</p>
                             <p>
                                 Electricity is also a safety topic. OSHA lists electrical hazards (arc flash and shock), hydraulic hazards including high-pressure cutting streams, whipping pneumatic hoses, and parts thrown when a tool fails. It also notes that electrically powered robots can be stopped or powered down more safely and faster than hydraulic or pneumatic ones.<sup><a href="#ref-2">[2]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">07. Linux, git and simulators</h2>
                             <p>
-                                <span class="spec-label">Linux:</span> ROS 2 runs mainly on Ubuntu Linux. The newest release, ROS 2 Lyrical Luth (22 May 2026, supported until May 2031), has Ubuntu 26.04 and Windows 11 as its Tier 1 (best supported) platforms.<sup><a href="#ref-12">[12]</a></sup> Getting comfortable with the command line (moving between folders, running commands, editing files) pays off quickly.
+                                <span class="spec-label">Linux:</span> ROS 2 runs mainly on Ubuntu Linux. Linux is an operating system like Windows or macOS, and the command line means typing text commands instead of clicking icons. The newest release, ROS 2 Lyrical Luth (22 May 2026, supported until May 2031), has Ubuntu 26.04 and Windows 11 as its Tier 1 (best supported) platforms.<sup><a href="#ref-12">[12]</a></sup> You do not need to install anything today. Lesson <a href="robotics-4-3.html">4.3</a> provides a step-by-step setup guide. Getting comfortable with the command line (moving between folders, running commands, editing files) pays off quickly.
                             </p>
                             <p>
                                 <span class="spec-label">git:</span> git tracks every change to your code so you can undo mistakes and share work. The book <em>Pro Git</em> is free to read online.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <p>
-                                <span class="spec-label">Simulators:</span> run a robot in simulation before you run a real one. Gazebo is the usual simulator for ROS, and each ROS 2 release has a matching Gazebo version. For new users, Gazebo recommends Ubuntu 24.04 with ROS 2 Jazzy and Gazebo Harmonic.<sup><a href="#ref-14">[14]</a></sup> This course installs ROS 2 Lyrical on Ubuntu 26.04 (<a href="robotics-4-3.html">4.3</a>), so if you follow the course, use the Lyrical row of the table below.
+                                <span class="spec-label">Simulators:</span> run a robot in simulation before you run a real one. Gazebo is the usual simulator for ROS, and each ROS 2 release has a matching Gazebo version. For new users, Gazebo recommends Ubuntu 24.04 with ROS 2 Jazzy and Gazebo Harmonic.<sup><a href="#ref-14">[14]</a></sup> This course installs ROS 2 Lyrical on Ubuntu 26.04 (<a href="robotics-4-3.html">4.3</a>), so if you follow the course, use the Lyrical row of the table below. You will use Gazebo in <a href="robotics-4-5.html">lesson 4.5</a>.
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -349,7 +364,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                                 </tbody>
                             </table>
                             <p>
-                                For Universal Robots, URSim runs on Linux or as a virtual machine on Windows. When URSim runs on the same computer as ROS, the robot&rsquo;s IP address is <code>127.0.0.1</code>. One warning: the Linux installer may remove ROS packages, so install ROS after URSim.<sup><a href="#ref-8">[8]</a></sup>
+                                For Universal Robots, the free simulator URSim runs on Linux or as a virtual machine on Windows. When URSim runs on the same computer as ROS, the robot&rsquo;s IP address is <code>127.0.0.1</code> (a special address that means your own computer). One warning: the Linux installer may remove ROS packages, so install ROS after URSim.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li><a href="https://swcarpentry.github.io/shell-novice/" target="_blank" rel="noopener noreferrer">Software Carpentry: The Unix Shell</a>, a beginner lesson on the command line.<sup><a href="#ref-15">[15]</a></sup></li>
@@ -357,6 +372,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                             </ul>
 
                             <h2 class="article-section-title">08. Networking basics</h2>
+                            <p class="optional-note"><i class="fas fa-route" aria-hidden="true"></i> <strong>Optional on first reading.</strong> This section introduces how robots talk to other factory equipment over a network. You can skim these details now, and <a href="robotics-8-2.html">lesson 8.2</a> covers industrial network protocols in depth.</p>
                             <p>
                                 Robots rarely work alone. Industrial robots talk to PLCs (programmable logic controllers, the computers that run factory equipment), cameras and other machines over Ethernet, and ROS 2 nodes exchange messages over the network. Useful basics:
                             </p>
@@ -365,6 +381,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
                                 <li class="article-spec-item"><span class="spec-label">TCP vs. UDP:</span> TCP provides &ldquo;a reliable, in-order, byte-stream service&rdquo;;<sup><a href="#ref-16">[16]</a></sup> UDP is lighter and faster but does not guarantee delivery, so packets can be lost.<sup><a href="#ref-17">[17]</a></sup> ROS 2&rsquo;s default middleware (connectivity software that lets distributed nodes communicate), DDS (Data Distribution Service), runs over UDP.<sup><a href="#ref-18">[18]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Ports:</span> a single device runs many services, each listening on its own port number. Modbus TCP, for example, uses port 502.<sup><a href="#ref-19">[19]</a></sup></li>
                             </ul>
+                            <p class="plain-words"><strong>In plain words:</strong> TCP is like registered mail where the sender gets a receipt for every letter. UDP is like a postcard that sends fast without checking if it arrived.</p>
                             <p>
                                 Factory equipment uses industrial protocols on top of Ethernet:
                             </p>
@@ -388,7 +405,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
 
                             <h2 class="article-section-title">10. Optional: assembly language</h2>
                             <p>
-                                Assembly language is a low-level language in which each instruction corresponds closely to one machine instruction of a specific processor.<sup><a href="#ref-23">[23]</a></sup> It is <em>not</em> a prerequisite for this course. Nothing in this course asks you to write assembly, and Modern Robotics needs only basic programming skills.<sup><a href="#ref-1">[1]</a></sup>
+                                This section is safe to skip on a first reading. Assembly language is a low-level language in which each instruction corresponds closely to one machine instruction of a specific processor.<sup><a href="#ref-23">[23]</a></sup> It is <em>not</em> a prerequisite for this course. Nothing in this course asks you to write assembly, and Modern Robotics needs only basic programming skills.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 The evidence points the same way. An engineering education paper by He, Zhang and Shen (2015) taught microcontrollers with about 30% assembly and 70% embedded C. It kept assembly for understanding machine code, instruction timing and the stack, and noted that industry prefers high-level languages such as embedded C.<sup><a href="#ref-24">[24]</a></sup> A 2022 All About Circuits article pointed out that assembly ranked 30th in IEEE Spectrum&rsquo;s 2022 job-posting ranking, while C and C++ ranked 6th and 7th. It argued that the strongest reason to learn assembly is to understand what the processor actually does, and that there is &ldquo;no one-size-fits-all answer.&rdquo;<sup><a href="#ref-25">[25]</a></sup>
@@ -509,7 +526,7 @@ print(round(x, 3), round(y, 3))   # 0.866 1.5</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=6002944a" defer></script>
+            <script src="assets/js/course-data.js?v=4786a680" defer></script>
             <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
             <script src="assets/js/learning.js?v=42e08602" defer></script>
 
