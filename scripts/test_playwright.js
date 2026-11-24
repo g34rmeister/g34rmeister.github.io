@@ -34,7 +34,8 @@ function serve() {
 const pages = fs.readdirSync(ROOT).filter(f => /^robotics.*\.html$/.test(f)).sort();
 const viewports = [
   { width: 1280, height: 800, name: '1280px desktop' },
-  { width: 375, height: 667, name: '375px mobile' }
+  { width: 375, height: 667, name: '375px mobile' },
+  { width: 320, height: 568, name: '320px mobile' }
 ];
 
 (async () => {

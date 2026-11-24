@@ -134,6 +134,17 @@ button:focus-visible,
 	outline-offset: 2px !important;
 }
 
+/* Skip link: themed to LSU purple/gold with high-visibility focus */
+.skip-link {
+	background: var(--wp-link);
+	color: var(--wp-on-link);
+}
+.skip-link:focus,
+.skip-link:focus-visible {
+	outline: 2px solid var(--wp-link) !important;
+	outline-offset: 2px !important;
+}
+
 /* Content shows immediately; no scroll-in animations */
 .reveal-on-scroll {
 	opacity: 1;
@@ -1086,11 +1097,29 @@ ol.article-spec-list { list-style: decimal; }
 	width: fit-content;
 	max-width: 100%;
 	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
 	margin: 0.5em 0 1em;
 	border-collapse: collapse;
 	background: var(--wp-bg-subtle);
 	border: 1px solid var(--wp-border);
 	font-size: 14px;
+}
+/* Table wrapper: ensures horizontal scrolling containers work smoothly on mobile */
+.table-wrapper {
+	width: 100%;
+	max-width: 100%;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+	margin: 0.5em 0 1em;
+}
+.table-wrapper > .article-table {
+	margin: 0;
+	min-width: 100%;
+}
+.table-wrapper:focus-visible,
+.article-table:focus-visible {
+	outline: 2px solid var(--wp-link);
+	outline-offset: 2px;
 }
 .article-table th,
 .article-table td {
@@ -1298,7 +1327,7 @@ ol.article-spec-list { list-style: decimal; }
 	color: var(--wp-gold-text);
 }
 .lesson-complete-status { margin: 0; font-size: 13px; color: var(--wp-text-muted); }
-.lesson-quiz-link { font-size: 14px; }
+.lesson-quiz-link { display: inline-block; min-height: 24px; line-height: 24px; font-size: 14px; }
 
 .lesson-done-mark { margin-left: 6px; font-size: 12px; color: var(--wp-gold-text); }
 .chapter-progress-pill {
@@ -1332,8 +1361,8 @@ ol.article-spec-list { list-style: decimal; }
 .quiz-question legend { padding: 0 4px; font-weight: 700; color: var(--wp-text); }
 .quiz-question.is-right { border-left-color: #14866d; }
 .quiz-question.is-wrong { border-left-color: #d33; }
-.quiz-choice { display: flex; align-items: baseline; gap: 6px; margin: 4px 0; cursor: pointer; font-weight: 400; }
-.quiz-choice input { margin: 0; }
+.quiz-choice { display: flex; align-items: center; gap: 8px; margin: 3px 0; min-height: 28px; cursor: pointer; font-weight: 400; }
+.quiz-choice input { width: 16px; height: 16px; margin: 0; accent-color: var(--wp-link); }
 .quiz-feedback { margin-top: 8px; font-size: 14px; }
 .quiz-feedback:focus { outline: none; }
 /* Sticks to the bottom of the window: the navbar is sticky at the top and would cover it there. */
@@ -1491,6 +1520,18 @@ ol.article-spec-list { list-style: decimal; }
 	.article-nav-card + .article-nav-card { border-left: 0; border-top: 1px solid var(--wp-border); }
 }
 
+@media screen and (max-width: 360px) {
+	.thesis-navbar-inner { padding: 6px 10px; gap: 8px; }
+	.thesis-masthead-inner,
+	.robotics-container,
+	.robotics-article-container,
+	#footer .container { padding-left: 10px; padding-right: 10px; }
+	.rise-widget,
+	.lesson-diagram { padding-left: 10px; padding-right: 10px; }
+	.lesson-bottom-bar { padding: 6px 8px; gap: 4px; }
+	.lesson-bottom-link { padding: 0 6px; font-size: 14px; }
+}
+
 /* Lesson search on the hub and "Check yourself" boxes in lessons (learning.js) */
 .lesson-search { margin: 12px 0 4px; }
 .lesson-search-label { display: block; font-weight: 700; margin-bottom: 4px; }
@@ -1527,7 +1568,7 @@ ol.article-spec-list { list-style: decimal; }
 .glossary-pop a { font-weight: 700; }
 
 /* "Load these values" button in a Try it step, and the widget it focuses */
-.widget-load-btn { margin-left: 6px; padding: 2px 10px; font-size: 13px; }
+.widget-load-btn { display: inline-flex; align-items: center; min-height: 24px; margin-left: 6px; padding: 2px 10px; font-size: 13px; }
 .widget-load-btn[hidden] { display: none; }
 .rise-widget:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
 
@@ -1547,9 +1588,10 @@ ol.article-spec-list { list-style: decimal; }
 /* Self-check answers: native <details>, so keyboard and screen readers work without script. */
 .check-answer { margin: 0.4em 0 0.6em; }
 .check-answer > summary {
-	display: inline-block; cursor: pointer; list-style: none;
+	display: inline-flex; align-items: center; min-height: 24px; line-height: 1.4;
+	cursor: pointer; list-style: none;
 	font-family: var(--wp-sans); font-size: 0.85rem; color: var(--wp-link);
-	border: 1px solid var(--wp-border-light); border-radius: 3px; padding: 0.1em 0.6em;
+	border: 1px solid var(--wp-border-light); border-radius: 3px; padding: 2px 8px;
 }
 .check-answer > summary::-webkit-details-marker { display: none; }
 .check-answer > summary:hover { background: var(--wp-bg-subtle); color: var(--wp-link-hover); }
