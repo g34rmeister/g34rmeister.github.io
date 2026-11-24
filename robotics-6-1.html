@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT14M",
+            "timeRequired": "PT17M",
             "teaches": [
                 "Arduino Uno",
                 "ATmega328P",
@@ -290,6 +290,37 @@
                                 Each GPIO pin can supply only a small current, and the limit differs between boards. On the Uno R3, Arduino lists 20 mA per I/O pin, and the ATmega328P's absolute maximum rating is 40 mA per pin. The 20 mA figure is the datasheet's test condition at 5 V, not a safe target to run at continuously.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-7">[7]</a></sup> On the Uno R4, Arduino states that the RA4M1's GPIOs can handle up to 8 mA and warns never to connect devices that draw more current directly to a GPIO.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
 
+                            <p>
+                                To understand how these specifications translate to physical hardware on an embedded robotics bench, inspect the interactive 3D model of the Arduino Uno R3 below. Drag to orbit, switch between perspective view presets, or click individual components to inspect their pinouts, voltage ratings, and subsystem roles.
+                            </p>
+
+                            <div data-widget="arduino-uno-3d">
+                                <p class="widget-note">The 3D Arduino Uno Board Explorer needs JavaScript. With it on, you can rotate and inspect the Uno R3 board in perspective 3D, switch view presets (3/4, Top, Bottom, Front), examine numbered callout chips for the ATmega328P DIP package, USB bridge, and power circuitry, and inspect pinout specifications and electrical limits.</p>
+                            </div>
+
+                            <div class="article-callout walkthrough-guide">
+                                <div class="article-callout-header"><i class="fas fa-compass"></i> Interactive Board Explorer Walkthrough</div>
+                                <p>Use the 3D viewport controls and component callout chips above to complete the following hardware inspection walkthrough:</p>
+                                <ol class="article-spec-list">
+                                    <li class="article-spec-item">
+                                        <span class="spec-label">1. Inspect the board in 3D:</span>
+                                        Use the floating toolbar presets (<strong>3/4</strong>, <strong>Top</strong>, <strong>Bottom</strong>, <strong>Front</strong>) or drag on the canvas to orbit around the PCB. Toggle the <strong>Rotate</strong> turntable button to observe the board from all angles. Note the standard Arduino form factor, the four M3 mounting holes used to fasten the board to robot chassis plates, and the dual rows of female header sockets along the top and bottom edges.
+                                    </li>
+                                    <li class="article-spec-item">
+                                        <span class="spec-label">2. Trace the ATmega328P DIP package:</span>
+                                        Click callout chip <strong>1</strong> or select the large central IC to highlight the <strong>ATmega328P</strong> microcontroller. Observe the dual-in-line package (DIP-28) seated in its socket, complete with the semicircular orientation notch on pin 1. In robotics education and prototyping, a socketed DIP microcontroller offers a major advantage: if an accidental motor short-circuit or inductive spike damages the I/O circuitry, the chip can be pried out and replaced without discarding the entire board.
+                                    </li>
+                                    <li class="article-spec-item">
+                                        <span class="spec-label">3. Examine the power regulator and USB bridge:</span>
+                                        Locate callout chip <strong>3</strong> (Voltage Regulator) and callout chip <strong>4</strong> (DC Barrel Jack, 2.1 mm center-positive). External power from a 7&ndash;12 V battery or adapter enters through the barrel jack (or VIN pin) and is stepped down to 5 V by the onboard linear regulator. Next, inspect callout chip <strong>2</strong> (ATmega16U2 USB interface) adjacent to the sturdy silver USB-B port (callout chip <strong>5</strong>) and the 16 MHz quartz crystal. The dedicated ATmega16U2 chip translates USB packets from your development workstation into UART serial streams on digital pins 0 (RX) and 1 (TX), allowing seamless sketch uploading and serial telemetry without requiring the primary ATmega328P to run a software USB stack.
+                                    </li>
+                                    <li class="article-spec-item">
+                                        <span class="spec-label">4. Explore pin limits and header groupings:</span>
+                                        Click callout chip <strong>6</strong> (Digital I/O Headers D0&ndash;D13) and callout chip <strong>7</strong> (Analog In Headers A0&ndash;A5). Note the tilde marks (<code>~</code>) indicating hardware PWM channels on pins 3, 5, 6, 9, 10, and 11. Remember the strict electrical ceiling: while the Uno R3 can source up to 20 mA per pin (with an absolute maximum of 40 mA), the total current across all I/O pins must never exceed 200 mA. By contrast, the 32-bit Uno R4 limits each GPIO to 8 mA. Finally, locate the tactile Reset button (callout chip <strong>8</strong>), which grounds the ATmega328P reset line to reboot the microcontroller and trigger the bootloader.
+                                    </li>
+                                </ol>
+                            </div>
+
                             <h2 class="article-section-title">03. GPIO pin functions and input modes</h2>
                             <p>
                                 An Arduino Uno exposes 14 digital input/output pins (labeled 0 through 13) and 6 analog input pins (labeled A0 through A5).<sup><a href="#ref-3">[3]</a></sup> Understanding their electrical behavior prevents confusing software bugs:
@@ -418,12 +449,20 @@ void loop() {
                                 <p class="widget-note">The ultrasonic distance calculation needs JavaScript. With it on, you can change echo pulse duration and calculate obstacle distance.</p>
                             </div>
 
+                            <div class="article-callout open-source-resource">
+                                <div class="article-callout-header"><i class="fas fa-cube"></i> Featured Open-Source Resource: 3D Interactive Workbench</div>
+                                <p>
+                                    Before assembling circuits or wiring physical microcontrollers on your hardware bench, test your connections in simulation. The open-source 3D interactive workbench at <a href="https://robotics-lab-app.vercel.app/#uno" target="_blank" rel="noopener noreferrer">robotics-lab-app.vercel.app/#uno</a> provides an interactive 3D environment for simulated breadboard wiring, pin limit verification, and step-by-step robot assembly missions. It lets you inspect current paths, verify wiring polarities, and practice interfacing sensors and drivers in full 3D without risking hardware damage.
+                                </p>
+                            </div>
+
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
                                     <li>Wire an active-low bumper switch to digital pin 2 using <code>pinMode(2, INPUT_PULLUP)</code>. Connect the other terminal of the switch to GND. Use the Serial Monitor to verify that the pin reads 1 when open and 0 when pressed, with no floating.</li>
                                     <li>Connect an HC-SR04 ultrasonic sensor to an Arduino, trigger a measurement pulse, and print the resulting distance in centimeters to the Serial Monitor at 115,200 baud. Test against flat cardboard targets at 10, 30, and 100 cm.</li>
                                     <li>Wire a dual H-bridge driver (such as a TB6612FNG or L298N) to a separate battery and motor, ensuring the battery Ground and Arduino Ground pins are securely bridged. Test bidirectional motor rotation by toggling the direction pins.</li>
+                                    <li>Open the 3D interactive workbench at <a href="https://robotics-lab-app.vercel.app/#uno" target="_blank" rel="noopener noreferrer">robotics-lab-app.vercel.app/#uno</a> and complete the Arduino Uno breadboard wiring and assembly mission to practice component placement and pin routing in full 3D before wiring live power.</li>
                                 </ol>
                             </div>
 
@@ -488,7 +527,7 @@ void loop() {
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=a6c9ebeb" defer></script>
+            <script src="assets/js/course-data.js?v=06716946" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=42e08602" defer></script>
             <script src="assets/js/widgets.js?v=c7f46916" defer></script>

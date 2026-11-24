@@ -224,10 +224,10 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: large language model, hallucination, vision-language-action model, foundation model, predictive maintenance, safety configuration, provenance, pose_trans, URSim
 - Sections: Why this lesson exists · Learned vision: bin picking, pose estimation and inspection · Predictive maintenance · LLM programming assistants ("copilots") · Foundation models that output robot actions · What the evidence says about AI-written code · How AI mistakes look in robot code · The safety layer stays deterministic · Regulation (as of October 2026) · Accountability, and this course
 
-## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 164 min)
+## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 167 min)
 
 ### 6.1 Arduino for Robotics
-`robotics-6-1.html` · 14 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
+`robotics-6-1.html` · 17 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
 - Objectives: Compare the hardware of the Arduino Uno R3 (ATmega328P) and Uno R4 (Renesas RA4M1), checking pin current limits and voltage ratings. / Configure digital GPIO modes including high-impedance floating inputs and internal pull-up resistors (INPUT_PULLUP). / Compare H-bridge motor drivers (L298N vs. MOSFET TB6612FNG) and set up proper power isolation with shared electrical grounds. / Apply critical Lithium Polymer (LiPo) battery safety rules, including cell voltage thresholds, C-ratings, and thermal runaway prevention.
 - Key terms: Arduino Uno, ATmega328P, pinMode, INPUT_PULLUP, H-bridge, L298N, TB6612FNG, LiPo battery, common ground
 - Sections: Microcontrollers at the physical frontier · Hardware architecture: Arduino Uno R3 versus Uno R4 · GPIO pin functions and input modes · Actuator power: why microcontrollers cannot drive motors · H-bridge motor drivers: L298N versus TB6612FNG · Power architecture: the common ground rule · Mobile robot power: Lithium Polymer (LiPo) safety · Sketch structure and non-blocking sensor timing
