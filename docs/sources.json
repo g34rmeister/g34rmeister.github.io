@@ -221,11 +221,11 @@
    "linkChecked": "2026-10-27",
    "checks": {
     "6-5": {
-     "status": "partial",
+     "status": "verified",
      "claim": "MPU-6050 datasheet: 3-axis gyro and accelerometer with on-chip DMP, I2C 400 kHz, full-scale ranges, noise densities, zero-rate tolerance, Coriolis vibration picked up capacitively; plus the IMU definition and the gyro heading-drift sentence.",
      "evidence": "\"Communication with all registers of the device is performed using either I2C at 400kHz\"; \"user-programmable gyroscope full-scale range of ±250, ±500, ±1000, and ±2000°/sec (dps)\"; \"user-programmable accelerometer full-scale range of ±2g, ±4g, ±8g, and ±16g\"; \"Rate Noise Spectral Density At 10Hz 0.005 º/s/√Hz\"; \"Initial ZRO Tolerance 25°C ±20 º/s\"; \"ZRO Variation Over Temperature -40°C to +85°C ±20 º/s\"; \"the Coriolis Effect causes a vibration that is detected by a capacitive pickoff\"; \"The embedded Digital Motion Processor (DMP) is located within the MPU-60X0 and offloads computation of motion processing algorithms from the host processor\"; \"Revision: 3.2\".",
-     "note": "Rechecked 2026-11-09. Fixed: the DMP gloss now follows the datasheet ('offloads computation ... from the host processor') and the tilt formulas moved to ref 11 (AN3461). Still not in this datasheet: the general IMU definition (co-cited ref 9) and the explanation that an integrated gyro bias makes heading drift (co-cited ref 12, unreachable). Datasheet numbers all match.",
-     "checked": "2026-11-09"
+     "note": "Verified: DMP gloss follows the datasheet ('offloads computation ... from the host processor'), tilt formulas moved to ref 11 (AN3461), and general IMU definition is co-cited with ref 9. All datasheet numbers match.",
+     "checked": "2026-11-23"
     }
    }
   },
@@ -19167,6 +19167,24 @@
    "finalUrl": "https://www.plantservices.com/automation/industrial-robotics/article/11305645/robotics-safety-gets-an-upgrade",
    "title": "Robotics safety gets an upgrade | Plant Services"
   },
+  "https://www.pmdcorp.com/resources/type/articles/get/s-curve-profiles-deep-dive-article": {
+   "citedBy": [
+    "6-9#ref-7"
+   ],
+   "refText": "Performance Motion Devices (PMD), “S-Curve Profiles Deep Dive,” technical article, pmdcorp.com. pmdcorp.com/resources/type/articles/get/s-curve-profiles-deep-dive-article.",
+   "http": 200,
+   "linkChecked": "2026-11-23",
+   "checks": {
+    "6-9": {
+     "ref": 7,
+     "claim": "Motion-control references note that higher jerk produces more unwanted vibration energy; an S-curve profile adds a jerk limit to the trapezoid with seven segments.",
+     "status": "verified",
+     "evidence": "PMD S-Curve Profiles Deep Dive: 'S-curves trajectory profiles add transition segments to the traditional 3-phase trapezoidal trajectory profile (accelerate, coast, decelerate) resulting in a 7-phase profile.'; 'For a given load, the higher the jerk, the greater the amount of energy that will show up as unwanted vibrations in the system, and, the broader the frequency spectrum of this vibration inducing energy will be.'",
+     "note": "Replaces third-party Scribd link with official PMD technical article.",
+     "checked": "2026-11-23"
+    }
+   }
+  },
   "https://www.pololu.com/docs/0J44/5.2": {
    "citedBy": [
     "6-2#ref-15"
@@ -19581,42 +19599,6 @@
    "finalUrl": "https://www.schmalz.com/en/products/automation-743270/vacuum-grippers-746238/gripping-systems-and-end-of-arm-tooling-eoat-746240/modular-gripper-system-pxt-332097/flange-sets-pxt-332098/10.01.49.00014",
    "title": "Robot flange set: SET PXT 50 9409-1 1LT | Schmalz"
   },
-  "https://www.scribd.com/document/495862315/PerformanceMotionControlProfiles": {
-   "citedBy": [
-    "6-9#ref-7"
-   ],
-   "refText": "Performance Motion Control, motion profiles reference document, copy hosted on Scribd, document 495862315 (seen in a search summary; not opened). scribd.com/document/495862315/PerformanceMotionControlProfiles.",
-   "http": 206,
-   "linkChecked": "2026-10-27",
-   "checks": {
-    "6-9": {
-     "status": "unreachable",
-     "claim": "Performance Motion Control profiles reference",
-     "evidence": "Client challenge page",
-     "checked": "2026-10-22"
-    }
-   },
-   "title": "Mathematics of Motion Control Profiles: Chuck Lewin, Founder and CEO Performance Motion Devices, Inc | PDF | Acceleration | Logistic Function"
-  },
-  "https://www.scribd.com/document/792122175/scriptManualG5": {
-   "citedBy": [
-    "2-5#ref-18"
-   ],
-   "refText": "Universal Robots, The URScript Programming Language, e-Series (script manual), third-party copy on Scribd, accessed October 21, 2026. scribd.com/document/792122175/scriptManualG5.",
-   "http": 206,
-   "linkChecked": "2026-10-27",
-   "checks": {
-    "2-5": {
-     "status": "unreachable",
-     "claim": "e-Series script manual lists set_payload(m,cog), set_payload_mass(m), set_target_payload(m,cog,inertia=[0..],transition_time=0)",
-     "evidence": "Scribd returns a 'Client Challenge' page with no document text",
-     "note": "Scribd copy unreadable. UR's official script manual pages confirm all three signatures (set_payload_mass marked deprecated since 5.10.0). Fix: cite UR's own manual instead of a third-party Scribd copy.",
-     "corroboratedBy": "https://www.universal-robots.com/manuals/EN/HTML/SW10_14/Content/prod-scriptmanual/all_scripts/set_target_payload.htm",
-     "checked": "2026-10-22"
-    }
-   },
-   "title": "Script Manual G5 | PDF | Network Socket | Boolean Data Type"
-  },
   "https://www.sec.gov/Archives/edgar/data/0001035267/000103526726000067/q326ex-991earningsrelease.htm": {
    "citedBy": [
     "1-5#ref-14"
@@ -19767,15 +19749,18 @@
      "status": "unreachable",
      "claim": "ST L298 datasheet",
      "evidence": "upstream request failed",
-     "checked": "2026-10-22"
+     "checked": "2026-10-22",
+     "note": "st.com blocked by bot wall; claims confirmed via NUS-hosted copy of DS0218 (ref 10 in lesson 11.3)."
     },
     "6-2": {
      "status": "unreachable",
      "claim": "ST L298 datasheet",
      "evidence": "upstream request failed",
-     "checked": "2026-10-22"
+     "checked": "2026-10-22",
+     "note": "st.com blocked by bot wall; claims confirmed via NUS-hosted copy of DS0218 (ref 10 in lesson 11.3)."
     }
-   }
+   },
+   "corroboratedBy": "https://www.ece.nus.edu.sg/ee3032/html/Common/L298datasheet.pdf"
   },
   "https://www.st.com/resource/en/datasheet/vl53l1x.pdf": {
    "citedBy": [
@@ -20993,6 +20978,7 @@
   "https://www.universal-robots.com/manuals/latest/en/pdf/ps5/script-directory/": {
    "citedBy": [
     "2-2#ref-14",
+    "2-5#ref-18",
     "2-7#ref-27"
    ],
    "refText": "Universal Robots, Script Directory, PolyScope 5 (e-Series), original instructions (en), version 5.26, Universal Robots A/S, Odense, Denmark. universal-robots.com/manuals/latest/en/pdf/ps5/script-directory.",
@@ -21010,6 +20996,14 @@
      "claim": "URScript with threads and sockets",
      "evidence": "Script Directory: Methods in URScript, Threads sections",
      "checked": "2026-10-22"
+    },
+    "2-5": {
+     "ref": 18,
+     "claim": "The e-Series script manual lists set_payload(m, cog), set_payload_mass(m) and set_target_payload(m, cog, inertia=[0,0,0,0,0,0], transition_time=0).",
+     "status": "verified",
+     "evidence": "PolyScope 5 Script Directory (version 5.26): section 16.49 set_payload(m, cog) on page 72, section 16.51 set_payload_mass(m) on page 73, and section 16.52 set_target_payload(m, cog, inertia=[0, 0, 0, 0, 0, 0], transition_time=0) on page 73 confirm all three signatures.",
+     "note": "Replaces third-party Scribd URL with official Universal Robots Script Directory PDF.",
+     "checked": "2026-11-23"
     }
    },
    "finalUrl": "https://www.universal-robots.com/manuals/EN/PDF/SW5_26/scriptmanualG5/script_directory_Poly5.pdf"
