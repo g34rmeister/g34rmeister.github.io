@@ -9,7 +9,7 @@
 	"edge-case-classifier" | "ultrasonic-distance" | "gyro-drift" |
 	"jacobian-singularity" | "f-number-aperture" |
 	"presence-area-check" | "ethernet-ip-messaging" | "fov" | "vlan" |
-	"robot-arm-3d" | "amr-frames-3d" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"robot-arm-3d" | "amr-frames-3d" | "arduino-uno-3d" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -4706,10 +4706,11 @@ function renderScene3D(svg, sc) {
 	svg.replaceChildren(frag);
 }
 
-function floorGrid3D(sc, xMin, xMax, yMin, yMax, step) {
+function floorGrid3D(sc, xMin, xMax, yMin, yMax, step, z0) {
 	var attrs = { stroke: 'var(--wp-border-light, #c8ccd1)', 'stroke-width': '1', opacity: '0.7' };
-	for (var x = xMin; x <= xMax + 1e-6; x += step) line3D(sc, [x, yMin, 0], [x, yMax, 0], attrs, 'floor');
-	for (var y = yMin; y <= yMax + 1e-6; y += step) line3D(sc, [xMin, y, 0], [xMax, y, 0], attrs, 'floor');
+	var z = z0 || 0;
+	for (var x = xMin; x <= xMax + 1e-6; x += step) line3D(sc, [x, yMin, z], [x, yMax, z], attrs, 'floor');
+	for (var y = yMin; y <= yMax + 1e-6; y += step) line3D(sc, [xMin, y, z], [xMax, y, z], attrs, 'floor');
 }
 
 /* Draws at most once per animation frame however many inputs fire. */
@@ -4892,6 +4893,769 @@ function checkRow3D(id, text, checked) {
 	return { input: input, row: h('div', { 'class': 'widget-control widget-check' }, [input, h('label', { 'for': id, text: text })]) };
 }
 
+
+/* ==========================================================================
+   Shared 3D Stage Toolbar, Turntable Auto-spin, and Component Inspector
+   ========================================================================== */
+
+var ARDUINO_PARTS = [
+	{
+		id: 1,
+		title: 'ATmega328P Microcontroller',
+		shortTitle: 'ATmega328P',
+		specPill: '8-bit AVR · 16 MHz · 5V Logic',
+		pos: [0.85, -0.65, 0.72],
+		box: [[0.85, -0.65, 0.32], [3.6, 0.95, 0.40]],
+		desc: 'The central processing unit running your Arduino robot program. It executes setup() once at power-up and repeatedly runs loop(), controlling GPIO pins, hardware timers, PWM channels, and ADC conversions.',
+		specs: [
+			['Architecture', '8-bit AVR RISC (Microchip / Atmel) @ 16 MHz'],
+			['Memory', '32 KB Flash (0.5 KB bootloader), 2 KB SRAM, 1 KB EEPROM'],
+			['Operating Voltage', '5.0 V nominal (safe operating range: 1.8 V – 5.5 V)'],
+			['Pin Current Limits', '20 mA recommended per I/O pin (40 mA absolute maximum)'],
+			['Total Current Limit', '200 mA absolute maximum across all I/O pins combined'],
+			['Robotics Role', 'Executes real-time sensor polling, motor PWM generation, and kinematic loops']
+		]
+	},
+	{
+		id: 2,
+		title: 'USB Interface (ATmega16U2)',
+		shortTitle: 'USB Interface',
+		specPill: 'USB-to-Serial · DFU Bootloader',
+		pos: [-1.35, 0.75, 0.58],
+		box: [[-1.35, 0.75, 0.18], [0.9, 0.9, 0.22]],
+		desc: 'Translates USB communication from your computer into asynchronous serial UART (TX/RX on pins 0 & 1). It also toggles the DTR reset line to automatically restart the ATmega328P when flashing new code.',
+		specs: [
+			['Chip Type', 'Microchip ATmega16U2 (32-pin QFN package)'],
+			['USB Standard', 'USB 2.0 Full Speed (12 Mbps) CDC Serial Profile'],
+			['Host Baud Rates', 'Supports standard serial rates from 300 up to 2,000,000 baud'],
+			['Firmware Mode', 'Reprogrammable via DFU (can emulate MIDI, joystick, or HID keyboard)'],
+			['Robotics Role', 'Streams debugging telemetry to Serial Monitor and receives ROS serial packets']
+		]
+	},
+	{
+		id: 3,
+		title: '5V Voltage Regulator (NCP1117 / AMS1117)',
+		shortTitle: '5V Regulator',
+		specPill: 'Linear LDO · 5.0V Output · up to 800 mA',
+		pos: [-1.25, -1.55, 0.58],
+		box: [[-1.25, -1.55, 0.22], [0.8, 0.75, 0.26]],
+		desc: 'Linear low-dropout (LDO) regulator that steps down raw external DC power (from barrel jack or VIN pin) to a stable 5.0 V rail for the microcontroller and onboard logic chips.',
+		specs: [
+			['Input Voltage', '7 V to 12 V DC recommended (dropout limit: 6.5 V, absolute max: 20 V)'],
+			['Output Voltage', '5.0 V regulated ±1% (up to ~800 mA thermally limited)'],
+			['Thermal Warning', 'P_loss = (V_in − 5V) × I. High V_in (12V) causes heavy heat dissipation'],
+			['Safety Rule', 'Never drive motors, servos, or heavy solenoids from this 5V rail'],
+			['Robotics Role', 'Powers onboard logic; motors must use dedicated battery supplies with common GND']
+		]
+	},
+	{
+		id: 4,
+		title: 'DC Power Barrel Jack',
+		shortTitle: 'Barrel Jack',
+		specPill: '2.1 mm Center-Positive · 7–12 V DC',
+		pos: [-2.60, -1.65, 1.15],
+		box: [[-2.60, -1.65, 0.60], [1.5, 1.0, 1.1]],
+		desc: 'Standard 2.1 mm barrel socket for powering autonomous mobile robots from untethered battery packs (e.g. 7.4V 2S LiPo, 9V NiMH, or 12V SLA). Protected against reverse polarity by an onboard series diode.',
+		specs: [
+			['Connector Spec', '2.1 mm center pin ID, 5.5 mm barrel OD, center-positive (+)'],
+			['Recommended Supply', '7 V to 12 V DC battery pack or regulated wall adapter'],
+			['Polarity Protection', 'Onboard M7 silicon diode prevents reverse-voltage destruction'],
+			['Auto-Switching', 'Onboard comparator (LM358) cuts USB power when VIN > 6.6 V'],
+			['Robotics Role', 'Main battery connection point for mobile robot controllers during untethered runs']
+		]
+	},
+	{
+		id: 5,
+		title: 'USB Type-B Port',
+		shortTitle: 'USB-B Port',
+		specPill: 'Rugged Through-Hole · 5V VBUS · 500 mA Fuse',
+		pos: [-2.65, 1.30, 1.18],
+		box: [[-2.65, 1.30, 0.62], [1.45, 1.25, 1.15]],
+		desc: 'Through-hole metal-shielded USB Type-B female connector used for sketch uploading, serial debugging, and desktop power. Large solder tabs make it mechanically far more durable than fragile micro-USB sockets.',
+		specs: [
+			['Connector Form', 'Full-size USB Type-B Female with ground shield retention tabs'],
+			['VBUS Power', 'Supplies 5.0 V from host computer up to 500 mA'],
+			['Polyfuse Protection', '500 mA resettable PTC polyfuse protects host PC USB ports from shorts'],
+			['Signal Lines', 'D+ and D− data differential pair with 22 Ω series damping resistors'],
+			['Robotics Role', 'Primary programming interface and wired serial tether during lab prototyping']
+		]
+	},
+	{
+		id: 6,
+		title: 'Digital I/O Headers (Pins 0–13)',
+		shortTitle: 'Digital I/O',
+		specPill: '14 GPIOs · 5V Logic · 6 Hardware PWM',
+		pos: [0.40, 2.30, 0.88],
+		box: [[0.40, 2.30, 0.45], [4.7, 0.45, 0.70]],
+		desc: 'Two female header blocks exposing 14 digital input/output pins. Pins marked with a tilde (~) support 8-bit hardware pulse-width modulation (PWM) for motor speed and servo position control.',
+		specs: [
+			['Digital Pins', 'Pins 0 to 13 (5.0 V HIGH, 0.0 V LOW; inputs exceed 3.0 V for HIGH)'],
+			['Hardware PWM (~)', 'Pins 3, 5, 6, 9, 10, 11 (approx 490 Hz / 980 Hz for motor speed control)'],
+			['Hardware UART', 'Pin 0 (RX) and Pin 1 (TX) shared with USB serial bridge'],
+			['External Interrupts', 'Pin 2 (INT0) and Pin 3 (INT1) for microsecond optical encoder pulses'],
+			['SPI Bus', 'Pin 10 (SS), Pin 11 (MOSI), Pin 12 (MISO), Pin 13 (SCK / onboard LED)'],
+			['Current Limit', '20 mA per pin recommended; absolute maximum 40 mA before silicon damage']
+		]
+	},
+	{
+		id: 7,
+		title: 'Analog In Headers (Pins A0–A5)',
+		shortTitle: 'Analog In',
+		specPill: '6 Channels · 10-bit ADC · 0–5V (4.88 mV/LSB)',
+		pos: [1.85, -2.30, 0.88],
+		box: [[1.85, -2.30, 0.45], [1.6, 0.45, 0.70]],
+		desc: '6 dedicated analog input pins connected to the ATmega328P internal 10-bit Successive Approximation Analog-to-Digital Converter (ADC). Can also be configured as standard digital GPIOs (pins 14–19).',
+		specs: [
+			['ADC Resolution', '10-bit (returns integer 0 to 1023 in analogRead())'],
+			['Voltage Range', '0.0 V to 5.0 V standard (reference can be customized via AREF pin)'],
+			['Step Size (LSB)', '5.0 V / 1024 = 4.88 mV per analog count'],
+			['Conversion Speed', 'Approx 100 microseconds per conversion (~10 kHz sample rate)'],
+			['I2C Communication', 'Pin A4 is SDA (data) and Pin A5 is SCL (clock) for IMU/sensor bus'],
+			['Robotics Role', 'Reads analog optical distance sensors, potentiometer joints, and battery monitors']
+		]
+	},
+	{
+		id: 8,
+		title: 'Tactile Reset Push Button',
+		shortTitle: 'Reset Button',
+		specPill: 'Momentary SPST · Active-LOW to GND',
+		pos: [-2.80, 2.15, 0.72],
+		box: [[-2.80, 2.15, 0.30], [0.65, 0.65, 0.35]],
+		desc: 'Momentary tactile switch wired between the ATmega328P /RESET pin (pin 1) and Ground. Pressing it pulls the reset line LOW, immediately halting robot code execution and restarting the Optiboot bootloader.',
+		specs: [
+			['Switch Type', 'Normally open SPST momentary tactile push switch'],
+			['Electrical State', 'Held at 5.0 V via 10 kΩ pull-up; pressing shorts to GND (0.0 V)'],
+			['Debounce & Filter', 'Filtered with a 100 nF capacitor against spurious electrical noise'],
+			['Bootloader Action', 'Restarts execution at flash address 0x7E00 to check for new code'],
+			['Robotics Role', 'Emergency stop reset during testing and manual recalibration trigger']
+		]
+	}
+];
+
+var ROBOT_ARM_PARTS = [
+	{
+		id: 'base',
+		title: 'Robot Base & Waist Joint {J1}',
+		shortTitle: 'J1 Waist',
+		specPill: 'Revolute Waist · Axis: World Z · ±170°',
+		pos: [0, 0, 0.22],
+		desc: 'The stationary mounting base and primary azimuth joint J1. Rotates the entire arm structure around the vertical world Z axis. Singularity caution: when the wrist center passes directly over this axis, small Cartesian Y movements demand very high J1 joint velocities (shoulder singularity).',
+		specs: [
+			['Joint Axis', 'World Z (vertical rotation, θ1)'],
+			['Joint Range', '−170° to +170° (340° total working envelope)'],
+			['Frame Role', '{base} reference frame for Cartesian world kinematics [X, Y, Z]'],
+			['Singularity', 'Shoulder singularity occurs when wrist radius r ≈ 0 m']
+		]
+	},
+	{
+		id: 'shoulder',
+		title: 'Shoulder Joint {J2} & Lower Arm Link',
+		shortTitle: 'J2 Shoulder',
+		specPill: 'Revolute Pitch · Length: 0.32 m · −60°..+90°',
+		pos: [0, 0, 0.14],
+		desc: 'Joint 2 elevates the heavy main arm section in the vertical plane. It bears the highest gravitational torque of any joint on the manipulator. Link 1 has an effective kinematic length of 0.32 m.',
+		specs: [
+			['Joint Axis', 'Horizontal pitch axis perpendicular to arm plane (θ2)'],
+			['Joint Range', '−60° to +90°'],
+			['Kinematic Length', 'L1 = 0.32 m (main boom)'],
+			['Dynamics', 'Peak holding torque required when arm is horizontal at full extension']
+		]
+	},
+	{
+		id: 'elbow',
+		title: 'Elbow Joint {J3} & Forearm Link',
+		shortTitle: 'J3 Elbow',
+		specPill: 'Revolute Pitch · Length: 0.28 m · −90°..+100°',
+		pos: [0.15, 0.15, 0.35],
+		desc: 'Joint 3 articulates the forearm (0.28 m link) relative to the lower arm. When θ3 = 0°, the arm is stretched out straight at its reach boundary (boundary singularity), where the kinematic Jacobian loses rank and outward velocity is zero.',
+		specs: [
+			['Joint Axis', 'Forearm pitch axis parallel to J2 (θ3)'],
+			['Joint Range', '−90° to +100°'],
+			['Kinematic Length', 'L2 = 0.28 m (forearm)'],
+			['Singularity', 'Elbow singularity occurs at θ3 = 0° (maximum radial reach 0.74 m)']
+		]
+	},
+	{
+		id: 'wrist',
+		title: 'Wrist Assembly (Pitch {J4} & Roll {J5})',
+		shortTitle: 'J4/J5 Wrist',
+		specPill: '2-DOF Spherical Wrist · Pitch ±100° · Roll ±180°',
+		pos: [0.35, 0.20, 0.30],
+		desc: 'Joints 4 and 5 form a compact two-axis wrist. J4 pitches the tool flange up and down to match the approach vector, while J5 spins the tool flange continuously to orient the gripper for grasp acquisition.',
+		specs: [
+			['Joint 4 (Pitch)', '−100° to +100° (determines tool approach angle φ)'],
+			['Joint 5 (Roll)', '−180° to +180° (spins tool frame around tool Z axis)'],
+			['Kinematic Length', 'L3 + L4 = 0.18 m combined flange and gripper depth'],
+			['Robotics Role', 'Decouples position IK (solved at wrist center) from tool orientation']
+		]
+	},
+	{
+		id: 'tool',
+		title: 'Pneumatic Parallel Gripper & TCP {tool}',
+		shortTitle: 'Gripper & TCP',
+		specPill: 'Tool Center Point · 2-Finger Grip',
+		pos: [0.42, 0.22, 0.18],
+		desc: 'The end-effector mounted to the robot tool flange. The Tool Center Point (TCP) is defined at the midpoint between the gripper fingers where workpieces are grasped.',
+		specs: [
+			['Gripper Stroke', '40 mm parallel opening for palletized cylinders/cubes'],
+			['Tool Coordinate Frame', '{tool}: Z points outward along approach, X along finger motion'],
+			['Jogging Frames', 'Supports jogging in both fixed {base} and tool-relative {tool} frames'],
+			['Trajectory Control', 'MoveL interpolates TCP on a straight line; MoveJ curves in Cartesian space']
+		]
+	},
+	{
+		id: 'workpiece',
+		title: 'Assembly Workpiece & Fixture Pedestals',
+		shortTitle: 'Workpiece',
+		specPill: '42 mm Cyan Payload Cube · Pick & Place Fixtures',
+		pos: [0.42, 0.26, 0.12],
+		desc: 'Standardized payload block used in pick-and-place automation sequences. The robot descends to the pick pedestal, activates its grasp, elevates along a clear vertical path, and deposits the payload onto the place pedestal.',
+		specs: [
+			['Workpiece Size', '42 × 42 × 42 mm precision cube'],
+			['Pick Pedestal', 'Located at X = +0.42 m, Y = +0.26 m, Z = 0.05 m'],
+			['Place Pedestal', 'Located at X = +0.30 m, Y = −0.40 m, Z = 0.07 m'],
+			['Safety Margin', 'Clearance height of +0.24 m Z avoids collisions during transfer']
+		]
+	}
+];
+
+var AMR_PARTS = [
+	{
+		id: 'chassis',
+		title: 'AMR Chassis & Payload Deck',
+		shortTitle: 'Chassis',
+		specPill: 'Differential Platform · 0.68 × 0.46 m Footprint',
+		pos: [0, 0, 0.25],
+		desc: 'Heavy-duty industrial mobile base housing the traction battery, motor drivers, onboard PC, and safety PLC. Low center of gravity provides stability during fast acceleration and emergency stops.',
+		specs: [
+			['Dimensions', '0.68 m length, 0.46 m width, 0.18 m body height'],
+			['Payload Rating', 'Up to 100 kg distributed deck load'],
+			['Speed Limits', 'Linear velocity v ≤ 0.55 m/s, angular velocity ω ≤ 1.4 rad/s'],
+			['Obstacle Clearance', 'Safety field footprint ROBOT_R = 0.38 m radius buffer']
+		]
+	},
+	{
+		id: 'drive',
+		title: 'Differential Drive Wheels & Casters',
+		shortTitle: 'Drive Wheels',
+		specPill: '2 Driven Wheels · 2 Passive Casters · Slip Modeling',
+		pos: [0, 0.26, 0.16],
+		desc: 'Two independent drive wheels on a common lateral axis, supported by front and rear passive swivel casters. Odometry computes position by integrating wheel encoder ticks; tire slip causes dead-reckoning drift over time.',
+		specs: [
+			['Wheel Radius', 'R = 0.085 m with high-traction polyurethane tires'],
+			['Track Gauge', 'L = 0.48 m distance between left and right wheel contacts'],
+			['Kinematic Model', 'v = (v_r + v_l)/2, ω = (v_r − v_l)/L'],
+			['Drift Source', 'Wheel slip slider introduces 0–25% encoder odometry divergence']
+		]
+	},
+	{
+		id: 'lidar',
+		title: '2D Safety LiDAR Rangefinder {lidar_link}',
+		shortTitle: 'LiDAR Puck',
+		specPill: '360° Planar Laser · 48 Active Rays · Time-of-Flight',
+		pos: [0, 0, 0.44],
+		desc: 'Puck-style planar laser scanner mounted on the top deck at Z = +0.315 m. Measures distance to warehouse walls and obstacles using speed-of-light pulse return timing.',
+		specs: [
+			['Scan Rate', 'Continuous 360° horizontal fan (48 beams simulated)'],
+			['Range Limit', 'Up to 6.0 m detection horizon in warehouse envelope'],
+			['LiDAR Frame', '{lidar_link} rigid transform from base_link: (0, 0, +0.315 m)'],
+			['Active Ray Highlighting', 'Beams hitting obstacles illuminate cyan strike lines']
+		]
+	},
+	{
+		id: 'base_link',
+		title: 'Robot Base Frame {base_link} (REP 105)',
+		shortTitle: '{base_link}',
+		specPill: 'Rigid Body Frame · Midpoint of Drive Wheel Axis',
+		pos: [0, 0, 0.05],
+		desc: 'The coordinate frame rigidly attached to the mobile robot body, standard across ROS and ROS 2 (REP 105). X points forward along travel, Y points left, and Z points upward.',
+		specs: [
+			['Origin Position', 'Center of rotation on ground surface midway between drive wheels'],
+			['REP 105 Standard', 'Parent frame is odom; child frames include lidar_link and camera_link'],
+			['Velocity Commands', 'cmd_vel Twist message specifies linear X (v) and angular Z (ω) in base_link']
+		]
+	},
+	{
+		id: 'odom',
+		title: 'Odometry Frame {odom} (REP 105)',
+		shortTitle: '{odom}',
+		specPill: 'Smooth Continuous Dead-Reckoning · Unbounded Drift',
+		pos: [0.35, 0.25, 0.10],
+		desc: 'World-fixed coordinate frame estimated solely from wheel encoders and IMU integration. Guaranteed to be continuous (never jumps), making it ideal for real-time motor velocity control, but drifts over time.',
+		specs: [
+			['Continuity', 'Continuous, smooth transform (odom → base_link never teleports)'],
+			['Drift Characteristic', 'Error accumulates unbounded as wheels slip or travel long distances'],
+			['Ghost AMR Model', 'The gold dashed ghost shows where the odom transform thinks the robot is']
+		]
+	},
+	{
+		id: 'map',
+		title: 'Global Map Frame {map} (REP 105)',
+		shortTitle: '{map}',
+		specPill: 'Fixed Earth Coordinate System · Discrete AMCL Jumps',
+		pos: [0, 0, 0.65],
+		desc: 'The global earth-fixed reference frame where warehouse obstacles and navigation goals reside. AMCL (Adaptive Monte Carlo Localization) periodically matches the LiDAR scan against the map, correcting the map → odom transform.',
+		specs: [
+			['Origin Position', 'Fixed warehouse origin [0, 0, 0]'],
+			['Discontinuous Jumps', 'map → odom transform jumps when AMCL publishes localization corrections'],
+			['TF Chain', 'Full transform: map → odom → base_link → lidar_link']
+		]
+	}
+];
+
+var PINHOLE_PARTS = [
+	{
+		id: 'camera',
+		title: 'Pinhole Camera Chassis & Coordinate Frame {camera}',
+		shortTitle: 'Camera Frame',
+		specPill: 'Right-Handed Vision Frame: X-Right, Y-Down, Z-Forward',
+		pos: [0, 0.05, 0.45],
+		desc: 'The physical optical housing and standard computer vision coordinate system. Unlike robotics world coordinates (Z-up), the camera reference frame defines Z along the optical axis, X pointing right, and Y pointing down.',
+		specs: [
+			['Camera Origin O', 'Perspective projection center at [0, 0, 0.35 m]'],
+			['Optical Axis +Z', 'Collinear with lens center line, pointing forward into the 3D scene'],
+			['Right-Handed Axes', 'X points right (increasing u column), Y points down (increasing v row)']
+		]
+	},
+	{
+		id: 'lens',
+		title: 'Optical Aperture & Principal Point (cx, cy)',
+		shortTitle: 'Lens Aperture',
+		specPill: 'Focal Length fx = fy · Principal Point: (320, 240) px',
+		pos: [0, 0.12, 0.40],
+		desc: 'The ideal pinhole lens through which all light rays converge. The principal point (cx, cy) is where the optical axis pierces the image sensor plane perpendicular to the lens.',
+		specs: [
+			['Focal Length Range', '400 px to 1200 px (slider adjustable, default 800 px)'],
+			['Principal Point', 'Center of 640×480 sensor: cx = 320 px, cy = 240 px'],
+			['Intrinsic Matrix K', '[[fx, 0, cx], [0, fy, cy], [0, 0, 1]] projects camera coordinates']
+		]
+	},
+	{
+		id: 'sensor',
+		title: 'Digital Image Sensor Plane',
+		shortTitle: 'Sensor Plane',
+		specPill: '640 × 480 Resolution · 2D Pixel Grid (u, v)',
+		pos: [0, 0.45, 0.55],
+		desc: 'The CMOS sensor grid placed at focal distance along the optical axis. In real cameras the image is inverted; the standard virtual image plane model places the sensor in front of the lens so pixel coordinates remain right-side up.',
+		specs: [
+			['Resolution', '640 columns (u) by 480 rows (v)'],
+			['Top-Left Origin', 'Pixel (0, 0) is at the top-left corner of the sensor frame'],
+			['Field of View (FOV)', 'Horizontal FOV = 2·arctan(320/fx), Vertical FOV = 2·arctan(240/fy)'],
+			['HUD Viewfinder', 'Top-right 2D inset shows the resulting camera frame and active pixel location']
+		]
+	},
+	{
+		id: 'target',
+		title: '3D Scene Target Point P(X, Y, Z)',
+		shortTitle: 'Target Point P',
+		specPill: 'World Coordinates: [X, Y, Z] meters',
+		pos: [0.10, 1.05, 0.45],
+		desc: 'A physical object or landmark point in 3D Euclidean space. The projection distance Z sets the scale: objects further away produce smaller image projections according to the 1/Z depth scaling factor.',
+		specs: [
+			['Normalized Coordinates', 'x\' = X / Z, y\' = Y / Z (rays projected to unit depth plane)'],
+			['Depth Sensitivity', 'As Z doubles, projected pixel displacement from center halves (perspective foreshortening)'],
+			['Drop Shadow', 'Vertical dashed drop line indicates physical altitude above floor']
+		]
+	},
+	{
+		id: 'ray',
+		title: 'Perspective Projection Ray',
+		shortTitle: 'Projection Ray',
+		specPill: 'Line of Sight · Collinearity: O → (u, v) → P',
+		pos: [0.05, 0.55, 0.38],
+		desc: 'The straight line connecting the camera projection center (0, 0, 0), the sensor image pixel (u, v), and the 3D target point P. Pinhole projection reduces 3D depth to 2D image coordinates along this single line of sight.',
+		specs: [
+			['Pixel u Formula', 'u = fx · (X / Z) + cx'],
+			['Pixel v Formula', 'v = fy · (Y / Z) + cy'],
+			['Depth Ambiguity', 'Any 3D point along this ray projects to the exact same pixel (u, v) unless stereo or depth sensing is used']
+		]
+	}
+];
+
+function drawHighlightBox3D(sc, center, size, col) {
+	col = col || '#00878a';
+	var bx = boxFaces(center, size, 0);
+	bx.faces.forEach(function (f) {
+		var poly = face3D(sc, f.pts, 'none', {
+			cull: false,
+			shade: false,
+			attrs: {
+				stroke: col,
+				'stroke-width': '2',
+				'stroke-dasharray': '4 3',
+				opacity: '0.88',
+				fill: col,
+				'fill-opacity': '0.12'
+			}
+		});
+		if (poly) sc.items.push({ depth: pr3(sc, center).depth - 0.04, nodes: [poly] });
+	});
+}
+
+function drawCalloutChip3D(sc, part, isAct, isHov, dark, stage) {
+	var pr = pr3(sc, part.pos);
+	if (pr.depth < 0.1) return;
+
+	var chipGroup = s('g', {
+		'class': 'w3d-chip' + (isAct ? ' is-active' : '') + (isHov ? ' is-hover' : ''),
+		'aria-pressed': isAct ? 'true' : 'false',
+		role: 'button',
+		'aria-label': 'Component ' + part.id + ': ' + part.title,
+		tabindex: '0',
+		style: 'cursor: pointer;'
+	});
+
+	chipGroup.appendChild(s('circle', {
+		cx: pr.u.toFixed(1), cy: pr.v.toFixed(1), r: '14', fill: 'transparent'
+	}));
+
+	var baseFill = isAct ? '#00878a' : (dark ? 'rgba(20,24,28,0.88)' : 'rgba(255,255,255,0.92)');
+	var baseStroke = isAct ? '#ffffff' : (dark ? '#38bdf8' : '#00878a');
+	var chipCircle = s('circle', {
+		cx: pr.u.toFixed(1), cy: pr.v.toFixed(1),
+		r: isAct ? '10' : '8.5',
+		fill: baseFill,
+		stroke: baseStroke,
+		'stroke-width': isAct ? '2.5' : '1.8'
+	});
+	chipGroup.appendChild(chipCircle);
+
+	var numStr = typeof part.id === 'number' ? String(part.id) : (part.shortTitle ? part.shortTitle.charAt(0) : '•');
+	var chipText = s('text', {
+		x: pr.u.toFixed(1),
+		y: (pr.v + (isAct ? 3.5 : 3.0)).toFixed(1),
+		fill: isAct ? '#ffffff' : (dark ? '#eaecf0' : '#00878a'),
+		'font-size': isAct ? '10px' : '9px',
+		'font-weight': '800',
+		'text-anchor': 'middle',
+		'font-family': 'var(--wp-mono, monospace)',
+		'pointer-events': 'none'
+	});
+	chipText.textContent = numStr;
+	chipGroup.appendChild(chipText);
+
+	chipGroup.addEventListener('click', function (ev) {
+		ev.stopPropagation();
+		stage.selectPart(part.id);
+	});
+	chipGroup.addEventListener('keydown', function (ev) {
+		if (ev.key === 'Enter' || ev.key === ' ') {
+			ev.preventDefault();
+			ev.stopPropagation();
+			stage.selectPart(part.id);
+		}
+	});
+	chipGroup.addEventListener('pointerenter', function () { stage.hoverPart(part.id); });
+	chipGroup.addEventListener('pointerleave', function () { stage.hoverPart(null); });
+
+	sc.items.push({ depth: pr.depth - 0.08, nodes: [chipGroup] });
+}
+
+function build3DStage(svg, cam, redraw, ctl, opts) {
+	opts = opts || {};
+	var presets = opts.presets || [];
+	var parts = opts.parts || [];
+	var hasTurntable = opts.turntable !== false;
+	var hasLabels = opts.labels !== false;
+	var hasZoom = opts.zoom !== false;
+
+	var wrap = h('div', {
+		'class': 'w3d-canvas-wrap w3d-stage-wrap',
+		role: 'region',
+		'aria-label': (opts.title || 'Interactive 3D Stage') + '. Drag to orbit; pinch or Ctrl+wheel to zoom.'
+	});
+
+	var stage = {
+		wrap: wrap,
+		svg: svg,
+		activePartId: null,
+		hoveredPartId: null,
+		showLabels: opts.initialLabels !== false,
+		turntableRunning: false,
+		selectPart: function (id) {
+			if (stage.activePartId === id) stage.activePartId = null;
+			else stage.activePartId = id;
+			updatePartState();
+			redraw();
+		},
+		hoverPart: function (id) {
+			if (stage.hoveredPartId === id) return;
+			stage.hoveredPartId = id;
+			updatePartState();
+			redraw();
+		},
+		stopTurntable: function () {
+			if (!stage.turntableRunning) return;
+			stage.turntableRunning = false;
+			if (btnTurntable) {
+				btnTurntable.setAttribute('aria-pressed', 'false');
+				btnTurntable.classList.remove('is-active', 'w3d-active');
+			}
+			if (turntableRaf) { cancelAnimationFrame(turntableRaf); turntableRaf = null; }
+		},
+		startTurntable: function () {
+			if (stage.turntableRunning) return;
+			stage.turntableRunning = true;
+			if (btnTurntable) {
+				btnTurntable.setAttribute('aria-pressed', 'true');
+				btnTurntable.classList.add('is-active', 'w3d-active');
+			}
+			spinTurntable();
+		}
+	};
+
+	var turntableRaf = null;
+	var pausedByDrag = false;
+	function spinTurntable() {
+		if (!stage.turntableRunning) return;
+		cam.azimuth = wrapDeg(cam.azimuth + (opts.spinSpeed || 0.35));
+		syncCameraSliders(cam, ctl);
+		redraw();
+		turntableRaf = requestAnimationFrame(spinTurntable);
+	}
+
+	svg.addEventListener('pointerdown', function () {
+		if (stage.turntableRunning) {
+			pausedByDrag = true;
+			if (turntableRaf) { cancelAnimationFrame(turntableRaf); turntableRaf = null; }
+		}
+	});
+	window.addEventListener('pointerup', function () {
+		if (pausedByDrag) {
+			pausedByDrag = false;
+			if (stage.turntableRunning && !turntableRaf) {
+				turntableRaf = requestAnimationFrame(spinTurntable);
+			}
+		}
+	});
+
+	// Floating frosted stage toolbar positioned over the 3D canvas
+	var toolbar = h('div', {
+		'class': 'w3d-stage-toolbar',
+		role: 'toolbar',
+		'aria-label': (opts.title || '3D') + ' Stage Controls'
+	});
+
+	if (presets.length) {
+		var presetGroup = h('div', { 'class': 'w3d-toolbar-group w3d-preset-group', role: 'group', 'aria-label': 'Camera Views' });
+		presets.forEach(function (p) {
+			var b = h('button', {
+				type: 'button',
+				'class': 'w3d-toolbar-btn w3d-stage-btn btn-copy-bibtex',
+				'aria-label': p[3] || ('Switch to ' + p[0] + ' view'),
+				title: p[3] || (p[0] + ' view'),
+				text: p[0]
+			});
+			b.addEventListener('click', function () {
+				var goal = { azimuth: p[1], elevation: p[2], dist: p[4] || cam.home.dist };
+				tweenCamera(cam, goal, redraw, ctl);
+			});
+			presetGroup.appendChild(b);
+		});
+		toolbar.appendChild(presetGroup);
+	}
+
+	var btnTurntable = null;
+	if (hasTurntable) {
+		btnTurntable = h('button', {
+			type: 'button',
+			'class': 'w3d-toolbar-btn w3d-stage-btn btn-copy-bibtex w3d-btn-turntable',
+			'aria-pressed': 'false',
+			'aria-label': 'Toggle auto-rotate turntable (continuous spin)',
+			title: 'Auto-rotate turntable'
+		}, [
+			h('span', { 'class': 'w3d-icon w3d-spin-icon', 'aria-hidden': 'true', text: '↻' }),
+			h('span', { 'class': 'w3d-btn-text', text: ' Rotate' })
+		]);
+		btnTurntable.addEventListener('click', function () {
+			if (stage.turntableRunning) stage.stopTurntable();
+			else stage.startTurntable();
+		});
+		toolbar.appendChild(btnTurntable);
+	}
+
+	var btnLabels = null;
+	if (hasLabels) {
+		btnLabels = h('button', {
+			type: 'button',
+			'class': 'w3d-toolbar-btn w3d-stage-btn btn-copy-bibtex w3d-btn-labels' + (stage.showLabels ? ' is-active w3d-active' : ''),
+			'aria-pressed': stage.showLabels ? 'true' : 'false',
+			'aria-label': 'Toggle 3D component callout labels',
+			title: 'Toggle 3D component labels'
+		}, [
+			h('span', { 'class': 'w3d-icon', 'aria-hidden': 'true', text: '🏷' }),
+			h('span', { 'class': 'w3d-btn-text', text: ' Labels' })
+		]);
+		btnLabels.addEventListener('click', function () {
+			stage.showLabels = !stage.showLabels;
+			btnLabels.setAttribute('aria-pressed', stage.showLabels ? 'true' : 'false');
+			if (stage.showLabels) btnLabels.classList.add('is-active', 'w3d-active');
+			else btnLabels.classList.remove('is-active', 'w3d-active');
+			redraw();
+		});
+		toolbar.appendChild(btnLabels);
+	}
+
+	if (opts.extraButtons) {
+		opts.extraButtons.forEach(function (btn) { toolbar.appendChild(btn); });
+	}
+
+	if (hasZoom) {
+		var zoomGroup = h('div', { 'class': 'w3d-toolbar-group w3d-zoom-group', role: 'group', 'aria-label': 'Zoom and reset' });
+		var btnZoomIn = h('button', {
+			type: 'button',
+			'class': 'w3d-toolbar-btn w3d-stage-btn btn-copy-bibtex',
+			'aria-label': 'Zoom in (+)',
+			title: 'Zoom in'
+		}, [h('span', { text: '+' })]);
+		btnZoomIn.addEventListener('click', function () { zoomCamera(cam, 1 / 1.25); redraw(); });
+
+		var btnZoomOut = h('button', {
+			type: 'button',
+			'class': 'w3d-toolbar-btn w3d-stage-btn btn-copy-bibtex',
+			'aria-label': 'Zoom out (−)',
+			title: 'Zoom out'
+		}, [h('span', { text: '−' })]);
+		btnZoomOut.addEventListener('click', function () { zoomCamera(cam, 1.25); redraw(); });
+
+		var btnReset = h('button', {
+			type: 'button',
+			'class': 'w3d-toolbar-btn w3d-stage-btn btn-copy-bibtex',
+			'aria-label': 'Reset camera view (0)',
+			title: 'Reset view'
+		}, [h('span', { text: '↺' })]);
+		btnReset.addEventListener('click', function () { tweenCamera(cam, cam.home, redraw, ctl); });
+
+		zoomGroup.appendChild(btnZoomIn);
+		zoomGroup.appendChild(btnZoomOut);
+		zoomGroup.appendChild(btnReset);
+		toolbar.appendChild(zoomGroup);
+	}
+
+	// Frosted Component Details Card
+	var card = h('div', {
+		'class': 'w3d-part-card w3d-inspector-card is-hidden',
+		role: 'region',
+		'aria-label': 'Component Details Inspector',
+		'aria-live': 'polite'
+	});
+	card.setAttribute('hidden', '');
+	card.style.position = 'absolute';
+
+	function getPartData(id) {
+		for (var i = 0; i < parts.length; i++) {
+			if (parts[i].id === id) return parts[i];
+		}
+		return null;
+	}
+
+	function renderInspectorCard(part) {
+		if (!part) {
+			card.setAttribute('hidden', '');
+			card.classList.add('is-hidden');
+			return;
+		}
+		card.removeAttribute('hidden');
+		card.classList.remove('is-hidden');
+
+		var closeBtn = h('button', {
+			type: 'button',
+			'class': 'w3d-card-close w3d-inspector-close btn-copy-bibtex',
+			'aria-label': 'Close component inspector card',
+			title: 'Close'
+		}, [h('span', { text: '✕' })]);
+		closeBtn.addEventListener('click', function () {
+			stage.activePartId = null;
+			updatePartState();
+			redraw();
+		});
+
+		var badgeNode = part.id && typeof part.id === 'number' ?
+			h('span', { 'class': 'w3d-chip-num w3d-spec-badge', text: String(part.id) }) : null;
+
+		var cardHdr = h('div', { 'class': 'w3d-part-card-header w3d-inspector-header' }, [
+			h('div', { 'class': 'w3d-card-title-group', style: 'display:flex;align-items:center;gap:6px;' }, [
+				badgeNode,
+				h('h4', { 'class': 'w3d-part-card-title w3d-inspector-title', text: part.title })
+			]),
+			part.specPill ? h('span', { 'class': 'w3d-spec-pill w3d-part-spec', text: part.specPill }) : null,
+			closeBtn
+		]);
+
+		var specDl = null;
+		if (part.specs && part.specs.length) {
+			specDl = h('dl', { 'class': 'w3d-part-details w3d-inspector-details' });
+			part.specs.forEach(function (sp) {
+				specDl.appendChild(h('dt', { 'class': 'w3d-part-detail-key', text: sp[0] }));
+				specDl.appendChild(h('dd', { 'class': 'w3d-part-detail-val', text: sp[1] }));
+			});
+		}
+
+		var cardBody = h('div', { 'class': 'w3d-part-card-body' }, [
+			h('p', { 'class': 'w3d-part-card-desc w3d-inspector-desc', text: part.desc }),
+			specDl
+		]);
+
+		card.replaceChildren(cardHdr, cardBody);
+	}
+
+	// Numbered Callout Chips Dock
+	var chipDock = null;
+	var chipButtons = {};
+	if (parts && parts.length && opts.showChipDock !== false) {
+		chipDock = h('div', {
+			'class': 'w3d-chips-row w3d-chips-bar w3d-chip-dock',
+			role: 'group',
+			'aria-label': 'Numbered component callout chips'
+		});
+		parts.forEach(function (p) {
+			var isNum = typeof p.id === 'number';
+			var cBtn = h('button', {
+				type: 'button',
+				'class': 'w3d-chip btn-copy-bibtex',
+				'aria-pressed': 'false',
+				'aria-label': (isNum ? ('Component ' + p.id + ': ') : '') + p.title,
+				title: p.title
+			}, [
+				isNum ? h('span', { 'class': 'w3d-chip-num', text: String(p.id) }) : null,
+				h('span', { 'class': 'w3d-chip-name', text: p.shortTitle || p.title })
+			]);
+			cBtn.addEventListener('click', function () { stage.selectPart(p.id); });
+			cBtn.addEventListener('mouseenter', function () { stage.hoverPart(p.id); });
+			cBtn.addEventListener('mouseleave', function () { stage.hoverPart(null); });
+			chipDock.appendChild(cBtn);
+			chipButtons[p.id] = cBtn;
+		});
+	}
+
+	function updatePartState() {
+		var active = stage.activePartId || stage.hoveredPartId;
+		var part = active ? getPartData(active) : null;
+		renderInspectorCard(part);
+
+		Object.keys(chipButtons).forEach(function (idKey) {
+			var id = isNaN(Number(idKey)) ? idKey : Number(idKey);
+			var b = chipButtons[idKey];
+			if (id === stage.activePartId) {
+				b.setAttribute('aria-pressed', 'true');
+				b.classList.add('is-active', 'w3d-chip-active');
+			} else {
+				b.setAttribute('aria-pressed', 'false');
+				b.classList.remove('is-active', 'w3d-chip-active');
+			}
+			if (id === stage.hoveredPartId) b.classList.add('is-hover', 'w3d-chip-hover');
+			else b.classList.remove('is-hover', 'w3d-chip-hover');
+		});
+	}
+
+	wrap.appendChild(toolbar);
+	wrap.appendChild(svg);
+	wrap.appendChild(card);
+	if (chipDock) wrap.appendChild(chipDock);
+
+	return stage;
+}
+
 /* ---------- 3D pinhole camera projection and frustum (lesson 7.6) ---------- */
 
 function initPinholeProjection(root) {
@@ -4914,6 +5678,19 @@ function initPinholeProjection(root) {
 	var light = norm3([0.35, -0.6, 0.8]);
 	var ctl = { az: az, el: el };
 	var redraw = frameScheduler(draw);
+
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: 'Pinhole Camera Frustum',
+		presets: [
+			['Iso', 35, 22, 'Isometric view of camera frustum and projection ray', 2.3],
+			['Front', 180, 12, 'View facing the camera lens', 2.2],
+			['Side', -90, 10, 'Side profile view showing optical axis depth Z', 2.2],
+			['Top', 0, 89, 'Top-down view of optical axis and target', 2.3],
+			['Camera-view', 0, 0, 'View through the camera lens looking along the optical axis', 2.1]
+		],
+		parts: PINHOLE_PARTS,
+		initialLabels: true
+	});
 
 	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
 	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
@@ -5074,6 +5851,27 @@ function initPinholeProjection(root) {
 			opacity: '0.6'
 		});
 
+		// Interactive Component Inspector Highlight
+		var sel = stage.activePartId || stage.hoveredPartId;
+		if (sel === 'camera') {
+			drawHighlightBox3D(sc, [0, -0.09, z0], [0.18, 0.18, 0.15], '#00878a');
+		} else if (sel === 'lens') {
+			drawHighlightBox3D(sc, [0, 0.035, z0], [0.11, 0.11, 0.11], '#00878a');
+		} else if (sel === 'sensor') {
+			drawHighlightBox3D(sc, [0, ds, z0], [ws * 2.1, 0.04, hs * 2.1], '#00878a');
+		} else if (sel === 'target') {
+			drawHighlightBox3D(sc, pTarget, [0.12, 0.12, 0.12], '#d97706');
+		} else if (sel === 'ray') {
+			line3D(sc, O, pTarget, { stroke: '#00878a', 'stroke-width': '4.5', opacity: '0.75' });
+		}
+
+		// Optional 3D callout chips
+		if (stage.showLabels) {
+			PINHOLE_PARTS.forEach(function (part) {
+				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
+			});
+		}
+
 		renderScene3D(svg, sc);
 
 		// 2D Viewfinder HUD in the top-right corner of SVG
@@ -5134,7 +5932,29 @@ function initPinholeProjection(root) {
 		if (status.textContent !== msg) status.textContent = msg;
 	}
 
-	orbitControls(svg, cam, redraw, ctl);
+	orbitControls(svg, cam, redraw, Object.assign(ctl, {
+		onTap: function (pt) {
+			var sc = newScene3D(cam, W, H, light);
+			var nearest = null, minDist = 28;
+			PINHOLE_PARTS.forEach(function (part) {
+				var pr = pr3(sc, part.pos);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = part; }
+			});
+			stage.selectPart(nearest ? nearest.id : null);
+		},
+		hover: function (pt) {
+			var sc = newScene3D(cam, W, H, light);
+			var nearest = null, minDist = 24;
+			PINHOLE_PARTS.forEach(function (part) {
+				var pr = pr3(sc, part.pos);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = part; }
+			});
+			stage.hoverPart(nearest ? nearest.id : null);
+			return nearest ? 'pointer' : null;
+		}
+	}));
 
 	[sX, sY, sZ, sF].forEach(function (ctrl) {
 		ctrl.input.addEventListener('input', redraw);
@@ -5162,24 +5982,15 @@ function initPinholeProjection(root) {
 
 	var buttons = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Point presets' }, [btnWorked, btnCenter, btnClose]);
 
-	var viewPresets = viewButtons3D(cam, redraw, ctl, [
-		['Iso', 35, 22, 'Isometric view of camera frustum and projection ray', 2.3],
-		['Front', 180, 12, 'View facing the camera lens', 2.2],
-		['Side', -90, 10, 'Side profile view showing optical axis depth Z', 2.2],
-		['Top', 0, 89, 'Top-down view of optical axis and target', 2.3],
-		['Camera-view', 0, 0, 'View through the camera lens looking along the optical axis', 2.1]
-	]);
-
-	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag anywhere to orbit the camera; pinch or Ctrl + scroll to zoom. Use view buttons to snap to Iso, Front, Side, Top, or look directly through the camera lens.' });
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag anywhere to orbit the camera; pinch or Ctrl + scroll to zoom. Use floating toolbar for view presets and auto-rotate turntable.' });
 
 	root.replaceChildren(frame('3D pinhole camera frustum: 3D scene to 2D pixels', [
 		h('p', { 'class': 'widget-note', text: 'Intrinsic matrix K projects 3D camera coordinates to 2D pixels: normalized x\'=X/Z, y\'=Y/Z; then u = fx·x\' + cx, v = fy·y\' + cy.' }),
 		buttons,
-		svg,
+		stage.wrap,
 		hint,
 		readout,
 		status,
-		viewPresets,
 		sX.row,
 		sY.row,
 		sZ.row,
@@ -5213,6 +6024,18 @@ function initRobotArm3D(root) {
 	var ctl = { az: az, el: el };
 	var redraw = frameScheduler(draw);
 
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: 'Articulated Robot Arm',
+		presets: [
+			['3/4', 35, 24, 'Isometric 3/4 view of the articulated arm', 2.1],
+			['Front', 90, 8, 'View from the front of the arm', 2.1],
+			['Side', 0, 8, 'View from the side of the arm', 2.1],
+			['Top', 0, 89, 'View from above', 2.1]
+		],
+		parts: ROBOT_ARM_PARTS,
+		initialLabels: true
+	});
+
 	var trail = [], points = [], anim = null, note = '', jogFrame = 'base', dragging = false;
 	var pickPos = [0.42, 0.26, 0.075], placePos = [0.30, -0.40, 0.095];
 	var workpiecePos = pickPos.slice(), workpieceHeld = false;
@@ -5238,15 +6061,12 @@ function initRobotArm3D(root) {
 		};
 	}
 
-	/* Inverse kinematics for a TCP position with the tool pitch (θ2+θ3+θ4) and roll θ5 held.
-	   Tries both waist directions and both elbow solutions and keeps the one nearest the current joints. */
 	function ik(t, pitchDeg, roll, cur) {
 		var yaw0 = Math.atan2(t[1], t[0]) / DEG2RAD, rr = Math.hypot(t[0], t[1]), best = null, why = 'the point is out of reach';
 		[[yaw0, rr], [yaw0 + 180, -rr]].forEach(function (c) {
 			var y = wrapDeg(c[0]);
 			if (Math.abs(y + 360 - cur[0]) < Math.abs(y - cur[0])) y += 360;
 			else if (Math.abs(y - 360 - cur[0]) < Math.abs(y - cur[0])) y -= 360;
-			// The pitch is measured in the arm's plane, which flips over when the waist turns half a turn.
 			var ph = (Math.cos((y - cur[0]) * DEG2RAD) >= 0 ? pitchDeg : -pitchDeg) * DEG2RAD, rw = c[1] - LT * Math.sin(ph), zw = t[2] - L0 - LT * Math.cos(ph);
 			var D = (rw * rw + zw * zw - L1 * L1 - L2 * L2) / (2 * L1 * L2);
 			if (Math.abs(D) > 1) return;
@@ -5299,7 +6119,6 @@ function initRobotArm3D(root) {
 		moveTcpTo(add3(f.tcp, scale3(dir, 0.01 * sign)), 'manual');
 	}
 
-	/* Motion playback. MoveJ interpolates joints; MoveL interpolates the TCP along a straight line. */
 	function play(targets, mode, done) {
 		stopAnim();
 		if (!targets.length) return;
@@ -5380,7 +6199,6 @@ function initRobotArm3D(root) {
 		label3D(sc, [floorR * Math.cos(-0.6), floorR * Math.sin(-0.6), 0], 'reach ' + REACH.toFixed(2) + ' m', { fill: 'var(--wp-gold-text, #6b5200)', size: 10, weight: '400', dy: 12 });
 
 		if (cbEnv.input.checked) {
-			// The outer limit of the TCP in the arm's current vertical plane: an arc of radius REACH about the shoulder.
 			var arc = [], c1 = Math.cos(q[0] * DEG2RAD), s1 = Math.sin(q[0] * DEG2RAD);
 			for (var a = -60; a <= 180; a += 8) {
 				var ang = a * DEG2RAD, r = REACH * Math.sin(ang), z = L0 + REACH * Math.cos(ang);
@@ -5407,7 +6225,6 @@ function initRobotArm3D(root) {
 			orientedBox3D(sc, add3(add3(gc, scale3(f.tool.y, 0.03 * sg)), scale3(f.tool.z, 0.034)), [0.012, 0.006, 0.024], f.tool, '#d97706');
 		});
 
-		// Optional intermediate joint coordinate frames {J1}–{J4}
 		if (cbFrames.input.checked) {
 			var c1 = Math.cos(q[0] * DEG2RAD), s1 = Math.sin(q[0] * DEG2RAD);
 			var R_j1 = { x: [c1, s1, 0], y: [-s1, c1, 0], z: [0, 0, 1] };
@@ -5419,7 +6236,6 @@ function initRobotArm3D(root) {
 			axes3D(sc, f.wrist, f.tool, 0.09, '{J4}');
 		}
 
-		// Workpiece pedestals and 3D target payload cube for pick-and-place
 		cylinder3D(sc, [pickPos[0], pickPos[1], 0], [pickPos[0], pickPos[1], 0.05], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true });
 		label3D(sc, [pickPos[0], pickPos[1], 0], 'pick pedestal', { dx: 6, dy: 14, size: 9, weight: '400' });
 
@@ -5430,7 +6246,6 @@ function initRobotArm3D(root) {
 		box3D(sc, wpCur, [0.042, 0.042, 0.042], 0, '#06b6d4', { shadow: !workpieceHeld });
 		label3D(sc, wpCur, 'workpiece', { dx: 6, dy: -8, size: 9, fill: '#0891b2', weight: '700' });
 
-		// Taught points and the TCP trail
 		points.forEach(function (p, i) {
 			var tp = fk(p).tcp;
 			dot3D(sc, tp, 4.5, { fill: 'var(--wp-gold-soft, #fff8d6)', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '2' });
@@ -5451,6 +6266,38 @@ function initRobotArm3D(root) {
 			sc.items.push({ depth: tcpPr.depth - 0.01, nodes: [s('circle', { cx: tcpPr.u.toFixed(1), cy: tcpPr.v.toFixed(1), r: dragging ? '15' : '12',
 				'class': 'w3d-handle' + (dragging ? ' w3d-handle-active' : '') })] });
 		}
+
+		// Interactive Component Inspector Highlight
+		var sel = stage.activePartId || stage.hoveredPartId;
+		if (sel === 'base') {
+			drawHighlightBox3D(sc, [0, 0, L0 * 0.5], [0.30, 0.30, L0 * 1.1], '#7d52c0');
+		} else if (sel === 'shoulder') {
+			drawHighlightBox3D(sc, f.shoulder, [0.22, 0.22, 0.22], '#7d52c0');
+		} else if (sel === 'elbow') {
+			drawHighlightBox3D(sc, f.elbow, [0.20, 0.20, 0.20], '#7d52c0');
+		} else if (sel === 'wrist') {
+			drawHighlightBox3D(sc, f.wrist, [0.16, 0.16, 0.16], '#7d52c0');
+		} else if (sel === 'tool') {
+			drawHighlightBox3D(sc, f.tcp, [0.16, 0.16, 0.16], '#d97706');
+		} else if (sel === 'workpiece') {
+			drawHighlightBox3D(sc, wpCur, [0.08, 0.08, 0.08], '#06b6d4');
+		}
+
+		// Optional 3D callout chips
+		if (stage.showLabels) {
+			var dynamicParts = [
+				{ id: 'base', title: 'Base Joint {J1}', shortTitle: 'J1', pos: [0, 0, L0 + 0.08] },
+				{ id: 'shoulder', title: 'Shoulder Joint {J2}', shortTitle: 'J2', pos: add3(f.shoulder, [0, 0, 0.08]) },
+				{ id: 'elbow', title: 'Elbow Joint {J3}', shortTitle: 'J3', pos: add3(f.elbow, [0, 0, 0.08]) },
+				{ id: 'wrist', title: 'Wrist {J4/J5}', shortTitle: 'J4', pos: add3(f.wrist, [0, 0, 0.08]) },
+				{ id: 'tool', title: 'Gripper & TCP {tool}', shortTitle: 'TCP', pos: add3(f.tcp, [0, 0, 0.08]) },
+				{ id: 'workpiece', title: 'Workpiece', shortTitle: 'WP', pos: add3(wpCur, [0, 0, 0.06]) }
+			];
+			dynamicParts.forEach(function (part) {
+				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
+			});
+		}
+
 		renderScene3D(svg, sc);
 
 		readout.textContent = 'TCP in {base}: X ' + signed(f.tcp[0], 3) + ' m, Y ' + signed(f.tcp[1], 3) + ' m, Z ' + signed(f.tcp[2], 3) +
@@ -5470,7 +6317,45 @@ function initRobotArm3D(root) {
 	}
 
 	orbitControls(svg, cam, redraw, Object.assign(ctl, {
-		hover: function (pt) { var p = projectPoint3D(fk(q).tcp, cam, W, H); return Math.hypot(pt.x - p.u, pt.y - p.v) < 18 ? 'move' : null; },
+		hover: function (pt) {
+			var p = projectPoint3D(fk(q).tcp, cam, W, H);
+			if (Math.hypot(pt.x - p.u, pt.y - p.v) < 18) return 'move';
+			var f0 = fk(q);
+			var checkPts = [
+				{ id: 'base', pos: [0, 0, L0 * 0.5] },
+				{ id: 'shoulder', pos: f0.shoulder },
+				{ id: 'elbow', pos: f0.elbow },
+				{ id: 'wrist', pos: f0.wrist },
+				{ id: 'tool', pos: f0.tcp },
+				{ id: 'workpiece', pos: workpieceHeld ? add3(f0.tcp, [0, 0, -0.022]) : workpiecePos }
+			];
+			var nearest = null, minDist = 22;
+			checkPts.forEach(function (cp) {
+				var pr = projectPoint3D(cp.pos, cam, W, H);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = cp.id; }
+			});
+			stage.hoverPart(nearest);
+			return nearest ? 'pointer' : null;
+		},
+		onTap: function (pt) {
+			var f0 = fk(q);
+			var checkPts = [
+				{ id: 'base', pos: [0, 0, L0 * 0.5] },
+				{ id: 'shoulder', pos: f0.shoulder },
+				{ id: 'elbow', pos: f0.elbow },
+				{ id: 'wrist', pos: f0.wrist },
+				{ id: 'tool', pos: f0.tcp },
+				{ id: 'workpiece', pos: workpieceHeld ? add3(f0.tcp, [0, 0, -0.022]) : workpiecePos }
+			];
+			var nearest = null, minDist = 26;
+			checkPts.forEach(function (cp) {
+				var pr = projectPoint3D(cp.pos, cam, W, H);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = cp.id; }
+			});
+			stage.selectPart(nearest);
+		},
 		onPointerDown: function (pt) {
 			var f0 = fk(q), p = projectPoint3D(f0.tcp, cam, W, H);
 			if (Math.hypot(pt.x - p.u, pt.y - p.v) > 20) return null;
@@ -5537,7 +6422,6 @@ function initRobotArm3D(root) {
 		button('Play MoveL', function () { playProgram('movel'); }, 'Play the taught points with straight-line tool motion'),
 		button('Demo program', function () {
 			workpieceHeld = false; workpiecePos = pickPos.slice();
-			// Tool pointing down: approach, pick, lift, approach, place (solved with the same IK as the jog buttons).
 			var seed = [30, 30, 70, 80, 0], prog = [];
 			[[0.42, 0.26, 0.24, 0], [0.42, 0.26, 0.10, 0], [0.42, 0.26, 0.24, 0], [0.30, -0.40, 0.24, 90], [0.30, -0.40, 0.12, 90]].some(function (c) {
 				var r = { err: 1 };
@@ -5552,14 +6436,18 @@ function initRobotArm3D(root) {
 		button('Clear points', function () { points = []; trail = []; note = ''; workpieceHeld = false; workpiecePos = pickPos.slice(); updateProgram(); redraw(); }, 'Delete the taught points and the trail')
 	]);
 
-	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag the ringed gripper to move the tool; drag anywhere else to orbit. Pinch or Ctrl + scroll to zoom. With the view focused: arrow keys orbit, + and − zoom, 0 resets, W/S jog X, A/D jog Y, R/F jog Z.' });
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag the ringed gripper to move the tool; drag anywhere else to orbit. Pinch or Ctrl + scroll to zoom. Use floating toolbar for view presets and auto-rotate turntable.' });
 
 	updateProgram();
 	root.replaceChildren(frame('3D articulated robot arm: joints, frames and jogging', [
-		presets, svg, hint, readout, status,
-		viewButtons3D(cam, redraw, ctl, [['Iso', 35, 24, 'Isometric view'], ['Front', 90, 8, 'View from the front of the arm'],
-			['Side', 0, 8, 'View from the side of the arm'], ['Top', 0, 89, 'View from above']]),
-		jogRow, progRow, program,
+		presets,
+		stage.wrap,
+		hint,
+		readout,
+		status,
+		jogRow,
+		progRow,
+		program,
 		js[0].row, js[1].row, js[2].row, js[3].row, js[4].row, cbEnv.row, cbFrames.row, az.row, el.row
 	]));
 	draw();
@@ -5584,6 +6472,17 @@ function initAmrFrames3D(root) {
 	var light = norm3([0.4, -0.5, 0.85]);
 	var ctl = { az: az, el: el };
 	var redraw = frameScheduler(draw);
+
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: '3D AMR and REP 105 Frames',
+		presets: [
+			['3/4', 30, 42, 'Isometric view of warehouse and robot', 6.4],
+			['Low', 30, 14, 'Low view across the floor', 6.0],
+			['Top', 0, 89, 'View from above, like RViz', 6.4]
+		],
+		parts: AMR_PARTS,
+		initialLabels: true
+	});
 
 	var obstacles = [
 		{ type: 'box', minX: 1.2, maxX: 2.0, minY: 0.8, maxY: 1.6, h: 0.8, fill: '#b45309', name: 'shelf' },
@@ -5623,14 +6522,12 @@ function initAmrFrames3D(root) {
 	}
 
 	function amcl() {
-		// Idealised: the scan match recovers the true pose exactly. Real AMCL leaves a small residual error.
 		var c = Math.cos(truth.yaw - odom.yaw), sn = Math.sin(truth.yaw - odom.yaw);
 		m2o = { yaw: wrapRad(truth.yaw - odom.yaw), x: truth.x - (odom.x * c - odom.y * sn), y: truth.y - (odom.x * sn + odom.y * c) };
 		uncert = 0.03; amclClock = 0;
 		trailE.push(null, [truth.x, truth.y]);
 	}
 
-	/* One physics step: odometry integrates the command; the real robot slips. */
 	function integrate(v, w, dt) {
 		var sl = Number(slip.input.value) / 100;
 		var o = { x: odom.x + v * dt * Math.cos(odom.yaw + w * dt / 2), y: odom.y + v * dt * Math.sin(odom.yaw + w * dt / 2), yaw: wrapRad(odom.yaw + w * dt) };
@@ -5653,7 +6550,6 @@ function initAmrFrames3D(root) {
 
 	function driftError() { var e = estimate(); return Math.hypot(truth.x - e.x, truth.y - e.y); }
 
-	/* Goal following uses the ESTIMATED pose, as a real navigation stack does. */
 	function followGoal() {
 		if (!goal) return { v: 0, w: 0 };
 		var e = estimate(), dx = goal.x - e.x, dy = goal.y - e.y, d = Math.hypot(dx, dy);
@@ -5695,7 +6591,6 @@ function initAmrFrames3D(root) {
 		for (var b = 0; b < n; b++) {
 			var ang = truth.yaw + (b / n) * 2 * Math.PI, dx = Math.cos(ang), dy = Math.sin(ang), best = 6;
 			var hitObs = false;
-			// Room walls (from inside)
 			[[(XB - truth.x) / dx, dx > 0], [(-XB - truth.x) / dx, dx < 0], [(YB - truth.y) / dy, dy > 0], [(-YB - truth.y) / dy, dy < 0]]
 				.forEach(function (c) { if (c[1] && c[0] > 0 && c[0] < best) { best = c[0]; hitObs = false; } });
 			obstacles.forEach(function (o) {
@@ -5720,7 +6615,6 @@ function initAmrFrames3D(root) {
 		if (ghost) {
 			box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, 'none', { attrs: {
 				fill: 'var(--wp-gold-soft, #fff8d6)', 'fill-opacity': '0.25', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.2', 'stroke-dasharray': '4 3' }, depthBias: -0.05 });
-			// Ghost wheel outlines
 			[1, -1].forEach(function (sg) {
 				var gh = [pose.x - 0.24 * sn * sg, pose.y + 0.24 * c * sg, 0.08];
 				cylinder3D(sc, add3(gh, [-0.02 * sn * sg, 0.02 * c * sg, 0]), add3(gh, [0.02 * sn * sg, -0.02 * c * sg, 0]), 0.085, 'none', {
@@ -5729,21 +6623,16 @@ function initAmrFrames3D(root) {
 			});
 			return;
 		}
-		// Main chassis
 		box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, dark ? '#7c55c4' : '#4a2185', { shadow: true });
 
-		// 3D Drive wheel cylinders (left & right)
 		[1, -1].forEach(function (sg) {
 			var hub = [pose.x - 0.24 * sn * sg, pose.y + 0.24 * c * sg, 0.08];
 			var ax = [-0.028 * sn * sg, 0.028 * c * sg, 0];
-			// Rubber tire cylinder
 			cylinder3D(sc, sub3(hub, ax), add3(hub, ax), 0.085, '#1e2327', { segments: 16, shadow: true });
-			// Outer wheel rim cap
 			var rimAx = [-0.03 * sn * sg, 0.03 * c * sg, 0];
 			cylinder3D(sc, add3(hub, scale3(ax, 0.4)), add3(hub, rimAx), 0.052, dark ? '#64748b' : '#94a3b8', { segments: 14 });
 		});
 
-		// 3D Caster wheels (front & rear passive support casters)
 		var fCaster = [pose.x + 0.26 * c, pose.y + 0.26 * sn, 0.042];
 		cylinder3D(sc, fCaster, [pose.x + 0.26 * c, pose.y + 0.26 * sn, 0.085], 0.016, '#64748b', { segments: 8 });
 		cylinder3D(sc, add3(fCaster, [-0.014 * sn, 0.014 * c, 0]), add3(fCaster, [0.014 * sn, -0.014 * c, 0]), 0.042, '#2d3339', { segments: 10, shadow: true });
@@ -5752,13 +6641,11 @@ function initAmrFrames3D(root) {
 		cylinder3D(sc, rCaster, [pose.x - 0.26 * c, pose.y - 0.26 * sn, 0.085], 0.016, '#64748b', { segments: 8 });
 		cylinder3D(sc, add3(rCaster, [-0.014 * sn, 0.014 * c, 0]), add3(rCaster, [0.014 * sn, -0.014 * c, 0]), 0.042, '#2d3339', { segments: 10, shadow: true });
 
-		// Direction chevron on top deck
 		var tip = [pose.x + 0.3 * c, pose.y + 0.3 * sn, 0.202], l = [pose.x + 0.14 * c - 0.11 * sn, pose.y + 0.14 * sn + 0.11 * c, 0.202],
 			r = [pose.x + 0.14 * c + 0.11 * sn, pose.y + 0.14 * sn - 0.11 * c, 0.202];
 		var chev = face3D(sc, [tip, l, r], '#fdd023', { shade: false });
 		sc.items.push({ depth: pr3(sc, [pose.x, pose.y, 0.2]).depth - 0.02, nodes: [chev] });
 
-		// 3D LiDAR puck at {lidar_link}
 		cylinder3D(sc, [pose.x, pose.y, 0.2], [pose.x, pose.y, 0.27], 0.035, '#72777d', { segments: 10 });
 		cylinder3D(sc, [pose.x, pose.y, 0.27], [pose.x, pose.y, 0.315], 0.07, '#1b1f24', { segments: 16 });
 		cylinder3D(sc, [pose.x, pose.y, 0.315], [pose.x, pose.y, 0.355], 0.065, '#111827', { segments: 16 });
@@ -5780,7 +6667,6 @@ function initAmrFrames3D(root) {
 			line3D(sc, [p[0], p[1], 0], [p[0], p[1], 0.4], { stroke: 'var(--wp-border, #a2a9b1)', 'stroke-width': '1.5' });
 		});
 
-		// Paths on the floor: true (purple) and estimated (gold, dashed); breaks where AMCL jumped.
 		function pathSegs(list, attrs) {
 			var seg = [];
 			list.concat([null]).forEach(function (p) {
@@ -5791,7 +6677,6 @@ function initAmrFrames3D(root) {
 		pathSegs(trailT, { stroke: 'var(--wp-link, #461d7c)', 'stroke-width': '2', opacity: '0.75', 'stroke-linejoin': 'round' });
 		pathSegs(trailE, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '2', 'stroke-dasharray': '5 4', opacity: '0.9' });
 
-		// Estimate uncertainty (illustrative)
 		var ring = [];
 		for (var k = 0; k <= 36; k++) ring.push([e.x + Math.cos(k / 36 * 2 * Math.PI) * (uncert + 0.36), e.y + Math.sin(k / 36 * 2 * Math.PI) * (uncert + 0.36), 0.004]);
 		polyline3D(sc, ring, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1', opacity: '0.6' });
@@ -5845,7 +6730,6 @@ function initAmrFrames3D(root) {
 						'stroke-width': isObs ? '0.8' : '0'
 					}, -0.01);
 					if (isObs) {
-						// Active vertical laser strike line on obstacle face
 						line3D(sc, [hp[0], hp[1], hp[2] - 0.035], [hp[0], hp[1], hp[2] + 0.035], {
 							stroke: '#22d3ee',
 							'stroke-width': '1.5'
@@ -5858,6 +6742,38 @@ function initAmrFrames3D(root) {
 				}
 			});
 		}
+
+		// Interactive Component Inspector Highlight
+		var sel = stage.activePartId || stage.hoveredPartId;
+		if (sel === 'chassis') {
+			drawHighlightBox3D(sc, [truth.x, truth.y, 0.11], [0.72, 0.50, 0.22], '#7c55c4');
+		} else if (sel === 'drive') {
+			drawHighlightBox3D(sc, [truth.x, truth.y, 0.08], [0.35, 0.58, 0.18], '#7c55c4');
+		} else if (sel === 'lidar') {
+			drawHighlightBox3D(sc, [truth.x, truth.y, LIDAR_Z], [0.20, 0.20, 0.18], '#06b6d4');
+		} else if (sel === 'base_link') {
+			drawHighlightBox3D(sc, [truth.x, truth.y, 0.02], [0.45, 0.45, 0.06], '#d92b2b');
+		} else if (sel === 'odom') {
+			drawHighlightBox3D(sc, [e.x, e.y, 0.11], [0.72, 0.50, 0.22], '#d97706');
+		} else if (sel === 'map') {
+			drawHighlightBox3D(sc, [0, 0, 0.02], [0.60, 0.60, 0.06], '#2b8a3e');
+		}
+
+		// Optional 3D callout chips
+		if (stage.showLabels) {
+			var dynamicParts = [
+				{ id: 'chassis', title: 'Chassis', shortTitle: 'C', pos: [truth.x, truth.y, 0.26] },
+				{ id: 'drive', title: 'Drive Wheels', shortTitle: 'W', pos: [truth.x, truth.y + 0.28, 0.18] },
+				{ id: 'lidar', title: 'LiDAR {lidar_link}', shortTitle: 'L', pos: [truth.x, truth.y, 0.44] },
+				{ id: 'base_link', title: '{base_link}', shortTitle: 'B', pos: [truth.x, truth.y, 0.05] },
+				{ id: 'odom', title: '{odom}', shortTitle: 'O', pos: [e.x, e.y, 0.26] },
+				{ id: 'map', title: '{map}', shortTitle: 'M', pos: [0, 0, 0.50] }
+			];
+			dynamicParts.forEach(function (part) {
+				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
+			});
+		}
+
 		renderScene3D(svg, sc);
 
 		function pose(p) { return '(' + signed(p.x, 2) + ', ' + signed(p.y, 2) + ' m, ' + Math.round(p.yaw / DEG2RAD) + '°)'; }
@@ -5876,12 +6792,48 @@ function initAmrFrames3D(root) {
 
 	orbitControls(svg, cam, redraw, Object.assign(ctl, {
 		onTap: function (pt) {
+			var sc = newScene3D(cam, W, H, light);
+			var checkPts = [
+				{ id: 'chassis', pos: [truth.x, truth.y, 0.11] },
+				{ id: 'drive', pos: [truth.x, truth.y + 0.24, 0.08] },
+				{ id: 'lidar', pos: [truth.x, truth.y, LIDAR_Z] },
+				{ id: 'base_link', pos: [truth.x, truth.y, 0] },
+				{ id: 'odom', pos: [e.x, e.y, 0.11] },
+				{ id: 'map', pos: [0, 0, 0] }
+			];
+			var nearest = null, minDist = 24;
+			checkPts.forEach(function (cp) {
+				var pr = pr3(sc, cp.pos);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = cp.id; }
+			});
+			if (nearest) { stage.selectPart(nearest); return; }
+
 			var p = unprojectToPlane(pt.x, pt.y, cam, W, H, 0);
 			if (!p || Math.abs(p[0]) > XB || Math.abs(p[1]) > YB) return;
 			var hit = collides(p[0], p[1]);
 			if (hit) { note = 'That goal is too close to ' + hit + ' for the robot to fit.'; blocked = ''; redraw(); return; }
 			goal = { x: p[0], y: p[1] }; route = []; note = ''; blocked = '';
 			run();
+		},
+		hover: function (pt) {
+			var sc = newScene3D(cam, W, H, light);
+			var checkPts = [
+				{ id: 'chassis', pos: [truth.x, truth.y, 0.11] },
+				{ id: 'drive', pos: [truth.x, truth.y + 0.24, 0.08] },
+				{ id: 'lidar', pos: [truth.x, truth.y, LIDAR_Z] },
+				{ id: 'base_link', pos: [truth.x, truth.y, 0] },
+				{ id: 'odom', pos: [e.x, e.y, 0.11] },
+				{ id: 'map', pos: [0, 0, 0] }
+			];
+			var nearest = null, minDist = 22;
+			checkPts.forEach(function (cp) {
+				var pr = pr3(sc, cp.pos);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = cp.id; }
+			});
+			stage.hoverPart(nearest);
+			return nearest ? 'pointer' : null;
 		},
 		onKey: function (ev, down) {
 			var k = ev.key.toLowerCase();
@@ -5915,14 +6867,284 @@ function initAmrFrames3D(root) {
 			'Match the LiDAR scan to the map and update the map-to-odom transform'),
 		button('Reset to origin', function () { reset(); if (loop) { cancelAnimationFrame(loop); loop = null; } redraw(); }, 'Reset the robot, odometry and map-to-odom')
 	]);
-	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Click the floor to send a goal (the robot steers by its estimated pose). Drag to orbit; pinch or Ctrl + scroll to zoom. With the view focused: W A S D drive, arrow keys orbit, + and − zoom, 0 resets.' });
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Click the floor to send a goal (the robot steers by its estimated pose). Drag to orbit; pinch or Ctrl + scroll to zoom. Use floating toolbar for view presets and auto-rotate turntable.' });
 
 	root.replaceChildren(frame('3D AMR, LiDAR and REP 105 frames', [
-		driveRow, actRow, svg, hint, tfReadout, poseReadout, status,
-		viewButtons3D(cam, redraw, ctl, [['Iso', 30, 42, 'Isometric view'], ['Low', 30, 14, 'Low view across the floor'],
-			['Top', 0, 89, 'View from above, like RViz']]),
+		driveRow, actRow, stage.wrap, hint, tfReadout, poseReadout, status,
 		slip.row, cbAmcl.row, cbLidar.row, cbRviz.row, cbFollow.row, az.row, el.row
 	]));
+	draw();
+}
+
+/* ---------- 3D Arduino Uno R3 Board Explorer (lesson 6.1) ---------- */
+
+function initArduinoUno3D(root) {
+	var az = slider('Camera azimuth', 'uno3d-az', -180, 180, 1, 35, '°');
+	var el = slider('Camera elevation', 'uno3d-el', -85, 89, 1, 32, '°');
+	var sDist = slider('Zoom distance', 'uno3d-dist', 6, 22, 0.5, 11.5, '');
+
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 340 : 380;
+	var svg = plotFrame(W, H, 'Interactive 3D model of an Arduino Uno R3 microcontroller board with ATmega328P DIP package, USB interface, voltage regulator, DC barrel jack, and pin headers. Drag to orbit, pinch or Ctrl+wheel to zoom, click callout chips to inspect components.');
+	svg.classList.add('w3d-canvas');
+
+	var cam = createCamera3D([0, 0, 0], narrow ? 12.5 : 11.5, narrow ? 440 : 500, 35, 32);
+	cam.minEl = -85;
+	cam.maxEl = 89;
+	cam.minDist = 5.0;
+	cam.maxDist = 24.0;
+	cam.home = { azimuth: 35, elevation: 32, dist: narrow ? 12.5 : 11.5 };
+	var light = norm3([0.35, -0.6, 0.85]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
+
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: 'Arduino Uno R3',
+		presets: [
+			['3/4', 35, 32, 'Perspective 3/4 view of Uno R3 board', narrow ? 12.5 : 11.5],
+			['Top', 0, 88, 'Top-down plan view of components and pin headers', 11.0],
+			['Front', 0, 10, 'Front view of USB, barrel jack, and pin headers', 11.5],
+			['Bottom', 0, -75, 'Bottom view of PCB solder points and ground plane', 11.5]
+		],
+		parts: ARDUINO_PARTS,
+		initialLabels: true
+	});
+
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+
+	function draw() {
+		var dark = isDarkWidget(svg);
+		var sc = newScene3D(cam, W, H, light);
+
+		// Workbench drop shadow and subtle grid when looking from above
+		if (cam.elevation > 0) {
+			floorGrid3D(sc, -5.0, 5.0, -4.0, 4.0, 1.0, -1.8);
+			shadowPoly3D(sc, [[-3.43, -2.67, -1.8], [3.43, -2.67, -1.8], [3.43, 2.67, -1.8], [-3.43, 2.67, -1.8]]);
+		}
+
+		// 1. PCB Slab: Arduino Teal
+		var pcbColor = dark ? '#00676a' : '#00878a';
+		box3D(sc, [0, 0, 0], [6.86, 5.34, 0.16], 0, pcbColor);
+
+		// PCB Edge copper accents
+		line3D(sc, [-3.43, -2.67, 0.08], [3.43, -2.67, 0.08], { stroke: '#d97706', 'stroke-width': '1', opacity: '0.4' });
+		line3D(sc, [-3.43, 2.67, 0.08], [3.43, 2.67, 0.08], { stroke: '#d97706', 'stroke-width': '1', opacity: '0.4' });
+
+		// 2. Mounting Holes (4 holes with gold plating ring)
+		var holes = [[-2.00, -2.15], [-2.00, 1.80], [1.90, 2.15], [2.80, -2.15]];
+		holes.forEach(function (hPos) {
+			dot3D(sc, [hPos[0], hPos[1], 0.082], 4.2, { fill: '#d97706', stroke: dark ? '#0f172a' : '#1e293b', 'stroke-width': '2' });
+			dot3D(sc, [hPos[0], hPos[1], -0.082], 4.2, { fill: '#d97706', stroke: dark ? '#0f172a' : '#1e293b', 'stroke-width': '2' });
+		});
+
+		// 3. USB-B Metal Connector Box (Callout #5)
+		var usbCol = dark ? '#8b949e' : '#cbd5e1';
+		box3D(sc, [-2.65, 1.30, 0.62], [1.40, 1.20, 1.10], 0, usbCol);
+		// USB socket opening
+		var usbOpenPoly = face3D(sc, [
+			[-3.36, 0.90, 0.30], [-3.36, 1.70, 0.30], [-3.36, 1.70, 0.94], [-3.36, 0.90, 0.94]
+		], '#161b22', { shade: false });
+		if (usbOpenPoly) sc.items.push({ depth: pr3(sc, [-3.36, 1.30, 0.62]).depth - 0.02, nodes: [usbOpenPoly] });
+		// USB plastic tongue
+		var usbTongue = face3D(sc, [
+			[-3.34, 1.05, 0.55], [-3.34, 1.55, 0.55], [-3.34, 1.55, 0.68], [-3.34, 1.05, 0.68]
+		], '#ffffff', { shade: false });
+		if (usbTongue) sc.items.push({ depth: pr3(sc, [-3.34, 1.30, 0.62]).depth - 0.03, nodes: [usbTongue] });
+
+		// 4. DC Power Barrel Jack (Callout #4)
+		box3D(sc, [-2.60, -1.65, 0.60], [1.45, 0.95, 1.05], 0, '#1f2428');
+		cylinder3D(sc, [-3.30, -1.65, 0.60], [-3.45, -1.65, 0.60], 0.32, '#374151', { segments: 14 });
+		cylinder3D(sc, [-3.30, -1.65, 0.60], [-3.45, -1.65, 0.60], 0.09, '#cbd5e1', { segments: 8 });
+
+		// 5. Digital Pin Headers (Callout #6)
+		// 10-pin header: AREF, GND, D13..D8
+		box3D(sc, [1.65, 2.30, 0.45], [2.54, 0.35, 0.65], 0, '#161b22');
+		for (var p1 = 0; p1 < 10; p1++) {
+			dot3D(sc, [0.50 + p1 * 0.254, 2.30, 0.78], 1.6, { fill: '#484f58' });
+		}
+		// 8-pin header: D7..D0
+		box3D(sc, [-0.85, 2.30, 0.45], [2.03, 0.35, 0.65], 0, '#161b22');
+		for (var p2 = 0; p2 < 8; p2++) {
+			dot3D(sc, [-1.75 + p2 * 0.254, 2.30, 0.78], 1.6, { fill: '#484f58' });
+		}
+
+		// 6. Power and Analog In Headers (Callout #7)
+		// Power 8-pin header
+		box3D(sc, [-0.10, -2.30, 0.45], [2.03, 0.35, 0.65], 0, '#161b22');
+		for (var p3 = 0; p3 < 8; p3++) {
+			dot3D(sc, [-1.00 + p3 * 0.254, -2.30, 0.78], 1.6, { fill: '#484f58' });
+		}
+		// Analog In 6-pin header
+		box3D(sc, [1.85, -2.30, 0.45], [1.52, 0.35, 0.65], 0, '#161b22');
+		for (var p4 = 0; p4 < 6; p4++) {
+			dot3D(sc, [1.20 + p4 * 0.254, -2.30, 0.78], 1.6, { fill: '#484f58' });
+		}
+
+		// 7. ATmega328P DIP-28 Microcontroller (Callout #1)
+		// Socket base
+		box3D(sc, [0.85, -0.65, 0.16], [3.65, 0.92, 0.14], 0, '#111518');
+		// Chip body
+		box3D(sc, [0.85, -0.65, 0.34], [3.55, 0.82, 0.24], 0, '#1f2428');
+		// Pin 1 orientation notch
+		dot3D(sc, [-0.90, -0.65, 0.47], 3.2, { fill: '#111827' });
+		// 28 Silver Pins (14 on each side bending down)
+		for (var ip = 0; ip < 14; ip++) {
+			var px = -0.75 + ip * 0.254;
+			line3D(sc, [px, -0.25, 0.30], [px, -0.15, 0.08], { stroke: '#d1d5db', 'stroke-width': '1.2' });
+			line3D(sc, [px, -1.05, 0.30], [px, -1.15, 0.08], { stroke: '#d1d5db', 'stroke-width': '1.2' });
+		}
+		// Silkscreen text on chip
+		label3D(sc, [0.85, -0.65, 0.48], 'ATMEGA328P-PU', { size: 9, fill: '#eaecf0', mono: true, weight: '700' });
+
+		// 8. ATmega16U2 USB Bridge (Callout #2)
+		box3D(sc, [-1.35, 0.75, 0.16], [0.75, 0.75, 0.12], 0, '#1e242a');
+		label3D(sc, [-1.35, 0.75, 0.24], '16U2', { size: 8, fill: '#cbd5e1', mono: true });
+
+		// 9. 5V Voltage Regulator (Callout #3)
+		box3D(sc, [-1.25, -1.55, 0.20], [0.65, 0.60, 0.16], 0, '#1a1f24');
+		box3D(sc, [-1.25, -1.82, 0.14], [0.60, 0.15, 0.06], 0, '#94a3b8');
+		line3D(sc, [-1.45, -1.25, 0.08], [-1.45, -1.50, 0.16], { stroke: '#cbd5e1', 'stroke-width': '1.5' });
+		line3D(sc, [-1.25, -1.25, 0.08], [-1.25, -1.50, 0.16], { stroke: '#cbd5e1', 'stroke-width': '1.5' });
+		line3D(sc, [-1.05, -1.25, 0.08], [-1.05, -1.50, 0.16], { stroke: '#cbd5e1', 'stroke-width': '1.5' });
+		label3D(sc, [-1.25, -1.55, 0.30], 'AMS1117', { size: 7, fill: '#94a3b8', mono: true });
+
+		// 10. 16 MHz Crystal Oscillator
+		box3D(sc, [1.50, 0.30, 0.24], [1.05, 0.42, 0.28], 0, '#cbd5e1');
+		label3D(sc, [1.50, 0.30, 0.40], '16.000 MHz', { size: 7, fill: '#334155', mono: true });
+
+		// 11. Reset Push Button (Callout #8)
+		box3D(sc, [-2.80, 2.15, 0.24], [0.55, 0.55, 0.18], 0, '#94a3b8');
+		cylinder3D(sc, [-2.80, 2.15, 0.33], [-2.80, 2.15, 0.44], 0.15, '#dc2626', { segments: 12 });
+
+		// 12. ICSP Headers (2x3 gold male pin headers)
+		var icspPins = [[-0.12, -0.12], [0.12, -0.12], [-0.12, 0.0], [0.12, 0.0], [-0.12, 0.12], [0.12, 0.12]];
+		box3D(sc, [2.85, 0.00, 0.14], [0.45, 0.65, 0.10], 0, '#111518');
+		icspPins.forEach(function (off) {
+			line3D(sc, [2.85 + off[0], off[1], 0.18], [2.85 + off[0], off[1], 0.40], { stroke: '#f59f00', 'stroke-width': '2' });
+		});
+
+		box3D(sc, [-1.00, 1.80, 0.14], [0.45, 0.65, 0.10], 0, '#111518');
+		icspPins.forEach(function (off) {
+			line3D(sc, [-1.00 + off[0], 1.80 + off[1], 0.18], [-1.00 + off[0], 1.80 + off[1], 0.40], { stroke: '#f59f00', 'stroke-width': '2' });
+		});
+
+		// 13. Status LEDs
+		// ON LED (green)
+		dot3D(sc, [1.30, 1.45, 0.12], 2.8, { fill: '#22c55e', stroke: '#15803d', 'stroke-width': '0.8' });
+		label3D(sc, [1.30, 1.62, 0.12], 'ON', { size: 7, fill: '#eaecf0', mono: true });
+
+		// TX and RX LEDs (amber)
+		dot3D(sc, [-0.45, 1.15, 0.12], 2.5, { fill: '#f59f00', stroke: '#b45309', 'stroke-width': '0.8' });
+		label3D(sc, [-0.62, 1.15, 0.12], 'TX', { size: 7, fill: '#eaecf0', mono: true });
+		dot3D(sc, [-0.45, 0.85, 0.12], 2.5, { fill: '#f59f00', stroke: '#b45309', 'stroke-width': '0.8' });
+		label3D(sc, [-0.62, 0.85, 0.12], 'RX', { size: 7, fill: '#eaecf0', mono: true });
+
+		// Pin 13 LED (amber)
+		dot3D(sc, [-0.20, 1.45, 0.12], 2.5, { fill: '#f59f00', stroke: '#b45309', 'stroke-width': '0.8' });
+		label3D(sc, [-0.20, 1.62, 0.12], 'L', { size: 7, fill: '#eaecf0', mono: true });
+
+		// 14. Board Silkscreen Text
+		label3D(sc, [0.00, 1.30, 0.10], 'ARDUINO UNO R3', { size: 10, fill: '#eaecf0', weight: '700' });
+		label3D(sc, [0.40, 1.95, 0.10], 'DIGITAL (PWM ~)', { size: 8, fill: '#eaecf0', mono: true });
+		label3D(sc, [1.85, -1.95, 0.10], 'ANALOG IN', { size: 8, fill: '#eaecf0', mono: true });
+		label3D(sc, [-0.10, -1.95, 0.10], 'POWER', { size: 8, fill: '#eaecf0', mono: true });
+
+		// 15. Underside solder joints and branding when viewed from below
+		if (cam.elevation < 0) {
+			label3D(sc, [0, 0, -0.09], 'MADE IN ITALY · ARDUINO.CC', { size: 9, fill: '#eaecf0', mono: true });
+			label3D(sc, [0, -1.0, -0.09], 'OPEN-SOURCE HARDWARE', { size: 8, fill: '#cbd5e1', mono: true });
+			for (var b1 = 0; b1 < 10; b1++) dot3D(sc, [0.50 + b1 * 0.254, 2.30, -0.082], 1.5, { fill: '#cbd5e1' });
+			for (var b2 = 0; b2 < 8; b2++) dot3D(sc, [-1.75 + b2 * 0.254, 2.30, -0.082], 1.5, { fill: '#cbd5e1' });
+			for (var b3 = 0; b3 < 8; b3++) dot3D(sc, [-1.00 + b3 * 0.254, -2.30, -0.082], 1.5, { fill: '#cbd5e1' });
+			for (var b4 = 0; b4 < 6; b4++) dot3D(sc, [1.20 + b4 * 0.254, -2.30, -0.082], 1.5, { fill: '#cbd5e1' });
+			for (var b5 = 0; b5 < 14; b5++) {
+				dot3D(sc, [-0.75 + b5 * 0.254, -0.15, -0.082], 1.5, { fill: '#cbd5e1' });
+				dot3D(sc, [-0.75 + b5 * 0.254, -1.15, -0.082], 1.5, { fill: '#cbd5e1' });
+			}
+		}
+
+		// 16. Active Component Highlight Box
+		var activePart = null;
+		var sel = stage.activePartId || stage.hoveredPartId;
+		if (sel) {
+			for (var si = 0; si < ARDUINO_PARTS.length; si++) {
+				if (ARDUINO_PARTS[si].id === sel) { activePart = ARDUINO_PARTS[si]; break; }
+			}
+		}
+		if (activePart) {
+			drawHighlightBox3D(sc, activePart.box[0], activePart.box[1], '#00878a');
+		}
+
+		// 17. 3D Numbered Callout Chips (1 to 8)
+		if (stage.showLabels) {
+			ARDUINO_PARTS.forEach(function (part) {
+				var isAct = stage.activePartId === part.id;
+				var isHov = stage.hoveredPartId === part.id;
+				drawCalloutChip3D(sc, part, isAct, isHov, dark, stage);
+			});
+		}
+
+		renderScene3D(svg, sc);
+
+		readout.textContent = 'Arduino Uno R3 · ATmega328P 8-bit AVR @ 16 MHz · 14 Digital I/O (6 PWM) · 6 Analog In (10-bit ADC) · 5.0V Logic';
+
+		if (activePart) {
+			var partMsg = activePart.title + ': ' + activePart.desc;
+			if (status.textContent !== partMsg) status.textContent = partMsg;
+		} else {
+			var defMsg = 'Explore the Arduino Uno R3 in 3D: click any numbered chip (1–8) or drag to orbit and inspect components.';
+			if (status.textContent !== defMsg) status.textContent = defMsg;
+		}
+	}
+
+	orbitControls(svg, cam, redraw, Object.assign(ctl, {
+		onTap: function (pt) {
+			var sc = newScene3D(cam, W, H, light);
+			var nearest = null, minDist = 28;
+			ARDUINO_PARTS.forEach(function (part) {
+				var pr = pr3(sc, part.pos);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = part; }
+				var prBox = pr3(sc, part.box[0]);
+				var dBox = Math.hypot(pt.x - prBox.u, pt.y - prBox.v);
+				if (dBox < minDist) { minDist = dBox; nearest = part; }
+			});
+			stage.selectPart(nearest ? nearest.id : null);
+		},
+		hover: function (pt) {
+			var sc = newScene3D(cam, W, H, light);
+			var nearest = null, minDist = 24;
+			ARDUINO_PARTS.forEach(function (part) {
+				var pr = pr3(sc, part.pos);
+				var d = Math.hypot(pt.x - pr.u, pt.y - pr.v);
+				if (d < minDist) { minDist = d; nearest = part; }
+				var prBox = pr3(sc, part.box[0]);
+				var dBox = Math.hypot(pt.x - prBox.u, pt.y - prBox.v);
+				if (dBox < minDist) { minDist = dBox; nearest = part; }
+			});
+			stage.hoverPart(nearest ? nearest.id : null);
+			return nearest ? 'pointer' : null;
+		}
+	}));
+
+	sDist.input.addEventListener('input', function () {
+		cam.dist = Number(sDist.input.value);
+		sDist.out.textContent = cam.dist.toFixed(1);
+		redraw();
+	});
+
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag anywhere to orbit in 3D; pinch or Ctrl + scroll to zoom. Use the floating frosted toolbar to snap views, auto-spin turntable, or toggle component chips.' });
+
+	root.replaceChildren(frame('3D Arduino Uno Board Explorer', [
+		h('p', { 'class': 'widget-note', text: 'Hardware inspection of the classic Arduino Uno R3: 16 MHz ATmega328P microcontroller, USB-serial interface, voltage regulator, power jack, and pin headers.' }),
+		stage.wrap,
+		hint,
+		readout,
+		status,
+		az.row,
+		el.row
+	]));
+
 	draw();
 }
 
@@ -5965,7 +7187,8 @@ function initAmrFrames3D(root) {
 		fov: initFov,
 		vlan: initVlan,
 		'robot-arm-3d': initRobotArm3D,
-		'amr-frames-3d': initAmrFrames3D
+		'amr-frames-3d': initAmrFrames3D,
+		'arduino-uno-3d': initArduinoUno3D
 	};
 
 	/* "Load these values" buttons in lessons: <button data-widget-load="fov" data-values='{"fov-h": 8.8}'>.
