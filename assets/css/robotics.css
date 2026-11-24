@@ -41,6 +41,20 @@
 	--wp-gold-soft: #fff8d6;
 	--wp-gold-text: #6b5200;
 	--wp-bib-key: #8a6a00;
+
+	/* 3D visualization tokens */
+	--w3d-bg: #ffffff;
+	--w3d-bg-subtle: #f8f9fa;
+	--w3d-border: #c8ccd1;
+	--w3d-x: #d92b2b;
+	--w3d-y: #2b8a3e;
+	--w3d-z: #1864ab;
+	--w3d-beam: rgba(8, 145, 178, 0.3);
+	--w3d-hit: #0891b2;
+	--w3d-shadow: #202122;
+	--w3d-badge-bg: rgba(255, 255, 255, 0.92);
+	--w3d-badge-border: #c8ccd1;
+	--w3d-badge-text: #202122;
 }
 
 [data-theme="dark"] {
@@ -57,6 +71,20 @@
 	--wp-gold-soft: rgba(253, 208, 35, 0.12);
 	--wp-gold-text: #fdd023;
 	--wp-bib-key: #fdd023;
+
+	/* 3D visualization tokens */
+	--w3d-bg: #14181c;
+	--w3d-bg-subtle: #1b1f24;
+	--w3d-border: #3f4449;
+	--w3d-x: #ff6b6b;
+	--w3d-y: #69db7c;
+	--w3d-z: #74c0fc;
+	--w3d-beam: rgba(34, 211, 238, 0.28);
+	--w3d-hit: #22d3ee;
+	--w3d-shadow: #000000;
+	--w3d-badge-bg: rgba(20, 24, 28, 0.88);
+	--w3d-badge-border: #3f4449;
+	--w3d-badge-text: #eaecf0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -74,6 +102,20 @@
 		--wp-gold-soft: rgba(253, 208, 35, 0.12);
 		--wp-gold-text: #fdd023;
 		--wp-bib-key: #fdd023;
+
+		/* 3D visualization tokens */
+		--w3d-bg: #14181c;
+		--w3d-bg-subtle: #1b1f24;
+		--w3d-border: #3f4449;
+		--w3d-x: #ff6b6b;
+		--w3d-y: #69db7c;
+		--w3d-z: #74c0fc;
+		--w3d-beam: rgba(34, 211, 238, 0.28);
+		--w3d-hit: #22d3ee;
+		--w3d-shadow: #000000;
+		--w3d-badge-bg: rgba(20, 24, 28, 0.88);
+		--w3d-badge-border: #3f4449;
+		--w3d-badge-text: #eaecf0;
 	}
 }
 
@@ -979,6 +1021,20 @@ body.thesis-drawer-open .thesis-drawer-backdrop {
 		--wp-gold-soft: #ffffff;
 		--wp-gold-text: #000000;
 		--wp-bib-key: #000000;
+
+		/* 3D visualization tokens */
+		--w3d-bg: #ffffff;
+		--w3d-bg-subtle: #ffffff;
+		--w3d-border: #bbbbbb;
+		--w3d-x: #000000;
+		--w3d-y: #333333;
+		--w3d-z: #555555;
+		--w3d-beam: rgba(0, 0, 0, 0.2);
+		--w3d-hit: #000000;
+		--w3d-shadow: #888888;
+		--w3d-badge-bg: #ffffff;
+		--w3d-badge-border: #777777;
+		--w3d-badge-text: #000000;
 	}
 	html, body, #page-wrapper, #main { background: #fff !important; color: #000 !important; }
 	body { font-size: 11pt; line-height: 1.45; }
@@ -1447,32 +1503,191 @@ ol.article-spec-list { list-style: decimal; }
 .glossary-list dd { margin: 2px 0 0 0; }
 .glossary-list dd a { font-size: inherit; }
 .glossary-filter { width: 100%; max-width: 360px; padding: 6px 8px; margin: 4px 0 8px; font: inherit; color: var(--wp-text); background: var(--wp-bg); border: 1px solid var(--wp-border); }
-/* 3D widgets (robot-arm-3d, amr-frames-3d) */
+/* 3D widgets (robot-arm-3d, amr-frames-3d, pinhole-projection) */
+.w3d-container,
+.w3d-canvas-wrap {
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+	margin: 8px 0;
+}
 .w3d-canvas {
-	--w3d-x: #d92b2b; --w3d-y: #2b8a3e; --w3d-z: #1864ab;
-	--w3d-beam: rgba(8, 145, 178, 0.3); --w3d-hit: #0891b2; --w3d-shadow: #202122;
-	background: var(--wp-bg); border: 1px solid var(--wp-border-light); border-radius: 4px;
-	user-select: none; -webkit-user-select: none; overflow: hidden;
+	--w3d-x: var(--w3d-x, #d92b2b);
+	--w3d-y: var(--w3d-y, #2b8a3e);
+	--w3d-z: var(--w3d-z, #1864ab);
+	--w3d-beam: var(--w3d-beam, rgba(8, 145, 178, 0.3));
+	--w3d-hit: var(--w3d-hit, #0891b2);
+	--w3d-shadow: var(--w3d-shadow, #202122);
+	--w3d-bg: var(--w3d-bg, var(--wp-bg));
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+	box-sizing: border-box;
+	background: var(--w3d-bg);
+	border: 1px solid var(--w3d-border, var(--wp-border-light));
+	border-radius: 4px;
+	user-select: none;
+	-webkit-user-select: none;
+	overflow: hidden;
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+	touch-action: none;
 }
 [data-theme="dark"] .w3d-canvas {
-	--w3d-x: #ff6b6b; --w3d-y: #69db7c; --w3d-z: #74c0fc;
-	--w3d-beam: rgba(34, 211, 238, 0.28); --w3d-hit: #22d3ee; --w3d-shadow: #000;
+	--w3d-x: #ff6b6b;
+	--w3d-y: #69db7c;
+	--w3d-z: #74c0fc;
+	--w3d-beam: rgba(34, 211, 238, 0.28);
+	--w3d-hit: #22d3ee;
+	--w3d-shadow: #000;
+	--w3d-bg: #14181c;
+	border-color: var(--w3d-border, #3f4449);
+	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) .w3d-canvas {
-		--w3d-x: #ff6b6b; --w3d-y: #69db7c; --w3d-z: #74c0fc;
-		--w3d-beam: rgba(34, 211, 238, 0.28); --w3d-hit: #22d3ee; --w3d-shadow: #000;
+		--w3d-x: #ff6b6b;
+		--w3d-y: #69db7c;
+		--w3d-z: #74c0fc;
+		--w3d-beam: rgba(34, 211, 238, 0.28);
+		--w3d-hit: #22d3ee;
+		--w3d-shadow: #000;
+		--w3d-bg: #14181c;
+		border-color: var(--w3d-border, #3f4449);
+		box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
 	}
 }
-.w3d-canvas:focus-visible { outline: 3px solid var(--wp-link); outline-offset: 2px; }
+
+/* High-contrast focus outline for 3D canvas interaction */
+.w3d-canvas:focus-visible {
+	outline: 3px solid var(--wp-link) !important;
+	outline-offset: 2px !important;
+	box-shadow: 0 0 0 1px var(--wp-bg), 0 0 0 5px var(--wp-link);
+}
+@media (forced-colors: active) {
+	.w3d-canvas:focus-visible {
+		outline: 3px solid Highlight !important;
+		outline-offset: 2px !important;
+	}
+}
+
 .w3d-shadow { fill: var(--w3d-shadow); stroke: var(--w3d-shadow); opacity: 0.14; }
 .w3d-label { paint-order: stroke; stroke: var(--wp-bg); stroke-width: 3px; stroke-linejoin: round; pointer-events: none; }
 .w3d-handle { fill: none; stroke: var(--wp-gold-text); stroke-width: 2; stroke-dasharray: 4 3; pointer-events: none; }
 .w3d-handle-active { stroke-width: 3; stroke-dasharray: none; }
-.w3d-view, .w3d-jog { align-items: center; }
-.w3d-view-label { font-size: 13px; font-weight: 700; color: var(--wp-text-muted); min-width: 4.5em; }
+
+/* 3D camera view button bars & jog controls */
+.w3d-view, .w3d-jog {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin: 6px 0;
+}
+.w3d-view-label {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--wp-text-muted);
+	min-width: 4.5em;
+	user-select: none;
+	-webkit-user-select: none;
+}
+.w3d-view .btn-copy-bibtex,
+.w3d-jog .btn-copy-bibtex,
+.w3d-view button,
+.w3d-jog button {
+	padding: 4px 10px;
+	font-size: 13px;
+	min-height: 28px;
+	border-radius: 3px;
+}
 .w3d-hold { user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .w3d-hint { margin-top: 0; }
+.w3d-view button:active,
+.w3d-jog button:active,
+.w3d-hold:active {
+	background: var(--wp-bg-muted);
+	border-color: var(--wp-link);
+}
+.w3d-view button[aria-pressed="true"],
+.w3d-jog button[aria-pressed="true"] {
+	background: var(--wp-link);
+	color: var(--wp-on-link);
+	border-color: var(--wp-link);
+}
+.w3d-view button:focus-visible,
+.w3d-jog button:focus-visible {
+	outline: 2px solid var(--wp-link) !important;
+	outline-offset: 1px !important;
+}
+
+/* 3D coordinate frame badges & camera orientation badges */
+.w3d-badge,
+.w3d-frame-badge,
+.w3d-orientation-badge,
+.w3d-coord-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 7px;
+	font-family: var(--wp-mono, monospace);
+	font-size: 11px;
+	font-weight: 700;
+	line-height: 1.4;
+	color: var(--w3d-badge-text, var(--wp-text));
+	background: var(--w3d-badge-bg, var(--wp-bg-subtle));
+	border: 1px solid var(--w3d-badge-border, var(--wp-border-light));
+	border-radius: 3px;
+	letter-spacing: 0.02em;
+	user-select: none;
+	-webkit-user-select: none;
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
+}
+.w3d-badge-overlay {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	z-index: 5;
+	pointer-events: none;
+}
+.w3d-badge-overlay > * { pointer-events: auto; }
+.w3d-badge-pill {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+.w3d-badge-x, .w3d-axis-x { color: var(--w3d-x, #d92b2b); }
+.w3d-badge-y, .w3d-axis-y { color: var(--w3d-y, #2b8a3e); }
+.w3d-badge-z, .w3d-axis-z { color: var(--w3d-z, #1864ab); }
+.w3d-pill-x { background-color: var(--w3d-x, #d92b2b); }
+.w3d-pill-y { background-color: var(--w3d-y, #2b8a3e); }
+.w3d-pill-z { background-color: var(--w3d-z, #1864ab); }
+
+/* SVG badge elements */
+svg.w3d-canvas .w3d-badge-bg {
+	fill: var(--w3d-badge-bg, var(--wp-bg));
+	stroke: var(--w3d-badge-border, var(--wp-border-light));
+	stroke-width: 1px;
+}
+svg.w3d-canvas .w3d-badge-text {
+	fill: var(--w3d-badge-text, var(--wp-text));
+	font-family: var(--wp-mono, monospace);
+	font-size: 11px;
+	font-weight: 700;
+	pointer-events: none;
+}
+/* 3D heads-up display overlay */
+.w3d-hud {
+	pointer-events: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
 @media screen and (max-width: 736px) {
 	.widget-control { grid-template-columns: 1fr 56px; }
 	.widget-control label { grid-column: 1 / -1; }
@@ -1520,6 +1735,23 @@ ol.article-spec-list { list-style: decimal; }
 	.article-nav-card + .article-nav-card { border-left: 0; border-top: 1px solid var(--wp-border); }
 }
 
+@media screen and (max-width: 480px) {
+	.widget-buttons { gap: 6px; }
+	.w3d-view, .w3d-jog { gap: 5px 4px; }
+	.w3d-view .btn-copy-bibtex,
+	.w3d-jog .btn-copy-bibtex,
+	.w3d-view button,
+	.w3d-jog button {
+		padding: 3px 8px;
+		font-size: 12.5px;
+		min-height: 28px;
+	}
+	.w3d-view-label {
+		font-size: 12px;
+		min-width: 3.8em;
+	}
+}
+
 @media screen and (max-width: 360px) {
 	.thesis-navbar-inner { padding: 6px 10px; gap: 8px; }
 	.thesis-masthead-inner,
@@ -1530,6 +1762,31 @@ ol.article-spec-list { list-style: decimal; }
 	.lesson-diagram { padding-left: 10px; padding-right: 10px; }
 	.lesson-bottom-bar { padding: 6px 8px; gap: 4px; }
 	.lesson-bottom-link { padding: 0 6px; font-size: 14px; }
+	.widget-buttons { gap: 4px; }
+	.w3d-view, .w3d-jog { gap: 4px 3px; }
+	.w3d-view .btn-copy-bibtex,
+	.w3d-jog .btn-copy-bibtex,
+	.w3d-view button,
+	.w3d-jog button,
+	.widget-buttons .btn-copy-bibtex,
+	.widget-buttons button {
+		padding: 2px 7px;
+		font-size: 12px;
+		min-height: 26px;
+	}
+	.w3d-view-label {
+		font-size: 11.5px;
+		min-width: auto;
+		margin-right: 2px;
+	}
+	.w3d-canvas { border-radius: 2px; }
+	.w3d-badge,
+	.w3d-frame-badge,
+	.w3d-orientation-badge,
+	.w3d-coord-badge {
+		padding: 1px 5px;
+		font-size: 10.5px;
+	}
 }
 
 /* Lesson search on the hub and "Check yourself" boxes in lessons (learning.js) */
