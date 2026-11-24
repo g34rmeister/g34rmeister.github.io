@@ -98,7 +98,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: vision-guided robotics, eye-in-hand, eye-to-hand, snapshot position, intrinsic calibration, camera matrix, lens distortion, re-projection error, hand-eye calibration, work object (user frame)
 - Sections: Why a taught point is not enough · 2D, 2.5D and 3D guidance · Where the camera goes: eye-to-hand or eye-in-hand · Camera calibration, part 1: the lens · Camera calibration, part 2: hand-eye and AX = XB · The industrial shortcut for 2D: calibrate to a user frame · From vision result to robot move: shifting the frame · The math of a frame shift, worked through · How accurate can it be? Pixels, calibration and light
 
-## Chapter 3: How to Contribute to Open Source (`robotics-oss.html`, 5 lessons, 31 min)
+## Chapter 3: How to Contribute to Open Source (`robotics-oss.html`, 5 lessons, 32 min)
 
 ### 3.1 What Open Source Is
 `robotics-3-1.html` · 5 min · 4 refs (verified 4) · 1 figures · 0 Try it
@@ -125,7 +125,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: Choosing a first contribution to robOSStics · Lab Path A: Editing directly in your browser · Lab Path B: Working locally with Git and running checks · The source rule and repository constraints · Opening the pull request with the repository template · Responding to review and getting help · Check your understanding
 
 ### 3.5 Case Study: Contributing to Nav2
-`robotics-3-5.html` · 6 min · 11 refs (verified 11) · 1 figures · 0 Try it
+`robotics-3-5.html` · 7 min · 11 refs (verified 11) · 1 figures · 1 Try it
 - Objectives: Describe what Nav2 does for a mobile robot and how localization, costmaps, planners, controllers and behavior trees fit together. / Find your way around the Nav2 project: packages, plugin interfaces and the separate documentation repository. / Tell the LICENSE wording apart from the CONTRIBUTING wording, and sign off commits for the DCO. / Follow the Nav2 contribution steps: open or claim an issue, then open a pull request with the template filled in.
 - Key terms: Nav2, costmap, planner, behavior tree, tf2, Developer Certificate of Origin, Open Navigation
 - Sections: What Nav2 is · How a mobile robot navigates · How the project is organized · Licensing and sign-off · How to get involved · A first contribution path · Check your understanding
@@ -432,7 +432,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: loopback simulator, initial pose, goal tolerance, feedback message, user space, channel
 - Sections: Why this lab · What you need and how to install it · What the loopback simulator is · Start Nav2 · Tell Nav2 where the robot is · Look before you drive · Send a goal from the command line · The same task from Python · Stop Nav2 · From here to a contribution · Check your understanding
 
-## Chapter 11: Capstone Projects (`robotics-capstone.html`, 4 lessons, 70 min)
+## Chapter 11: Capstone Projects (`robotics-capstone.html`, 4 lessons, 71 min)
 
 ### 11.1 Capstone: Build a Simulated Work Cell
 `robotics-11-1.html` · 20 min · 23 refs (fixed 6, partial 1, unreachable 2, verified 14) · 1 figures · 1 Try it
@@ -453,7 +453,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: What you will build and why · Prerequisites · Equipment and software · Electrical and mechanical safety · Milestones and what to hand in · Milestone 1: measure speed with the encoder · Milestone 2: open-loop drive, then the PID speed loop · Milestone 3: the state machine, ramps and FAULT · Testing, verification and common problems · Grading rubric, reflection and stretch goals
 
 ### 11.4 Capstone: An Open-Source Cell Monitor
-`robotics-11-4.html` · 6 min · 6 refs (verified 6) · 1 figures · 0 Try it
+`robotics-11-4.html` · 7 min · 6 refs (verified 6) · 1 figures · 1 Try it
 - Objectives: Build a ROS 2 node that reports a robot's mode and safety status from the Dashboard Server. / Read and write packed handshake bits on a Modbus server and add a simple camera check. / Keep a time-stamped maintenance log that warns about repeated stops without ever resetting them. / Publish the project with a README, LICENSE and CONTRIBUTING file and open a real pull request.
 - Key terms: cell monitor, maintenance log, draft pull request
 - Sections: What you will build and why · Prerequisites · Software (all free) · Milestones and what to hand in · Testing and verification · Grading rubric · Reflection questions and stretch goals

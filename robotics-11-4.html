@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT6M",
+            "timeRequired": "PT7M",
             "teaches": [
                 "cell monitor",
                 "maintenance log",
@@ -342,6 +342,22 @@
                                 <li>Stretch: watch your own monitor's Modbus traffic in Wireshark, as in <a href="robotics-8-6.html">8.6</a>.</li>
                             </ul>
 
+                            <div class="article-callout try-it lesson-try">
+                                <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                                <ol>
+                                    <li><strong>Reproducible build check:</strong> In a separate test folder or fresh virtual workspace, clone your capstone repository. Run <code>colcon build --packages-select cell_monitor</code> followed by sourcing the local workspace overlay. Confirm that the package builds without warnings and that ROS 2 recognizes your monitor node entry point.</li>
+                                    <li><strong>README demo checklist:</strong> Step through your repository's <code>README.md</code> instructions from scratch as a newcomer. Confirm that each command is given in order: launching the Dashboard Server stand-in (port 29999), launching the Modbus stand-in (8.3), running the <code>cam2image</code> burger-mode demo, and starting the cell monitor. Ensure expected console outputs are documented for each step.</li>
+                                    <li><strong>Automated test harness:</strong> Add a test script or pytest suite under <code>test/</code> to automate the pass conditions from Section 05:
+                                        <ul>
+                                            <li>Trigger a simulated protective stop on the Dashboard server and verify that the monitor publishes <code>PROTECTIVE_STOP</code> within two seconds.</li>
+                                            <li>Verify that handshake bitmask patterns written to Modbus general-purpose registers (128&ndash;255) are correctly decoded.</li>
+                                            <li>Confirm that repeated protective stops trigger a warning in the maintenance log without ever sending an automated stop unlock or reset command.</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Draft pull request:</strong> Push your branch to GitHub and open a draft pull request with your verification table from Section 05 completed in the PR description, inviting peer feedback on your documentation and node structure.</li>
+                                </ol>
+                            </div>
+
                             <h2 class="article-section-title">08. References</h2>
                             <p class="references-note">Source check (October 2026): 6 of 6 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-11-4.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                             <ol class="article-spec-list">
@@ -388,7 +404,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=089a387c" defer></script>
+            <script src="assets/js/course-data.js?v=a6c9ebeb" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=42e08602" defer></script>
 
