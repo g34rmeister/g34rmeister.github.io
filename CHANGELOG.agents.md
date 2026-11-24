@@ -49,6 +49,7 @@ Older entries (PRs #4 to #20, chapters 7 to 9, the renumber, widgets, the 2026-1
   - Responsive tables: `.table-wrapper` and `.article-table` styled with `-webkit-overflow-scrolling: touch;`, horizontal scroll boundaries, and focus-visible outlines.
   - Touch targets (WCAG 2.5.8): `.lesson-quiz-link` (min-height 24px), `.check-answer > summary` (min-height 24px), `.widget-load-btn` (min-height 24px), and `.quiz-choice` (min-height 28px, 16px radio/checkbox inputs) ensure all interactive controls meet minimum touch target sizing.
   - 320px viewport: verified zero horizontal overflow across all pages; added <= 360px breakpoint rules for compact padding on containers, widgets, and mobile bottom bar; added 320px mobile viewport to `scripts/test_playwright.js`.
+<<<<<<< HEAD
 - Lesson interactive widget and Try-it pedagogical enhancements (2026-11-24, branch `swarm-pedagogy-a3c04652`; pedagogy in native swarm):
   - 7.6 (`robotics-7-6.html`): Updated `pinhole-projection` widget note to describe 3D camera frustum orbit/zoom, view presets (Iso, Front, Side, Top, and Camera-view looking through the lens), 3D point sliders, and projection ray tracing from space through the optical center to the image sensor plane. Expanded Try-it box with step 1 instructing readers to explore the 3D widget, orbit the frustum, and observe pixel scaling against principal point offsets.
   - 3.5 (`robotics-3-5.html`): Added practical, newcomer-friendly Try-it box (`div.article-callout.try-it.lesson-try`) covering standard Nav2 simulation launch (`tb3_simulation_launch.py`), sending navigation goals via RViz, tuning costmap inflation parameters (`cost_scaling_factor` and `inflation_radius`), and querying TF2 coordinate frames (`map` -> `odom` -> `base_link`). Strictly adheres to existing lesson facts.
@@ -61,3 +62,21 @@ Older entries (PRs #4 to #20, chapters 7 to 9, the renumber, widgets, the 2026-1
   - 3D coordinate frame badges & orientation badges: Added styles for HTML badges (`.w3d-badge`, `.w3d-frame-badge`, `.w3d-orientation-badge`, `.w3d-coord-badge`, `.w3d-badge-overlay`, `.w3d-badge-pill`, `.w3d-badge-x/y/z`) and SVG badge elements (`svg.w3d-canvas .w3d-badge-bg`, `svg.w3d-canvas .w3d-badge-text`).
   - Mobile responsiveness down to 320px: Added responsive breakpoints (`<= 480px` and `<= 360px`) for compact button padding (`2px 7px`, `min-height: 26px`), tighter button gaps, smaller badge padding, and no horizontal overflow.
   - Verified with `python3 scripts/test_hygiene.py` and `test_playwright.js`.
+- 3D interactive visualizations and capabilities across the site (2026-11-24, branch `swarm-graphics3d-b95f7e38`; graphics3d in native swarm):
+  - Upgraded `pinhole-projection` (lesson 7.6) into a true 3D interactive camera frustum widget using the zero-dependency pure JS 3D engine in `assets/js/widgets.js`:
+    - 3D camera model: camera origin `{camera}` with coordinate frame axes (X right red, Y down green, Z optical axis into scene blue), camera chassis box, and cylindrical lens barrel.
+    - Optical axis +Z projecting into the scene with depth reference lines and label.
+    - Sensor plane at focal distance $d_s = 0.35 \times (fx / 800)$ with pixel boundaries ($640 \times 480$), crosshairs at optical center $(cx, cy) = (320, 240)$, and pierced sensor point $(u, v)$.
+    - 3D target point $P(X, Y, Z)$ in physical camera coordinates with ground drop-shadow line and 3D position marker.
+    - 3D projection ray connecting camera center $(0,0,0)$ through $(u, v)$ on the sensor plane to $P(X, Y, Z)$ in space.
+    - Integrated 2D viewfinder HUD inset in the corner showing live 2D sensor frame view with crosshairs and projected pixel dot.
+    - Full orbitControls (mouse drag, touch drag, pinch/wheel zoom, keyboard arrows, +, -, 0 to reset) with view preset buttons: Iso, Front, Side, Top, and Camera-view looking straight through the camera lens.
+    - Preserved worked example buttons (`Worked example`, `Optical center`, `Closer point`), slider inputs ($X, Y, Z, fx$, azimuth, elevation), and mathematical readout showing normalized coordinates and pixel equations.
+  - Polished `robot-arm-3d` (lesson 1.3):
+    - Added 3D target workpiece cube (cyan payload box) on a cylindrical pick pedestal and a place pedestal.
+    - Added pick-and-place tracking during demo program execution (arm reaches down to pick workpiece, carries it to place pedestal).
+    - Added interactive visual checkbox toggle (`#arm3d-frames`) for intermediate joint coordinate frames `{J1}` to `{J4}` alongside base and tool frames.
+  - Polished `amr-frames-3d` (lesson 10.1):
+    - Enhanced AMR robot model with 3D drive wheel cylinders (rubber tires + outer wheel rim caps) and front/rear passive support caster assemblies (swivel brackets + caster wheels).
+    - Added active 3D LiDAR scan rays projecting from `{lidar_link}` towards obstacle boxes (shelves, pallet rack, column) with higher-intensity active beam highlights, hit reflection markers, and vertical impact laser strike stripes.
+  - Verification: all layout, accessibility (ARIA roles, live regions, labels), and 320px responsive tests pass with zero JS errors.

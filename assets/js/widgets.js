@@ -3263,113 +3263,8 @@
 		draw();
 	}
 
-	/* ---------- Pinhole camera projection matrix K (lesson 7.6) ---------- */
-
-	function initPinholeProjection(root) {
-		var sX = slider('3D coordinate X (m)', 'pp-x', -0.25, 0.25, 0.01, 0.10, ' m');
-		var sY = slider('3D coordinate Y (m)', 'pp-y', -0.20, 0.20, 0.01, 0.05, ' m');
-		var sZ = slider('3D coordinate Z (m)', 'pp-z', 0.40, 2.50, 0.05, 1.00, ' m');
-		var sF = slider('Focal length (fx = fy)', 'pp-f', 400, 1200, 50, 800, ' px');
-
-		var W = 380, H = 210;
-		var svg = plotFrame(W, H, 'Pinhole projection of 3D camera coordinates to 2D image pixel coordinates');
-		var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
-
-		var btnWorked = button('Worked example ([0.10, 0.05, 1.00] m)', function () {
-			sX.input.value = 0.10; sY.input.value = 0.05; sZ.input.value = 1.00; sF.input.value = 800; draw();
-		});
-		var btnCenter = button('Optical center ([0.0, 0.0, 1.00] m)', function () {
-			sX.input.value = 0.0; sY.input.value = 0.0; sZ.input.value = 1.00; draw();
-		});
-		var btnClose = button('Closer point (Z=0.50 m)', function () {
-			sZ.input.value = 0.50; draw();
-		});
-
-		var buttons = h('div', { 'class': 'widget-buttons' }, [btnWorked, btnCenter, btnClose]);
-
-		function draw() {
-			var X = Number(sX.input.value);
-			var Y = Number(sY.input.value);
-			var Z = Number(sZ.input.value);
-			var fx = Number(sF.input.value);
-			var fy = fx;
-			var cx = 320.0, cy = 240.0;
-
-			sX.out.textContent = X.toFixed(2) + ' m';
-			sY.out.textContent = Y.toFixed(2) + ' m';
-			sZ.out.textContent = Z.toFixed(2) + ' m';
-			sF.out.textContent = fx + ' px';
-
-			var x_norm = X / Z;
-			var y_norm = Y / Z;
-			var u = fx * x_norm + cx;
-			var v = fy * y_norm + cy;
-
-			svg.replaceChildren();
-
-			var sensorW = 224, sensorH = 168;
-			var originX = 78, originY = 20;
-
-			var frameBox = s('rect', { 'class': 'd-box', x: originX, y: originY, width: sensorW, height: sensorH, rx: 4 });
-			svg.appendChild(frameBox);
-
-			var cxSvg = originX + (cx / 640) * sensorW;
-			var cySvg = originY + (cy / 480) * sensorH;
-			var chX = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: originX, y1: cySvg, x2: originX + sensorW, y2: cySvg });
-			var chY = s('line', { 'class': 'd-line', 'stroke-dasharray': '2 3', x1: cxSvg, y1: originY, x2: cxSvg, y2: originY + sensorH });
-			var tCenter = s('text', { 'class': 'd-muted', x: cxSvg + 4, y: cySvg - 4, 'font-size': '10px' });
-			tCenter.textContent = '(cx, cy)';
-			svg.appendChild(chX);
-			svg.appendChild(chY);
-			svg.appendChild(tCenter);
-
-			var uSvg = originX + (u / 640) * sensorW;
-			var vSvg = originY + (v / 480) * sensorH;
-
-			var inBounds = (u >= 0 && u <= 640 && v >= 0 && v <= 480);
-			var dot = s('circle', {
-				'class': inBounds ? 'd-box-gold' : 'd-box',
-				cx: Math.max(originX, Math.min(originX + sensorW, uSvg)),
-				cy: Math.max(originY, Math.min(originY + sensorH, vSvg)),
-				r: 6
-			});
-			var tPoint = s('text', { 'class': 'd-title', x: originX + sensorW + 10, y: 100 });
-			tPoint.textContent = 'u = ' + u.toFixed(1) + ' px';
-			var tPointV = s('text', { 'class': 'd-title', x: originX + sensorW + 10, y: 120 });
-			tPointV.textContent = 'v = ' + v.toFixed(1) + ' px';
-
-			svg.appendChild(dot);
-			svg.appendChild(tPoint);
-			svg.appendChild(tPointV);
-
-			var tBounds = s('text', { 'class': 'd-muted', x: originX, y: originY + sensorH + 14 });
-			tBounds.textContent = '640 × 480 image frame (optical center at 320, 240)';
-			svg.appendChild(tBounds);
-
-			readout.textContent = '[X, Y, Z] = [' + X.toFixed(2) + ', ' + Y.toFixed(2) + ', ' +
-				Z.toFixed(2) + '] m · Normalized: x\' = ' + x_norm.toFixed(3) + ', y\' = ' +
-				y_norm.toFixed(3) + ' · Pixel: u = ' + fx + '×' + x_norm.toFixed(3) + ' + 320 = ' +
-				u.toFixed(1) + ' px, v = ' + fy + '×' + y_norm.toFixed(3) + ' + 240 = ' +
-				v.toFixed(1) + ' px ' + (inBounds ? '(inside frame)' : '(outside frame!)') + '.';
-		}
-
-		[sX, sY, sZ, sF].forEach(function (ctrl) {
-			ctrl.input.addEventListener('input', draw);
-		});
-
-		root.replaceChildren(frame('pinhole projection: 3D camera frame to 2D pixels', [
-			h('p', { 'class': 'widget-note', text: 'Intrinsic matrix K projects 3D camera coordinates to 2D pixels: normalized x\'=X/Z, y\'=Y/Z; then u = fx·x\' + cx, v = fy·y\' + cy.' }),
-			sX.row,
-			sY.row,
-			sZ.row,
-			sF.row,
-			buttons,
-			svg,
-			readout
-		]));
-
-		draw();
-	}
+	/* ---------- Pinhole camera projection matrix K (lesson 7.6) ----------
+	   Upgraded to 3D interactive frustum widget: see initPinholeProjection in the 3D engine section below. */
 
 	/* ---------- Device Level Ring (DLR) supervisor & recovery (lesson 8.1) ---------- */
 
@@ -4953,13 +4848,16 @@ function orbitControls(svg, cam, redraw, ctl) {
 	});
 }
 
-/* "View: Iso Front Side Top  Zoom + −" row. presets: [[label, azimuth, elevation, aria-label]]. */
+/* "View: Iso Front Side Top  Zoom + −" row. presets: [[label, azimuth, elevation, aria-label, dist]]. */
 function viewButtons3D(cam, redraw, ctl, presets) {
 	var row = h('div', { 'class': 'widget-buttons w3d-view', role: 'group', 'aria-label': 'Camera view' }, [
 		h('span', { 'class': 'w3d-view-label', text: 'View' })
 	]);
 	presets.forEach(function (p) {
-		row.appendChild(button(p[0], function () { tweenCamera(cam, { azimuth: p[1], elevation: p[2], dist: cam.home.dist }, redraw, ctl); }, p[3]));
+		row.appendChild(button(p[0], function () {
+			var goal = { azimuth: p[1], elevation: p[2], dist: p[4] || cam.home.dist };
+			tweenCamera(cam, goal, redraw, ctl);
+		}, p[3]));
 	});
 	row.appendChild(button('Zoom +', function () { zoomCamera(cam, 1 / 1.25); redraw(); }, 'Zoom in'));
 	row.appendChild(button('Zoom −', function () { zoomCamera(cam, 1.25); redraw(); }, 'Zoom out'));
@@ -4994,6 +4892,305 @@ function checkRow3D(id, text, checked) {
 	return { input: input, row: h('div', { 'class': 'widget-control widget-check' }, [input, h('label', { 'for': id, text: text })]) };
 }
 
+/* ---------- 3D pinhole camera projection and frustum (lesson 7.6) ---------- */
+
+function initPinholeProjection(root) {
+	var sX = slider('3D coordinate X (m)', 'pp-x', -0.25, 0.25, 0.01, 0.10, ' m');
+	var sY = slider('3D coordinate Y (m)', 'pp-y', -0.20, 0.20, 0.01, 0.05, ' m');
+	var sZ = slider('3D coordinate Z (m)', 'pp-z', 0.40, 2.50, 0.05, 1.00, ' m');
+	var sF = slider('Focal length (fx = fy)', 'pp-f', 400, 1200, 50, 800, ' px');
+	var az = slider('Camera azimuth', 'pp-az', -180, 180, 1, 35, '°');
+	var el = slider('Camera elevation', 'pp-el', 0, 89, 1, 22, '°');
+
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 320 : 380;
+	var svg = plotFrame(W, H, 'Interactive 3D model of a pinhole camera frustum, sensor plane, and projection ray connecting the camera center to 3D points in space. Drag to orbit, pinch or wheel to zoom.');
+	svg.classList.add('w3d-canvas');
+
+	var z0 = 0.35;
+	var cam = createCamera3D([0, 0.85, z0], 2.3, narrow ? 440 : 490, 35, 22);
+	cam.minEl = 0;
+	cam.minDist = 1.0;
+	cam.maxDist = 5.0;
+	var light = norm3([0.35, -0.6, 0.8]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
+
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+
+	function draw() {
+		var X = Number(sX.input.value);
+		var Y = Number(sY.input.value);
+		var Z = Number(sZ.input.value);
+		var fx = Number(sF.input.value);
+		var fy = fx;
+		var cx = 320.0, cy = 240.0;
+
+		sX.out.textContent = X.toFixed(2) + ' m';
+		sY.out.textContent = Y.toFixed(2) + ' m';
+		sZ.out.textContent = Z.toFixed(2) + ' m';
+		sF.out.textContent = fx + ' px';
+
+		var x_norm = X / Z;
+		var y_norm = Y / Z;
+		var u = fx * x_norm + cx;
+		var v = fy * y_norm + cy;
+		var inBounds = (u >= 0 && u <= 640 && v >= 0 && v <= 480);
+
+		var sc = newScene3D(cam, W, H, light);
+		var dark = isDarkWidget(svg);
+
+		// Floor grid
+		floorGrid3D(sc, -0.8, 0.8, -0.2, 2.6, 0.2);
+
+		// Camera origin O = [0, 0, z0]
+		var O = [0, 0, z0];
+
+		// Camera chassis box and cylindrical lens barrel
+		var bodyColor = dark ? '#2d333b' : '#33383f';
+		box3D(sc, [0, -0.09, z0], [0.15, 0.16, 0.12], 0, bodyColor, { shadow: true });
+		cylinder3D(sc, [0, -0.01, z0], [0, 0.04, z0], 0.046, dark ? '#444c56' : '#57606a', { segments: 16 });
+		cylinder3D(sc, [0, 0.035, z0], [0, 0.048, z0], 0.04, dark ? '#161b22' : '#24292f', { segments: 16 });
+
+		// Camera coordinate frame axes {camera}: X right (red), Y down (green), Z forward into scene (blue)
+		var R_cam = { x: [1, 0, 0], y: [0, 0, -1], z: [0, 1, 0] };
+		axes3D(sc, O, R_cam, 0.20, '{camera}');
+
+		// Optical axis Z into the scene
+		var optEnd = [0, 2.6, z0];
+		line3D(sc, O, optEnd, {
+			stroke: 'var(--w3d-z, #1864ab)',
+			'stroke-width': '1.5',
+			'stroke-dasharray': '5 4',
+			opacity: '0.65'
+		});
+		label3D(sc, [0, 2.5, z0], 'optical axis +Z', { fill: 'var(--w3d-z, #1864ab)', size: 10, mono: true, dy: 14 });
+
+		// Sensor plane at distance ds along optical axis
+		var ds = 0.35 * (fx / 800);
+		var ws = ds * (320 / fx);
+		var hs = ds * (240 / fy);
+
+		var cTL = [-ws, ds, z0 + hs]; // u=0, v=0
+		var cTR = [ws, ds, z0 + hs];  // u=640, v=0
+		var cBR = [ws, ds, z0 - hs];  // u=640, v=480
+		var cBL = [-ws, ds, z0 - hs]; // u=0, v=480
+
+		// Frustum wireframe from camera origin O to sensor corners
+		var frustumStyle = { stroke: 'var(--wp-link, #461d7c)', 'stroke-width': '1.2', opacity: '0.65' };
+		[cTL, cTR, cBR, cBL].forEach(function (corner) {
+			line3D(sc, O, corner, frustumStyle);
+		});
+
+		// Sensor plane rectangle
+		var sensorFill = dark ? '#21262d' : '#f6f8fa';
+		var sensorPoly = face3D(sc, [cTL, cTR, cBR, cBL], sensorFill, {
+			cull: false,
+			shade: false,
+			attrs: {
+				'fill-opacity': dark ? '0.55' : '0.45',
+				stroke: 'var(--wp-link, #461d7c)',
+				'stroke-width': '1.5'
+			}
+		});
+		if (sensorPoly) {
+			sc.items.push({ depth: pr3(sc, [0, ds, z0]).depth - 0.005, nodes: [sensorPoly] });
+		}
+
+		// Crosshairs on sensor plane through principal point (cx, cy)
+		line3D(sc, [-ws, ds, z0], [ws, ds, z0], {
+			stroke: 'var(--wp-border, #72777d)',
+			'stroke-width': '1',
+			'stroke-dasharray': '2 2',
+			opacity: '0.85'
+		});
+		line3D(sc, [0, ds, z0 + hs], [0, ds, z0 - hs], {
+			stroke: 'var(--wp-border, #72777d)',
+			'stroke-width': '1',
+			'stroke-dasharray': '2 2',
+			opacity: '0.85'
+		});
+		dot3D(sc, [0, ds, z0], 2.5, { fill: 'var(--wp-text, #202122)' });
+		label3D(sc, [0, ds, z0], '(cx, cy)', { dx: 5, dy: -6, size: 9, fill: 'var(--wp-text-muted, #54595d)' });
+
+		// Labels on sensor plane
+		label3D(sc, cTL, '(0,0)', { dx: -18, dy: -6, size: 8, fill: 'var(--wp-text-muted, #72777d)' });
+		label3D(sc, cBR, '640×480', { dx: 6, dy: 10, size: 8, fill: 'var(--wp-text-muted, #72777d)' });
+		label3D(sc, [0, ds, z0 + hs], 'sensor plane (f = ' + fx + 'px)', { dx: -52, dy: -10, size: 9, fill: 'var(--wp-link, #461d7c)', weight: '600' });
+
+		// Pierced point on the sensor plane (u, v)
+		var xs = ds * x_norm;
+		var zs = z0 - ds * y_norm;
+		var pSensor = [xs, ds, zs];
+
+		dot3D(sc, pSensor, inBounds ? 4.5 : 3.5, {
+			fill: inBounds ? '#d97706' : '#dc2626',
+			stroke: '#ffffff',
+			'stroke-width': '1.5'
+		}, -0.01);
+		label3D(sc, pSensor, '(u, v) = (' + u.toFixed(1) + ', ' + v.toFixed(1) + ')' + (inBounds ? '' : ' [outside]'), {
+			dx: 7,
+			dy: -8,
+			size: 10,
+			fill: inBounds ? 'var(--wp-gold-text, #6b5200)' : '#dc2626',
+			weight: '700'
+		});
+
+		// 3D Target point P(X, Y, Z) in space: world coords = [X, Z, z0 - Y]
+		var pTarget = [X, Z, z0 - Y];
+		// Floor drop-shadow line
+		line3D(sc, pTarget, [X, Z, 0], {
+			stroke: 'var(--wp-border-light, #a2a9b1)',
+			'stroke-width': '1',
+			'stroke-dasharray': '3 3'
+		});
+		dot3D(sc, [X, Z, 0], 3, { fill: 'var(--wp-text-muted, #72777d)' });
+
+		// Target marker
+		dot3D(sc, pTarget, 6, {
+			fill: 'var(--wp-gold-text, #b45309)',
+			stroke: '#ffffff',
+			'stroke-width': '2'
+		}, -0.02);
+		label3D(sc, pTarget, 'P(' + X.toFixed(2) + ', ' + Y.toFixed(2) + ', ' + Z.toFixed(2) + ') m', {
+			dx: 8,
+			dy: -8,
+			size: 11,
+			fill: 'var(--wp-gold-text, #6b5200)',
+			weight: '700'
+		});
+
+		// Projection ray: line connecting (0, 0, 0) through (u, v) on sensor plane to (X, Y, Z)
+		line3D(sc, O, pTarget, {
+			stroke: 'var(--wp-gold-text, #b45309)',
+			'stroke-width': '2.5',
+			'stroke-linecap': 'round'
+		});
+		var rayDir = norm3(sub3(pTarget, O));
+		line3D(sc, pTarget, add3(pTarget, scale3(rayDir, 0.25)), {
+			stroke: 'var(--wp-gold-text, #b45309)',
+			'stroke-width': '1.2',
+			'stroke-dasharray': '3 3',
+			opacity: '0.6'
+		});
+
+		renderScene3D(svg, sc);
+
+		// 2D Viewfinder HUD in the top-right corner of SVG
+		var hudW = 104, hudH = 78, hudX = W - hudW - 8, hudY = 8;
+		var hudBg = s('rect', {
+			x: hudX, y: hudY, width: hudW, height: hudH, rx: '4',
+			fill: dark ? 'rgba(22,27,34,0.85)' : 'rgba(255,255,255,0.88)',
+			stroke: dark ? '#444c56' : '#c8ccd1',
+			'stroke-width': '1'
+		});
+		var hudTitle = s('text', {
+			x: hudX + 4, y: hudY + 11, 'font-size': '8px', 'font-family': 'var(--wp-mono, monospace)',
+			fill: 'var(--wp-text-muted, #72777d)'
+		});
+		hudTitle.textContent = 'Camera frame 640×480';
+		var hudBox = s('rect', {
+			x: hudX + 4, y: hudY + 15, width: 96, height: 56, rx: '2',
+			fill: dark ? '#0d1117' : '#f0f3f6', stroke: 'var(--wp-link, #461d7c)', 'stroke-width': '1'
+		});
+		var hudCx = hudX + 4 + 96 * (cx / 640);
+		var hudCy = hudY + 15 + 56 * (cy / 480);
+		var hudChX = s('line', {
+			x1: hudX + 4, y1: hudCy, x2: hudX + 100, y2: hudCy,
+			stroke: 'var(--wp-border, #a2a9b1)', 'stroke-dasharray': '2 2', 'stroke-width': '0.7'
+		});
+		var hudChY = s('line', {
+			x1: hudCx, y1: hudY + 15, x2: hudCx, y2: hudY + 71,
+			stroke: 'var(--wp-border, #a2a9b1)', 'stroke-dasharray': '2 2', 'stroke-width': '0.7'
+		});
+		var uClamped = Math.max(0, Math.min(640, u));
+		var vClamped = Math.max(0, Math.min(480, v));
+		var hudPx = hudX + 4 + 96 * (uClamped / 640);
+		var hudPy = hudY + 15 + 56 * (vClamped / 480);
+		var hudDot = s('circle', {
+			cx: hudPx.toFixed(1), cy: hudPy.toFixed(1), r: '3',
+			fill: inBounds ? '#d97706' : '#dc2626', stroke: '#ffffff', 'stroke-width': '1'
+		});
+		var hudGroup = s('g', { 'class': 'w3d-hud', 'aria-hidden': 'true' });
+		hudGroup.appendChild(hudBg);
+		hudGroup.appendChild(hudTitle);
+		hudGroup.appendChild(hudBox);
+		hudGroup.appendChild(hudChX);
+		hudGroup.appendChild(hudChY);
+		hudGroup.appendChild(hudDot);
+		svg.appendChild(hudGroup);
+
+		readout.textContent = '[X, Y, Z] = [' + X.toFixed(2) + ', ' + Y.toFixed(2) + ', ' +
+			Z.toFixed(2) + '] m · Normalized: x\' = ' + x_norm.toFixed(3) + ', y\' = ' +
+			y_norm.toFixed(3) + ' · Pixel: u = ' + fx + '×' + x_norm.toFixed(3) + ' + 320 = ' +
+			u.toFixed(1) + ' px, v = ' + fy + '×' + y_norm.toFixed(3) + ' + 240 = ' +
+			v.toFixed(1) + ' px ' + (inBounds ? '(inside frame)' : '(outside frame!)') + '.';
+
+		var fovH = (2 * Math.atan(320 / fx) * 180 / Math.PI).toFixed(1);
+		var fovV = (2 * Math.atan(240 / fy) * 180 / Math.PI).toFixed(1);
+		var msg = 'Camera horizontal FOV: ' + fovH + '°, vertical FOV: ' + fovV + '°. ' +
+			(inBounds ? 'Projection ray passes through pixel (' + u.toFixed(1) + ', ' + v.toFixed(1) + ') on the sensor plane.' :
+				'⚠️ Target point projects outside the 640×480 sensor frame.');
+		if (status.textContent !== msg) status.textContent = msg;
+	}
+
+	orbitControls(svg, cam, redraw, ctl);
+
+	[sX, sY, sZ, sF].forEach(function (ctrl) {
+		ctrl.input.addEventListener('input', redraw);
+	});
+
+	function setParams(x, y, z, f) {
+		if (x !== undefined) sX.input.value = x;
+		if (y !== undefined) sY.input.value = y;
+		if (z !== undefined) sZ.input.value = z;
+		if (f !== undefined) sF.input.value = f;
+		redraw();
+	}
+
+	var btnWorked = button('Worked example ([0.10, 0.05, 1.00] m)', function () {
+		setParams(0.10, 0.05, 1.00, 800);
+	}, 'Load the lesson worked example point [0.10, 0.05, 1.00] m');
+
+	var btnCenter = button('Optical center ([0.0, 0.0, 1.00] m)', function () {
+		setParams(0.00, 0.00, 1.00);
+	}, 'Position target point directly on optical axis at [0.0, 0.0, 1.00] m');
+
+	var btnClose = button('Closer point (Z=0.50 m)', function () {
+		setParams(undefined, undefined, 0.50);
+	}, 'Move target point closer to camera at Z = 0.50 m');
+
+	var buttons = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Point presets' }, [btnWorked, btnCenter, btnClose]);
+
+	var viewPresets = viewButtons3D(cam, redraw, ctl, [
+		['Iso', 35, 22, 'Isometric view of camera frustum and projection ray', 2.3],
+		['Front', 180, 12, 'View facing the camera lens', 2.2],
+		['Side', -90, 10, 'Side profile view showing optical axis depth Z', 2.2],
+		['Top', 0, 89, 'Top-down view of optical axis and target', 2.3],
+		['Camera-view', 0, 0, 'View through the camera lens looking along the optical axis', 2.1]
+	]);
+
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag anywhere to orbit the camera; pinch or Ctrl + scroll to zoom. Use view buttons to snap to Iso, Front, Side, Top, or look directly through the camera lens.' });
+
+	root.replaceChildren(frame('3D pinhole camera frustum: 3D scene to 2D pixels', [
+		h('p', { 'class': 'widget-note', text: 'Intrinsic matrix K projects 3D camera coordinates to 2D pixels: normalized x\'=X/Z, y\'=Y/Z; then u = fx·x\' + cx, v = fy·y\' + cy.' }),
+		buttons,
+		svg,
+		hint,
+		readout,
+		status,
+		viewPresets,
+		sX.row,
+		sY.row,
+		sZ.row,
+		sF.row,
+		az.row,
+		el.row
+	]));
+
+	draw();
+}
+
 /* ---------- 3D articulated robot arm (lesson 1.3) ---------- */
 
 function initRobotArm3D(root) {
@@ -5006,6 +5203,7 @@ function initRobotArm3D(root) {
 	var az = slider('Camera azimuth', 'arm3d-az', -180, 180, 1, 35, '°');
 	var el = slider('Camera elevation', 'arm3d-el', 5, 89, 1, 24, '°');
 	var cbEnv = checkRow3D('arm3d-env', 'Show the reach envelope in the arm’s plane', true);
+	var cbFrames = checkRow3D('arm3d-frames', 'Show joint coordinate frames {J1}–{J4}', false);
 
 	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 360 : 380;
 	var svg = plotFrame(W, H, 'Interactive 3D model of a five-axis articulated robot arm with its base and tool coordinate frames. Drag the gripper handle to move the tool, or drag elsewhere to orbit the camera.');
@@ -5016,6 +5214,8 @@ function initRobotArm3D(root) {
 	var redraw = frameScheduler(draw);
 
 	var trail = [], points = [], anim = null, note = '', jogFrame = 'base', dragging = false;
+	var pickPos = [0.42, 0.26, 0.075], placePos = [0.30, -0.40, 0.095];
+	var workpiecePos = pickPos.slice(), workpieceHeld = false;
 	var readout = h('p', { 'class': 'widget-readout' });
 	var program = h('p', { 'class': 'widget-readout' });
 	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
@@ -5134,6 +5334,14 @@ function initRobotArm3D(root) {
 			} else {
 				setQ(start.map(function (v, j) { return v + (goal[j] - v) * e; }), mode);
 			}
+			var curTcp = fk(q).tcp;
+			if (Math.hypot(curTcp[0] - pickPos[0], curTcp[1] - pickPos[1], curTcp[2] - pickPos[2]) < 0.045) {
+				workpieceHeld = true;
+			}
+			if (Math.hypot(curTcp[0] - placePos[0], curTcp[1] - placePos[1], curTcp[2] - placePos[2]) < 0.045) {
+				workpieceHeld = false;
+				workpiecePos = placePos.slice();
+			}
 			if (k >= 1) {
 				idx++;
 				if (idx >= targets.length) { anim = null; if (done) done(); redraw(); return; }
@@ -5198,6 +5406,29 @@ function initRobotArm3D(root) {
 		[-1, 1].forEach(function (sg) {
 			orientedBox3D(sc, add3(add3(gc, scale3(f.tool.y, 0.03 * sg)), scale3(f.tool.z, 0.034)), [0.012, 0.006, 0.024], f.tool, '#d97706');
 		});
+
+		// Optional intermediate joint coordinate frames {J1}–{J4}
+		if (cbFrames.input.checked) {
+			var c1 = Math.cos(q[0] * DEG2RAD), s1 = Math.sin(q[0] * DEG2RAD);
+			var R_j1 = { x: [c1, s1, 0], y: [-s1, c1, 0], z: [0, 0, 1] };
+			axes3D(sc, [0, 0, L0], R_j1, 0.10, '{J1}');
+			var l1_dir = norm3(sub3(f.elbow, f.shoulder));
+			axes3D(sc, f.shoulder, { x: l1_dir, y: f.side, z: cross3(l1_dir, f.side) }, 0.10, '{J2}');
+			var l2_dir = norm3(sub3(f.wrist, f.elbow));
+			axes3D(sc, f.elbow, { x: l2_dir, y: f.side, z: cross3(l2_dir, f.side) }, 0.10, '{J3}');
+			axes3D(sc, f.wrist, f.tool, 0.09, '{J4}');
+		}
+
+		// Workpiece pedestals and 3D target payload cube for pick-and-place
+		cylinder3D(sc, [pickPos[0], pickPos[1], 0], [pickPos[0], pickPos[1], 0.05], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true });
+		label3D(sc, [pickPos[0], pickPos[1], 0], 'pick pedestal', { dx: 6, dy: 14, size: 9, weight: '400' });
+
+		cylinder3D(sc, [placePos[0], placePos[1], 0], [placePos[0], placePos[1], 0.07], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true });
+		label3D(sc, [placePos[0], placePos[1], 0], 'place pedestal', { dx: 6, dy: 14, size: 9, weight: '400' });
+
+		var wpCur = workpieceHeld ? add3(f.tcp, [0, 0, -0.022]) : workpiecePos;
+		box3D(sc, wpCur, [0.042, 0.042, 0.042], 0, '#06b6d4', { shadow: !workpieceHeld });
+		label3D(sc, wpCur, 'workpiece', { dx: 6, dy: -8, size: 9, fill: '#0891b2', weight: '700' });
 
 		// Taught points and the TCP trail
 		points.forEach(function (p, i) {
@@ -5269,9 +5500,10 @@ function initRobotArm3D(root) {
 		});
 	});
 	cbEnv.input.addEventListener('change', redraw);
+	cbFrames.input.addEventListener('change', redraw);
 
 	function preset(text, a, aria) {
-		return button(text, function () { note = ''; play([a], 'movej'); }, aria);
+		return button(text, function () { note = ''; workpieceHeld = false; workpiecePos = pickPos.slice(); play([a], 'movej'); }, aria);
 	}
 	var presets = h('div', { 'class': 'widget-buttons' }, [
 		preset('Home pose', [0, 20, -20, 0, 0], 'Move the arm to its home pose'),
@@ -5304,6 +5536,7 @@ function initRobotArm3D(root) {
 		button('Play MoveJ', function () { playProgram('movej'); }, 'Play the taught points with joint interpolation'),
 		button('Play MoveL', function () { playProgram('movel'); }, 'Play the taught points with straight-line tool motion'),
 		button('Demo program', function () {
+			workpieceHeld = false; workpiecePos = pickPos.slice();
 			// Tool pointing down: approach, pick, lift, approach, place (solved with the same IK as the jog buttons).
 			var seed = [30, 30, 70, 80, 0], prog = [];
 			[[0.42, 0.26, 0.24, 0], [0.42, 0.26, 0.10, 0], [0.42, 0.26, 0.24, 0], [0.30, -0.40, 0.24, 90], [0.30, -0.40, 0.12, 90]].some(function (c) {
@@ -5316,7 +5549,7 @@ function initRobotArm3D(root) {
 			points = prog || [[45, 40, -35, -10, 0], [45, 20, -20, -10, 0], [-45, 20, -20, -10, 45], [-45, 42, -32, -10, 90]];
 			updateProgram(); note = 'Loaded a pick-and-place (approach, pick, lift, approach, place). Play it as MoveJ, then as MoveL, and compare the trails.'; redraw();
 		}, 'Load a five-point pick-and-place program'),
-		button('Clear points', function () { points = []; trail = []; note = ''; updateProgram(); redraw(); }, 'Delete the taught points and the trail')
+		button('Clear points', function () { points = []; trail = []; note = ''; workpieceHeld = false; workpiecePos = pickPos.slice(); updateProgram(); redraw(); }, 'Delete the taught points and the trail')
 	]);
 
 	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag the ringed gripper to move the tool; drag anywhere else to orbit. Pinch or Ctrl + scroll to zoom. With the view focused: arrow keys orbit, + and − zoom, 0 resets, W/S jog X, A/D jog Y, R/F jog Z.' });
@@ -5327,7 +5560,7 @@ function initRobotArm3D(root) {
 		viewButtons3D(cam, redraw, ctl, [['Iso', 35, 24, 'Isometric view'], ['Front', 90, 8, 'View from the front of the arm'],
 			['Side', 0, 8, 'View from the side of the arm'], ['Top', 0, 89, 'View from above']]),
 		jogRow, progRow, program,
-		js[0].row, js[1].row, js[2].row, js[3].row, js[4].row, cbEnv.row, az.row, el.row
+		js[0].row, js[1].row, js[2].row, js[3].row, js[4].row, cbEnv.row, cbFrames.row, az.row, el.row
 	]));
 	draw();
 }
@@ -5461,9 +5694,10 @@ function initAmrFrames3D(root) {
 		var hits = [];
 		for (var b = 0; b < n; b++) {
 			var ang = truth.yaw + (b / n) * 2 * Math.PI, dx = Math.cos(ang), dy = Math.sin(ang), best = 6;
+			var hitObs = false;
 			// Room walls (from inside)
 			[[(XB - truth.x) / dx, dx > 0], [(-XB - truth.x) / dx, dx < 0], [(YB - truth.y) / dy, dy > 0], [(-YB - truth.y) / dy, dy < 0]]
-				.forEach(function (c) { if (c[1] && c[0] > 0 && c[0] < best) best = c[0]; });
+				.forEach(function (c) { if (c[1] && c[0] > 0 && c[0] < best) { best = c[0]; hitObs = false; } });
 			obstacles.forEach(function (o) {
 				var t = Infinity;
 				if (o.type === 'box') {
@@ -5474,9 +5708,9 @@ function initAmrFrames3D(root) {
 					var vx = o.cx - truth.x, vy = o.cy - truth.y, tp = vx * dx + vy * dy, d2 = vx * vx + vy * vy - tp * tp;
 					if (tp > 0 && d2 < o.r * o.r) t = tp - Math.sqrt(o.r * o.r - d2);
 				}
-				if (t < best) best = t;
+				if (t < best) { best = t; hitObs = true; }
 			});
-			hits.push({ rel: ang - truth.yaw, range: best });
+			hits.push({ rel: ang - truth.yaw, range: best, hitObstacle: hitObs });
 		}
 		return hits;
 	}
@@ -5486,19 +5720,49 @@ function initAmrFrames3D(root) {
 		if (ghost) {
 			box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, 'none', { attrs: {
 				fill: 'var(--wp-gold-soft, #fff8d6)', 'fill-opacity': '0.25', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.2', 'stroke-dasharray': '4 3' }, depthBias: -0.05 });
+			// Ghost wheel outlines
+			[1, -1].forEach(function (sg) {
+				var gh = [pose.x - 0.24 * sn * sg, pose.y + 0.24 * c * sg, 0.08];
+				cylinder3D(sc, add3(gh, [-0.02 * sn * sg, 0.02 * c * sg, 0]), add3(gh, [0.02 * sn * sg, -0.02 * c * sg, 0]), 0.085, 'none', {
+					attrs: { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1', 'stroke-dasharray': '3 2' }, depthBias: -0.05
+				});
+			});
 			return;
 		}
+		// Main chassis
 		box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, dark ? '#7c55c4' : '#4a2185', { shadow: true });
+
+		// 3D Drive wheel cylinders (left & right)
 		[1, -1].forEach(function (sg) {
-			var hub = [pose.x - 0.25 * sn * sg, pose.y + 0.25 * c * sg, 0.08];
-			cylinder3D(sc, add3(hub, [-0.03 * sn * sg, 0.03 * c * sg, 0]), add3(hub, [0.03 * sn * sg, -0.03 * c * sg, 0]), 0.08, '#2b2f33', { segments: 12 });
+			var hub = [pose.x - 0.24 * sn * sg, pose.y + 0.24 * c * sg, 0.08];
+			var ax = [-0.028 * sn * sg, 0.028 * c * sg, 0];
+			// Rubber tire cylinder
+			cylinder3D(sc, sub3(hub, ax), add3(hub, ax), 0.085, '#1e2327', { segments: 16, shadow: true });
+			// Outer wheel rim cap
+			var rimAx = [-0.03 * sn * sg, 0.03 * c * sg, 0];
+			cylinder3D(sc, add3(hub, scale3(ax, 0.4)), add3(hub, rimAx), 0.052, dark ? '#64748b' : '#94a3b8', { segments: 14 });
 		});
+
+		// 3D Caster wheels (front & rear passive support casters)
+		var fCaster = [pose.x + 0.26 * c, pose.y + 0.26 * sn, 0.042];
+		cylinder3D(sc, fCaster, [pose.x + 0.26 * c, pose.y + 0.26 * sn, 0.085], 0.016, '#64748b', { segments: 8 });
+		cylinder3D(sc, add3(fCaster, [-0.014 * sn, 0.014 * c, 0]), add3(fCaster, [0.014 * sn, -0.014 * c, 0]), 0.042, '#2d3339', { segments: 10, shadow: true });
+
+		var rCaster = [pose.x - 0.26 * c, pose.y - 0.26 * sn, 0.042];
+		cylinder3D(sc, rCaster, [pose.x - 0.26 * c, pose.y - 0.26 * sn, 0.085], 0.016, '#64748b', { segments: 8 });
+		cylinder3D(sc, add3(rCaster, [-0.014 * sn, 0.014 * c, 0]), add3(rCaster, [0.014 * sn, -0.014 * c, 0]), 0.042, '#2d3339', { segments: 10, shadow: true });
+
+		// Direction chevron on top deck
 		var tip = [pose.x + 0.3 * c, pose.y + 0.3 * sn, 0.202], l = [pose.x + 0.14 * c - 0.11 * sn, pose.y + 0.14 * sn + 0.11 * c, 0.202],
 			r = [pose.x + 0.14 * c + 0.11 * sn, pose.y + 0.14 * sn - 0.11 * c, 0.202];
 		var chev = face3D(sc, [tip, l, r], '#fdd023', { shade: false });
 		sc.items.push({ depth: pr3(sc, [pose.x, pose.y, 0.2]).depth - 0.02, nodes: [chev] });
-		cylinder3D(sc, [pose.x, pose.y, 0.2], [pose.x, pose.y, 0.28], 0.035, '#72777d', { segments: 10 });
-		cylinder3D(sc, [pose.x, pose.y, 0.28], [pose.x, pose.y, 0.35], 0.07, '#1b1f24', { segments: 16 });
+
+		// 3D LiDAR puck at {lidar_link}
+		cylinder3D(sc, [pose.x, pose.y, 0.2], [pose.x, pose.y, 0.27], 0.035, '#72777d', { segments: 10 });
+		cylinder3D(sc, [pose.x, pose.y, 0.27], [pose.x, pose.y, 0.315], 0.07, '#1b1f24', { segments: 16 });
+		cylinder3D(sc, [pose.x, pose.y, 0.315], [pose.x, pose.y, 0.355], 0.065, '#111827', { segments: 16 });
+		cylinder3D(sc, [pose.x, pose.y, 0.328], [pose.x, pose.y, 0.342], 0.066, '#06b6d4', { segments: 16, shade: false });
 	}
 
 	function draw() {
@@ -5569,8 +5833,24 @@ function initAmrFrames3D(root) {
 			hits.forEach(function (hb) {
 				if (cbLidar.input.checked) {
 					var hp = [truth.x + hb.range * Math.cos(truth.yaw + hb.rel), truth.y + hb.range * Math.sin(truth.yaw + hb.rel), LIDAR_Z];
-					line3D(sc, lo, hp, { stroke: 'var(--w3d-beam, rgba(8,145,178,0.3))', 'stroke-width': '1' });
-					dot3D(sc, hp, 2.4, { fill: 'var(--w3d-hit, #0891b2)' }, -0.01);
+					var isObs = hb.hitObstacle;
+					line3D(sc, lo, hp, {
+						stroke: isObs ? 'var(--w3d-hit, #0891b2)' : 'var(--w3d-beam, rgba(8,145,178,0.25))',
+						'stroke-width': isObs ? '1.5' : '1',
+						opacity: isObs ? '0.85' : '0.6'
+					});
+					dot3D(sc, hp, isObs ? 3.2 : 2.2, {
+						fill: isObs ? '#22d3ee' : 'var(--w3d-hit, #0891b2)',
+						stroke: isObs ? '#ffffff' : 'none',
+						'stroke-width': isObs ? '0.8' : '0'
+					}, -0.01);
+					if (isObs) {
+						// Active vertical laser strike line on obstacle face
+						line3D(sc, [hp[0], hp[1], hp[2] - 0.035], [hp[0], hp[1], hp[2] + 0.035], {
+							stroke: '#22d3ee',
+							'stroke-width': '1.5'
+						});
+					}
 				}
 				if (cbRviz.input.checked) {
 					dot3D(sc, [e.x + hb.range * Math.cos(e.yaw + hb.rel), e.y + hb.range * Math.sin(e.yaw + hb.rel), LIDAR_Z], 2.4,
