@@ -93,3 +93,12 @@ Older entries (PRs #4 to #20, chapters 7 to 9, the renumber, widgets, the 2026-1
   - Turntable spin & toast hints: Styled auto-rotate active state indicator (`.w3d-rotate-indicator`, `.w3d-spin-indicator`, `.w3d-spin-icon`, `.w3d-auto-rotate-badge`) with pulse and spin animations (respecting `prefers-reduced-motion: reduce`), and floating zoom toast hints (`.w3d-zoom-toast`, `.w3d-toast-hint`, `.w3d-toast`).
   - Mobile responsiveness down to 320px: Added breakpoint adjustments for <= 736px, <= 480px, and <= 360px with compact button padding, tighter toolbar gap, compact chip sizing, scaled inspector cards, and guaranteed zero horizontal overflow.
   - Verified with `python3 scripts/test_hygiene.py`.
+- 3D Arduino Uno Board Explorer and Stage Controls System (2026-11-24, branch `swarm-modeler3d-f0a1d42d`; modeler3d in native swarm):
+  - Built `initArduinoUno3D` and registered `'arduino-uno-3d'` in `assets/js/widgets.js`:
+    - Full 3D perspective Arduino Uno R3 board geometry: Arduino teal (`#00878a`) PCB slab with rounded corners and mounting holes, silver USB-B connector box, DC power barrel jack with inner pin, 16 MHz metal quartz crystal, tactile reset push button, 5V linear voltage regulator with metal heatsink tab, ATmega328P DIP-28 package with orientation notch and 28 silver lead pins, ATmega16U2 USB interface chip, Power and TX/RX surface-mount LEDs, and dual female pin header rows (D0–D13, A0–A5, Power, ICSP).
+    - 8 numbered 3D component callout badges (1: ATmega328P, 2: USB Interface, 3: Voltage Regulator, 4: DC Barrel Jack, 5: USB-B Port, 6: Digital I/O Headers, 7: Analog In Headers, 8: Reset Button) with click/hover ray-casting, 3D highlight bounding boxes, and synced button dock.
+    - Component Details Inspector: clicking or hovering any chip or 3D component renders an interactive frosted glass inspector card with specs, pinout, memory, voltage and current limits, and robotics role.
+  - Built shared `build3DStage` controller architecture:
+    - Floating frosted stage toolbar with view presets (3/4, Top, Front, Bottom, Side), auto-rotate turntable continuous spin toggle with drag pause/resume, labels toggle, and zoom controls.
+    - Integrated `build3DStage` and inspector cards across `robot-arm-3d`, `amr-frames-3d`, and `pinhole-projection` with component callouts and specs.
+  - Accessibility and responsiveness: ARIA roles (`region`, `toolbar`, `group`), `aria-pressed`, `aria-live` readouts, and responsive layout verified down to 320px with zero layout shift or errors.
