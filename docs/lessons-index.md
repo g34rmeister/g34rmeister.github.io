@@ -48,10 +48,10 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: robot cell, robot system, system integrator, enabling device, end effector, light curtain, handshake signal, programmable logic controller (PLC), factory acceptance test (FAT), takt time
 - Sections: From robot arm to robot cell · Robot, robot system, robot cell, robot line · What is inside a typical cell · Safeguarding: keeping people out of harm's way · How the parts talk: PLC, robot and handshakes · Who does what: robot maker, integrator, end user · How a cell gets built: from idea to production · Three typical cells · Cycle time basics · What a cell costs
 
-## Chapter 2: Robot Programming (`robotics-programming.html`, 8 lessons, 143 min)
+## Chapter 2: Robot Programming (`robotics-programming.html`, 8 lessons, 146 min)
 
 ### 2.1 Types of Programming
-`robotics-2-1.html` · 13 min · 25 refs (partial 1, unreachable 4, verified 20) · 1 figures · 1 Try it
+`robotics-2-1.html` · 14 min · 25 refs (partial 1, unreachable 4, verified 20) · 1 figures · 1 Try it
 - Objectives: Compare online programming (teach pendant, lead-through) with offline programming (OLP) and block-based visual tools. / Explain the safety interlocks on an industrial teach pendant, including the three-position enabling device and the 250 mm/s reduced teach speed. / Explain how the simulation-to-reality gap is bridged through work object and robot kinematic calibration. / Compare the economic and operational trade-offs of programming methods based on cell downtime and batch size.
 - Key terms: offline programming, teach pendant, lead-through, enabling device, reduced teach speed, simulation-to-reality gap, kinematic calibration, post-processor, block-based programming
 - Sections: The spectrum of programming methods · Online programming: teach pendants in practice · Pendant safety interlocks and reduced speed · Coordinate frames for manual jogging · Lead-through programming and collaborative robots · Offline programming (OLP) principles and architecture · The simulation-to-reality gap and cell calibration · Block-based visual programming · Economic and operational trade-offs · Case study: spot welding vs. custom deburring · Comparing online and offline workflows
@@ -75,13 +75,13 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: The fragmentation of industrial robotics · What problem does ROS solve? · The origins of ROS: Stanford and Willow Garage · The limits of ROS 1: the roscore bottleneck · The ROS 2 revolution: DDS and decentralization · Target releases and the LTS lifecycle: Lyrical Luth · The four pillars of ROS · Community stacks: Nav2 and MoveIt 2 · ROS-Industrial: open source on the factory floor · Deep dive: Universal Robots ROS 2 driver · When to use ROS vs. proprietary vendor languages
 
 ### 2.5 End-of-Arm Tooling and I/O
-`robotics-2-5.html` · 23 min · 42 refs (fixed 11, verified 31) · 1 figures · 1 Try it
+`robotics-2-5.html` · 24 min · 42 refs (fixed 11, verified 31) · 1 figures · 1 Try it
 - Objectives: Choose a gripper family (vacuum, finger, soft, magnetic) from the part and the cell's utilities, and size suction cups with a safety factor. / Describe ISO 9409-1 tool mounting, and set payload and center of gravity with set_target_payload in URScript or tooldata and GripLoad in RAPID. / Read and write controller and tool-flange digital I/O with get_standard_digital_in, set_tool_digital_out, SetDO and WaitDI with a timeout. / Confirm a grip before moving, handle a failed grip safely, and follow a latched PLC handshake sequence.
 - Key terms: end effector, end-of-arm tooling, vacuum ejector, suction cup safety factor, ISO 9409-1, payload, tooldata, tool I/O, WaitDI, PLC handshake
 - Sections: What the robot holds, and how it is told to hold it · Choosing a gripper family · Vacuum grippers: sizing the cups · Finger grippers and soft grippers · Mounting: the ISO 9409-1 flange · Telling the controller about the tool: payload and center of gravity · The I/O on a UR and an ABB controller · Reading and writing I/O in code · Confirming the grip and handling failures · Worked example: one pick, two languages · Handshaking with a PLC
 
 ### 2.6 Your First Pick-and-Place
-`robotics-2-6.html` · 20 min · 35 refs (fixed 12, verified 23) · 1 figures · 1 Try it
+`robotics-2-6.html` · 21 min · 35 refs (fixed 12, verified 23) · 1 figures · 1 Try it
 - Objectives: Set up a free robot simulator (URSim in Docker, or ABB RobotStudio) and explain the licensing limits to plan around. / Define a tool center point and payload, and keep UR units (meters, radians) and ABB units (millimeters, quaternions) straight. / Build a complete pick-and-place cycle: MoveJ approach, MoveL descent to an exact stop, grip and wait, retract, MoveJ transfer and place. / Teach targets in a three-point fixture frame so that moving the fixture only requires re-teaching three points.
 - Key terms: URSim, tool center point (TCP), payload, work object (user frame), approach point, exact stop, blending (zone), RelTool, pose_trans, singularity
 - Sections: The job: one part, two places · Getting a simulator · Tell the robot what it is holding: TCP and payload · A frame for the fixture: the three-point work object · Approach and retract points: offsets instead of extra teaching · Speeds and blends: where to stop exactly · The program on a UR: PolyScope and URScript · The program on an ABB: RAPID in RobotStudio · The payoff: move the fixture, re-teach three points · Common beginner mistakes
@@ -187,7 +187,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: Why ROS needs a driver for every robot brand · ROS-Industrial: a community, not a single program · The common pattern: three layers · Universal Robots: the official driver · ABB: a community driver built on EGM · FANUC and KUKA: drivers from the robot makers · Yaskawa MotoROS2 and a side-by-side comparison · Real time and safety: the controller stays in charge · ROS or the vendor language? · Hands-on: one move, two languages
 
 ### 4.10 Lab: From a Failing Test to a Bug Report
-`robotics-4-10.html` · 16 min · 8 refs (verified 8) · 0 figures · 1 Try it
+`robotics-4-10.html` · 16 min · 8 refs (verified 8) · 1 figures · 1 Try it
 - Objectives: Build a small Python package with colcon and run its tests with pytest. / Read a failing test's output and find the line of code that causes it. / Confirm a one-line fix by running the tests again, and run a single test by name. / Write a bug report that follows the ROS 2 issue reporting guide.
 - Key terms: assertion, linter, regression, stack trace, test, virtual environment
 - Sections: Why this lab · What you need · The package · Build and run the tests · Read the failure · Fix it and test again · In a real ROS 2 package · Write the bug report · From report to pull request · Check your understanding
@@ -427,7 +427,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: Actions: asking for a long task · Behavior trees: architecture and node semantics · Concrete Nav2 Behavior Tree walkthrough · Lifecycle nodes: starting and stopping in order · Where to go next · Check your understanding
 
 ### 10.5 Lab: Send a Navigation Goal to Nav2
-`robotics-10-5.html` · 25 min · 11 refs (verified 11) · 0 figures · 1 Try it
+`robotics-10-5.html` · 25 min · 11 refs (verified 11) · 1 figures · 1 Try it
 - Objectives: Install ROS 2 and Nav2 in your home folder with micromamba, without administrator rights. / Start Nav2 with its loopback simulator and give it the robot's starting pose. / Send a navigation goal from the command line and read the feedback messages Nav2 sends back. / Send the same kind of goal from a short Python script that uses the Nav2 Simple Commander.
 - Key terms: loopback simulator, initial pose, goal tolerance, feedback message, user space, channel
 - Sections: Why this lab · What you need and how to install it · What the loopback simulator is · Start Nav2 · Tell Nav2 where the robot is · Look before you drive · Send a goal from the command line · The same task from Python · Stop Nav2 · From here to a contribution · Check your understanding

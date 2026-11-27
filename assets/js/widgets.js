@@ -4559,11 +4559,18 @@ function face3D(sc, pts, fill, opts) {
 	if (opts.cull && dot3(n, sub3(cameraBasis(sc.cam).pos, pts[0])) <= 0) return null;
 	var col = fill;
 	if (sc.light && fill && fill.charAt(0) === '#' && opts.shade !== false) {
-		col = shadeHex(fill, 0.5 + 0.55 * Math.max(0, dot3(n, sc.light)) + (opts.boost || 0));
+		var diff = Math.max(0, dot3(n, sc.light));
+		var viewDir = norm3(sub3(cameraBasis(sc.cam).pos, pts[0]));
+		var rim = Math.pow(1 - Math.max(0, dot3(n, viewDir)), 2) * 0.14;
+		col = shadeHex(fill, 0.46 + 0.56 * diff + rim + (opts.boost || 0));
 	}
 	var str = pts.map(function (p) { var q = pr3(sc, p); return q.u.toFixed(1) + ',' + q.v.toFixed(1); }).join(' ');
 	var a = { points: str, fill: col };
-	if (opts.solid) { a.stroke = col; a['stroke-width'] = '0.8'; a['stroke-linejoin'] = 'round'; }
+	if (opts.solid) {
+		a.stroke = opts.edge ? (fill && fill.charAt(0) === '#' ? shadeHex(fill, 0.42) : col) : col;
+		a['stroke-width'] = opts.edge ? '0.8' : '0.8';
+		a['stroke-linejoin'] = 'round';
+	}
 	return s('polygon', Object.assign(a, opts.attrs || {}));
 }
 
@@ -4573,7 +4580,14 @@ function solid3D(sc, faces, fill, centre, opts) {
 	var wire = !!opts.attrs;
 	var nodes = [];
 	faces.forEach(function (f) {
-		var node = face3D(sc, f.pts, f.fill || fill, { cull: !wire, solid: !wire, boost: f.boost, attrs: opts.attrs, shade: !wire });
+		var node = face3D(sc, f.pts, f.fill || fill, {
+			cull: opts.cull !== undefined ? opts.cull : !wire,
+			solid: !wire,
+			edge: opts.edge,
+			boost: f.boost,
+			attrs: opts.attrs,
+			shade: opts.shade !== undefined ? opts.shade : !wire
+		});
 		if (node) nodes.push(node);
 	});
 	if (nodes.length) sc.items.push({ depth: pr3(sc, centre).depth + (opts.depthBias || 0), nodes: nodes });
@@ -4601,16 +4615,39 @@ function box3D(sc, center, size, yawRad, fill, opts) {
 	if (opts && opts.shadow) shadowPoly3D(sc, bx.footprint);
 }
 
+/* Extrude a CCW 2D polygon [[x,y], ...] between zMin and zMax into a 3D solid. */
+function extrudePoly3D(sc, poly2d, zMin, zMax, fill, opts) {
+	opts = opts || {};
+	var n = poly2d.length;
+	if (n < 3) return;
+	var cx = 0, cy = 0;
+	var bot = [], top = [];
+	for (var i = 0; i < n; i++) {
+		cx += poly2d[i][0]; cy += poly2d[i][1];
+		bot.push([poly2d[i][0], poly2d[i][1], zMin]);
+		top.push([poly2d[i][0], poly2d[i][1], zMax]);
+	}
+	var faces = [];
+	for (var j = 0; j < n; j++) {
+		var k = (j + 1) % n;
+		faces.push({ pts: [bot[j], bot[k], top[k], top[j]] });
+	}
+	faces.push({ pts: top, boost: 0.06 });
+	faces.push({ pts: bot.slice().reverse() });
+	solid3D(sc, faces, fill, [cx / n, cy / n, (zMin + zMax) * 0.5], opts);
+	if (opts.shadow) shadowPoly3D(sc, bot);
+}
+
 /* A box whose local axes are given (for parts that follow the tool frame). */
-function orientedBox3D(sc, center, half, ax, fill) {
+function orientedBox3D(sc, center, half, ax, fill, opts) {
 	function tf(a, b, c) { return add3(center, add3(scale3(ax.x, a * half[0]), add3(scale3(ax.y, b * half[1]), scale3(ax.z, c * half[2])))); }
 	var p0 = tf(-1, -1, -1), p1 = tf(1, -1, -1), p2 = tf(1, 1, -1), p3 = tf(-1, 1, -1);
 	var p4 = tf(-1, -1, 1), p5 = tf(1, -1, 1), p6 = tf(1, 1, 1), p7 = tf(-1, 1, 1);
 	solid3D(sc, [{ pts: [p0, p3, p2, p1] }, { pts: [p4, p5, p6, p7] }, { pts: [p0, p1, p5, p4] },
-		{ pts: [p2, p3, p7, p6] }, { pts: [p3, p0, p4, p7] }, { pts: [p1, p2, p6, p5] }], fill, center);
+		{ pts: [p2, p3, p7, p6] }, { pts: [p3, p0, p4, p7] }, { pts: [p1, p2, p6, p5] }], fill, center, opts);
 }
 
-function cylinder3D(sc, pBase, pTop, radius, fill, opts) {
+function taperedCylinder3D(sc, pBase, pTop, rBase, rTop, fill, opts) {
 	opts = opts || {};
 	var nSeg = opts.segments || 14;
 	var zAxis = norm3(sub3(pTop, pBase));
@@ -4619,22 +4656,27 @@ function cylinder3D(sc, pBase, pTop, radius, fill, opts) {
 	var bottom = [], top = [];
 	for (var i = 0; i < nSeg; i++) {
 		var th = (i / nSeg) * 2 * Math.PI;
-		var radial = add3(scale3(xAxis, Math.cos(th) * radius), scale3(yAxis, Math.sin(th) * radius));
-		bottom.push(add3(pBase, radial));
-		top.push(add3(pTop, radial));
+		var ux = Math.cos(th), uy = Math.sin(th);
+		var dir = add3(scale3(xAxis, ux), scale3(yAxis, uy));
+		bottom.push(add3(pBase, scale3(dir, rBase)));
+		top.push(add3(pTop, scale3(dir, rTop)));
 	}
 	var faces = [];
 	for (var j = 0; j < nSeg; j++) {
 		var k = (j + 1) % nSeg;
 		faces.push({ pts: [bottom[j], bottom[k], top[k], top[j]] });
 	}
-	faces.push({ pts: top, boost: 0.08 });
-	faces.push({ pts: bottom.slice().reverse() });
+	if (rTop > 1e-4) faces.push({ pts: top, boost: 0.08 });
+	if (rBase > 1e-4) faces.push({ pts: bottom.slice().reverse() });
 	solid3D(sc, faces, fill, lerp3(pBase, pTop, 0.5), opts);
 	if (opts.shadow) {
 		if (Math.abs(zAxis[2]) > 0.95) shadowPoly3D(sc, bottom);
-		else shadowSegment3D(sc, pBase, pTop, radius);
+		else shadowSegment3D(sc, pBase, pTop, Math.max(rBase, rTop));
 	}
+}
+
+function cylinder3D(sc, pBase, pTop, radius, fill, opts) {
+	taperedCylinder3D(sc, pBase, pTop, radius, radius, fill, opts);
 }
 
 /* Shadows: straight down onto the floor, merged into one translucent layer. */
@@ -4654,7 +4696,8 @@ function label3D(sc, p, text, opts) {
 	opts = opts || {};
 	var q = pr3(sc, p);
 	sc.labels.push({ u: q.u + (opts.dx || 0), v: q.v + (opts.dy === undefined ? -6 : opts.dy), text: text,
-		fill: opts.fill || 'var(--wp-text, #202122)', size: opts.size || 11, mono: opts.mono !== false, weight: opts.weight || '700' });
+		fill: opts.fill || 'var(--wp-text, #202122)', size: opts.size || 11, mono: opts.mono !== false, weight: opts.weight || '700',
+		halo: opts.halo, haloColor: opts.haloColor });
 }
 
 /* An RGB tripod (X red, Y green, Z blue) with arrowheads, an origin dot and a frame name. */
@@ -4678,6 +4721,33 @@ function axes3D(sc, origin, R, len, name) {
 	if (name) label3D(sc, origin, name, { dx: 7, dy: -7 });
 }
 
+/* Corner RGB world orientation triad (bottom-left of 3D viewport). */
+function drawGizmo3D(sc) {
+	var b = cameraBasis(sc.cam);
+	var gx = 28, gy = sc.H - 26, len = 18;
+	var g = s('g', { 'class': 'w3d-gizmo', 'aria-hidden': 'true' });
+	g.appendChild(s('circle', { cx: gx, cy: gy, r: '21', fill: 'var(--w3d-badge-bg, rgba(255,255,255,0.8))',
+		stroke: 'var(--w3d-badge-border, #c8ccd1)', 'stroke-width': '1', opacity: '0.88' }));
+	var axes = [
+		['X', [1, 0, 0], 'var(--w3d-x, #d92b2b)'],
+		['Y', [0, 1, 0], 'var(--w3d-y, #2b8a3e)'],
+		['Z', [0, 0, 1], 'var(--w3d-z, #1864ab)']
+	].map(function (a) {
+		var dx = dot3(a[1], b.right), dy = -dot3(a[1], b.up), dz = dot3(a[1], b.forward);
+		return { name: a[0], col: a[2], dx: dx, dy: dy, dz: dz };
+	}).sort(function (a, b2) { return b2.dz - a.dz; });
+	axes.forEach(function (ax) {
+		var ex = gx + ax.dx * len, ey = gy + ax.dy * len;
+		g.appendChild(s('line', { x1: gx, y1: gy, x2: ex.toFixed(1), y2: ey.toFixed(1), stroke: ax.col, 'stroke-width': '2', 'stroke-linecap': 'round' }));
+		var lx = gx + ax.dx * (len + 6.5), ly = gy + ax.dy * (len + 6.5) + 3;
+		var tx = s('text', { x: lx.toFixed(1), y: ly.toFixed(1), fill: ax.col, 'font-size': '8.5px', 'font-weight': '700',
+			'text-anchor': 'middle', 'font-family': 'var(--wp-mono, monospace)' });
+		tx.textContent = ax.name;
+		g.appendChild(tx);
+	});
+	return g;
+}
+
 function renderScene3D(svg, sc) {
 	var frag = document.createDocumentFragment();
 	sc.floor.forEach(function (n) { frag.appendChild(n); });
@@ -4698,11 +4768,15 @@ function renderScene3D(svg, sc) {
 			return !hit;
 		});
 		placed.push(best.box);
-		var tn = s('text', { x: x.toFixed(1), y: best.y.toFixed(1), fill: lb.fill, 'font-size': lb.size + 'px',
-			'font-weight': lb.weight, 'font-family': lb.mono ? 'var(--wp-mono, monospace)' : 'var(--wp-sans, sans-serif)', 'class': 'w3d-label' });
+		var lattrs = { x: x.toFixed(1), y: best.y.toFixed(1), fill: lb.fill, 'font-size': lb.size + 'px',
+			'font-weight': lb.weight, 'font-family': lb.mono ? 'var(--wp-mono, monospace)' : 'var(--wp-sans, sans-serif)', 'class': 'w3d-label' };
+		if (lb.halo === false) lattrs.style = 'stroke: none;';
+		else if (lb.haloColor) lattrs.style = 'stroke: ' + lb.haloColor + '; stroke-width: 2.5px;';
+		var tn = s('text', lattrs);
 		tn.textContent = lb.text;
 		frag.appendChild(tn);
 	});
+	if (!sc.noGizmo) frag.appendChild(drawGizmo3D(sc));
 	svg.replaceChildren(frag);
 }
 
@@ -5035,8 +5109,9 @@ var ARDUINO_PARTS = [
 var ROBOT_ARM_PARTS = [
 	{
 		id: 'base',
+		badge: 'J1',
 		title: 'Robot Base & Waist Joint {J1}',
-		shortTitle: 'J1 Waist',
+		shortTitle: 'Waist',
 		specPill: 'Revolute Waist · Axis: World Z · ±170°',
 		pos: [0, 0, 0.22],
 		desc: 'The stationary mounting base and primary azimuth joint J1. Rotates the entire arm structure around the vertical world Z axis. Singularity caution: when the wrist center passes directly over this axis, small Cartesian Y movements demand very high J1 joint velocities (shoulder singularity).',
@@ -5049,8 +5124,9 @@ var ROBOT_ARM_PARTS = [
 	},
 	{
 		id: 'shoulder',
+		badge: 'J2',
 		title: 'Shoulder Joint {J2} & Lower Arm Link',
-		shortTitle: 'J2 Shoulder',
+		shortTitle: 'Shoulder',
 		specPill: 'Revolute Pitch · Length: 0.32 m · −60°..+90°',
 		pos: [0, 0, 0.14],
 		desc: 'Joint 2 elevates the heavy main arm section in the vertical plane. It bears the highest gravitational torque of any joint on the manipulator. Link 1 has an effective kinematic length of 0.32 m.',
@@ -5063,8 +5139,9 @@ var ROBOT_ARM_PARTS = [
 	},
 	{
 		id: 'elbow',
+		badge: 'J3',
 		title: 'Elbow Joint {J3} & Forearm Link',
-		shortTitle: 'J3 Elbow',
+		shortTitle: 'Elbow',
 		specPill: 'Revolute Pitch · Length: 0.28 m · −90°..+100°',
 		pos: [0.15, 0.15, 0.35],
 		desc: 'Joint 3 articulates the forearm (0.28 m link) relative to the lower arm. When θ3 = 0°, the arm is stretched out straight at its reach boundary (boundary singularity), where the kinematic Jacobian loses rank and outward velocity is zero.',
@@ -5077,8 +5154,9 @@ var ROBOT_ARM_PARTS = [
 	},
 	{
 		id: 'wrist',
+		badge: 'J4',
 		title: 'Wrist Assembly (Pitch {J4} & Roll {J5})',
-		shortTitle: 'J4/J5 Wrist',
+		shortTitle: 'Wrist',
 		specPill: '2-DOF Spherical Wrist · Pitch ±100° · Roll ±180°',
 		pos: [0.35, 0.20, 0.30],
 		desc: 'Joints 4 and 5 form a compact two-axis wrist. J4 pitches the tool flange up and down to match the approach vector, while J5 spins the tool flange continuously to orient the gripper for grasp acquisition.',
@@ -5091,6 +5169,7 @@ var ROBOT_ARM_PARTS = [
 	},
 	{
 		id: 'tool',
+		badge: 'TCP',
 		title: 'Pneumatic Parallel Gripper & TCP {tool}',
 		shortTitle: 'Gripper & TCP',
 		specPill: 'Tool Center Point · 2-Finger Grip',
@@ -5105,6 +5184,7 @@ var ROBOT_ARM_PARTS = [
 	},
 	{
 		id: 'workpiece',
+		badge: 'WP',
 		title: 'Assembly Workpiece & Fixture Pedestals',
 		shortTitle: 'Workpiece',
 		specPill: '42 mm Cyan Payload Cube · Pick & Place Fixtures',
@@ -5122,6 +5202,7 @@ var ROBOT_ARM_PARTS = [
 var AMR_PARTS = [
 	{
 		id: 'chassis',
+		badge: '1',
 		title: 'AMR Chassis & Payload Deck',
 		shortTitle: 'Chassis',
 		specPill: 'Differential Platform · 0.68 × 0.46 m Footprint',
@@ -5136,6 +5217,7 @@ var AMR_PARTS = [
 	},
 	{
 		id: 'drive',
+		badge: '2',
 		title: 'Differential Drive Wheels & Casters',
 		shortTitle: 'Drive Wheels',
 		specPill: '2 Driven Wheels · 2 Passive Casters · Slip Modeling',
@@ -5150,6 +5232,7 @@ var AMR_PARTS = [
 	},
 	{
 		id: 'lidar',
+		badge: '3',
 		title: '2D Safety LiDAR Rangefinder {lidar_link}',
 		shortTitle: 'LiDAR Puck',
 		specPill: '360° Planar Laser · 48 Active Rays · Time-of-Flight',
@@ -5164,6 +5247,7 @@ var AMR_PARTS = [
 	},
 	{
 		id: 'base_link',
+		badge: '4',
 		title: 'Robot Base Frame {base_link} (REP 105)',
 		shortTitle: '{base_link}',
 		specPill: 'Rigid Body Frame · Midpoint of Drive Wheel Axis',
@@ -5177,6 +5261,7 @@ var AMR_PARTS = [
 	},
 	{
 		id: 'odom',
+		badge: '5',
 		title: 'Odometry Frame {odom} (REP 105)',
 		shortTitle: '{odom}',
 		specPill: 'Smooth Continuous Dead-Reckoning · Unbounded Drift',
@@ -5190,6 +5275,7 @@ var AMR_PARTS = [
 	},
 	{
 		id: 'map',
+		badge: '6',
 		title: 'Global Map Frame {map} (REP 105)',
 		shortTitle: '{map}',
 		specPill: 'Fixed Earth Coordinate System · Discrete AMCL Jumps',
@@ -5206,10 +5292,11 @@ var AMR_PARTS = [
 var PINHOLE_PARTS = [
 	{
 		id: 'camera',
+		badge: '1',
 		title: 'Pinhole Camera Chassis & Coordinate Frame {camera}',
 		shortTitle: 'Camera Frame',
 		specPill: 'Right-Handed Vision Frame: X-Right, Y-Down, Z-Forward',
-		pos: [0, 0.05, 0.45],
+		pos: [0, -0.09, 0.45],
 		desc: 'The physical optical housing and standard computer vision coordinate system. Unlike robotics world coordinates (Z-up), the camera reference frame defines Z along the optical axis, X pointing right, and Y pointing down.',
 		specs: [
 			['Camera Origin O', 'Perspective projection center at [0, 0, 0.35 m]'],
@@ -5219,10 +5306,11 @@ var PINHOLE_PARTS = [
 	},
 	{
 		id: 'lens',
+		badge: '2',
 		title: 'Optical Aperture & Principal Point (cx, cy)',
 		shortTitle: 'Lens Aperture',
 		specPill: 'Focal Length fx = fy · Principal Point: (320, 240) px',
-		pos: [0, 0.12, 0.40],
+		pos: [0, 0.06, 0.43],
 		desc: 'The ideal pinhole lens through which all light rays converge. The principal point (cx, cy) is where the optical axis pierces the image sensor plane perpendicular to the lens.',
 		specs: [
 			['Focal Length Range', '400 px to 1200 px (slider adjustable, default 800 px)'],
@@ -5232,10 +5320,11 @@ var PINHOLE_PARTS = [
 	},
 	{
 		id: 'sensor',
+		badge: '3',
 		title: 'Digital Image Sensor Plane',
 		shortTitle: 'Sensor Plane',
 		specPill: '640 × 480 Resolution · 2D Pixel Grid (u, v)',
-		pos: [0, 0.45, 0.55],
+		pos: [0, 0.35, 0.56],
 		desc: 'The CMOS sensor grid placed at focal distance along the optical axis. In real cameras the image is inverted; the standard virtual image plane model places the sensor in front of the lens so pixel coordinates remain right-side up.',
 		specs: [
 			['Resolution', '640 columns (u) by 480 rows (v)'],
@@ -5246,10 +5335,11 @@ var PINHOLE_PARTS = [
 	},
 	{
 		id: 'target',
+		badge: '4',
 		title: '3D Scene Target Point P(X, Y, Z)',
 		shortTitle: 'Target Point P',
 		specPill: 'World Coordinates: [X, Y, Z] meters',
-		pos: [0.10, 1.05, 0.45],
+		pos: [0.10, 1.00, 0.42],
 		desc: 'A physical object or landmark point in 3D Euclidean space. The projection distance Z sets the scale: objects further away produce smaller image projections according to the 1/Z depth scaling factor.',
 		specs: [
 			['Normalized Coordinates', 'x\' = X / Z, y\' = Y / Z (rays projected to unit depth plane)'],
@@ -5259,10 +5349,11 @@ var PINHOLE_PARTS = [
 	},
 	{
 		id: 'ray',
+		badge: '5',
 		title: 'Perspective Projection Ray',
 		shortTitle: 'Projection Ray',
 		specPill: 'Line of Sight · Collinearity: O → (u, v) → P',
-		pos: [0.05, 0.55, 0.38],
+		pos: [0.05, 0.65, 0.33],
 		desc: 'The straight line connecting the camera projection center (0, 0, 0), the sensor image pixel (u, v), and the 3D target point P. Pinhole projection reduces 3D depth to 2D image coordinates along this single line of sight.',
 		specs: [
 			['Pixel u Formula', 'u = fx · (X / Z) + cx'],
@@ -5305,27 +5396,26 @@ function drawCalloutChip3D(sc, part, isAct, isHov, dark, stage) {
 		style: 'cursor: pointer;'
 	});
 
-	chipGroup.appendChild(s('circle', {
-		cx: pr.u.toFixed(1), cy: pr.v.toFixed(1), r: '14', fill: 'transparent'
+	var numStr = part.badge || (typeof part.id === 'number' ? String(part.id) : (part.shortTitle ? part.shortTitle.slice(0, 3) : '•'));
+	var pw = Math.max(18, numStr.length * 6.4 + 8), ph = isAct ? 19 : 17;
+	chipGroup.appendChild(s('rect', {
+		x: (pr.u - Math.max(14, pw * 0.6)).toFixed(1), y: (pr.v - 14).toFixed(1),
+		width: Math.max(28, pw * 1.2).toFixed(1), height: '28', rx: '14', fill: 'transparent'
 	}));
 
-	var baseFill = isAct ? '#00878a' : (dark ? 'rgba(20,24,28,0.88)' : 'rgba(255,255,255,0.92)');
-	var baseStroke = isAct ? '#ffffff' : (dark ? '#38bdf8' : '#00878a');
-	var chipCircle = s('circle', {
-		cx: pr.u.toFixed(1), cy: pr.v.toFixed(1),
-		r: isAct ? '10' : '8.5',
-		fill: baseFill,
-		stroke: baseStroke,
-		'stroke-width': isAct ? '2.5' : '1.8'
-	});
-	chipGroup.appendChild(chipCircle);
+	var baseFill = isAct ? 'var(--lsu-purple, #461d7c)' : (dark ? 'rgba(20,24,28,0.88)' : 'rgba(255,255,255,0.92)');
+	var baseStroke = isAct ? 'var(--lsu-gold, #fdd023)' : (isHov ? 'var(--wp-gold, #fdd023)' : (dark ? '#38bdf8' : '#00878a'));
+	chipGroup.appendChild(s('rect', {
+		x: (pr.u - pw * 0.5).toFixed(1), y: (pr.v - ph * 0.5).toFixed(1),
+		width: pw.toFixed(1), height: ph.toFixed(1), rx: (ph * 0.5).toFixed(1),
+		fill: baseFill, stroke: baseStroke, 'stroke-width': isAct || isHov ? '2.2' : '1.6'
+	}));
 
-	var numStr = typeof part.id === 'number' ? String(part.id) : (part.shortTitle ? part.shortTitle.charAt(0) : '•');
 	var chipText = s('text', {
 		x: pr.u.toFixed(1),
-		y: (pr.v + (isAct ? 3.5 : 3.0)).toFixed(1),
-		fill: isAct ? '#ffffff' : (dark ? '#eaecf0' : '#00878a'),
-		'font-size': isAct ? '10px' : '9px',
+		y: (pr.v + 3.2).toFixed(1),
+		fill: isAct ? 'var(--lsu-gold, #fdd023)' : (dark ? '#eaecf0' : '#00878a'),
+		'font-size': isAct ? '9.5px' : '8.5px',
 		'font-weight': '800',
 		'text-anchor': 'middle',
 		'font-family': 'var(--wp-mono, monospace)',
@@ -5532,7 +5622,7 @@ function build3DStage(svg, cam, redraw, ctl, opts) {
 		toolbar.appendChild(zoomGroup);
 	}
 
-	// Frosted Component Details Card
+	// Frosted Component Details Card (in-flow below chip dock so it never blocks the 3D view or chip clicks)
 	var card = h('div', {
 		'class': 'w3d-part-card w3d-inspector-card is-hidden',
 		role: 'region',
@@ -5540,7 +5630,6 @@ function build3DStage(svg, cam, redraw, ctl, opts) {
 		'aria-live': 'polite'
 	});
 	card.setAttribute('hidden', '');
-	card.style.position = 'absolute';
 
 	function getPartData(id) {
 		for (var i = 0; i < parts.length; i++) {
@@ -5570,11 +5659,11 @@ function build3DStage(svg, cam, redraw, ctl, opts) {
 			redraw();
 		});
 
-		var badgeNode = part.id && typeof part.id === 'number' ?
-			h('span', { 'class': 'w3d-chip-num w3d-spec-badge', text: String(part.id) }) : null;
+		var badgeText = part.badge || (typeof part.id === 'number' ? String(part.id) : null);
+		var badgeNode = badgeText ? h('span', { 'class': 'w3d-chip-num w3d-spec-badge', text: badgeText }) : null;
 
 		var cardHdr = h('div', { 'class': 'w3d-part-card-header w3d-inspector-header' }, [
-			h('div', { 'class': 'w3d-card-title-group', style: 'display:flex;align-items:center;gap:6px;' }, [
+			h('div', { 'class': 'w3d-card-title-group', style: 'display:flex;align-items:center;gap:6px;flex-wrap:wrap;' }, [
 				badgeNode,
 				h('h4', { 'class': 'w3d-part-card-title w3d-inspector-title', text: part.title })
 			]),
@@ -5606,18 +5695,18 @@ function build3DStage(svg, cam, redraw, ctl, opts) {
 		chipDock = h('div', {
 			'class': 'w3d-chips-row w3d-chips-bar w3d-chip-dock',
 			role: 'group',
-			'aria-label': 'Numbered component callout chips'
+			'aria-label': 'Component callout chips'
 		});
 		parts.forEach(function (p) {
-			var isNum = typeof p.id === 'number';
+			var badgeTxt = p.badge || (typeof p.id === 'number' ? String(p.id) : null);
 			var cBtn = h('button', {
 				type: 'button',
 				'class': 'w3d-chip btn-copy-bibtex',
 				'aria-pressed': 'false',
-				'aria-label': (isNum ? ('Component ' + p.id + ': ') : '') + p.title,
+				'aria-label': (badgeTxt ? ('Component ' + badgeTxt + ': ') : '') + p.title,
 				title: p.title
 			}, [
-				isNum ? h('span', { 'class': 'w3d-chip-num', text: String(p.id) }) : null,
+				badgeTxt ? h('span', { 'class': 'w3d-chip-num', text: badgeTxt }) : null,
 				h('span', { 'class': 'w3d-chip-name', text: p.shortTitle || p.title })
 			]);
 			cBtn.addEventListener('click', function () { stage.selectPart(p.id); });
@@ -5629,8 +5718,7 @@ function build3DStage(svg, cam, redraw, ctl, opts) {
 	}
 
 	function updatePartState() {
-		var active = stage.activePartId || stage.hoveredPartId;
-		var part = active ? getPartData(active) : null;
+		var part = stage.activePartId ? getPartData(stage.activePartId) : null;
 		renderInspectorCard(part);
 
 		Object.keys(chipButtons).forEach(function (idKey) {
@@ -5648,10 +5736,10 @@ function build3DStage(svg, cam, redraw, ctl, opts) {
 		});
 	}
 
-	wrap.appendChild(toolbar);
-	wrap.appendChild(svg);
-	wrap.appendChild(card);
+	var viewport = h('div', { 'class': 'w3d-viewport' }, [toolbar, svg]);
+	wrap.appendChild(viewport);
 	if (chipDock) wrap.appendChild(chipDock);
+	wrap.appendChild(card);
 
 	return stage;
 }
@@ -5723,15 +5811,25 @@ function initPinholeProjection(root) {
 		// Camera origin O = [0, 0, z0]
 		var O = [0, 0, z0];
 
-		// Camera chassis box and cylindrical lens barrel
+		// Industrial GigE machine vision camera body + cooling fins + lens assembly + mounting stand
 		var bodyColor = dark ? '#2d333b' : '#33383f';
-		box3D(sc, [0, -0.09, z0], [0.15, 0.16, 0.12], 0, bodyColor, { shadow: true });
-		cylinder3D(sc, [0, -0.01, z0], [0, 0.04, z0], 0.046, dark ? '#444c56' : '#57606a', { segments: 16 });
-		cylinder3D(sc, [0, 0.035, z0], [0, 0.048, z0], 0.04, dark ? '#161b22' : '#24292f', { segments: 16 });
+		var metalColor = dark ? '#444c56' : '#64748b';
+		cylinder3D(sc, [0, -0.09, 0], [0, -0.09, z0 - 0.06], 0.018, metalColor, { segments: 10, shadow: true, edge: true });
+		box3D(sc, [0, -0.09, 0.012], [0.14, 0.14, 0.024], 0, metalColor, { shadow: true, edge: true });
+		box3D(sc, [0, -0.09, z0], [0.15, 0.16, 0.12], 0, bodyColor, { shadow: true, edge: true });
+		// Cooling fins & rear GigE connector
+		[-0.04, 0, 0.04].forEach(function (fz) {
+			box3D(sc, [0, -0.10, z0 + fz], [0.162, 0.10, 0.012], 0, metalColor, { edge: true });
+		});
+		box3D(sc, [0, -0.185, z0 - 0.01], [0.05, 0.03, 0.045], 0, '#0f172a', { edge: true });
+		// C-mount lens barrel & tapered hood
+		cylinder3D(sc, [0, -0.01, z0], [0, 0.025, z0], 0.050, metalColor, { segments: 16, edge: true });
+		taperedCylinder3D(sc, [0, 0.025, z0], [0, 0.055, z0], 0.048, 0.056, dark ? '#1f242c' : '#24292f', { segments: 16, edge: true });
+		cylinder3D(sc, [0, 0.048, z0], [0, 0.056, z0], 0.038, '#0891b2', { segments: 16, shade: false });
 
 		// Camera coordinate frame axes {camera}: X right (red), Y down (green), Z forward into scene (blue)
 		var R_cam = { x: [1, 0, 0], y: [0, 0, -1], z: [0, 1, 0] };
-		axes3D(sc, O, R_cam, 0.20, '{camera}');
+		axes3D(sc, O, R_cam, 0.22, '{camera}');
 
 		// Optical axis Z into the scene
 		var optEnd = [0, 2.6, z0];
@@ -5741,7 +5839,7 @@ function initPinholeProjection(root) {
 			'stroke-dasharray': '5 4',
 			opacity: '0.65'
 		});
-		label3D(sc, [0, 2.5, z0], 'optical axis +Z', { fill: 'var(--w3d-z, #1864ab)', size: 10, mono: true, dy: 14 });
+		label3D(sc, [0, 2.45, z0], 'optical axis +Z', { fill: 'var(--w3d-z, #1864ab)', size: 10, mono: true, dy: 14 });
 
 		// Sensor plane at distance ds along optical axis
 		var ds = 0.35 * (fx / 800);
@@ -5788,12 +5886,11 @@ function initPinholeProjection(root) {
 			opacity: '0.85'
 		});
 		dot3D(sc, [0, ds, z0], 2.5, { fill: 'var(--wp-text, #202122)' });
-		label3D(sc, [0, ds, z0], '(cx, cy)', { dx: 5, dy: -6, size: 9, fill: 'var(--wp-text-muted, #54595d)' });
 
-		// Labels on sensor plane
-		label3D(sc, cTL, '(0,0)', { dx: -18, dy: -6, size: 8, fill: 'var(--wp-text-muted, #72777d)' });
-		label3D(sc, cBR, '640×480', { dx: 6, dy: 10, size: 8, fill: 'var(--wp-text-muted, #72777d)' });
-		label3D(sc, [0, ds, z0 + hs], 'sensor plane (f = ' + fx + 'px)', { dx: -52, dy: -10, size: 9, fill: 'var(--wp-link, #461d7c)', weight: '600' });
+		// Labels on sensor plane (placed away from center so chips don't collide)
+		label3D(sc, cTL, '(0,0)', { dx: -26, dy: -6, size: 8.5, fill: 'var(--wp-text-muted, #72777d)' });
+		label3D(sc, cBR, '640×480', { dx: 8, dy: 12, size: 8.5, fill: 'var(--wp-text-muted, #72777d)' });
+		label3D(sc, [0, ds, z0 + hs], 'sensor (f=' + fx + 'px)', { dx: -44, dy: -16, size: 9.5, fill: 'var(--wp-link, #461d7c)', weight: '700' });
 
 		// Pierced point on the sensor plane (u, v)
 		var xs = ds * x_norm;
@@ -5805,34 +5902,30 @@ function initPinholeProjection(root) {
 			stroke: '#ffffff',
 			'stroke-width': '1.5'
 		}, -0.01);
-		label3D(sc, pSensor, '(u, v) = (' + u.toFixed(1) + ', ' + v.toFixed(1) + ')' + (inBounds ? '' : ' [outside]'), {
-			dx: 7,
-			dy: -8,
-			size: 10,
+		label3D(sc, pSensor, '(' + u.toFixed(0) + ', ' + v.toFixed(0) + ')' + (inBounds ? ' px' : ' [out]'), {
+			dx: 8,
+			dy: 14,
+			size: 9.5,
 			fill: inBounds ? 'var(--wp-gold-text, #6b5200)' : '#dc2626',
 			weight: '700'
 		});
 
-		// 3D Target point P(X, Y, Z) in space: world coords = [X, Z, z0 - Y]
+		// 3D Target calibration workpiece cube at P(X, Y, Z) mounted on a stand
 		var pTarget = [X, Z, z0 - Y];
-		// Floor drop-shadow line
-		line3D(sc, pTarget, [X, Z, 0], {
-			stroke: 'var(--wp-border-light, #a2a9b1)',
-			'stroke-width': '1',
-			'stroke-dasharray': '3 3'
-		});
-		dot3D(sc, [X, Z, 0], 3, { fill: 'var(--wp-text-muted, #72777d)' });
+		cylinder3D(sc, [X, Z, 0], [X, Z, Math.max(0.01, pTarget[2] - 0.03)], 0.010, metalColor, { segments: 8, shadow: true });
+		box3D(sc, [X, Z, 0.008], [0.07, 0.07, 0.016], 0, metalColor, { shadow: true });
+		box3D(sc, pTarget, [0.06, 0.06, 0.06], 0.3, '#d97706', { shadow: true, edge: true });
 
-		// Target marker
-		dot3D(sc, pTarget, 6, {
-			fill: 'var(--wp-gold-text, #b45309)',
-			stroke: '#ffffff',
-			'stroke-width': '2'
+		// Target corner marker
+		dot3D(sc, pTarget, 5.5, {
+			fill: '#fdd023',
+			stroke: '#6b5200',
+			'stroke-width': '1.8'
 		}, -0.02);
 		label3D(sc, pTarget, 'P(' + X.toFixed(2) + ', ' + Y.toFixed(2) + ', ' + Z.toFixed(2) + ') m', {
-			dx: 8,
-			dy: -8,
-			size: 11,
+			dx: 10,
+			dy: -10,
+			size: 10.5,
 			fill: 'var(--wp-gold-text, #6b5200)',
 			weight: '700'
 		});
@@ -5865,57 +5958,78 @@ function initPinholeProjection(root) {
 			line3D(sc, O, pTarget, { stroke: '#00878a', 'stroke-width': '4.5', opacity: '0.75' });
 		}
 
-		// Optional 3D callout chips
+		// Optional 3D callout chips (sync positions dynamically with current focal length & target)
 		if (stage.showLabels) {
-			PINHOLE_PARTS.forEach(function (part) {
+			var dynPinhole = [
+				Object.assign({}, PINHOLE_PARTS[0], { pos: [0, -0.10, z0 + 0.13] }),
+				Object.assign({}, PINHOLE_PARTS[1], { pos: [0, 0.04, z0 + 0.09] }),
+				Object.assign({}, PINHOLE_PARTS[2], { pos: [-ws, ds, z0 + hs + 0.04] }),
+				Object.assign({}, PINHOLE_PARTS[3], { pos: [X, Z, pTarget[2] + 0.07] }),
+				Object.assign({}, PINHOLE_PARTS[4], { pos: [X * 0.55, Z * 0.55, z0 - Y * 0.55 - 0.06] })
+			];
+			dynPinhole.forEach(function (part) {
 				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
 			});
 		}
 
 		renderScene3D(svg, sc);
 
-		// 2D Viewfinder HUD in the top-right corner of SVG
-		var hudW = 104, hudH = 78, hudX = W - hudW - 8, hudY = 8;
+		// 2D Viewfinder HUD in the top-right corner of SVG (now clear of docked toolbar!)
+		var hudW = 114, hudH = 88, hudX = W - hudW - 8, hudY = 8;
 		var hudBg = s('rect', {
-			x: hudX, y: hudY, width: hudW, height: hudH, rx: '4',
-			fill: dark ? 'rgba(22,27,34,0.85)' : 'rgba(255,255,255,0.88)',
+			x: hudX, y: hudY, width: hudW, height: hudH, rx: '5',
+			fill: dark ? 'rgba(22,27,34,0.88)' : 'rgba(255,255,255,0.92)',
 			stroke: dark ? '#444c56' : '#c8ccd1',
 			'stroke-width': '1'
 		});
 		var hudTitle = s('text', {
-			x: hudX + 4, y: hudY + 11, 'font-size': '8px', 'font-family': 'var(--wp-mono, monospace)',
+			x: hudX + 5, y: hudY + 11, 'font-size': '8px', 'font-weight': '700', 'font-family': 'var(--wp-mono, monospace)',
 			fill: 'var(--wp-text-muted, #72777d)'
 		});
-		hudTitle.textContent = 'Camera frame 640×480';
+		hudTitle.textContent = 'Viewfinder 640×480';
 		var hudBox = s('rect', {
-			x: hudX + 4, y: hudY + 15, width: 96, height: 56, rx: '2',
+			x: hudX + 5, y: hudY + 15, width: 104, height: 58, rx: '2',
 			fill: dark ? '#0d1117' : '#f0f3f6', stroke: 'var(--wp-link, #461d7c)', 'stroke-width': '1'
 		});
-		var hudCx = hudX + 4 + 96 * (cx / 640);
-		var hudCy = hudY + 15 + 56 * (cy / 480);
+		var hudCx = hudX + 5 + 104 * (cx / 640);
+		var hudCy = hudY + 15 + 58 * (cy / 480);
 		var hudChX = s('line', {
-			x1: hudX + 4, y1: hudCy, x2: hudX + 100, y2: hudCy,
+			x1: hudX + 5, y1: hudCy, x2: hudX + 109, y2: hudCy,
 			stroke: 'var(--wp-border, #a2a9b1)', 'stroke-dasharray': '2 2', 'stroke-width': '0.7'
 		});
 		var hudChY = s('line', {
-			x1: hudCx, y1: hudY + 15, x2: hudCx, y2: hudY + 71,
+			x1: hudCx, y1: hudY + 15, x2: hudCx, y2: hudY + 73,
 			stroke: 'var(--wp-border, #a2a9b1)', 'stroke-dasharray': '2 2', 'stroke-width': '0.7'
 		});
+		// Projected 3D cube size scales inversely with Z (perspective foreshortening!)
+		var boxHalfPx = clampN((0.03 * fx / Z) * (104 / 640), 1.5, 18);
 		var uClamped = Math.max(0, Math.min(640, u));
 		var vClamped = Math.max(0, Math.min(480, v));
-		var hudPx = hudX + 4 + 96 * (uClamped / 640);
-		var hudPy = hudY + 15 + 56 * (vClamped / 480);
+		var hudPx = hudX + 5 + 104 * (uClamped / 640);
+		var hudPy = hudY + 15 + 58 * (vClamped / 480);
+		var hudCube = s('rect', {
+			x: (hudPx - boxHalfPx).toFixed(1), y: (hudPy - boxHalfPx).toFixed(1),
+			width: (boxHalfPx * 2).toFixed(1), height: (boxHalfPx * 2).toFixed(1),
+			fill: 'rgba(217,119,6,0.28)', stroke: '#d97706', 'stroke-width': '1'
+		});
 		var hudDot = s('circle', {
-			cx: hudPx.toFixed(1), cy: hudPy.toFixed(1), r: '3',
+			cx: hudPx.toFixed(1), cy: hudPy.toFixed(1), r: '2.8',
 			fill: inBounds ? '#d97706' : '#dc2626', stroke: '#ffffff', 'stroke-width': '1'
 		});
+		var hudCoord = s('text', {
+			x: hudX + 5, y: hudY + 83, 'font-size': '8px', 'font-family': 'var(--wp-mono, monospace)',
+			fill: inBounds ? 'var(--wp-text, #202122)' : '#dc2626'
+		});
+		hudCoord.textContent = 'u=' + u.toFixed(0) + ' v=' + v.toFixed(0) + (inBounds ? ' px' : ' [out]');
 		var hudGroup = s('g', { 'class': 'w3d-hud', 'aria-hidden': 'true' });
 		hudGroup.appendChild(hudBg);
 		hudGroup.appendChild(hudTitle);
 		hudGroup.appendChild(hudBox);
 		hudGroup.appendChild(hudChX);
 		hudGroup.appendChild(hudChY);
+		if (inBounds) hudGroup.appendChild(hudCube);
 		hudGroup.appendChild(hudDot);
+		hudGroup.appendChild(hudCoord);
 		svg.appendChild(hudGroup);
 
 		readout.textContent = '[X, Y, Z] = [' + X.toFixed(2) + ', ' + Y.toFixed(2) + ', ' +
@@ -6009,7 +6123,7 @@ function initRobotArm3D(root) {
 	var LIM = [[-170, 170], [-60, 90], [-90, 100], [-100, 100], [-180, 180]];
 	var JNAME = ['J1 waist', 'J2 shoulder', 'J3 elbow', 'J4 wrist pitch', 'J5 wrist roll'];
 	var labels = ['Joint 1 Waist θ1', 'Joint 2 Shoulder θ2', 'Joint 3 Elbow θ3', 'Joint 4 Wrist Pitch θ4', 'Joint 5 Wrist Roll θ5'];
-	var q = [25, 35, -35, 10, 0];
+	var q = [25, 42, -55, 25, 0];
 	var js = q.map(function (v, i) { return slider(labels[i], 'arm3d-j' + (i + 1), LIM[i][0], LIM[i][1], 1, v, '°'); });
 	var az = slider('Camera azimuth', 'arm3d-az', -180, 180, 1, 35, '°');
 	var el = slider('Camera elevation', 'arm3d-el', 5, 89, 1, 24, '°');
@@ -6209,20 +6323,29 @@ function initRobotArm3D(root) {
 			}
 		}
 
-		cylinder3D(sc, [0, 0, 0], [0, 0, L0], 0.13, C.base, { segments: 20, shadow: true });
+		// Bolted base pedestal and tapered CAD links with servo end-caps
+		cylinder3D(sc, [0, 0, 0], [0, 0, 0.025], 0.165, dark ? '#334155' : '#475569', { segments: 20, shadow: true, edge: true });
+		for (var fb = 0; fb < 6; fb++) {
+			var fba = (fb / 6) * Math.PI * 2;
+			dot3D(sc, [Math.cos(fba) * 0.145, Math.sin(fba) * 0.145, 0.026], 2.2, { fill: '#94a3b8' });
+		}
+		taperedCylinder3D(sc, [0, 0, 0.025], [0, 0, L0], 0.135, 0.115, C.base, { segments: 20, shadow: true, edge: true });
 		axes3D(sc, [0, 0, 0.002], null, 0.3, '{base}');
 		var shAxis = f.side;
-		cylinder3D(sc, add3(f.shoulder, scale3(shAxis, -0.08)), add3(f.shoulder, scale3(shAxis, 0.08)), 0.065, C.knuckle, { shadow: true });
-		cylinder3D(sc, f.shoulder, f.elbow, 0.048, C.link, { shadow: true });
-		cylinder3D(sc, add3(f.elbow, scale3(shAxis, -0.065)), add3(f.elbow, scale3(shAxis, 0.065)), 0.054, C.knuckle, { shadow: true });
-		cylinder3D(sc, f.elbow, f.wrist, 0.04, C.link, { shadow: true });
-		cylinder3D(sc, add3(f.wrist, scale3(shAxis, -0.045)), add3(f.wrist, scale3(shAxis, 0.045)), 0.04, C.knuckle, { segments: 12 });
-		cylinder3D(sc, f.wrist, f.flange, 0.032, C.knuckle, { segments: 12, shadow: true });
-		cylinder3D(sc, f.flange, add3(f.flange, scale3(f.tool.z, 0.016)), 0.042, C.flange, { segments: 14 });
+		cylinder3D(sc, add3(f.shoulder, scale3(shAxis, -0.085)), add3(f.shoulder, scale3(shAxis, 0.085)), 0.068, C.knuckle, { shadow: true, edge: true });
+		cylinder3D(sc, add3(f.shoulder, scale3(shAxis, 0.085)), add3(f.shoulder, scale3(shAxis, 0.10)), 0.052, '#1f2937', { segments: 14 });
+		taperedCylinder3D(sc, f.shoulder, f.elbow, 0.056, 0.044, C.link, { shadow: true, edge: true });
+		cylinder3D(sc, add3(f.elbow, scale3(shAxis, -0.070)), add3(f.elbow, scale3(shAxis, 0.070)), 0.056, C.knuckle, { shadow: true, edge: true });
+		cylinder3D(sc, add3(f.elbow, scale3(shAxis, -0.082)), add3(f.elbow, scale3(shAxis, -0.070)), 0.042, '#1f2937', { segments: 12 });
+		taperedCylinder3D(sc, f.elbow, f.wrist, 0.044, 0.034, C.link, { shadow: true, edge: true });
+		cylinder3D(sc, add3(f.wrist, scale3(shAxis, -0.048)), add3(f.wrist, scale3(shAxis, 0.048)), 0.042, C.knuckle, { segments: 12, edge: true });
+		cylinder3D(sc, f.wrist, f.flange, 0.030, C.knuckle, { segments: 12, shadow: true, edge: true });
+		cylinder3D(sc, f.flange, add3(f.flange, scale3(f.tool.z, 0.018)), 0.044, C.flange, { segments: 14, edge: true });
 		var gc = add3(f.flange, scale3(f.tool.z, 0.032));
-		orientedBox3D(sc, gc, [0.02, 0.04, 0.016], f.tool, C.grip);
+		orientedBox3D(sc, gc, [0.022, 0.044, 0.016], f.tool, C.grip, { edge: true });
+		var jawHalfGap = workpieceHeld ? 0.025 : 0.034;
 		[-1, 1].forEach(function (sg) {
-			orientedBox3D(sc, add3(add3(gc, scale3(f.tool.y, 0.03 * sg)), scale3(f.tool.z, 0.034)), [0.012, 0.006, 0.024], f.tool, '#d97706');
+			orientedBox3D(sc, add3(add3(gc, scale3(f.tool.y, jawHalfGap * sg)), scale3(f.tool.z, 0.034)), [0.012, 0.006, 0.024], f.tool, '#d97706', { edge: true });
 		});
 
 		if (cbFrames.input.checked) {
@@ -6236,15 +6359,15 @@ function initRobotArm3D(root) {
 			axes3D(sc, f.wrist, f.tool, 0.09, '{J4}');
 		}
 
-		cylinder3D(sc, [pickPos[0], pickPos[1], 0], [pickPos[0], pickPos[1], 0.05], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true });
+		cylinder3D(sc, [pickPos[0], pickPos[1], 0], [pickPos[0], pickPos[1], 0.05], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true, edge: true });
 		label3D(sc, [pickPos[0], pickPos[1], 0], 'pick pedestal', { dx: 6, dy: 14, size: 9, weight: '400' });
 
-		cylinder3D(sc, [placePos[0], placePos[1], 0], [placePos[0], placePos[1], 0.07], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true });
+		cylinder3D(sc, [placePos[0], placePos[1], 0], [placePos[0], placePos[1], 0.07], 0.065, dark ? '#334155' : '#475569', { segments: 14, shadow: true, edge: true });
 		label3D(sc, [placePos[0], placePos[1], 0], 'place pedestal', { dx: 6, dy: 14, size: 9, weight: '400' });
 
 		var wpCur = workpieceHeld ? add3(f.tcp, [0, 0, -0.022]) : workpiecePos;
-		box3D(sc, wpCur, [0.042, 0.042, 0.042], 0, '#06b6d4', { shadow: !workpieceHeld });
-		label3D(sc, wpCur, 'workpiece', { dx: 6, dy: -8, size: 9, fill: '#0891b2', weight: '700' });
+		box3D(sc, wpCur, [0.042, 0.042, 0.042], 0, '#06b6d4', { shadow: !workpieceHeld, edge: true });
+		label3D(sc, wpCur, 'workpiece', { dx: 8, dy: -8, size: 9, fill: '#0891b2', weight: '700' });
 
 		points.forEach(function (p, i) {
 			var tp = fk(p).tcp;
@@ -6286,12 +6409,12 @@ function initRobotArm3D(root) {
 		// Optional 3D callout chips
 		if (stage.showLabels) {
 			var dynamicParts = [
-				{ id: 'base', title: 'Base Joint {J1}', shortTitle: 'J1', pos: [0, 0, L0 + 0.08] },
-				{ id: 'shoulder', title: 'Shoulder Joint {J2}', shortTitle: 'J2', pos: add3(f.shoulder, [0, 0, 0.08]) },
-				{ id: 'elbow', title: 'Elbow Joint {J3}', shortTitle: 'J3', pos: add3(f.elbow, [0, 0, 0.08]) },
-				{ id: 'wrist', title: 'Wrist {J4/J5}', shortTitle: 'J4', pos: add3(f.wrist, [0, 0, 0.08]) },
-				{ id: 'tool', title: 'Gripper & TCP {tool}', shortTitle: 'TCP', pos: add3(f.tcp, [0, 0, 0.08]) },
-				{ id: 'workpiece', title: 'Workpiece', shortTitle: 'WP', pos: add3(wpCur, [0, 0, 0.06]) }
+				{ id: 'base', badge: 'J1', title: 'Base Joint {J1}', shortTitle: 'J1', pos: [0, 0, L0 * 0.45] },
+				{ id: 'shoulder', badge: 'J2', title: 'Shoulder Joint {J2}', shortTitle: 'J2', pos: add3(f.shoulder, [0, 0, 0.09]) },
+				{ id: 'elbow', badge: 'J3', title: 'Elbow Joint {J3}', shortTitle: 'J3', pos: add3(f.elbow, [0, 0, 0.08]) },
+				{ id: 'wrist', badge: 'J4', title: 'Wrist {J4/J5}', shortTitle: 'J4', pos: add3(f.wrist, [0, 0, 0.08]) },
+				{ id: 'tool', badge: 'TCP', title: 'Gripper & TCP {tool}', shortTitle: 'TCP', pos: add3(f.tcp, [0, 0, 0.09]) },
+				{ id: 'workpiece', badge: 'WP', title: 'Workpiece', shortTitle: 'WP', pos: add3(wpCur, [0, 0, 0.06]) }
 			];
 			dynamicParts.forEach(function (part) {
 				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
@@ -6461,6 +6584,7 @@ function initAmrFrames3D(root) {
 	var slip = slider('Wheel slip / odometry drift', 'amr3d-slip', 0, 25, 1, 12, '%');
 	var cbLidar = checkRow3D('amr3d-cblidar', 'Show LiDAR beams and hits', true);
 	var cbRviz = checkRow3D('amr3d-cbrviz', 'Also draw the scan at the estimated pose, as RViz would (gold)', false);
+	var cbCostmap = checkRow3D('amr3d-cbcost', 'Show Nav2 obstacle inflation buffer (ROBOT_R = 0.38 m)', false);
 	var cbAmcl = checkRow3D('amr3d-cbamcl', 'Keep AMCL running (corrects map → odom about once a second while driving)', false);
 	var cbFollow = checkRow3D('amr3d-cbfollow', 'Camera follows the robot', false);
 
@@ -6489,7 +6613,7 @@ function initAmrFrames3D(root) {
 		{ type: 'cyl', cx: -1.4, cy: -0.9, r: 0.35, h: 1.0, fill: '#0369a1', name: 'column' },
 		{ type: 'box', minX: -0.3, maxX: 1.3, minY: -1.6, maxY: -1.2, h: 0.65, fill: '#c2410c', name: 'pallet rack' }
 	];
-	var truth, odom, m2o, trailT, trailE, goal, route, blocked, uncert, amclClock, loop, lastTs, cmd, burst, note;
+	var truth, odom, m2o, trailT, trailE, goal, route, blocked, uncert, amclClock, loop, lastTs, cmd, burst, note, wheelAngle;
 	var keys = {};
 
 	var tfReadout = h('p', { 'class': 'widget-readout' });
@@ -6499,7 +6623,7 @@ function initAmrFrames3D(root) {
 	function reset() {
 		truth = { x: 0, y: 0, yaw: 0 }; odom = { x: 0, y: 0, yaw: 0 }; m2o = { x: 0, y: 0, yaw: 0 };
 		trailT = [[0, 0]]; trailE = [[0, 0]]; goal = null; route = []; blocked = ''; uncert = 0.03; amclClock = 0;
-		cmd = { v: 0, w: 0 }; burst = 0; note = '';
+		cmd = { v: 0, w: 0 }; burst = 0; note = ''; wheelAngle = 0;
 	}
 	reset();
 
@@ -6540,6 +6664,7 @@ function initAmrFrames3D(root) {
 			return false;
 		}
 		odom = o; truth = t;
+		wheelAngle += vt * dt / 0.085;
 		var e = estimate(), lt = trailT[trailT.length - 1], le = trailE[trailE.length - 1];
 		if (!lt || Math.hypot(t.x - lt[0], t.y - lt[1]) > 0.03) { trailT.push([t.x, t.y]); if (trailT.length > 500) trailT.shift(); }
 		if (!le || Math.hypot(e.x - le[0], e.y - le[1]) > 0.03) { trailE.push([e.x, e.y]); if (trailE.length > 500) trailE.shift(); }
@@ -6610,8 +6735,9 @@ function initAmrFrames3D(root) {
 		return hits;
 	}
 
-	function robotModel(sc, pose, ghost, dark) {
+	function robotModel(sc, pose, ghost, dark, ledCol) {
 		var c = Math.cos(pose.yaw), sn = Math.sin(pose.yaw);
+		function wp(lx, ly, lz) { return [pose.x + lx * c - ly * sn, pose.y + lx * sn + ly * c, lz]; }
 		if (ghost) {
 			box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, 'none', { attrs: {
 				fill: 'var(--wp-gold-soft, #fff8d6)', 'fill-opacity': '0.25', stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.2', 'stroke-dasharray': '4 3' }, depthBias: -0.05 });
@@ -6623,32 +6749,47 @@ function initAmrFrames3D(root) {
 			});
 			return;
 		}
-		box3D(sc, [pose.x, pose.y, 0.11], [0.68, 0.46, 0.18], pose.yaw, dark ? '#7c55c4' : '#4a2185', { shadow: true });
+		// Chamfered industrial AMR base chassis + upper payload deck + front depth camera bar
+		var bodyPoly = [[0.28, -0.23], [0.34, -0.15], [0.34, 0.15], [0.28, 0.23], [-0.28, 0.23], [-0.34, 0.15], [-0.34, -0.15], [-0.28, -0.23]]
+			.map(function (pt) { return [pose.x + pt[0] * c - pt[1] * sn, pose.y + pt[0] * sn + pt[1] * c]; });
+		extrudePoly3D(sc, bodyPoly, 0.035, 0.175, dark ? '#6d44b8' : '#461d7c', { shadow: true, edge: true });
+		box3D(sc, [pose.x, pose.y, 0.195], [0.54, 0.36, 0.04], pose.yaw, dark ? '#334155' : '#475569', { edge: true });
+		// Front & rear safety LED status light strips
+		line3D(sc, wp(0.342, -0.13, 0.095), wp(0.342, 0.13, 0.095), { stroke: ledCol || '#06b6d4', 'stroke-width': '3', 'stroke-linecap': 'round' });
+		line3D(sc, wp(-0.342, -0.13, 0.095), wp(-0.342, 0.13, 0.095), { stroke: ledCol || '#06b6d4', 'stroke-width': '2.5', 'stroke-linecap': 'round' });
+		// Front depth camera visor
+		box3D(sc, wp(0.31, 0, 0.19), [0.05, 0.14, 0.03], pose.yaw, '#111827', { edge: true });
 
+		// Drive wheels with rotating hub spokes
 		[1, -1].forEach(function (sg) {
-			var hub = [pose.x - 0.24 * sn * sg, pose.y + 0.24 * c * sg, 0.08];
+			var hub = [pose.x - 0.24 * sn * sg, pose.y + 0.24 * c * sg, 0.085];
 			var ax = [-0.028 * sn * sg, 0.028 * c * sg, 0];
-			cylinder3D(sc, sub3(hub, ax), add3(hub, ax), 0.085, '#1e2327', { segments: 16, shadow: true });
-			var rimAx = [-0.03 * sn * sg, 0.03 * c * sg, 0];
-			cylinder3D(sc, add3(hub, scale3(ax, 0.4)), add3(hub, rimAx), 0.052, dark ? '#64748b' : '#94a3b8', { segments: 14 });
+			cylinder3D(sc, sub3(hub, ax), add3(hub, ax), 0.085, '#1e2327', { segments: 16, shadow: true, edge: true });
+			var rimAx = [-0.031 * sn * sg, 0.031 * c * sg, 0];
+			cylinder3D(sc, add3(hub, scale3(ax, 0.4)), add3(hub, rimAx), 0.050, dark ? '#64748b' : '#94a3b8', { segments: 14 });
+			var spOut = add3(hub, [-0.032 * sn * sg, 0.032 * c * sg, 0]);
+			var spDir = [Math.cos(wheelAngle) * 0.045, 0, Math.sin(wheelAngle) * 0.045];
+			var spWorld = [spDir[0] * c, spDir[0] * sn, spDir[2]];
+			line3D(sc, sub3(spOut, spWorld), add3(spOut, spWorld), { stroke: '#1e293b', 'stroke-width': '1.6' });
 		});
 
-		var fCaster = [pose.x + 0.26 * c, pose.y + 0.26 * sn, 0.042];
-		cylinder3D(sc, fCaster, [pose.x + 0.26 * c, pose.y + 0.26 * sn, 0.085], 0.016, '#64748b', { segments: 8 });
-		cylinder3D(sc, add3(fCaster, [-0.014 * sn, 0.014 * c, 0]), add3(fCaster, [0.014 * sn, -0.014 * c, 0]), 0.042, '#2d3339', { segments: 10, shadow: true });
+		var fCaster = [pose.x + 0.25 * c, pose.y + 0.25 * sn, 0.035];
+		cylinder3D(sc, fCaster, [pose.x + 0.25 * c, pose.y + 0.25 * sn, 0.07], 0.014, '#64748b', { segments: 8 });
+		cylinder3D(sc, add3(fCaster, [-0.012 * sn, 0.012 * c, 0]), add3(fCaster, [0.012 * sn, -0.012 * c, 0]), 0.035, '#2d3339', { segments: 10, shadow: true });
 
-		var rCaster = [pose.x - 0.26 * c, pose.y - 0.26 * sn, 0.042];
-		cylinder3D(sc, rCaster, [pose.x - 0.26 * c, pose.y - 0.26 * sn, 0.085], 0.016, '#64748b', { segments: 8 });
-		cylinder3D(sc, add3(rCaster, [-0.014 * sn, 0.014 * c, 0]), add3(rCaster, [0.014 * sn, -0.014 * c, 0]), 0.042, '#2d3339', { segments: 10, shadow: true });
+		var rCaster = [pose.x - 0.25 * c, pose.y - 0.25 * sn, 0.035];
+		cylinder3D(sc, rCaster, [pose.x - 0.25 * c, pose.y - 0.25 * sn, 0.07], 0.014, '#64748b', { segments: 8 });
+		cylinder3D(sc, add3(rCaster, [-0.012 * sn, 0.012 * c, 0]), add3(rCaster, [0.012 * sn, -0.012 * c, 0]), 0.035, '#2d3339', { segments: 10, shadow: true });
 
-		var tip = [pose.x + 0.3 * c, pose.y + 0.3 * sn, 0.202], l = [pose.x + 0.14 * c - 0.11 * sn, pose.y + 0.14 * sn + 0.11 * c, 0.202],
-			r = [pose.x + 0.14 * c + 0.11 * sn, pose.y + 0.14 * sn - 0.11 * c, 0.202];
+		// Heading chevron on payload deck
+		var tip = wp(0.24, 0, 0.218), l = wp(0.09, 0.10, 0.218), r = wp(0.09, -0.10, 0.218);
 		var chev = face3D(sc, [tip, l, r], '#fdd023', { shade: false });
-		sc.items.push({ depth: pr3(sc, [pose.x, pose.y, 0.2]).depth - 0.02, nodes: [chev] });
+		sc.items.push({ depth: pr3(sc, [pose.x, pose.y, 0.22]).depth - 0.02, nodes: [chev] });
 
-		cylinder3D(sc, [pose.x, pose.y, 0.2], [pose.x, pose.y, 0.27], 0.035, '#72777d', { segments: 10 });
-		cylinder3D(sc, [pose.x, pose.y, 0.27], [pose.x, pose.y, 0.315], 0.07, '#1b1f24', { segments: 16 });
-		cylinder3D(sc, [pose.x, pose.y, 0.315], [pose.x, pose.y, 0.355], 0.065, '#111827', { segments: 16 });
+		// LiDAR mast + 360° puck
+		taperedCylinder3D(sc, [pose.x, pose.y, 0.215], [pose.x, pose.y, 0.275], 0.040, 0.032, '#64748b', { segments: 12, edge: true });
+		cylinder3D(sc, [pose.x, pose.y, 0.275], [pose.x, pose.y, 0.315], 0.07, '#1b1f24', { segments: 16, edge: true });
+		cylinder3D(sc, [pose.x, pose.y, 0.315], [pose.x, pose.y, 0.355], 0.064, '#111827', { segments: 16, edge: true });
 		cylinder3D(sc, [pose.x, pose.y, 0.328], [pose.x, pose.y, 0.342], 0.066, '#06b6d4', { segments: 16, shade: false });
 	}
 
@@ -6659,6 +6800,9 @@ function initAmrFrames3D(root) {
 		var sc = newScene3D(cam, W, H, light), e = estimate();
 
 		floorGrid3D(sc, -XB, XB, -YB, YB, 0.4);
+		// Yellow warehouse safety lane markers on floor
+		line3D(sc, [-XB + 0.15, -0.55, 0.002], [XB - 0.15, -0.55, 0.002], { stroke: '#d97706', 'stroke-width': '1.2', 'stroke-dasharray': '8 6', opacity: '0.45' }, 'floor');
+		line3D(sc, [-XB + 0.15, 0.55, 0.002], [XB - 0.15, 0.55, 0.002], { stroke: '#d97706', 'stroke-width': '1.2', 'stroke-dasharray': '8 6', opacity: '0.45' }, 'floor');
 		var corners = [[-XB, -YB], [XB, -YB], [XB, YB], [-XB, YB]];
 		corners.forEach(function (p, i) {
 			var nx = corners[(i + 1) % 4];
@@ -6681,11 +6825,32 @@ function initAmrFrames3D(root) {
 		for (var k = 0; k <= 36; k++) ring.push([e.x + Math.cos(k / 36 * 2 * Math.PI) * (uncert + 0.36), e.y + Math.sin(k / 36 * 2 * Math.PI) * (uncert + 0.36), 0.004]);
 		polyline3D(sc, ring, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1', opacity: '0.6' });
 
+		// Detailed warehouse obstacles + optional Nav2 inflation buffer
 		obstacles.forEach(function (o) {
 			if (o.type === 'box') {
-				box3D(sc, [(o.minX + o.maxX) / 2, (o.minY + o.maxY) / 2, o.h / 2], [o.maxX - o.minX, o.maxY - o.minY, o.h], 0, o.fill, { shadow: true });
+				var cx = (o.minX + o.maxX) / 2, cy = (o.minY + o.maxY) / 2, sx = o.maxX - o.minX, sy = o.maxY - o.minY;
+				if (o.name === 'shelf') {
+					box3D(sc, [cx, cy, 0.25], [sx, sy, 0.50], 0, o.fill, { shadow: true, edge: true });
+					box3D(sc, [cx, cy, 0.54], [sx + 0.04, sy + 0.04, 0.04], 0, '#475569', { edge: true });
+					box3D(sc, [cx - 0.16, cy - 0.12, 0.68], [0.28, 0.26, 0.24], 0.1, '#d97706', { edge: true });
+					box3D(sc, [cx + 0.16, cy + 0.14, 0.66], [0.24, 0.22, 0.20], -0.1, '#92400e', { edge: true });
+				} else {
+					box3D(sc, [cx, cy, o.h / 2], [sx, sy, o.h], 0, o.fill, { shadow: true, edge: true });
+					box3D(sc, [cx, cy, 0.04], [sx + 0.04, sy + 0.04, 0.06], 0, '#78350f', { edge: true });
+				}
+				if (cbCostmap.input.checked) {
+					var pad = ROBOT_R, ir = [[o.minX - pad, o.minY - pad, 0.004], [o.maxX + pad, o.minY - pad, 0.004],
+						[o.maxX + pad, o.maxY + pad, 0.004], [o.minX - pad, o.maxY + pad, 0.004], [o.minX - pad, o.minY - pad, 0.004]];
+					polyline3D(sc, ir, { stroke: '#dc2626', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', opacity: '0.75' });
+				}
 			} else {
-				cylinder3D(sc, [o.cx, o.cy, 0], [o.cx, o.cy, o.h], o.r, o.fill, { segments: 20, shadow: true });
+				cylinder3D(sc, [o.cx, o.cy, 0], [o.cx, o.cy, 0.12], o.r + 0.03, '#f59f00', { segments: 20, shadow: true, edge: true });
+				cylinder3D(sc, [o.cx, o.cy, 0.12], [o.cx, o.cy, o.h], o.r, o.fill, { segments: 20, edge: true });
+				if (cbCostmap.input.checked) {
+					var cr2 = [];
+					for (var ci = 0; ci <= 28; ci++) cr2.push([o.cx + Math.cos(ci / 28 * Math.PI * 2) * (o.r + ROBOT_R), o.cy + Math.sin(ci / 28 * Math.PI * 2) * (o.r + ROBOT_R), 0.004]);
+					polyline3D(sc, cr2, { stroke: '#dc2626', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', opacity: '0.75' });
+				}
 			}
 		});
 
@@ -6707,8 +6872,9 @@ function initAmrFrames3D(root) {
 		}
 
 		var drift = driftError();
+		var ledCol = blocked ? '#dc2626' : (drift > 0.08 ? '#f59f00' : '#06b6d4');
 		if (drift > 0.03) robotModel(sc, e, true, dark);
-		robotModel(sc, truth, false, dark);
+		robotModel(sc, truth, false, dark, ledCol);
 		var cr = Math.cos(truth.yaw), sr = Math.sin(truth.yaw), R = { x: [cr, sr, 0], y: [-sr, cr, 0], z: [0, 0, 1] };
 		axes3D(sc, [truth.x, truth.y, 0.005], R, 0.3, '{base_link}');
 		axes3D(sc, [truth.x, truth.y, LIDAR_Z], R, 0.2, '{lidar_link}');
@@ -6759,15 +6925,15 @@ function initAmrFrames3D(root) {
 			drawHighlightBox3D(sc, [0, 0, 0.02], [0.60, 0.60, 0.06], '#2b8a3e');
 		}
 
-		// Optional 3D callout chips
+		// Optional 3D callout chips (spread out radially so numbers 1..6 don't pile at origin)
 		if (stage.showLabels) {
 			var dynamicParts = [
-				{ id: 'chassis', title: 'Chassis', shortTitle: 'C', pos: [truth.x, truth.y, 0.26] },
-				{ id: 'drive', title: 'Drive Wheels', shortTitle: 'W', pos: [truth.x, truth.y + 0.28, 0.18] },
-				{ id: 'lidar', title: 'LiDAR {lidar_link}', shortTitle: 'L', pos: [truth.x, truth.y, 0.44] },
-				{ id: 'base_link', title: '{base_link}', shortTitle: 'B', pos: [truth.x, truth.y, 0.05] },
-				{ id: 'odom', title: '{odom}', shortTitle: 'O', pos: [e.x, e.y, 0.26] },
-				{ id: 'map', title: '{map}', shortTitle: 'M', pos: [0, 0, 0.50] }
+				{ id: 'chassis', badge: '1', title: 'Chassis', pos: [truth.x - 0.24, truth.y - 0.16, 0.25] },
+				{ id: 'drive', badge: '2', title: 'Drive Wheels', pos: [truth.x - 0.02, truth.y + 0.30, 0.16] },
+				{ id: 'lidar', badge: '3', title: 'LiDAR {lidar_link}', pos: [truth.x, truth.y, 0.46] },
+				{ id: 'base_link', badge: '4', title: '{base_link}', pos: [truth.x + 0.38, truth.y, 0.08] },
+				{ id: 'odom', badge: '5', title: '{odom}', pos: [e.x + 0.20, e.y - 0.26, 0.24] },
+				{ id: 'map', badge: '6', title: '{map}', pos: [-0.36, 0.36, 0.12] }
 			];
 			dynamicParts.forEach(function (part) {
 				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
@@ -6844,7 +7010,7 @@ function initAmrFrames3D(root) {
 		onBlur: function () { keys = {}; }
 	}));
 	[slip].forEach(function (c) { c.input.addEventListener('input', function () { slip.out.textContent = slip.input.value + '%'; }); });
-	[cbLidar, cbRviz, cbAmcl, cbFollow].forEach(function (c) { c.input.addEventListener('change', redraw); });
+	[cbLidar, cbRviz, cbCostmap, cbAmcl, cbFollow].forEach(function (c) { c.input.addEventListener('change', redraw); });
 
 	function drive(v, w, label) {
 		return holdButton(label, function (once) {
@@ -6871,7 +7037,7 @@ function initAmrFrames3D(root) {
 
 	root.replaceChildren(frame('3D AMR, LiDAR and REP 105 frames', [
 		driveRow, actRow, stage.wrap, hint, tfReadout, poseReadout, status,
-		slip.row, cbAmcl.row, cbLidar.row, cbRviz.row, cbFollow.row, az.row, el.row
+		slip.row, cbAmcl.row, cbLidar.row, cbRviz.row, cbCostmap.row, cbFollow.row, az.row, el.row
 	]));
 	draw();
 }
@@ -6911,110 +7077,131 @@ function initArduinoUno3D(root) {
 
 	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
 	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+	var simMode = 'idle', simTimer = null, simPhase = 0;
+
+	function setSimMode(m) {
+		simMode = m;
+		if (simTimer) { clearInterval(simTimer); simTimer = null; }
+		simPhase = 0;
+		if (m !== 'idle') {
+			simTimer = setInterval(function () { simPhase = (simPhase + 1) % 20; draw(); }, m === 'serial' ? 120 : (m === 'pwm' ? 80 : 450));
+		}
+		Array.prototype.forEach.call(simRow.querySelectorAll('button'), function (b) {
+			b.setAttribute('aria-pressed', b.dataset.mode === m ? 'true' : 'false');
+		});
+		draw();
+	}
+
+	var simRow = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Board activity simulation' }, [
+		h('span', { 'class': 'w3d-view-label', text: 'Simulate' })
+	]);
+	[['idle', 'Power ON'], ['blink', 'Blink (Pin 13)'], ['serial', 'Serial TX/RX'], ['pwm', 'PWM ~9']].forEach(function (item) {
+		var b = button(item[1], function () { setSimMode(item[0]); }, 'Simulate ' + item[1] + ' on the Uno R3');
+		b.dataset.mode = item[0];
+		b.setAttribute('aria-pressed', item[0] === 'idle' ? 'true' : 'false');
+		simRow.appendChild(b);
+	});
 
 	function draw() {
 		var dark = isDarkWidget(svg);
 		var sc = newScene3D(cam, W, H, light);
+		var topView = cam.elevation >= -2;
+		sDist.input.value = cam.dist.toFixed(1);
+		sDist.out.textContent = cam.dist.toFixed(1);
 
 		// Workbench drop shadow and subtle grid when looking from above
 		if (cam.elevation > 0) {
 			floorGrid3D(sc, -5.0, 5.0, -4.0, 4.0, 1.0, -1.8);
-			shadowPoly3D(sc, [[-3.43, -2.67, -1.8], [3.43, -2.67, -1.8], [3.43, 2.67, -1.8], [-3.43, 2.67, -1.8]]);
+			shadowPoly3D(sc, [[-3.43, -2.67, -1.8], [3.15, -2.67, -1.8], [3.43, -2.35, -1.8], [3.43, 1.85, -1.8], [3.15, 2.15, -1.8], [3.15, 2.67, -1.8], [-3.43, 2.67, -1.8]]);
 		}
 
-		// 1. PCB Slab: Arduino Teal
+		// 1. Authentic Arduino Uno R3 Notched PCB Slab (Teal)
 		var pcbColor = dark ? '#00676a' : '#00878a';
-		box3D(sc, [0, 0, 0], [6.86, 5.34, 0.16], 0, pcbColor);
+		var pcbHalo = dark ? '#00474a' : '#006366';
+		var unoPoly = [[-3.43, -2.67], [3.15, -2.67], [3.43, -2.35], [3.43, 1.85], [3.15, 2.15], [3.15, 2.67], [-3.43, 2.67]];
+		extrudePoly3D(sc, unoPoly, -0.08, 0.08, pcbColor, { edge: true });
 
-		// PCB Edge copper accents
-		line3D(sc, [-3.43, -2.67, 0.08], [3.43, -2.67, 0.08], { stroke: '#d97706', 'stroke-width': '1', opacity: '0.4' });
-		line3D(sc, [-3.43, 2.67, 0.08], [3.43, 2.67, 0.08], { stroke: '#d97706', 'stroke-width': '1', opacity: '0.4' });
+		// PCB Edge copper trim
+		for (var ei = 0; ei < unoPoly.length; ei++) {
+			var ep1 = unoPoly[ei], ep2 = unoPoly[(ei + 1) % unoPoly.length];
+			line3D(sc, [ep1[0], ep1[1], 0.081], [ep2[0], ep2[1], 0.081], { stroke: '#d97706', 'stroke-width': '1', opacity: '0.45' });
+		}
 
-		// 2. Mounting Holes (4 holes with gold plating ring)
+		// 2. Mounting Holes (4 M3 holes with gold annular plating rings)
 		var holes = [[-2.00, -2.15], [-2.00, 1.80], [1.90, 2.15], [2.80, -2.15]];
+		var holeZ = topView ? 0.083 : -0.083;
 		holes.forEach(function (hPos) {
-			dot3D(sc, [hPos[0], hPos[1], 0.082], 4.2, { fill: '#d97706', stroke: dark ? '#0f172a' : '#1e293b', 'stroke-width': '2' });
-			dot3D(sc, [hPos[0], hPos[1], -0.082], 4.2, { fill: '#d97706', stroke: dark ? '#0f172a' : '#1e293b', 'stroke-width': '2' });
+			dot3D(sc, [hPos[0], hPos[1], holeZ], 4.4, { fill: dark ? '#0f172a' : '#334155', stroke: '#d97706', 'stroke-width': '2' });
 		});
 
 		// 3. USB-B Metal Connector Box (Callout #5)
 		var usbCol = dark ? '#8b949e' : '#cbd5e1';
-		box3D(sc, [-2.65, 1.30, 0.62], [1.40, 1.20, 1.10], 0, usbCol);
-		// USB socket opening
+		box3D(sc, [-2.65, 1.30, 0.62], [1.40, 1.20, 1.10], 0, usbCol, { edge: true });
 		var usbOpenPoly = face3D(sc, [
 			[-3.36, 0.90, 0.30], [-3.36, 1.70, 0.30], [-3.36, 1.70, 0.94], [-3.36, 0.90, 0.94]
 		], '#161b22', { shade: false });
 		if (usbOpenPoly) sc.items.push({ depth: pr3(sc, [-3.36, 1.30, 0.62]).depth - 0.02, nodes: [usbOpenPoly] });
-		// USB plastic tongue
 		var usbTongue = face3D(sc, [
 			[-3.34, 1.05, 0.55], [-3.34, 1.55, 0.55], [-3.34, 1.55, 0.68], [-3.34, 1.05, 0.68]
 		], '#ffffff', { shade: false });
 		if (usbTongue) sc.items.push({ depth: pr3(sc, [-3.34, 1.30, 0.62]).depth - 0.03, nodes: [usbTongue] });
 
 		// 4. DC Power Barrel Jack (Callout #4)
-		box3D(sc, [-2.60, -1.65, 0.60], [1.45, 0.95, 1.05], 0, '#1f2428');
-		cylinder3D(sc, [-3.30, -1.65, 0.60], [-3.45, -1.65, 0.60], 0.32, '#374151', { segments: 14 });
-		cylinder3D(sc, [-3.30, -1.65, 0.60], [-3.45, -1.65, 0.60], 0.09, '#cbd5e1', { segments: 8 });
+		box3D(sc, [-2.60, -1.65, 0.60], [1.45, 0.95, 1.05], 0, '#1f2428', { edge: true });
+		cylinder3D(sc, [-3.30, -1.65, 0.60], [-3.48, -1.65, 0.60], 0.32, '#374151', { segments: 14, edge: true });
+		cylinder3D(sc, [-3.30, -1.65, 0.60], [-3.50, -1.65, 0.60], 0.09, '#cbd5e1', { segments: 8 });
 
 		// 5. Digital Pin Headers (Callout #6)
-		// 10-pin header: AREF, GND, D13..D8
-		box3D(sc, [1.65, 2.30, 0.45], [2.54, 0.35, 0.65], 0, '#161b22');
-		for (var p1 = 0; p1 < 10; p1++) {
-			dot3D(sc, [0.50 + p1 * 0.254, 2.30, 0.78], 1.6, { fill: '#484f58' });
+		box3D(sc, [1.65, 2.30, 0.45], [2.54, 0.35, 0.65], 0, '#161b22', { edge: true });
+		if (topView) {
+			for (var p1 = 0; p1 < 10; p1++) {
+				var isPin13 = (p1 === 5 && simMode === 'blink' && simPhase % 2 === 0);
+				var isPin9 = (p1 === 1 && simMode === 'pwm');
+				dot3D(sc, [0.50 + p1 * 0.254, 2.30, 0.78], isPin13 || isPin9 ? 2.6 : 1.6, {
+					fill: isPin13 ? '#f59f00' : (isPin9 ? '#22d3ee' : '#484f58')
+				});
+			}
 		}
-		// 8-pin header: D7..D0
-		box3D(sc, [-0.85, 2.30, 0.45], [2.03, 0.35, 0.65], 0, '#161b22');
-		for (var p2 = 0; p2 < 8; p2++) {
-			dot3D(sc, [-1.75 + p2 * 0.254, 2.30, 0.78], 1.6, { fill: '#484f58' });
+		box3D(sc, [-0.85, 2.30, 0.45], [2.03, 0.35, 0.65], 0, '#161b22', { edge: true });
+		if (topView) {
+			for (var p2 = 0; p2 < 8; p2++) {
+				var isSerialPin = (simMode === 'serial' && p2 <= 1 && simPhase % 2 === 0);
+				dot3D(sc, [-1.75 + p2 * 0.254, 2.30, 0.78], isSerialPin ? 2.6 : 1.6, { fill: isSerialPin ? '#f59f00' : '#484f58' });
+			}
 		}
 
 		// 6. Power and Analog In Headers (Callout #7)
-		// Power 8-pin header
-		box3D(sc, [-0.10, -2.30, 0.45], [2.03, 0.35, 0.65], 0, '#161b22');
-		for (var p3 = 0; p3 < 8; p3++) {
-			dot3D(sc, [-1.00 + p3 * 0.254, -2.30, 0.78], 1.6, { fill: '#484f58' });
+		box3D(sc, [-0.10, -2.30, 0.45], [2.03, 0.35, 0.65], 0, '#161b22', { edge: true });
+		if (topView) {
+			for (var p3 = 0; p3 < 8; p3++) dot3D(sc, [-1.00 + p3 * 0.254, -2.30, 0.78], 1.6, { fill: '#484f58' });
 		}
-		// Analog In 6-pin header
-		box3D(sc, [1.85, -2.30, 0.45], [1.52, 0.35, 0.65], 0, '#161b22');
-		for (var p4 = 0; p4 < 6; p4++) {
-			dot3D(sc, [1.20 + p4 * 0.254, -2.30, 0.78], 1.6, { fill: '#484f58' });
+		box3D(sc, [1.85, -2.30, 0.45], [1.52, 0.35, 0.65], 0, '#161b22', { edge: true });
+		if (topView) {
+			for (var p4 = 0; p4 < 6; p4++) dot3D(sc, [1.20 + p4 * 0.254, -2.30, 0.78], 1.6, { fill: '#484f58' });
 		}
 
 		// 7. ATmega328P DIP-28 Microcontroller (Callout #1)
-		// Socket base
-		box3D(sc, [0.85, -0.65, 0.16], [3.65, 0.92, 0.14], 0, '#111518');
-		// Chip body
-		box3D(sc, [0.85, -0.65, 0.34], [3.55, 0.82, 0.24], 0, '#1f2428');
-		// Pin 1 orientation notch
-		dot3D(sc, [-0.90, -0.65, 0.47], 3.2, { fill: '#111827' });
-		// 28 Silver Pins (14 on each side bending down)
+		box3D(sc, [0.85, -0.65, 0.16], [3.65, 0.92, 0.14], 0, '#111518', { edge: true });
+		box3D(sc, [0.85, -0.65, 0.34], [3.55, 0.82, 0.24], 0, '#1f2428', { edge: true });
+		if (topView) dot3D(sc, [-0.90, -0.65, 0.47], 3.2, { fill: '#0b0e11' });
 		for (var ip = 0; ip < 14; ip++) {
 			var px = -0.75 + ip * 0.254;
 			line3D(sc, [px, -0.25, 0.30], [px, -0.15, 0.08], { stroke: '#d1d5db', 'stroke-width': '1.2' });
 			line3D(sc, [px, -1.05, 0.30], [px, -1.15, 0.08], { stroke: '#d1d5db', 'stroke-width': '1.2' });
 		}
-		// Silkscreen text on chip
-		label3D(sc, [0.85, -0.65, 0.48], 'ATMEGA328P-PU', { size: 9, fill: '#eaecf0', mono: true, weight: '700' });
 
-		// 8. ATmega16U2 USB Bridge (Callout #2)
-		box3D(sc, [-1.35, 0.75, 0.16], [0.75, 0.75, 0.12], 0, '#1e242a');
-		label3D(sc, [-1.35, 0.75, 0.24], '16U2', { size: 8, fill: '#cbd5e1', mono: true });
-
-		// 9. 5V Voltage Regulator (Callout #3)
-		box3D(sc, [-1.25, -1.55, 0.20], [0.65, 0.60, 0.16], 0, '#1a1f24');
-		box3D(sc, [-1.25, -1.82, 0.14], [0.60, 0.15, 0.06], 0, '#94a3b8');
+		// 8. ATmega16U2 USB Bridge (Callout #2) & 9. 5V Regulator (Callout #3)
+		box3D(sc, [-1.35, 0.75, 0.16], [0.75, 0.75, 0.12], 0, '#1e242a', { edge: true });
+		box3D(sc, [-1.25, -1.55, 0.20], [0.65, 0.60, 0.16], 0, '#1a1f24', { edge: true });
+		box3D(sc, [-1.25, -1.82, 0.14], [0.60, 0.15, 0.06], 0, '#94a3b8', { edge: true });
 		line3D(sc, [-1.45, -1.25, 0.08], [-1.45, -1.50, 0.16], { stroke: '#cbd5e1', 'stroke-width': '1.5' });
 		line3D(sc, [-1.25, -1.25, 0.08], [-1.25, -1.50, 0.16], { stroke: '#cbd5e1', 'stroke-width': '1.5' });
 		line3D(sc, [-1.05, -1.25, 0.08], [-1.05, -1.50, 0.16], { stroke: '#cbd5e1', 'stroke-width': '1.5' });
-		label3D(sc, [-1.25, -1.55, 0.30], 'AMS1117', { size: 7, fill: '#94a3b8', mono: true });
 
-		// 10. 16 MHz Crystal Oscillator
-		box3D(sc, [1.50, 0.30, 0.24], [1.05, 0.42, 0.28], 0, '#cbd5e1');
-		label3D(sc, [1.50, 0.30, 0.40], '16.000 MHz', { size: 7, fill: '#334155', mono: true });
-
-		// 11. Reset Push Button (Callout #8)
-		box3D(sc, [-2.80, 2.15, 0.24], [0.55, 0.55, 0.18], 0, '#94a3b8');
-		cylinder3D(sc, [-2.80, 2.15, 0.33], [-2.80, 2.15, 0.44], 0.15, '#dc2626', { segments: 12 });
+		// 10. 16 MHz Crystal Oscillator & 11. Reset Push Button (Callout #8)
+		box3D(sc, [1.50, 0.30, 0.24], [1.05, 0.42, 0.28], 0, '#cbd5e1', { edge: true });
+		box3D(sc, [-2.80, 2.15, 0.24], [0.55, 0.55, 0.18], 0, '#94a3b8', { edge: true });
+		cylinder3D(sc, [-2.80, 2.15, 0.33], [-2.80, 2.15, 0.44], 0.15, '#dc2626', { segments: 12, edge: true });
 
 		// 12. ICSP Headers (2x3 gold male pin headers)
 		var icspPins = [[-0.12, -0.12], [0.12, -0.12], [-0.12, 0.0], [0.12, 0.0], [-0.12, 0.12], [0.12, 0.12]];
@@ -7022,44 +7209,43 @@ function initArduinoUno3D(root) {
 		icspPins.forEach(function (off) {
 			line3D(sc, [2.85 + off[0], off[1], 0.18], [2.85 + off[0], off[1], 0.40], { stroke: '#f59f00', 'stroke-width': '2' });
 		});
-
 		box3D(sc, [-1.00, 1.80, 0.14], [0.45, 0.65, 0.10], 0, '#111518');
 		icspPins.forEach(function (off) {
 			line3D(sc, [-1.00 + off[0], 1.80 + off[1], 0.18], [-1.00 + off[0], 1.80 + off[1], 0.40], { stroke: '#f59f00', 'stroke-width': '2' });
 		});
 
-		// 13. Status LEDs
-		// ON LED (green)
-		dot3D(sc, [1.30, 1.45, 0.12], 2.8, { fill: '#22c55e', stroke: '#15803d', 'stroke-width': '0.8' });
-		label3D(sc, [1.30, 1.62, 0.12], 'ON', { size: 7, fill: '#eaecf0', mono: true });
+		// 13 & 14. Top-side LEDs & Silkscreen (ONLY visible from top hemisphere, with matching dark PCB halo!)
+		if (topView) {
+			var onGlow = true;
+			var lGlow = (simMode === 'blink' && simPhase % 2 === 0) || (simMode === 'pwm' && (simPhase % 10) < 5);
+			var txGlow = simMode === 'serial' && (simPhase % 3 === 0);
+			var rxGlow = simMode === 'serial' && (simPhase % 3 === 1);
 
-		// TX and RX LEDs (amber)
-		dot3D(sc, [-0.45, 1.15, 0.12], 2.5, { fill: '#f59f00', stroke: '#b45309', 'stroke-width': '0.8' });
-		label3D(sc, [-0.62, 1.15, 0.12], 'TX', { size: 7, fill: '#eaecf0', mono: true });
-		dot3D(sc, [-0.45, 0.85, 0.12], 2.5, { fill: '#f59f00', stroke: '#b45309', 'stroke-width': '0.8' });
-		label3D(sc, [-0.62, 0.85, 0.12], 'RX', { size: 7, fill: '#eaecf0', mono: true });
+			dot3D(sc, [1.30, 1.45, 0.10], onGlow ? 3.5 : 2.5, { fill: '#22c55e', stroke: '#bbf7d0', 'stroke-width': '1.2' });
+			dot3D(sc, [-0.45, 1.15, 0.10], txGlow ? 3.8 : 2.3, { fill: txGlow ? '#fbbf24' : '#78350f', stroke: txGlow ? '#fef08a' : '#451a03', 'stroke-width': '0.9' });
+			dot3D(sc, [-0.45, 0.85, 0.10], rxGlow ? 3.8 : 2.3, { fill: rxGlow ? '#fbbf24' : '#78350f', stroke: rxGlow ? '#fef08a' : '#451a03', 'stroke-width': '0.9' });
+			dot3D(sc, [-0.20, 1.45, 0.10], lGlow ? 4.0 : 2.4, { fill: lGlow ? '#fbbf24' : '#78350f', stroke: lGlow ? '#fef08a' : '#451a03', 'stroke-width': '1.0' });
 
-		// Pin 13 LED (amber)
-		dot3D(sc, [-0.20, 1.45, 0.12], 2.5, { fill: '#f59f00', stroke: '#b45309', 'stroke-width': '0.8' });
-		label3D(sc, [-0.20, 1.62, 0.12], 'L', { size: 7, fill: '#eaecf0', mono: true });
-
-		// 14. Board Silkscreen Text
-		label3D(sc, [0.00, 1.30, 0.10], 'ARDUINO UNO R3', { size: 10, fill: '#eaecf0', weight: '700' });
-		label3D(sc, [0.40, 1.95, 0.10], 'DIGITAL (PWM ~)', { size: 8, fill: '#eaecf0', mono: true });
-		label3D(sc, [1.85, -1.95, 0.10], 'ANALOG IN', { size: 8, fill: '#eaecf0', mono: true });
-		label3D(sc, [-0.10, -1.95, 0.10], 'POWER', { size: 8, fill: '#eaecf0', mono: true });
-
-		// 15. Underside solder joints and branding when viewed from below
-		if (cam.elevation < 0) {
-			label3D(sc, [0, 0, -0.09], 'MADE IN ITALY · ARDUINO.CC', { size: 9, fill: '#eaecf0', mono: true });
-			label3D(sc, [0, -1.0, -0.09], 'OPEN-SOURCE HARDWARE', { size: 8, fill: '#cbd5e1', mono: true });
-			for (var b1 = 0; b1 < 10; b1++) dot3D(sc, [0.50 + b1 * 0.254, 2.30, -0.082], 1.5, { fill: '#cbd5e1' });
-			for (var b2 = 0; b2 < 8; b2++) dot3D(sc, [-1.75 + b2 * 0.254, 2.30, -0.082], 1.5, { fill: '#cbd5e1' });
-			for (var b3 = 0; b3 < 8; b3++) dot3D(sc, [-1.00 + b3 * 0.254, -2.30, -0.082], 1.5, { fill: '#cbd5e1' });
-			for (var b4 = 0; b4 < 6; b4++) dot3D(sc, [1.20 + b4 * 0.254, -2.30, -0.082], 1.5, { fill: '#cbd5e1' });
+			label3D(sc, [0.85, -0.65, 0.48], 'ATMEGA328P-PU', { size: 8.5, fill: '#eaecf0', mono: true, weight: '700', haloColor: '#1f2428' });
+			label3D(sc, [-1.35, 0.75, 0.25], '16U2', { size: 7.5, fill: '#cbd5e1', mono: true, haloColor: '#1e242a' });
+			label3D(sc, [1.50, 0.30, 0.40], '16 MHz', { size: 7.5, fill: '#1e293b', mono: true, haloColor: '#cbd5e1' });
+			label3D(sc, [0.10, 1.25, 0.10], 'UNO R3', { size: 9.5, fill: '#ffffff', weight: '700', haloColor: pcbHalo });
+			label3D(sc, [0.40, 1.92, 0.10], 'DIGITAL (PWM ~)', { size: 7.5, fill: '#f1f5f9', mono: true, haloColor: pcbHalo });
+			label3D(sc, [1.85, -1.92, 0.10], 'ANALOG IN', { size: 7.5, fill: '#f1f5f9', mono: true, haloColor: pcbHalo });
+			label3D(sc, [-0.10, -1.92, 0.10], 'POWER', { size: 7.5, fill: '#f1f5f9', mono: true, haloColor: pcbHalo });
+			label3D(sc, [1.30, 1.63, 0.10], 'ON', { size: 7, fill: '#f1f5f9', mono: true, haloColor: pcbHalo });
+			label3D(sc, [-0.20, 1.63, 0.10], 'L', { size: 7, fill: '#f1f5f9', mono: true, haloColor: pcbHalo });
+		} else {
+			// 15. Underside solder joints and branding when viewed from below
+			label3D(sc, [0, 0.3, -0.10], 'MADE IN ITALY · ARDUINO.CC', { size: 9, fill: '#ffffff', mono: true, haloColor: pcbHalo });
+			label3D(sc, [0, -0.9, -0.10], 'OPEN-SOURCE HARDWARE', { size: 8, fill: '#e2e8f0', mono: true, haloColor: pcbHalo });
+			for (var b1 = 0; b1 < 10; b1++) dot3D(sc, [0.50 + b1 * 0.254, 2.30, -0.084], 1.7, { fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': '0.5' });
+			for (var b2 = 0; b2 < 8; b2++) dot3D(sc, [-1.75 + b2 * 0.254, 2.30, -0.084], 1.7, { fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': '0.5' });
+			for (var b3 = 0; b3 < 8; b3++) dot3D(sc, [-1.00 + b3 * 0.254, -2.30, -0.084], 1.7, { fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': '0.5' });
+			for (var b4 = 0; b4 < 6; b4++) dot3D(sc, [1.20 + b4 * 0.254, -2.30, -0.084], 1.7, { fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': '0.5' });
 			for (var b5 = 0; b5 < 14; b5++) {
-				dot3D(sc, [-0.75 + b5 * 0.254, -0.15, -0.082], 1.5, { fill: '#cbd5e1' });
-				dot3D(sc, [-0.75 + b5 * 0.254, -1.15, -0.082], 1.5, { fill: '#cbd5e1' });
+				dot3D(sc, [-0.75 + b5 * 0.254, -0.15, -0.084], 1.7, { fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': '0.5' });
+				dot3D(sc, [-0.75 + b5 * 0.254, -1.15, -0.084], 1.7, { fill: '#e2e8f0', stroke: '#94a3b8', 'stroke-width': '0.5' });
 			}
 		}
 
@@ -7075,8 +7261,8 @@ function initArduinoUno3D(root) {
 			drawHighlightBox3D(sc, activePart.box[0], activePart.box[1], '#00878a');
 		}
 
-		// 17. 3D Numbered Callout Chips (1 to 8)
-		if (stage.showLabels) {
+		// 17. 3D Numbered Callout Chips (1 to 8, shown on top view)
+		if (stage.showLabels && topView) {
 			ARDUINO_PARTS.forEach(function (part) {
 				var isAct = stage.activePartId === part.id;
 				var isHov = stage.hoveredPartId === part.id;
@@ -7092,8 +7278,11 @@ function initArduinoUno3D(root) {
 			var partMsg = activePart.title + ': ' + activePart.desc;
 			if (status.textContent !== partMsg) status.textContent = partMsg;
 		} else {
-			var defMsg = 'Explore the Arduino Uno R3 in 3D: click any numbered chip (1–8) or drag to orbit and inspect components.';
-			if (status.textContent !== defMsg) status.textContent = defMsg;
+			var simNote = simMode === 'blink' ? 'Simulating Blink on Pin 13 (built-in amber LED L pulses with D13 HIGH/LOW).'
+				: (simMode === 'serial' ? 'Simulating USB Serial UART traffic: ATmega16U2 pulses TX/RX LEDs on pins 0 & 1.'
+				: (simMode === 'pwm' ? 'Simulating analogWrite() PWM output on Pin ~9 (490 Hz duty modulation).'
+				: 'Explore the Arduino Uno R3 in 3D: click any numbered chip (1–8), switch Simulate modes, or drag to orbit.'));
+			if (status.textContent !== simNote) status.textContent = simNote;
 		}
 	}
 
@@ -7133,18 +7322,580 @@ function initArduinoUno3D(root) {
 		redraw();
 	});
 
-	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag anywhere to orbit in 3D; pinch or Ctrl + scroll to zoom. Use the floating frosted toolbar to snap views, auto-spin turntable, or toggle component chips.' });
+	var hint = h('p', { 'class': 'widget-note w3d-hint', text: 'Drag anywhere to orbit in 3D; pinch or Ctrl + scroll to zoom. Use the frosted toolbar to snap views (try Bottom!), auto-spin turntable, or toggle component chips.' });
 
 	root.replaceChildren(frame('3D Arduino Uno Board Explorer', [
 		h('p', { 'class': 'widget-note', text: 'Hardware inspection of the classic Arduino Uno R3: 16 MHz ATmega328P microcontroller, USB-serial interface, voltage regulator, power jack, and pin headers.' }),
+		simRow,
 		stage.wrap,
 		hint,
 		readout,
 		status,
 		az.row,
-		el.row
+		el.row,
+		sDist.row
 	]));
 
+	draw();
+}
+
+/* ---------- 3D Robot Configuration Explorer: SCARA, Delta, Cartesian (lesson 1.3) ---------- */
+
+var CONFIGS_PARTS = {
+	scara: [
+		{ id: 'pedestal', badge: '1', title: 'SCARA Pedestal & J1 Shoulder', shortTitle: 'J1 Shoulder', specPill: 'Revolute Z · Horizontal Swing', pos: [0, -0.22, 0.26],
+			desc: 'Horizontal-plane rotary shoulder joint J1. Bears vertical rigidity while enabling rapid lateral sweeps across a flat assembly table.',
+			specs: [['Motion Type', 'Rotary around vertical Z axis'], ['Stiffness', 'High vertical rigidity for press-fit insertion'], ['Example', 'Epson T6-B (600 mm reach, 22 kg)']] },
+		{ id: 'elbow', badge: '2', title: 'J2 Elbow & Forearm Link', shortTitle: 'J2 Elbow', specPill: 'Revolute Z · Planar Reach', pos: [0.12, 0.05, 0.42],
+			desc: 'Second horizontal rotary joint J2. Together with J1 it positions the quill anywhere inside a cylindrical/kidney-shaped horizontal footprint.',
+			specs: [['Kinematics', '2-link planar R-R arm (L1 = 0.30 m, L2 = 0.26 m)'], ['Compliance', 'Compliant sideways, stiff vertically']] },
+		{ id: 'quill', badge: '3', title: 'Z-Quill Stroke & Theta-4 Roll', shortTitle: 'Z/θ4 Quill', specPill: 'Prismatic Z + Revolute Tool', pos: [0.15, 0.18, 0.28],
+			desc: 'Ball-screw spline quill providing vertical linear plunge (Z) and tool wrist rotation (θ4) for fast pick-and-place and screw driving.',
+			specs: [['Axes', 'Axis 3 (Linear Z plunge) + Axis 4 (Tool roll)'], ['Cycle Time', '0.46 s standard 300 mm cycle (Epson T6-B)']] }
+	],
+	delta: [
+		{ id: 'base', badge: '1', title: 'Overhead Delta Base & 3 Actuators', shortTitle: 'Base Motors', specPill: 'Fixed Frame · Heavy Motors Stationary', pos: [0, 0, 0.68],
+			desc: 'All three heavy servo motors remain bolted to the stationary overhead triangle—meaning moving links carry almost zero motor weight.',
+			specs: [['Topology', 'Closed-loop 3-arm parallel mechanism'], ['Dynamic Gain', 'Very low moving inertia enables 0.30 s pick cycles']] },
+		{ id: 'parallelogram', badge: '2', title: 'Parallel Rod Linkages (6 Push-Rods)', shortTitle: 'Parallel Rods', specPill: 'Parallelogram Constraint · Keeps Plate Level', pos: [0.22, 0.0, 0.42],
+			desc: 'Three pairs of lightweight carbon-fiber parallel rods form parallelograms that mechanically lock the lower tool plate parallel to the floor.',
+			specs: [['Constraint', 'Always keeps tool plate horizontal (zero pitch/roll)'], ['Example', 'ABB IRB 360 FlexPicker (1–8 kg payload)']] },
+		{ id: 'plate', badge: '3', title: 'Moving Tool Plate & Vacuum Head', shortTitle: 'Tool Plate', specPill: '3-DOF Translation · High-Speed Pick', pos: [0, 0, 0.16],
+			desc: 'Lightweight end-effector plate driven in X, Y, Z simultaneously by all three kinematic chains.',
+			specs: [['Workspace', 'Inverted dome / cylinder below overhead frame'], ['Applications', 'High-speed conveyor sorting & food packaging']] }
+	],
+	cartesian: [
+		{ id: 'xrail', badge: '1', title: 'Overhead X-Axis Bridge Rails', shortTitle: 'X-Axis Rail', specPill: 'Prismatic X · Linear Guide', pos: [0, -0.32, 0.66],
+			desc: 'Twin parallel linear rails supporting the traveling Y-axis bridge across the work cell length.',
+			specs: [['Joint Type', 'Prismatic linear actuator (belt or ball screw)'], ['Rigidity', 'Uniform stiffness across entire rectangular box']] },
+		{ id: 'ybridge', badge: '2', title: 'Traveling Y-Axis Crossbeam', shortTitle: 'Y-Axis Bridge', specPill: 'Prismatic Y · Orthogonal', pos: [0.10, 0, 0.68],
+			desc: 'Orthogonal crossbeam carrying the vertical Z carriage across the width of the gantry.',
+			specs: [['Kinematics', 'Decoupled X, Y, Z axes (no singularities)'], ['Scalability', 'Spans meters for CNC tending & palletizing']] },
+		{ id: 'zram', badge: '3', title: 'Vertical Z-Axis Ram', shortTitle: 'Z-Axis Ram', specPill: 'Prismatic Z · Linear Plunge', pos: [0.12, 0.12, 0.40],
+			desc: 'Vertical linear stage lowering the gripper cleanly onto the work table with zero angular coupling.',
+			specs: [['Workspace', 'Rectangular cuboid (X × Y × Z)'], ['Repeatability', 'Consistent precision at every corner']] }
+	]
+};
+
+function initRobotConfigs3D(root) {
+	var mode = 'scara';
+	var sx = slider('Target X (m)', 'rc3d-x', -0.25, 0.25, 0.01, 0.16, ' m');
+	var sy = slider('Target Y (m)', 'rc3d-y', -0.20, 0.25, 0.01, 0.12, ' m');
+	var sz = slider('Target Z (m)', 'rc3d-z', 0.04, 0.24, 0.01, 0.14, ' m');
+	var az = slider('Camera azimuth', 'rc3d-az', -180, 180, 1, 36, '°');
+	var el = slider('Camera elevation', 'rc3d-el', 8, 89, 1, 24, '°');
+	var cbEnv = checkRow3D('rc3d-env', 'Show workspace volume envelope', true);
+
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 340 : 380;
+	var svg = plotFrame(W, H, 'Interactive 3D comparison of SCARA, Delta parallel, and Cartesian gantry industrial robot configurations.');
+	svg.classList.add('w3d-canvas');
+	var cam = createCamera3D([0, 0, 0.28], 1.75, narrow ? 440 : 490, 36, 24);
+	var light = norm3([0.4, -0.5, 0.85]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
+	var anim = null, note = '';
+
+	var partsProxy = CONFIGS_PARTS.scara.slice();
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: 'Robot Configurations',
+		presets: [
+			['3/4', 36, 24, 'Isometric 3/4 view', 1.75],
+			['Front', 90, 12, 'Front elevation view', 1.75],
+			['Side', 0, 12, 'Side elevation view', 1.75],
+			['Top', 0, 89, 'Top-down footprint view', 1.85]
+		],
+		parts: partsProxy,
+		initialLabels: true
+	});
+
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+
+	function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
+
+	function setMode(m) {
+		stopAnim();
+		mode = m;
+		note = '';
+		partsProxy.length = 0;
+		CONFIGS_PARTS[m].forEach(function (p) { partsProxy.push(p); });
+		stage.activePartId = null;
+		// Update chip dock labels cleanly
+		var btns = stage.wrap.querySelectorAll('.w3d-chip-dock button');
+		CONFIGS_PARTS[m].forEach(function (p, i) {
+			if (btns[i]) {
+				btns[i].title = p.title;
+				btns[i].setAttribute('aria-label', 'Component ' + p.badge + ': ' + p.title);
+				var nm = btns[i].querySelector('.w3d-chip-name');
+				if (nm) nm.textContent = p.shortTitle;
+				btns[i].setAttribute('aria-pressed', 'false');
+				btns[i].classList.remove('is-active', 'w3d-chip-active');
+			}
+		});
+		var card = stage.wrap.querySelector('.w3d-part-card');
+		if (card) { card.setAttribute('hidden', ''); card.classList.add('is-hidden'); }
+		Array.prototype.forEach.call(modeRow.querySelectorAll('button[data-cfg]'), function (b) {
+			b.setAttribute('aria-pressed', b.dataset.cfg === m ? 'true' : 'false');
+		});
+		draw();
+	}
+
+	function runCycle() {
+		stopAnim();
+		var wps = [[0.18, 0.12, 0.18], [0.18, 0.12, 0.04], [0.18, 0.12, 0.22], [-0.18, 0.12, 0.22], [-0.18, 0.12, 0.04], [-0.18, 0.12, 0.18], [0.16, 0.12, 0.14]];
+		var idx = 0, t0 = null, dur = REDUCED_MOTION ? 0.01 : (mode === 'delta' ? 0.30 : (mode === 'scara' ? 0.42 : 0.60));
+		var cur = [Number(sx.input.value), Number(sy.input.value), Number(sz.input.value)];
+		function step(ts) {
+			if (t0 === null) t0 = ts;
+			var k = Math.min(1, (ts - t0) / 1000 / dur), e = 0.5 - 0.5 * Math.cos(k * Math.PI), nxt = wps[idx];
+			sx.input.value = (cur[0] + (nxt[0] - cur[0]) * e).toFixed(2);
+			sy.input.value = (cur[1] + (nxt[1] - cur[1]) * e).toFixed(2);
+			sz.input.value = (cur[2] + (nxt[2] - cur[2]) * e).toFixed(2);
+			draw();
+			if (k >= 1) {
+				cur = nxt.slice(); idx++; t0 = null;
+				if (idx >= wps.length) { anim = null; note = 'Pick-and-place cycle complete.'; draw(); return; }
+			}
+			anim = requestAnimationFrame(step);
+		}
+		note = 'Running ' + mode.toUpperCase() + ' pick-and-place cycle...';
+		anim = requestAnimationFrame(step);
+	}
+
+	function draw() {
+		var tx = Number(sx.input.value), ty = Number(sy.input.value), tz = Number(sz.input.value);
+		sx.out.textContent = signed(tx, 2) + ' m';
+		sy.out.textContent = signed(ty, 2) + ' m';
+		sz.out.textContent = tz.toFixed(2) + ' m';
+
+		var dark = isDarkWidget(svg), sc = newScene3D(cam, W, H, light);
+		floorGrid3D(sc, -0.5, 0.5, -0.5, 0.5, 0.1);
+		var metal = dark ? '#475569' : '#64748b', purp = dark ? '#8f6ad6' : '#5b2a9e', purpDk = dark ? '#6c4bb0' : '#3d1a6e';
+
+		// Pick & place pads on table
+		cylinder3D(sc, [0.18, 0.12, 0], [0.18, 0.12, 0.025], 0.045, '#0891b2', { segments: 12, edge: true });
+		cylinder3D(sc, [-0.18, 0.12, 0], [-0.18, 0.12, 0.025], 0.045, '#d97706', { segments: 12, edge: true });
+
+		var dyn = [], reachOk = true;
+		if (mode === 'scara') {
+			var bx = 0, by = -0.22, L1 = 0.28, L2 = 0.24, zArm = 0.36;
+			var dx = tx - bx, dy = ty - by, d2 = dx * dx + dy * dy, dist = Math.sqrt(d2);
+			if (dist > L1 + L2 - 0.01) { reachOk = false; var kCl = (L1 + L2 - 0.01) / dist; dx *= kCl; dy *= kCl; d2 = dx * dx + dy * dy; }
+			if (dist < Math.abs(L1 - L2) + 0.02) { reachOk = false; var kIn = (Math.abs(L1 - L2) + 0.02) / Math.max(0.001, dist); dx *= kIn; dy *= kIn; d2 = dx * dx + dy * dy; }
+			var cosQ2 = clampN((d2 - L1 * L1 - L2 * L2) / (2 * L1 * L2), -1, 1);
+			var q2 = Math.acos(cosQ2), q1 = Math.atan2(dy, dx) - Math.atan2(L2 * Math.sin(q2), L1 + L2 * cosQ2);
+			var ex = bx + L1 * Math.cos(q1), ey = by + L1 * Math.sin(q1);
+			var wx = ex + L2 * Math.cos(q1 + q2), wy = ey + L2 * Math.sin(q1 + q2);
+
+			if (cbEnv.input.checked) {
+				var outer = [], inner = [];
+				for (var a = 0; a <= 36; a++) {
+					var ang = (-20 + a * 220 / 36) * DEG2RAD;
+					outer.push([bx + (L1 + L2) * Math.cos(ang), by + (L1 + L2) * Math.sin(ang), 0.004]);
+					inner.push([bx + Math.abs(L1 - L2) * Math.cos(ang), by + Math.abs(L1 - L2) * Math.sin(ang), 0.004]);
+				}
+				polyline3D(sc, outer, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', opacity: '0.8' });
+				polyline3D(sc, inner, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1', 'stroke-dasharray': '3 3', opacity: '0.6' });
+			}
+			cylinder3D(sc, [bx, by, 0], [bx, by, zArm + 0.04], 0.075, purpDk, { segments: 16, shadow: true, edge: true });
+			// Link 1 arm
+			var l1ang = Math.atan2(ey - by, ex - bx);
+			box3D(sc, [(bx + ex) / 2, (by + ey) / 2, zArm], [L1 + 0.06, 0.08, 0.06], l1ang, purp, { shadow: true, edge: true });
+			cylinder3D(sc, [ex, ey, zArm - 0.03], [ex, ey, zArm + 0.06], 0.048, metal, { segments: 12, edge: true });
+			// Link 2 forearm
+			var l2ang = Math.atan2(wy - ey, wx - ex);
+			box3D(sc, [(ex + wx) / 2, (ey + wy) / 2, zArm + 0.06], [L2 + 0.05, 0.07, 0.055], l2ang, purp, { shadow: true, edge: true });
+			// Vertical Z spline quill + tool
+			cylinder3D(sc, [wx, wy, tz], [wx, wy, zArm + 0.14], 0.018, '#cbd5e1', { segments: 10, edge: true });
+			cylinder3D(sc, [wx, wy, tz], [wx, wy, tz + 0.035], 0.030, '#d97706', { segments: 12, edge: true });
+			axes3D(sc, [wx, wy, tz], null, 0.10, '{tool}');
+			readout.textContent = 'SCARA 4-axis | J1=' + Math.round(q1 / DEG2RAD) + '°, J2=' + Math.round(q2 / DEG2RAD) + '°, Z=' + tz.toFixed(2) + ' m | Stiff vertically, rapid planar sweep';
+			dyn = [
+				Object.assign({}, CONFIGS_PARTS.scara[0], { pos: [bx, by, zArm + 0.07] }),
+				Object.assign({}, CONFIGS_PARTS.scara[1], { pos: [ex, ey, zArm + 0.09] }),
+				Object.assign({}, CONFIGS_PARTS.scara[2], { pos: [wx, wy, tz + 0.08] })
+			];
+		} else if (mode === 'delta') {
+			var zTop = 0.68, Rbase = 0.20, Rplat = 0.07, Lup = 0.22, Lfore = 0.44;
+			var px = clampN(tx, -0.22, 0.22), py = clampN(ty, -0.22, 0.22), pz = clampN(tz, 0.04, 0.26);
+			if (Math.hypot(px, py) > 0.22) { reachOk = false; var dk = 0.22 / Math.hypot(px, py); px *= dk; py *= dk; }
+			if (cbEnv.input.checked) {
+				var dr = [];
+				for (var da = 0; da <= 36; da++) dr.push([Math.cos(da / 36 * Math.PI * 2) * 0.22, Math.sin(da / 36 * Math.PI * 2) * 0.22, 0.004]);
+				polyline3D(sc, dr, { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1.5', 'stroke-dasharray': '4 3', opacity: '0.8' });
+			}
+			// Overhead delta support frame & fixed motor base
+			[0, 120, 240].forEach(function (deg) {
+				var ra = deg * DEG2RAD, fx = Math.cos(ra) * 0.42, fy = Math.sin(ra) * 0.42;
+				cylinder3D(sc, [fx, fy, 0], [fx, fy, zTop], 0.018, metal, { segments: 8, shadow: true });
+				line3D(sc, [fx, fy, zTop], [Math.cos(ra) * Rbase, Math.sin(ra) * Rbase, zTop], { stroke: metal, 'stroke-width': '4' });
+			});
+			var baseTri = [0, 120, 240].map(function (deg) { return [Math.cos(deg * DEG2RAD) * Rbase, Math.sin(deg * DEG2RAD) * Rbase]; });
+			extrudePoly3D(sc, baseTri, zTop - 0.025, zTop + 0.025, purpDk, { edge: true });
+
+			// 3 Delta kinematic chains (upper arm + 2 parallel push-rods to lower moving plate)
+			var platTri = [];
+			[0, 120, 240].forEach(function (deg) {
+				var ra = deg * DEG2RAD, ux = Math.cos(ra), uy = Math.sin(ra), side = [-uy, ux, 0];
+				var hip = [ux * Rbase, uy * Rbase, zTop];
+				var wristPt = [px + ux * Rplat, py + uy * Rplat, pz + 0.03];
+				platTri.push([wristPt[0], wristPt[1]]);
+				var toW = sub3(wristPt, hip);
+				var radial = toW[0] * ux + toW[1] * uy, dz = toW[2], lat = toW[0] * (-uy) + toW[1] * ux;
+				var LfEff = Math.sqrt(Math.max(0.02, Lfore * Lfore - lat * lat));
+				var distHW = Math.hypot(radial, dz);
+				var cosA = clampN((distHW * distHW + Lup * Lup - LfEff * LfEff) / (2 * distHW * Lup), -1, 1);
+				var angBase = Math.atan2(dz, radial) + Math.acos(cosA);
+				var elb = [hip[0] + ux * Lup * Math.cos(angBase), hip[1] + uy * Lup * Math.cos(angBase), hip[2] + Lup * Math.sin(angBase)];
+				cylinder3D(sc, hip, elb, 0.018, purp, { segments: 10, edge: true });
+				cylinder3D(sc, add3(hip, scale3(side, -0.04)), add3(hip, scale3(side, 0.04)), 0.028, '#1f2937', { segments: 10 });
+				[-0.026, 0.026].forEach(function (off) {
+					line3D(sc, add3(elb, scale3(side, off)), add3(wristPt, scale3(side, off)), { stroke: '#0891b2', 'stroke-width': '2.4', 'stroke-linecap': 'round' });
+				});
+			});
+			extrudePoly3D(sc, platTri, pz + 0.015, pz + 0.035, '#d97706', { shadow: true, edge: true });
+			cylinder3D(sc, [px, py, pz], [px, py, pz + 0.015], 0.016, '#1f2937', { segments: 10 });
+			axes3D(sc, [px, py, pz], null, 0.09, '{tool}');
+			readout.textContent = 'Delta 3-axis parallel | Tool=[' + signed(px, 2) + ', ' + signed(py, 2) + ', ' + pz.toFixed(2) + '] m | Heavy motors fixed overhead';
+			dyn = [
+				Object.assign({}, CONFIGS_PARTS.delta[0], { pos: [0, 0, zTop + 0.05] }),
+				Object.assign({}, CONFIGS_PARTS.delta[1], { pos: [0.20, 0, 0.42] }),
+				Object.assign({}, CONFIGS_PARTS.delta[2], { pos: [px, py, pz + 0.06] })
+			];
+		} else {
+			var gx = 0.36, gy = 0.30, gz = 0.66;
+			var cx = clampN(tx, -0.25, 0.25), cy = clampN(ty, -0.20, 0.22), cz = clampN(tz, 0.04, 0.24);
+			if (cbEnv.input.checked) {
+				box3D(sc, [0, 0.01, 0.14], [0.50, 0.42, 0.20], 0, 'none', { attrs: { stroke: 'var(--wp-gold-text, #6b5200)', 'stroke-width': '1', 'stroke-dasharray': '4 3', fill: 'none' } });
+			}
+			[[-gx, -gy], [gx, -gy], [gx, gy], [-gx, gy]].forEach(function (c) {
+				box3D(sc, [c[0], c[1], gz * 0.5], [0.035, 0.035, gz], 0, metal, { shadow: true, edge: true });
+			});
+			// X rails
+			box3D(sc, [0, -gy, gz], [gx * 2 + 0.04, 0.04, 0.04], 0, purpDk, { edge: true });
+			box3D(sc, [0, gy, gz], [gx * 2 + 0.04, 0.04, 0.04], 0, purpDk, { edge: true });
+			// Traveling Y bridge at x = cx
+			box3D(sc, [cx, 0, gz + 0.04], [0.045, gy * 2 + 0.04, 0.045], 0, purp, { shadow: true, edge: true });
+			// Z carriage + vertical telescoping quill
+			box3D(sc, [cx, cy, gz + 0.05], [0.08, 0.08, 0.08], 0, '#1f2937', { edge: true });
+			cylinder3D(sc, [cx, cy, cz + 0.03], [cx, cy, gz + 0.04], 0.020, '#cbd5e1', { segments: 10, shadow: true, edge: true });
+			box3D(sc, [cx, cy, cz + 0.015], [0.045, 0.045, 0.03], 0, '#d97706', { edge: true });
+			axes3D(sc, [cx, cy, cz], null, 0.10, '{tool}');
+			readout.textContent = 'Cartesian Gantry | X=' + signed(cx, 2) + ', Y=' + signed(cy, 2) + ', Z=' + cz.toFixed(2) + ' m | Decoupled orthogonal axes, zero singularities';
+			dyn = [
+				Object.assign({}, CONFIGS_PARTS.cartesian[0], { pos: [0, -gy, gz + 0.05] }),
+				Object.assign({}, CONFIGS_PARTS.cartesian[1], { pos: [cx, -0.10, gz + 0.09] }),
+				Object.assign({}, CONFIGS_PARTS.cartesian[2], { pos: [cx, cy, cz + 0.14] })
+			];
+		}
+
+		if (stage.showLabels) {
+			dyn.forEach(function (part) {
+				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
+			});
+		}
+		renderScene3D(svg, sc);
+		var stMsg = note || (reachOk ? 'Adjust X/Y/Z sliders or press "Run Pick-and-Place" to compare kinematics and workspace envelopes.' : 'Target clamped to configuration reach boundary.');
+		if (status.textContent !== stMsg) status.textContent = stMsg;
+	}
+
+	orbitControls(svg, cam, redraw, ctl);
+	[sx, sy, sz].forEach(function (c) { c.input.addEventListener('input', function () { stopAnim(); note = ''; draw(); }); });
+	cbEnv.input.addEventListener('change', draw);
+
+	var modeRow = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Robot configuration type' }, [
+		h('span', { 'class': 'w3d-view-label', text: 'Robot type' })
+	]);
+	[['scara', 'SCARA (4-axis)'], ['delta', 'Delta (Parallel)'], ['cartesian', 'Cartesian Gantry']].forEach(function (item) {
+		var b = button(item[1], function () { setMode(item[0]); }, 'Switch 3D view to ' + item[1]);
+		b.dataset.cfg = item[0];
+		b.setAttribute('aria-pressed', item[0] === 'scara' ? 'true' : 'false');
+		modeRow.appendChild(b);
+	});
+	modeRow.appendChild(button('Run Pick-and-Place', runCycle, 'Animate a standard pick-and-place cycle'));
+
+	root.replaceChildren(frame('3D robot configurations: SCARA, Delta & Cartesian', [
+		modeRow, stage.wrap, readout, status, sx.row, sy.row, sz.row, cbEnv.row, az.row, el.row
+	]));
+	draw();
+}
+
+/* ---------- 3D Safety Cell & ISO 13855 Light Curtain Distance (lesson 5.4) ---------- */
+
+var SAFETY_CELL_PARTS = [
+	{ id: 'curtain', badge: '1', title: 'Optical Safety Light Curtain', shortTitle: 'Light Curtain', specPill: 'ISO 13855 · S = K × T + C', pos: [0.65, 0.72, 0.65],
+		desc: 'Row of infrared beams across the open cell entrance. Must be mounted at least distance S from the hazard zone so the robot stops before an operator reaches the arm.',
+		specs: [['Approach Speed K', '2000 mm/s (S ≤ 500 mm); 1600 mm/s (S > 500 mm, min 500 mm)'], ['Intrusion C', '8 × (d − 14) mm for resolution d ≤ 40 mm'], ['Total Stopping Time T', 'Sensor response time + robot stopping time']] },
+	{ id: 'zone', badge: '2', title: 'Minimum Safety Distance Zone S', shortTitle: 'Safety Distance S', specPill: 'Separation Boundary', pos: [0, 0.55, 0.05],
+		desc: 'Minimum distance from the light curtain detection plane to the hazard zone, so the robot has stopped before a hand or body can reach it.',
+		specs: [['Worked Example 1', 'T = 0.1157 s, d = 25 mm → C = 88 mm → S = 319.4 mm'], ['Worked Example 2', 'T = 0.300 s, d = 14 mm → C = 0 mm → S = 500.0 mm']] },
+	{ id: 'fence', badge: '3', title: 'Perimeter Fence & Interlocked Guard', shortTitle: 'Safety Fence', specPill: 'ISO 13857 · Fixed Perimeter', pos: [-0.90, -0.35, 0.70],
+		desc: 'Rigid perimeter fencing enclosing the sides and back of the robot cell so personnel can enter only through the safeguarded front light curtain.',
+		specs: [['Side Guards', 'Prevent bypassing the light curtain from the flanks'], ['Status Stack', 'Green = Run mode; Red = Protective stop active']] }
+];
+
+function initSafetyCell3D(root) {
+	var sT = slider('Total stopping time T (s)', 'sc3d-t', 0.05, 0.50, 0.0001, 0.1157, ' s');
+	var sD = slider('Curtain resolution d (mm)', 'sc3d-d', 14, 40, 1, 25, ' mm');
+	var sApp = slider('Operator hand test', 'sc3d-app', -0.25, 0.35, 0.02, -0.15, ' m');
+	var az = slider('Camera azimuth', 'sc3d-az', -180, 180, 1, 38, '°');
+	var el = slider('Camera elevation', 'sc3d-el', 10, 89, 1, 26, '°');
+
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 340 : 380;
+	var svg = plotFrame(W, H, 'Interactive 3D industrial robot cell showing an optical safety light curtain positioned at ISO 13855 minimum safety distance S from the robot hazard zone.');
+	svg.classList.add('w3d-canvas');
+	var cam = createCamera3D([0, 0.15, 0.40], 2.8, narrow ? 440 : 490, 38, 26);
+	var light = norm3([0.4, -0.5, 0.85]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
+
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: 'ISO 13855 Robot Safety Cell',
+		presets: [
+			['3/4', 38, 26, 'Isometric view of robot cell and light curtain', 2.8],
+			['Side', 0, 12, 'Side view showing separation distance S', 2.7],
+			['Top', 0, 89, 'Top-down floor plan of safety distance S', 2.9]
+		],
+		parts: SAFETY_CELL_PARTS,
+		initialLabels: true
+	});
+
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+
+	function calcS(T_s, d_mm) {
+		var C = Math.max(0, 8 * (d_mm - 14));
+		var K = 2000, S = K * T_s + C, note = 'K = 2000 mm/s (S ≤ 500 mm)';
+		if (S > 500) {
+			K = 1600;
+			S = Math.max(500, 1600 * T_s + C);
+			note = S === 500 ? 'S > 500 with K=2000 → K=1600 gives <500, so S clamped to 500 mm floor' : 'Recalculated with K = 1600 mm/s';
+		}
+		return { S: S, C: C, K: K, note: note };
+	}
+
+	function draw() {
+		var T_s = Number(sT.input.value), d_mm = Number(sD.input.value), handOffset = Number(sApp.input.value);
+		sT.out.textContent = Number(T_s.toFixed(4)) + ' s';
+		sD.out.textContent = d_mm + ' mm';
+		sApp.out.textContent = (handOffset >= 0 ? 'tripped' : 'clear');
+
+		var res = calcS(T_s, d_mm), S_m = res.S / 1000;
+		var dark = isDarkWidget(svg), sc = newScene3D(cam, W, H, light);
+		floorGrid3D(sc, -1.2, 1.2, -1.0, 1.6, 0.25);
+
+		// Hazard reach boundary (robot base at [0, -0.30], reach 0.55 m -> front edge at y = +0.25 m)
+		var yHaz = 0.25, yCurtain = yHaz + S_m;
+		var tripped = handOffset >= 0;
+		var beamCol = tripped ? '#dc2626' : '#f59f00';
+
+		// Hazard floor circle
+		var hazRing = [];
+		for (var i = 0; i <= 36; i++) hazRing.push([Math.cos(i / 36 * Math.PI * 2) * 0.55, -0.30 + Math.sin(i / 36 * Math.PI * 2) * 0.55, 0.004]);
+		polyline3D(sc, hazRing, { stroke: '#dc2626', 'stroke-width': '1.8', 'stroke-dasharray': '5 3', opacity: '0.8' });
+
+		// Safety distance S floor zone between yHaz and yCurtain
+		var sZonePoly = face3D(sc, [[-0.65, yHaz, 0.005], [0.65, yHaz, 0.005], [0.65, yCurtain, 0.005], [-0.65, yCurtain, 0.005]],
+			tripped ? '#dc2626' : '#f59f00', { cull: false, shade: false, attrs: { 'fill-opacity': '0.18', stroke: beamCol, 'stroke-width': '1.5' } });
+		if (sZonePoly) sc.floor.push(sZonePoly);
+		line3D(sc, [0, yHaz, 0.01], [0, yCurtain, 0.01], { stroke: beamCol, 'stroke-width': '2.5' }, 'floor');
+		label3D(sc, [0.05, (yHaz + yCurtain) * 0.5, 0.02], 'S = ' + res.S.toFixed(1) + ' mm', { fill: tripped ? '#dc2626' : 'var(--wp-gold-text, #6b5200)', size: 11, weight: '700' });
+
+		// Perimeter fences (left, right, back)
+		var fencePosts = [[-0.85, -0.90], [0, -0.90], [0.85, -0.90], [-0.85, yCurtain], [0.85, yCurtain]];
+		fencePosts.forEach(function (fp) {
+			box3D(sc, [fp[0], fp[1], 0.55], [0.04, 0.04, 1.10], 0, '#475569', { shadow: true, edge: true });
+		});
+		[[[-0.85, -0.90], [0.85, -0.90]], [[-0.85, -0.90], [-0.85, yCurtain]], [[0.85, -0.90], [0.85, yCurtain]]].forEach(function (seg) {
+			for (var zf = 0.25; zf <= 0.95; zf += 0.35) {
+				line3D(sc, [seg[0][0], seg[0][1], zf], [seg[1][0], seg[1][1], zf], { stroke: 'var(--wp-border, #72777d)', 'stroke-width': '1.8' });
+			}
+		});
+		// Signal beacon tower on right post (green OK, red protective stop)
+		cylinder3D(sc, [0.85, yCurtain, 1.10], [0.85, yCurtain, 1.24], 0.035, tripped ? '#dc2626' : '#16a34a', { segments: 12, shade: false });
+
+		// Yellow light curtain columns & IR beams
+		[-0.65, 0.65].forEach(function (lx) {
+			box3D(sc, [lx, yCurtain, 0.55], [0.05, 0.05, 1.10], 0, '#eab308', { shadow: true, edge: true });
+		});
+		var nBeams = Math.max(4, Math.round(14 - (d_mm - 14) / 3));
+		for (var b = 0; b < nBeams; b++) {
+			var bz = 0.16 + (b / (nBeams - 1)) * 0.85;
+			line3D(sc, [-0.62, yCurtain, bz], [0.62, yCurtain, bz], { stroke: beamCol, 'stroke-width': tripped ? '1.8' : '1.1', opacity: tripped ? '0.9' : '0.65' });
+		}
+
+		// Industrial robot arm inside the cell
+		var purp = dark ? '#8f6ad6' : '#5b2a9e';
+		cylinder3D(sc, [0, -0.30, 0], [0, -0.30, 0.22], 0.11, '#3d1a6e', { segments: 14, shadow: true, edge: true });
+		taperedCylinder3D(sc, [0, -0.30, 0.22], [0.08, -0.05, 0.56], 0.055, 0.042, purp, { segments: 12, shadow: true, edge: true });
+		taperedCylinder3D(sc, [0.08, -0.05, 0.56], [0.05, 0.22, 0.36], 0.042, 0.030, purp, { segments: 12, shadow: true, edge: true });
+
+		// Human operator standing outside cell & reaching toward curtain
+		var opY = yCurtain + 0.32 - handOffset;
+		cylinder3D(sc, [-0.22, opY, 0], [-0.22, opY, 0.52], 0.08, '#334155', { segments: 12, shadow: true });
+		cylinder3D(sc, [-0.22, opY, 0.52], [-0.22, opY, 0.92], 0.11, '#0284c7', { segments: 12, shadow: true, edge: true });
+		cylinder3D(sc, [-0.22, opY, 0.95], [-0.22, opY, 1.12], 0.075, '#f59e0b', { segments: 12, edge: true });
+		// Reaching arm & hand
+		var handY = yCurtain + 0.04 - handOffset;
+		cylinder3D(sc, [-0.22, opY, 0.82], [-0.14, handY, 0.72], 0.032, '#0284c7', { segments: 8, edge: true });
+		dot3D(sc, [-0.14, handY, 0.72], 4.5, { fill: tripped ? '#dc2626' : '#f59e0b', stroke: '#ffffff', 'stroke-width': '1.2' });
+
+		if (stage.showLabels) {
+			[
+				Object.assign({}, SAFETY_CELL_PARTS[0], { pos: [0.65, yCurtain, 1.16] }),
+				Object.assign({}, SAFETY_CELL_PARTS[1], { pos: [0, (yHaz + yCurtain) * 0.5, 0.08] }),
+				Object.assign({}, SAFETY_CELL_PARTS[2], { pos: [-0.85, -0.35, 1.12] })
+			].forEach(function (part) {
+				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
+			});
+		}
+
+		renderScene3D(svg, sc);
+		readout.textContent = 'S = ' + res.K + ' × ' + Number(T_s.toFixed(4)) + ' + ' + res.C.toFixed(0) + ' = ' + res.S.toFixed(1) + ' mm (' + res.note + ')';
+		var st = tripped ? 'PROTECTIVE STOP: Light curtain beam broken — robot halted before the hand reaches the hazard zone.' : 'Cell running: light curtain stands ' + res.S.toFixed(1) + ' mm clear of the hazard boundary.';
+		if (status.textContent !== st) status.textContent = st;
+	}
+
+	orbitControls(svg, cam, redraw, ctl);
+	[sT, sD, sApp].forEach(function (c) { c.input.addEventListener('input', draw); });
+
+	var preRow = h('div', { 'class': 'widget-buttons' }, [
+		button('Worked example 1 (Keyence: 319.4 mm)', function () { sT.input.value = 0.1157; sD.input.value = 25; sApp.input.value = -0.15; draw(); }, 'Load Keyence worked example: T=0.1157 s, d=25 mm'),
+		button('Worked example 2 (500.0 mm)', function () { sT.input.value = 0.300; sD.input.value = 14; sApp.input.value = -0.15; draw(); }, 'Load large robot worked example: T=0.300 s, d=14 mm'),
+		button('Test Curtain Trip', function () { sApp.input.value = Number(sApp.input.value) >= 0 ? -0.15 : 0.12; draw(); }, 'Toggle operator hand breaking the light curtain beams')
+	]);
+
+	root.replaceChildren(frame('3D robot safety cell: ISO 13855 light curtain distance', [
+		preRow, stage.wrap, readout, status, sT.row, sD.row, sApp.row, az.row, el.row
+	]));
+	draw();
+}
+
+/* ---------- 3D Coordinate Frames & Euler Rotation Explorer (lesson 1.6) ---------- */
+
+var FRAMES_PARTS = [
+	{ id: 'world', badge: '1', title: 'World & Robot Base Frame {world} / {base}', shortTitle: '{world}', specPill: 'Fixed Reference Origin', pos: [0, 0, 0.24],
+		desc: 'Fixed global reference frame for the whole work cell. By default {base} coincides with {world}.',
+		specs: [['Axes', 'X red (forward), Y green (left), Z blue (up)'], ['Role', 'Root parent of the robot kinematic transform chain']] },
+	{ id: 'wobj', badge: '2', title: 'Work Object Frame {wobj} on Fixture', shortTitle: '{wobj}', specPill: 'Fixture-Attached Frame', pos: [0.45, 0.0, 0.18],
+		desc: 'User frame attached to the fixture table. If the fixture moves or rotates, re-teaching {wobj} automatically updates every programmed part target without rewriting the robot program.',
+		specs: [['Invariance', 'Target P stays fixed relative to the workpiece in {wobj}'], ['RAPID', 'Stored in wobjdata; default wobj0 equals {base}']] },
+	{ id: 'tool', badge: '3', title: 'Tool Frame {tool} & Euler RPY Orientation', shortTitle: '{tool}', specPill: 'TCP Orientation (Roll, Pitch, Yaw)', pos: [0.55, 0.10, 0.30],
+		desc: 'Coordinate frame at the Tool Center Point (TCP). Rotated using ZYX Euler angles (Yaw, Pitch, Roll); note that at Pitch = ±90°, Roll and Yaw align (gimbal lock), which is one reason ABB controllers store orientations as quaternions.',
+		specs: [['Gimbal Lock', 'Occurs at Pitch = ±90°, losing one rotational DOF in Euler representation'], ['Quaternions', 'q1..q4 avoid gimbal lock completely']] }
+];
+
+function initFrames3D(root) {
+	var wx = slider('Fixture {wobj} X (m)', 'fr3d-wx', 0.25, 0.65, 0.01, 0.45, ' m');
+	var wy = slider('Fixture {wobj} Y (m)', 'fr3d-wy', -0.30, 0.30, 0.01, 0.00, ' m');
+	var wyaw = slider('Fixture {wobj} Yaw', 'fr3d-wyaw', -90, 90, 1, 0, '°');
+	var tRoll = slider('Tool Roll (Rx)', 'fr3d-tr', -180, 180, 1, 180, '°');
+	var tPitch = slider('Tool Pitch (Ry)', 'fr3d-tp', -90, 90, 1, 0, '°');
+	var tYaw = slider('Tool Yaw (Rz)', 'fr3d-ty', -180, 180, 1, 0, '°');
+	var az = slider('Camera azimuth', 'fr3d-az', -180, 180, 1, 35, '°');
+	var el = slider('Camera elevation', 'fr3d-el', 10, 89, 1, 28, '°');
+
+	var narrow = (root.clientWidth || 600) < 500, W = narrow ? 360 : 560, H = narrow ? 340 : 380;
+	var svg = plotFrame(W, H, 'Interactive 3D coordinate frames explorer showing World, Work Object on a movable fixture, and Tool TCP orientation including gimbal lock.');
+	svg.classList.add('w3d-canvas');
+	var cam = createCamera3D([0.28, 0, 0.12], 1.75, narrow ? 440 : 490, 35, 28);
+	var light = norm3([0.4, -0.5, 0.85]);
+	var ctl = { az: az, el: el };
+	var redraw = frameScheduler(draw);
+
+	var stage = build3DStage(svg, cam, redraw, ctl, {
+		title: '3D Coordinate Frames & RPY',
+		presets: [
+			['3/4', 35, 28, 'Isometric 3/4 view', 1.75],
+			['Top', 0, 89, 'Top-down view of fixture transform', 1.80],
+			['Side', 0, 12, 'Side elevation view', 1.75]
+		],
+		parts: FRAMES_PARTS,
+		initialLabels: true
+	});
+
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+	var status = h('p', { 'class': 'widget-readout', 'aria-live': 'polite', style: 'margin-top:2px;' });
+
+	function rpyRot(rDeg, pDeg, yDeg) {
+		var r = rDeg * DEG2RAD, p = pDeg * DEG2RAD, y = yDeg * DEG2RAD;
+		var cr = Math.cos(r), sr = Math.sin(r), cp = Math.cos(p), sp = Math.sin(p), cy = Math.cos(y), sy = Math.sin(y);
+		return {
+			x: [cy * cp, sy * cp, -sp],
+			y: [cy * sp * sr - sy * cr, sy * sp * sr + cy * cr, cp * sr],
+			z: [cy * sp * cr + sy * sr, sy * sp * cr - cy * sr, cp * cr]
+		};
+	}
+
+	function draw() {
+		var Xw = Number(wx.input.value), Yw = Number(wy.input.value), Yaww = Number(wyaw.input.value);
+		var Rr = Number(tRoll.input.value), Rp = Number(tPitch.input.value), Ry = Number(tYaw.input.value);
+		wx.out.textContent = Xw.toFixed(2) + ' m';
+		wy.out.textContent = signed(Yw, 2) + ' m';
+		wyaw.out.textContent = Yaww + '°';
+		tRoll.out.textContent = Rr + '°';
+		tPitch.out.textContent = Rp + '°';
+		tYaw.out.textContent = Ry + '°';
+
+		var dark = isDarkWidget(svg), sc = newScene3D(cam, W, H, light);
+		floorGrid3D(sc, -0.3, 0.9, -0.5, 0.5, 0.15);
+
+		// World/Base pedestal & frame
+		cylinder3D(sc, [0, 0, 0], [0, 0, 0.08], 0.08, dark ? '#6c4bb0' : '#461d7c', { segments: 14, shadow: true, edge: true });
+		axes3D(sc, [0, 0, 0.08], null, 0.22, '{world}/{base}');
+
+		// Movable Fixture table + part
+		var yRad = Yaww * DEG2RAD, cy = Math.cos(yRad), sy = Math.sin(yRad);
+		var R_wobj = { x: [cy, sy, 0], y: [-sy, cy, 0], z: [0, 0, 1] };
+		var wOrigin = [Xw, Yw, 0.08];
+		box3D(sc, [Xw, Yw, 0.04], [0.36, 0.24, 0.08], yRad, dark ? '#334155' : '#64748b', { shadow: true, edge: true });
+		// Part sitting on fixture in {wobj} frame
+		var pLocal = [0.08, 0.05, 0.04];
+		var pWorld = [Xw + pLocal[0] * cy - pLocal[1] * sy, Yw + pLocal[0] * sy + pLocal[1] * cy, wOrigin[2] + pLocal[2]];
+		box3D(sc, [pWorld[0], pWorld[1], 0.10], [0.08, 0.08, 0.04], yRad, '#0891b2', { edge: true });
+
+		// Transform vector from {world} to {wobj}
+		line3D(sc, [0, 0, 0.08], wOrigin, { stroke: '#d97706', 'stroke-width': '1.6', 'stroke-dasharray': '4 3' });
+		axes3D(sc, wOrigin, R_wobj, 0.16, '{wobj}');
+
+		// Tool TCP at pWorld with Euler orientation relative to {wobj}
+		var R_local = rpyRot(Rr, Rp, Ry);
+		function mulW(v) { return [v[0] * cy - v[1] * sy, v[0] * sy + v[1] * cy, v[2]]; }
+		var R_tool = { x: mulW(R_local.x), y: mulW(R_local.y), z: mulW(R_local.z) };
+		var tcpPos = [pWorld[0], pWorld[1], pWorld[2] + 0.08];
+		cylinder3D(sc, add3(tcpPos, scale3(R_tool.z, -0.09)), tcpPos, 0.018, '#d97706', { segments: 10, edge: true });
+		axes3D(sc, tcpPos, R_tool, 0.14, '{tool}');
+
+		if (stage.showLabels) {
+			[
+				Object.assign({}, FRAMES_PARTS[0], { pos: [0, 0, 0.25] }),
+				Object.assign({}, FRAMES_PARTS[1], { pos: [Xw, Yw, 0.24] }),
+				Object.assign({}, FRAMES_PARTS[2], { pos: [tcpPos[0], tcpPos[1], tcpPos[2] + 0.12] })
+			].forEach(function (part) {
+				drawCalloutChip3D(sc, part, stage.activePartId === part.id, stage.hoveredPartId === part.id, dark, stage);
+			});
+		}
+
+		renderScene3D(svg, sc);
+		readout.textContent = 'Target P in {wobj}: (+0.08, +0.05, +0.04) m | Target P in {world}: (' + pWorld[0].toFixed(2) + ', ' + signed(pWorld[1], 2) + ', ' + pWorld[2].toFixed(2) + ') m';
+		var glock = Math.abs(Math.abs(Rp) - 90) < 3;
+		var st = glock ? '⚠️ Gimbal lock at Pitch = ' + Rp + '°: Roll and Yaw rotate around the same vertical axis! Quaternions (q1..q4) avoid this.' :
+			'Notice how moving or rotating the fixture shifts {world} coordinates while P stays locked on the blue part inside {wobj}.';
+		if (status.textContent !== st) status.textContent = st;
+	}
+
+	orbitControls(svg, cam, redraw, ctl);
+	[wx, wy, wyaw, tRoll, tPitch, tYaw].forEach(function (c) { c.input.addEventListener('input', draw); });
+
+	var preRow = h('div', { 'class': 'widget-buttons' }, [
+		button('Aligned fixture', function () { wx.input.value = 0.45; wy.input.value = 0; wyaw.input.value = 0; tRoll.input.value = 180; tPitch.input.value = 0; tYaw.input.value = 0; draw(); }, 'Reset fixture and tool alignment'),
+		button('Shift & rotate fixture', function () { wx.input.value = 0.35; wy.input.value = 0.22; wyaw.input.value = 35; draw(); }, 'Shift and rotate the fixture work object'),
+		button('Gimbal lock (Pitch 90°)', function () { tRoll.input.value = 0; tPitch.input.value = 90; tYaw.input.value = 30; draw(); }, 'Demonstrate Euler gimbal lock at 90 degrees pitch')
+	]);
+
+	root.replaceChildren(frame('3D coordinate frames: {world}, {wobj} & {tool}', [
+		preRow, stage.wrap, readout, status, wx.row, wy.row, wyaw.row, tRoll.row, tPitch.row, tYaw.row, az.row, el.row
+	]));
 	draw();
 }
 
@@ -7187,6 +7938,9 @@ function initArduinoUno3D(root) {
 		fov: initFov,
 		vlan: initVlan,
 		'robot-arm-3d': initRobotArm3D,
+		'robot-configs-3d': initRobotConfigs3D,
+		'safety-cell-3d': initSafetyCell3D,
+		'frames-3d': initFrames3D,
 		'amr-frames-3d': initAmrFrames3D,
 		'arduino-uno-3d': initArduinoUno3D
 	};

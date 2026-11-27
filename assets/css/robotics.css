@@ -1718,32 +1718,37 @@ svg.w3d-canvas .w3d-badge-text {
    8c. Frosted Glassmorphism HUD Design System (robotics-lab-app)
    ========================================================================== */
 
-/* Floating frosted stage toolbar positioned over the 3D canvas */
+/* Frosted stage toolbar docked seamlessly at the top of the 3D viewport */
+.w3d-viewport {
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+	border: 1px solid var(--w3d-border, var(--wp-border-light));
+	border-radius: 6px;
+	overflow: hidden;
+	background: var(--w3d-bg);
+	box-sizing: border-box;
+}
+.w3d-viewport .w3d-canvas {
+	border: 0;
+	border-radius: 0;
+}
 .w3d-stage-toolbar {
-	position: absolute;
-	top: 10px;
-	left: 50%;
-	transform: translateX(-50%);
+	position: relative;
 	z-index: 10;
-	display: inline-flex;
+	display: flex;
+	flex-wrap: wrap;
 	align-items: center;
+	justify-content: center;
 	gap: 4px;
-	padding: 4px 6px;
+	padding: 6px 8px;
 	background: var(--w3d-frost-bg);
 	backdrop-filter: blur(var(--w3d-frost-blur));
 	-webkit-backdrop-filter: blur(var(--w3d-frost-blur));
-	border: 1px solid var(--w3d-frost-edge);
-	border-radius: 9999px;
-	box-shadow: var(--w3d-frost-shadow);
+	border-bottom: 1px solid var(--w3d-frost-edge);
 	pointer-events: auto;
-	max-width: calc(100% - 20px);
+	width: 100%;
 	box-sizing: border-box;
-	overflow-x: auto;
-	scrollbar-width: none;
-	-webkit-overflow-scrolling: touch;
-}
-.w3d-stage-toolbar::-webkit-scrollbar {
-	display: none;
 }
 
 .w3d-stage-toolbar.is-left {
@@ -1880,60 +1885,89 @@ svg.w3d-canvas .w3d-badge-text {
 	outline-offset: 1px !important;
 }
 
-/* Circular numbered component chips matching 3D callouts */
-.w3d-chip {
-	display: inline-grid;
-	place-items: center;
-	width: 28px;
-	height: 28px;
-	min-width: 28px;
+/* Component callout chips in dock (frosted pill buttons with badge + label) */
+.w3d-chip-dock .w3d-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	width: auto;
+	min-width: 0;
+	height: auto;
 	min-height: 28px;
-	padding: 0;
-	border-radius: 50%;
-	font-family: var(--wp-mono, monospace);
-	font-size: 13px;
-	font-weight: 700;
-	line-height: 1;
-	text-align: center;
+	padding: 3px 10px 3px 5px;
+	border-radius: 9999px;
+	font-family: var(--wp-sans);
+	font-size: 12.5px;
+	font-weight: 600;
+	line-height: 1.25;
+	text-align: left;
 	color: var(--wp-text);
 	background: var(--w3d-frost-bg);
 	backdrop-filter: blur(var(--w3d-frost-blur));
 	-webkit-backdrop-filter: blur(var(--w3d-frost-blur));
-	border: 1.5px solid var(--w3d-frost-edge);
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	border: 1px solid var(--w3d-frost-edge);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 	cursor: pointer;
 	user-select: none;
 	-webkit-user-select: none;
-	transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease, border-color 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+	white-space: nowrap;
+	transition: transform 0.14s ease, background 0.14s ease, border-color 0.14s ease, color 0.14s ease, box-shadow 0.14s ease;
 	box-sizing: border-box;
 	text-decoration: none;
 }
+.w3d-chip-dock .w3d-chip:not(:has(.w3d-chip-num)) {
+	padding: 4px 11px;
+}
+.w3d-chip-num {
+	display: inline-grid;
+	place-items: center;
+	min-width: 19px;
+	height: 19px;
+	padding: 0 5px;
+	border-radius: 9999px;
+	font-family: var(--wp-mono, monospace);
+	font-size: 10.5px;
+	font-weight: 800;
+	line-height: 1;
+	background: var(--wp-bg-muted);
+	color: var(--wp-text);
+	box-sizing: border-box;
+	flex-shrink: 0;
+}
 
-.w3d-chip:hover {
-	transform: scale(1.15);
+.w3d-chip-dock .w3d-chip:hover,
+.w3d-chip-dock .w3d-chip.is-hover {
+	transform: translateY(-1px);
 	border-color: var(--wp-gold);
 	color: var(--wp-gold-text);
 	background: var(--wp-gold-soft);
-	box-shadow: 0 4px 12px rgba(253, 208, 35, 0.35);
+	box-shadow: 0 3px 10px rgba(253, 208, 35, 0.25);
 	text-decoration: none;
-	z-index: 2;
+}
+.w3d-chip-dock .w3d-chip:hover .w3d-chip-num,
+.w3d-chip-dock .w3d-chip.is-hover .w3d-chip-num {
+	background: var(--wp-gold);
+	color: #1a1200;
 }
 
-.w3d-chip:active {
-	transform: scale(1.05);
+.w3d-chip-dock .w3d-chip:active {
+	transform: translateY(0);
 }
 
-.w3d-chip[aria-pressed="true"],
-.w3d-chip.is-active {
+.w3d-chip-dock .w3d-chip[aria-pressed="true"],
+.w3d-chip-dock .w3d-chip.is-active {
 	background: var(--lsu-purple, #461d7c);
-	color: var(--lsu-gold, #fdd023);
+	color: #ffffff;
 	border-color: var(--lsu-gold, #fdd023);
-	box-shadow: 0 0 0 2px rgba(253, 208, 35, 0.4), 0 4px 14px rgba(70, 29, 124, 0.35);
-	transform: scale(1.15);
-	z-index: 3;
+	box-shadow: 0 0 0 1px rgba(253, 208, 35, 0.4), 0 3px 10px rgba(70, 29, 124, 0.28);
+}
+.w3d-chip-dock .w3d-chip[aria-pressed="true"] .w3d-chip-num,
+.w3d-chip-dock .w3d-chip.is-active .w3d-chip-num {
+	background: var(--lsu-gold, #fdd023);
+	color: #1a0b33;
 }
 
-.w3d-chip:focus-visible {
+.w3d-chip-dock .w3d-chip:focus-visible {
 	outline: 2px solid var(--wp-link) !important;
 	outline-offset: 2px !important;
 }
@@ -1994,36 +2028,32 @@ svg g.w3d-chip[aria-pressed="true"] text {
 	margin: 8px 0;
 }
 
-/* Floating frosted component details card with title, spec pill, and description */
+/* Frosted component details inspector card (docked in-flow below chips so it never covers the 3D scene) */
 .w3d-part-card,
 .w3d-inspector-card {
-	position: absolute;
-	bottom: 12px;
-	left: 12px;
-	max-width: min(340px, calc(100% - 24px));
+	position: relative;
+	width: 100%;
+	max-width: 100%;
 	box-sizing: border-box;
+	margin: 6px 0 8px;
 	padding: 12px 14px;
 	background: var(--w3d-frost-bg);
 	backdrop-filter: blur(var(--w3d-frost-blur));
 	-webkit-backdrop-filter: blur(var(--w3d-frost-blur));
 	border: 1px solid var(--w3d-frost-edge);
-	border-radius: 8px;
+	border-left: 3px solid var(--wp-link);
+	border-radius: 6px;
 	box-shadow: var(--w3d-frost-shadow);
 	color: var(--wp-text);
 	font-family: var(--wp-sans);
-	z-index: 10;
-	pointer-events: auto;
-	transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+	transition: opacity 0.18s ease, transform 0.18s ease;
 }
 
 .w3d-part-card[hidden],
 .w3d-inspector-card[hidden],
 .w3d-part-card.is-hidden,
 .w3d-inspector-card.is-hidden {
-	opacity: 0;
-	transform: translateY(8px);
-	visibility: hidden;
-	pointer-events: none;
+	display: none;
 }
 
 .w3d-part-card-header,
@@ -2328,8 +2358,8 @@ svg g.w3d-chip[aria-pressed="true"] text {
 	.hltv-featured-thumb { width: 100%; max-width: 320px; }
 	.article-footer-nav { grid-template-columns: 1fr; }
 	.article-nav-card + .article-nav-card { border-left: 0; border-top: 1px solid var(--wp-border); }
-	.w3d-stage-toolbar { top: 8px; max-width: calc(100% - 16px); }
-	.w3d-part-card, .w3d-inspector-card { bottom: 10px; left: 10px; max-width: calc(100% - 20px); }
+	.w3d-stage-toolbar { padding: 5px 6px; }
+	.w3d-part-card, .w3d-inspector-card { padding: 10px 12px; }
 }
 
 @media screen and (max-width: 480px) {
@@ -2348,10 +2378,8 @@ svg g.w3d-chip[aria-pressed="true"] text {
 		min-width: 3.8em;
 	}
 	.w3d-stage-toolbar {
-		top: 6px;
-		padding: 3px 5px;
+		padding: 4px 5px;
 		gap: 3px;
-		max-width: calc(100% - 12px);
 	}
 	.w3d-stage-toolbar button,
 	.w3d-stage-toolbar .btn-copy-bibtex,
@@ -2361,19 +2389,13 @@ svg g.w3d-chip[aria-pressed="true"] text {
 		font-size: 12px;
 		min-height: 26px;
 	}
-	.w3d-chip {
-		width: 26px;
-		height: 26px;
-		min-width: 26px;
-		min-height: 26px;
+	.w3d-chip-dock .w3d-chip {
+		padding: 2px 8px 2px 4px;
 		font-size: 12px;
+		min-height: 26px;
 	}
 	.w3d-part-card,
 	.w3d-inspector-card {
-		bottom: 8px;
-		left: 8px;
-		right: 8px;
-		max-width: calc(100% - 16px);
 		padding: 10px 12px;
 	}
 	.w3d-zoom-toast,
@@ -2394,8 +2416,10 @@ svg g.w3d-chip[aria-pressed="true"] text {
 	#footer .container { padding-left: 10px; padding-right: 10px; }
 	.rise-widget,
 	.lesson-diagram { padding-left: 10px; padding-right: 10px; }
-	.lesson-bottom-bar { padding: 6px 8px; gap: 4px; }
-	.lesson-bottom-link { padding: 0 6px; font-size: 14px; }
+	.lesson-bottom-bar { padding: 6px 6px; gap: 3px; }
+	.lesson-bottom-link { padding: 0 5px; font-size: 13px; }
+	.lesson-bottom-search { min-width: 30px; padding: 0 4px; font-size: 13px; }
+	.lesson-bottom-next { padding: 0 8px; font-size: 13.5px; }
 	.widget-buttons { gap: 4px; }
 	.w3d-view, .w3d-jog { gap: 4px 3px; }
 	.w3d-view .btn-copy-bibtex,
@@ -2413,7 +2437,7 @@ svg g.w3d-chip[aria-pressed="true"] text {
 		min-width: auto;
 		margin-right: 2px;
 	}
-	.w3d-canvas { border-radius: 2px; }
+	.w3d-viewport { border-radius: 4px; }
 	.w3d-badge,
 	.w3d-frame-badge,
 	.w3d-orientation-badge,
@@ -2422,10 +2446,8 @@ svg g.w3d-chip[aria-pressed="true"] text {
 		font-size: 10.5px;
 	}
 	.w3d-stage-toolbar {
-		top: 4px;
-		padding: 2px 4px;
+		padding: 3px 4px;
 		gap: 2px;
-		max-width: calc(100% - 8px);
 	}
 	.w3d-stage-toolbar button,
 	.w3d-stage-toolbar .btn-copy-bibtex,
@@ -2435,19 +2457,13 @@ svg g.w3d-chip[aria-pressed="true"] text {
 		font-size: 11px;
 		min-height: 24px;
 	}
-	.w3d-chip {
-		width: 24px;
-		height: 24px;
-		min-width: 24px;
+	.w3d-chip-dock .w3d-chip {
+		padding: 2px 7px 2px 3px;
+		font-size: 11.5px;
 		min-height: 24px;
-		font-size: 11px;
 	}
 	.w3d-part-card,
 	.w3d-inspector-card {
-		bottom: 6px;
-		left: 6px;
-		right: 6px;
-		max-width: calc(100% - 12px);
 		padding: 8px 10px;
 	}
 	.w3d-part-card-title,
@@ -2687,3 +2703,60 @@ main .ref-backlinks a:not([class]):hover, main .ref-backlinks a:not([class]):foc
 .glossary-letters a { display: inline-block; min-width: 26px; min-height: 26px; line-height: 26px; text-align: center; text-decoration: none; border: 1px solid var(--wp-border-light); }
 .glossary-letters a:hover, .glossary-letters a:focus-visible { border-color: var(--wp-link); text-decoration: underline; }
 .glossary-list dt { scroll-margin-top: 70px; }
+
+/* Reading progress bar, bottom-bar search, and persistent hub tracks strip */
+.lesson-read-progress {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	z-index: 95;
+	pointer-events: none;
+	background: transparent;
+}
+.lesson-read-progress-fill {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, var(--lsu-purple, #461d7c), var(--lsu-gold, #fdd023));
+	transform-origin: left center;
+	transform: scaleX(0);
+}
+@media print { .lesson-read-progress { display: none !important; } }
+
+.lesson-bottom-search {
+	flex: none;
+	display: inline-grid;
+	place-items: center;
+	min-width: 38px;
+	min-height: 44px;
+	padding: 0 8px;
+	background: transparent;
+	border: 1px solid var(--wp-border-light);
+	border-radius: 3px;
+	color: var(--wp-link);
+	font-size: 14px;
+	cursor: pointer;
+}
+.lesson-bottom-search:hover,
+.lesson-bottom-search:focus-visible {
+	background: var(--wp-bg-subtle);
+	border-color: var(--wp-link);
+	outline: 2px solid var(--wp-link);
+	outline-offset: 1px;
+}
+
+.hub-tracks {
+	order: 5;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px 14px;
+	width: 100%;
+	margin-top: 6px;
+	font-size: 13.5px;
+	color: var(--wp-text-muted);
+}
+.hub-tracks-label { font-weight: 700; color: var(--wp-text); }
+.hub-tracks a { min-height: 24px; line-height: 24px; }

@@ -276,6 +276,7 @@
 
 		addNextReadingTime();
 		addLessonBottomBar(chapter);
+		addReadingProgress(body);
 
 		if (footerNav) {
 			body.insertBefore(panel, footerNav);
@@ -788,9 +789,18 @@
 				start.appendChild(document.createTextNode('All lessons complete: try a capstone project'));
 			}
 		}
-		// The "where to start" cards are for first-time visitors; a returning reader gets the Continue button instead.
+		// The "where to start" cards are for first-time visitors; a returning reader gets the Continue button + compact tracks bar.
 		var startCards = document.querySelector('.hub-start');
-		if (startCards && started) startCards.hidden = true;
+		if (startCards && started) {
+			startCards.hidden = true;
+			var tracks = el('nav', { 'class': 'hub-tracks', 'aria-label': 'Learning tracks' }, [
+				el('span', { 'class': 'hub-tracks-label', text: 'Tracks:' }),
+				el('a', { href: 'robotics-1-1.html', text: 'New to robotics' }),
+				el('a', { href: 'robotics-4-1.html', text: 'Software & ROS' }),
+				el('a', { href: 'robotics-oss.html#oss-track', text: 'Open-Source Track' })
+			]);
+			startCards.parentNode.insertBefore(tracks, startCards.nextSibling);
+		}
 
 		// Only the chapter in progress starts open (Chapter 1 for a new visitor), unless the link points into another one.
 		var upNext = nextLesson();
@@ -830,7 +840,28 @@
 		}
 	}
 
-	// Below 1200px there is no side contents panel: a fixed bar gives the chapter, the contents list and the next page.
+	function addReadingProgress(body) {
+		if (document.querySelector('.lesson-read-progress')) return;
+		var bar = el('div', { 'class': 'lesson-read-progress', 'aria-hidden': 'true' }, [
+			el('span', { 'class': 'lesson-read-progress-fill' })
+		]);
+		var fill = bar.firstChild;
+		document.body.appendChild(bar);
+		var ticking = false;
+		function update() {
+			ticking = false;
+			var r = body.getBoundingClientRect();
+			var total = Math.max(1, body.offsetHeight - window.innerHeight * 0.65);
+			var pct = Math.max(0, Math.min(1, (-r.top + window.innerHeight * 0.15) / total));
+			fill.style.transform = 'scaleX(' + pct.toFixed(4) + ')';
+		}
+		window.addEventListener('scroll', function () {
+			if (!ticking) { ticking = true; requestAnimationFrame(update); }
+		}, { passive: true });
+		update();
+	}
+
+	// Below 1200px there is no side contents panel: a fixed bar gives the chapter, the contents list, search and the next page.
 	function addLessonBottomBar(chapter) {
 		if (document.querySelector('.lesson-bottom-bar')) return;
 		var card = nextCard();
@@ -848,6 +879,20 @@
 			list.focus({ preventScroll: true });
 		});
 		bar.appendChild(toc);
+		var searchBtn = el('button', {
+			type: 'button',
+			'class': 'lesson-bottom-search',
+			'aria-label': 'Search course',
+			title: 'Search lessons and glossary',
+			html: '<i class="fas fa-search" aria-hidden="true"></i>'
+		});
+		searchBtn.addEventListener('click', function () {
+			var toggle = document.getElementById('thesis-mobile-btn');
+			if (toggle && toggle.offsetParent !== null) toggle.click();
+			var inp = document.querySelector('.nav-search-drawer input[type="search"]') || document.querySelector('.nav-search input[type="search"]');
+			if (inp) { inp.focus(); inp.select(); }
+		});
+		bar.appendChild(searchBtn);
 		if (card) {
 			var target = card.querySelector('.article-nav-target');
 			var label = (target ? target.textContent : card.textContent).replace(/\s+/g, ' ').trim();
