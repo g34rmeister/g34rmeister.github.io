@@ -1,0 +1,18 @@
+# Step 69: moved and reworded passages in robotics-2-7.html
+
+01. From one cycle to a program that keeps running | Added plain-first opener with nine-slot pallet, empty feeder, and mid-shift restart examples; split long sentences and kept all three open-source program citations intact | [1], [2], [3]
+02. How a RAPID program is organized | Added plain-first opener; simplified routine explanations and main-routine summary; split long sentences while keeping the ROS-Industrial listing byte-for-byte | [1]
+02. How a RAPID program is organized | Moved exact ROS-Industrial main start-up declarations, interrupt wiring lines (IDelete, CONNECT, IPers), ExitCycle source comment, and endless loop into `<details class="deeper">` | [1]
+03. How RAPID data survives a restart: CONST, VAR, and PERS | Reworded heading to state what the reader gets; added plain-first opener with four-part pallet restart example; expanded CONST and VAR on first use; kept PERS quote word-for-word before explanation; split long sentences and semicolon list | [2], [4], [5], [6], [7]
+03. How RAPID data survives a restart: CONST, VAR, and PERS | Moved RPI's literal TASK PERS tooldata declaration into `<details class="deeper">` | [2]
+04. How a URScript and PolyScope program is organized | Added plain-first opener; split long sentences across functions, globals, threads, and RAPID mapping | [3], [8], [9]
+04. How a URScript and PolyScope program is organized | Moved PolyScope 5 vs. PolyScope X node list and version 10.8 Function-to-Thread release note into `<details class="deeper">` | [8], [10], [11]
+05. How to write loops and checks in both languages | Reworded heading; added plain-first opener; expanded bool (boolean) on first use; split long sentences while keeping the ROS-Industrial code block byte-for-byte | [1], [2], [3]
+06. One taught point, nine pallet slots | Split long sentences across Offs, pose_add, pose_trans, and PlaceAt/pallet3x3 explanations while keeping all code blocks byte-for-byte | [12], [13], [14]
+06. One taught point, nine pallet slots | Moved vendor palletizing tools (PolyScope Palletizing node and 5.12 forum report, ABB PickMaster 5 / Palletizing PowerPac / Palletizing Template, FANUC PalletTool and PalletPRO) into `<details class="deeper">` | [8], [15], [16], [17], [18], [19]
+07. How RAPID handles errors: ERROR, ERRNO, and four ways out | Reworded heading; added plain-first opener; expanded ERRNO and EOF on first use; split long sentences while keeping code blocks byte-for-byte | [1], [2], [12], [20], [21]
+07. How RAPID handles errors: ERROR, ERRNO, and four ways out | Moved exact RPI cleanup/re-raise and ROS-Industrial ErrWrite \W / ErrWrite\I lines into `<details class="deeper">` | [1], [2]
+08. The RETRY trap, and how to avoid it | Added plain-first opener; split long sentences across the RETRY trap and TryPick/PickPart fix while keeping both code blocks byte-for-byte | [2], [12]
+08. The RETRY trap, and how to avoid it | Moved ABB IRC5 maximum-retry limit and ResetRetryCount note into `<details class="deeper">` | [22]
+09. Handling errors without exceptions: URScript and FANUC | Reworded heading; added plain-first opener; split long sentences while keeping third-party runtime-error caveat, secondary-source FANUC caveats, and both code blocks byte-for-byte; added plain lead-in expanding I/O right before the verbatim safety paragraph | [3], [13], [14], [23], [24], [25], [26], [27], [28], [29], [30]
+10. Putting it together: a structure that survives restarts | Added plain-first opener with five-slot pallet restart example; split long sentences in prose and checklist while keeping Pallet3x3 code block and diagram intact | [1], [2], [5], [9]

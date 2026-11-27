@@ -1,0 +1,23 @@
+# Step 69: moved and reworded passages in robotics-2-5.html
+
+01. What the robot holds, and how it is told to hold it | Added plain-first opener with suction cups and finger gripper examples; defined flange in plain words; expanded Universal Robots (UR) on first use; split long sentences | (none)
+02. Choosing a gripper family | Added plain-first opener with sealed cardboard box, rough steel bracket, and soft fruit examples; clarified porosity and pneumatic in plain words; split long sentences | (none)
+02. Choosing a gripper family | Moved Robotiq Hand-E March 2024 manual revision example and quote into `<details class="deeper">` | [1]
+03. Vacuum grippers: sizing the cups | Added plain-first opener with 2 kg box example; split holding-force formulas into a list and short sentences; kept safety factors and worked example values exact | [2], [3], [4], [5]
+03. Vacuum grippers: sizing the cups | Moved DaimlerChrysler multistage ejector study (1.1 SCFM, up to 78% less, check valve) and Piab P2010 vendor figures (up to 50% lower, 26 psi) into `<details class="deeper">` | [6], [7]
+04. Finger grippers and soft grippers | Added plain-first opener; reorganized electric, pneumatic, and soft gripper explanations into shorter sentences while keeping force/speed trade-off and power-loss holding in main text | [8], [9], [10], [11], [12], [13]
+04. Finger grippers and soft grippers | Moved RG2 stroke/repeatability/IP54/mass/current specs, Zimmer GEP2000 size/force table, Vention UR package specs, FDA 21 CFR and EC 1935/2004 codes, and washdown patent note into `<details class="deeper">` | [8], [9], [11], [12], [13]
+05. How grippers bolt onto the robot | Renamed heading from "05. Mounting: the ISO 9409-1 flange"; added plain-first opener; introduced ISO 9409-1 in plain words and expanded International Organization for Standardization (ISO) on first use | [14], [15]
+05. How grippers bolt onto the robot | Moved Epson 31.5-4-M5 pattern, Schmalz flange set, and Robotiq Hand-E GRP-CPL-062 coupling into `<details class="deeper">` | [1], [15], [16]
+06. Telling the controller about the tool: payload and center of gravity | Added plain-first opener; expanded collaborative robot (cobot) and application programming interface (API) on first use; kept cobot collision safety warning exact; split long URScript and RAPID sentences | [17], [18], [19], [20], [21], [22]
+06. Telling the controller about the tool: payload and center of gravity | Moved PolyScope < 5.10.0 fallback log message, full UR payload signatures, RAPID `tooldata` field details, exact CoG coordinates (`[10, 0, 80] mm` and `(0.023, 0, 0.075) m`), and `\TLoad` alternative into `<details class="deeper">` | [17], [18], [19], [20], [21], [22]
+07. Where I/O signals connect on UR and ABB robots | Renamed heading from "07. The I/O on a UR and an ABB controller"; added plain-first opener; expanded Robot Operating System (ROS) on first use; split long sentences | [23], [24], [25], [26], [27], [28], [29], [30]
+07. Where I/O signals connect on UR and ABB robots | Moved CB3 M8 connector details and external-supply current limit, NPN/PNP/push-pull mode numbers (1, 2, 3), and IRC5 Compact XS7 500 mA / DeviceNet 20-device limit into `<details class="deeper">` | [26], [27], [28], [29]
+08. Reading and writing I/O in code | Added plain-first opener; expanded programmable logic controller (PLC) on first use; split URScript and RAPID paragraphs into shorter sentences | [17], [30], [31], [32], [33], [34], [35]
+08. Reading and writing I/O in code | Moved CB3 0.008 s vs e-Series 0.002 s cycle-time figures and RAPID `\TimeFlag` Auto-mode note into `<details class="deeper">` | [17], [34]
+09. Confirming the grip and handling failures | Added plain-first opener; split long sentences on suction confirmation, Robotiq URCap, Zimmer feedback, full-close failure, and RG2 power-loss behavior | [8], [9], [10], [30], [36], [37]
+09. Confirming the grip and handling failures | Moved Robotiq `gOBJ` register disagreement note into `<details class="deeper">` | [38], [39]
+10. Worked example: one pick, two languages | Added plain-first opener; turned wiring assumptions into a bullet list without semicolons; split long comparison sentences before and after the RAPID code block | [34]
+11. Handshaking with a PLC | Added plain-first opener; clarified E-stop as emergency stop on first use while keeping `"E-stop OK"`, `"guard door closed"`, and safety-circuit wording exact; split handshake and state-machine sentences without semicolons | [24], [29], [40], [41]
+11. Handshaking with a PLC | Moved FANUC PalletTool signal names (`cycle-ready, pallet-ready, and abort`) into `<details class="deeper">` | [42]
+Try it | Split semicolon in item 2 into two sentences | (none)

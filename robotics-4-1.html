@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT13M",
+            "timeRequired": "PT17M",
             "teaches": [
                 "node",
                 "topic",
@@ -219,66 +219,96 @@
                                 <p>This lesson and <a href="robotics-4-2.html">4.2</a> explain how ROS 2 works. If concepts stick better once you have seen them run, install ROS 2 in <a href="robotics-4-3.html">4.3</a> and drive the turtle in <a href="robotics-4-4.html">4.4</a> first, then come back here. Lesson 4.4 introduces topics and services as you use them.</p>
                             </div>
 
-                            <h2 class="article-section-title">01. Deconstructing the Robot Operating System</h2>
+                            <h2 class="article-section-title">01. What ROS actually is</h2>
                             <p>
-                                The Robot Operating System (ROS) is an open-source ecosystem of frameworks, tools and libraries for building, running and maintaining robot applications.<sup><a href="#ref-1">[1]</a></sup> However, its name is a historical misnomer. The official documentation says plainly that ROS is &ldquo;not an operating system in the traditional sense, but a set of tools and libraries&rdquo; that help developers build robots on various platforms and in various programming languages.<sup><a href="#ref-1">[1]</a></sup> It does not replace Linux, Windows or macOS: it does not schedule CPU time, manage virtual memory or drive hard disks.
+                                Building a robot takes many separate jobs, like reading a camera and spinning motors. You do not have to write all of that software from scratch. The Robot Operating System (ROS) gives you shared building blocks so those parts can talk to each other. Even with &ldquo;operating system&rdquo; in its name, ROS is not like Windows or Linux.
                             </p>
                             <p>
-                                Instead, ROS is best described as <strong>robot middleware</strong>: software that runs on top of a normal host operating system and connects the parts of a robot program. Each ROS 2 distribution targets a specific Ubuntu LTS release, and Windows and macOS are also possible.<sup><a href="#ref-1">[1]</a></sup> The documentation divides the ecosystem into the following areas:<sup><a href="#ref-1">[1]</a></sup>
+                                ROS is an open-source ecosystem of frameworks, tools, and libraries for building, running, and maintaining robot applications.<sup><a href="#ref-1">[1]</a></sup> In everyday words, it is <strong>robot middleware</strong>, meaning software that runs on top of a normal host operating system and connects your robot&rsquo;s programs. The official documentation puts it plainly: ROS is &ldquo;not an operating system in the traditional sense, but a set of tools and libraries&rdquo; that help developers build robots on various platforms and in various programming languages.<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                ROS does not replace Linux, Windows, or macOS. It does not schedule central processing unit (CPU) time, manage virtual memory, or drive hard disks. Each ROS 2 distribution targets a specific Ubuntu Long Term Support (LTS) release, and Windows and macOS are also possible.<sup><a href="#ref-1">[1]</a></sup> The documentation divides the ecosystem into five main areas:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Framework (the &ldquo;plumbing&rdquo;):</span> Messaging, standard interfaces and support for several programming languages, so that, for example, a camera can send images to a processing node or a planner can send commands to a motor controller. Its basic parts are nodes, interfaces (topics, services and actions), parameters and client libraries.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Tools:</span> Utilities for introspection, analysis, launching nodes, debugging, building, visualization (such as showing a robot's sensors in 3D) and recording and playing back data.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Capabilities:</span> Ready-to-use packages for simulation, motion planning, navigation, manipulation and perception, so developers do not start from scratch.<sup><a href="#ref-1">[1]</a></sup> The 2025 ROS Metrics Report counted 34,614 unique ROS packages available through apt.<sup><a href="#ref-2">[2]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Community and integrations:</span> Contributors, plus related Open Robotics platforms such as the Gazebo simulator, Open-RMF for coordinating fleets with building systems, and ros-controls for real-time control.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Build and dependency tools:</span> The <code>colcon</code> build tool builds whole workspaces of packages,<sup><a href="#ref-3">[3]</a></sup> and <code>rosdep</code> installs the system libraries those packages depend on.<sup><a href="#ref-4">[4]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Framework (the &ldquo;plumbing&rdquo;):</span> Messaging, standard interfaces, and support for several programming languages. For example, a camera can send images to a processing node, or a planner can send commands to a motor controller. Its basic parts are nodes, interfaces (topics, services, and actions), parameters, and client libraries.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Tools:</span> Utilities for inspecting what running programs are doing, analyzing data, launching nodes, and debugging. They also help you build code, visualize sensors in three dimensions (3D), and record and play back data.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Capabilities:</span> Ready-to-use packages for simulation, motion planning, navigation, manipulation, and perception, so you do not start from scratch.<sup><a href="#ref-1">[1]</a></sup> The 2025 ROS Metrics Report counted 34,614 unique ROS packages available through <code>apt</code>.<sup><a href="#ref-2">[2]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Community and integrations:</span> Contributors, plus related Open Robotics platforms. These include the Gazebo simulator, Open-RMF for coordinating fleets with building systems, and ros-controls for real-time control.<sup><a href="#ref-1">[1]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Build and dependency tools:</span> The <code>colcon</code> build tool builds whole workspaces of packages.<sup><a href="#ref-3">[3]</a></sup> Meanwhile, <code>rosdep</code> installs the system libraries those packages depend on.<sup><a href="#ref-4">[4]</a></sup></li>
                             </ul>
 
-                            <h2 class="article-section-title">02. Historical roots: Stanford and Willow Garage</h2>
+                            <h2 class="article-section-title">02. How ROS started</h2>
                             <p>
-                                The roots of ROS lie at Stanford University. Morgan Quigley, then a student on Andrew Ng's STAIR (Stanford AI Robot) project, built a message-passing system called Switchyard, which he describes as &ldquo;our first attempt at having the STAIR Project work together.&rdquo;<sup><a href="#ref-5">[5]</a></sup> At the same time, Eric Berger and Keenan Wyrobek were running the Personal Robotics Program in Ken Salisbury's lab at Stanford, and they saw that robotics researchers kept rebuilding the same basic software from scratch.<sup><a href="#ref-5">[5]</a></sup>
+                                Before ROS existed, robotics teams kept rebuilding the same basic software over and over. Every new robot needed custom code just to pass messages between cameras, planners, and motors. ROS began as a way to stop repeating that work and share code instead. You can skim the names and dates here on a first read.
                             </p>
                             <p>
-                                In 2007, Scott Hassan bought a building at 68 Willow Road and funded a robotics research lab there, Willow Garage, which drew heavily on this Stanford work.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> Willow Garage built the PR2 (Personal Robot 2), a two-armed mobile manipulator, and ROS began life as the development environment for it.<sup><a href="#ref-7">[7]</a></sup> The ROS team dates the start of its work to November 2007.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                                The roots of ROS lie at Stanford University. Morgan Quigley worked there as a student on Andrew Ng&rsquo;s artificial intelligence (AI) project, STAIR (Stanford AI Robot). He built a message-passing system called Switchyard. He describes it as &ldquo;our first attempt at having the STAIR Project work together.&rdquo;<sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
-                                In 2009, Quigley, Gerkey and colleagues presented the paper &ldquo;ROS: an open-source Robot Operating System&rdquo;. They presented it at the ICRA Workshop on Open Source Software in Kobe, Japan, held with the IEEE International Conference on Robotics and Automation.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-5">[5]</a></sup> In May 2012 the Open Source Robotics Foundation (OSRF) was created as one of several spin-offs of Willow Garage, to continue developing ROS and the Gazebo simulator.<sup><a href="#ref-6">[6]</a></sup>
+                                At the same time, Eric Berger and Keenan Wyrobek ran the Personal Robotics Program in Ken Salisbury&rsquo;s lab at Stanford. They saw that robotics researchers kept rebuilding the same basic software from scratch.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
+                            <p>
+                                In 2007, Scott Hassan funded a robotics research lab called Willow Garage, drawing heavily on this Stanford work.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> Willow Garage built the PR2 (Personal Robot 2), a two-armed mobile manipulator. ROS began life as the development environment for that robot.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                In 2009, researchers introduced ROS in a public paper.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-5">[5]</a></sup> Later, in May 2012, the Open Source Robotics Foundation (OSRF) was created as one of several spin-offs of Willow Garage. Its goal was to continue developing ROS and the Gazebo simulator.<sup><a href="#ref-6">[6]</a></sup>
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: Willow Garage address, exact dates, and the 2009 paper</summary>
+                                <p>Scott Hassan bought a building at 68 Willow Road for Willow Garage.<sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-6">[6]</a></sup> The ROS team dates the start of its work to November 2007.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-5">[5]</a></sup></p>
+                                <p>In 2009, Quigley, Gerkey, and colleagues presented the paper &ldquo;ROS: an open-source Robot Operating System&rdquo;. They presented it in Kobe, Japan, at a workshop held with the Institute of Electrical and Electronics Engineers (IEEE) International Conference on Robotics and Automation (ICRA), the ICRA Workshop on Open Source Software.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-5">[5]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">03. The node-based computational graph</h2>
+                            <h2 class="article-section-title">03. Splitting a robot into nodes</h2>
                             <p>
-                                In ROS 2, a robot application is organized as a <strong>graph</strong> of participants that process and exchange data.<sup><a href="#ref-9">[9]</a></sup> The basic participant in this graph is the <strong>node</strong>: a unit of computation that should do one logical thing.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> Nodes can talk to other nodes in the same process, in a different process or on a different machine.<sup><a href="#ref-9">[9]</a></sup>
+                                A robot does many things at once, like reading sensors, planning a route, and spinning wheels. Putting all of that code into one giant program makes it hard to test and fix. Instead, ROS 2 splits your robot software into small, single-job programs called <strong>nodes</strong>. If a camera program crashes, the motor controller can keep running safely.
+                            </p>
+                            <p>
+                                In ROS 2, a robot application is organized as a <strong>graph</strong> of participants that process and exchange data.<sup><a href="#ref-9">[9]</a></sup> The basic participant in this graph is the <strong>node</strong>, a unit of computation that should do one logical thing.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> Nodes can talk to other nodes in the same process, in a different process, or on a different machine.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
                                 As an illustration (our own example), an autonomous delivery robot might be split into five nodes:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item">One node talks to the lidar hardware over Ethernet, reads raw laser returns and packages them into messages.</li>
-                                <li class="article-spec-item">A second node reads optical wheel encoders and computes dead-reckoning odometry (estimating the robot&rsquo;s change in position by accumulating wheel rotations measured by encoders).</li>
-                                <li class="article-spec-item">A third node uses the lidar scans and odometry to build a 2D occupancy grid map with Simultaneous Localization and Mapping (SLAM).</li>
+                                <li class="article-spec-item">One node talks to the lidar hardware over Ethernet. It reads raw laser returns and packages them into messages.</li>
+                                <li class="article-spec-item">A second node reads optical wheel encoders and computes dead-reckoning odometry. That means estimating the robot&rsquo;s change in position by accumulating wheel rotations measured by encoders.</li>
+                                <li class="article-spec-item">A third node uses the lidar scans and odometry to build a two-dimensional (2D) occupancy grid map with Simultaneous Localization and Mapping (SLAM).</li>
                                 <li class="article-spec-item">A fourth node computes an obstacle-free trajectory to a target coordinate.</li>
                                 <li class="article-spec-item">A fifth node turns the trajectory into velocity commands for the motor controllers.</li>
                             </ul>
                             <p>
-                                Splitting a robot into small nodes also helps when things go wrong. Because nodes can run as separate processes,<sup><a href="#ref-9">[9]</a></sup> a crash in the camera driver (for example, after a USB glitch) does not have to take down the motor controller or a safety monitor running in other processes. The driver can be restarted on its own without rebooting the robot.
+                                Splitting a robot into small nodes also helps when things go wrong. Because nodes can run as separate processes,<sup><a href="#ref-9">[9]</a></sup> a crash in one node does not have to stop the rest. For example, a Universal Serial Bus (USB) glitch might crash the camera driver. That crash does not have to take down the motor controller or a safety monitor running in other processes. You can restart the driver on its own without rebooting the robot.
                             </p>
 
-                            <h2 class="article-section-title">04. Topics and the publish-subscribe pattern</h2>
+                            <h2 class="article-section-title">04. Topics: streaming data between nodes</h2>
                             <p>
-                                The most common way nodes exchange information is through <strong>topics</strong>, which the documentation recommends for continuous data streams such as sensor data and robot state.<sup><a href="#ref-11">[11]</a></sup> A topic is a named channel that nodes publish messages to and subscribe to; any number of other nodes can subscribe to the information a node publishes.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-12">[12]</a></sup>
+                                Once your robot has separate nodes, they need a way to share live updates. Think of a radio station or a live news feed. One node broadcasts sensor readings, and any node that cares can tune in to listen. In ROS 2, those broadcast channels are called <strong>topics</strong>.
                             </p>
                             <p>
-                                Topics implement the <strong>publish-subscribe</strong> pattern. A node that produces data is a <em>publisher</em>, and a node that consumes it is a <em>subscriber</em>.<sup><a href="#ref-11">[11]</a></sup> The documentation calls ROS 2 a &ldquo;strongly-typed, anonymous publish/subscribe system&rdquo;:<sup><a href="#ref-11">[11]</a></sup>
+                                Topics are the most common way nodes exchange information. The documentation recommends them for continuous data streams such as sensor data and robot state.<sup><a href="#ref-11">[11]</a></sup> A topic is a named channel that nodes publish messages to and subscribe to. Any number of other nodes can subscribe to the information a node publishes.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                Topics use the <strong>publish-subscribe</strong> pattern. A node that produces data is a <em>publisher</em>. A node that consumes it is a <em>subscriber</em>.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                In everyday words, nodes do not need to know who they are talking to, and every message has a checked layout. The documentation calls ROS 2 a &ldquo;strongly-typed, anonymous publish/subscribe system&rdquo;:<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Anonymous Communication:</span> A subscriber generally does not know or care which publisher sent a piece of data. Publishers and subscribers can therefore be swapped without affecting the rest of the system.<sup><a href="#ref-11">[11]</a></sup> For example, a lidar driver can publish scans to <code>/scan</code> while a mapping node, an obstacle detector and a visualization tool on an engineer's laptop all subscribe at once.</li>
-                                <li class="article-spec-item"><span class="spec-label">Many-to-Many Decoupling:</span> A topic can have zero or more publishers and zero or more subscribers, and every subscriber receives the data published by any publisher. Tools such as <code>ros2 bag record</code> work by simply adding another subscriber.<sup><a href="#ref-11">[11]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Strict Message Typing:</span> Every field in a ROS message has a type that is enforced, and message types are described in <code>.msg</code> files.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-13">[13]</a></sup> For example, the standard <code>sensor_msgs/msg/LaserScan</code> message holds a header with a timestamp, the start and end angles of the scan, the angle increment between beams, and arrays of ranges and intensities.<sup><a href="#ref-14">[14]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Anonymous Communication:</span> A subscriber generally does not know or care which publisher sent a piece of data. You can swap out publishers and subscribers without affecting the rest of the system.<sup><a href="#ref-11">[11]</a></sup> For example, a lidar driver can publish scans to <code>/scan</code>. A mapping node, an obstacle detector, and a visualization tool on an engineer&rsquo;s laptop can all subscribe at once.</li>
+                                <li class="article-spec-item"><span class="spec-label">Many-to-Many Decoupling:</span> A topic can have zero or more publishers and zero or more subscribers. Every subscriber receives the data published by any publisher. Tools such as <code>ros2 bag record</code> work by simply adding another subscriber.<sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Strict Message Typing:</span> Every field in a ROS message has a type that is enforced. Message types are described in <code>.msg</code> files.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-13">[13]</a></sup> For example, a lidar scan uses the standard <code>sensor_msgs/msg/LaserScan</code> message.</li>
                             </ul>
+                            <details class="deeper">
+                                <summary>For the curious: what is inside a LaserScan message</summary>
+                                <p>The standard <code>sensor_msgs/msg/LaserScan</code> message holds a header with a timestamp, the start and end angles of the scan, the angle increment between beams, and arrays of ranges and intensities.<sup><a href="#ref-14">[14]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">05. The lidar, SLAM, and path planning pipeline</h2>
+                            <h2 class="article-section-title">05. Putting nodes and topics together</h2>
                             <p>
-                                The diagram below shows three decoupled nodes that guide an autonomous robot by communicating over two named topics. Publishing and subscribing to named topics is the mechanism the ROS documentation describes; the node names are our own example.<sup><a href="#ref-12">[12]</a></sup>
+                                Let us trace how nodes and topics work together on a real job. Imagine an autonomous robot trying to cross a room without hitting anything. One node reads the laser scanner, a second draws the map, and a third plans the route. Each node only connects to the topics it needs.
+                            </p>
+                            <p>
+                                The diagram below shows three decoupled nodes guiding an autonomous robot over two named topics. Publishing and subscribing to named topics is the mechanism the ROS documentation describes. The node names here are our own example.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
                             <figure class="lesson-diagram">
                                 <svg viewBox="0 0 680 190" role="img" aria-label="Diagram: lidar_driver node publishes /scan, slam node subscribes to /scan and publishes /map, planner node subscribes to /map" xmlns="http://www.w3.org/2000/svg">
@@ -288,15 +318,21 @@
                                 <figcaption>Nodes publish to topics and subscribe to them. The lidar driver never needs to know which nodes use its scans.</figcaption>
                             </figure>
                             <p>
-                                In this example pipeline, the <code>lidar_driver</code> publishes <code>sensor_msgs/msg/LaserScan</code> data to <code>/scan</code> (say, at 20 Hz). The <code>slam</code> node subscribes to <code>/scan</code>, estimates the robot's motion, and publishes updated 2D occupancy grids to the <code>/map</code> topic. The <code>planner</code> node subscribes to <code>/map</code>, computes an obstacle-free route, and outputs velocity targets. Because topics are anonymous, the driver and the planner never need to know that the other exists.<sup><a href="#ref-11">[11]</a></sup>
+                                Here is how data flows through this example pipeline. First, the <code>lidar_driver</code> node publishes <code>sensor_msgs/msg/LaserScan</code> data to <code>/scan</code> (say, at 20 hertz (Hz), or 20 times a second). Next, the <code>slam</code> node subscribes to <code>/scan</code>, estimates the robot&rsquo;s motion, and publishes updated 2D occupancy grids to the <code>/map</code> topic. Finally, the <code>planner</code> node subscribes to <code>/map</code>, computes an obstacle-free route, and outputs velocity targets. Because topics are anonymous, the driver and the planner never need to know that the other exists.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">06. Services: request-response transactions</h2>
+                            <h2 class="article-section-title">06. Services: asking for a quick answer</h2>
                             <p>
-                                Topics suit continuous data flows, but robots also need to ask one-off questions and get an answer. Examples include asking a node to save the current map to disk or to report a battery's health. In ROS 2 these are handled by a remote procedure call, where one node asks another to do a computation and return a result.<sup><a href="#ref-15">[15]</a></sup>
+                                Topics fit steady data streams, but robots also need to ask one-off questions and get a reply. For example, you might ask a node to save the current map to disk or report a battery&rsquo;s health. You do not need a constant broadcast for that. You want a single request followed by a clear answer.
                             </p>
                             <p>
-                                For these transactions, ROS provides <strong>services</strong>.<sup><a href="#ref-15">[15]</a></sup> A service has a server, which does the work, and one or more clients, which send requests; there should only ever be one server per service name.<sup><a href="#ref-15">[15]</a></sup> Client libraries let a client wait for the answer synchronously or continue working and collect it asynchronously.<sup><a href="#ref-16">[16]</a></sup> A service is defined in a <code>.srv</code> file made of a request part and a response part separated by three hyphens (<code>---</code>).<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-13">[13]</a></sup> The standard <code>std_srvs/srv/Trigger</code> service, for example, has an empty request and a response with a success flag and a message:<sup><a href="#ref-17">[17]</a></sup>
+                                In ROS 2, those one-off jobs use a remote procedure call. That means one node asks another node to run a calculation and return a result.<sup><a href="#ref-15">[15]</a></sup>
+                            </p>
+                            <p>
+                                For these transactions, ROS provides <strong>services</strong>.<sup><a href="#ref-15">[15]</a></sup> A service has a <em>server</em>, which does the work, and one or more <em>clients</em>, which send requests. There should only ever be one server per service name.<sup><a href="#ref-15">[15]</a></sup> Client libraries let a client wait for the answer synchronously, or keep working and collect it asynchronously.<sup><a href="#ref-16">[16]</a></sup>
+                            </p>
+                            <p>
+                                You define a service in a <code>.srv</code> file. It has a request part and a response part separated by three hyphens (<code>---</code>).<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-13">[13]</a></sup> For example, the standard <code>std_srvs/srv/Trigger</code> service has an empty request and a response with a success flag and a message:<sup><a href="#ref-17">[17]</a></sup>
                             </p>
                             <pre class="article-code"><code># Example: Trigger.srv
 ---
@@ -306,15 +342,18 @@ string message</code></pre>
                                 When a client node calls a service, it sends a typed request to the server node. The server processes the request and returns a typed response, so the caller learns whether the request succeeded.<sup><a href="#ref-18">[18]</a></sup><sup><a href="#ref-17">[17]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">07. Actions: preemptible goals with feedback</h2>
+                            <h2 class="article-section-title">07. Actions: running long tasks you can cancel</h2>
                             <p>
-                                Some tasks take ten seconds, two minutes or half an hour. Examples include having a robot arm pick up a bin, or sending an autonomous rover to a waypoint 50 meters down a warehouse corridor.
+                                Some robot tasks take ten seconds, two minutes, or half an hour. For example, a robot arm might pick up a bin, or an autonomous rover might drive to a waypoint 50 meters down a warehouse corridor. For jobs that long, you want progress updates while the robot works. You also need a way to cancel the job if something changes.
                             </p>
                             <p>
-                                A topic gives no built-in acknowledgment that the job is done. A service is the wrong tool too. The documentation says services are expected to return quickly because the client is generally waiting. They should never be used for long-running processes that might need to be preempted, for example if a person walks in front of the robot.<sup><a href="#ref-15">[15]</a></sup>
+                                A topic gives no built-in confirmation that the job is done. A service is the wrong tool too. The documentation says services are expected to return quickly because the client is generally waiting. They should never be used for long-running processes that might need to be preempted, for example if a person walks in front of the robot.<sup><a href="#ref-15">[15]</a></sup>
                             </p>
                             <p>
-                                For these tasks, ROS provides <strong>actions</strong>: long-running remote procedure calls with feedback and the ability to cancel or preempt the goal.<sup><a href="#ref-19">[19]</a></sup> An action is defined in an <code>.action</code> file with three parts, goal, result and feedback, separated by <code>---</code>.<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-13">[13]</a></sup> The example below is a simplified version of the <code>NavigateToPose</code> action used by the Nav2 navigation stack; the real definition also includes a behavior tree name, error codes and more feedback fields.<sup><a href="#ref-20">[20]</a></sup>
+                                For these tasks, ROS provides <strong>actions</strong>. An action is a long-running remote procedure call with feedback and the ability to cancel or preempt the goal.<sup><a href="#ref-19">[19]</a></sup> You define an action in an <code>.action</code> file with three parts: goal, result, and feedback, separated by <code>---</code>.<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <p>
+                                The example below is a simplified version of the <code>NavigateToPose</code> action used by the Nav2 navigation stack. The real definition also includes a behavior tree name, error codes, and more feedback fields.<sup><a href="#ref-20">[20]</a></sup>
                             </p>
                             <pre class="article-code"><code># Simplified from nav2_msgs/action/NavigateToPose.action
 geometry_msgs/PoseStamped pose          # 1. Goal: where to go
@@ -324,29 +363,36 @@ uint16 error_code                       # 2. Result: final outcome
 geometry_msgs/PoseStamped current_pose  # 3. Feedback: periodic updates
 float32 distance_remaining</code></pre>
                             <p>
-                                An action client sends a goal to the action server. While the robot drives, the server sends feedback (for example, the distance remaining). If the operator presses a cancel button, the client can cancel the goal, and the server is expected to react to the cancellation. When the task finishes, the server returns the final result.<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-21">[21]</a></sup>
+                                Here is how an action runs. First, an action client sends a goal to the action server. While the robot drives, the server sends feedback, such as the distance remaining. If you press a cancel button, the client can cancel the goal, and the server is expected to react to the cancellation. When the task finishes, the server returns the final result.<sup><a href="#ref-19">[19]</a></sup><sup><a href="#ref-21">[21]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">08. Local parameters in ROS 2</h2>
+                            <h2 class="article-section-title">08. Parameters: settings for each node</h2>
                             <p>
-                                In ROS 1, <code>roscore</code> acted like a global parameter blackboard where every node could get and set parameters.<sup><a href="#ref-22">[22]</a></sup> Because the store was shared, one package could change a value another package relied on.
+                                Robots often have settings you want to tune, such as controller gains or speed limits. You should not have to edit code and restart the robot every time you tweak a number. In ROS 2, each node keeps its own live settings called <strong>parameters</strong>.
                             </p>
                             <p>
-                                In ROS 2, parameters belong to the individual node that uses them, and their lifetime is tied to that node.<sup><a href="#ref-23">[23]</a></sup><sup><a href="#ref-22">[22]</a></sup> By default a node must declare every parameter it accepts, and each parameter value has one of a fixed set of types: <code>bool</code>, <code>int64</code>, <code>float64</code>, <code>string</code>, <code>byte[]</code>, or arrays of bool, int64, float64 or string. A parameter's descriptor can also hold a description and a valid value range.<sup><a href="#ref-23">[23]</a></sup> Parameters can be changed on the command line with <code>ros2 param set</code>, and saved to or loaded from YAML files.<sup><a href="#ref-24">[24]</a></sup> Nodes can register callbacks that check or react to parameter changes while running, so values such as controller gains can be tuned without restarting the process.<sup><a href="#ref-23">[23]</a></sup>
+                                In ROS 1, a program called <code>roscore</code> acted like a global parameter blackboard where every node could get and set parameters.<sup><a href="#ref-22">[22]</a></sup> Because that store was shared, one package could change a value another package relied on.
                             </p>
+                            <p>
+                                In ROS 2, parameters belong to the individual node that uses them. Their lifetime is tied to that node.<sup><a href="#ref-23">[23]</a></sup><sup><a href="#ref-22">[22]</a></sup> You can change parameters on the command line with <code>ros2 param set</code>. You can also save them to or load them from YAML files.<sup><a href="#ref-24">[24]</a></sup> Nodes can register callbacks that check or react to parameter changes while running. That lets you tune values such as controller gains without restarting the process.<sup><a href="#ref-23">[23]</a></sup>
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: allowed parameter types and descriptors</summary>
+                                <p>By default, a node must declare every parameter it accepts. Each parameter value has one of a fixed set of types: <code>bool</code>, <code>int64</code>, <code>float64</code>, <code>string</code>, <code>byte[]</code>, or arrays of <code>bool</code>, <code>int64</code>, <code>float64</code>, or <code>string</code>. A parameter&rsquo;s descriptor can also hold a description and a valid value range.<sup><a href="#ref-23">[23]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">09. Network isolation: ROS_DOMAIN_ID</h2>
+                            <h2 class="article-section-title">09. Keeping robots separate on shared Wi-Fi: ROS_DOMAIN_ID</h2>
                             <p>
-                                ROS 2's default middleware is DDS, and nodes find each other automatically through that middleware. A new node advertises itself to other nodes in the same ROS domain, and they reply with information about themselves.<sup><a href="#ref-25">[25]</a></sup><sup><a href="#ref-26">[26]</a></sup> DDS discovery uses multicast, so the network interface must have multicast enabled.<sup><a href="#ref-27">[27]</a></sup>
+                                When you start a ROS 2 robot, its nodes find each other automatically on the network. That saves you from typing addresses by hand. On a shared network, however, automatic search can cause chaos. Picture ten students turning on ten TurtleBots on the same school Wi-Fi. With default settings, your drive commands could move everyone else&rsquo;s robot too.
                             </p>
                             <p>
-                                This automatic discovery creates a real problem in classrooms, university labs and multi-robot factories. Suppose ten students turn on ten TurtleBots on the same school Wi-Fi network with default settings. Every computer can then discover every robot, and a student teleoperating their robot on <code>/cmd_vel</code> may drive other robots in the room. The ROS documentation warns that running several ROS 2 systems on one network can cause this kind of interference.<sup><a href="#ref-27">[27]</a></sup>
+                                ROS 2&rsquo;s default middleware is Data Distribution Service (DDS), and nodes find each other through it automatically. A new node advertises itself to other nodes in the same ROS domain, and they reply with information about themselves.<sup><a href="#ref-25">[25]</a></sup><sup><a href="#ref-26">[26]</a></sup> DDS discovery uses multicast, so the network interface must have multicast enabled.<sup><a href="#ref-27">[27]</a></sup>
                             </p>
                             <p>
-                                To isolate robots on a shared network, ROS 2 provides the <strong>ROS_DOMAIN_ID</strong> environment variable. Nodes on the same domain can discover and message each other, while nodes on different domains cannot.<sup><a href="#ref-26">[26]</a></sup> The documentation recommends choosing a domain ID between 0 and 101 inclusive. The highest ID that can be assigned at all is 232, and IDs above 101 can collide with the Linux ephemeral port range.<sup><a href="#ref-26">[26]</a></sup> DDS uses the domain ID to calculate its UDP ports.<sup><a href="#ref-26">[26]</a></sup>
+                                That automatic discovery creates a real problem in classrooms, university labs, and multi-robot factories. If ten students run ten TurtleBots on the same Wi-Fi with default settings, every computer can discover every robot. A student teleoperating their robot on <code>/cmd_vel</code> may drive other robots in the room. The ROS documentation warns that running several ROS 2 systems on one network can cause this kind of interference.<sup><a href="#ref-27">[27]</a></sup>
                             </p>
                             <p>
-                                The ports follow the port mapping of the DDS wire protocol (RTPS), with a port base of 7400, a domain gain of 250 and a participant gain of 2:<sup><a href="#ref-26">[26]</a></sup><sup><a href="#ref-28">[28]</a></sup>
+                                To isolate robots on a shared network, ROS 2 provides the <strong>ROS_DOMAIN_ID</strong> environment variable. Nodes on the same domain can discover and message each other. Nodes on different domains cannot.<sup><a href="#ref-26">[26]</a></sup> Behind the scenes, DDS uses the domain ID to calculate its User Datagram Protocol (UDP) ports.<sup><a href="#ref-26">[26]</a></sup> You can test how those ports are calculated in the tool and formulas below.
                             </p>
 
                             <div data-widget="ros-domain-id">
@@ -363,32 +409,49 @@ float32 distance_remaining</code></pre>
                             </p>
                             <pre class="article-code"><code>export ROS_DOMAIN_ID=7</code></pre>
                             <p>
-                                That team's multicast discovery traffic then moves from port 7400 to port 9150 (7400 + 250 &times; 7). Nodes on domain 7 cannot discover or exchange messages with nodes on domain 0, 1 or 42.<sup><a href="#ref-26">[26]</a></sup>
+                                That team&rsquo;s multicast discovery traffic then moves from port 7400 to port 9150 (7400 + 250 &times; 7). Nodes on domain 7 cannot discover or exchange messages with nodes on domain 0, 1, or 42.<sup><a href="#ref-26">[26]</a></sup>
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: domain ID limits and the DDS wire protocol</summary>
+                                <p>The ROS documentation recommends choosing a domain ID between 0 and 101 inclusive. The highest ID that can be assigned at all is 232, and IDs above 101 can collide with the Linux ephemeral port range.<sup><a href="#ref-26">[26]</a></sup></p>
+                                <p>The port formulas follow the port mapping of the DDS wire protocol, Real-Time Publish-Subscribe (RTPS). That protocol uses a port base of 7400, a domain gain of 250, and a participant gain of 2.<sup><a href="#ref-26">[26]</a></sup><sup><a href="#ref-28">[28]</a></sup></p>
+                            </details>
+
+                            <h2 class="article-section-title">10. ROS by the numbers</h2>
+                            <p>
+                                When you learn ROS 2, you are learning a tool used across the robotics world, not just in one classroom. Its packages and patterns carry over to many kinds of real hardware. You can skim the exact download numbers on a first read.
+                            </p>
+                            <p>
+                                ROS has grown far beyond the single PR2 research robot it was built for. Today it runs on wheeled robots of all sizes, humanoids, industrial arms, self-driving cars, aerial vehicles, and more.<sup><a href="#ref-7">[7]</a></sup>
+                            </p>
+                            <p>
+                                Open Robotics publishes a periodic <em>ROS Metrics Report</em>.<sup><a href="#ref-2">[2]</a></sup> The 2025 report counted 984,135,185 ROS package downloads in 2025, an 85% increase over 2024. It describes its figures as a lower bound because some data was lost.<sup><a href="#ref-2">[2]</a></sup> The report also shows the move to ROS 2. In October 2025, ROS 2 packages made up 91.2% of all ROS downloads.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                The same report counted 34,614 unique ROS packages available through <code>apt</code>, which is 9% more than a year earlier. Those packages cover everything from drivers and simulators to complete navigation and manipulation stacks.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-1">[1]</a></sup>
                             </p>
 
-                            <h2 class="article-section-title">10. Global adoption and metrics</h2>
+                            <h2 class="article-section-title">11. Who runs the ROS 2 project</h2>
                             <p>
-                                ROS has grown far beyond the single PR2 research robot it was built for. It is now used on wheeled robots of all sizes, humanoids, industrial arms, self-driving cars, aerial vehicles and more.<sup><a href="#ref-7">[7]</a></sup>
+                                When an open-source tool powers thousands of companies, no single business should control it alone. ROS 2 uses a shared governance model so hardware makers, software teams, and researchers all have a voice. That keeps the project neutral and sustainable over time.
                             </p>
                             <p>
-                                Open Robotics publishes a periodic <em>ROS Metrics Report</em>.<sup><a href="#ref-2">[2]</a></sup> The 2025 report counted 984,135,185 ROS package downloads in 2025, an 85% increase over 2024, and describes its figures as a lower bound because some data was lost.<sup><a href="#ref-2">[2]</a></sup> The report also shows the move to ROS 2: in October 2025, ROS 2 packages made up 91.2% of all ROS downloads.<sup><a href="#ref-2">[2]</a></sup>
+                                To keep ROS neutral and sustainable, its governance changed in 2024. The Open Source Robotics Foundation announced the <strong>Open Source Robotics Alliance (OSRA)</strong>, and since 2024 the ROS 2 project has been governed through it.<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-30">[30]</a></sup>
                             </p>
                             <p>
-                                The same report counted 34,614 unique ROS packages available through apt, 9% more than a year earlier, covering everything from drivers and simulators to complete navigation and manipulation stacks.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-1">[1]</a></sup>
+                                The OSRA is a membership organization that looks after ROS, Gazebo, Open-RMF, and their supporting infrastructure.<sup><a href="#ref-29">[29]</a></sup> A higher committee oversees all OSRA projects, while a ROS Project Management Committee runs the day-to-day work on ROS 2, including reviewing code and making technical decisions.<sup><a href="#ref-30">[30]</a></sup>
                             </p>
-
-                            <h2 class="article-section-title">11. Governance and the Open Source Robotics Alliance</h2>
-                            <p>
-                                To keep ROS neutral and sustainable, its governance changed in 2024. On 18 March 2024, the Open Source Robotics Foundation announced the <strong>Open Source Robotics Alliance (OSRA)</strong>, and since 2024 the ROS 2 project has been governed through it.<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-30">[30]</a></sup>
-                            </p>
-                            <p>
-                                The OSRA is a membership organization. Its inaugural members included Intrinsic, NVIDIA and Qualcomm Technologies (Platinum), Apex.AI and Zettascale (Gold), and Clearpath Robotics, Ekumen, eProsima and PickNik (Silver). The OSRF Board assigned it ROS, Gazebo, Open-RMF and their supporting infrastructure.<sup><a href="#ref-29">[29]</a></sup> A Technical Governance Committee oversees all OSRA projects, and a ROS Project Management Committee runs the day-to-day work on ROS 2, including reviewing and merging code and making technical decisions.<sup><a href="#ref-30">[30]</a></sup>
-                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: OSRA founding date, inaugural members, and committees</summary>
+                                <p>The Open Source Robotics Foundation announced the Open Source Robotics Alliance (OSRA) on 18 March 2024. The OSRF Board assigned it ROS, Gazebo, Open-RMF, and their supporting infrastructure.<sup><a href="#ref-29">[29]</a></sup></p>
+                                <p>Its inaugural members included Intrinsic, NVIDIA, and Qualcomm Technologies (Platinum), Apex.AI and Zettascale (Gold), and Clearpath Robotics, Ekumen, eProsima, and PickNik (Silver).<sup><a href="#ref-29">[29]</a></sup></p>
+                                <p>A Technical Governance Committee oversees all OSRA projects. The ROS Project Management Committee runs the day-to-day work on ROS 2, including reviewing and merging code and making technical decisions.<sup><a href="#ref-30">[30]</a></sup></p>
+                            </details>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
-                                    <li>Categorize each of the following tasks as best suited for a Topic, a Service, or an Action: (a) streaming 30 fps video from a depth camera; (b) navigating a mobile robot across a room to docking station 4; (c) setting a digital gripper output to release a part. Justify your choices.</li>
+                                    <li>Categorize each of the following tasks as best suited for a Topic, a Service, or an Action: (a) streaming 30 frames per second (fps) video from a depth camera; (b) navigating a mobile robot across a room to docking station 4; (c) setting a digital gripper output to release a part. Justify your choices.</li>
                                     <li>Calculate the multicast discovery port that DDS will assign if you configure your robot with <code>export ROS_DOMAIN_ID=12</code>.</li>
                                     <li>Why is it safer for an industrial robot to split the work into separate nodes that do not wait for each other, rather than run all motor drivers and computer vision logic inside one big loop?</li>
                                 </ol>
@@ -470,7 +533,7 @@ float32 distance_remaining</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=950a82b7" defer></script>
+            <script src="assets/js/course-data.js?v=78ce5dd6" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
             <script src="assets/js/widgets.js?v=b3de63b6" defer></script>

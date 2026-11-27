@@ -1,0 +1,19 @@
+# Step 69: moved and reworded passages in robotics-2-2.html
+
+01. Why robots need special programming tools | Reworded heading; added plain-first opener with factory arm and gripper example; expanded 3D, PC, and UR on first use; split long sentences | [1], [2], [3]
+02. Simulating a robot on a PC: ABB RobotStudio | Reworded heading; added plain-first opener; added plain explanation before Virtual Controller quote; split long sentences | [2], [4], [5], [6]
+03. How simulation matches real robot motion | Reworded heading; added plain-first opener with two-robot packaging cell example; added plain explanations before TrueMove and QuickMove quotes; split long sentences | [5], [6]
+03. How simulation matches real robot motion | Moved the early RobotStudio specification caveat (0.1 s too fast per cycle and non-motion wait instructions excluded) into `<details class="deeper">` | [4]
+04. Creating robot paths from 3D models and add-ins | Reworded heading; added plain-first opener with curved sheet metal edge example; expanded CAD and CAM on first use; split path-generation sentences | [4], [5], [7], [8], [9], [10]
+04. Creating robot paths from 3D models and add-ins | Moved Spatial ACIS 3D geometry kernel, InterOp translators, and standard/optional CAD file format list (IGES, STEP, VDAFS, CATIA, STL, VRML) into `<details class="deeper">` while keeping CAD import claim in main text to preserve ref order | [4], [7]
+05. Virtual commissioning: testing signals before power-on | Reworded heading; added plain-first opener with conveyor and gripper example; put plain explanation before virtual commissioning quote; split long sentences | [1]
+05. Virtual commissioning: testing signals before power-on | Moved Raffaeli et al. PLC Smart Component, Beckhoff TwinCAT PLC, and OPC protocol integration details into `<details class="deeper">` | [1]
+06. Programming on a touchscreen: Universal Robots PolyScope | Reworded heading; added plain-first opener; put plain explanation before PolyScope quote; expanded I/O, TCP, and SDK on first use; split sentences | [3], [11], [12], [13]
+07. Building a program tree and teaching by hand | Reworded heading; added plain-first opener with pick-and-sort example; added prose walkthrough of the code block explaining DO and DI without altering `<pre>` byte-for-byte; split Freedrive and URScript sentences | [11], [12], [14]
+08. Virtual safety walls and speed limits | Reworded heading; added plain-first lead-in opener; described ISO/TS 15066 in plain words on first mention while keeping exact safety wording and numbers | [3], [11], [12], [15]
+09. Adding new tools with URCaps plugins | Reworded heading; added plain-first opener with electric gripper, screw feeder, and camera examples; put plain explanation before URCap quote; split sentences | [16]
+09. Adding new tools with URCaps plugins | Moved PolyScope 5 background daemon (Python script) and PolyScope X `.urcapx`, Docker container, and TypeScript API packaging details into `<details class="deeper">` | [13], [16]
+10. Other robot programming suites: ROBOGUIDE, MotoSim, and RoboDK | Reworded heading; added plain-first opener; expanded API on first main-text use; split long sentences | [17], [18], [19], [20]
+10. Other robot programming suites: ROBOGUIDE, MotoSim, and RoboDK | Moved FANUC ROBOGUIDE package names (iRPickPRO, HandlingPRO, PaintPRO, PalletPRO, WeldPRO) and Yaskawa controller model list (NX100, DX100, DX200, FS100, YRC1000, YRC1000micro) into `<details class="deeper">` | [18], [19]
+11. Choosing the right programming environment | Reworded heading; added plain-first opener; kept comparison table intact; split closing recommendation sentences | [1], [2], [3], [4], [11], [14], [17], [20], [21], [22], [23]
+Try it | Simplified wording ("designed to be used" instead of "architectural philosophy", "laser area scanner" and "people" in item 2, "helpful" and "problems" in item 3) | (none)

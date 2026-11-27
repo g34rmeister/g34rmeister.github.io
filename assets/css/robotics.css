@@ -2760,3 +2760,22 @@ main .ref-backlinks a:not([class]):hover, main .ref-backlinks a:not([class]):foc
 }
 .hub-tracks-label { font-weight: 700; color: var(--wp-text); }
 .hub-tracks a { min-height: 24px; line-height: 24px; }
+
+/* "For the curious" box: optional detail (clause numbers, edition history) folded away from beginners. */
+details.deeper {
+	margin: 12px 0 16px;
+	padding: 6px 14px;
+	background: var(--wp-bg-subtle);
+	border: 1px solid var(--wp-border-light);
+	border-left: 4px solid var(--wp-border);
+}
+details.deeper > summary {
+	cursor: pointer;
+	font-weight: 700;
+	color: var(--wp-text-muted);
+	padding: 4px 0;
+}
+details.deeper > summary:focus-visible { outline: 2px solid var(--wp-link); outline-offset: 2px; }
+details.deeper[open] > summary { margin-bottom: 6px; }
+details.deeper > :last-child { margin-bottom: 4px; }
+@media print { details.deeper > summary { display: none; } }

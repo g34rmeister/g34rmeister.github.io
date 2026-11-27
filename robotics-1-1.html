@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT19M",
+            "timeRequired": "PT23M",
             "teaches": [
                 "robot",
                 "ISO 8373",
@@ -227,50 +227,73 @@
 
                             <h2 class="article-section-title">01. A working definition</h2>
                             <p>
-                                You do not need to memorize any definition here. The goal is to see why people disagree on what counts as a robot. Everyone has a picture of a robot in their head, but people rarely agree on exactly which machines count. A good place to start is the dictionary. Merriam-Webster&rsquo;s first sense of &ldquo;robot&rdquo; is &ldquo;a machine that resembles a living creature in being capable of moving independently (as by walking or rolling on wheels) and performing complex actions (such as grasping and moving objects).&rdquo; It adds that such a machine is often &ldquo;built to resemble a human being or animal in appearance and behavior.&rdquo;<sup><a href="#ref-1">[1]</a></sup>
+                                What counts as a robot is less obvious than it sounds. A robot vacuum rolling across your floor and a six-axis welding arm bolted to a factory floor look nothing alike. Yet both count as robots, and seeing why helps you understand what separates a robot from an ordinary machine. You do not need to memorize any definition here.
                             </p>
                             <p>
-                                The dictionary also gives two meanings that do not depend on looks at all. One is &ldquo;a device that automatically performs complicated, often repetitive tasks (as in an industrial assembly line).&rdquo;<sup><a href="#ref-1">[1]</a></sup> The other is &ldquo;a mechanism guided by automatic controls.&rdquo;<sup><a href="#ref-1">[1]</a></sup> <em>Encyclop&aelig;dia Britannica</em> takes the same practical view: a robot is &ldquo;any automatically operated machine that replaces human effort,&rdquo; even if it does not look or act like a person. Britannica calls <em>robotics</em> &ldquo;the engineering discipline dealing with the design, construction, and operation of robots.&rdquo;<sup><a href="#ref-2">[2]</a></sup>
+                                Everyone has a picture of a robot in their head. Yet people rarely agree on which machines count. A good place to start is the dictionary. Merriam-Webster&rsquo;s first sense of &ldquo;robot&rdquo; is &ldquo;a machine that resembles a living creature in being capable of moving independently (as by walking or rolling on wheels) and performing complex actions (such as grasping and moving objects).&rdquo; It adds that such a machine is often &ldquo;built to resemble a human being or animal in appearance and behavior.&rdquo;<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                A six-axis arm that welds car frames on an assembly line does not look like a person. A six-axis arm has six joints, which give it six separate ways to move. Yet it moves on its own, performs complex actions and is guided by a program. That makes it a robot.
+                                That first sense focuses on looking or acting alive, like a robot in a movie. The dictionary also gives two meanings that do not depend on looks at all. One is &ldquo;a device that automatically performs complicated, often repetitive tasks (as in an industrial assembly line).&rdquo;<sup><a href="#ref-1">[1]</a></sup> The other is &ldquo;a mechanism guided by automatic controls.&rdquo;<sup><a href="#ref-1">[1]</a></sup>
+                            </p>
+                            <p>
+                                <em>Encyclop&aelig;dia Britannica</em> takes the same practical view. It calls a robot &ldquo;any automatically operated machine that replaces human effort,&rdquo; even if it does not look or act like a person. Britannica calls <em>robotics</em> &ldquo;the engineering discipline dealing with the design, construction, and operation of robots.&rdquo;<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                Now picture a six-axis arm that welds car frames on an assembly line. It does not look like a person at all. Its six joints give it six separate ways to move. Yet it moves on its own, performs complex actions, and is guided by a program. That makes it a robot.
                             </p>
 
-                            <h2 class="article-section-title">02. The standard definition: ISO 8373</h2>
+                            <h2 class="article-section-title">02. What counts as a robot: the ISO 8373 definition</h2>
                             <p>
-                                Dictionaries describe how a word is used. Engineers need something stricter, so that a factory, a regulator and a statistics office all mean the same thing. This definition matters to you because robot specifications, safety rules, and industry statistics in this course rely on it. That job falls to the International Organization for Standardization (ISO). Its vocabulary standard, ISO 8373:2021 <em>Robotics: Vocabulary</em>, is the third edition and replaced the 2012 edition.<sup><a href="#ref-3">[3]</a></sup> Clause 3.1 defines a robot as a
+                                Everyday talk leaves room for debate, but factories cannot run on guesswork. Safety inspectors, robot makers, and data offices all need one shared rule for what counts as a robot. Without it, a welding arm or a robot vacuum might count as a robot in one report and not in another. The robot specs, safety rules, and industry numbers in this course all rely on one international standard.
+                            </p>
+                            <p>
+                                That standard comes from the International Organization for Standardization (ISO). ISO publishes ISO 8373, the international standard that fixes the vocabulary of robotics. You do not need to memorize its wording, just the five checks it uses.
+                            </p>
+                            <p>
+                                In everyday words, a robot is a machine that runs a program, has motors, does part of its job on its own, and moves itself, handles objects, or places tools; the standard puts it this way:
                             </p>
                             <div class="article-callout">
-                                <div class="article-callout-header"><i class="fas fa-quote-right"></i> ISO 8373:2021, clause 3.1</div>
+                                <div class="article-callout-header"><i class="fas fa-quote-right"></i> ISO 8373 definition of a robot</div>
                                 <p>&ldquo;programmed actuated mechanism with a degree of autonomy (3.2) to perform locomotion, manipulation or positioning&rdquo;<sup><a href="#ref-3">[3]</a></sup></p>
                             </div>
-                            <p class="plain-words"><strong>In plain words:</strong> a robot is a machine that runs a program and has motors. It does some work without human steering, and it moves, handles objects, or positions tools.</p>
                             <p>
                                 Each word in that sentence is a test a machine has to pass:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Programmed:</span> its behavior comes from a program, not only from its fixed mechanical shape.</li>
-                                <li class="article-spec-item"><span class="spec-label">Actuated:</span> it has actuators, which ISO defines as a &ldquo;power mechanism that converts electrical, hydraulic, pneumatic or any energy to effect motion of the robot.&rdquo;</li>
-                                <li class="article-spec-item"><span class="spec-label">Mechanism:</span> it is a physical machine. The notes to clause 3.1 give a manipulator (an arm), a mobile platform and a wearable robot as examples of its mechanical structure. They also say that &ldquo;A robot includes the control system.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label">Actuated:</span> it has actuators (motors or other powered parts that move it). ISO defines an actuator as a &ldquo;power mechanism that converts electrical, hydraulic, pneumatic or any energy to effect motion of the robot.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label">Mechanism:</span> it is a physical machine. ISO gives a manipulator (a robot arm), a mobile platform (a moving base), and a wearable robot as examples of its body. It also says that &ldquo;A robot includes the control system.&rdquo;</li>
                                 <li class="article-spec-item"><span class="spec-label">A degree of autonomy:</span> it can do at least part of its job on its own (section 04 explains this).</li>
                                 <li class="article-spec-item"><span class="spec-label">Locomotion, manipulation or positioning:</span> it moves itself, handles objects, or places something (a tool or a part) in a chosen position.<sup><a href="#ref-3">[3]</a></sup></li>
                             </ul>
                             <p>
-                                The same standard names the main families of robots. An <strong>industrial robot</strong> (clause 3.6) is an &ldquo;automatically controlled, reprogrammable multipurpose manipulator, programmable in three or more axes, which can be either fixed in place or fixed to a mobile platform for use in automation applications in an industrial environment&rdquo; (clause cross-references left out). Here, the manipulator means the robot arm, and axes are the separate joints or directions it can move in (explained in <a href="robotics-1-6.html">lesson 1.6</a>).
+                                ISO 8373 also names the main families of robots you will meet in this course. An <strong>industrial robot</strong> is a factory robot arm with at least three movable joints. In the standard&rsquo;s words, it is an &ldquo;automatically controlled, reprogrammable multipurpose manipulator, programmable in three or more axes, which can be either fixed in place or fixed to a mobile platform for use in automation applications in an industrial environment&rdquo;. Here, the manipulator means the robot arm, and axes are the separate joints or directions it can move in (explained in <a href="robotics-1-6.html">lesson 1.6</a>).
                             </p>
                             <p>
-                                A <strong>service robot</strong> (3.7) is a &ldquo;robot in personal use or professional use that performs useful tasks for humans or equipment.&rdquo; A <strong>medical robot</strong> (3.8) is one &ldquo;intended to be used as medical electrical equipment or medical electrical systems.&rdquo;<sup><a href="#ref-3">[3]</a></sup> ISO says it is counted as neither an industrial nor a service robot.<sup><a href="#ref-3">[3]</a></sup> The International Federation of Robotics (IFR), which publishes the world&rsquo;s robot statistics, still counts medical robots among service robots, so the two sources split the categories slightly differently.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> Finally, <strong>robotics</strong> itself (3.10) is the &ldquo;science and practice of designing, manufacturing, and applying robots.&rdquo;<sup><a href="#ref-3">[3]</a></sup> The clause numbers in parentheses are listed for your reference.
+                                A <strong>service robot</strong> works outside factory production to help people or equipment. ISO calls it a &ldquo;robot in personal use or professional use that performs useful tasks for humans or equipment.&rdquo; A <strong>medical robot</strong> is built for healthcare. ISO defines it as one &ldquo;intended to be used as medical electrical equipment or medical electrical systems.&rdquo;<sup><a href="#ref-3">[3]</a></sup> Finally, <strong>robotics</strong> itself is the &ldquo;science and practice of designing, manufacturing, and applying robots.&rdquo;<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
-                                The welding arm from section 01 passes every test in clause 3.6. It is automatically controlled, and it can be reprogrammed for a new car model. It also has six axes, and it works in a factory. The IFR says it uses the ISO 8373 definitions when it counts robots for its <em>World Robotics</em> reports.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup>
+                                Look back at the welding arm from section 01. It is controlled automatically, and you can reprogram it for a new car model. It has six axes, and it works in a factory. That means it passes every part of ISO&rsquo;s industrial robot test.
                             </p>
-                            <p>
-                                The standard&rsquo;s own title shows how the field has grown. The 1994 edition was called <em>Manipulating industrial robots: Vocabulary</em>, the 2012 edition <em>Robots and robotic devices: Vocabulary</em>, and the 2021 edition simply <em>Robotics: Vocabulary</em>.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-3">[3]</a></sup> In under thirty years the definition moved from factory arms to all of robotics.
-                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: ISO 8373 clause numbers, edition history, and IFR categories</summary>
+                                <p>The edition used here is ISO 8373:2021 <em>Robotics: Vocabulary</em>. It is the third edition and replaced the 2012 edition.<sup><a href="#ref-3">[3]</a></sup> In this standard, a robot is clause 3.1, and &ldquo;(3.2)&rdquo; in the quote points to the autonomy definition in clause 3.2. The examples of a mechanical structure and the note about the control system come from the notes to clause 3.1. The other terms sit in clauses 3.6 (industrial robot, with its own clause cross-references left out of the quote above), 3.7 (service robot), 3.8 (medical robot), and 3.10 (robotics).<sup><a href="#ref-3">[3]</a></sup></p>
+                                <p>Organizations group medical robots slightly differently. ISO says a medical robot is counted as neither an industrial nor a service robot.<sup><a href="#ref-3">[3]</a></sup> The International Federation of Robotics (IFR), which publishes the world&rsquo;s robot statistics, still counts medical robots among service robots.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> Aside from that split, the IFR says it uses the ISO 8373 definitions when it counts robots for its <em>World Robotics</em> reports.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup></p>
+                                <p>The standard&rsquo;s own title shows how the field has grown. The 1994 edition was called <em>Manipulating industrial robots: Vocabulary</em>.<sup><a href="#ref-8">[8]</a></sup> The 2012 edition was called <em>Robots and robotic devices: Vocabulary</em>.<sup><a href="#ref-9">[9]</a></sup> The 2021 edition is simply <em>Robotics: Vocabulary</em>.<sup><a href="#ref-3">[3]</a></sup> In under thirty years, the definition moved from factory arms to all of robotics.</p>
+                            </details>
 
                             <h2 class="article-section-title">03. Other definitions you will meet</h2>
                             <p>
-                                ISO is not the only voice. Older textbooks often quote the Robot Institute of America (RIA). In 1979, the RIA described a robot as &ldquo;a reprogrammable, multifunctional manipulator designed to move material, parts, tools, or specialized devices&rdquo; through programmed motions to do a variety of tasks.<sup><a href="#ref-10">[10]</a></sup> Researchers who study mobile and intelligent robots tend to define robots by what they do. George Bekey of the University of Southern California writes, &ldquo;We frequently define a robot as a machine that senses, thinks, and acts.&rdquo;<sup><a href="#ref-11">[11]</a></sup> He also stresses that a robot &ldquo;is a physical system situated in the real world, and is not only software residing on a computer.&rdquo;<sup><a href="#ref-12">[12]</a></sup> He adds that it is not a living organism.<sup><a href="#ref-12">[12]</a></sup> IEEE Spectrum&rsquo;s ROBOTS guide gives a similar version: &ldquo;A robot is an autonomous machine capable of sensing its environment, carrying out computations to make decisions, and performing actions in the real world.&rdquo;<sup><a href="#ref-13">[13]</a></sup>
+                                ISO 8373 is not the only definition you will see in robotics books and articles. Older books often describe a robot as a factory arm like a welding robot, because arms were the main robots at the time. Newer guides include machines like a robot vacuum that must sense a room before moving. Seeing how these definitions differ helps you read older manuals and modern articles without getting confused.
+                            </p>
+                            <p>
+                                Older textbooks often quote the Robot Institute of America (RIA). In 1979, the RIA described a robot as &ldquo;a reprogrammable, multifunctional manipulator designed to move material, parts, tools, or specialized devices&rdquo; through programmed motions to do a variety of tasks.<sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                Researchers who study mobile and intelligent robots tend to define robots by what they do. George Bekey of the University of Southern California writes, &ldquo;We frequently define a robot as a machine that senses, thinks, and acts.&rdquo;<sup><a href="#ref-11">[11]</a></sup> He stresses that a robot &ldquo;is a physical system situated in the real world, and is not only software residing on a computer.&rdquo;<sup><a href="#ref-12">[12]</a></sup> He also adds that it is not a living organism.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                The Institute of Electrical and Electronics Engineers (IEEE) publishes a ROBOTS guide through <em>IEEE Spectrum</em>. It gives a similar definition: &ldquo;A robot is an autonomous machine capable of sensing its environment, carrying out computations to make decisions, and performing actions in the real world.&rdquo;<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -280,79 +303,101 @@
                                     <tr><td>Merriam-Webster (sense 1)</td><td>Moving and acting like a living creature<sup><a href="#ref-1">[1]</a></sup></td></tr>
                                     <tr><td>Britannica</td><td>Operating automatically and replacing human effort<sup><a href="#ref-2">[2]</a></sup></td></tr>
                                     <tr><td>RIA (1979)</td><td>A reprogrammable, multifunctional manipulator; no mention of autonomy<sup><a href="#ref-10">[10]</a></sup></td></tr>
-                                    <tr><td>ISO 8373:2021</td><td>Programmed, actuated, some autonomy, and locomotion, manipulation or positioning<sup><a href="#ref-3">[3]</a></sup></td></tr>
+                                    <tr><td>ISO 8373</td><td>Programmed, actuated, some autonomy, and locomotion, manipulation or positioning<sup><a href="#ref-3">[3]</a></sup></td></tr>
                                     <tr><td>Bekey; IEEE ROBOTS guide</td><td>Sensing, thinking (computing) and acting, in a physical body<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-13">[13]</a></sup></td></tr>
                                 </tbody>
                             </table>
                             <p>
-                                Notice the pattern. The RIA definition is really a description of an industrial arm, while the newer definitions add autonomy and sensing. Even experts admit the edges are fuzzy. Joseph Engelberger, who founded Unimation, the company behind the first industrial robot, famously said: &ldquo;I don&rsquo;t know how to define one, but I know one when I see one!&rdquo;<sup><a href="#ref-13">[13]</a></sup>
+                                Notice the pattern across these definitions. The RIA definition describes an industrial arm. The newer definitions add autonomy and sensing. Even experts admit the edges are fuzzy. Joseph Engelberger founded Unimation, the company behind the first industrial robot. He famously said: &ldquo;I don&rsquo;t know how to define one, but I know one when I see one!&rdquo;<sup><a href="#ref-13">[13]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">04. Autonomy is a matter of degree</h2>
                             <p>
-                                <strong>Autonomy</strong> is the part of the ISO definition that separates a robot from an ordinary machine. ISO 8373 defines it as the &ldquo;ability to perform intended tasks based on current state and sensing, without human intervention.&rdquo; A note adds that, for a given application, the degree of autonomy can be judged by &ldquo;the quality of decision-making&rdquo; and the &ldquo;independence from human.&rdquo;<sup><a href="#ref-3">[3]</a></sup> In other words, autonomy is not yes or no. A machine can have a little or a lot.
-                            </p>
-                            <p class="plain-words"><strong>In plain words:</strong> think of washing dishes. A sponge needs you for every move, while a dishwasher runs after you load it and press start. Autonomy works on that same sliding scale.</p>
-                            <p>
-                                What about a machine with no autonomy at all, such as an arm that a person drives with a joystick? ISO gives it a separate name: a <strong>robotic device</strong>, a &ldquo;mechanism developed with robotic technology, but not fulfilling all characteristics of a robot.&rdquo; Its examples are a &ldquo;Teleoperated remote manipulator, haptic device, end-effector, unpowered exoskeleton&rdquo;&mdash;where a haptic device is a force-feedback interface and an end-effector is the robot&rsquo;s tool or gripper.<sup><a href="#ref-3">[3]</a></sup> Here, teleoperated means operated from a distance by a person, and an exoskeleton is a wearable frame. ISO 8373 itself lists a teleoperated (remotely operated) manipulator as an example of a robotic device rather than a robot.<sup><a href="#ref-14">[14]</a></sup> Real robots often mix the two modes. ISO notes that a mobile robot (&ldquo;robot able to travel under its own control&rdquo;) can also have a way to be remotely controlled.<sup><a href="#ref-3">[3]</a></sup> In addition, the IEEE guide says many robots combine remote control with operation that needs no human.<sup><a href="#ref-13">[13]</a></sup>
+                                Some machines need you to guide every move, while others keep going on their own after you press start. Think of washing dishes. A sponge needs you for every scrub, while a dishwasher finishes the wash once you load it and press start. In robotics, this sliding scale of independence is called <strong>autonomy</strong>, and it is what separates a robot from an ordinary machine.
                             </p>
                             <p>
-                                Researchers have built scales to describe how much autonomy a robot has. Jenay Beer, A. D. Fisk and W. A. Rogers proposed &ldquo;categorizing autonomy along a 10-point taxonomy,&rdquo; with levels &ldquo;ranging from teleoperation to fully autonomous systems.&rdquo;<sup><a href="#ref-15">[15]</a></sup> For cars, the engineering society SAE International publishes the J3016 standard. Its April 2021 revision has six levels:<sup><a href="#ref-16">[16]</a></sup> You can skim these levels on a first read:
+                                In everyday words, autonomy means doing a job based on what the machine senses right now, without a person stepping in; ISO 8373 puts it this way: &ldquo;ability to perform intended tasks based on current state and sensing, without human intervention.&rdquo; The standard adds that you can judge a machine&rsquo;s degree of autonomy by &ldquo;the quality of decision-making&rdquo; and its &ldquo;independence from human.&rdquo;<sup><a href="#ref-3">[3]</a></sup> In other words, autonomy is not yes or no. A machine can have a little or a lot.
+                            </p>
+                            <p>
+                                What about a machine with no autonomy at all, like a robot-style arm you steer with a joystick? ISO 8373 gives it a separate name: a <strong>robotic device</strong>. In everyday words, it uses robot technology, but it does not pass every part of the robot test; the standard defines it as a &ldquo;mechanism developed with robotic technology, but not fulfilling all characteristics of a robot.&rdquo; Its examples are a &ldquo;Teleoperated remote manipulator, haptic device, end-effector, unpowered exoskeleton&rdquo;.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Level 0:</span> No Driving Automation</li>
-                                <li class="article-spec-item"><span class="spec-label">Level 1:</span> Driver Assistance</li>
-                                <li class="article-spec-item"><span class="spec-label">Level 2:</span> Partial Driving Automation</li>
-                                <li class="article-spec-item"><span class="spec-label">Level 3:</span> Conditional Driving Automation</li>
-                                <li class="article-spec-item"><span class="spec-label">Level 4:</span> High Driving Automation</li>
-                                <li class="article-spec-item"><span class="spec-label">Level 5:</span> Full Driving Automation</li>
+                                <li class="article-spec-item"><span class="spec-label">Teleoperated remote manipulator:</span> an arm operated from a distance by a person.</li>
+                                <li class="article-spec-item"><span class="spec-label">Haptic device:</span> a force-feedback hand interface that lets a person feel pushback.</li>
+                                <li class="article-spec-item"><span class="spec-label">End-effector:</span> the robot&rsquo;s tool or gripper.</li>
+                                <li class="article-spec-item"><span class="spec-label">Unpowered exoskeleton:</span> a wearable frame without motors.</li>
                             </ul>
                             <p>
-                                SAE assigns a level to the driving feature that is switched on at a given moment, not to the car as a whole. It also leaves out momentary interventions such as automatic emergency braking.<sup><a href="#ref-16">[16]</a></sup> That is a useful habit for robots too: ask how autonomous a machine is <em>while doing a particular task</em>.
+                                ISO 8373 itself lists a teleoperated (remotely operated) manipulator as a robotic device rather than a robot.<sup><a href="#ref-14">[14]</a></sup> Real robots often mix both modes. A <strong>mobile robot</strong> (&ldquo;robot able to travel under its own control&rdquo;) can also have a way to be remotely controlled.<sup><a href="#ref-3">[3]</a></sup> The IEEE guide also says many robots combine remote control with work that needs no human.<sup><a href="#ref-13">[13]</a></sup>
                             </p>
+                            <p>
+                                Engineers and researchers also use numbered scales to talk about how much autonomy a machine has. For cars, the engineering society SAE International publishes the J3016 standard, which grades driving automation into six levels. SAE grades the driving feature switched on at a given moment, not the car as a whole. That is a useful habit for robots too: ask how autonomous a machine is <em>while doing a particular task</em>.
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: autonomy scales (the 10-point taxonomy and SAE J3016)</summary>
+                                <p>Researchers Jenay Beer, A. D. Fisk, and W. A. Rogers proposed &ldquo;categorizing autonomy along a 10-point taxonomy,&rdquo; with levels &ldquo;ranging from teleoperation to fully autonomous systems.&rdquo;<sup><a href="#ref-15">[15]</a></sup></p>
+                                <p>For cars, SAE International&rsquo;s J3016 standard (April 2021 revision) lists six levels:<sup><a href="#ref-16">[16]</a></sup></p>
+                                <ul class="article-spec-list">
+                                    <li class="article-spec-item"><span class="spec-label">Level 0:</span> No Driving Automation</li>
+                                    <li class="article-spec-item"><span class="spec-label">Level 1:</span> Driver Assistance</li>
+                                    <li class="article-spec-item"><span class="spec-label">Level 2:</span> Partial Driving Automation</li>
+                                    <li class="article-spec-item"><span class="spec-label">Level 3:</span> Conditional Driving Automation</li>
+                                    <li class="article-spec-item"><span class="spec-label">Level 4:</span> High Driving Automation</li>
+                                    <li class="article-spec-item"><span class="spec-label">Level 5:</span> Full Driving Automation</li>
+                                </ul>
+                                <p>SAE assigns a level to the driving feature that is switched on at a given moment, not to the car as a whole. It also leaves out momentary interventions such as automatic emergency braking.<sup><a href="#ref-16">[16]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">05. Edge cases: is it a robot?</h2>
                             <p>
-                                No definition settles every case, and well-known roboticists disagree. The IEEE ROBOTS guide notes that the sense, compute, act definition &ldquo;could very well describe a dishwasher, a thermostat, an elevator, an automatic door, and many other systems.&rdquo; Gill Pratt considers a thermostat a simple robot, because it measures the temperature, checks a schedule and switches the heating or cooling. Rodney Brooks is not keen on counting dishwashers, and the guide leaves cruise control as an open question.<sup><a href="#ref-13">[13]</a></sup>
+                                Once you have a few definitions, it helps to test everyday machines against them. Think of a dishwasher, an automatic door, or a drone. Some machines pass one definition of a robot and fail another. Testing borderline cases shows you why engineers care about words like &ldquo;multipurpose&rdquo; and &ldquo;autonomy.&rdquo;
                             </p>
                             <p>
-                                The verdicts below apply the definitions above. They are this lesson&rsquo;s reasoning, not rulings from ISO, so feel free to argue with them.
+                                No definition settles every case, and well-known roboticists disagree. The IEEE ROBOTS guide notes that the sense, compute, act definition &ldquo;could very well describe a dishwasher, a thermostat, an elevator, an automatic door, and many other systems.&rdquo; Gill Pratt considers a thermostat a simple robot. It measures the temperature, checks a schedule, and switches heating or cooling. Rodney Brooks is not keen on counting dishwashers, and the guide leaves cruise control as an open question.<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <p>
+                                You can test five common machines yourself in the tool below. The verdicts after it apply the definitions from sections 02 through 04. They are this lesson&rsquo;s reasoning, not rulings from ISO, so feel free to argue with them.
                             </p>
 
                             <div data-widget="edge-case-classifier">
                                 <p class="widget-note">The edge-case classifier needs JavaScript. With it on, you can test candidate machines against ISO 8373 criteria and view classification verdicts.</p>
                             </div>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Dishwasher or automatic door:</span> each one senses, decides and acts, so it passes the sense, think, act test. It struggles with ISO clause 3.1, though, because a dishwasher does not move itself, handle objects or position anything.</li>
-                                <li class="article-spec-item"><span class="spec-label">CNC machine tool:</span> it is programmed, actuated and positions a cutting tool along several axes, which comes close to an industrial robot. The usual difference is that a CNC machine does one kind of job, while clause 3.6 asks for a &ldquo;multipurpose&rdquo; manipulator.</li>
+                                <li class="article-spec-item"><span class="spec-label">Dishwasher or automatic door:</span> each one senses, decides, and acts, so it passes the sense, think, act test. It struggles with ISO 8373, though, because a dishwasher does not move itself, handle objects, or position anything.</li>
+                                <li class="article-spec-item"><span class="spec-label">Computer numerical control (CNC) machine tool:</span> it is programmed, actuated, and positions a cutting tool along several axes. That comes close to an industrial robot. The usual difference is that a CNC machine does one kind of job, while ISO asks for a &ldquo;multipurpose&rdquo; manipulator.</li>
                                 <li class="article-spec-item"><span class="spec-label">Drone:</span> the IEEE guide lists drones among robots that &ldquo;take to the skies.&rdquo;<sup><a href="#ref-13">[13]</a></sup> Under ISO, a drone flown entirely by a pilot looks more like a robotic device. One that holds its position or flies a route by itself has the autonomy to be a mobile robot.</li>
-                                <li class="article-spec-item"><span class="spec-label">Chatbot or software &ldquo;bot&rdquo;:</span> no. It has no actuated mechanism, and Bekey&rsquo;s point that a robot is &ldquo;not only software&rdquo; rules it out.<sup><a href="#ref-12">[12]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Self-driving car:</span> yes under clause 3.1 and the mobile robot definition, since it is programmed, actuated and moves itself with some autonomy. The SAE levels show how much autonomy it has.</li>
+                                <li class="article-spec-item"><span class="spec-label">Chatbot or software &ldquo;bot&rdquo;:</span> no. It has no actuated mechanism. Bekey&rsquo;s point that a robot is &ldquo;not only software&rdquo; rules it out too.<sup><a href="#ref-12">[12]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Self-driving car:</span> yes under ISO 8373&rsquo;s robot and mobile robot definitions. It is programmed, actuated, and moves itself with some autonomy. The SAE J3016 levels from section 04 show how much autonomy it has.</li>
                             </ul>
                             <p>
-                                One more distinction is worth keeping. Every robot is a kind of automation, but not every piece of automation is a robot. A fixed conveyor belt or a machine built for a single job is automated. But it is not reprogrammable or multipurpose, and those are the words ISO uses to mark the line.
+                                One more distinction is worth keeping. Every robot is a kind of automation, but not every piece of automation is a robot. A fixed conveyor belt or a machine built for a single job is automated. Yet it is not reprogrammable or multipurpose, and those are the words ISO uses to mark the line.
                             </p>
 
                             <h2 class="article-section-title">06. Where the word came from</h2>
                             <p>
-                                This section is historical background that you can safely skim on a first read. <a href="robotics-1-2.html">Lesson 1.2</a> traces how these early stories connected to real machines. The word &ldquo;robot&rdquo; is borrowed from the Czech word <em>robota</em>, which means &ldquo;forced labor.&rdquo;<sup><a href="#ref-17">[17]</a></sup> Merriam-Webster also gives &ldquo;robota compulsory labor.&rdquo;<sup><a href="#ref-1">[1]</a></sup> In addition, the Czech Consulate General in Los Angeles explains that the word is strongly linked to serfdom, the unpaid work a serf owed to a lord.<sup><a href="#ref-18">[18]</a></sup>
+                                Long before factory welding arms or home vacuums existed, the word &ldquo;robot&rdquo; started in a stage play. Learning where the word came from helps explain why many people still picture artificial humans when they hear &ldquo;robot.&rdquo; This section is historical background that you can safely skim on a first read. <a href="robotics-1-2.html">Lesson 1.2</a> traces how these early stories connected to real machines.
                             </p>
                             <p>
-                                The Czech writer Karel &#268;apek made the word famous in his play <em>R.U.R.</em> (<em>Rossum&rsquo;s Universal Robots</em>), but he did not invent it. &#268;apek first thought of calling his artificial workers &ldquo;labori,&rdquo; from the Latin <em>labor</em>. His brother Josef &#268;apek, a painter, suggested &ldquo;robots&rdquo; instead. In Karel&rsquo;s own memory of the moment, &ldquo;&lsquo;Name them Robots,&rsquo; the painter muttered with a brush in his mouth.&rdquo;<sup><a href="#ref-18">[18]</a></sup> Karel published this account in the newspaper <em>Lidov&eacute; noviny</em> on 24 December 1933.<sup><a href="#ref-19">[19]</a></sup>
+                                The word &ldquo;robot&rdquo; comes from the Czech word <em>robota</em>, which means &ldquo;forced labor.&rdquo;<sup><a href="#ref-17">[17]</a></sup> Merriam-Webster also gives &ldquo;robota compulsory labor.&rdquo;<sup><a href="#ref-1">[1]</a></sup> The Czech Consulate General in Los Angeles explains that the word is strongly linked to serfdom, the unpaid work a serf owed to a lord.<sup><a href="#ref-18">[18]</a></sup>
                             </p>
                             <p>
-                                The dates are often mixed up, so here they are in order. You do not need to memorize these dates on a first read. <em>R.U.R.</em> was published by Aventinum in November 1920, with a cover by Josef &#268;apek. An amateur group in Hradec Kr&aacute;lov&eacute; staged it first, on 2 January 1921. The official premiere was at the National Theatre in Prague on 25 January 1921, where it stayed in the repertoire for six years.
+                                The Czech writer Karel &#268;apek made the word famous in his 1920 play <em>R.U.R.</em> (<em>Rossum&rsquo;s Universal Robots</em>). Yet he did not invent it. &#268;apek first thought of calling his artificial workers &ldquo;labori,&rdquo; from the Latin <em>labor</em>. His brother Josef &#268;apek, a painter, suggested &ldquo;robots&rdquo; instead. In Karel&rsquo;s own memory of the moment, &ldquo;&lsquo;Name them Robots,&rsquo; the painter muttered with a brush in his mouth.&rdquo;<sup><a href="#ref-18">[18]</a></sup> Karel published this account in the newspaper <em>Lidov&eacute; noviny</em> on 24 December 1933.<sup><a href="#ref-19">[19]</a></sup>
                             </p>
                             <p>
-                                It was first performed in English in 1922, when the Theatre Guild opened it at the Garrick Theater in New York on 9 October 1922. It then reached London in 1923.<sup><a href="#ref-18">[18]</a></sup> That is why Merriam-Webster dates the first known use of &ldquo;robot&rdquo; in English to 1922.<sup><a href="#ref-1">[1]</a></sup>
+                                In the play, a scientist named Rossum discovers how to make humanlike workers and builds a factory to produce them. The robots are built to replace humans in hard and dangerous work. Over time they are made more human, for example by giving them the ability to feel pain. In the end, the robots rise up and take over from humanity.<sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-20">[20]</a></sup>
                             </p>
-                            <p>
-                                In the play, a scientist named Rossum discovers how to make humanlike workers and builds a factory to produce them. The robots are built to replace humans in hard and dangerous work and are gradually made more human, for example by giving them the ability to feel pain. In the end the robots rise up and take over from humanity.<sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-20">[20]</a></sup>
-                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: exact publication and stage dates for R.U.R.</summary>
+                                <p>The dates for <em>R.U.R.</em> are often mixed up, so here they are in order. Aventinum published the play in November 1920, with a cover by Josef &#268;apek. An amateur group in Hradec Kr&aacute;lov&eacute; staged it first, on 2 January 1921. The official premiere was at the National Theatre in Prague on 25 January 1921, where it stayed in the repertoire for six years.</p>
+                                <p>It was first performed in English in 1922, when the Theatre Guild opened it at the Garrick Theater in New York on 9 October 1922. It then reached London in 1923.<sup><a href="#ref-18">[18]</a></sup> That is why Merriam-Webster dates the first known use of &ldquo;robot&rdquo; in English to 1922.<sup><a href="#ref-1">[1]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">07. Asimov and the word &ldquo;robotics&rdquo;</h2>
                             <p>
-                                &ldquo;Robot&rdquo; came from a play, and &ldquo;robotics&rdquo; came from science fiction too. Isaac Asimov&rsquo;s short story &ldquo;Liar!&rdquo; was published in <em>Astounding Science Fiction</em> in May 1941. According to the <em>Oxford English Dictionary</em>, as cited by Wikipedia, it contains the first recorded use of the word.<sup><a href="#ref-21">[21]</a></sup> His story &ldquo;Runaround&rdquo; (March 1942) was the first to state his Three Laws of Robotics outright. Its plot turns on a robot called Speedy caught between two of the laws.<sup><a href="#ref-22">[22]</a></sup> As printed in <em>I, Robot</em> (1950), the laws are:<sup><a href="#ref-23">[23]</a></sup>
+                                While a play gave us &ldquo;robot,&rdquo; science fiction gave us the word &ldquo;robotics.&rdquo; You may have heard of Isaac Asimov&rsquo;s Three Laws of Robotics, which ask whether a robot may harm a person. Those rules are story ideas, not code running inside a welding arm or a robot vacuum. Still, they started debates about robot safety and ethics that this course returns to later.
+                            </p>
+                            <p>
+                                Isaac Asimov&rsquo;s short story &ldquo;Liar!&rdquo; came out in <em>Astounding Science Fiction</em> in May 1941. According to the <em>Oxford English Dictionary</em>, as cited by Wikipedia, it holds the first recorded use of &ldquo;robotics.&rdquo;<sup><a href="#ref-21">[21]</a></sup> His story &ldquo;Runaround&rdquo; (March 1942) was the first to state his Three Laws of Robotics outright. Its plot turns on a robot called Speedy caught between two of the laws.<sup><a href="#ref-22">[22]</a></sup> As printed in <em>I, Robot</em> (1950), the laws are:<sup><a href="#ref-23">[23]</a></sup>
                             </p>
                             <ol class="article-spec-list">
                                 <li>&ldquo;A robot may not injure a human being or, through inaction, allow a human being to come to harm.&rdquo;</li>
@@ -360,36 +405,39 @@
                                 <li>&ldquo;A robot must protect its own existence as long as such protection does not conflict with the First or Second Law.&rdquo;</li>
                             </ol>
                             <p>
-                                Asimov later added a &ldquo;Zeroth Law&rdquo; putting humanity as a whole first.<sup><a href="#ref-23">[23]</a></sup> The laws are fiction, not engineering rules, but they started a conversation about robot safety and ethics that this course returns to in <a href="robotics-5-2.html">Ethics in Robotics</a>. So the word &ldquo;robot&rdquo; (1920) is about twenty years older than &ldquo;robotics&rdquo; (1941), and both came from stories long before real industrial robots existed.
+                                Asimov later added a &ldquo;Zeroth Law&rdquo; putting humanity as a whole first.<sup><a href="#ref-23">[23]</a></sup> The laws are fiction, not engineering rules. Even so, they kicked off a conversation about robot safety and ethics that you will revisit in <a href="robotics-5-2.html">Ethics in Robotics</a>. So &ldquo;robot&rdquo; (1920) is about twenty years older than &ldquo;robotics&rdquo; (1941). Both words came from stories long before real industrial robots existed.
                             </p>
 
                             <h2 class="article-section-title">08. What a robot is made of</h2>
                             <p>
-                                ISO 8373 also gives standard names for the parts of a robot. You will meet each of them again later in the course.<sup><a href="#ref-3">[3]</a></sup>
+                                Every robot, from a factory welding arm to a home vacuum, is built from the same basic parts. It needs a physical body, motors to move, a computer to run logic, sensors to measure, a program, and a way to do its job (such as a tool or wheels). Learning the standard names for these parts helps you read datasheets and later lessons without guessing. ISO 8373 gives standard names to six parts of a robot:<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Mechanical structure:</span> the body. For an arm this is the <em>manipulator</em>, &ldquo;an arrangement of segments, jointed or sliding relative to one another.&rdquo; The manipulator includes the actuators but not the tool on the end. Other structures are a mobile platform (a wheeled base, also called an automated guided vehicle or AGV) and a wearable robot. You will study mobile platforms and AGVs in <a href="robotics-1-3.html">lesson 1.3</a>.</li>
-                                <li class="article-spec-item"><span class="spec-label">Actuators:</span> the motors or cylinders that turn electrical, hydraulic or pneumatic energy into motion.</li>
+                                <li class="article-spec-item"><span class="spec-label">Mechanical structure:</span> the robot&rsquo;s body. For an arm, this is the <em>manipulator</em>, &ldquo;an arrangement of segments, jointed or sliding relative to one another.&rdquo; It includes the actuators, but not the tool on the end. Other bodies include a wearable robot and a mobile platform (a wheeled base, also called an automated guided vehicle or AGV). You will study mobile platforms and AGVs in <a href="robotics-1-3.html">lesson 1.3</a>.</li>
+                                <li class="article-spec-item"><span class="spec-label">Actuators:</span> the motors or cylinders that turn electrical, hydraulic (fluid), or pneumatic (air) energy into motion.</li>
                                 <li class="article-spec-item"><span class="spec-label">End-effector:</span> the tool attached to the robot so it can do its task, such as a welding torch. A <em>gripper</em> is an end-effector &ldquo;designed for seizing and holding.&rdquo;</li>
-                                <li class="article-spec-item"><span class="spec-label">Control system:</span> a &ldquo;set of hardware and software components implementing logic and power control, and other functions.&rdquo; ISO counts it as part of the robot.</li>
+                                <li class="article-spec-item"><span class="spec-label">Control system:</span> the hardware and software that run logic and power control. ISO defines it as a &ldquo;set of hardware and software components implementing logic and power control, and other functions.&rdquo; It counts the control system as part of the robot.</li>
                                 <li class="article-spec-item"><span class="spec-label">Task program:</span> the instructions for the job. ISO includes a task program in its definition of an industrial robot system.</li>
-                                <li class="article-spec-item"><span class="spec-label">Sensors:</span> ISO builds sensing into the definition of autonomy itself, which depends on the robot&rsquo;s &ldquo;current state and sensing.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label">Sensors:</span> the parts that measure the robot and its surroundings. ISO builds sensing into autonomy itself, which depends on the robot&rsquo;s &ldquo;current state and sensing.&rdquo;</li>
                             </ul>
                             <p>
-                                On a welding robot, for example, the six-axis arm is the manipulator and the welding torch is the end-effector. Lesson <a href="robotics-1-6.html">1.6</a> looks at this anatomy in more detail.
+                                On a welding robot, for example, the six-axis arm is the manipulator. The welding torch on the tip is the end-effector. Lesson <a href="robotics-1-6.html">1.6</a> looks at this anatomy in more detail.
                             </p>
 
                             <h2 class="article-section-title">09. Sense, think, act</h2>
                             <p>
-                                A helpful way to picture any robot, from a hobby rover to an industrial arm, is the definition Bekey uses: a machine that senses, thinks and acts.<sup><a href="#ref-11">[11]</a></sup> These three parts form a loop:
+                                Whether you look at a hobby rover or a six-axis welding arm, every robot runs the same three-step cycle. First it checks what is happening around it, then it decides what to do, and then it moves. That cycle repeats many times per second so the robot can respond to the real world. George Bekey sums this up by calling a robot a machine that senses, thinks, and acts.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                These three parts form a continuous loop:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Sense:</span> sensors such as encoders, ultrasonic range finders and cameras measure the robot and its surroundings. An encoder measures how far a motor turns (<a href="robotics-6-3.html">lesson 6.3</a>). An ultrasonic sensor measures distance using sound.</li>
-                                <li class="article-spec-item"><span class="spec-label">Think:</span> a controller (a microcontroller like an Arduino, or an industrial robot controller) runs a program that decides what to do next. A microcontroller is a small computer on a single chip.</li>
-                                <li class="article-spec-item"><span class="spec-label">Act:</span> actuators such as motors and grippers carry out the decision, which changes what the sensors see on the next pass.</li>
+                                <li class="article-spec-item"><span class="spec-label">Sense:</span> sensors measure the robot and its surroundings. Examples include encoders, ultrasonic range finders, and cameras. An encoder measures how far a motor turns (<a href="robotics-6-3.html">lesson 6.3</a>). An ultrasonic sensor measures distance using sound.</li>
+                                <li class="article-spec-item"><span class="spec-label">Think:</span> a controller runs a program that decides what to do next. It can be a microcontroller (a small computer on a single chip, like an Arduino) or an industrial robot controller.</li>
+                                <li class="article-spec-item"><span class="spec-label">Act:</span> actuators such as motors and grippers carry out the decision. That action changes what the sensors see on the next pass.</li>
                             </ul>
                             <p>
-                                The <a href="robotics-control.html">Electronics and Control</a> chapter follows exactly this loop. Here, <a href="robotics-6-2.html">PWM</a> is how a program acts on a motor, <a href="robotics-6-3.html">encoders</a> are how it senses the result, and <a href="robotics-6-4.html">PID control</a> is how it thinks about the difference. You do not need to memorize these terms now. <a href="robotics-control.html">Chapter 6</a> explains each concept when you need it.
+                                The <a href="robotics-control.html">Electronics and Control</a> chapter follows this exact loop. There, <a href="robotics-6-2.html">pulse width modulation (PWM)</a> is how a program acts on a motor. <a href="robotics-6-3.html">Encoders</a> are how it senses the result. <a href="robotics-6-4.html">Proportional-integral-derivative (PID) control</a> is how it thinks about the difference. You do not need to memorize these terms now. <a href="robotics-control.html">Chapter 6</a> explains each concept when you need it.
                             </p>
                             <figure class="lesson-diagram">
                                 <svg viewBox="0 0 680 180" role="img" aria-label="Diagram: sense, then think, then act, with an arrow looping back from act to sense" xmlns="http://www.w3.org/2000/svg">
@@ -402,38 +450,46 @@
                             <h2 class="article-section-title">10. Does a robot always think before it acts?</h2>
                             <p class="optional-note"><i class="fas fa-route" aria-hidden="true"></i> <strong>Optional on first reading.</strong> This section explores how robots organize their decisions into control architectures. You will build these ideas in <a href="robotics-6-7.html">lesson 6.7</a>.</p>
                             <p>
-                                The loop above makes &ldquo;think&rdquo; look like one tidy step. Real robots organize their thinking in different ways, called <strong>control architectures</strong>. There are three main families.
+                                The loop in section 09 makes &ldquo;think&rdquo; look like one tidy step. In reality, a robot often needs fast reflexes and slower planning at the same time. When a robot vacuum bumps a chair, it backs up right away, while planning a route across a whole room takes longer. Engineers organize these fast and slow decisions into patterns called <strong>control architectures</strong>, and there are three main families.
                             </p>
                             <p>
-                                <strong>Sense, plan, act (hierarchical).</strong> The robot senses, updates an internal model of the world, makes a plan, carries out the first step and then senses again. Think of using a map app on your phone. You check your location, calculate a route, take a few steps, and then check the screen again. This approach dominated early robotics research.<sup><a href="#ref-24">[24]</a></sup> The classic example is Shakey, built at the research institute SRI from 1966 to 1972 and the &ldquo;first mobile robot to reason about its actions.&rdquo; Its cameras and touch sensors sent data by radio to remote computers. Those computers used search and planning programs (the A* pathfinding search algorithm and the STRIPS automated planner) to make a plan. They then sent motion commands back to the robot.<sup><a href="#ref-25">[25]</a></sup> Both A* and STRIPS are software tools that search for a route or plan.
+                                <strong>Sense, plan, act (hierarchical).</strong> First, the robot senses and updates an internal model of the world. Next, it makes a plan and carries out the first step. Then it senses again. Think of using a map app on your phone. You check your location, calculate a route, take a few steps, and check the screen again. This approach dominated early robotics research.<sup><a href="#ref-24">[24]</a></sup> A classic example is Shakey, built at the research institute SRI. Its cameras and touch sensors sent data by radio to remote computers. Those computers planned a route and sent motion commands back.<sup><a href="#ref-25">[25]</a></sup>
                             </p>
                             <p>
-                                <strong>Reactive (behavior-based).</strong> In 1986 Rodney Brooks argued for a different design, the <em>subsumption architecture</em>. Here, subsumption means stacking simple behaviors into layers, where a higher layer can take over from a lower one. This is like a human reflex. When you touch a hot pan, you pull your hand back without planning the move first.
+                                <strong>Reactive (behavior-based).</strong> In 1986, Rodney Brooks argued for a different design called the <em>subsumption architecture</em>. Here, subsumption means stacking simple behaviors into layers, where a higher layer can take over from a lower one. This works like a human reflex. When you touch a hot pan, you pull your hand back without planning the move first.
                             </p>
                             <p>
-                                Instead of one long chain from sensing to planning to motor control, he stacked simple behaviors in layers, each giving the robot a new &ldquo;level of competence.&rdquo; Level 0 avoids touching objects, level 1 wanders without hitting things, level 2 explores toward distant places and level 3 builds a map and plans routes. In his words, &ldquo;Higher-level layers can subsume the roles of lower levels by suppressing their outputs,&rdquo; yet &ldquo;lower levels continue to function as higher levels are added.&rdquo;<sup><a href="#ref-26">[26]</a></sup> Reactive control links sensing straight to acting with no global world model. It is fast, modular and cheap, but it is hard to give a reactive robot a specific task or a long-range goal.<sup><a href="#ref-24">[24]</a></sup>
+                                Instead of one long chain from sensing to planning to motor control, Brooks stacked simple behavior layers. Each layer gives the robot a new &ldquo;level of competence,&rdquo; from avoiding objects up to building maps. In his words, &ldquo;Higher-level layers can subsume the roles of lower levels by suppressing their outputs,&rdquo; yet &ldquo;lower levels continue to function as higher levels are added.&rdquo;<sup><a href="#ref-26">[26]</a></sup> Reactive control links sensing straight to acting with no global world model. It is fast, modular, and cheap, though it is hard to give a reactive robot a specific task or long-range goal.<sup><a href="#ref-24">[24]</a></sup>
                             </p>
                             <p>
-                                <strong>Hybrid (three-layer).</strong> Many robots combine the two. Erann Gat described a common pattern organized into three layers. First, a <em>controller</em> runs fast feedback loops between sensors and actuators. Then, a <em>sequencer</em> chooses which behavior to run, while a <em>deliberator</em> does slow planning and search.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-28">[28]</a></sup> A feedback loop means measuring the result and adjusting the motor commands repeatedly (<a href="robotics-6-4.html">lesson 6.4</a>). Gat&rsquo;s reasoning was that pure planning is too slow for a changing world, while pure reaction trusts sensors that are often unreliable.<sup><a href="#ref-28">[28]</a></sup>
+                                <strong>Hybrid (three-layer).</strong> Many robots combine both ideas. Erann Gat described a common pattern with three layers. First, a <em>controller</em> runs fast feedback loops between sensors and actuators. A feedback loop measures the result and adjusts motor commands repeatedly (<a href="robotics-6-4.html">lesson 6.4</a>). Second, a <em>sequencer</em> chooses which behavior to run. Third, a <em>deliberator</em> does slow planning and search.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-28">[28]</a></sup> Gat reasoned that pure planning is too slow for a changing world. Pure reaction, on the other hand, trusts sensors that are often unreliable.<sup><a href="#ref-28">[28]</a></sup>
                             </p>
                             <p>
-                                You can map this onto the course. The PID loop you will write in <a href="robotics-6-4.html">lesson 6.4</a> is the kind of fast feedback loop that lives in Gat&rsquo;s controller layer. The <a href="robotics-6-7.html">state machines</a> of lesson 6.7 do the job of a simple sequencer. These terms will become familiar when you reach Chapter 6.
+                                You can map this onto the course. The PID loop you will write in <a href="robotics-6-4.html">lesson 6.4</a> belongs in Gat&rsquo;s controller layer. The <a href="robotics-6-7.html">state machines</a> in lesson 6.7 work like a simple sequencer. These terms will feel natural by the time you reach Chapter 6.
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: Shakey&rsquo;s planners and Brooks&rsquo;s four layers</summary>
+                                <p>Shakey was built at SRI from 1966 to 1972 and was the &ldquo;first mobile robot to reason about its actions.&rdquo; Its remote computers used the A* pathfinding search algorithm and the STRIPS automated planner to make a plan. They then sent motion commands back.<sup><a href="#ref-25">[25]</a></sup> Both A* and STRIPS are software tools that search for a route or plan.</p>
+                                <p>In Brooks&rsquo;s subsumption stack, level 0 avoids touching objects, level 1 wanders without hitting things, level 2 explores toward distant places, and level 3 builds a map and plans routes.<sup><a href="#ref-26">[26]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">11. Robots by the numbers</h2>
                             <p class="optional-note"><i class="fas fa-route" aria-hidden="true"></i> <strong>Optional on first reading.</strong> This section looks at global robot installation and density figures. You will explore these industry statistics in <a href="robotics-1-5.html">lesson 1.5</a>.</p>
                             <p>
-                                Because the IFR counts robots using the ISO definition, its figures show how many machines meet the industrial robot test from section 02.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup> According to <em>World Robotics 2026</em>, released on 24 September 2026, factories worldwide installed 603,307 industrial robots in 2025, an increase of 11%. The number in operation grew 9% to 5,079,078, about 5.08 million robots.<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-30">[30]</a></sup> Asia received 76% of the new robots, and China alone installed 354,226 units.<sup><a href="#ref-29">[29]</a></sup>
+                                How many factory robots like the welding arm in section 01 are actually at work around the world? Counting them matters because it shows where automation is growing and how many people work beside robots. Since ISO 8373 defines which machines count, worldwide statistics can track the real numbers.
                             </p>
                             <p>
-                                Another way to measure robots is <strong>robot density</strong>, the number of industrial robots for every 10,000 manufacturing employees. In the IFR&rsquo;s most recent density figures (2024 data, from <em>World Robotics 2025</em>), the world average was 132. The Republic of Korea led with 1,220, followed by Singapore (818), Germany (449) and Japan (446). The United States had 307 and China 166.<sup><a href="#ref-31">[31]</a></sup> Korea&rsquo;s figure works out to roughly one industrial robot for every eight factory workers.
+                                The International Federation of Robotics (IFR) uses the ISO definition when it counts factory robots. Its numbers show how many machines pass the industrial robot test from section 02.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-7">[7]</a></sup> According to <em>World Robotics 2026</em>, released on 24 September 2026, factories worldwide installed 603,307 industrial robots in 2025. That was an increase of 11%. The number in operation grew 9% to 5,079,078, or about 5.08 million robots.<sup><a href="#ref-29">[29]</a></sup><sup><a href="#ref-30">[30]</a></sup> Asia received 76% of the new robots, and China alone installed 354,226 units.<sup><a href="#ref-29">[29]</a></sup>
+                            </p>
+                            <p>
+                                Another way to measure robots is <strong>robot density</strong>. That is the number of industrial robots for every 10,000 manufacturing employees. In the IFR&rsquo;s most recent density figures (2024 data, from <em>World Robotics 2025</em>), the world average was 132. The Republic of Korea led with 1,220, followed by Singapore (818), Germany (449), and Japan (446). The United States had 307, and China had 166.<sup><a href="#ref-31">[31]</a></sup> Korea&rsquo;s figure works out to roughly one industrial robot for every eight factory workers.
                             </p>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
                                     <li>Pick a machine you use every day (a robot vacuum, an automatic door, a dishwasher). Write down what it senses, what decides, and what acts.</li>
-                                    <li>Test it against the five parts of ISO 8373 clause 3.1 in section 02: programmed, actuated, mechanism, a degree of autonomy, and locomotion, manipulation or positioning. Which tests does it pass?</li>
+                                    <li>Test it against the five parts of ISO 8373&rsquo;s definition of a robot in section 02: programmed, actuated, mechanism, a degree of autonomy, and locomotion, manipulation or positioning. Which tests does it pass?</li>
                                     <li>Compare your verdict with the Merriam-Webster definition. Do the two agree? If not, which one do you find more useful, and why?</li>
                                 </ol>
                             </div>
@@ -508,7 +564,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=950a82b7" defer></script>
+            <script src="assets/js/course-data.js?v=78ce5dd6" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
             <script src="assets/js/widgets.js?v=b3de63b6" defer></script>

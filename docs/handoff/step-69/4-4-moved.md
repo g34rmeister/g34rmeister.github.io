@@ -1,0 +1,18 @@
+# Step 69: moved and reworded passages in robotics-4-4.html
+
+01. Hands-on robotics with Turtlesim | Added plain-first opener with rover speed-mistake example; expanded ROS 2 and 2D on first use; split long sentences | [1], [2]
+02. Launching and driving your first simulated robot | Reworded heading from "02. Launching and teleoperating your first robot"; added plain-first opener; expanded teleoperation on first use; kept safety stop rule and one-second timeout intact; split long sentences | [1], [2]
+02. Launching and driving your first simulated robot | Moved REP 2001 (expanded as ROS Enhancement Proposal 2001) and Jazzy/Rolling desktop variant details into `<details class="deeper">` | [3]
+03. Inspecting topics and sending movement commands | Reworded heading from "03. Topic introspection and the Twist message"; added plain-first opener with radio-channel explanation; added plain explanation immediately before the `Twist` quote; kept Lyrical vs Jazzy `turtlesim_msgs` note near topic list; split long sentences | [1], [2], [4], [5], [6], [7]
+03. Inspecting topics and sending movement commands | Moved `scale_linear`/`scale_angular` parameter names and optional `holonomic` (`linear.y`) parameter explanation into `<details class="deeper">` | [2]
+04. Using services to spawn a second turtle | Reworded heading from "04. Calling services from the CLI: spawning robots"; added plain-first opener; expanded CLI on first use; split long and semicolon-joined sentences | [1], [2], [5]
+04. Using services to spawn a second turtle | Moved Jazzy and pre-Kilted `turtlesim/srv/Spawn` service type note into `<details class="deeper">` | [5]
+05. Remapping names to drive the second turtle | Reworded heading from "05. Remapping names on the command line"; added plain-first opener explaining the `turtle1/` prefix; split long sentences | [1], [8]
+06. Setting up your ROS 2 workspace | Reworded heading from "06. ROS 2 workspace architecture"; added plain-first opener; introduced colcon as the ROS 2 build tool; split long sentences | [9], [10]
+07. Creating a Python package | Reworded heading from "07. Python package layout: package.xml and setup.py"; added plain-first opener; expanded `rclpy` as the ROS client library on first use in prose; split semicolon-joined `setup.cfg` sentence | [11], [12], [13]
+07. Creating a Python package | Moved Jazzy `turtlesim` dependency difference into `<details class="deeper">` | [5]
+08. Writing a Python node that drives the turtle | Reworded heading from "08. Writing a custom rclpy velocity publisher"; added plain-first opener; expanded Hz and rad/s on first use; turned `draw_circle.py` breakdown into a bulleted spec list; kept one-second timeout and all code blocks intact | [2], [13], [14]
+08. Writing a Python node that drives the turtle | Moved Jazzy older-style `main()` (`rclpy.init()`, `rclpy.spin()`, `destroy_node()`, `rclpy.shutdown()`) note into `<details class="deeper">` | [15]
+09. Writing a Python node that reads the turtle's position | Reworded heading from "09. Writing a custom rclpy pose subscriber"; added plain-first opener; split long sentences and aligned figcaption term with "keyboard node" | [2], [13]
+10. Building your package and running your nodes | Reworded heading from "10. Compiling with colcon and running custom nodes"; added plain-first opener; split long sentences and kept all code blocks byte-for-byte | [9], [10], [13]
+11. Transferring skills to physical robots | Added plain-first opener; split long `diff_drive_controller` sentence; formatted comparison bullets with spec labels and split semicolons | [2], [6], [13], [16]
