@@ -9,7 +9,9 @@
 	"edge-case-classifier" | "ultrasonic-distance" | "gyro-drift" |
 	"jacobian-singularity" | "f-number-aperture" |
 	"presence-area-check" | "ethernet-ip-messaging" | "fov" | "vlan" |
-	"robot-arm-3d" | "amr-frames-3d" | "arduino-uno-3d" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
+	"robot-arm-3d" | "amr-frames-3d" | "arduino-uno-3d" |
+	"costmap-inflation" | "launch-tree" | "moveit-pipeline" | "lighting-angles" |
+	"troubleshoot-steps" is turned into a small simulator. Plain JS and inline SVG, no libraries. Without JS the
 	placeholder's own text is shown instead.
 */
 (function () {
@@ -7899,7 +7901,1736 @@ function initFrames3D(root) {
 	draw();
 }
 
+// ---- costmap-inflation (step 68) ----
+// Placeholder text: The costmap inflation widget needs JavaScript. With it on, you can adjust inflation_radius and robot_radius, move the robot across the grid, and switch between global and local costmaps.
+
+// Facts used (from robotics-10-2.html):
+// - Line 220: "In Nav2 the environmental representation is a costmap: a regular 2D grid of cells, each holding a cost from unknown, free, occupied or inflated."
+// - Line 220: "The costmap is searched to compute a global plan, or sampled to compute local control efforts."
+// - Line 223-224: "Four dark cells in the middle are occupied by an obstacle, the ring of cells around them is inflated, a few cells at the edge are marked unknown and the rest are free. A circle shows the robot footprint" (legend labels: free, occupied, inflated, unknown, ?, robot).
+// - Line 226: "The inflation layer adds cost around obstacles."
+// - Line 234: "The inflation layer is one of those rule-based layers. It places a decaying cost around obstacles, which makes it more costly to travel near a collision. Its inflation_radius parameter sets the radius to inflate around lethal obstacles."
+// - Line 239: "Nav2 keeps a global and a local view. The planner has access to a global environmental representation, and the controller to a local one. The behavior server subscribes to the local costmap instead of building its own, because costmaps are computationally expensive to duplicate."
+// - Line 242: "The costmap also needs the robot's shape. The footprint is set either as a circle of radius robot_radius or, for a non-circular robot, as a list of points called footprint that describes a polygon."
+
+function initCostmapInflation(root) {
+	var COLS = 20, ROWS = 12, CELL = 20;
+	var GX = 12, GY = 36;
+	var W = 560, H = 320;
+	var clipId = 'cm-grid-clip-' + Math.random().toString(36).slice(2, 8);
+
+	var viewMode = 'global'; // 'global' | 'local'
+	var robotC = 3, robotR = 6;
+
+	var sInfl = slider('inflation_radius (cells)', 'cm-inflation', 0, 5, 0.5, 2.5, '');
+	var sRobot = slider('robot_radius (cells)', 'cm-robot', 0.5, 2.5, 0.5, 1.0, '');
+
+	var svg = plotFrame(W, H, 'Top-down 2D costmap grid showing free, inflated, occupied, and unknown cells with a circular robot footprint');
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+	// Static cell map: 'free' | 'occupied' | 'unknown'
+	var baseGrid = [];
+	var occupiedCells = [];
+	for (var r = 0; r < ROWS; r++) {
+		baseGrid[r] = [];
+		for (var c = 0; c < COLS; c++) {
+			var isWall = (c === 13 && r >= 2 && r <= 8);
+			var isObstacle = (c >= 7 && c <= 8 && r >= 5 && r <= 6);
+			var isUnknown = ((c >= 18 && r <= 3) || (c === 19 && r >= 4 && r <= 5));
+			if (isWall || isObstacle) {
+				baseGrid[r][c] = 'occupied';
+				occupiedCells.push({ c: c, r: r });
+			} else if (isUnknown) {
+				baseGrid[r][c] = 'unknown';
+			} else {
+				baseGrid[r][c] = 'free';
+			}
+		}
+	}
+
+	function nearestOccupiedDist(c, r) {
+		var minD = Infinity;
+		for (var i = 0; i < occupiedCells.length; i++) {
+			var o = occupiedCells[i];
+			var d = Math.hypot(c - o.c, r - o.r);
+			if (d < minD) minD = d;
+		}
+		return minD;
+	}
+
+	function footprintOverlapsOccupied(rx, ry, radius) {
+		for (var i = 0; i < occupiedCells.length; i++) {
+			var o = occupiedCells[i];
+			var dx = Math.max(o.c - rx, 0, rx - (o.c + 1));
+			var dy = Math.max(o.r - ry, 0, ry - (o.r + 1));
+			if (Math.hypot(dx, dy) < radius - 1e-6) return true;
+		}
+		return false;
+	}
+
+	function inLocalView(c, r) {
+		return Math.abs(c - robotC) <= 4 && Math.abs(r - robotR) <= 3;
+	}
+
+	function moveRobot(dc, dr) {
+		var nc = Math.max(0, Math.min(COLS - 1, robotC + dc));
+		var nr = Math.max(0, Math.min(ROWS - 1, robotR + dr));
+		if (nc === robotC && nr === robotR) return;
+		robotC = nc;
+		robotR = nr;
+		draw();
+	}
+
+	var btnGlobal = button('Global costmap', function () { viewMode = 'global'; draw(); }, 'Show global costmap view for the planner');
+	var btnLocal = button('Local costmap', function () { viewMode = 'local'; draw(); }, 'Show local costmap view for the controller and behavior server');
+
+	var btnLeft = button('← Left', function () { moveRobot(-1, 0); }, 'Move robot one cell left');
+	var btnUp = button('↑ Up', function () { moveRobot(0, -1); }, 'Move robot one cell up');
+	var btnDown = button('↓ Down', function () { moveRobot(0, 1); }, 'Move robot one cell down');
+	var btnRight = button('→ Right', function () { moveRobot(1, 0); }, 'Move robot one cell right');
+
+	var viewButtons = h('div', { 'class': 'widget-buttons' }, [btnGlobal, btnLocal]);
+	var moveButtons = h('div', { 'class': 'widget-buttons' }, [btnLeft, btnUp, btnDown, btnRight]);
+
+	function drawLegend() {
+		var lx = 424, ly = 36, lw = 124;
+
+		svg.appendChild(s('rect', { 'class': 'd-box', x: lx, y: ly, width: lw, height: 166, rx: 4 }));
+		var lTitle = s('text', { 'class': 'd-title', x: lx + 10, y: ly + 20, 'font-size': '13' });
+		lTitle.textContent = 'Cell cost';
+		svg.appendChild(lTitle);
+
+		// free
+		svg.appendChild(s('rect', {
+			'class': 'd-box',
+			x: lx + 10, y: ly + 32, width: 16, height: 16,
+			style: 'stroke: var(--wp-border); stroke-width: 1;'
+		}));
+		var tFree = s('text', { x: lx + 34, y: ly + 44, 'font-size': '12', style: 'fill: var(--wp-text); font-family: var(--wp-sans);' });
+		tFree.textContent = 'free';
+		svg.appendChild(tFree);
+
+		// inflated (decaying cost)
+		svg.appendChild(s('rect', {
+			'class': 'd-box-gold',
+			x: lx + 10, y: ly + 58, width: 16, height: 16
+		}));
+		svg.appendChild(s('rect', {
+			x: lx + 10, y: ly + 58, width: 8, height: 16,
+			style: 'fill: var(--wp-gold-text); fill-opacity: 0.52;'
+		}));
+		svg.appendChild(s('rect', {
+			x: lx + 18, y: ly + 58, width: 8, height: 16,
+			style: 'fill: var(--wp-gold-text); fill-opacity: 0.22;'
+		}));
+		var tInf = s('text', { x: lx + 34, y: ly + 69, 'font-size': '12', style: 'fill: var(--wp-text); font-family: var(--wp-sans);' });
+		tInf.textContent = 'inflated';
+		var tInfSub = s('text', { 'class': 'd-muted', x: lx + 34, y: ly + 82, 'font-size': '11' });
+		tInfSub.textContent = '(decaying cost)';
+		svg.appendChild(tInf);
+		svg.appendChild(tInfSub);
+
+		// occupied (lethal)
+		svg.appendChild(s('rect', {
+			'class': 'd-box',
+			x: lx + 10, y: ly + 96, width: 16, height: 16,
+			style: 'fill: var(--wp-link); stroke: var(--wp-link); stroke-width: 1;'
+		}));
+		var tOcc = s('text', { x: lx + 34, y: ly + 107, 'font-size': '12', style: 'fill: var(--wp-text); font-family: var(--wp-sans);' });
+		tOcc.textContent = 'occupied';
+		var tOccSub = s('text', { 'class': 'd-muted', x: lx + 34, y: ly + 120, 'font-size': '11' });
+		tOccSub.textContent = '(lethal)';
+		svg.appendChild(tOcc);
+		svg.appendChild(tOccSub);
+
+		// unknown
+		svg.appendChild(s('rect', {
+			'class': 'd-box',
+			x: lx + 10, y: ly + 134, width: 16, height: 16,
+			style: 'stroke: var(--wp-border); stroke-width: 1;'
+		}));
+		var tQ = s('text', { 'class': 'd-muted', x: lx + 18, y: ly + 146, 'text-anchor': 'middle', 'font-size': '12' });
+		tQ.textContent = '?';
+		var tUnk = s('text', { x: lx + 34, y: ly + 146, 'font-size': '12', style: 'fill: var(--wp-text); font-family: var(--wp-sans);' });
+		tUnk.textContent = 'unknown';
+		svg.appendChild(tQ);
+		svg.appendChild(tUnk);
+
+		// Robot footprint legend
+		svg.appendChild(s('rect', { 'class': 'd-box', x: lx, y: 212, width: lw, height: 64, rx: 4 }));
+		svg.appendChild(s('circle', {
+			'class': 'd-strong',
+			cx: lx + 20, cy: 234, r: 9,
+			style: 'fill: var(--wp-bg); fill-opacity: 0.6;'
+		}));
+		svg.appendChild(s('circle', {
+			cx: lx + 20, cy: 234, r: 2.5,
+			style: 'fill: var(--wp-link);'
+		}));
+		var tRob = s('text', { x: lx + 36, y: 238, 'font-size': '12', style: 'fill: var(--wp-text); font-family: var(--wp-sans);' });
+		tRob.textContent = 'robot';
+		var tRad = s('text', { 'class': 'd-muted', x: lx + 10, y: 260, 'font-size': '11' });
+		tRad.textContent = 'robot_radius';
+		svg.appendChild(tRob);
+		svg.appendChild(tRad);
+	}
+
+	function draw() {
+		var inflR = Number(sInfl.input.value);
+		var robR = Number(sRobot.input.value);
+		sInfl.out.textContent = inflR.toFixed(1);
+		sRobot.out.textContent = robR.toFixed(1);
+
+		btnGlobal.setAttribute('aria-pressed', String(viewMode === 'global'));
+		btnLocal.setAttribute('aria-pressed', String(viewMode === 'local'));
+
+		svg.replaceChildren();
+
+		// Clip path so the robot circle stays cleanly inside the grid area
+		var defs = s('defs', {});
+		var clip = s('clipPath', { id: clipId });
+		clip.appendChild(s('rect', { x: GX, y: GY, width: COLS * CELL, height: ROWS * CELL }));
+		defs.appendChild(clip);
+		svg.appendChild(defs);
+
+		// Top heading
+		var heading = s('text', { 'class': 'd-title', x: GX, y: 22, 'font-size': '14' });
+		heading.textContent = viewMode === 'global'
+			? 'Global costmap (planner: global plan)'
+			: 'Local costmap (controller & behavior)';
+		svg.appendChild(heading);
+
+		// Grid cells
+		var centreState = 'free';
+		for (var r = 0; r < ROWS; r++) {
+			for (var c = 0; c < COLS; c++) {
+				var base = baseGrid[r][c];
+				var state = base;
+				var decay = 0;
+				if (base === 'free' && inflR > 0) {
+					var dist = nearestOccupiedDist(c, r);
+					if (dist <= inflR) {
+						state = 'inflated';
+						var t = (inflR - dist) / Math.max(inflR - 1, 0.5);
+						decay = Math.max(0.16, Math.min(0.55, 0.16 + 0.39 * t));
+					}
+				}
+				if (c === robotC && r === robotR) {
+					centreState = state;
+				}
+
+				var x = GX + c * CELL;
+				var y = GY + r * CELL;
+				var dimmed = (viewMode === 'local' && !inLocalView(c, r));
+				var cellOpacity = dimmed ? '0.24' : '1';
+
+				var rectAttrs = {
+					x: x, y: y, width: CELL, height: CELL,
+					style: 'cursor: pointer; opacity: ' + cellOpacity + '; stroke: var(--wp-border); stroke-width: 0.8;'
+				};
+				if (state === 'occupied') {
+					rectAttrs['class'] = 'd-box';
+					rectAttrs.style = 'cursor: pointer; opacity: ' + cellOpacity + '; fill: var(--wp-link); stroke: var(--wp-link); stroke-width: 0.8;';
+				} else if (state === 'inflated') {
+					rectAttrs['class'] = 'd-box';
+					rectAttrs.style = 'cursor: pointer; opacity: ' + cellOpacity + '; fill: var(--wp-bg); stroke: var(--wp-border); stroke-width: 0.8;';
+				} else {
+					rectAttrs['class'] = 'd-box';
+				}
+
+				var rect = s('rect', rectAttrs);
+				(function (cc, rr) {
+					rect.addEventListener('click', function () {
+						robotC = cc;
+						robotR = rr;
+						draw();
+					});
+				})(c, r);
+				svg.appendChild(rect);
+
+				if (state === 'inflated') {
+					var overlay = s('rect', {
+						x: x, y: y, width: CELL, height: CELL,
+						style: 'pointer-events: none; fill: var(--wp-gold-text); fill-opacity: ' + decay.toFixed(2) + '; opacity: ' + cellOpacity + ';'
+					});
+					svg.appendChild(overlay);
+				} else if (state === 'unknown') {
+					var qMark = s('text', {
+						'class': 'd-muted',
+						x: x + CELL / 2, y: y + CELL / 2 + 4,
+						'text-anchor': 'middle',
+						'font-size': '12',
+						style: 'pointer-events: none; opacity: ' + cellOpacity + ';'
+					});
+					qMark.textContent = '?';
+					svg.appendChild(qMark);
+				}
+			}
+		}
+
+		// View frame (global full grid vs local window around robot)
+		if (viewMode === 'global') {
+			svg.appendChild(s('rect', {
+				'class': 'd-strong',
+				x: GX, y: GY, width: COLS * CELL, height: ROWS * CELL,
+				style: 'pointer-events: none; fill: none;'
+			}));
+		} else {
+			var lc0 = Math.max(0, robotC - 4);
+			var lc1 = Math.min(COLS - 1, robotC + 4);
+			var lr0 = Math.max(0, robotR - 3);
+			var lr1 = Math.min(ROWS - 1, robotR + 3);
+			svg.appendChild(s('rect', {
+				'class': 'd-strong',
+				x: GX + lc0 * CELL, y: GY + lr0 * CELL,
+				width: (lc1 - lc0 + 1) * CELL, height: (lr1 - lr0 + 1) * CELL,
+				'stroke-dasharray': '5 3',
+				style: 'pointer-events: none; fill: none;'
+			}));
+		}
+
+		// Robot footprint circle
+		var rx = robotC + 0.5;
+		var ry = robotR + 0.5;
+		var footprintHit = footprintOverlapsOccupied(rx, ry, robR);
+		var inCollision = (centreState === 'occupied' || footprintHit);
+
+		var robotGroup = s('g', { 'clip-path': 'url(#' + clipId + ')', style: 'pointer-events: none;' });
+		var cx = GX + rx * CELL;
+		var cy = GY + ry * CELL;
+		var rPx = robR * CELL;
+
+		if (inCollision) {
+			robotGroup.appendChild(s('circle', {
+				cx: cx, cy: cy, r: rPx,
+				style: 'fill: var(--wp-gold-soft); fill-opacity: 0.45; stroke: var(--wp-bg); stroke-width: 4.5;'
+			}));
+			robotGroup.appendChild(s('circle', {
+				cx: cx, cy: cy, r: rPx,
+				'stroke-dasharray': '5 3',
+				style: 'fill: none; stroke: var(--wp-gold-text); stroke-width: 2.5;'
+			}));
+		} else {
+			robotGroup.appendChild(s('circle', {
+				'class': 'd-strong',
+				cx: cx, cy: cy, r: rPx,
+				style: 'fill: var(--wp-bg); fill-opacity: 0.35;'
+			}));
+		}
+
+		robotGroup.appendChild(s('circle', {
+			cx: cx, cy: cy, r: 3,
+			style: 'fill: ' + (inCollision ? 'var(--wp-gold-text)' : 'var(--wp-link)') + '; stroke: var(--wp-bg); stroke-width: 1;'
+		}));
+		svg.appendChild(robotGroup);
+
+		// Bottom instruction inside SVG
+		var hint = s('text', { 'class': 'd-muted', x: GX, y: 298, 'font-size': '12' });
+		hint.textContent = 'Click any cell or use buttons to move robot';
+		svg.appendChild(hint);
+
+		drawLegend();
+
+		// Readout text (only lesson terms)
+		var centreDesc;
+		if (centreState === 'occupied') {
+			centreDesc = 'occupied (in collision)';
+		} else if (footprintHit) {
+			centreDesc = (centreState === 'inflated' ? 'in inflated cost (decaying cost)' : centreState) +
+				', and robot_radius overlaps an occupied cell (in collision)';
+		} else if (centreState === 'inflated') {
+			centreDesc = 'in inflated cost (decaying cost)';
+		} else if (centreState === 'unknown') {
+			centreDesc = 'unknown';
+		} else {
+			centreDesc = 'free';
+		}
+
+		var viewDesc = viewMode === 'global'
+			? 'Global costmap: used by the planner to compute a global plan.'
+			: 'Local costmap: local view used by the controller and subscribed to by the behavior server.';
+
+		readout.textContent = 'Robot centre cell is ' + centreDesc + '. ' +
+			'inflation_radius = ' + inflR.toFixed(1) + ' cells, robot_radius = ' + robR.toFixed(1) + ' cells. ' +
+			viewDesc;
+	}
+
+	sInfl.input.addEventListener('input', draw);
+	sRobot.input.addEventListener('input', draw);
+
+	root.replaceChildren(frame('Costmap inflation and robot footprint', [
+		h('p', { 'class': 'widget-note', text: 'The inflation layer places a decaying cost around lethal obstacles up to inflation_radius. Nav2 keeps a global view for the planner and a local view for the controller and behavior server.' }),
+		viewButtons,
+		sInfl.row,
+		sRobot.row,
+		moveButtons,
+		svg,
+		readout
+	]));
+
+	draw();
+}
+
+// ---- launch-tree (step 68) ----
+// Placeholder text: The launch tree needs JavaScript. With it on, you can inspect the mimic launch tree, test launch arguments, and see which parameter values survive a node restart.
+
+// Facts used (from robotics-4-7.html):
+// - L256-287, L289, L301-333, L337-339: turtlesim_mimic_launch.py defines generate_launch_description() returning a LaunchDescription with three Node actions (no launch arguments declared):
+//   1) L264-270: package='turtlesim', namespace='turtlesim1', executable='turtlesim_node', name='sim', arguments=['--ros-args', '--log-level', 'info']
+//   2) L271-277: package='turtlesim', namespace='turtlesim2', executable='turtlesim_node', name='sim', ros_arguments=['--log-level', 'warn']
+//   3) L278-286: package='turtlesim', executable='mimic', name='mimic', remappings=[('/input/pose', '/turtlesim1/turtle1/pose'), ('/output/cmd_vel', '/turtlesim2/turtle1/cmd_vel')]
+// - L292, L313, L317, L321, L330, L546: Full node names are /turtlesim1/sim and /turtlesim2/sim (plus mimic), and topics are prefixed by each namespace (e.g. /turtlesim1/turtle1/pose). "Unique namespaces allow the system to start two nodes without node name or topic name conflicts." (L292); "two nodes with the same name and no distinct namespaces clash; unique namespaces avoid node and topic name conflicts." (L546)
+// - L295, L315, L323: arguments passes ROS and non-ROS options (needs --ros-args); ros_arguments is for ROS-only options cleanly without --ros-args.
+// - L298, L301, L318, L326-329, L345: mimic subscribes to /turtlesim1/turtle1/pose (remapped from /input/pose) and publishes on /turtlesim2/turtle1/cmd_vel (remapped from /output/cmd_vel) so turtlesim2 mimics turtlesim1's movements.
+// - L405, L407-415, L420-423: DeclareLaunchArgument('turtlesim_ns', default_value='turtlesim1') with LaunchConfiguration('turtlesim_ns') sets namespace=turtlesim_ns on Node(package='turtlesim', namespace=turtlesim_ns, executable='turtlesim_node', name='sim'). LaunchConfiguration is evaluated during execution of the launch description.
+// - L418, L425: Command-line override syntax name:=value, e.g. background_r:=255 (L418); XML <arg name="background_r" default="0" /> (L425).
+// - L433, L435-455: IncludeLaunchDescription includes launch_tutorial/launch/example_substitutions_launch.py and passes launch_arguments={'turtlesim_ns': 'turtlesim2', 'use_provided_red': 'True', 'new_background_r': colors['background_r']} where colors = {'background_r': '200'} (L441).
+// - L482: "The lifetime of a parameter is tied to the lifetime of the node."
+// - L497, L501: ros2 param set /turtlesim background_r 150 changes the background color at once; "A value set this way is lost when the node restarts."
+// - L501, L511-515, L522-530: A YAML parameter file (turtlesim.yaml with /turtlesim2/sim: ros__parameters: background_r: 150, background_g: 86, background_b: 255) passed via parameters=[...] is applied at node startup.
+// - L535: "Tune a running node with ros2 param set, then save the result with ros2 param dump."
+
+function initLaunchTree(root) {
+	var whatIfClash = false;       // Panel 1 what-if toggle
+	var subMode = 'defaults';      // Panel 2: 'defaults' | 'bg255' | 'include'
+	var paramSource = 'param_set'; // Panel 3: 'param_set' | 'yaml'
+	var restarted = false;         // Panel 3 restart state
+	var activePanel = 'mimic';     // 'mimic' | 'substitutions' | 'param'
+
+	var svgMimic = plotFrame(560, 315, 'Launch tree diagram for turtlesim_mimic_launch.py');
+	var svgSub = plotFrame(560, 192, 'Launch arguments diagram for example_substitutions_launch.py');
+	var svgParam = plotFrame(560, 122, 'Parameter lifetime panel comparing ros2 param set and YAML parameter file on node restart');
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+	var btnWhatIfClash = button('Same namespace for both simulators', function () {
+		whatIfClash = !whatIfClash;
+		activePanel = 'mimic';
+		draw();
+	});
+
+	var btnSubDefault = button('defaults', function () {
+		subMode = 'defaults';
+		activePanel = 'substitutions';
+		draw();
+	});
+	var btnSubBg255 = button('background_r:=255', function () {
+		subMode = 'bg255';
+		activePanel = 'substitutions';
+		draw();
+	});
+	var btnSubInclude = button('included from a top-level launch file', function () {
+		subMode = 'include';
+		activePanel = 'substitutions';
+		draw();
+	});
+
+	var btnParamSet = button('Set with ros2 param set', function () {
+		paramSource = 'param_set';
+		restarted = false;
+		activePanel = 'param';
+		draw();
+	});
+	var btnYaml = button('Loaded from YAML at launch', function () {
+		paramSource = 'yaml';
+		restarted = false;
+		activePanel = 'param';
+		draw();
+	});
+	var btnRestart = button('Restart node', function () {
+		restarted = true;
+		activePanel = 'param';
+		draw();
+	});
+
+	function addSvgText(svg, cls, x, y, text, opts) {
+		var attrs = { 'class': cls, x: x, y: y };
+		if (opts) {
+			if (opts.anchor) attrs['text-anchor'] = opts.anchor;
+			if (opts.size) attrs['font-size'] = opts.size;
+			if (opts.fill) attrs.style = 'fill: ' + opts.fill + ';';
+		}
+		var el = s('text', attrs);
+		el.textContent = text;
+		svg.appendChild(el);
+		return el;
+	}
+
+	function addMarker(defs, id, color) {
+		var mk = s('marker', {
+			id: id,
+			viewBox: '0 0 10 10',
+			refX: '9',
+			refY: '5',
+			markerWidth: '6',
+			markerHeight: '6',
+			orient: 'auto-start-reverse'
+		});
+		mk.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', fill: color }));
+		defs.appendChild(mk);
+	}
+
+	function drawMimicTree() {
+		svgMimic.replaceChildren();
+		var ns2 = whatIfClash ? 'turtlesim1' : 'turtlesim2';
+		var node2Full = '/' + ns2 + '/sim';
+
+		var defs = s('defs', {});
+		addMarker(defs, 'lt-arrow', 'var(--wp-link)');
+		addMarker(defs, 'lt-arrow-muted', 'var(--wp-text-muted)');
+		svgMimic.appendChild(defs);
+
+		// Root launch file box
+		svgMimic.appendChild(s('rect', { 'class': 'd-box-gold', x: 90, y: 8, width: 380, height: 50, rx: 4 }));
+		addSvgText(svgMimic, 'd-title', 280, 28, 'turtlesim_mimic_launch.py', { anchor: 'middle', size: '14px' });
+		addSvgText(svgMimic, 'd-muted', 280, 46, 'LaunchDescription (3 Node actions)', { anchor: 'middle', size: '12px' });
+
+		// Tree edges to the 3 Node actions
+		svgMimic.appendChild(s('line', { 'class': 'd-line', x1: 200, y1: 58, x2: 94, y2: 90, 'marker-end': 'url(#lt-arrow-muted)' }));
+		svgMimic.appendChild(s('line', { 'class': 'd-line', x1: 280, y1: 58, x2: 280, y2: 90, 'marker-end': 'url(#lt-arrow-muted)' }));
+		svgMimic.appendChild(s('line', { 'class': 'd-line', x1: 360, y1: 58, x2: 466, y2: 90, 'marker-end': 'url(#lt-arrow-muted)' }));
+		addSvgText(svgMimic, 'd-muted', 132, 74, 'Node', { anchor: 'end', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 287, 78, 'Node', { size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 428, 74, 'Node', { size: '11px' });
+
+		// Node 1 (left): /turtlesim1/sim
+		svgMimic.appendChild(s('rect', { 'class': whatIfClash ? 'd-box-gold' : 'd-box', x: 8, y: 92, width: 172, height: 104, rx: 4 }));
+		addSvgText(svgMimic, 'd-title', 94, 112, '/turtlesim1/sim', { anchor: 'middle', size: '14px', fill: whatIfClash ? 'var(--wp-gold-text)' : null });
+		addSvgText(svgMimic, 'd-muted', 94, 131, 'ns: turtlesim1, name: sim', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 94, 148, 'exec: turtlesim_node', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 94, 165, 'arguments (log: info)', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 94, 182, 'pkg: turtlesim', { anchor: 'middle', size: '11px' });
+
+		// Node 2 (center): mimic
+		svgMimic.appendChild(s('rect', { 'class': 'd-box', x: 194, y: 92, width: 172, height: 104, rx: 4 }));
+		addSvgText(svgMimic, 'd-title', 280, 112, 'mimic', { anchor: 'middle', size: '14px' });
+		addSvgText(svgMimic, 'd-muted', 280, 131, 'ns: (none), name: mimic', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 280, 148, 'exec: mimic', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 280, 165, 'remaps /input/pose', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 280, 182, 'remaps /output/cmd_vel', { anchor: 'middle', size: '11px' });
+
+		// Node 3 (right): /turtlesim2/sim (or colliding /turtlesim1/sim in what-if)
+		svgMimic.appendChild(s('rect', { 'class': whatIfClash ? 'd-box-gold' : 'd-box', x: 380, y: 92, width: 172, height: 104, rx: 4 }));
+		addSvgText(svgMimic, 'd-title', 466, 112, node2Full, { anchor: 'middle', size: '14px', fill: whatIfClash ? 'var(--wp-gold-text)' : null });
+		addSvgText(svgMimic, 'd-muted', 466, 131, 'ns: ' + ns2 + ', name: sim', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 466, 148, 'exec: turtlesim_node', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 466, 165, 'ros_arguments (log: warn)', { anchor: 'middle', size: '11px' });
+		addSvgText(svgMimic, 'd-muted', 466, 182, 'pkg: turtlesim', { anchor: 'middle', size: '11px' });
+
+		// Pose topic link (Node 1 -> mimic)
+		svgMimic.appendChild(s('path', {
+			'class': 'd-strong',
+			d: 'M 94,196 V 240 H 250 V 201',
+			'marker-end': 'url(#lt-arrow)'
+		}));
+		addSvgText(svgMimic, 'd-title', 166, 258, '/turtlesim1/turtle1/pose', { anchor: 'middle', size: '12px' });
+		addSvgText(svgMimic, 'd-muted', 166, 275, 'remapped from /input/pose', { anchor: 'middle', size: '11px' });
+
+		// cmd_vel topic link (mimic -> Node 3)
+		if (whatIfClash) {
+			svgMimic.appendChild(s('line', {
+				'class': 'd-line',
+				'stroke-dasharray': '4 4',
+				x1: 310, y1: 196, x2: 310, y2: 240
+			}));
+			addSvgText(svgMimic, 'd-title', 396, 258, '/turtlesim2/turtle1/cmd_vel', { anchor: 'middle', size: '12px', fill: 'var(--wp-gold-text)' });
+			addSvgText(svgMimic, 'd-muted', 396, 275, 'no /turtlesim2/sim node', { anchor: 'middle', size: '11px' });
+			addSvgText(svgMimic, 'd-title', 280, 296, 'What-if clash: both nodes use /turtlesim1/sim', { anchor: 'middle', size: '11px', fill: 'var(--wp-gold-text)' });
+			addSvgText(svgMimic, 'd-muted', 280, 310, 'Unique namespaces avoid name conflicts.', { anchor: 'middle', size: '11px' });
+		} else {
+			svgMimic.appendChild(s('path', {
+				'class': 'd-strong',
+				d: 'M 310,196 V 240 H 466 V 201',
+				'marker-end': 'url(#lt-arrow)'
+			}));
+			addSvgText(svgMimic, 'd-title', 396, 258, '/turtlesim2/turtle1/cmd_vel', { anchor: 'middle', size: '12px' });
+			addSvgText(svgMimic, 'd-muted', 396, 275, 'remapped from /output/cmd_vel', { anchor: 'middle', size: '11px' });
+			addSvgText(svgMimic, 'd-muted', 280, 302, 'Unique namespaces avoid name conflicts.', { anchor: 'middle', size: '12px' });
+		}
+
+		svgMimic.setAttribute('aria-label',
+			whatIfClash
+				? 'What-if collision in turtlesim_mimic_launch.py: both simulator nodes use namespace turtlesim1, clashing on /turtlesim1/sim and its topics. Unique namespaces avoid name conflicts.'
+				: 'Launch tree for turtlesim_mimic_launch.py: starts /turtlesim1/sim, mimic, and /turtlesim2/sim. mimic remaps /input/pose to /turtlesim1/turtle1/pose and /output/cmd_vel to /turtlesim2/turtle1/cmd_vel.'
+		);
+	}
+
+	function drawSubTree() {
+		svgSub.replaceChildren();
+		var defs = s('defs', {});
+		addMarker(defs, 'lt-sub-arrow', 'var(--wp-link)');
+		svgSub.appendChild(defs);
+
+		var ns = (subMode === 'include') ? 'turtlesim2' : 'turtlesim1';
+		var fullNode = '/' + ns + '/sim';
+
+		// Left box: arguments and substitutions
+		svgSub.appendChild(s('rect', { 'class': subMode === 'defaults' ? 'd-box' : 'd-box-gold', x: 8, y: 12, width: 244, height: 146, rx: 4 }));
+		if (subMode === 'defaults') {
+			addSvgText(svgSub, 'd-title', 130, 34, 'example_substitutions_launch.py', { anchor: 'middle', size: '12px' });
+			addSvgText(svgSub, 'd-muted', 130, 58, 'DeclareLaunchArgument:', { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-muted', 130, 77, "turtlesim_ns = 'turtlesim1'", { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-muted', 130, 96, 'background_r default: 0 (XML)', { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-muted', 130, 118, "LaunchConfiguration('turtlesim_ns')", { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-muted', 130, 142, 'Evaluated at launch execution', { anchor: 'middle', size: '11px' });
+		} else if (subMode === 'bg255') {
+			addSvgText(svgSub, 'd-title', 130, 34, 'example_substitutions_launch.py', { anchor: 'middle', size: '12px' });
+			addSvgText(svgSub, 'd-muted', 130, 58, "turtlesim_ns: 'turtlesim1' (default)", { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-title', 130, 80, 'CLI: background_r:=255', { anchor: 'middle', size: '12px', fill: 'var(--wp-link)' });
+			addSvgText(svgSub, 'd-muted', 130, 106, "LaunchConfiguration('turtlesim_ns')", { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-muted', 130, 142, 'name:=value overrides default', { anchor: 'middle', size: '11px' });
+		} else {
+			addSvgText(svgSub, 'd-title', 130, 34, 'IncludeLaunchDescription', { anchor: 'middle', size: '12px' });
+			addSvgText(svgSub, 'd-muted', 130, 54, '-> example_substitutions_launch.py', { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-title', 130, 78, "turtlesim_ns: 'turtlesim2'", { anchor: 'middle', size: '11px', fill: 'var(--wp-link)' });
+			addSvgText(svgSub, 'd-muted', 130, 98, "use_provided_red: 'True'", { anchor: 'middle', size: '11px', fill: 'var(--wp-link)' });
+			addSvgText(svgSub, 'd-muted', 130, 118, "new_background_r: '200'", { anchor: 'middle', size: '11px', fill: 'var(--wp-link)' });
+			addSvgText(svgSub, 'd-muted', 130, 142, "colors = {'background_r': '200'}", { anchor: 'middle', size: '11px' });
+		}
+
+		// Arrow
+		svgSub.appendChild(s('line', {
+			'class': 'd-strong',
+			x1: 254, y1: 85, x2: 300, y2: 85,
+			'marker-end': 'url(#lt-sub-arrow)'
+		}));
+		addSvgText(svgSub, 'd-muted', 277, 74, 'Node', { anchor: 'middle', size: '11px' });
+
+		// Right box: resulting turtlesim node
+		svgSub.appendChild(s('rect', { 'class': subMode === 'defaults' ? 'd-box' : 'd-box-gold', x: 306, y: 12, width: 246, height: 146, rx: 4 }));
+		addSvgText(svgSub, 'd-title', 429, 36, fullNode, { anchor: 'middle', size: '14px', fill: subMode === 'include' ? 'var(--wp-gold-text)' : null });
+		addSvgText(svgSub, 'd-muted', 429, 59, 'pkg: turtlesim, name: sim', { anchor: 'middle', size: '11px' });
+		addSvgText(svgSub, 'd-muted', 429, 78, 'exec: turtlesim_node', { anchor: 'middle', size: '11px' });
+		addSvgText(svgSub, 'd-muted', 429, 97, 'ns: ' + ns + ' (turtlesim_ns)', { anchor: 'middle', size: '11px', fill: subMode === 'include' ? 'var(--wp-link)' : null });
+		if (subMode === 'defaults') {
+			addSvgText(svgSub, 'd-muted', 429, 119, 'background_r: 0 (default)', { anchor: 'middle', size: '11px' });
+			addSvgText(svgSub, 'd-muted', 429, 142, 'Topic prefix: /turtlesim1/...', { anchor: 'middle', size: '11px' });
+		} else if (subMode === 'bg255') {
+			addSvgText(svgSub, 'd-title', 429, 119, 'background_r: 255 (CLI arg)', { anchor: 'middle', size: '11px', fill: 'var(--wp-link)' });
+			addSvgText(svgSub, 'd-muted', 429, 142, 'Topic prefix: /turtlesim1/...', { anchor: 'middle', size: '11px' });
+		} else {
+			addSvgText(svgSub, 'd-muted', 429, 119, 'new_background_r: 200 (passed)', { anchor: 'middle', size: '11px', fill: 'var(--wp-link)' });
+			addSvgText(svgSub, 'd-muted', 429, 142, 'use_provided_red: True (passed)', { anchor: 'middle', size: '11px' });
+		}
+
+		// Bottom caption
+		if (subMode === 'defaults') {
+			addSvgText(svgSub, 'd-muted', 280, 180, 'LaunchConfiguration evaluates at launch.', { anchor: 'middle', size: '12px' });
+		} else if (subMode === 'bg255') {
+			addSvgText(svgSub, 'd-muted', 280, 180, 'CLI name:=value overrides the argument.', { anchor: 'middle', size: '12px' });
+		} else {
+			addSvgText(svgSub, 'd-muted', 280, 180, 'IncludeLaunchDescription passes arguments.', { anchor: 'middle', size: '12px' });
+		}
+
+		svgSub.setAttribute('aria-label',
+			subMode === 'defaults'
+				? 'example_substitutions_launch.py with default arguments: turtlesim_ns is turtlesim1 and background_r is 0, starting node /turtlesim1/sim.'
+				: (subMode === 'bg255'
+					? 'example_substitutions_launch.py with background_r:=255: turtlesim_ns remains turtlesim1, starting node /turtlesim1/sim with background_r 255.'
+					: 'example_substitutions_launch.py included from a top-level launch file: passes turtlesim_ns=turtlesim2, use_provided_red=True, and new_background_r=200, starting node /turtlesim2/sim.')
+		);
+	}
+
+	function drawParamPanel() {
+		svgParam.replaceChildren();
+		var defs = s('defs', {});
+		addMarker(defs, 'lt-param-arrow', restarted ? 'var(--wp-link)' : 'var(--wp-text-muted)');
+		svgParam.appendChild(defs);
+
+		// Left box: source of parameter change
+		svgParam.appendChild(s('rect', { 'class': 'd-box', x: 8, y: 10, width: 248, height: 102, rx: 4 }));
+		if (paramSource === 'param_set') {
+			addSvgText(svgParam, 'd-title', 132, 32, 'Set with ros2 param set', { anchor: 'middle', size: '14px' });
+			addSvgText(svgParam, 'd-muted', 132, 53, 'ros2 param set /turtlesim', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 132, 71, 'background_r 150', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 132, 95, 'Changes background color at once', { anchor: 'middle', size: '12px' });
+		} else {
+			addSvgText(svgParam, 'd-title', 132, 32, 'Loaded from YAML at launch', { anchor: 'middle', size: '14px' });
+			addSvgText(svgParam, 'd-muted', 132, 53, 'parameters=[turtlesim.yaml]', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 132, 71, '/turtlesim2/sim: background_r: 150', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 132, 95, 'Applied at node startup', { anchor: 'middle', size: '12px' });
+		}
+
+		// Arrow
+		svgParam.appendChild(s('line', {
+			'class': restarted ? 'd-strong' : 'd-line',
+			x1: 258, y1: 61, x2: 298, y2: 61,
+			'marker-end': 'url(#lt-param-arrow)'
+		}));
+		addSvgText(svgParam, 'd-muted', 278, 49, restarted ? 'Restart' : 'State', { anchor: 'middle', size: '11px' });
+
+		// Right box: running or post-restart survival
+		svgParam.appendChild(s('rect', { 'class': restarted ? 'd-box-gold' : 'd-box', x: 304, y: 10, width: 248, height: 102, rx: 4 }));
+		if (!restarted) {
+			addSvgText(svgParam, 'd-title', 428, 32, 'Node state: Running', { anchor: 'middle', size: '14px' });
+			addSvgText(svgParam, 'd-muted', 428, 54, 'background_r = 150 is active', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 428, 76, 'Parameter lifetime matches', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 428, 95, 'the lifetime of the node.', { anchor: 'middle', size: '12px' });
+		} else if (paramSource === 'param_set') {
+			addSvgText(svgParam, 'd-title', 428, 32, 'After restart: Value LOST', { anchor: 'middle', size: '14px', fill: 'var(--wp-gold-text)' });
+			addSvgText(svgParam, 'd-muted', 428, 54, 'Value set with ros2 param set', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 428, 73, 'is lost when the node restarts.', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 428, 95, 'Save with ros2 param dump.', { anchor: 'middle', size: '12px' });
+		} else {
+			addSvgText(svgParam, 'd-title', 428, 32, 'After restart: Value SURVIVES', { anchor: 'middle', size: '14px', fill: 'var(--wp-gold-text)' });
+			addSvgText(svgParam, 'd-muted', 428, 54, 'YAML file is given at startup,', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 428, 73, 'so launch reapplies', { anchor: 'middle', size: '12px' });
+			addSvgText(svgParam, 'd-muted', 428, 95, 'background_r: 150 on restart.', { anchor: 'middle', size: '12px' });
+		}
+
+		svgParam.setAttribute('aria-label',
+			paramSource === 'param_set'
+				? (restarted ? 'After restarting the node, the value set with ros2 param set is lost.' : 'ros2 param set /turtlesim background_r 150 active while the node is running.')
+				: (restarted ? 'After restarting the node, the YAML parameter file loaded at launch reapplies background_r: 150.' : 'YAML parameter file turtlesim.yaml applied to /turtlesim2/sim at startup.')
+		);
+	}
+
+	function draw() {
+		btnWhatIfClash.setAttribute('aria-pressed', String(whatIfClash));
+		btnSubDefault.setAttribute('aria-pressed', String(subMode === 'defaults'));
+		btnSubBg255.setAttribute('aria-pressed', String(subMode === 'bg255'));
+		btnSubInclude.setAttribute('aria-pressed', String(subMode === 'include'));
+		btnParamSet.setAttribute('aria-pressed', String(paramSource === 'param_set'));
+		btnYaml.setAttribute('aria-pressed', String(paramSource === 'yaml'));
+
+		drawMimicTree();
+		drawSubTree();
+		drawParamPanel();
+
+		if (activePanel === 'mimic') {
+			readout.textContent = whatIfClash
+				? 'turtlesim_mimic_launch.py (what-if same namespace): resulting nodes /turtlesim1/sim, /turtlesim1/sim, and mimic clash. Unique namespaces allow the system to start two nodes without node name or topic name conflicts.'
+				: 'turtlesim_mimic_launch.py: resulting nodes are /turtlesim1/sim, mimic, and /turtlesim2/sim. Unique namespaces allow the system to start two nodes without node name or topic name conflicts.';
+		} else if (activePanel === 'substitutions') {
+			if (subMode === 'defaults') {
+				readout.textContent = 'example_substitutions_launch.py (defaults): resulting node is /turtlesim1/sim (turtlesim_ns=turtlesim1, background_r=0).';
+			} else if (subMode === 'bg255') {
+				readout.textContent = 'example_substitutions_launch.py (background_r:=255): resulting node is /turtlesim1/sim (turtlesim_ns=turtlesim1, background_r=255).';
+			} else {
+				readout.textContent = 'example_substitutions_launch.py (included from a top-level launch file): resulting node is /turtlesim2/sim (turtlesim_ns=turtlesim2, use_provided_red=True, new_background_r=200).';
+			}
+		} else {
+			if (paramSource === 'param_set') {
+				readout.textContent = restarted
+					? 'Parameter lifetime (/turtlesim): after node restart, the value set with ros2 param set is lost when the node restarts (save with ros2 param dump).'
+					: 'Parameter lifetime (/turtlesim): ros2 param set /turtlesim background_r 150 changes the background color at once (active until the node restarts).';
+			} else {
+				readout.textContent = restarted
+					? 'Parameter lifetime (/turtlesim2/sim): after node restart, the YAML parameter file passed via parameters=[...] is applied at node startup, so background_r: 150 survives.'
+					: 'Parameter lifetime (/turtlesim2/sim): turtlesim.yaml loaded via parameters=[...] applies background_r: 150 at node startup.';
+			}
+		}
+	}
+
+	draw();
+
+	root.replaceChildren(frame('Turtlesim launch trees, arguments, and parameter lifetime', [
+		h('p', { 'class': 'widget-note', text: '1. turtlesim_mimic_launch.py (fixed namespaces, no launch arguments):' }),
+		h('div', { 'class': 'widget-buttons' }, [btnWhatIfClash]),
+		svgMimic,
+		h('p', { 'class': 'widget-note', text: '2. example_substitutions_launch.py (launch arguments and substitutions):' }),
+		h('div', { 'class': 'widget-buttons' }, [btnSubDefault, btnSubBg255, btnSubInclude]),
+		svgSub,
+		h('p', { 'class': 'widget-note', text: '3. Parameter persistence across a node restart:' }),
+		h('div', { 'class': 'widget-buttons' }, [btnParamSet, btnYaml, btnRestart]),
+		svgParam,
+		readout
+	]));
+}
+// ---- moveit-pipeline (step 68) ----
+// Placeholder text: The MoveIt 2 pipeline explorer needs JavaScript. With it on, you can inspect each stage from URDF/xacro to hardware, switch between OMPL and Pilz planners, and compare mock hardware with a real arm.
+
+// Facts used (from robotics-4-8.html):
+// - Line 230: URDF (Unified Robot Description Format) is an XML file describing the robot as a tree of links (rigid bodies) connected by joints.
+// - Line 240: Universal Robots uses xacro macros so models reuse the same kinematics and configure meshes, DH parameters, and joint limits from YAML files.
+// - Line 249: URDF says what the robot is (geometry, kinematics, hard limits); SRDF (Semantic Robot Description Format) represents semantic information about the robot structure.
+// - Lines 252, 258: UR's SRDF defines one planning group (ur_manipulator from base_link to tool0) and three named poses (home, up, test_configuration).
+// - Line 261: SRDF lists 11 <disable_collisions> pairs stored in MoveIt's Allowed Collision Matrix (ACM) to skip those checks.
+// - Line 269: ros2_control's controller manager connects hardware interfaces to controllers.
+// - Lines 272, 275: mock_components/GenericSystem mirrors commands to states; use_mock_hardware selects GenericSystem vs the real UR hardware plugin.
+// - Line 275: Mock hardware is useful for testing launch files, descriptions, and MoveIt integration without a robot.
+// - Line 278: Mock hardware is not a physics simulator (arm can jump instead of accelerating) and does not test TCP pose broadcaster, passthrough trajectory controller, force mode, or GPIO (nor timing, contact, or I/O).
+// - Lines 284, 287: joint_trajectory_controller (JTC) accepts FollowJointTrajectory goals and commands hardware; joint_state_broadcaster reports state interfaces on /joint_states for MoveIt and robot_state_publisher.
+// - Lines 292, 298-300: move_group is MoveIt's central integrator node reading URDF, SRDF, and *_moveit_config files, listening on /joint_states and TF, and talking to controllers via FollowJointTrajectoryAction.
+// - Lines 309, 312, 315: planning scene represents the world and robot state on /planning_scene; FCL checks meshes, primitives, and Octomaps (skipping ACM pairs); KDL plugin solves inverse kinematics.
+// - Lines 320, 323: OMPL is the default planner and implements randomized motion planners; handles clutter well, promises nothing about tool path shape, and two plans to the same goal can differ.
+// - Lines 326, 333-335, 339, 342: Pilz industrial motion planner generates teach-pendant motions (PTP/MoveJ, LIN/MoveL, CIRC/MoveC) and chains moves with blend_radius; LIN keeps a straight Cartesian path.
+// - Lines 347, 370, 372: Planner finds a path (joint configurations); planning adapters (e.g. AddTimeOptimalParameterization) turn it into a timed trajectory sent as a FollowJointTrajectory goal.
+// - Lines 350, 394: A real UR can run slower than planned due to speed scaling; swapping mock for a real UR changes only the hardware plugin.
+
+function initMoveitPipeline(root) {
+	var W = 560, H = 228;
+	var svg = plotFrame(W, H, 'MoveIt 2 motion planning pipeline from URDF/xacro, SRDF, move_group, and planning scene to planner, trajectory, ros2_control, and hardware');
+
+	var defs = s('defs', {});
+	var mk = s('marker', { id: 'arrow-moveit-pipe', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '6', markerHeight: '6', orient: 'auto-start-reverse' });
+	mk.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', 'class': 'd-fill' }));
+	defs.appendChild(mk);
+	svg.appendChild(defs);
+
+	var plannerMode = 'ompl';
+	var hwMode = 'mock';
+	var selected = 'urdf';
+
+	var BOX_W = 118, BOX_H = 68;
+	var COLS = [11, 151, 291, 431];
+	var ROWS = [16, 144];
+
+	var STAGES = [
+		{
+			id: 'urdf',
+			title: 'URDF / xacro',
+			sub1: 'links, joints,',
+			sub2: 'hard limits',
+			x: COLS[0], y: ROWS[0],
+			info: function () {
+				return 'URDF / xacro: The URDF XML file describes the robot as a tree of links (rigid bodies) connected by joints, stating its geometry, kinematics, and hard limits. Universal Robots uses xacro macros so models reuse the same kinematics and load meshes, DH parameters, and limits from YAML files.';
+			}
+		},
+		{
+			id: 'srdf',
+			title: 'SRDF',
+			sub1: 'groups, poses,',
+			sub2: 'ACM',
+			x: COLS[1], y: ROWS[0],
+			info: function () {
+				return 'SRDF: Adds semantic information on top of the URDF: planning groups (such as ur_manipulator from base_link to tool0), named poses (home, up, test_configuration), and disabled collision pairs. MoveIt stores those pairs in its Allowed Collision Matrix (ACM) and skips checking them.';
+			}
+		},
+		{
+			id: 'move_group',
+			title: 'move_group',
+			sub1: 'central',
+			sub2: 'integrator',
+			x: COLS[2], y: ROWS[0],
+			info: function () {
+				return 'move_group: MoveIt\'s central integrator node, pulling the URDF, SRDF, and *_moveit_config files together to provide ROS actions and services. It listens on /joint_states and TF, and talks to the robot\'s controllers through the FollowJointTrajectoryAction interface.';
+			}
+		},
+		{
+			id: 'planning_scene',
+			title: 'planning scene',
+			sub1: 'FCL collisions',
+			sub2: '+ KDL IK',
+			x: COLS[3], y: ROWS[0],
+			info: function () {
+				return 'planning scene: Represents the world around the robot and the state of the robot itself, updated on /planning_scene. FCL checks collisions against meshes, primitive shapes, and Octomaps (skipping ACM pairs), while the KDL plugin solves inverse kinematics.';
+			}
+		},
+		{
+			id: 'planner',
+			title: 'planner: OMPL',
+			sub1: 'randomized',
+			sub2: 'default',
+			x: COLS[0], y: ROWS[1],
+			info: function () {
+				if (plannerMode === 'ompl') {
+					return 'planner (OMPL): OMPL is the default and implements randomized motion planners that search for an obstacle-free path using MoveIt\'s robot model and collision checks. It handles clutter well, but promises nothing about tool path shape and two plans to the same goal can differ (unlike Pilz\'s teach-pendant PTP, LIN, and CIRC moves).';
+				}
+				return 'planner (Pilz): Pilz works like a teach pendant, generating PTP (MoveJ), LIN (MoveL), and CIRC (MoveC) trajectories and can chain moves with a blend_radius. Unlike OMPL\'s randomized paths, Pilz plans a straight Cartesian trajectory with LIN when path shape matters.';
+			}
+		},
+		{
+			id: 'trajectory',
+			title: 'trajectory',
+			sub1: 'adapters:',
+			sub2: 'path \u2192 timed',
+			x: COLS[1], y: ROWS[1],
+			info: function () {
+				return 'trajectory: A planner first finds a path (a list of joint configurations), and planning adapters (such as AddTimeOptimalParameterization) add timing, velocity, and acceleration at every point to respect limits. MoveIt sends that timed trajectory as a FollowJointTrajectory action goal.';
+			}
+		},
+		{
+			id: 'ros2_control',
+			title: 'ros2_control',
+			sub1: 'JTC + state',
+			sub2: 'broadcaster',
+			x: COLS[2], y: ROWS[1],
+			info: function () {
+				return 'ros2_control: Its controller manager connects controllers to hardware interfaces. The joint_trajectory_controller (JTC) accepts MoveIt\'s FollowJointTrajectory goal and commands the hardware, while joint_state_broadcaster reports state interfaces on /joint_states for MoveIt and robot_state_publisher.';
+			}
+		},
+		{
+			id: 'hardware',
+			title: 'mock hardware',
+			sub1: 'GenericSystem',
+			sub2: 'mirrors state',
+			x: COLS[3], y: ROWS[1],
+			info: function () {
+				if (hwMode === 'mock') {
+					return 'mock hardware: Mirrors commands straight into states (mock_components/GenericSystem), testing launch files, descriptions, ROS piping, and MoveIt integration without a robot. It is not a physics simulator and does not test acceleration, timing, contact, the TCP pose broadcaster, passthrough trajectory controller, force mode, or GPIO.';
+				}
+				return 'real arm: Setting use_mock_hardware:=false swaps only the hardware plugin to the real UR hardware plugin. Unlike mock hardware (which only mirrors commands to test piping, launch files, and MoveIt integration), a real arm exercises real acceleration, timing (including speed scaling), contact, force mode, and I/O.';
+			}
+		}
+	];
+
+	var ARROWS = [
+		{ type: 'line', x1: COLS[0] + BOX_W, y1: ROWS[0] + BOX_H / 2, x2: COLS[1] - 2, y2: ROWS[0] + BOX_H / 2 },
+		{ type: 'line', x1: COLS[1] + BOX_W, y1: ROWS[0] + BOX_H / 2, x2: COLS[2] - 2, y2: ROWS[0] + BOX_H / 2 },
+		{ type: 'line', x1: COLS[2] + BOX_W, y1: ROWS[0] + BOX_H / 2, x2: COLS[3] - 2, y2: ROWS[0] + BOX_H / 2 },
+		{ type: 'path', d: 'M ' + (COLS[3] + BOX_W / 2) + ',' + (ROWS[0] + BOX_H) + ' L ' + (COLS[3] + BOX_W / 2) + ',114 L ' + (COLS[0] + BOX_W / 2) + ',114 L ' + (COLS[0] + BOX_W / 2) + ',' + (ROWS[1] - 2) },
+		{ type: 'line', x1: COLS[0] + BOX_W, y1: ROWS[1] + BOX_H / 2, x2: COLS[1] - 2, y2: ROWS[1] + BOX_H / 2 },
+		{ type: 'line', x1: COLS[1] + BOX_W, y1: ROWS[1] + BOX_H / 2, x2: COLS[2] - 2, y2: ROWS[1] + BOX_H / 2 },
+		{ type: 'line', x1: COLS[2] + BOX_W, y1: ROWS[1] + BOX_H / 2, x2: COLS[3] - 2, y2: ROWS[1] + BOX_H / 2 }
+	];
+
+	ARROWS.forEach(function (a) {
+		var el;
+		if (a.type === 'line') {
+			el = s('line', { 'class': 'd-line', x1: a.x1, y1: a.y1, x2: a.x2, y2: a.y2, 'marker-end': 'url(#arrow-moveit-pipe)' });
+		} else {
+			el = s('path', { 'class': 'd-line', d: a.d, fill: 'none', 'marker-end': 'url(#arrow-moveit-pipe)' });
+		}
+		svg.appendChild(el);
+	});
+
+	var stageEls = {};
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+	STAGES.forEach(function (st) {
+		var g = s('g', {
+			tabindex: '0',
+			role: 'button',
+			'aria-label': st.title + ', ' + st.sub1 + ' ' + st.sub2,
+			style: 'cursor: pointer;'
+		});
+		var rect = s('rect', { 'class': 'd-box', x: st.x, y: st.y, width: BOX_W, height: BOX_H, rx: 4 });
+		var tTitle = s('text', { 'class': 'd-title', x: st.x + BOX_W / 2, y: st.y + 23, 'text-anchor': 'middle', style: 'font-size: 12px;' });
+		tTitle.textContent = st.title;
+		var tSub1 = s('text', { 'class': 'd-muted', x: st.x + BOX_W / 2, y: st.y + 41, 'text-anchor': 'middle', style: 'font-size: 11px;' });
+		tSub1.textContent = st.sub1;
+		var tSub2 = s('text', { 'class': 'd-muted', x: st.x + BOX_W / 2, y: st.y + 56, 'text-anchor': 'middle', style: 'font-size: 11px;' });
+		tSub2.textContent = st.sub2;
+
+		g.appendChild(rect);
+		g.appendChild(tTitle);
+		g.appendChild(tSub1);
+		g.appendChild(tSub2);
+
+		function activate() {
+			selected = st.id;
+			update();
+		}
+
+		g.addEventListener('click', activate);
+		g.addEventListener('keydown', function (e) {
+			if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+				e.preventDefault();
+				activate();
+			}
+		});
+
+		svg.appendChild(g);
+		stageEls[st.id] = { g: g, title: tTitle, sub1: tSub1, sub2: tSub2, stage: st };
+	});
+
+	var btnOmpl = button('Planner: OMPL', function () {
+		plannerMode = 'ompl';
+		selected = 'planner';
+		update();
+	}, 'Switch planner to OMPL');
+
+	var btnPilz = button('Planner: Pilz', function () {
+		plannerMode = 'pilz';
+		selected = 'planner';
+		update();
+	}, 'Switch planner to Pilz');
+
+	var btnMock = button('Mock hardware', function () {
+		hwMode = 'mock';
+		selected = 'hardware';
+		update();
+	}, 'Switch hardware to mock hardware');
+
+	var btnReal = button('Real arm', function () {
+		hwMode = 'real';
+		selected = 'hardware';
+		update();
+	}, 'Switch hardware to real arm');
+
+	function update() {
+		var p = stageEls.planner;
+		if (plannerMode === 'ompl') {
+			p.title.textContent = 'planner: OMPL';
+			p.sub1.textContent = 'randomized';
+			p.sub2.textContent = 'default';
+		} else {
+			p.title.textContent = 'planner: Pilz';
+			p.sub1.textContent = 'PTP, LIN, CIRC';
+			p.sub2.textContent = 'teach-pendant';
+		}
+		p.g.setAttribute('aria-label', p.title.textContent + ', ' + p.sub1.textContent + ' ' + p.sub2.textContent);
+
+		var hw = stageEls.hardware;
+		if (hwMode === 'mock') {
+			hw.title.textContent = 'mock hardware';
+			hw.sub1.textContent = 'GenericSystem';
+			hw.sub2.textContent = 'mirrors state';
+		} else {
+			hw.title.textContent = 'real arm';
+			hw.sub1.textContent = 'UR hardware';
+			hw.sub2.textContent = 'plugin';
+		}
+		hw.g.setAttribute('aria-label', hw.title.textContent + ', ' + hw.sub1.textContent + ' ' + hw.sub2.textContent);
+
+		btnOmpl.setAttribute('aria-pressed', plannerMode === 'ompl' ? 'true' : 'false');
+		btnPilz.setAttribute('aria-pressed', plannerMode === 'pilz' ? 'true' : 'false');
+		btnMock.setAttribute('aria-pressed', hwMode === 'mock' ? 'true' : 'false');
+		btnReal.setAttribute('aria-pressed', hwMode === 'real' ? 'true' : 'false');
+
+		var activeStage = null;
+		STAGES.forEach(function (st) {
+			var isSel = selected === st.id;
+			stageEls[st.id].g.classList.toggle('d-active', isSel);
+			stageEls[st.id].g.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+			if (isSel) activeStage = st;
+		});
+
+		readout.textContent = activeStage
+			? activeStage.info()
+			: 'Click or select a stage box to inspect what it does in MoveIt 2.';
+	}
+
+	var wrap = h('figure', { 'class': 'lesson-diagram', style: 'margin: 8px 0; padding: 0; border: 0;' }, [svg]);
+	var btnRow = h('div', { 'class': 'widget-buttons' }, [btnOmpl, btnPilz, btnMock, btnReal]);
+
+	root.replaceChildren(frame('MoveIt 2 motion planning pipeline', [
+		h('p', { 'class': 'widget-note', text: 'Click or focus any stage (Enter or Space) to read what it does. Switch planner or hardware below.' }),
+		wrap,
+		btnRow,
+		readout
+	]));
+	update();
+}
+
+// ---- lighting-angles (step 68) ----
+// Placeholder text: The lighting angles simulator needs JavaScript. With it on, you can switch between backlight, ring light, glancing, darkfield, diffuse dome, and coaxial illumination to see light paths and what the camera sees.
+
+// Facts used:
+// - Backlight positioning & use (lines 235, 244): light source positioned behind the object shining toward the camera lens; used for checking external boundaries, measuring dimensions or hole diameters, and 2D robotic picking/sorting.
+// - Backlight camera view (lines 238, 241): background appears near saturation (pure white); opaque object blocks transmission and appears as a deep black profile (opaque silhouette); front face receives no direct light so surface scratches are cast into uniform shadow.
+// - Ring light (lines 252, 255): mounts directly to the camera lens for uniform, shadow-reducing illumination over short working distances; on reflective parts (polished metals, glossy plastics) LEDs produce a bright circular ring of specular reflections (glare) that saturates pixels and obscures underlying features.
+// - Directional glancing illumination (line 258): point-source light at a low, grazing angle (sharp angle of incidence) reveals surface topography and texture; raised ridges and surface cracks cast distinct, elongated shadows, turning small height differences into high-contrast edges.
+// - Darkfield illumination (lines 261, 264): shallow-angle light strikes a flat, shiny surface so mirror-like reflection bounces away from the lens and a smooth, defect-free surface appears completely black; scratches scatter shallow incident rays upward into the camera aperture as a bright line or spot on a black background.
+// - Diffuse dome lights (lines 275, 278): project omnidirectional scattered light (like an overcast sky) from every angle to evenly illuminate curved specular objects, eliminating harsh shadows and specular highlights for reading printed labels, inspecting solder fillets, and detecting dimensional flaws.
+// - Coaxial illumination (lines 283, 286, 289, 307): uses a beamsplitter (semi-transparent mirror in front of the lens) to project diffuse light along the camera optical axis onto flat specular surfaces (silicon wafers, polished glass, mirrored metal dies); flat surfaces reflect directly back appearing bright and uniform, while scratches, edge bevels, and engraved markings scatter light away and appear dark (with beamsplitter stray light adding slight haze).
+// - Side-view diagram conventions (line 293): camera above the part, gold light sources, and directional rays for backlight, glancing, darkfield, diffuse dome, and coaxial with a beamsplitter.
+
+function initLightingAngles(root) {
+	var W = 560, H = 320;
+	var svg = plotFrame(W, H, 'Side-view lighting geometry and simulated camera view');
+
+	var MODES = [
+		{
+			id: 'backlight',
+			label: 'Backlight',
+			aria: 'Backlight side view and camera silhouette view',
+			camLines: [
+				'Background: pure white',
+				'Part: deep black silhouette',
+				'Edge & scratch: in shadow'
+			],
+			readout: 'Backlight: Light behind the part shines toward the camera lens, showing an opaque silhouette against a near-saturated white background. Maximizes edge contrast for checking external boundaries, measuring dimensions or hole diameters, and 2D robotic picking or sorting, while front-face surface scratches are cast into uniform shadow.'
+		},
+		{
+			id: 'ring',
+			label: 'Ring light',
+			aria: 'Ring light mounted on lens with circular glare on shiny part',
+			camLines: [
+				'Lens-mounted front lighting',
+				'Uniform over short distances',
+				'Shiny part: bright glare ring'
+			],
+			readout: 'Ring light: Mounts directly to the camera lens to provide uniform, shadow-reducing illumination over short working distances. On reflective parts such as polished metals or glossy plastics, LEDs cause a bright circular glare ring that saturates sensor pixels and obscures underlying features.'
+		},
+		{
+			id: 'glancing',
+			label: 'Glancing',
+			aria: 'Directional glancing light at a low grazing angle casting a shadow from the raised edge',
+			camLines: [
+				'Grazing angle across surface',
+				'Raised edge casts long shadow',
+				'Height steps -> sharp edges'
+			],
+			readout: 'Glancing illumination: Point-source light at a low, grazing angle reveals surface topography and texture. Small raised ridges, stamped characters, laser etchings, and surface cracks cast distinct, elongated shadows that turn small height differences into high-contrast edges.'
+		},
+		{
+			id: 'darkfield',
+			label: 'Darkfield',
+			aria: 'Darkfield shallow-angle light where flat reflections miss the lens and the scratch scatters light up',
+			camLines: [
+				'Smooth flat surface: black',
+				'Reflection misses the lens',
+				'Scratch: bright line on black'
+			],
+			readout: 'Darkfield illumination: Shallow-angle light bounces away from the lens on a flat, shiny surface, so a smooth defect-free surface appears completely black. A surface scratch scatters shallow incident rays upward into the camera aperture as a bright line on a black background for flaw detection.'
+		},
+		{
+			id: 'dome',
+			label: 'Diffuse dome',
+			aria: 'Diffuse dome projecting omnidirectional light from every angle onto the part',
+			camLines: [
+				'Rays from every angle',
+				'No harsh shadows or glare',
+				'Even brightness across part'
+			],
+			readout: 'Diffuse dome: Projects omnidirectional scattered light like an overcast sky, eliminating harsh shadows and specular highlights. Good for reading printed labels, inspecting solder fillets, and detecting subtle dimensional flaws across curved, reflective parts.'
+		},
+		{
+			id: 'coaxial',
+			label: 'Coaxial',
+			aria: 'Coaxial illumination using a beamsplitter to send light along the camera optical axis',
+			camLines: [
+				'Flat shiny surface: bright',
+				'Scratch & bevel: dark feature',
+				'Beamsplitter adds faint haze'
+			],
+			readout: 'Coaxial illumination: A beamsplitter projects diffuse light along the camera optical axis onto flat specular surfaces (such as silicon wafers, polished glass, or mirrored metal dies). Flat surfaces appear bright and uniform, while surface scratches, edge bevels, and engravings scatter light away and appear dark.'
+		}
+	];
+
+	var current = MODES[0];
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+	var buttons = h('div', { 'class': 'widget-buttons', role: 'group', 'aria-label': 'Lighting technique' });
+
+	function addEl(parent, tag, attrs, text) {
+		var el = s(tag, attrs);
+		if (text !== undefined) el.textContent = text;
+		parent.appendChild(el);
+		return el;
+	}
+
+	function drawArrow(parent, x1, y1, x2, y2, kind) {
+		if (kind === 'gold') {
+			addEl(parent, 'line', {
+				x1: x1, y1: y1, x2: x2, y2: y2,
+				stroke: 'var(--wp-gold-text)', 'stroke-width': '2',
+				'marker-end': 'url(#la-arrow-gold)'
+			});
+		} else if (kind === 'cam') {
+			addEl(parent, 'line', {
+				'class': 'd-strong',
+				x1: x1, y1: y1, x2: x2, y2: y2,
+				'marker-end': 'url(#la-arrow-link)'
+			});
+		} else {
+			addEl(parent, 'line', {
+				'class': 'd-line',
+				'stroke-dasharray': '4 3',
+				x1: x1, y1: y1, x2: x2, y2: y2,
+				'marker-end': 'url(#la-arrow-muted)'
+			});
+		}
+	}
+
+	function draw() {
+		svg.replaceChildren();
+		svg.setAttribute('aria-label', current.aria);
+
+		var defs = addEl(svg, 'defs', {});
+		[
+			['la-arrow-gold', 'var(--wp-gold-text)'],
+			['la-arrow-link', 'var(--wp-link)'],
+			['la-arrow-muted', 'var(--wp-text-muted)']
+		].forEach(function (spec) {
+			var mk = addEl(defs, 'marker', {
+				id: spec[0], viewBox: '0 0 10 10', refX: '8', refY: '5',
+				markerWidth: '5', markerHeight: '5', orient: 'auto-start-reverse'
+			});
+			addEl(mk, 'path', { d: 'M0,0 L10,5 L0,10 z', fill: spec[1] });
+		});
+
+		// Left panel: side-view geometry
+		addEl(svg, 'rect', {
+			x: 8, y: 10, width: 330, height: 300, rx: 6,
+			fill: 'var(--wp-bg)', stroke: 'var(--wp-border)', 'stroke-width': '1'
+		});
+		addEl(svg, 'text', { 'class': 'd-title', x: 20, y: 30 }, 'Side view');
+		addEl(svg, 'text', { 'class': 'd-muted', x: 326, y: 30, 'text-anchor': 'end' }, current.label);
+
+		// Camera and lens above the part
+		addEl(svg, 'rect', { 'class': 'd-box', x: 135, y: 36, width: 80, height: 22, rx: 4 });
+		addEl(svg, 'text', { 'class': 'd-muted', x: 175, y: 51, 'text-anchor': 'middle' }, 'Camera');
+		addEl(svg, 'rect', { 'class': 'd-box', x: 158, y: 58, width: 34, height: 12, rx: 2 });
+
+		// Part with raised edge (left) and surface scratch (right)
+		addEl(svg, 'path', {
+			'class': 'd-box',
+			d: 'M 100,222 L 122,222 L 122,206 L 140,206 L 140,222 L 192,222 L 198,229 L 204,222 L 250,222 L 250,244 L 100,244 Z'
+		});
+		addEl(svg, 'text', { 'class': 'd-muted', x: 168, y: 239, 'text-anchor': 'middle' }, 'Part');
+		addEl(svg, 'text', { 'class': 'd-muted', x: 131, y: 258, 'text-anchor': 'middle' }, 'Raised edge');
+		addEl(svg, 'text', { 'class': 'd-muted', x: 204, y: 258, 'text-anchor': 'middle' }, 'Scratch');
+
+		// Light source and ray geometry per mode
+		var m = current.id;
+		if (m === 'backlight') {
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 56, y: 274, width: 238, height: 18, rx: 3 });
+			addEl(svg, 'text', {
+				x: 175, y: 287, 'text-anchor': 'middle',
+				'font-size': '12px', 'font-weight': '700', fill: 'var(--wp-gold-text)'
+			}, 'Backlight');
+			drawArrow(svg, 70, 272, 162, 73, 'gold');
+			drawArrow(svg, 280, 272, 188, 73, 'gold');
+			drawArrow(svg, 173, 272, 173, 248, 'blocked');
+			drawArrow(svg, 238, 272, 238, 248, 'blocked');
+		} else if (m === 'ring') {
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 132, y: 58, width: 24, height: 12, rx: 2 });
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 194, y: 58, width: 24, height: 12, rx: 2 });
+			addEl(svg, 'text', { 'class': 'd-muted', x: 224, y: 68 }, 'Ring light');
+			drawArrow(svg, 144, 72, 163, 220, 'gold');
+			drawArrow(svg, 206, 72, 187, 220, 'gold');
+			drawArrow(svg, 165, 220, 169, 73, 'cam');
+			drawArrow(svg, 185, 220, 181, 73, 'cam');
+		} else if (m === 'glancing') {
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 18, y: 196, width: 28, height: 14, rx: 3 });
+			addEl(svg, 'text', { 'class': 'd-muted', x: 18, y: 188 }, 'Glancing light');
+			addEl(svg, 'path', {
+				d: 'M 140,206 L 190,222 L 140,222 Z',
+				fill: 'var(--wp-text-muted)', opacity: '0.28'
+			});
+			addEl(svg, 'text', { 'class': 'd-muted', x: 165, y: 199, 'text-anchor': 'middle' }, 'Shadow');
+			drawArrow(svg, 46, 203, 120, 212, 'gold');
+			drawArrow(svg, 46, 198, 234, 213, 'gold');
+			drawArrow(svg, 122, 208, 171, 73, 'cam');
+		} else if (m === 'darkfield') {
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 18, y: 204, width: 26, height: 12, rx: 3 });
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 304, y: 204, width: 26, height: 12, rx: 3 });
+			addEl(svg, 'text', { 'class': 'd-muted', x: 18, y: 196 }, 'Darkfield lights');
+			addEl(svg, 'text', { 'class': 'd-muted', x: 248, y: 192, 'text-anchor': 'middle' }, 'Misses lens');
+			drawArrow(svg, 44, 210, 156, 221, 'gold');
+			drawArrow(svg, 156, 221, 282, 204, 'blocked');
+			drawArrow(svg, 304, 210, 200, 221, 'gold');
+			drawArrow(svg, 198, 220, 178, 73, 'cam');
+		} else if (m === 'dome') {
+			addEl(svg, 'path', {
+				'class': 'd-line', 'stroke-width': '3',
+				d: 'M 54,238 A 121,132 0 0 1 156,86 M 194,86 A 121,132 0 0 1 296,238'
+			});
+			addEl(svg, 'path', {
+				fill: 'none', stroke: 'var(--wp-gold-text)', 'stroke-width': '2', 'stroke-dasharray': '4 3',
+				d: 'M 60,236 A 115,126 0 0 1 156,92 M 194,92 A 115,126 0 0 1 290,236'
+			});
+			addEl(svg, 'text', { 'class': 'd-muted', x: 20, y: 112 }, 'Diffuse dome');
+			drawArrow(svg, 74, 178, 122, 207, 'gold');
+			drawArrow(svg, 108, 122, 154, 220, 'gold');
+			drawArrow(svg, 242, 122, 194, 220, 'gold');
+			drawArrow(svg, 276, 178, 228, 220, 'gold');
+			drawArrow(svg, 166, 220, 170, 73, 'cam');
+			drawArrow(svg, 184, 220, 180, 73, 'cam');
+		} else if (m === 'coaxial') {
+			addEl(svg, 'rect', { 'class': 'd-box-gold', x: 18, y: 118, width: 36, height: 28, rx: 3 });
+			addEl(svg, 'text', {
+				x: 36, y: 136, 'text-anchor': 'middle',
+				'font-size': '12px', 'font-weight': '700', fill: 'var(--wp-gold-text)'
+			}, 'Light');
+			addEl(svg, 'line', {
+				x1: 144, y1: 112, x2: 206, y2: 150,
+				stroke: 'var(--wp-link)', 'stroke-width': '3'
+			});
+			addEl(svg, 'text', { 'class': 'd-muted', x: 212, y: 134 }, 'Beamsplitter');
+			drawArrow(svg, 54, 124, 162, 124, 'gold');
+			drawArrow(svg, 54, 145, 196, 145, 'gold');
+			drawArrow(svg, 164, 125, 164, 220, 'gold');
+			drawArrow(svg, 198, 146, 198, 220, 'gold');
+			drawArrow(svg, 169, 220, 169, 73, 'cam');
+			drawArrow(svg, 198, 220, 244, 174, 'blocked');
+		}
+
+		// Right panel: simulated top-down camera view inset
+		addEl(svg, 'rect', { 'class': 'd-box', x: 348, y: 10, width: 204, height: 300, rx: 6 });
+		addEl(svg, 'text', { 'class': 'd-title', x: 450, y: 32, 'text-anchor': 'middle' }, 'Camera view');
+		addEl(svg, 'text', { 'class': 'd-muted', x: 450, y: 49, 'text-anchor': 'middle' }, 'Top-down sensor image');
+
+		var bgCol = '#262626', partCol = '#b8b8b8', edgeCol = '#c8c8c8', edgeStroke = '#666666';
+		if (m === 'backlight') {
+			bgCol = '#ffffff'; partCol = '#000000'; edgeCol = '#000000'; edgeStroke = 'none';
+		} else if (m === 'ring') {
+			bgCol = '#222222'; partCol = '#a6a6a6'; edgeCol = '#b8b8b8'; edgeStroke = '#707070';
+		} else if (m === 'glancing') {
+			bgCol = '#222222'; partCol = '#b6b6b6'; edgeCol = '#ffffff'; edgeStroke = '#555555';
+		} else if (m === 'darkfield') {
+			bgCol = '#000000'; partCol = '#050505'; edgeCol = '#050505'; edgeStroke = '#262626';
+		} else if (m === 'dome') {
+			bgCol = '#2c2c2c'; partCol = '#d4d4d4'; edgeCol = '#e2e2e2'; edgeStroke = '#9a9a9a';
+		} else if (m === 'coaxial') {
+			bgCol = '#3b3b3b'; partCol = '#f2f2f2'; edgeCol = '#2b2b2b'; edgeStroke = '#555555';
+		}
+
+		addEl(svg, 'rect', {
+			x: 366, y: 60, width: 168, height: 146, rx: 3,
+			fill: bgCol, stroke: 'var(--wp-border)', 'stroke-width': '1.5'
+		});
+		addEl(svg, 'rect', {
+			x: 388, y: 94, width: 124, height: 78, rx: 2,
+			fill: partCol,
+			stroke: m === 'backlight' ? '#000000' : (m === 'darkfield' ? '#242424' : '#555555'),
+			'stroke-width': '1'
+		});
+
+		if (m === 'glancing') {
+			// Elongated shadow cast to the right of the raised edge
+			addEl(svg, 'rect', { x: 418, y: 94, width: 26, height: 78, fill: '#181818' });
+		}
+		if (m !== 'backlight' && m !== 'darkfield') {
+			addEl(svg, 'rect', {
+				x: 406, y: 94, width: 12, height: 78,
+				fill: edgeCol, stroke: edgeStroke, 'stroke-width': '1'
+			});
+		}
+
+		// Surface scratch in camera view
+		if (m === 'glancing') {
+			addEl(svg, 'path', { d: 'M 476,110 L 488,134 L 480,156', fill: 'none', stroke: '#ffffff', 'stroke-width': '2' });
+			addEl(svg, 'path', { d: 'M 473,110 L 485,134 L 477,156', fill: 'none', stroke: '#181818', 'stroke-width': '2.5' });
+		} else if (m === 'darkfield') {
+			addEl(svg, 'path', { d: 'M 474,110 L 486,134 L 478,156', fill: 'none', stroke: '#ffffff', 'stroke-width': '2.5' });
+		} else if (m === 'coaxial') {
+			addEl(svg, 'path', { d: 'M 474,110 L 486,134 L 478,156', fill: 'none', stroke: '#262626', 'stroke-width': '2.5' });
+		} else if (m === 'dome') {
+			addEl(svg, 'path', { d: 'M 474,110 L 486,134 L 478,156', fill: 'none', stroke: '#8c8c8c', 'stroke-width': '2' });
+		} else if (m === 'ring') {
+			addEl(svg, 'path', { d: 'M 474,110 L 486,134 L 478,156', fill: 'none', stroke: '#7a7a7a', 'stroke-width': '2' });
+			addEl(svg, 'circle', {
+				cx: 450, cy: 133, r: 34,
+				fill: 'none', stroke: '#ffffff', 'stroke-width': '12', opacity: '0.92'
+			});
+		}
+
+		addEl(svg, 'text', {
+			x: 366, y: 226,
+			'font-size': '13px', 'font-weight': '700', fill: 'var(--wp-text)'
+		}, 'What the camera sees:');
+		current.camLines.forEach(function (line, idx) {
+			addEl(svg, 'text', { 'class': 'd-muted', x: 366, y: 246 + idx * 19 }, line);
+		});
+
+		readout.textContent = current.readout;
+	}
+
+	MODES.forEach(function (mode) {
+		var b = button(mode.label, function () {
+			current = mode;
+			Array.prototype.forEach.call(buttons.children, function (btn) {
+				btn.setAttribute('aria-pressed', String(btn === b));
+			});
+			draw();
+		});
+		b.setAttribute('aria-pressed', String(mode === current));
+		buttons.appendChild(b);
+	});
+
+	root.replaceChildren(frame('Machine vision lighting angles', [
+		h('p', {
+			'class': 'widget-note',
+			text: 'Pick a lighting setup to see where the light sits, how rays travel to the camera, and which features stand out. Gold: light source and incident rays; solid arrows: light entering the lens.'
+		}),
+		buttons,
+		svg,
+		readout
+	]));
+	draw();
+}
+
+// ---- troubleshoot-steps (step 68) ----
+// Placeholder text: The troubleshooting steps walkthrough needs JavaScript. With it on, you can step through a fault scenario from hazardous energy control to documenting the repair.
+
+// Facts used (from robotics-9-2.html):
+// - Line 215: "When a cell stops, the first temptation is to walk in and clear the problem. That is exactly when people get hurt."
+// - Line 218 (safety, verbatim): "Maintenance and repair need more: the machine has to be cut off from every energy source so it cannot move or release energy while someone works on it."
+// - Line 221 (safety, verbatim): "OSHA standard 29 CFR 1910.147 establishes procedures to disable machinery and prevent the release of hazardous electrical, mechanical, hydraulic, pneumatic, chemical, and thermal energy during servicing."
+// - Line 229 (safety, verbatim): "Pressing an emergency stop or switching the robot to manual mode does not isolate it. Push buttons, selector switches, and control circuit devices are not considered energy isolating devices under OSHA standards."
+// - Line 232 (safety, verbatim): "An energy isolating device, such as a main disconnect switch or a shutoff valve, physically blocks the energy instead."
+// - Line 255 (safety, verbatim): "The required sequence for applying energy control begins with preparation and shutdown, followed by machine isolation, lockout application, stored energy relief, and verification of isolation."
+// - Line 258 (safety, verbatim): "1. Preparation and shutdown: Know which energy sources the machine has and shut it down normally."
+// - Line 259 (safety, verbatim): "2. Machine isolation: Operate every energy isolating device so the machine is cut off."
+// - Line 260 (safety, verbatim): "3. Lockout application: Put a lock (or tag) on each isolating device."
+// - Line 261 (safety, verbatim): "4. Stored energy relief: After applying lockout devices, all potentially hazardous residual or stored energy must be relieved, disconnected, restrained, and rendered safe."
+// - Line 262 (safety, verbatim): "5. Verification of isolation: Before starting work, confirm that the machine really is isolated and de-energized."
+// - Line 265 (safety, verbatim): "Energy control procedures must enforce that only the authorized worker who applied a lockout device is permitted to remove it."
+// - Line 276: "Once the cell is properly secured and ready for diagnostic inspection, troubleshooting begins by gathering facts."
+// - Line 279 (safety, verbatim): "Resetting robot faults without identifying the root cause masks fault detection and increases the risk of personnel injury."
+// - Line 282 (safety, verbatim): "UR warns that automatic acknowledgment and reset of robot stops masks faults that will lead to a failure condition."
+// - Line 285: "Instead of resetting the fault, a methodical technician begins by collecting observable symptoms. What was the robot doing when it stopped? What step in the program was executing? Did the gripper drop the part? Are pneumatic pressure regulators showing normal line pressure?"
+// - Line 288: "Safety Control Board diagnostic LEDs show normal communication with a slow green flash and a hardware or safety error with permanent red."
+// - Line 296: "The UR Support File is automatically generated inside the robot controller and bundles log files, robot programs, and flight reports. UR's Log Viewer is a program for reading it on a computer."
+// - Line 299: "A controller log entry records the message description, error category, error code, error source, and timestamp."
+// - Line 309: "Universal Robots error code numbers ranging from 1 to 255 apply exclusively to CB3 and earlier robot controllers. In contrast, Universal Robots error code numbers higher than 256 designate faults on e-Series and newer controllers."
+// - Line 312: "So always look a code up in the list for your controller."
+// - Line 320: "Flight record diagnostics plot joint position, velocity, acceleration, motor current, and torque at the exact moment a fault occurs."
+// - Line 323: "UR describes this flight record view as intended for expert-level users, to be used when advised. For a beginner, the point is that the data exists and can be sent to the robot maker's support team."
+// - Line 328: "1. Define the problem clearly: State the exact symptoms, error codes, affected joints, and operating conditions under which the fault appeared."
+// - Line 329: "2. Formulate a single hypothesis: Propose one clear, testable explanation that accounts for all observed evidence. For example, suppose joint 3 shows an unexpected torque spike during high-acceleration moves while carrying a new workpiece. You might hypothesize that the configured tool center point (TCP) payload mass is lower than the actual physical payload."
+// - Line 330: "3. Change only one variable at a time: Test the hypothesis by modifying a single parameter or swapping a single component. If testing payload settings, update the payload mass in the installation settings and re-run the program at reduced speed. Never change multiple variables at once, such as re-teaching points, modifying acceleration rates, swapping cables, and adjusting mechanical stops. Changing multiple variables prevents knowing which adjustment solved the problem and risks introducing new secondary faults."
+// - Line 331: "4. Verify the outcome: Observe system behavior during test runs. Check the log again. If the fault recurs, discard the hypothesis, formulate a new one based on the new observations, and repeat the cycle."
+// - Line 336: "The final phase of the troubleshooting method, after the robot is moving again, is documenting the intervention in the plant maintenance management system."
+// - Line 339: "As 9.1 explained, maintenance records of faults, root causes and repairs speed up later troubleshooting and improve failure prediction."
+// - Line 342: "Record the symptom, the cause you found and the fix."
+
+function initTroubleshootSteps(root) {
+	var W = 560, H = 320;
+	var svg = plotFrame(W, H, 'Seven-step robot cell troubleshooting workflow from hazardous energy control to documenting the repair');
+
+	var STEPS = [
+		{
+			id: 'loto',
+			short1: '1. Lockout &',
+			short2: 'tagout',
+			title: 'Control hazardous energy (Sections 01–02)',
+			x: 12, y: 10, w: 118, h: 44
+		},
+		{
+			id: 'symptoms',
+			short1: '2. Gather',
+			short2: 'symptoms',
+			title: 'Gather symptoms (Section 03)',
+			x: 152, y: 10, w: 118, h: 44
+		},
+		{
+			id: 'logs',
+			short1: '3. Controller',
+			short2: 'logs & codes',
+			title: 'Read controller logs and error codes (Section 04)',
+			x: 292, y: 10, w: 118, h: 44
+		},
+		{
+			id: 'flight',
+			short1: '4. Flight',
+			short2: 'report & fault',
+			title: 'Analyze flight report and define problem (Section 05)',
+			x: 432, y: 10, w: 116, h: 44
+		},
+		{
+			id: 'hypothesis',
+			short1: '5. Formulate a',
+			short2: 'single hypothesis',
+			title: 'Formulate a single hypothesis (Section 05)',
+			x: 12, y: 78, w: 160, h: 44
+		},
+		{
+			id: 'test',
+			short1: '6. Change one',
+			short2: 'variable & verify',
+			title: 'Change one variable and verify outcome (Section 05)',
+			x: 200, y: 78, w: 160, h: 44
+		},
+		{
+			id: 'document',
+			short1: '7. Document',
+			short2: 'cause & fix',
+			title: 'Document root causes and repairs (Section 06)',
+			x: 388, y: 78, w: 160, h: 44
+		}
+	];
+
+	var curStep = 0;
+	var symptomChoice = null; // null | 'collect' | 'reset'
+
+	var progressLine = h('p', { 'class': 'widget-note' });
+	var readout = h('p', { 'class': 'widget-readout', 'aria-live': 'polite' });
+
+	var prevBtn = button('◀ Back', function () {
+		if (curStep > 0) {
+			curStep--;
+			render();
+		}
+	});
+	var nextBtn = button('Next ▶', function () {
+		if (curStep < STEPS.length - 1) {
+			curStep++;
+			render();
+		}
+	});
+	var resetBtn = button('Reset', function () {
+		curStep = 0;
+		symptomChoice = null;
+		render();
+	});
+
+	var collectBtn = button('Collect observable symptoms', function () {
+		symptomChoice = 'collect';
+		render();
+	});
+	var alarmResetBtn = button('Reset the alarm and restart', function () {
+		symptomChoice = 'reset';
+		render();
+	});
+	var choiceRow = h('div', {
+		'class': 'widget-buttons',
+		role: 'group',
+		'aria-label': 'Action at gather symptoms step'
+	}, [collectBtn, alarmResetBtn]);
+
+	function addSvgText(parent, cls, x, y, text, extraAttrs) {
+		var el = s('text', Object.assign({ 'class': cls, x: x, y: y }, extraAttrs || {}));
+		el.textContent = text;
+		parent.appendChild(el);
+		return el;
+	}
+
+	function drawCard(x, y, w, hgt, isGold, titleText, lines, lineSize) {
+		svg.appendChild(s('rect', {
+			'class': isGold ? 'd-box-gold' : 'd-box',
+			x: x, y: y, width: w, height: hgt, rx: 4
+		}));
+		addSvgText(svg, 'd-title', x + 12, y + 22, titleText, {
+			style: 'font-size: ' + (w > 300 ? 14 : 13) + 'px;'
+		});
+		lines.forEach(function (line, idx) {
+			addSvgText(svg, 'd-muted', x + 12, y + 44 + idx * 20, line, {
+				style: 'font-size: ' + lineSize + 'px; fill: var(--wp-text);'
+			});
+		});
+	}
+
+	function render() {
+		var st = STEPS[curStep];
+		progressLine.textContent = 'Step ' + (curStep + 1) + ' of ' + STEPS.length + ' — ' + st.title;
+
+		prevBtn.disabled = curStep === 0;
+		nextBtn.disabled = curStep === STEPS.length - 1;
+
+		choiceRow.style.display = (curStep === 1) ? '' : 'none';
+		collectBtn.setAttribute('aria-pressed', String(symptomChoice === 'collect'));
+		alarmResetBtn.setAttribute('aria-pressed', String(symptomChoice === 'reset'));
+
+		svg.replaceChildren();
+
+		var defs = s('defs', {});
+		var mk = s('marker', {
+			id: 'arrow-ts',
+			viewBox: '0 0 10 10',
+			refX: '9',
+			refY: '5',
+			markerWidth: '5',
+			markerHeight: '5',
+			orient: 'auto-start-reverse'
+		});
+		mk.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--wp-text-muted)' }));
+		var mkGold = s('marker', {
+			id: 'arrow-ts-gold',
+			viewBox: '0 0 10 10',
+			refX: '9',
+			refY: '5',
+			markerWidth: '5',
+			markerHeight: '5',
+			orient: 'auto-start-reverse'
+		});
+		mkGold.appendChild(s('path', { d: 'M0,0 L10,5 L0,10 z', fill: 'var(--wp-gold-text)' }));
+		defs.appendChild(mk);
+		defs.appendChild(mkGold);
+		svg.appendChild(defs);
+
+		var connectors = [
+			{ type: 'line', x1: 130, y1: 32, x2: 150, y2: 32 },
+			{ type: 'line', x1: 270, y1: 32, x2: 290, y2: 32 },
+			{ type: 'line', x1: 410, y1: 32, x2: 430, y2: 32 },
+			{ type: 'path', d: 'M 490 54 L 490 66 L 92 66 L 92 76' },
+			{ type: 'line', x1: 172, y1: 100, x2: 198, y2: 100 },
+			{ type: 'line', x1: 360, y1: 100, x2: 386, y2: 100 }
+		];
+		connectors.forEach(function (c, idx) {
+			var active = idx === curStep - 1;
+			var attrs = {
+				'class': active ? 'd-strong' : 'd-line',
+				'marker-end': active ? 'url(#arrow-ts-gold)' : 'url(#arrow-ts)'
+			};
+			if (active) attrs.style = 'stroke: var(--wp-gold-text);';
+			if (c.type === 'line') {
+				attrs.x1 = c.x1; attrs.y1 = c.y1; attrs.x2 = c.x2; attrs.y2 = c.y2;
+				svg.appendChild(s('line', attrs));
+			} else {
+				attrs.d = c.d;
+				svg.appendChild(s('path', attrs));
+			}
+		});
+
+		STEPS.forEach(function (step, idx) {
+			var isCur = idx === curStep;
+			var g = s('g', {
+				tabindex: '0',
+				role: 'button',
+				'aria-label': 'Step ' + (idx + 1) + ': ' + step.title,
+				'aria-pressed': String(isCur),
+				style: 'cursor: pointer;'
+			});
+			g.appendChild(s('rect', {
+				'class': isCur ? 'd-box-gold' : 'd-box',
+				x: step.x, y: step.y, width: step.w, height: step.h, rx: 4,
+				style: isCur ? 'stroke-width: 2.5;' : ''
+			}));
+			addSvgText(g, 'd-title', step.x + step.w / 2, step.y + 18, step.short1, {
+				'text-anchor': 'middle',
+				style: 'font-size: 12px;'
+			});
+			addSvgText(g, 'd-muted', step.x + step.w / 2, step.y + 34, step.short2, {
+				'text-anchor': 'middle',
+				style: 'font-size: 11px;'
+			});
+			g.addEventListener('click', function () {
+				curStep = idx;
+				render();
+			});
+			g.addEventListener('keydown', function (e) {
+				if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 32) {
+					e.preventDefault();
+					curStep = idx;
+					render();
+				}
+			});
+			svg.appendChild(g);
+		});
+
+		if (curStep === 0) {
+			drawCard(12, 136, 262, 174, false, 'OSHA 29 CFR 1910.147 sequence', [
+				'1. Preparation and shutdown',
+				'2. Machine isolation',
+				'3. Lockout application',
+				'4. Stored energy relief',
+				'5. Verification of isolation'
+			], 12);
+			drawCard(286, 136, 262, 174, true, 'Energy isolating devices', [
+				'Pressing an emergency stop or',
+				'switching the robot to manual',
+				'mode does not isolate it.',
+				'An energy isolating device, such',
+				'as a main disconnect switch or',
+				'shutoff valve, physically blocks',
+				'the energy instead.'
+			], 12);
+			readout.textContent = 'Step 1 of 7 — Control hazardous energy (Sections 01–02): Maintenance and repair need more: the machine has to be cut off from every energy source so it cannot move or release energy while someone works on it. OSHA standard 29 CFR 1910.147 establishes procedures to disable machinery and prevent the release of hazardous electrical, mechanical, hydraulic, pneumatic, chemical, and thermal energy during servicing. Pressing an emergency stop or switching the robot to manual mode does not isolate it. The required sequence for applying energy control begins with preparation and shutdown, followed by machine isolation, lockout application, stored energy relief, and verification of isolation. After applying lockout devices, all potentially hazardous residual or stored energy must be relieved, disconnected, restrained, and rendered safe. Energy control procedures must enforce that only the authorized worker who applied a lockout device is permitted to remove it.';
+		} else if (curStep === 1) {
+			if (symptomChoice === 'collect') {
+				drawCard(12, 136, 262, 174, true, 'Collect observable symptoms', [
+					'• What was the robot doing?',
+					'• What program step executed?',
+					'• Did gripper drop the part?',
+					'• Normal pneumatic line',
+					'  pressure on regulators?'
+				], 12);
+				drawCard(286, 136, 262, 174, false, 'Safety Control Board LEDs', [
+					'Slow green flash:',
+					'  normal communication',
+					'Permanent red:',
+					'  hardware or safety error',
+					'Scenario condition:',
+					'  high-accel with new workpiece'
+				], 12);
+				readout.textContent = 'Step 2 of 7 — Gather symptoms (Section 03): Correct choice. Instead of resetting the fault, a methodical technician begins by collecting observable symptoms. What was the robot doing when it stopped? What step in the program was executing? Did the gripper drop the part? Are pneumatic pressure regulators showing normal line pressure? Safety Control Board diagnostic LEDs show normal communication with a slow green flash and a hardware or safety error with permanent red.';
+			} else if (symptomChoice === 'reset') {
+				drawCard(12, 136, 536, 174, true, 'Warning: unverified reset', [
+					'Resetting robot faults without identifying',
+					'the root cause masks fault detection and',
+					'increases the risk of personnel injury.',
+					'UR warns that automatic acknowledgment and',
+					'reset of robot stops masks faults that',
+					'will lead to a failure condition.'
+				], 13);
+				readout.textContent = 'Step 2 of 7 — Warning on unverified reset (Section 03): Resetting robot faults without identifying the root cause masks fault detection and increases the risk of personnel injury. UR warns that automatic acknowledgment and reset of robot stops masks faults that will lead to a failure condition.';
+			} else {
+				drawCard(12, 136, 536, 174, false, 'Cell stopped — choose an action', [
+					'Once the cell is properly secured and',
+					'ready for diagnostic inspection,',
+					'troubleshooting begins by gathering facts.',
+					'Pick one of the two actions above:',
+					'• Collect observable symptoms',
+					'• Reset the alarm and restart'
+				], 13);
+				readout.textContent = 'Step 2 of 7 — Gather symptoms (Section 03): Once the cell is properly secured and ready for diagnostic inspection, troubleshooting begins by gathering facts. Select an action: Collect observable symptoms, or Reset the alarm and restart.';
+			}
+		} else if (curStep === 2) {
+			drawCard(12, 136, 262, 174, false, 'UR Support File & Log Viewer', [
+				'Automatically generated inside',
+				'the robot controller; bundles:',
+				'• log files',
+				'• robot programs',
+				'• flight reports',
+				"Read with UR's Log Viewer."
+			], 12);
+			drawCard(286, 136, 262, 174, false, 'Log entry & error code list', [
+				'• message description',
+				'• error category & error code',
+				'• error source & timestamp',
+				'1–255: CB3 and earlier',
+				'>256: e-Series and newer',
+				'Look up in your controller list.'
+			], 12);
+			readout.textContent = "Step 3 of 7 — Read controller logs and error codes (Section 04): The UR Support File is automatically generated inside the robot controller and bundles log files, robot programs, and flight reports. UR's Log Viewer is a program for reading it on a computer. A controller log entry records the message description, error category, error code, error source, and timestamp. Universal Robots error code numbers ranging from 1 to 255 apply exclusively to CB3 and earlier robot controllers, while numbers higher than 256 designate faults on e-Series and newer controllers. Always look a code up in the list for your controller.";
+		} else if (curStep === 3) {
+			drawCard(12, 136, 262, 174, false, 'Flight record diagnostics', [
+				'Plots at exact fault moment:',
+				'• joint position',
+				'• velocity and acceleration',
+				'• motor current and torque',
+				'Data can be sent to the robot',
+				"maker's support team."
+			], 12);
+			drawCard(286, 136, 262, 174, true, '1. Define the problem clearly', [
+				'State symptoms, error codes,',
+				'joints, and conditions:',
+				'joint 3 shows an unexpected',
+				'torque spike during',
+				'high-acceleration moves while',
+				'carrying a new workpiece.'
+			], 12);
+			readout.textContent = "Step 4 of 7 — Flight reports and defining the problem (Section 05): Flight record diagnostics plot joint position, velocity, acceleration, motor current, and torque at the exact moment a fault occurs. UR describes this flight record view as intended for expert-level users, to be used when advised, and the data can be sent to the robot maker's support team. Define the problem clearly: joint 3 shows an unexpected torque spike during high-acceleration moves while carrying a new workpiece.";
+		} else if (curStep === 4) {
+			drawCard(12, 136, 536, 174, false, '2. Formulate a single hypothesis', [
+				'Propose one clear, testable explanation',
+				'that accounts for all observed evidence.',
+				'Scenario hypothesis:',
+				'The configured tool center point (TCP)',
+				'payload mass is lower than the actual',
+				'physical payload.'
+			], 13);
+			readout.textContent = 'Step 5 of 7 — Formulate a single hypothesis (Section 05): Propose one clear, testable explanation that accounts for all observed evidence. For this fault scenario, hypothesize that the configured tool center point (TCP) payload mass is lower than the actual physical payload.';
+		} else if (curStep === 5) {
+			drawCard(12, 136, 262, 174, false, '3. Change only one variable', [
+				'Update the payload mass in the',
+				'installation settings and re-run',
+				'the program at reduced speed.',
+				'Never change multiple',
+				'variables at once.'
+			], 12);
+			drawCard(286, 136, 262, 174, false, '4. Verify the outcome', [
+				'Observe system behavior',
+				'during test runs.',
+				'Check the log again.',
+				'If the fault recurs, discard',
+				'hypothesis and repeat.'
+			], 12);
+			readout.textContent = 'Step 6 of 7 — Change one variable and verify (Section 05): Test the hypothesis by modifying a single parameter or swapping a single component. Update the payload mass in the installation settings and re-run the program at reduced speed. Never change multiple variables at once, because doing so prevents knowing which adjustment solved the problem and risks introducing new secondary faults. Observe system behavior during test runs and check the log again; if the fault recurs, discard the hypothesis and repeat the cycle.';
+		} else {
+			drawCard(12, 136, 536, 174, false, 'Document root causes and repairs', [
+				'After the robot is moving again, document',
+				'the intervention in the plant maintenance',
+				'management system:',
+				'• Record the symptom, the cause you found,',
+				'  and the fix.',
+				'Speeds up later troubleshooting.'
+			], 13);
+			readout.textContent = 'Step 7 of 7 — Document root causes and repairs (Section 06): The final phase of the troubleshooting method, after the robot is moving again, is documenting the intervention in the plant maintenance management system. Record the symptom, the cause you found, and the fix. Maintenance records of faults, root causes and repairs speed up later troubleshooting and improve failure prediction.';
+		}
+	}
+
+	var navRow = h('div', { 'class': 'widget-buttons' }, [prevBtn, nextBtn, resetBtn]);
+
+	render();
+
+	root.replaceChildren(frame('robot cell troubleshooting method', [
+		progressLine,
+		navRow,
+		choiceRow,
+		svg,
+		readout
+	]));
+}
 	var INIT = {
+		'costmap-inflation': initCostmapInflation,
+		'launch-tree': initLaunchTree,
+		'moveit-pipeline': initMoveitPipeline,
+		'lighting-angles': initLightingAngles,
+		'troubleshoot-steps': initTroubleshootSteps,
 		pwm: initPwm,
 		encoder: initEncoder,
 		pid: initPid,

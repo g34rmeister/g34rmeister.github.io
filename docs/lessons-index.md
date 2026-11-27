@@ -130,7 +130,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: Nav2, costmap, planner, behavior tree, tf2, Developer Certificate of Origin, Open Navigation
 - Sections: What Nav2 is · How a mobile robot navigates · How the project is organized · Licensing and sign-off · How to get involved · A first contribution path · Check your understanding
 
-## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 10 lessons, 169 min)
+## Chapter 4: Robot Operating System (ROS) (`robotics-ros.html`, 10 lessons, 170 min)
 
 ### 4.1 Definition and Introduction
 `robotics-4-1.html` · 13 min · 30 refs (partial 3, verified 27) · 1 figures · 1 Try it
@@ -169,7 +169,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: From running examples to owning a package · Workspaces, underlays and overlays · Creating the package with ros2 pkg create · What the generator wrote · Declaring dependencies: package.xml and rosdep · Writing the node: the Lyrical rclpy pattern · Turtlesim's interface on Lyrical · Designing the square driver: a timer-driven state machine · Building, running and troubleshooting · Stretch: closing the loop with pose feedback
 
 ### 4.7 Launch Files and Parameters
-`robotics-4-7.html` · 21 min · 16 refs (fixed 3, verified 13) · 1 figures · 1 Try it
+`robotics-4-7.html` · 22 min · 16 refs (fixed 3, verified 13) · 1 figures · 1 Try it
 - Objectives: Explain the ROS 2 launch system, compare it with ROS 1 roslaunch, and choose between Python, XML and YAML launch files. / Write and run a Python launch file that starts several nodes with namespaces, remappings and ROS arguments, using the official turtlesim_mimic example. / Install launch and configuration files in an ament_python package through setup.py data_files, and expose launch arguments with DeclareLaunchArgument and LaunchConfiguration. / Declare, inspect and save parameters using rclpy and ros2 param, and load a YAML parameter file from a launch file.
 - Key terms: launch file, LaunchDescription, namespace, remapping, launch argument, substitution, data_files, parameter, parameter file, event handler
 - Sections: Why launch files exist · From ROS 1 roslaunch to ROS 2 launch · Anatomy of a Python launch file · Running the mimic system, and the same file in XML · Installing launch files in a package · Launch arguments and substitutions · Larger systems: includes, namespaces and event handlers · Parameters belong to nodes · Parameter files and launch · Common mistakes, and what is new in Lyrical

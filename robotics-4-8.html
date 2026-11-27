@@ -394,6 +394,10 @@
                                 <figcaption>The loop from sections 04 to 08 on mock hardware. <code>move_group</code> plans with the robot model and the planning scene, sends a timed trajectory to the <code>joint_trajectory_controller</code>, and reads the result back on <code>/joint_states</code> and TF. Swapping the mock for a real UR changes only the hardware plugin.</figcaption>
                             </figure>
 
+                            <div data-widget="moveit-pipeline">
+                                <p class="widget-note">The MoveIt 2 pipeline explorer needs JavaScript. With it on, you can inspect each stage from URDF/xacro to hardware, switch between OMPL and Pilz planners, and compare mock hardware with a real arm.</p>
+                            </div>
+
                             <h2 class="article-section-title">09. The Setup Assistant and the code interfaces</h2>
                             <p>
                                 Where do the SRDF and all these YAML files come from for a new robot? The <strong>MoveIt Setup Assistant</strong> is a graphical wizard that reads a URDF and generates a <code>*_moveit_config</code> package. You start it with <code>ros2 launch moveit_setup_assistant setup_assistant.launch.py</code>.<sup><a href="#ref-31">[31]</a></sup> Its panes step through the self-collision matrix, virtual joints, and planning groups (with the KDL kinematics plugin). You then configure named poses, end effectors (needed to attach objects for pick and place), ros2_control and MoveIt controllers, and launch files before generating the package.<sup><a href="#ref-31">[31]</a></sup> You do not need it for the bare UR, but you would after adding a gripper or table to your workcell description.<sup><a href="#ref-16">[16]</a></sup>
@@ -531,9 +535,10 @@ ros2 control list_controllers</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=e329f831" defer></script>
+            <script src="assets/js/course-data.js?v=950a82b7" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
+            <script src="assets/js/widgets.js?v=b3de63b6" defer></script>
 
     </body>
 </html>
