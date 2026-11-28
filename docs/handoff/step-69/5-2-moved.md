@@ -1,0 +1,8 @@
+# Step 69: moved and reworded passages in robotics-5-2.html (§06-09, task T-70h)
+
+06. Protecting privacy around robot sensors | Reworded heading; added plain-first opener with home/workplace robot sensor example; expanded IEEE on first use; split long sentences in body and design-pattern bullets | [18], [19]
+07. Fair vision: why robot cameras miss some people | Reworded heading; added plain-first opener with delivery robot and self-driving car example; split long sentences in Gender Shades and pedestrian-detection bullets; preserved safety-critical person-detection responsibility | [20], [21]
+08. Autonomous weapons and meaningful human control | Added plain-first opener contrasting routine robot jobs with lethal force; expanded UN on first use; split long sentences in CCW, ICRC, and accountability-gap bullets | [22], [23], [24], [25]
+08. Autonomous weapons and meaningful human control | Moved Additional Protocol I Article 36 weapons-review requirement into `<details class="deeper">` | [26]
+09. Rules for ethical design: IEEE 7000 and the EU AI Act | Reworded heading; added plain-first opener; introduced IEEE 7000 and EU AI Act in plain words; expanded EU and AI on first use; split long sentences around Value-based Engineering, high-risk machinery rules, and 2026 update; kept risk-level table intact | [27], [28], [29], [30], [31]
+09. Rules for ethical design: IEEE 7000 and the EU AI Act | Moved exact IEEE 7000-2021 publication date and title, Regulation (EU) 2024/1689 and Article 6(1)/Annex I references, and Regulation (EU) 2026/1744 ("Digital Omnibus on AI") Section B and 2 August 2028 dates into `<details class="deeper">` | [27], [28], [29], [30], [31]

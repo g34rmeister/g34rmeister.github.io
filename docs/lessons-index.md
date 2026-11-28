@@ -192,42 +192,42 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: assertion, linter, regression, stack trace, test, virtual environment
 - Sections: Why this lab · What you need · Creating the robot arm package · Build and run the tests · Read the failure · Fix it and test again · Checking code style in a real ROS 2 package · Write the bug report · From report to pull request · Check your understanding
 
-## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 79 min)
+## Chapter 5: Ethics (`robotics-ethics.html`, 5 lessons, 95 min)
 
 ### 5.1 Ethics in Engineering
-`robotics-5-1.html` · 14 min · 20 refs (partial 1, unreachable 1, verified 18) · 1 figures · 1 Try it
+`robotics-5-1.html` · 18 min · 20 refs (partial 1, unreachable 1, verified 18) · 1 figures · 1 Try it
 - Objectives: Apply the Fundamental Canons of the NSPE and IEEE Codes of Ethics to robotics, emphasizing paramount public safety and conflict of interest disclosure. / Examine ISO 10218:2025 and ISO/TS 15066 collaborative modes (monitored stop, hand guiding, speed-and-separation, power-and-force limiting). / Review OSHA industrial robot accident statistics, identifying why non-routine tasks (maintenance, teaching, jam clearing) carry the highest fatality risks. / Explain legal liability, strict product liability, and the European Union Machinery Regulation 2023/1230 governing autonomous and AI-driven machines.
 - Key terms: Fundamental Canons, conflict of interest, ISO 10218:2025, ISO/TS 15066, collaborative application, OSHA, EU Machinery Regulation, strict product liability, lockout/tagout, biomechanical threshold
-- Sections: Why ethics is an engineering discipline · The NSPE Code of Ethics and the Fundamental Canons · The IEEE Code of Ethics · Conflicts of interest and professional competence · Physical safety standards: ISO 10218:2025 · Collaborative applications under ISO/TS 15066 · Biomechanical thresholds for physical contact · Industrial accident analysis: OSHA and NIOSH data · The European Union Machinery Regulation 2023/1230 · Legal liability and professional engineering duty · Case study: production pressure versus safety sign-off
+- Sections: Why ethics is part of engineering · Putting safety first: the NSPE Code of Ethics · Global robotics rules: the IEEE Code of Ethics · Conflicts of interest and working within your skills · The main robot safety standard: ISO 10218 · Four ways people and robots can share space · How hard may a robot touch you? Body-region limits · When robot accidents really happen: OSHA and NIOSH data · European rules for smart robots: EU Machinery Regulation · Legal responsibility and the duty to speak up · Case study: choosing safety over a deadline
 
 ### 5.2 Ethics in Robotics (Hardware, Software)
-`robotics-5-2.html` · 14 min · 31 refs (fixed 1, partial 1, unreachable 3, verified 26) · 1 figures · 1 Try it
+`robotics-5-2.html` · 16 min · 31 refs (fixed 1, partial 1, unreachable 3, verified 26) · 1 figures · 1 Try it
 - Objectives: Explain hardware safety systems, including ISO 13850 emergency stop categories, three-position enabling devices, and dual-channel redundant safety circuits. / Explain software safety systems, including hardware watchdog timers, geofencing safety zones, and ISO 13849 Performance Levels (PL d/e). / Examine privacy risks and algorithmic bias in robotics perception systems, from sensor data harvesting to demographic disparities in vision models. / Compare governance frameworks for autonomous systems, including the UN CCW lethal autonomous weapons debate, IEEE 7000, and EU AI Act risk tiers.
 - Key terms: emergency stop, watchdog timer, enabling device, functional safety, geofencing, algorithmic bias, meaningful human control, IEEE 7000, EU AI Act
-- Sections: Physical safety as an ethical obligation · Hardware safeguards and emergency stops · Safeguards while teaching: the enabling device · Functional safety architectures and safety PLCs · Software safety layers: watchdogs and geofencing · Sensor privacy and data harvesting · Algorithmic bias in robotics perception · Autonomous weapons and meaningful human control · Governance frameworks: IEEE 7000 and the EU AI Act
+- Sections: Keeping people safe comes first · Hardware safeguards and emergency stops · Staying safe while you teach: the enabling device · Safety controllers that check themselves · Software safety layers: watchdogs and virtual fences · Protecting privacy around robot sensors · Fair vision: why robot cameras miss some people · Autonomous weapons and meaningful human control · Rules for ethical design: IEEE 7000 and the EU AI Act
 
 ### 5.3 Robots and Society
-`robotics-5-3.html` · 12 min · 16 refs (fixed 2, unreachable 1, verified 13) · 1 figures · 1 Try it
+`robotics-5-3.html` · 14 min · 16 refs (fixed 2, unreachable 1, verified 13) · 1 figures · 1 Try it
 - Objectives: Explain labor economics research on industrial robotics, including Acemoglu and Restrepo's local labor market findings and task framework. / Compare global robot density metrics from the International Federation of Robotics (IFR) and OECD workforce transformation data. / Apply data minimization and privacy engineering principles to autonomous mobile robots equipped with ambient perception sensors. / Explain moral crumple zones, human-in-the-loop governance, and legal accountability frameworks for autonomous robotic systems.
 - Key terms: robot density, displacement effect, reinstatement effect, data minimization, edge computing, moral crumple zone, human-in-the-loop, IFR World Robotics
-- Sections: Expanding our perspective: robots in society · Empirical evidence on jobs and automation · The task framework: displacement, productivity, and reinstatement · Global robot density and industrial trends · Job polarization and workforce transition · Privacy: robots as mobile surveillance platforms · Data minimization and edge privacy architectures · Accountability and the moral crumple zone · Questions to ask before you build
+- Sections: Beyond the factory: how robots affect society · What the data says about robots and jobs · How automation removes, grows, and creates tasks · Where robots are used most: global robot density · How jobs change and how to help workers adapt · Privacy risks: robots see and map private spaces · Designing for privacy: keep less data, process on the robot · Who is responsible when an autonomous robot fails? · Five questions to ask before you build
 
 ### 5.4 Making a Robot Cell Safe
-`robotics-5-4.html` · 21 min · 48 refs (fixed 21, verified 27) · 1 figures · 1 Try it
+`robotics-5-4.html` · 26 min · 48 refs (fixed 21, verified 27) · 1 figures · 1 Try it
 - Objectives: Apply the ISO 12100 three-step method and a task-based S/E/A risk assessment to a robot cell. / Select fences, interlocked doors, light curtains and emergency stops for each access point, and calculate a light curtain safety distance with S = K × T + C. / Explain how Performance Levels, architecture categories and robot controller safety functions make safeguards reliable. / Distinguish teach-mode protection from lockout/tagout, and review a real robot fatality (NIOSH FACE 8420) layer by layer.
 - Key terms: three-step method, task-based risk assessment, residual risk, safety distance, light curtain, interlock, Performance Level, emergency stop, enabling device, lockout/tagout
-- Sections: From principles to a working safety plan · The ISO 12100 three-step method · Task-based risk assessment with S, E and A · Fences and interlocked doors · Light curtains and the safety distance S = K × T + C · Emergency stops and teach mode · Functional safety in brief: Performance Levels and categories · Safety functions inside the robot controller · Lockout/tagout: when the robot must have no energy at all · Case study: NIOSH FACE 8420
+- Sections: From principles to a working safety plan · Three ways to reduce risk, best one first (ISO 12100) · Finding and ranking the hazards, task by task (S, E and A) · Fences, and doors that stop the robot · Light curtains and the safety distance S = K × T + C · Emergency stops, and staying safe while you teach · How reliable must a safety circuit be? Performance Levels · Safety functions inside the robot controller · Lockout/tagout: all energy off and locked before repairs · Case study: a fatal accident, layer by layer (NIOSH FACE 8420)
 
 ### 5.5 AI in Robotics: Uses and Limits
-`robotics-5-5.html` · 18 min · 38 refs (fixed 6, unreachable 1, verified 31) · 1 figures · 1 Try it
+`robotics-5-5.html` · 21 min · 38 refs (fixed 6, unreachable 1, verified 31) · 1 figures · 1 Try it
 - Objectives: Describe where AI is used in industrial robotics as of October 2026 (learned vision, predictive maintenance, LLM coding assistants) and separate shipping products from research foundation models. / Summarise the evidence on hallucinated packages and failure types in LLM-written code, and explain how the same errors appear in robot programs. / Explain why the safety configuration stays deterministic and outline how ISO 10218:2025, the EU Machinery Regulation and the 2026 AI Act Omnibus treat AI in machinery. / Find unit, frame, invented-function and safety-bypass errors in an AI-written URScript program and apply a nine-point verification checklist before running it.
 - Key terms: large language model, hallucination, vision-language-action model, foundation model, predictive maintenance, safety configuration, provenance, pose_trans, URSim
-- Sections: Why this lesson exists · Learned vision: bin picking, pose estimation and inspection · Predictive maintenance · LLM programming assistants ("copilots") · Foundation models that output robot actions · What the evidence says about AI-written code · How AI mistakes look in robot code · The safety layer stays deterministic · Regulation (as of October 2026) · Accountability, and this course
+- Sections: Why this lesson exists · Helping robots see: bin picking, pose estimation and inspection · Spotting wear early: predictive maintenance · AI coding assistants for robots and PLCs · Models that turn images and words into robot motion · How often AI-written code gets things wrong · Three dangerous mistakes AI makes in robot code · The safety layer stays predictable, with no AI in it · What the law says about AI in machinery (as of October 2026) · Who is responsible, and how to read this course
 
-## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 167 min)
+## Chapter 6: Extra: Electronics and Control Basics (`robotics-control.html`, 10 lessons, 168 min)
 
 ### 6.1 Arduino for Robotics
-`robotics-6-1.html` · 17 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
+`robotics-6-1.html` · 18 min · 22 refs (partial 1, unreachable 4, verified 17) · 1 figures · 1 Try it
 - Objectives: Compare the hardware of the Arduino Uno R3 (ATmega328P) and Uno R4 (Renesas RA4M1), checking pin current limits and voltage ratings. / Configure digital GPIO modes including high-impedance floating inputs and internal pull-up resistors (INPUT_PULLUP). / Compare H-bridge motor drivers (L298N vs. MOSFET TB6612FNG) and set up proper power isolation with shared electrical grounds. / Apply critical Lithium Polymer (LiPo) battery safety rules, including cell voltage thresholds, C-ratings, and thermal runaway prevention.
 - Key terms: Arduino Uno, ATmega328P, pinMode, INPUT_PULLUP, H-bridge, L298N, TB6612FNG, LiPo battery, common ground
 - Sections: Microcontrollers at the physical frontier · Hardware architecture: Arduino Uno R3 versus Uno R4 · GPIO pin functions and input modes · Actuator power: why microcontrollers cannot drive motors · H-bridge motor drivers: L298N versus TB6612FNG · Power architecture: the common ground rule · Mobile robot power: Lithium Polymer (LiPo) safety · Sketch structure and non-blocking sensor timing
@@ -324,7 +324,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: sensor_msgs/Image, sensor_msgs/CameraInfo, plumb_bob, image_transport, TimeSynchronizer, cv_bridge
 - Sections: Cameras in the ROS 2 architecture · Image data representation: sensor_msgs/Image · Calibration metadata: sensor_msgs/CameraInfo · Streaming transport and message synchronization · Bridging ROS 2 and OpenCV with cv_bridge · Lab: Implementing an OpenCV vision node · Running and testing the node · Check your understanding
 
-## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 54 min)
+## Chapter 8: Industrial Networks (`robotics-networks.html`, 6 lessons, 55 min)
 
 ### 8.1 From Wires to Networks
 `robotics-8-1.html` · 10 min · 5 refs (verified 5) · 1 figures · 1 Try it
@@ -345,7 +345,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: Connecting robots to cell PLCs · Modbus TCP server architecture · Register mapping and bit packing · Python communication with pymodbus · Lab: Talk to a Modbus server from Python · Modbus exceptions and offline simulation · Check your understanding
 
 ### 8.4 Safety over the Network
-`robotics-8-4.html` · 7 min · 5 refs (verified 5) · 1 figures · 0 Try it
+`robotics-8-4.html` · 8 min · 5 refs (verified 5) · 1 figures · 0 Try it
 - Objectives: Explain the black channel principle and how safety communication operates over unverified transmission media. / Compare functional safety standards across PROFIsafe (IEC 61784-3-3), FailSafe over EtherCAT (IEC 61784-3), and CIP Safety. / Describe how CIP Safety verifies data transfer integrity using timestamps, production identifiers, and Safety Network Numbers. / Describe the safety signals a robot and a safety PLC exchange over PROFIsafe and which stop category each one triggers.
 - Key terms: black channel principle, PROFIsafe, FailSafe over EtherCAT, CIP Safety, Safety Network Number, F-device
 - Sections: Standard networks versus safety requirements · The black-channel principle · PROFIsafe protocol and functional safety standards · CIP Safety and message integrity validation · Safety over EtherCAT (FSoE) · What a robot and a safety PLC exchange · Check your understanding
@@ -362,7 +362,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Key terms: ISA/IEC 62443, demilitarized zone, VLAN, Time-Sensitive Networking, IEEE 802.1AS, mbtcp
 - Sections: Industrial network security and ISA/IEC 62443 · Network segmentation: zones, conduits, and the DMZ · Managed switches and VLAN configuration · Deterministic communication and Time-Sensitive Networking · Network diagnostics and Wireshark packet analysis · Lab: Watching Modbus traffic on the wire · Check your understanding
 
-## Chapter 9: Maintenance and Troubleshooting (`robotics-maintenance.html`, 6 lessons, 45 min)
+## Chapter 9: Maintenance and Troubleshooting (`robotics-maintenance.html`, 6 lessons, 46 min)
 
 ### 9.1 Preventive Maintenance
 `robotics-9-1.html` · 7 min · 4 refs (verified 4) · 1 figures · 1 Try it
@@ -371,7 +371,7 @@ Source checks, all lessons: fixed 131, partial 35, unreachable 46, verified 1115
 - Sections: Maintenance strategies in automated manufacturing · Balancing schedules, sensor data, and maintenance records · Routine service intervals and safety system testing · Robot arm inspection, cleaning, and joint lubrication · Control cabinet maintenance and electrostatic discharge protection · A worked checklist: UR's inspection plan · Structural fasteners, collisions, and torque verification · Check your understanding
 
 ### 9.2 A Troubleshooting Method
-`robotics-9-2.html` · 7 min · 6 refs (verified 6) · 1 figures · 0 Try it
+`robotics-9-2.html` · 8 min · 6 refs (verified 6) · 1 figures · 0 Try it
 - Objectives: Follow the five-step OSHA 29 CFR 1910.147 lockout/tagout sequence to isolate machinery and relieve stored hazardous energy. / Compare energy isolating devices with control circuit devices and check lock and tag hardware specifications. / Read robot controller log entries, error code numbering ranges across controller generations, and flight record diagnostics. / Interpret Safety Control Board status LEDs and explain why resetting faults without root cause analysis risks component failure and injury.
 - Key terms: lockout/tagout, energy isolating device, stored energy, Support File, flight record, Safety Control Board
 - Sections: Safety first: controlling hazardous energy · Lockout and tagout procedures · Gathering symptoms and the risk of unverified resets · Reading controller logs and error codes · Flight reports and hypothesis testing · Documenting root causes and repairs · Check your understanding

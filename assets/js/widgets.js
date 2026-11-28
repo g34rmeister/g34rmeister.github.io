@@ -9236,6 +9236,8 @@ function initLightingAngles(root) {
 // Placeholder text: The troubleshooting steps walkthrough needs JavaScript. With it on, you can step through a fault scenario from hazardous energy control to documenting the repair.
 
 // Facts used (from robotics-9-2.html):
+// Step 70 (2026-11-27): 9.2 sections 01-03 were reworded in plain words. The on-screen strings below
+// now match the new lesson wording; the quoted lines here are the pre-step-70 originals they came from.
 // - Line 215: "When a cell stops, the first temptation is to walk in and clear the problem. That is exactly when people get hurt."
 // - Line 218 (safety, verbatim): "Maintenance and repair need more: the machine has to be cut off from every energy source so it cannot move or release energy while someone works on it."
 // - Line 221 (safety, verbatim): "OSHA standard 29 CFR 1910.147 establishes procedures to disable machinery and prevent the release of hazardous electrical, mechanical, hydraulic, pneumatic, chemical, and thermal energy during servicing."
@@ -9490,15 +9492,15 @@ function initTroubleshootSteps(root) {
 				'5. Verification of isolation'
 			], 12);
 			drawCard(286, 136, 262, 174, true, 'Energy isolating devices', [
-				'Pressing an emergency stop or',
-				'switching the robot to manual',
-				'mode does not isolate it.',
+				'Pressing an emergency stop does',
+				'not isolate the robot. Switching',
+				'to manual mode does not either.',
 				'An energy isolating device, such',
 				'as a main disconnect switch or',
 				'shutoff valve, physically blocks',
 				'the energy instead.'
 			], 12);
-			readout.textContent = 'Step 1 of 7 — Control hazardous energy (Sections 01–02): Maintenance and repair need more: the machine has to be cut off from every energy source so it cannot move or release energy while someone works on it. OSHA standard 29 CFR 1910.147 establishes procedures to disable machinery and prevent the release of hazardous electrical, mechanical, hydraulic, pneumatic, chemical, and thermal energy during servicing. Pressing an emergency stop or switching the robot to manual mode does not isolate it. The required sequence for applying energy control begins with preparation and shutdown, followed by machine isolation, lockout application, stored energy relief, and verification of isolation. After applying lockout devices, all potentially hazardous residual or stored energy must be relieved, disconnected, restrained, and rendered safe. Energy control procedures must enforce that only the authorized worker who applied a lockout device is permitted to remove it.';
+			readout.textContent = 'Step 1 of 7 — Control hazardous energy (Sections 01–02): Maintenance and repair need more: the machine has to be cut off from every energy source so it cannot move or release energy while someone works on it. OSHA standard 29 CFR 1910.147 sets out procedures to switch machinery off safely and stop it releasing hazardous energy while it is serviced. Pressing an emergency stop does not isolate the robot. Switching it to manual mode does not isolate it either. The steps must happen in a fixed order: first preparation and shutdown, then machine isolation, lockout application, stored energy relief, and finally verification of isolation. After the locks are on, all energy that is left over or stored and could still be hazardous must be relieved, disconnected, restrained, and made safe. Only the authorized worker who put a lockout device on is allowed to take it off.';
 		} else if (curStep === 1) {
 			if (symptomChoice === 'collect') {
 				drawCard(12, 136, 262, 174, true, 'Collect observable symptoms', [
@@ -9519,24 +9521,24 @@ function initTroubleshootSteps(root) {
 				readout.textContent = 'Step 2 of 7 — Gather symptoms (Section 03): Correct choice. Instead of resetting the fault, a methodical technician begins by collecting observable symptoms. What was the robot doing when it stopped? What step in the program was executing? Did the gripper drop the part? Are pneumatic pressure regulators showing normal line pressure? Safety Control Board diagnostic LEDs show normal communication with a slow green flash and a hardware or safety error with permanent red.';
 			} else if (symptomChoice === 'reset') {
 				drawCard(12, 136, 536, 174, true, 'Warning: unverified reset', [
-					'Resetting robot faults without identifying',
-					'the root cause masks fault detection and',
-					'increases the risk of personnel injury.',
+					'If you reset a fault without finding its',
+					'root cause, the fault is hidden instead of',
+					'fixed, and the risk of injury goes up.',
 					'UR warns that automatic acknowledgment and',
 					'reset of robot stops masks faults that',
 					'will lead to a failure condition.'
 				], 13);
-				readout.textContent = 'Step 2 of 7 — Warning on unverified reset (Section 03): Resetting robot faults without identifying the root cause masks fault detection and increases the risk of personnel injury. UR warns that automatic acknowledgment and reset of robot stops masks faults that will lead to a failure condition.';
+				readout.textContent = 'Step 2 of 7 — Warning on unverified reset (Section 03): If you reset a robot fault without finding its root cause, the fault is hidden instead of fixed, and the risk that someone gets hurt goes up. UR warns that automatic acknowledgment and reset of robot stops masks faults that will lead to a failure condition.';
 			} else {
 				drawCard(12, 136, 536, 174, false, 'Cell stopped — choose an action', [
 					'Once the cell is properly secured and',
-					'ready for diagnostic inspection,',
-					'troubleshooting begins by gathering facts.',
+					'safe to inspect, troubleshooting',
+					'starts with gathering facts.',
 					'Pick one of the two actions above:',
 					'• Collect observable symptoms',
 					'• Reset the alarm and restart'
 				], 13);
-				readout.textContent = 'Step 2 of 7 — Gather symptoms (Section 03): Once the cell is properly secured and ready for diagnostic inspection, troubleshooting begins by gathering facts. Select an action: Collect observable symptoms, or Reset the alarm and restart.';
+				readout.textContent = 'Step 2 of 7 — Gather symptoms (Section 03): Once the cell is properly secured and safe to inspect, troubleshooting starts with gathering facts. Select an action: Collect observable symptoms, or Reset the alarm and restart.';
 			}
 		} else if (curStep === 2) {
 			drawCard(12, 136, 262, 174, false, 'UR Support File & Log Viewer', [

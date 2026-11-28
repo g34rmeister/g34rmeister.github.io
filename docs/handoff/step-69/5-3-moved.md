@@ -1,0 +1,16 @@
+# Step 69: moved and reworded passages in robotics-5-3.html
+
+01. Beyond the factory: how robots affect society | Reworded heading; added plain-first opener with warehouse, robot vacuum, and surgical robot examples; split long sentences and clarified lidar | [1]
+02. What the data says about robots and jobs | Reworded heading; added plain-first opener; expanded MIT and US on first use; split sentences around 1990-2007 results and local-market caveats | [2]
+02. What the data says about robots and jobs | Moved Journal of Political Economy name, exposure calculation detail, and 2017 working-paper numbers (0.18-0.34 percentage points, 0.25-0.5 percent, 5.6 workers) into `<details class="deeper">` | [2], [3]
+03. How automation removes, grows, and creates tasks | Reworded heading; added plain-first opener with car-frame spot-welding example; simplified displacement, productivity, and reinstatement bullet wording while keeping figure intact | [4]
+03. How automation removes, grows, and creates tasks | Moved Journal of Economic Perspectives name and three-decade US employment slowdown decomposition into `<details class="deeper">` | [4]
+04. Where robots are used most: global robot density | Reworded heading; added plain-first opener explaining why robot counts are compared per 10,000 workers; split sentences around 2025 growth, 2023 table, and China overtaking Germany and Japan | [1], [2], [5]
+05. How jobs change and how to help workers adapt | Reworded heading; added plain-first opener; split long sentences around OECD PIAAC estimates, David Autor's wage polarization findings, and operator-friendly cell design | [6], [7], [8]
+06. Privacy risks: robots see and map private spaces | Reworded heading; added plain-first opener contrasting online privacy with physical home spaces; expanded RGB and AI on first use; split Roomba J7 case into short sentences | [9]
+07. Designing for privacy: keep less data, process on the robot | Reworded heading; added plain-first opener with a robot vacuum avoiding a shoe; put plain data-minimization explanation before the GDPR quote; expanded EU and IEEE on first use; simplified four architecture bullets | [10], [11]
+07. Designing for privacy: keep less data, process on the robot | Moved exact GDPR clause number (Article 5(1)(c)) into `<details class="deeper">` | [10]
+08. Who is responsible when an autonomous robot fails? | Reworded heading; added plain-first opener; put the car crumple zone analogy before introducing moral crumple zone; split Three Mile Island, Air France 447, and Tempe Uber crash sentences and EU HLEG oversight bullets | [12], [13]
+09. Five questions to ask before you build | Reworded heading; added plain-first opener; introduced IEEE 7000 and the EU AI Act without edition years or regulation numbers in main text; kept all five deployment questions including safety standards in item 5 | [14], [15], [16]
+09. Five questions to ask before you build | Moved IEEE 7000-2021 edition year, Regulation (EU) 2024/1689, Regulation (EU) 2026/1744, Annex I Section B, and 2 August 2028 delegated-acts deadline into `<details class="deeper">` | [14], [15], [16]
+Try it | Reworded prompts into active voice while keeping the GDPR audit, task-framework breakdown, and moral-crumple-zone handoff requirements intact | (none)

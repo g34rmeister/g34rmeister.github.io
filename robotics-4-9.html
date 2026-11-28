@@ -522,7 +522,7 @@ ENDWHILE</code></pre>
                                 If your PC misses its deadlines, the controller drops the network link.<sup><a href="#ref-42">[42]</a></sup> In plain words, the PC must read incoming robot data before the next update arrives. UR's client library warns that "it is quite critical that arriving RTDE messages are read before the next message arrives". It runs its receive thread at real-time priority and shuts down RTDE communication if data is not read fast enough.<sup><a href="#ref-23">[23]</a></sup><sup><a href="#ref-46">[46]</a></sup>
                             </p>
                             <p>
-                                To meet those deadlines, UR recommends a <code>PREEMPT_RT</code> kernel, which is a real-time Linux kernel patch designed to guarantee predictable task execution deadlines for hardware control loops. It notes that a low-latency kernel (<code>sudo apt install linux-lowlatency</code>) "has shown to be sufficient in many situations". It also warns that e-Series robots may move unevenly without a real-time-enabled system.<sup><a href="#ref-47">[47]</a></sup> Trajectory-forwarding modes, such as UR's passthrough controller and MotoROS2, avoid much of this problem because the controller does the fine-grained interpolation.<sup><a href="#ref-27">[27]</a></sup>
+                                To meet those deadlines, UR recommends a <code>PREEMPT_RT</code> kernel. This is a real-time patch for the Linux kernel. It is designed so that tasks for hardware control loops run on time, predictably. It notes that a low-latency kernel (<code>sudo apt install linux-lowlatency</code>) "has shown to be sufficient in many situations". It also warns that e-Series robots may move unevenly without a real-time-enabled system.<sup><a href="#ref-47">[47]</a></sup> Trajectory-forwarding modes, such as UR's passthrough controller and MotoROS2, avoid much of this problem because the controller does the fine-grained interpolation.<sup><a href="#ref-27">[27]</a></sup>
                             </p>
                             <p>
                                 Even more important than timing is knowing which machine protects people in the work cell. <strong>ROS 2 is not the robot's safety system.</strong> The certified safety functions, such as the safety configuration, emergency stops, protective stops, speed limits and zone limits, live in the vendor's controller and keep working whatever the PC sends. ROS only sends requests, and the robot may slow down or stop at any time. The drivers make this visible:
@@ -701,7 +701,7 @@ end</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=78ce5dd6" defer></script>
+            <script src="assets/js/course-data.js?v=26037997" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 

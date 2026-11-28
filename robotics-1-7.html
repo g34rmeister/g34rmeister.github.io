@@ -298,7 +298,10 @@
                                 A factory robot arm moves fast and swings heavy tools, so people need physical protection whenever it runs. Safeguards keep workers outside the danger zone or stop the arm the moment someone crosses a boundary. They are what separate a robot cell from a bare robot on a bench.
                             </p>
                             <p>
-                                As summarized from the OSHA Technical Manual, the options include mechanical limiting devices, nonmechanical limiting devices, presence-sensing safeguarding devices, fixed barriers and interlocked barrier guards.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-12">[12]</a></sup> During automatic operation all safeguards should be active, and no part of the operator's body should be inside the safeguarded area.<sup><a href="#ref-12">[12]</a></sup> In everyday words, guards must either block entry or stop the robot right away if someone enters; an OSHA interpretation letter puts it this way, listing acceptable controls as &ldquo;fixed barriers that are not easily defeated, barrier guards with interlocks that immediately stop machine motion, or presence-sensing devices that immediately stop machine motion.&rdquo;<sup><a href="#ref-13">[13]</a></sup>
+                                The OSHA Technical Manual lists the kinds of safeguard you can choose from: mechanical limiting devices, nonmechanical limiting devices, presence-sensing safeguarding devices, fixed barriers and interlocked barrier guards.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-12">[12]</a></sup> While the robot runs in automatic mode, all safeguards should be active. No part of the operator's body should be inside the guarded area.<sup><a href="#ref-12">[12]</a></sup>
+                            </p>
+                            <p>
+                                In everyday words, a guard must do one of two things. It blocks the way in, or it stops the robot right away when someone gets in. An OSHA interpretation letter lists the acceptable controls like this: &ldquo;fixed barriers that are not easily defeated, barrier guards with interlocks that immediately stop machine motion, or presence-sensing devices that immediately stop machine motion.&rdquo;<sup><a href="#ref-13">[13]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Fence and interlocked gate:</span> a fixed fence keeps people out. The gate has a safety switch, so opening it stops the robot.</li>
@@ -314,7 +317,7 @@
                                 <figcaption>A sketch of one possible layout, not a standard: the parts from sections 03 and 04 in top view. Opening the interlocked gate stops the robot, and breaking any beam of the light curtain at the operator&rsquo;s loading opening sends a stop signal.</figcaption>
                             </figure>
                             <p>
-                                A light curtain only protects people if it is far enough from the hazard. When a hand breaks the beams, the robot still needs some time to stop, and the hand keeps moving during that time. ISO 13855, the international standard for positioning safeguards based on human approach speed, gives the minimum safety distance as:<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup>
+                                A light curtain only protects people if it is far enough from the hazard. When a hand breaks the beams, the robot still needs some time to stop. The hand keeps moving during that time. So the curtain must sit far enough away that the robot has stopped before the hand arrives. ISO 13855 is the international standard for placing safeguards according to how fast a person can approach them. It gives the minimum safety distance as:<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup>
                             </p>
                             <pre class="article-code"><code>S = K &times; T + C
 
@@ -324,7 +327,7 @@ T = total stopping time: light curtain response + machine stopping time (s)
 C = extra distance that depends on the curtain's resolution d (mm)</code></pre>
                             <p class="plain-words"><strong>In plain words:</strong> K &times; T is how far a hand travels while the robot is still stopping, and C adds a little more for how fine the curtain is. So a robot that stops faster lets the curtain sit closer to the hazard. In the example below, 2000 mm/s &times; 0.1157 s is about 231 mm, and adding C = 88 mm gives about 319 mm. Lesson <a href="robotics-5-4.html">5.4</a> works through the full method.</p>
                             <p>
-                                For a curtain fine enough to detect a finger or hand, K = 2000 mm/s and C = 8 &times; (d &minus; 14 mm). If S comes out above 500 mm, the calculation is repeated with K = 1600 mm/s.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> In a worked example from Keyence, T = 0.1157 s and C = 88 mm give S = 2000 &times; 0.1157 + 88 &asymp; 319 mm.<sup><a href="#ref-14">[14]</a></sup> (C = 88 mm corresponds to a 25 mm resolution, since 8 &times; (25 &minus; 14) = 88.) The vendor guides do not agree on the minimum distances that apply when S is small, so a real installation must be checked against ISO 13855 itself.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> A slow-stopping robot needs its light curtain farther away. A faster stop allows a more compact cell.
+                                Some of the letters have fixed values. For a curtain fine enough to detect a finger or hand, K = 2000 mm/s and C = 8 &times; (d &minus; 14 mm). If S comes out above 500 mm, you repeat the calculation with K = 1600 mm/s.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> Keyence gives a worked example. There, T = 0.1157 s and C = 88 mm, so S = 2000 &times; 0.1157 + 88 &asymp; 319 mm.<sup><a href="#ref-14">[14]</a></sup> (C = 88 mm corresponds to a 25 mm resolution, since 8 &times; (25 &minus; 14) = 88.) The vendor guides do not agree on the minimum distances that apply when S is small. So a real installation must be checked against ISO 13855 itself.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> A slow-stopping robot needs its light curtain farther away. A faster stop allows a more compact cell.
                             </p>
                             <details class="deeper">
                                 <summary>For the curious: the ANSI/RIA standard referenced by OSHA</summary>
@@ -592,10 +595,10 @@ C = extra distance that depends on the curtain's resolution d (mm)</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=78ce5dd6" defer></script>
+            <script src="assets/js/course-data.js?v=26037997" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
-            <script src="assets/js/widgets.js?v=b3de63b6" defer></script>
+            <script src="assets/js/widgets.js?v=254bdd0c" defer></script>
 
     </body>
 </html>
