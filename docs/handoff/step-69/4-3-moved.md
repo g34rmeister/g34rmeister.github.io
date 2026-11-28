@@ -1,0 +1,17 @@
+# Step 69: moved and reworded passages in robotics-4-3.html
+
+01. Picking the right install method for your computer | Reworded heading; added plain-first opener with Ubuntu laptop, Windows PC, and Mac examples; expanded ROS 2, PC, and LTS on first use; split long sentences | [1], [2], [3], [4]
+02. Which computers ROS 2 supports best | Reworded heading; added plain-first opener; expanded CPU, CI, RHEL, and RPM on first use; explained supported-platforms doc in plain words; split long sentences | [2], [5], [7]
+02. Which computers ROS 2 supports best | Moved REP 2000 and Kilted Kaiju-to-Lyrical Luth platform-tracking transition into `<details class="deeper">` | [6], [7]
+03. How a native Ubuntu install works | Reworded heading; added plain-first opener; split long sentences around Debian packages and the four install stages; kept SVG diagram unchanged | [2], [8]
+04. Preparing Ubuntu and adding the ROS software source | Reworded heading; added plain-first opener; expanded UTF-8, POSIX, and apt on first use; added plain explanation of the curl/dpkg commands; kept all `<pre>` blocks byte-for-byte | [8]
+05. Choosing Desktop or Base and installing ROS 2 | Reworded heading; added plain-first opener contrasting workstation vs. mobile-robot onboard computer; expanded GUI, DDS, and RMW on first use; split sentences; kept `<pre>` blocks byte-for-byte | [8]
+06. Loading ROS 2 into your terminal | Reworded heading; added plain-first opener explaining why `ros2` is not found at first; explained sourcing in plain words; split long sentences; kept `<pre>` block byte-for-byte | [8], [9], [10]
+07. Installing ROS 2 on a Windows PC | Reworded heading; added plain-first opener contrasting WSL 2 vs. native Windows; expanded OpenGL and GPU on first use; added plain explanation after native Windows commands; split long sentences; kept `<pre>` blocks byte-for-byte | [11], [12], [13], [14], [15], [16]
+08. Installing on a Snapdragon Windows laptop (Arm64) | Reworded heading; added plain-first opener; expanded URSim, WSLg, vGPU, and VM on first use; kept table and `<pre>` block byte-for-byte; split long sentences | [6], [7], [9], [12], [14], [16], [17], [18], [22], [23], [24], [25], [26], [27]
+08. Installing on a Snapdragon Windows laptop (Arm64) | Moved Jazzy/REP 2000 history, URSim Mac-emulation and 2013 RobotStudio Mac-VM thread details, and Windows-in-Mac-VM nested virtualization note into `<details class="deeper">` | [6], [19], [20], [21], [28]
+09. Running ROS 2 on a Mac | Reworded heading; added plain-first opener; expanded X11 and VNC on first use; split long sentences; kept `<pre>` block byte-for-byte | [1], [2], [7], [27], [29]
+10. Testing your install with talker and listener | Reworded heading; added plain-first opener; expanded APIs on first use; kept all `<pre>` command and output blocks byte-for-byte | [8], [30], [31]
+11. Installing two tools for building your own packages | Reworded heading; added plain-first opener; split long sentences around colcon and rosdep; kept `<pre>` blocks byte-for-byte | [32], [33]
+11. Installing two tools for building your own packages | Moved older ROS build tool names (`catkin_make`, `catkin_make_isolated`, `catkin_tools`, `ament_tools`) into `<details class="deeper">` | [32]
+12. Fixing common setup problems | Reworded heading; added plain-first opener; expanded ufw and UDP on first use; split sentences; kept `<pre>` blocks byte-for-byte | [9], [14]

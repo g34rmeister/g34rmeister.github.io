@@ -1,0 +1,16 @@
+# Step 69: moved and reworded passages in robotics-2-1.html
+
+01. Ways to program a robot | Reworded heading; added plain-first opener with welding arm and steel tooling example; expanded ISO on first use; introduced ISO 8373 in plain words and added plain-words explanation before the industrial robot quote; split long sentences and clarified cobots | [1], [2], [3], [4]
+01. Ways to program a robot | Moved ISO 8373:2021 edition year into `<details class="deeper">` | [1], [2]
+02. Teaching on the robot with a pendant | Reworded heading; added plain-first opener; expanded 4D, DCS, 6D, UR, and tool center point (TCP) on first use; switched to active "you" phrasing and split long sentences across pendant bullets | [3], [5], [6], [7], [8], [9], [10]
+03. Staying safe while teaching up close | Reworded heading; added plain-first opener; introduced ISO 10218-1 in plain words without edition year; expanded mm/s and OSHA on first use while keeping enabling device and 250 mm/s safety wording and numbers exact | [5], [7], [11]
+03. Staying safe while teaching up close | Moved ISO 10218-1:2025 edition year and ANSI/RIA R15.06-2012 (2011 ISO 10218 national adoption) into `<details class="deeper">` | [5], [11]
+04. Choosing how the arm moves when you jog | Reworded heading; added plain-first opener with tilted bracket and drill bit examples; clarified inverse kinematics and singularities; split long bullet sentences | [7], [12]
+05. Guiding a collaborative robot by hand | Reworded heading; added plain-first opener; switched to active "you" phrasing and split long sentences across Freedrive, sensor bullets, and closing paragraph | [6], [10], [13], [14], [15], [16]
+06. Programming in 3D on a computer (OLP) | Reworded heading; added plain-first opener; expanded personal computer (PC), three-dimensional (3D), and computer-aided design (CAD) on first use; split long sentences across the four OLP functions | [3], [6], [17], [18], [19], [20]
+07. Closing the simulation-to-reality gap | Reworded heading; added plain-first opener; introduced ISO 9283 in plain words; split long sentences across calibration bullets while keeping all point counts and millimeter figures exact | [12], [21], [22]
+08. Programming with drag-and-drop blocks | Reworded heading; added plain-first opener; switched to active "you" phrasing and split long sentences around Blockly, Wizard Easy Programming, and PolyScope | [4], [10], [23], [24]
+09. Comparing cost, precision, and downtime | Reworded heading; added plain-first opener; split semicolon sentence before table; expanded computer numerical control (CNC) on first use and split long closing sentences while keeping Siemens $2.3 million per hour figure and dates intact | [3], [4], [6], [21], [25]
+10. Worked examples: spot welding vs. custom deburring | Reworded heading; added plain-first opener; clarified deburring in parentheses; split long sentences while keeping 450 spot welds, 40 to 60 hours, and batches of twenty intact | [17]
+11. Comparing online and offline workflows | Added plain-first opener introducing the online vs. offline workflow diagram | (none)
+Try it | Replaced "base Cartesian coordinates" with "world/base coordinates" in item 1 to match section 04 terminology | (none)

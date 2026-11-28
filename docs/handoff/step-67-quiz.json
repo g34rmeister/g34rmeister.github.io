@@ -1,0 +1,870 @@
+[
+  {
+    "lesson": "2-1",
+    "question": "What happens if an operator squeezes a teach pendant's three-position enabling device all the way down in a panic?",
+    "choices": [
+      "The robot switches into high-speed automatic mode",
+      "The robot stops moving",
+      "The robot enters Freedrive hand-guiding mode",
+      "The controller ignores the switch until the current move finishes"
+    ],
+    "answer": 1,
+    "explanation": "A three-position enabling device must be held in its center position; both releasing it and squeezing it fully stop the robot.",
+    "quote": "Releasing the switch, or squeezing it fully in a moment of panic, therefore stops the robot.",
+    "html_line": 259
+  },
+  {
+    "lesson": "2-1",
+    "question": "In offline programming software, what does a post-processor do?",
+    "choices": [
+      "It calibrates the physical fixture frame using a laser tracker",
+      "It detects collisions between the robot arm and cell fences",
+      "It translates the simulated robot path into the robot maker's own language",
+      "It measures joint torque to enable cobot hand guiding"
+    ],
+    "answer": 2,
+    "explanation": "A post-processor converts a simulated path into brand-specific robot code such as ABB RAPID or URScript.",
+    "quote": "A post-processor translates the simulated path into the robot maker's own language.",
+    "html_line": 305
+  },
+  {
+    "lesson": "2-2",
+    "question": "In ABB RobotWare and RobotStudio, what does TrueMove ensure when an operator lowers the program speed during testing?",
+    "choices": [
+      "The tool traces the same geometric path regardless of speed",
+      "The robot skips intermediate waypoints to keep cycle time constant",
+      "The controller switches automatically from RAPID to URScript",
+      "Wait instructions are removed from the cycle-time estimate"
+    ],
+    "answer": 0,
+    "explanation": "TrueMove keeps the robot's path speed-independent so lowering the speed during testing still follows the same programmed geometric path.",
+    "quote": "If an operator lowers program speed during testing, the tool should trace the same geometric path.",
+    "html_line": 261
+  },
+  {
+    "lesson": "2-2",
+    "question": "In Universal Robots PolyScope, how does the program tree flag a node that is not configured correctly?",
+    "choices": [
+      "It deletes the node automatically when you press Play",
+      "It converts the node into a URCap background daemon",
+      "It switches the robot from Normal Mode into Reduced Mode",
+      "It highlights the node in yellow and prevents the program from running until it is fixed"
+    ],
+    "answer": 3,
+    "explanation": "PolyScope highlights misconfigured nodes in yellow in the program tree and blocks the program from running until they are corrected.",
+    "quote": "Nodes that are not configured correctly are highlighted in yellow, so the program cannot run until they are fixed.",
+    "html_line": 340
+  },
+  {
+    "lesson": "2-3",
+    "question": "Which units does URScript use for positions, tool speeds, and blend radii?",
+    "choices": [
+      "Millimeters, mm/s, and millimeters",
+      "Meters, m/s, and meters",
+      "Inches, in/s, and inches",
+      "Centimeters, cm/s, and degrees"
+    ],
+    "answer": 1,
+    "explanation": "Unlike ABB RAPID (which uses millimeters), URScript uses SI units: positions and blend radii in meters, and tool speeds in m/s.",
+    "quote": "Unlike RAPID, which works in millimeters, URScript uses SI units: positions are in meters, tool speeds in m/s, and blend radii in meters.",
+    "html_line": 350
+  },
+  {
+    "lesson": "2-3",
+    "question": "What kind of process is URScript's movep ('Move process') instruction designed for?",
+    "choices": [
+      "Fast joint moves in open space where the path shape does not matter",
+      "Calibrating external axes using 9E9 placeholders",
+      "Processes such as dispensing a bead of glue that need a steady tool speed",
+      "Stopping the robot immediately when a digital input changes"
+    ],
+    "answer": 2,
+    "explanation": "movep blends circular and linear moves in tool space while holding a constant tool speed, which processes like glue dispensing need.",
+    "quote": "A steady tool speed is what processes such as dispensing a bead of glue need.",
+    "html_line": 361
+  },
+  {
+    "lesson": "2-4",
+    "question": "Which operating system is the main (Tier 1) host platform for ROS 2?",
+    "choices": [
+      "Ubuntu Linux",
+      "ABB RobotWare",
+      "Apple macOS",
+      "FreeRTOS only"
+    ],
+    "answer": 0,
+    "explanation": "ROS is middleware that runs on top of a host operating system rather than replacing it, and Ubuntu Linux is the main Tier 1 host platform for ROS 2.",
+    "quote": "For ROS 2, the main (Tier 1) host platform is Ubuntu Linux.",
+    "html_line": 243
+  },
+  {
+    "lesson": "2-4",
+    "question": "In the Universal Robots ROS 2 driver, what can happen if you skip extracting the robot's factory calibration with ur_calibration?",
+    "choices": [
+      "The teach pendant refuses to power on the arm",
+      "DDS discovery falls back to roscore",
+      "The robot controller drops from 500 Hz to 125 Hz",
+      "End-effector positions in ROS might be off by centimeters"
+    ],
+    "answer": 3,
+    "explanation": "Each UR arm is calibrated individually at the factory; without running ur_calibration to load those values into the URDF, ROS end-effector positions can be off by centimeters.",
+    "quote": "The documentation warns that without this step, end-effector positions in ROS might be off by centimeters.",
+    "html_line": 390
+  },
+  {
+    "lesson": "2-6",
+    "question": "How does the standard 4-point method calibrate a tool center point (TCP) on a real robot?",
+    "choices": [
+      "By typing CAD dimensions into a Docker environment variable",
+      "By touching one fixed, pointed tip with the tool from four different wrist orientations so the controller solves for the offset",
+      "By weighing the gripper on a scale and running the payload wizard",
+      "By teaching three corner points on the worktable fixture"
+    ],
+    "answer": 1,
+    "explanation": "Both UR and ABB let you touch a single fixed pointer from four distinct wrist orientations so the controller can compute the TCP offset.",
+    "quote": "Both vendors offer a method in which you touch one fixed, pointed tip with the tool from four different wrist orientations, and the controller solves for the offset.",
+    "html_line": 283
+  },
+  {
+    "lesson": "2-6",
+    "question": "On Universal Robots, what limits the maximum blend radius you can set at a waypoint?",
+    "choices": [
+      "It must be at least 100 mm for every MoveL instruction",
+      "It must equal the payload mass in kilograms",
+      "Blends cannot overlap, so it can be at most half the length of the shortest segment it touches",
+      "It is fixed at 50 mm whenever a fixture plane is used"
+    ],
+    "answer": 2,
+    "explanation": "Because blend regions cannot overlap on UR robots, a blend radius cannot exceed half the length of the shortest adjacent path segment.",
+    "quote": "On UR, blends cannot overlap, so a blend radius can be at most half the length of the shortest segment it touches.",
+    "html_line": 346
+  },
+  {
+    "lesson": "2-7",
+    "question": "In a 3 by 3 palletizing loop with slots numbered 0 to 8, how does the program avoid teaching all nine points separately?",
+    "choices": [
+      "It teaches one corner slot and computes each slot's row and column using integer division and remainder",
+      "It takes a camera snapshot before every single placement",
+      "It declares nine separate PERS counters, one for each row",
+      "It uses TRYNEXT to jump automatically between pallet rows"
+    ],
+    "answer": 0,
+    "explanation": "By teaching one corner and numbering slots 0 to 8, integer division (i DIV 3) and remainder (i MOD 3) compute every row and column offset.",
+    "quote": "The trick that keeps the program short is to number the slots 0 to 8 and compute the row and column from the number with integer division and remainder:",
+    "html_line": 356
+  },
+  {
+    "lesson": "2-7",
+    "question": "Inside a RAPID ERROR handler, what does the TRYNEXT statement do?",
+    "choices": [
+      "It runs the instruction that caused the error again",
+      "It ends the routine and passes the error to the caller",
+      "It resets all PERS variables back to zero",
+      "It skips the instruction that caused the error and continues with the next one"
+    ],
+    "answer": 3,
+    "explanation": "TRYNEXT tells the RAPID error handler to skip the instruction that raised the error and continue executing from the following instruction.",
+    "quote": "skip that instruction and continue with the next one.",
+    "html_line": 411
+  },
+  {
+    "lesson": "2-8",
+    "question": "Which pose values does a 2D vision guidance system measure for a part?",
+    "choices": [
+      "X, Y, and Z position plus rotation about all three axes",
+      "The part's X and Y position plus its rotation about the vertical axis",
+      "Only the part's Z height above the conveyor belt",
+      "The robot's joint torques and gripper finger force"
+    ],
+    "answer": 1,
+    "explanation": "A 2D vision system measures X, Y, and rotation about the vertical axis, assuming the part lies flat at a known part Z height.",
+    "quote": "A 2D result gives the part's X and Y position plus its rotation about the vertical axis.",
+    "html_line": 240
+  },
+  {
+    "lesson": "2-8",
+    "question": "After calibrating a vision-guided robot cell, when must you redo the camera calibration?",
+    "choices": [
+      "Only when the robot picks a part of a different color",
+      "Before every single pick-and-place cycle",
+      "Whenever the optics or camera mounting change, such as a bumped bracket, refocused lens, or new zoom setting",
+      "Never; intrinsic and hand-eye calibrations adjust automatically"
+    ],
+    "answer": 2,
+    "explanation": "Camera calibration only holds while the optics and mounting stay unchanged; bumping the bracket, refocusing, or changing zoom breaks it.",
+    "quote": "A bumped bracket, a refocused lens or a new zoom setting all break it.",
+    "html_line": 344
+  },
+  {
+    "lesson": "4-1",
+    "question": "Why does splitting a robot application into separate ROS 2 nodes help when a camera driver crashes?",
+    "choices": [
+      "The driver can be restarted on its own without rebooting the robot",
+      "Other nodes automatically take over reading the camera USB port",
+      "All nodes share one OS process so no memory is ever lost",
+      "ROS 2 converts the camera driver into a safety-rated PLC"
+    ],
+    "answer": 0,
+    "explanation": "Because nodes can run as separate OS processes, a crash in one driver does not bring down the motor controller or safety monitor, and it can be restarted on its own.",
+    "quote": "The driver can be restarted on its own without rebooting the robot.",
+    "html_line": 263
+  },
+  {
+    "lesson": "4-1",
+    "question": "What range of values does the ROS 2 documentation recommend for ROS_DOMAIN_ID to avoid Linux port collisions?",
+    "choices": [
+      "Between 0 and 10 inclusive",
+      "Between 0 and 101 inclusive",
+      "Between 102 and 232 inclusive",
+      "Between 7400 and 7411 inclusive"
+    ],
+    "answer": 1,
+    "explanation": "Although IDs up to 232 can be assigned, ROS 2 recommends choosing a domain ID from 0 to 101 inclusive because IDs above 101 can collide with the Linux ephemeral port range.",
+    "quote": "The documentation recommends choosing a domain ID between 0 and 101 inclusive.",
+    "html_line": 346
+  },
+  {
+    "lesson": "4-2",
+    "question": "A map publisher uses Volatile durability, while an RViz subscriber opened later requests Transient Local durability. What happens?",
+    "choices": [
+      "RViz receives the map immediately from the DDS cache",
+      "The publisher automatically switches to Transient Local durability",
+      "The subscriber receives only the first message and then disconnects",
+      "No communication happens because the publisher keeps no old samples for the late-joining subscriber"
+    ],
+    "answer": 3,
+    "explanation": "Volatile offered vs. Transient Local requested is a QoS incompatibility: a Volatile publisher keeps no past samples, so no connection is made.",
+    "quote": "Subscriber asks for old (latched) samples, but the publisher keeps none. No communication.",
+    "html_line": 355
+  },
+  {
+    "lesson": "4-2",
+    "question": "In a ROS 2 managed (lifecycle) node, in which primary state does the node actively process data and produce outputs?",
+    "choices": [
+      "Unconfigured",
+      "Inactive",
+      "Active",
+      "Finalized"
+    ],
+    "answer": 2,
+    "explanation": "Only the Active state processes data and answers requests; a supervisor moves each node through configure (to Inactive) and activate (to Active) once hardware is ready.",
+    "quote": "Only the Active state processes data; a supervisor moves each node through configure and activate when its hardware is ready.",
+    "html_line": 390
+  },
+  {
+    "lesson": "4-3",
+    "question": "When should you install the ros-lyrical-ros-base package instead of ros-lyrical-desktop?",
+    "choices": [
+      "On a computer without a screen, such as a single-board computer mounted inside a mobile robot",
+      "When you need RViz2 and graphical tutorials on a laptop",
+      "Whenever you want to run Turtlesim in WSL 2",
+      "When installing ROS 2 on Windows 11 with pixi"
+    ],
+    "answer": 0,
+    "explanation": "ROS-Base includes communication libraries, message packages, and CLI tools without GUI packages, making it suited for headless onboard computers.",
+    "quote": "This suits a computer without a screen, such as a single-board computer mounted inside a mobile robot:",
+    "html_line": 293
+  },
+  {
+    "lesson": "4-3",
+    "question": "Why does running ROS 2 Lyrical Luth directly on macOS require building it from source?",
+    "choices": [
+      "Apple silicon CPUs cannot run DDS discovery",
+      "macOS is a Tier 3 platform, so there are no official binary packages for it",
+      "Ubuntu apt repositories only work on Windows 11",
+      "macOS does not support Python 3"
+    ],
+    "answer": 1,
+    "explanation": "For Lyrical Luth, macOS is a Tier 3 platform without official binaries; Mac users are advised to use an Ubuntu virtual machine or Docker container instead.",
+    "quote": "For Lyrical Luth, macOS is a Tier 3 platform, so there are no official binaries and running Lyrical directly on macOS means building it from source.",
+    "html_line": 409
+  },
+  {
+    "lesson": "4-4",
+    "question": "Why do ROS 2 developers pass --remap arguments when launching a node such as turtle_teleop_key?",
+    "choices": [
+      "To compile Python code into C++ binaries",
+      "To dynamically change topic names after the node has started",
+      "To reuse the same executable for a different robot or topic name without changing its code",
+      "To increase the publisher queue size from 10 to 100"
+    ],
+    "answer": 2,
+    "explanation": "Startup remapping redirects topic and service names so the same node executable can control another robot (like turtle2) without modifying source code.",
+    "quote": "Remapping lets you reuse the same executable for a different robot or topic name without changing its code.",
+    "html_line": 338
+  },
+  {
+    "lesson": "4-4",
+    "question": "When writing a custom rclpy subscriber node, what two things must match the publisher for messages to be received?",
+    "choices": [
+      "The node class name and the Python file name",
+      "The timer period and the logger output",
+      "The workspace folder name and the ROS domain ID",
+      "The topic name and the message type"
+    ],
+    "answer": 3,
+    "explanation": "In ROS 2, a subscriber and publisher communicate only if they use the same topic name and the same message type (with compatible QoS).",
+    "quote": "The topic name and message type must match the publisher's for the two to communicate.",
+    "html_line": 513
+  },
+  {
+    "lesson": "4-5",
+    "question": "In RViz2, what rule should you follow when choosing the Fixed Frame?",
+    "choices": [
+      "Choose a frame that does not move relative to the world, such as map or world",
+      "Always set it to the moving lidar sensor frame",
+      "Set it to the robot's wrist joint so obstacles move with the arm",
+      "Leave it blank so tf2 rotates the grid automatically"
+    ],
+    "answer": 0,
+    "explanation": "The Fixed Frame acts as the stationary world reference in RViz2; setting it to a moving frame causes everything seen by the robot to appear in front of it instead of where it really is.",
+    "quote": "For correct results, the fixed frame should not move relative to the world.",
+    "html_line": 256
+  },
+  {
+    "lesson": "4-5",
+    "question": "Why does an MCAP bag file recorded with ros2 bag remain readable in the future even if your ROS 2 code changes?",
+    "choices": [
+      "It saves all topics as plain CSV spreadsheets",
+      "It stores message schemas alongside the recorded data",
+      "It requires a live Gazebo simulation to decode messages",
+      "It uploads every recording to an online ROS database"
+    ],
+    "answer": 1,
+    "explanation": "MCAP is self-describing because it embeds message schemas directly inside the bag file alongside the serialized data.",
+    "quote": "MCAP stores message schemas alongside the data, so files stay readable in the future even as your code changes.",
+    "html_line": 337
+  },
+  {
+    "lesson": "4-6",
+    "question": "After running colcon build on your workspace overlay, what should you do before sourcing install/setup.bash?",
+    "choices": [
+      "Delete the build/ directory so the overlay takes precedence",
+      "Source the overlay in the same terminal and run colcon build a second time",
+      "Open a new terminal separate from the one where you built the workspace",
+      "Move your source files from src/ into /opt/ros/lyrical/"
+    ],
+    "answer": 2,
+    "explanation": "The ROS 2 tutorial warns to open a new terminal before sourcing the overlay, because sourcing an overlay in the same terminal where you built it can cause complex issues.",
+    "quote": "Sourcing an overlay in the same terminal where you built, or likewise building where an overlay is sourced, may create complex issues.",
+    "html_line": 242
+  },
+  {
+    "lesson": "4-6",
+    "question": "Why does the timer-based square driver in Lesson 4.6 fail to land back on its exact starting point?",
+    "choices": [
+      "The 10 Hz timer exceeds Turtlesim's 1.0-second timeout",
+      "Turtlesim ignores angular velocity commands while moving forward",
+      "Python classes reset self.elapsed after every fourth turn",
+      "Small timing and integration errors add up from corner to corner without sensor feedback"
+    ],
+    "answer": 3,
+    "explanation": "Because the open-loop node checks the clock only every 0.1 s and never reads /turtle1/pose, small errors accumulate at each corner and cause drift.",
+    "quote": "These small errors add up from corner to corner, and the last side will not land exactly on the start point.",
+    "html_line": 481
+  },
+  {
+    "lesson": "4-7",
+    "question": "In the turtlesim_mimic launch file, how can two turtlesim_node instances both use the node name 'sim' without colliding?",
+    "choices": [
+      "They are placed in unique namespaces (turtlesim1 and turtlesim2)",
+      "One is written in XML and the other is written in Python",
+      "The mimic node automatically renames duplicate nodes at runtime",
+      "Turtlesim disables DDS discovery when started from a launch file"
+    ],
+    "answer": 0,
+    "explanation": "Unique namespaces give the two nodes distinct fully qualified names (/turtlesim1/sim and /turtlesim2/sim) and prefix their topics to prevent conflicts.",
+    "quote": "Unique namespaces allow the system to start two nodes without node name or topic name conflicts.",
+    "html_line": 292
+  },
+  {
+    "lesson": "4-7",
+    "question": "What happens to a parameter value changed at runtime with ros2 param set after the node restarts?",
+    "choices": [
+      "It is saved automatically into the package's YAML file",
+      "The value is lost when the node restarts",
+      "It is stored permanently on a global ROS 2 parameter server",
+      "It becomes read-only for all future launches"
+    ],
+    "answer": 1,
+    "explanation": "Changes made with ros2 param set apply only to that running node instance and are lost on restart unless dumped to a YAML file and loaded again.",
+    "quote": "A value set this way is lost when the node restarts.",
+    "html_line": 497
+  },
+  {
+    "lesson": "4-8",
+    "question": "What information does the SRDF provide to MoveIt 2 that is not in the URDF?",
+    "choices": [
+      "The physical link masses and joint rotation limits",
+      "The real-time Ethernet IP address of the robot controller",
+      "Planning groups, named group states, end effectors, virtual joints, and ignored collision pairs",
+      "The PID gains for the joint_trajectory_controller"
+    ],
+    "answer": 2,
+    "explanation": "The URDF defines geometry, kinematics, and limits, while the SRDF adds semantic structure such as planning groups, named poses, and collision pairs to skip.",
+    "quote": "An SRDF can define planning groups, named group states, and end effectors.",
+    "html_line": 249
+  },
+  {
+    "lesson": "4-8",
+    "question": "Why must timing, contact, and I/O still be tested in Gazebo, URSim, or on a real arm instead of relying only on ros2_control mock hardware?",
+    "choices": [
+      "Mock hardware cannot connect to RViz2 or MoveIt 2",
+      "Mock hardware only supports 2-axis planar arms",
+      "Mock hardware requires a physical teach pendant to start",
+      "Mock hardware is not a physics simulator; commands simply become states, so the arm can jump instead of accelerating like a real one"
+    ],
+    "answer": 3,
+    "explanation": "GenericSystem mock hardware mirrors joint commands straight into joint states, so it ignores real dynamics, acceleration, contact forces, and GPIO.",
+    "quote": "Commands simply become states, so the arm can jump to positions instead of accelerating like a real one.",
+    "html_line": 278
+  },
+  {
+    "lesson": "4-10",
+    "question": "Why did test_straight_arm pass even though two_link/kinematics.py had a bug using sin(t2) instead of sin(t1 + t2)?",
+    "choices": [
+      "Because θ1 was 0 degrees in that test, making the buggy formula produce the exact same numerical result as the correct formula",
+      "Because pytest skips assertions that use pytest.approx",
+      "Because colcon test only runs one test function by default",
+      "Because the bug only affected the x-coordinate, which was not checked"
+    ],
+    "answer": 0,
+    "explanation": "When shoulder angle θ1 is 0, t1 + t2 equals t2, so the buggy sin(t2) formula matches sin(t1 + t2) until a test with a non-zero θ1 (like 90°) runs.",
+    "quote": "Therefore, whenever θ1 is 0, the buggy formula produces the exact same numerical result as the correct formula.",
+    "html_line": 360
+  },
+  {
+    "lesson": "4-10",
+    "question": "According to the ROS 2 issue reporting guide, what information should you include in a bug report?",
+    "choices": [
+      "Only a short title like 'kinematics broken' and a link to your fork",
+      "Your environment, the steps and commands to reproduce the problem, the exact output, and any troubleshooting already tried",
+      "A zip archive of your entire build/ and install/ directories",
+      "Your GitHub password and the maintainer's email address"
+    ],
+    "answer": 1,
+    "explanation": "A useful bug report gives the environment, reproduction steps and commands, exact error output, and what you already tried so a maintainer can reproduce the failure.",
+    "quote": "The guide asks for your environment, the steps and commands that lead to the problem, the exact output, and any troubleshooting you have already tried.",
+    "html_line": 458
+  },
+  {
+    "lesson": "5-1",
+    "question": "Why did the 2025 revision of ISO 10218 replace the terms 'collaborative robot' and 'collaborative operation' with 'collaborative applications'?",
+    "choices": [
+      "Because collaborative robots are no longer permitted on factory floors",
+      "Because ISO 10218:2025 applies only to autonomous mobile robots",
+      "Because collaboration belongs to the whole risk-assessed application—robot, end-effector, workpiece, and surroundings—not the robot alone",
+      "Because collaborative tasks no longer require a risk assessment"
+    ],
+    "answer": 2,
+    "explanation": "Even a torque-sensing cobot arm becomes hazardous if it carries a sharp part or cutting tool, so ISO 10218:2025 treats collaboration as a property of the whole application.",
+    "quote": "The terms \"collaborative robot\" and \"collaborative operation\" no longer appear in ISO 10218; the standard speaks of \"collaborative applications\" instead.",
+    "html_line": 274
+  },
+  {
+    "lesson": "5-1",
+    "question": "Under ISO/TS 15066, transient (short impact) contact allows at least twice the quasi-static force and pressure limits for most body regions—except which ones?",
+    "choices": [
+      "The hands and fingers",
+      "The lower arms and wrist joints",
+      "The thighs and knees",
+      "The skull, forehead, and face"
+    ],
+    "answer": 3,
+    "explanation": "While most body regions allow at least double the quasi-static limit during brief transient impacts (< 0.5 s), ISO/TS 15066 permits no such increase for the skull, forehead, and face.",
+    "quote": "No such increase applies to the skull, forehead and face.",
+    "html_line": 342
+  },
+  {
+    "lesson": "5-2",
+    "question": "Under ISO 13850, which IEC 60204-1 stop categories may be used for an emergency stop function?",
+    "choices": [
+      "Category 0 or Category 1 (Category 2 may be used only for normal stopping functions)",
+      "Only Category 2 (controlled stop leaving power on the actuators)",
+      "Category 1 or Category 2 (never Category 0)",
+      "All three categories (0, 1, and 2) equally"
+    ],
+    "answer": 0,
+    "explanation": "ISO 13850 restricts emergency stops to Category 0 (immediate power removal) or Category 1 (controlled stop followed by power removal); Category 2 is only for normal stops.",
+    "quote": "ISO 13850 limits emergency stops to Category 0 or 1, so Category 2 may be used only for normal stopping functions.",
+    "html_line": 242
+  },
+  {
+    "lesson": "5-2",
+    "question": "Why do Category 3 and 4 safety controllers use dual-channel redundancy for emergency stops and door interlocks?",
+    "choices": [
+      "So the robot can move twice as fast in reduced teach mode",
+      "So two independent channels monitor each other and a single fault cannot lead to loss of the safety function",
+      "So ordinary desktop PCs can replace certified safety PLCs",
+      "So technicians can bypass one channel during production"
+    ],
+    "answer": 1,
+    "explanation": "Dual-channel redundancy pairs two independent safety channels that check each other; if one fails (e.g. a broken wire or welded contact), the other still stops the machine.",
+    "quote": "As Universal Robots puts it, two independent safety channels monitor each other, so a single fault cannot lead to loss of the safety function.",
+    "html_line": 269
+  },
+  {
+    "lesson": "5-3",
+    "question": "What does Madeleine Clare Elish's concept of a 'moral crumple zone' describe in automated systems?",
+    "choices": [
+      "A mechanical bumper designed to absorb collision force on a mobile robot",
+      "A privacy filter that blurs faces before uploading camera images",
+      "How responsibility may be misattributed to a human operator who had only limited control over the system",
+      "A workforce retraining program for displaced factory technicians"
+    ],
+    "answer": 2,
+    "explanation": "Like a car's physical crumple zone absorbing crash force, a human supervisor can end up absorbing moral and legal blame when a complex autonomous system fails.",
+    "quote": "This concept describes how responsibility for an action may be misattributed to a human actor who had only limited control over an automated or autonomous system.",
+    "html_line": 364
+  },
+  {
+    "lesson": "5-3",
+    "question": "What pattern of 'labor market polarization' in the United States did economist David Autor describe?",
+    "choices": [
+      "All workers experienced equal wage growth regardless of task type",
+      "Only middle-skill routine manufacturing jobs gained wages",
+      "Robots eliminated 70% of all service-sector jobs by 2018",
+      "Wage gains went disproportionately to workers at the top and bottom of the skill distribution, not to those in the middle"
+    ],
+    "answer": 3,
+    "explanation": "Computers substitute most easily for routine, codifiable middle-skill tasks while amplifying high-skill problem-solving and leaving lower-income manual service tasks intact.",
+    "quote": "He explains that wage gains went disproportionately to workers at the top and the bottom of the income and skill distribution, not to those in the middle.",
+    "html_line": 317
+  },
+  {
+    "lesson": "5-5",
+    "question": "In URScript, what can happen if an AI-written program uses pose_add (base frame) instead of pose_trans (tool frame) to back a downward-pointing tool away by -0.05 m along Z?",
+    "choices": [
+      "Because base +Z points opposite to downward tool +Z, the offset can drive the tool 50 mm into the part instead of away from it",
+      "The robot moves sideways along the X axis instead of vertically",
+      "The controller automatically converts the base offset into joint angles",
+      "The gripper opens early before the arm reaches the waypoint"
+    ],
+    "answer": 0,
+    "explanation": "When the tool points straight down, tool Z points into the table while base Z points up; applying a -0.05 m offset in the base frame drives the tool down into the part.",
+    "quote": "An offset meant to back the tool away from a part can therefore drive it 50 mm into the part instead.",
+    "html_line": 344
+  },
+  {
+    "lesson": "5-5",
+    "question": "What does the lesson recommend recording as 'provenance' when using AI-generated code in a robot program?",
+    "choices": [
+      "Only the final compiled binary checksum",
+      "Which parts were AI-written, which prompt or tool produced them, and who reviewed and tested them",
+      "The training dataset weights of the large language model",
+      "A signed waiver releasing the programmer from safety responsibility"
+    ],
+    "answer": 1,
+    "explanation": "Recording provenance in a comment or change log tracks which code came from AI, what prompt or tool generated it, and who reviewed and tested it.",
+    "quote": "In a comment or a change log, note which parts of a program were AI-written, which prompt or tool produced them, and who reviewed and tested them.",
+    "html_line": 389
+  },
+  {
+    "lesson": "6-1",
+    "question": "When a bumper switch is wired to an Arduino pin configured with INPUT_PULLUP and connected to Ground, what does digitalRead() return when the switch is pressed?",
+    "choices": [
+      "HIGH, because the internal pull-up resistor sends 5 V through the switch",
+      "A random floating value between HIGH and LOW",
+      "LOW, because closing the switch connects the pin to Ground",
+      "An analog voltage of 2.5 V"
+    ],
+    "answer": 2,
+    "explanation": "With INPUT_PULLUP, the internal resistor holds the pin HIGH when open; pressing the switch connects the pin to Ground so it reads LOW.",
+    "quote": "When the robot's bumper switch closes, it connects the pin to Ground and the pin reads LOW, so the logic is inverted: LOW means pressed.",
+    "html_line": 337
+  },
+  {
+    "lesson": "6-1",
+    "question": "Why does the MOSFET-based TB6612FNG motor driver run much cooler than the older L298 at 1 A?",
+    "choices": [
+      "The TB6612FNG does not need a shared ground with the Arduino",
+      "The TB6612FNG generates AC power instead of DC power",
+      "The L298 cannot switch PWM signals faster than 50 Hz",
+      "The TB6612FNG drops only about 0.5 V at 1 A, whereas the L298 has a much larger voltage drop"
+    ],
+    "answer": 3,
+    "explanation": "The TB6612FNG's MOSFET outputs have low on-resistance (~0.5 ohm, ~0.5 V drop at 1 A), wasting far less heat than the L298's bipolar transistor voltage drop (1.8 V typical, up to 3.2 V at 1 A).",
+    "quote": "At 1 A this is a drop of only about 0.5 V, so it runs much cooler than the L298 for the same current.",
+    "html_line": 361
+  },
+  {
+    "lesson": "6-2",
+    "question": "How can an engineer eliminate the audible whine from a DC motor driven at Arduino's default 490 Hz or 980 Hz PWM?",
+    "choices": [
+      "Raise the PWM frequency into the ultrasonic range, such as 20 kHz, above human hearing",
+      "Lower the PWM frequency to 50 Hz",
+      "Set the duty cycle strictly to 50%",
+      "Remove the flyback diodes from the H-bridge"
+    ],
+    "answer": 0,
+    "explanation": "490 Hz and 980 Hz fall inside human hearing (20 Hz to 20 kHz), making the motor windings sing; raising the PWM frequency above 20 kHz moves it out of audible range (at higher switching loss).",
+    "quote": "Pololu's engineers note that the best way to reduce PWM-related motor whine is an ultrasonic PWM frequency, such as 20 kHz, above the range of human hearing.",
+    "html_line": 362
+  },
+  {
+    "lesson": "6-2",
+    "question": "What causes a DC gearmotor's mechanical 'dead zone' at low PWM duty cycles?",
+    "choices": [
+      "The Arduino Servo library disables Timer0 on pins 5 and 6",
+      "Static friction (stiction) in the gears and bearings is greater than the motor's torque at low duty cycles",
+      "The H-bridge reverses motor direction below a 25% duty cycle",
+      "Human hearing cannot detect frequencies below 20 Hz"
+    ],
+    "answer": 1,
+    "explanation": "At low duty cycles, current flows and warms the windings, but torque is too small to overcome gearbox and bearing friction until the command reaches a breakaway threshold.",
+    "quote": "At low duty cycles the motor's torque is too small to overcome the friction of the gears and bearings.",
+    "html_line": 379
+  },
+  {
+    "lesson": "6-3",
+    "question": "How does a quadrature encoder controller determine which direction a motor shaft is spinning?",
+    "choices": [
+      "It measures the analog voltage amplitude of Channel A",
+      "It counts the pulses on the index Channel Z",
+      "It checks which of the two 90-degree phase-shifted channels (A or B) leads the other",
+      "It reads the Gray code word over an SSI clock line"
+    ],
+    "answer": 2,
+    "explanation": "Channel A and Channel B are 90 degrees out of phase; when A leads B the count increments, and when B leads A it decrements.",
+    "quote": "The controller looks at which channel leads: when A leads B, the count increments, and when B leads A, it decrements.",
+    "html_line": 244
+  },
+  {
+    "lesson": "6-3",
+    "question": "What limitation occurs when an encoder is mounted only on the motor shaft rather than the output shaft of a gearmotor?",
+    "choices": [
+      "The encoder loses its count every time the shaft reverses direction",
+      "The motor shaft spins too slowly to trigger hardware interrupts",
+      "Quadrature decoding drops from X4 resolution to X1 resolution",
+      "The encoder cannot see the mechanical play (backlash) between the gear teeth"
+    ],
+    "answer": 3,
+    "explanation": "A motor-shaft encoder sees the motor move before the gear teeth re-engage on reversal, so it misses gearbox backlash on the load side.",
+    "quote": "Mounting an encoder on the fast motor shaft of a gearmotor gives excellent resolution, but the encoder cannot see the mechanical play (\"backlash\") between gear teeth.",
+    "html_line": 405
+  },
+  {
+    "lesson": "6-4",
+    "question": "Why does a pure proportional (P) controller leave a steady-state error when fighting friction or gravity?",
+    "choices": [
+      "Because as the robot nears the target, the shrinking error makes the proportional push too weak to overcome friction or gravity",
+      "Because the proportional term amplifies high-frequency encoder noise",
+      "Because pure P control requires a cascade of three nested loops",
+      "Because proportional control accumulates past errors even when blocked"
+    ],
+    "answer": 0,
+    "explanation": "Since P output equals Kp times error, a tiny remaining error cannot generate enough torque to overcome steady friction or gravity; the integral (I) term eliminates this offset.",
+    "quote": "As the robot approaches the setpoint, the error shrinks toward zero and the proportional push becomes too weak to overcome opposing physical forces such as gearbox friction or gravity.",
+    "html_line": 251
+  },
+  {
+    "lesson": "6-4",
+    "question": "What undesirable side effect can a large derivative gain (Kd) introduce when fed noisy discrete sensor readings?",
+    "choices": [
+      "It permanently locks the integrator at zero",
+      "It acts as a high-pass filter that amplifies high-frequency electrical sensor noise",
+      "It causes steady-state droop when holding against gravity",
+      "It disables hardware timer interrupts on the microcontroller"
+    ],
+    "answer": 1,
+    "explanation": "Because the derivative measures rapid changes, fast quantization jumps or electrical noise in sensor readings get amplified, which is why practical controllers filter the D term.",
+    "quote": "Derivative action helps stabilize oscillations, but it inherently acts as a high-pass filter that amplifies high-frequency electrical sensor noise.",
+    "html_line": 253
+  },
+  {
+    "lesson": "6-5",
+    "question": "Why can active sensors such as ultrasonic rangefinders and LiDAR operate in complete darkness while passive RGB cameras cannot?",
+    "choices": [
+      "Active sensors only measure internal wheel rotation and battery voltage",
+      "Active sensors rely on Earth's magnetic field instead of light",
+      "Active sensors supply their own emitted energy and measure what reflects back",
+      "Active sensors integrate gyroscope bias to map dark rooms"
+    ],
+    "answer": 2,
+    "explanation": "Active sensors emit controlled acoustic or optical energy into the environment rather than relying on ambient light.",
+    "quote": "Because they supply their own energy, active sensors can work in complete darkness.",
+    "html_line": 232
+  },
+  {
+    "lesson": "6-5",
+    "question": "Why does the HC-SR04 ultrasonic datasheet recommend waiting more than 60 milliseconds between trigger pulses?",
+    "choices": [
+      "To give the ultrasonic transducer time to cool down",
+      "Because Arduino's millis() timer only updates once every 60 ms",
+      "To keep the sensor's measuring cone narrower than 15 degrees",
+      "So late echoes from the previous ping are not mistaken for a nearby obstacle"
+    ],
+    "answer": 3,
+    "explanation": "Waiting over 60 ms between trigger pulses ensures echoes from the previous burst die out before the next measurement begins.",
+    "quote": "If a new ping is fired too quickly, late echoes from the last ping can be mistaken for a nearby obstacle.",
+    "html_line": 255
+  },
+  {
+    "lesson": "6-6",
+    "question": "Why is midpoint integration (second-order Runge-Kutta) more accurate on curved paths than Euler forward integration?",
+    "choices": [
+      "It evaluates the trigonometry at the average heading halfway through the step rather than assuming the starting heading held constant",
+      "It ignores wheel encoder counts during turns and reads GPS instead",
+      "It requires both drive wheels to spin at the exact same speed",
+      "It resets the robot's heading angle to zero after every update"
+    ],
+    "answer": 0,
+    "explanation": "During a turn the robot's heading changes across the step; evaluating cosine and sine at θ[k] + dθ/2 aligns the step with the chord of the curved arc.",
+    "quote": "Midpoint integration evaluates the trigonometry at the average heading halfway through the step, and the ROS 2 driver for the TurtleBot3 teaching robot uses exactly this form:",
+    "html_line": 306
+  },
+  {
+    "lesson": "6-6",
+    "question": "Why does the UMBmark calibration procedure drive the robot around a 4 m by 4 m square in both clockwise (CW) and counter-clockwise (CCW) directions?",
+    "choices": [
+      "To wear down both tires evenly before testing",
+      "To separate wheelbase errors from unequal wheel diameter errors so each can be estimated and corrected",
+      "To measure non-systematic wheel slip on wet floors",
+      "To reset the gyroscope zero-rate bias automatically"
+    ],
+    "answer": 1,
+    "explanation": "A wrong wheelbase adds or subtracts rotation in both CW and CCW runs, while unequal wheel diameters add in one direction and subtract in the other, letting UMBmark isolate both.",
+    "quote": "Comparing the CW and CCW results therefore lets each error be estimated and corrected with scaling factors.",
+    "html_line": 434
+  },
+  {
+    "lesson": "6-7",
+    "question": "Why do large robot applications often switch from a flat Finite State Machine (FSM) to a Behavior Tree?",
+    "choices": [
+      "Because FSMs cannot call millis() for non-blocking timing",
+      "Because Behavior Trees run without any periodic tick signal",
+      "Because adding a new behavior to a flat FSM can mean editing transitions in many existing states, tightly coupling the code",
+      "Because FSMs are allowed only in IEC 61131-3 PLCs"
+    ],
+    "answer": 2,
+    "explanation": "In a flat FSM, transitions can grow quadratically as states are added, making new behaviors hard to insert without rewiring existing states; Behavior Trees keep tasks modular.",
+    "quote": "Adding a new behavior can mean editing transitions in many existing states, which couples the code tightly.",
+    "html_line": 519
+  },
+  {
+    "lesson": "6-7",
+    "question": "What FSM anti-pattern does updating motor speeds inside scattered conditional checks cause, and how do you avoid it?",
+    "choices": [
+      "Terminal traps; avoid them by removing all guard conditions",
+      "Integral windup; avoid it by calling delay() between motor writes",
+      "State chattering; avoid it by running setup() on every loop pass",
+      "Duplicate output actuation with conflicting commands; avoid it by updating actuator outputs only once per pass based on the active state"
+    ],
+    "answer": 3,
+    "explanation": "Writing motor speeds from scattered branches can cause two checks to fight over the motors in the same cycle; updating outputs once from the active state prevents conflicts.",
+    "quote": "A well-structured FSM updates actuator outputs only once per pass based on the active state.",
+    "html_line": 447
+  },
+  {
+    "lesson": "6-8",
+    "question": "In a 1D Kalman filter update, how does the updated variance P compare to the predicted variance P_pred and the sensor noise R?",
+    "choices": [
+      "P is strictly smaller than both P_pred and R, making the fused estimate more certain than either source alone",
+      "P is always larger than both P_pred and R",
+      "P equals the sum P_pred + R",
+      "P stays equal to P_pred unless K equals 0"
+    ],
+    "answer": 0,
+    "explanation": "Because P = (P_pred * R) / (P_pred + R), fusing two uncertain sources yields a variance smaller than either source on its own.",
+    "quote": "By fusing two uncertain sources of information, the Kalman filter produced an estimate that is more certain than either source alone.",
+    "html_line": 338
+  },
+  {
+    "lesson": "6-8",
+    "question": "How does a complementary filter estimate tilt angle from a 6-axis IMU on a microcontroller without EKF matrix math?",
+    "choices": [
+      "It averages GPS coordinates with wheel encoder ticks",
+      "It takes the high-frequency part from the gyroscope and the low-frequency gravity part from the accelerometer using fixed weights",
+      "It discards the gyroscope whenever the robot accelerates",
+      "It uses 2n + 1 sigma points to propagate a Gaussian distribution"
+    ],
+    "answer": 1,
+    "explanation": "A complementary filter uses fixed weights (such as alpha = 0.98) to blend fast gyroscope integration with slow, drift-free accelerometer tilt.",
+    "quote": "The filter takes the high-frequency part of its estimate from the gyroscope and the low-frequency part from the accelerometer, using fixed weights.",
+    "html_line": 470
+  },
+  {
+    "lesson": "6-9",
+    "question": "When checking a velocity-versus-time motion profile by hand, what must the area under the curve equal?",
+    "choices": [
+      "The maximum acceleration a_max",
+      "The jerk limit j_max",
+      "The total move distance D",
+      "The cycle time divided by two"
+    ],
+    "answer": 2,
+    "explanation": "Because distance is the integral of velocity over time, the geometric area under v(t)—whether trapezoidal or triangular—must equal the move distance D.",
+    "quote": "Distance is the integral of velocity, so the area of the trapezoid must equal D.",
+    "html_line": 254
+  },
+  {
+    "lesson": "6-9",
+    "question": "Why can a linear MoveL instruction fail near a wrist singularity (joint 5 near zero) where a MoveJ instruction succeeds?",
+    "choices": [
+      "MoveJ uses a trapezoidal velocity profile while MoveL does not",
+      "MoveL ignores the robot's tool center point",
+      "MoveL cannot use blending zones",
+      "Holding a constant TCP speed near a singularity demands huge joint speeds, causing the controller to slow, stop, or error"
+    ],
+    "answer": 3,
+    "explanation": "MoveL solves inverse kinematics along a straight Cartesian line; near a wrist singularity where axes 4 and 6 align, keeping constant TCP speed requires extreme joint velocities.",
+    "quote": "Holding a constant TCP speed through that region can demand very large joint speeds, so the controller slows, stops or reports an error.",
+    "html_line": 427
+  },
+  {
+    "lesson": "6-10",
+    "question": "What problem can happen in inverse kinematics code if you pass cos θ2 directly to acos() without clamping it to [-1, 1]?",
+    "choices": [
+      "Floating-point rounding can push cos θ2 slightly past ±1 on the workspace boundary, causing a valid reachable pose to fail or return NaN",
+      "The arm always picks Solution B instead of Solution A",
+      "Forward kinematics starts returning two different tip positions",
+      "The Jacobian determinant becomes negative inside the workspace ring"
+    ],
+    "answer": 0,
+    "explanation": "On the boundary of the ring, rounding errors like 1.0000000000000004 make math.acos raise ValueError (and np.arccos return nan), rejecting a valid boundary pose unless clamped.",
+    "quote": "A point you computed from a perfectly valid pose is rejected as unreachable.",
+    "html_line": 340
+  },
+  {
+    "lesson": "6-10",
+    "question": "Why should a robot controller avoid switching between elbow-up and elbow-down IK branches in the middle of a straight-line move?",
+    "choices": [
+      "Because forward kinematics cannot compute two elbow positions",
+      "Because moving from one elbow posture to the other forces link 2 to swing through a singularity (stretched or folded)",
+      "Because atan2 only works for the elbow-down branch",
+      "Because switching branches changes the link lengths L1 and L2"
+    ],
+    "answer": 1,
+    "explanation": "Crossing from one elbow branch to the other requires passing through θ2 = 0° or 180°, which are workspace singularities.",
+    "quote": "Whatever the rule, a controller should not switch branches in the middle of a straight-line move.",
+    "html_line": 317
+  },
+  {
+    "lesson": "10-5",
+    "question": "How does Nav2's loopback simulator model the robot's motion?",
+    "choices": [
+      "It simulates full 3D rigid-body physics, wheel slip, and motor inertia like Gazebo",
+      "It requires a physical TurtleBot3 connected over Wi-Fi",
+      "It computes odometry directly from commanded velocities with no wheel slip and no motor dynamics",
+      "It uses AMCL particle filters to estimate odometry from camera images"
+    ],
+    "answer": 2,
+    "explanation": "The loopback simulator acts as a frictionless plane: the robot moves exactly as commanded by Nav2 with no wheel slip or motor dynamics.",
+    "quote": "The robot moves exactly as commanded, with no wheel slip and no motor dynamics.",
+    "html_line": 269
+  },
+  {
+    "lesson": "10-5",
+    "question": "In the loopback simulator lab, what happens if you wait too long (over ~60 seconds) to publish /initialpose after starting Nav2?",
+    "choices": [
+      "Nav2 defaults the robot's starting position to (0, 0) and continues",
+      "The loopback simulator publishes a random initial pose automatically",
+      "Only the behavior_server shuts down while planner_server stays active",
+      "Bringup aborts, leaving the nodes inactive so the entire stack must be stopped and restarted"
+    ],
+    "answer": 3,
+    "explanation": "If the map-to-base_link transform does not become available before planner_server times out, bringup aborts and leaves the lifecycle nodes inactive until restarted.",
+    "quote": "Following this timeout, the nodes remained in the inactive state and the entire stack had to be stopped and restarted.",
+    "html_line": 356
+  }
+]

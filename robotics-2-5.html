@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT24M",
+            "timeRequired": "PT28M",
             "teaches": [
                 "end effector",
                 "end-of-arm tooling",
@@ -226,94 +226,167 @@
 
                             <h2 class="article-section-title">01. What the robot holds, and how it is told to hold it</h2>
                             <p>
-                                On its own, a robot arm only carries a flange through space. The work is done by the <strong>end-of-arm tooling</strong> (EOAT), also called the end effector: a gripper, suction cups, a torch or a screwdriver. In <a href="robotics-2-3.html">lesson 2.3</a> you wrote pick-and-place programs. A single line set a digital output to close a gripper, and another line read an input to check for a part. This lesson looks at what sits behind those lines.
+                                A bare robot arm cannot pick anything up by itself. To do useful work, it needs a tool bolted to its wrist, such as suction cups lifting a box or fingers gripping a metal part. Learning how that tool attaches, how the robot tracks its weight, and how your code checks its grip turns simple motion into real work.
                             </p>
                             <p>
-                                Three questions run through the lesson. The first is what can physically hold the part. The second is what the controller needs to know about the tool bolted to it. The third is how the program finds out whether the tool actually did its job. The answers involve mechanics, tool configuration and input/output (I/O) programming in URScript and ABB RAPID.
+                                On its own, a robot arm only carries a mounting plate, called a flange, through space. The tool bolted to that flange does the real job. Engineers call it <strong>end-of-arm tooling</strong> (EOAT), or an end effector. Common examples are a finger gripper, suction cups, a welding torch, or a screwdriver.
+                            </p>
+                            <p>
+                                In <a href="robotics-2-3.html">lesson 2.3</a>, you wrote simple pick-and-place programs. One line turned on a digital output to close a gripper, and another checked an input for a part. This lesson looks at what sits behind those two lines.
+                            </p>
+                            <p>
+                                Three questions run through the lesson. First, what can physically hold the part? Second, what must the controller know about the tool bolted to it? Third, how does your program find out whether the tool actually did its job? The answers cover gripper hardware, tool setup, and input/output (I/O) programming in Universal Robots (UR) URScript and ABB RAPID.
                             </p>
 
                             <h2 class="article-section-title">02. Choosing a gripper family</h2>
                             <p>
-                                Gripper selection starts from the part: its material, porosity, mass, shape and fragility. It also depends on the utilities the cell has. Some cells have a compressed-air supply; others have only 24 V electrical power. A practical rule of thumb for a first choice:
+                                No single gripper works for every object. Suction cups that lift a sealed cardboard box will drop a rough steel bracket, while hard metal fingers will crush soft fruit. Picking the right gripper family up front prevents dropped parts, damaged goods, and wasted wiring.
+                            </p>
+                            <p>
+                                Gripper selection starts from the part itself. Check its material, porosity (whether air leaks through it), mass, shape, and fragility. It also depends on the utilities in your robot cell. Some cells supply compressed air, while others have only 24 V electrical power. Here is a practical rule of thumb for a first choice:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Vacuum (suction cups):</span> Flat, smooth, non-porous parts such as sheet, panels and sealed boxes.</li>
-                                <li class="article-spec-item"><span class="spec-label">Parallel finger grippers:</span> Rigid parts such as machined components. Pneumatic fingers are inexpensive, fast and strong, but are usually either fully open or fully closed. Electric fingers offer programmable force and position, can report their state back to the controller, and need no compressed air.</li>
+                                <li class="article-spec-item"><span class="spec-label">Vacuum (suction cups):</span> Flat, smooth, non-porous parts such as sheet, panels, and sealed boxes.</li>
+                                <li class="article-spec-item"><span class="spec-label">Parallel finger grippers:</span> Rigid parts such as machined components. Pneumatic (air-powered) fingers are inexpensive, fast, and strong, though they are usually either fully open or fully closed. Electric fingers offer programmable force and position, can report their state to the controller, and need no compressed air.</li>
                                 <li class="article-spec-item"><span class="spec-label">Magnetic grippers:</span> Ferrous (steel) sheet and parts.</li>
                                 <li class="article-spec-item"><span class="spec-label">Soft grippers:</span> Food and irregular or fragile items that rigid fingers would bruise or crush.</li>
                                 <li class="article-spec-item"><span class="spec-label">Tool changers:</span> Cells that must handle several part types, each needing a different tool.</li>
                             </ul>
                             <p>
-                                This list is a starting heuristic, not a standard. A real selection checks the candidate gripper's datasheet against the actual part, and notes which version of the datasheet each number came from. For example, Robotiq revised the specifications in its Hand-E manual in March 2024 &ldquo;to account for the change in Gripper payload,&rdquo; so copies of the manual from before and after that revision give different payload figures for the same gripper.<sup><a href="#ref-1">[1]</a></sup> This lesson concentrates on vacuum and finger grippers, which you are most likely to meet first.
+                                This list is a starting rule of thumb, not a standard. A real selection checks the candidate gripper&rsquo;s datasheet against your actual part. Always note which version of the datasheet each number came from, because makers sometimes update load ratings. This lesson focuses on vacuum and finger grippers, which you are most likely to meet first.
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: why datasheet versions matter (Robotiq Hand-E example)</summary>
+                                <p>Makers revise tool specifications over time. For example, Robotiq revised the specifications in its Hand-E manual in March 2024 &ldquo;to account for the change in Gripper payload.&rdquo; Copies of the manual from before and after that revision give different payload figures for the same gripper.<sup><a href="#ref-1">[1]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">03. Vacuum grippers: sizing the cups</h2>
                             <p>
-                                A suction cup holds a part because the air pressure outside the cup is higher than the partial vacuum inside it. The holding force is the pressure difference multiplied by the effective suction area of the cup, before any safety factor is applied.<sup><a href="#ref-2">[2]</a></sup> For a round cup of diameter D, the area is A = &pi;(D/2)&sup2;.<sup><a href="#ref-3">[3]</a></sup> Schmalz's sizing method runs this backwards and gives the cup diameter needed. Its inputs are the part's mass, a safety factor, the vacuum level and the number of cups. When the cup face is vertical and the part hangs on friction alone, a friction coefficient is added.<sup><a href="#ref-2">[2]</a></sup>
+                                A suction cup looks simple, yet picking a cup that is too small can drop a 2 kg box as soon as the arm speeds up. Suction does not actually pull on the box. Instead, the outside air pushes the box against the cup once the air inside is pumped out. Sizing your cups properly keeps parts from slipping during fast robot moves.
                             </p>
                             <p>
-                                The force a cup must supply is larger than the part's weight, because the robot accelerates. Robotiq gives the required holding force as F<sub>H</sub> = m &times; (g + a) &times; S for a horizontal cup lifting straight up (the part is picked from above), F<sub>H</sub> = m &times; (g + a/&mu;) &times; S for a horizontal cup when the force is horizontal (the part is moved sideways and held by friction), and F<sub>H</sub> = (m/&mu;) &times; (g + a) &times; S for a vertical cup. Here m is the part mass, g is gravitational acceleration, a is the robot's acceleration, &mu; is the friction coefficient between cup and part, and S is the safety factor.<sup><a href="#ref-4">[4]</a></sup> Robotiq recommends a safety factor of at least 1.5 for smooth parts, 2.0 for porous or oily parts, up to 4.0 when the cup face is vertical, and 2.5 or more for fast swinging or swiveling moves.<sup><a href="#ref-4">[4]</a></sup>
+                                A suction cup holds a part because air pressure outside the cup is higher than the partial vacuum inside it. Before any safety factor is applied, the holding force equals that pressure difference multiplied by the cup&rsquo;s effective suction area.<sup><a href="#ref-2">[2]</a></sup> For a round cup of diameter D, the area is A = &pi;(D/2)&sup2;.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
-                                <strong>Worked example.</strong> A 2 kg box is picked from above with a horizontal cup. The robot accelerates upward at a = 5 m/s&sup2; and the box is smooth, so S = 1.5. Using Robotiq's formula for a horizontal cup lifting straight up, F<sub>H</sub> = 2 &times; (9.81 + 5) &times; 1.5 = 2 &times; 14.81 &times; 1.5 &asymp; 44 N.<sup><a href="#ref-4">[4]</a></sup> To turn that into a cup size, assume, for this exercise only, that the vacuum generator holds a pressure difference of 60 kPa (a real design takes this from the generator's datasheet). The total cup area must then be at least 44 N &divide; 60,000 Pa &asymp; 7.4 &times; 10<sup>-4</sup> m&sup2;, or about 740 mm&sup2;. Split over two cups, that is about 370 mm&sup2; each, and solving A = &pi;(D/2)&sup2; gives D &asymp; 22 mm per cup.
+                                Vacuum maker Schmalz runs this sizing math in reverse to find the cup diameter you need. You enter the part&rsquo;s mass, a safety factor, the vacuum level, and the number of cups. When the cup face is vertical and the part hangs on friction alone, you also add a friction coefficient.<sup><a href="#ref-2">[2]</a></sup>
+                            </p>
+                            <p>
+                                A cup must supply more force than the part&rsquo;s resting weight because the robot accelerates. Robotiq gives three formulas for the required holding force F<sub>H</sub>, depending on how the cup meets the part:<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Horizontal cup lifting straight up (picked from above):</span> F<sub>H</sub> = m &times; (g + a) &times; S.</li>
+                                <li class="article-spec-item"><span class="spec-label">Horizontal cup with horizontal force (moved sideways and held by friction):</span> F<sub>H</sub> = m &times; (g + a/&mu;) &times; S.</li>
+                                <li class="article-spec-item"><span class="spec-label">Vertical cup:</span> F<sub>H</sub> = (m/&mu;) &times; (g + a) &times; S.</li>
+                            </ul>
+                            <p>
+                                Here m is the part mass, g is gravitational acceleration, and a is the robot&rsquo;s acceleration. The symbol &mu; is the friction coefficient between cup and part, and S is the safety factor. Robotiq recommends a safety factor of at least 1.5 for smooth parts, 2.0 for porous or oily parts, up to 4.0 when the cup face is vertical, and 2.5 or more for fast swinging or swiveling moves.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                <strong>Worked example.</strong> Suppose a 2 kg box is picked from above with a horizontal cup. The robot accelerates upward at a = 5 m/s&sup2;. Because the box is smooth, you use S = 1.5. Robotiq&rsquo;s lifting formula gives F<sub>H</sub> = 2 &times; (9.81 + 5) &times; 1.5 = 2 &times; 14.81 &times; 1.5 &asymp; 44 N.<sup><a href="#ref-4">[4]</a></sup>
+                            </p>
+                            <p>
+                                Next, turn that force into a cup size. Assume, for this exercise only, that the vacuum generator holds a pressure difference of 60 kPa. In a real design, you take that number from the generator&rsquo;s datasheet. The total cup area must be at least 44 N &divide; 60,000 Pa &asymp; 7.4 &times; 10<sup>-4</sup> m&sup2;, or about 740 mm&sup2;. Split over two cups, that is about 370 mm&sup2; each. Solving A = &pi;(D/2)&sup2; gives a diameter D &asymp; 22 mm per cup.
                             </p>
 
                             <div data-widget="vacuum-cup-sizing">
                                 <p class="widget-note">The vacuum cup sizing calculator needs JavaScript. With it on, you can calculate holding force and required cup diameter from part mass, acceleration, safety factor, vacuum level, and cup count.</p>
                             </div>
                             <p>
-                                The vacuum itself comes either from an electric pump or from an <strong>ejector</strong> (a venturi device that creates vacuum from a flow of compressed air). Piab, an ejector maker, says ejectors generate no heat or vibration and reduce noise, while conceding that they consume a lot of compressed air.<sup><a href="#ref-5">[5]</a></sup> How the ejector is built matters for that air bill. In a stamping study at DaimlerChrysler, multistage ejectors used 1.1 SCFM (standard cubic feet per minute, a measure of how much compressed air flows) per cycle, up to 78% less than single-stage generators. An air-saving check valve that shuts off the air once vacuum is reached reduced consumption further.<sup><a href="#ref-6">[6]</a></sup> Piab also claims up to 50% lower compressed-air cost for its compact P2010 multistage ejector, which runs from a 26 psi feed.<sup><a href="#ref-7">[7]</a></sup> Treat these as vendor figures: no independent comparison of ejectors and pumps was found for this lesson.
+                                The vacuum itself comes from an electric pump or an <strong>ejector</strong>, a venturi device that creates vacuum from a flow of compressed air. Ejector maker Piab says ejectors generate no heat or vibration and reduce noise. At the same time, Piab concedes that they consume a lot of compressed air.<sup><a href="#ref-5">[5]</a></sup>
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: multistage ejectors and compressed-air savings</summary>
+                                <p>How an ejector is built changes that compressed-air bill. In a stamping study at DaimlerChrysler, multistage ejectors used 1.1 SCFM (standard cubic feet per minute, a measure of how much compressed air flows) per cycle, up to 78% less than single-stage generators. An air-saving check valve that shuts off the air once vacuum is reached reduced consumption further.<sup><a href="#ref-6">[6]</a></sup></p>
+                                <p>Piab also claims up to 50% lower compressed-air cost for its compact P2010 multistage ejector, which runs from a 26 psi feed.<sup><a href="#ref-7">[7]</a></sup> Treat these as vendor figures: no independent comparison of ejectors and pumps was found for this lesson.</p>
+                            </details>
 
                             <h2 class="article-section-title">04. Finger grippers and soft grippers</h2>
                             <p>
-                                Finger grippers hold a part either by friction (squeezing it) or by form (the fingers wrap around a shape so the part cannot slip out). Datasheets therefore often quote two payloads. The OnRobot RG2 electric gripper, for example, is rated for 2 kg with a force-fit grip and 5 kg with a form-fit grip.<sup><a href="#ref-8">[8]</a></sup> Its other datasheet figures show the trade-offs an electric gripper exposes to the programmer:<sup><a href="#ref-8">[8]</a></sup>
+                                When a part is narrow, rough, or oddly shaped, suction cups cannot seal against it. That is when you switch to finger grippers or soft grippers. Finger grippers hold rigid parts between moving jaws, while soft grippers wrap flexible material gently around delicate items such as food.
+                            </p>
+                            <p>
+                                Finger grippers hold a part either by friction (squeezing it) or by form (the fingers wrap around a shape so it cannot slip out). Datasheets often quote two payload numbers for this reason. The OnRobot RG2 electric gripper, for example, is rated for 2 kg with a force-fit grip and 5 kg with a form-fit grip.<sup><a href="#ref-8">[8]</a></sup> Its specs also show the trade-offs an electric gripper exposes to your program:<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Stroke and force:</span> 110 mm total stroke; grip force adjustable from 3 to 40 N (&plusmn;25%).</li>
-                                <li class="article-spec-item"><span class="spec-label">Speed:</span> 38 to 127 mm/s, linearly proportional to the force setting, so a gentle grip is also a slower one.</li>
-                                <li class="article-spec-item"><span class="spec-label">Repeatability and build:</span> 0.2 mm repeatability, IP54, 0.78 kg, powered from 24 V at 70 to 600 mA.</li>
+                                <li class="article-spec-item"><span class="spec-label">Force and speed:</span> Grip force is adjustable from 3 to 40 N (&plusmn;25%), and speed (38 to 127 mm/s) scales linearly with force, so a gentle grip is also a slower one.</li>
                                 <li class="article-spec-item"><span class="spec-label">Power loss:</span> The gripper keeps holding the workpiece if power is lost.</li>
                             </ul>
                             <p>
-                                Electric grippers also differ in how they talk to the controller. Zimmer's GEP2000 series comes in three sizes, with 10, 13 and 16 mm of stroke per jaw and up to 200, 360 and 500 N of grip force. Each size is offered with plain digital I/O, with a 0-10 V position-feedback signal, or with IO-Link (a standard digital link that connects one sensor or actuator to an industrial controller).<sup><a href="#ref-9">[9]</a></sup> A GEP2000-B variant adds detection of a lost workpiece that is reported to the controller.<sup><a href="#ref-10">[10]</a></sup> Vention sells a Universal Robots package for the 16 mm Zimmer gripper (125 to 500 N, 24 V, 2 A maximum, 0.02 mm repeatability) aimed at sites with no compressed air.<sup><a href="#ref-11">[11]</a></sup> The choice of interface decides what your program can know: a digital-only gripper reports at most "open" or "closed", while an analog or IO-Link version can report where the jaws actually stopped.
+                                Electric grippers also differ in how they talk to the robot controller. The choice of interface decides what your program can know. A digital-only gripper reports at most &ldquo;open&rdquo; or &ldquo;closed,&rdquo; while an analog or IO-Link version can report where the jaws actually stopped. Here, IO-Link is a standard digital link that connects one sensor or actuator to an industrial controller.<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <p>
-                                A pneumatic finger gripper is driven by a solenoid valve: the robot switches a digital output, the valve sends air to one side of the gripper's piston, and the fingers move. Grip force is set mechanically, by the air pressure, rather than in the program. This makes pneumatic grippers cheap and robust, but they tell the controller little unless sensors are added.
+                                Zimmer&rsquo;s GEP2000 series offers plain digital I/O, a 0-10 V position-feedback signal, or IO-Link.<sup><a href="#ref-9">[9]</a></sup> A GEP2000-B variant adds detection of a lost workpiece that is reported to the controller.<sup><a href="#ref-10">[10]</a></sup> For sites with no compressed air, Vention also sells a Universal Robots package for the 16 mm Zimmer gripper.<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <p>
-                                Soft grippers use flexible materials that conform to the item. The OnRobot Soft Gripper, for example, has three interchangeable silicone cups and handles small items under 2.2 kg, with a grip size of 10 to 118 mm depending on the cup. It needs no external air supply and is certified for food contact (FDA 21 CFR for non-fatty foods and EC 1935/2004).<sup><a href="#ref-12">[12]</a></sup> Its capacity depends on the item's shape, softness and friction.<sup><a href="#ref-12">[12]</a></sup> Inflatable soft grippers can handle varied food shapes with forces that do not bruise, although one patent notes that few industrial soft-robotics designs suit washdown or food-contact environments.<sup><a href="#ref-13">[13]</a></sup>
+                                A pneumatic finger gripper works much more simply. It is driven by a solenoid valve: the robot switches a digital output, the valve sends air to one side of the gripper&rsquo;s piston, and the fingers move. You set the grip force mechanically with the air pressure, not in your program. That makes pneumatic grippers cheap and robust, though they tell the controller little unless you add sensors.
                             </p>
+                            <p>
+                                Soft grippers use flexible materials that conform to the item. The OnRobot Soft Gripper, for instance, uses three interchangeable silicone cups and handles small items under 2.2 kg, with a grip size of 10 to 118 mm depending on the cup. It needs no external air supply and is certified for food contact.<sup><a href="#ref-12">[12]</a></sup> Its capacity depends on the item&rsquo;s shape, softness, and friction.<sup><a href="#ref-12">[12]</a></sup> Inflatable soft grippers can also handle varied food shapes with forces that do not bruise.<sup><a href="#ref-13">[13]</a></sup>
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: full datasheet numbers, food-contact rules, and washdown limits</summary>
+                                <p>The OnRobot RG2 has a 110 mm total stroke, 0.2 mm repeatability, IP54 protection, and 0.78 kg mass, powered from 24 V at 70 to 600 mA.<sup><a href="#ref-8">[8]</a></sup></p>
+                                <p>Zimmer&rsquo;s GEP2000 series comes in three sizes, with 10, 13, and 16 mm of stroke per jaw and up to 200, 360, and 500 N of grip force.<sup><a href="#ref-9">[9]</a></sup> Vention&rsquo;s Universal Robots package for the 16 mm Zimmer gripper is rated for 125 to 500 N, 24 V, 2 A maximum, and 0.02 mm repeatability.<sup><a href="#ref-11">[11]</a></sup></p>
+                                <p>The OnRobot Soft Gripper is certified for food contact under FDA 21 CFR for non-fatty foods and EC 1935/2004.<sup><a href="#ref-12">[12]</a></sup> On inflatable soft grippers, one patent notes that few industrial soft-robotics designs suit washdown or food-contact environments.<sup><a href="#ref-13">[13]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">05. Mounting: the ISO 9409-1 flange</h2>
+                            <h2 class="article-section-title">05. How grippers bolt onto the robot</h2>
                             <p>
-                                Grippers bolt to the robot through a standardized mechanical interface defined in ISO 9409-1. The designation encodes the pattern: <strong>ISO 9409-1-50-4-M6</strong> means a 50 mm pitch circle with four M6 screws.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup> Accessory makers sell adapters for this pattern; Schmalz, for example, offers a 50 mm / M6 flange set described as compatible with Universal Robots arms.<sup><a href="#ref-16">[16]</a></sup> It is not the only size. Epson's tool-adapter documentation lists a smaller ISO pattern, a 31.5 mm pitch circle with four M5 screws (31.5-4-M5), alongside the 50 mm, 4 &times; M6 pattern.<sup><a href="#ref-15">[15]</a></sup> Gripper makers often supply a coupling plate for a given pattern; Robotiq's Hand-E manual, for instance, lists a coupling (GRP-CPL-062) for ISO 9409-1-50-4-M6.<sup><a href="#ref-1">[1]</a></sup>
+                                Once you choose a gripper, you need a reliable way to bolt it onto the robot&rsquo;s wrist. Instead of using custom bolt holes for every brand, robot makers share standard flange patterns so tools from different companies fit. Checking that bolt pattern before you buy keeps you from ending up with a gripper that cannot mount to your arm.
                             </p>
                             <p>
-                                Compare the gripper's coupling with the flange drawing in your robot's manual. Remember that every adapter plate moves the tool further out, which changes the tool center point (TCP) offset.
+                                Most grippers bolt to the robot using ISO 9409-1, the international standard from the International Organization for Standardization (ISO) that defines robot wrist flanges. The standard&rsquo;s code name tells you the exact hole pattern. For example, <strong>ISO 9409-1-50-4-M6</strong> means four M6 screws arranged on a 50 mm circle (called a pitch circle).<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-15">[15]</a></sup>
                             </p>
+                            <p>
+                                That 50 mm pattern is common, though smaller patterns also exist. Compare the gripper&rsquo;s coupling plate with the flange drawing in your robot&rsquo;s manual before mounting. If they do not match, an adapter plate can bridge the two. Remember that every adapter plate pushes the tool further out, which changes the tool center point (TCP) offset.
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: smaller flange patterns and vendor adapters</summary>
+                                <p>Epson&rsquo;s tool-adapter documentation lists a smaller ISO pattern, a 31.5 mm pitch circle with four M5 screws (31.5-4-M5), alongside the 50 mm, 4 &times; M6 pattern.<sup><a href="#ref-15">[15]</a></sup></p>
+                                <p>Accessory and gripper makers supply hardware for these patterns. Schmalz offers a 50 mm / M6 flange set described as compatible with Universal Robots arms.<sup><a href="#ref-16">[16]</a></sup> Gripper makers often include a matching coupling plate. Robotiq&rsquo;s Hand-E manual, for instance, lists a coupling (GRP-CPL-062) for ISO 9409-1-50-4-M6.<sup><a href="#ref-1">[1]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">06. Telling the controller about the tool: payload and center of gravity</h2>
                             <p>
-                                The controller does not see the gripper; it has to be told what it carries. Two groups of numbers matter: the TCP (where the working point of the tool is, covered in <a href="robotics-1-6.html">lesson 1.6</a>) and the <strong>payload</strong>, meaning the mass of the tool, and later of the tool plus the part, together with the position of its center of gravity (CoG). The controller uses these numbers in its model of the arm's dynamics. If they are wrong, that model is wrong: path accuracy suffers, and on a force-limited cobot the robot may stop for a collision that never happened, or press harder than expected before it reacts to a real one. So a careful program updates the payload at the pick and restores it at the place.
+                                When you bolt a gripper onto a wrist and pick up a 2 kg box, the arm feels all of that weight pulling on its joints. The controller cannot weigh the tool on its own, so you have to enter those numbers yourself. Skipping this step can make the arm miss its path or stop mid-move thinking it hit something.
                             </p>
                             <p>
-                                <strong>On a Universal Robots arm</strong>, UR's own open-source driver script shows the two calls in use. It calls <code>set_payload(mass, cog)</code>, with <code>cog</code> given as <code>[x, y, z]</code>, and on PolyScope 5.10.0 or newer it calls <code>set_target_payload(mass, cog, inertia, transition_time)</code> instead. On older software it falls back to <code>set_payload</code> and logs "PolyScope &lt; 5.10.0. Inertia and transition_time ignored."<sup><a href="#ref-17">[17]</a></sup> The e-Series script manual lists <code>set_payload(m, cog)</code>, <code>set_payload_mass(m)</code> and <code>set_target_payload(m, cog, inertia=[0,0,0,0,0,0], transition_time=0)</code>.<sup><a href="#ref-18">[18]</a></sup>
+                                Two sets of numbers matter to the controller. First is the TCP, where the working point of the tool sits (covered in <a href="robotics-1-6.html">lesson 1.6</a>). Second is the <strong>payload</strong>: the mass of the tool, and later of the tool plus the part, along with its center of gravity (CoG).
                             </p>
                             <p>
-                                <strong>In ABB RAPID</strong>, the tool's load is part of the <code>tooldata</code> record. Its components are <code>robhold</code> (TRUE when the robot holds the tool), <code>tframe</code> (the TCP as a translation and a quaternion) and <code>tload</code> (mass, center of gravity, axes of moment <code>aom</code>, and the inertia values <code>ix</code>, <code>iy</code>, <code>iz</code>).<sup><a href="#ref-19">[19]</a></sup> One ABB community example defines a dual gripper of 8.5 kg with its CoG at [10, 0, 80] mm.<sup><a href="#ref-20">[20]</a></sup> The RobotStudio API documentation models a load as a 5 kg point mass at (0.023, 0, 0.075) m.<sup><a href="#ref-21">[21]</a></sup> The part being carried is handled separately: <code>GripLoad</code> sets the payload of the gripped part relative to the active TCP, whereas the optional <code>\TLoad</code> argument of a move instruction gives the total load of tool and part relative to the wrist flange.<sup><a href="#ref-22">[22]</a></sup> The declarations below are an illustrative example with made-up values, not a measured tool:
+                                The controller uses these numbers inside its model of the arm&rsquo;s dynamics. If they are wrong, that model is wrong, and path accuracy suffers. On a force-limited collaborative robot (cobot), wrong numbers are also a safety issue: the robot may stop for a collision that never happened, or press harder than expected before it reacts to a real one. So a careful program updates the payload at the pick and restores it at the place.
                             </p>
+                            <p>
+                                <strong>On a Universal Robots arm</strong>, your script updates the payload directly. Older software uses <code>set_payload(mass, cog)</code>, with <code>cog</code> given as <code>[x, y, z]</code>. On PolyScope 5.10.0 or newer, UR&rsquo;s own open-source driver script calls <code>set_target_payload(mass, cog, inertia, transition_time)</code> instead.<sup><a href="#ref-17">[17]</a></sup><sup><a href="#ref-18">[18]</a></sup>
+                            </p>
+                            <p>
+                                <strong>In ABB RAPID</strong>, the tool&rsquo;s load lives inside a <code>tooldata</code> record. It holds <code>robhold</code> (whether the robot holds the tool), <code>tframe</code> (the TCP), and <code>tload</code> (the mass, center of gravity, and inertia).<sup><a href="#ref-19">[19]</a></sup> Real examples range from an 8.5 kg dual gripper in an ABB community post<sup><a href="#ref-20">[20]</a></sup> to a 5 kg load in the RobotStudio application programming interface (API) documentation.<sup><a href="#ref-21">[21]</a></sup>
+                            </p>
+                            <p>
+                                The gripped part is handled separately from the empty tool. After the gripper closes, <code>GripLoad</code> sets the payload of the part relative to the active TCP.<sup><a href="#ref-22">[22]</a></sup> The declarations below are an illustrative example with made-up values, not a measured tool:
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: PolyScope version fallback, RAPID tooldata fields, and load coordinates</summary>
+                                <p>On software older than PolyScope 5.10.0, UR&rsquo;s driver script falls back to <code>set_payload</code> and logs &ldquo;PolyScope &lt; 5.10.0. Inertia and transition_time ignored.&rdquo;<sup><a href="#ref-17">[17]</a></sup> The e-Series script manual lists <code>set_payload(m, cog)</code>, <code>set_payload_mass(m)</code>, and <code>set_target_payload(m, cog, inertia=[0,0,0,0,0,0], transition_time=0)</code>.<sup><a href="#ref-18">[18]</a></sup></p>
+                                <p>In RAPID&rsquo;s <code>tooldata</code>, <code>robhold</code> is TRUE when the robot holds the tool, <code>tframe</code> gives the TCP as a translation and a quaternion, and <code>tload</code> gives mass, center of gravity, axes of moment <code>aom</code>, and inertia values <code>ix</code>, <code>iy</code>, <code>iz</code>.<sup><a href="#ref-19">[19]</a></sup> The ABB community example places its 8.5 kg dual gripper&rsquo;s CoG at [10, 0, 80] mm,<sup><a href="#ref-20">[20]</a></sup> while the RobotStudio API example models its 5 kg point mass at (0.023, 0, 0.075) m.<sup><a href="#ref-21">[21]</a></sup> As an alternative to <code>GripLoad</code>, the optional <code>\TLoad</code> argument of a move instruction gives the total load of tool and part relative to the wrist flange.<sup><a href="#ref-22">[22]</a></sup></p>
+                            </details>
                             <pre class="article-code"><code>! Tool: held by robot, TCP 150 mm along tool Z, 1.2 kg with CoG 60 mm out from the flange
 PERS tooldata tGripper := [TRUE, [[0, 0, 150], [1, 0, 0, 0]], [1.2, [0, 0, 60], [1, 0, 0, 0], 0, 0, 0]];
 ! Part: 0.5 kg, CoG 60 mm from the TCP (used with GripLoad after the grip)
 PERS loaddata loPart := [0.5, [0, 0, 60], [1, 0, 0, 0], 0, 0, 0];</code></pre>
 
-                            <h2 class="article-section-title">07. The I/O on a UR and an ABB controller</h2>
+                            <h2 class="article-section-title">07. Where I/O signals connect on UR and ABB robots</h2>
                             <p>
-                                A digital input (DI) tells the program whether something is true, such as a part sensor seeing a part. A digital output (DO) switches something, such as a gripper valve. Analog inputs and outputs (AI and AO) carry a value in a range, such as a jaw position.
+                                To close a gripper or check a sensor, the robot controller needs wires carrying electrical signals in and out. Some wires plug into the main control cabinet, while others connect right at the wrist so you do not have to run cables down the arm. Knowing which pins live where helps you wire a gripper and pick the right channel in code.
                             </p>
                             <p>
-                                The Universal Robots e-Series control box provides 16 digital inputs, 16 digital outputs, 2 analog inputs, 2 analog outputs and 4 quadrature digital inputs, powered by a 24 V, 2 A I/O supply.<sup><a href="#ref-23">[23]</a></sup> UR describes the digital channels as 8 dedicated (standard) inputs and outputs plus 8 configurable ones, with two more of each at the tool flange; more I/O can be added through a Modbus I/O block.<sup><a href="#ref-24">[24]</a></sup> UR's official ROS message definition gives the pin numbering that drivers use:<sup><a href="#ref-25">[25]</a></sup>
+                                A <strong>digital input (DI)</strong> tells your program whether something is true, such as a sensor seeing a part. A <strong>digital output (DO)</strong> switches something on or off, such as a gripper valve. <strong>Analog inputs and outputs (AI and AO)</strong> carry a value across a range, such as a jaw position.
+                            </p>
+                            <p>
+                                On a Universal Robots e-Series controller, the main control box has 16 digital inputs, 16 digital outputs, 2 analog inputs, 2 analog outputs, and 4 quadrature digital inputs. They share a 24 V, 2 A I/O power supply.<sup><a href="#ref-23">[23]</a></sup> UR splits the digital channels into 8 standard inputs and outputs plus 8 configurable ones. You also get two digital inputs and two digital outputs right at the tool flange, and you can add more I/O over a Modbus I/O block.<sup><a href="#ref-24">[24]</a></sup>
+                            </p>
+                            <p>
+                                The table below shows the pin numbers used by Robot Operating System (ROS) drivers, from UR&rsquo;s official ROS message definition:<sup><a href="#ref-25">[25]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -352,15 +425,27 @@ PERS loaddata loPart := [0.5, [0, 0, 60], [1, 0, 0, 0], 0, 0, 0];</code></pre>
                                 </tbody>
                             </table>
                             <p>
-                                The tool connector matters most for grippers, because it saves running cables along the arm. A UR community wiki written for the CB3 generation, which has the same tool I/O counts, describes an M8 connector with 2 digital inputs, 2 digital outputs and 2 analog inputs. Signals and tool power are at 12 V or 24 V, switched together, with 600 mA available in total. Because the tool voltage is generated locally, an external power supply does not raise that limit.<sup><a href="#ref-26">[26]</a></sup> Check the figures for your controller generation in its own manual. The tool outputs can be set to sink current (NPN), source current (PNP) or push-pull with <code>set_tool_digital_output_mode(n, mode)</code>, using mode 1, 2 or 3 respectively.<sup><a href="#ref-27">[27]</a></sup> Use the mode your gripper's manual specifies.
+                                The tool connector matters most for grippers because it saves running cables along the arm. It supplies 12 V or 24 V power with 600 mA available in total, so check your controller generation&rsquo;s manual for exact limits.<sup><a href="#ref-26">[26]</a></sup> You can also switch the tool output wiring mode with <code>set_tool_digital_output_mode(n, mode)</code> to match what your gripper&rsquo;s manual specifies.<sup><a href="#ref-27">[27]</a></sup>
                             </p>
                             <p>
-                                On an ABB IRC5, I/O usually comes from fieldbus units. The DSQC 652 is a DeviceNet unit with 16 digital inputs and 16 digital outputs. On the IRC5 Compact these come out on connector XS7 with 24 V, and a forum reply gives 500 mA per output.<sup><a href="#ref-28">[28]</a></sup> The usual way to get more is a second DSQC 652 at an unused DeviceNet address, within DeviceNet's limit of 20 I/O devices per controller.<sup><a href="#ref-29">[29]</a></sup> In RAPID, signals are not addressed by pin number: each one is given a name in the controller's I/O configuration, and the program uses that name.<sup><a href="#ref-30">[30]</a></sup>
+                                On an ABB IRC5 controller, I/O usually comes from fieldbus units. For example, the DSQC 652 is a DeviceNet unit with 16 digital inputs and 16 digital outputs.<sup><a href="#ref-28">[28]</a></sup> You can add another unit if you need more channels.<sup><a href="#ref-29">[29]</a></sup> Unlike UR&rsquo;s numbered pins, RAPID does not address signals by pin number. Instead, you give each signal a name in the controller&rsquo;s I/O configuration, and your program uses that name.<sup><a href="#ref-30">[30]</a></sup>
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: UR tool connector limits, NPN/PNP modes, and ABB DeviceNet details</summary>
+                                <p>A UR community wiki written for the CB3 generation (which has the same tool I/O counts) describes an M8 connector with 2 digital inputs, 2 digital outputs, and 2 analog inputs. Signals and tool power are at 12 V or 24 V, switched together, with 600 mA available in total. Because the tool voltage is generated locally, an external power supply does not raise that limit.<sup><a href="#ref-26">[26]</a></sup></p>
+                                <p>The tool outputs can be set to sink current (NPN), source current (PNP), or push-pull with <code>set_tool_digital_output_mode(n, mode)</code>, using mode 1, 2, or 3 respectively.<sup><a href="#ref-27">[27]</a></sup></p>
+                                <p>On the ABB IRC5 Compact, the DSQC 652&rsquo;s 24 V signals come out on connector XS7, and a forum reply gives 500 mA per output.<sup><a href="#ref-28">[28]</a></sup> To add more I/O, you usually install a second DSQC 652 at an unused DeviceNet address, within DeviceNet&rsquo;s limit of 20 I/O devices per controller.<sup><a href="#ref-29">[29]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">08. Reading and writing I/O in code</h2>
                             <p>
-                                <strong>URScript</strong> has separate functions for the control-box I/O and for the tool I/O. The current script manual's Interfaces module lists <code>get_tool_digital_in(n)</code>, <code>set_tool_digital_out(n, b)</code> and <code>set_tool_digital_output_mode(n, mode)</code> for the tool connector.<sup><a href="#ref-31">[31]</a></sup> For the standard control-box channels, the same module lists <code>get_standard_digital_in(n)</code> and <code>set_standard_digital_out(n, b)</code>.<sup><a href="#ref-31">[31]</a></sup> A UR forum reply describes the older generic input function as deprecated in favor of these names, so prefer them to the generic <code>get_digital_in</code> and <code>set_digital_out</code> used in lesson 2.3.<sup><a href="#ref-32">[32]</a></sup> Tool power is switched with <code>set_tool_voltage</code>, which UR's own driver script calls.<sup><a href="#ref-17">[17]</a></sup>
+                                Once your gripper wires are plugged in, your program needs commands to read sensors and flip outputs. Reading an input is like checking a switch, and setting an output is like flipping one. You also need a timeout whenever you wait on a sensor, so the robot does not freeze forever if a part never shows up.
+                            </p>
+                            <p>
+                                <strong>URScript</strong> uses separate functions for control-box I/O and tool I/O. For the tool connector, the current script manual&rsquo;s Interfaces module lists <code>get_tool_digital_in(n)</code>, <code>set_tool_digital_out(n, b)</code>, and <code>set_tool_digital_output_mode(n, mode)</code>.<sup><a href="#ref-31">[31]</a></sup> For standard control-box channels, the same module lists <code>get_standard_digital_in(n)</code> and <code>set_standard_digital_out(n, b)</code>.<sup><a href="#ref-31">[31]</a></sup>
+                            </p>
+                            <p>
+                                Prefer these specific names over the generic <code>get_digital_in</code> and <code>set_digital_out</code> used in lesson 2.3, which a UR forum reply describes as deprecated.<sup><a href="#ref-32">[32]</a></sup> Tool power is switched on with <code>set_tool_voltage</code>, which UR&rsquo;s own driver script calls:<sup><a href="#ref-17">[17]</a></sup>
                             </p>
                             <pre class="article-code"><code>set_tool_voltage(24)               # power the tool connector at 24 V
 set_tool_digital_out(0, True)      # tool output 0 on
@@ -369,10 +454,10 @@ if get_standard_digital_in(0):     # control-box input 0
   textmsg("Part present")
 end</code></pre>
                             <p>
-                                URScript has no single "wait for input with timeout" instruction in the sources used here, so a timed wait is written as a loop. UR's own driver script uses <code>sync()</code> inside its control loops and reads the control-cycle length with <code>get_steptime()</code>, treating 0.008 s as a CB3 controller and 0.002 s as an e-Series.<sup><a href="#ref-17">[17]</a></sup> Calling <code>sync()</code> in a polling loop ends the current control cycle, so the loop checks the input once per cycle instead of spinning and starving the controller. Adding <code>get_steptime()</code> to a counter each time round gives elapsed time.
+                                URScript has no single &ldquo;wait for input with timeout&rdquo; instruction in the sources used here. Instead, you write a timed wait as a loop that checks the input once per control cycle. Calling <code>sync()</code> ends the current control cycle so the loop does not spin and starve the controller. Adding <code>get_steptime()</code> to a counter each pass measures elapsed time.<sup><a href="#ref-17">[17]</a></sup>
                             </p>
                             <p>
-                                <strong>RAPID</strong> uses named signals and dedicated instructions. <code>SetDO</code> sets an output defined in the I/O configuration, and <code>WaitDI</code> waits until an input reaches a value, as in <code>WaitDI di1, 1;</code>.<sup><a href="#ref-30">[30]</a></sup><sup><a href="#ref-33">[33]</a></sup> A timeout is an optional argument: <code>WaitDI sig, value \MaxTime:=t \TimeFlag:=flag;</code>. With <code>\TimeFlag</code>, an expired timeout sets the Boolean flag to TRUE and execution continues. Without it, the error <code>ERR_WAIT_MAXTIME</code> is raised, which an <code>ERROR</code> handler can catch.<sup><a href="#ref-34">[34]</a></sup><sup><a href="#ref-35">[35]</a></sup> One user reported <code>\TimeFlag</code> behaving differently in Auto mode, which was not resolved, so test your timeout handling in the mode you will run in.<sup><a href="#ref-34">[34]</a></sup> For momentary signals, such as a "cycle done" pulse to a PLC, there is <code>PulseDO</code>, used as <code>PulseDO do1;</code>.<sup><a href="#ref-33">[33]</a></sup>
+                                <strong>RAPID</strong> uses your configured signal names and dedicated I/O instructions. <code>SetDO</code> switches an output, and <code>WaitDI</code> pauses until an input reaches a value, as in <code>WaitDI di1, 1;</code>.<sup><a href="#ref-30">[30]</a></sup><sup><a href="#ref-33">[33]</a></sup> Adding <code>\MaxTime:=t</code> sets a timeout. Without <code>\TimeFlag</code>, an expired timeout raises the error <code>ERR_WAIT_MAXTIME</code>, which an <code>ERROR</code> handler can catch.<sup><a href="#ref-34">[34]</a></sup><sup><a href="#ref-35">[35]</a></sup> For short momentary signals, such as a &ldquo;cycle done&rdquo; pulse to a programmable logic controller (PLC), RAPID includes <code>PulseDO</code>, used as <code>PulseDO do1;</code>.<sup><a href="#ref-33">[33]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -405,22 +490,27 @@ end</code></pre>
                                     </tr>
                                 </tbody>
                             </table>
+                            <details class="deeper">
+                                <summary>For the curious: UR control-cycle times and RAPID&rsquo;s \TimeFlag behavior</summary>
+                                <p>UR&rsquo;s driver script reads the control-cycle length with <code>get_steptime()</code>, treating 0.008 s as a CB3 controller and 0.002 s as an e-Series controller.<sup><a href="#ref-17">[17]</a></sup></p>
+                                <p>In RAPID, a timeout can also take <code>\TimeFlag:=flag</code>, written as <code>WaitDI sig, value \MaxTime:=t \TimeFlag:=flag;</code>. With <code>\TimeFlag</code>, an expired timeout sets the Boolean flag to TRUE and execution continues instead of jumping to an error handler. One user reported <code>\TimeFlag</code> behaving differently in Auto mode, which was not resolved, so test your timeout handling in the mode you will run in.<sup><a href="#ref-34">[34]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">09. Confirming the grip and handling failures</h2>
                             <p>
-                                Setting an output only tells the gripper what to do. It does not prove that the part is held. The rule for a reliable cell is simple: <strong>never move away from the pick until the grip is confirmed</strong>, and never wait for that confirmation forever.
+                                Setting an output only tells the gripper what to do. It does not prove that the part is actually held. If a part is missing or shifted, the robot could swing away empty or drop it mid-move. The rule for a reliable cell is simple: <strong>never move away from the pick until the grip is confirmed</strong>, and never wait for that confirmation forever.
                             </p>
                             <p>
-                                For suction tools, confirmation usually comes from a vacuum switch wired to a digital input. In one RobotStudio program discussed on ABB's forum, the robot turns the vacuum on with <code>SetDO doVacuum,1;</code> and then waits with <code>WaitDI diVacuum,1;</code> before it moves.<sup><a href="#ref-30">[30]</a></sup> In RobotStudio simulation, Smart Components (such as a simulated gripper) can set such inputs in place of real sensors.<sup><a href="#ref-36">[36]</a></sup>
+                                For suction tools, confirmation usually comes from a vacuum switch wired to a digital input. In a RobotStudio program discussed on ABB&rsquo;s forum, the robot turns the vacuum on with <code>SetDO doVacuum,1;</code> and waits with <code>WaitDI diVacuum,1;</code> before moving.<sup><a href="#ref-30">[30]</a></sup> In RobotStudio simulation, Smart Components (such as a simulated gripper) can set those inputs in place of real sensors.<sup><a href="#ref-36">[36]</a></sup>
                             </p>
                             <p>
-                                Electric grippers can report more. With the Robotiq URCap installed on a UR, <code>rq_is_object_detected()</code> returns True if an object was picked and False otherwise.<sup><a href="#ref-37">[37]</a></sup> Underneath, Robotiq grippers report object detection through a status register called gOBJ. Sources disagree about what some of its values mean, so read the manual for your exact gripper and firmware before relying on a particular code.<sup><a href="#ref-38">[38]</a></sup><sup><a href="#ref-39">[39]</a></sup> The Zimmer GEP2000 can report jaw position as a 0-10 V signal or over IO-Link, and its -B variant reports a lost workpiece.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                                Electric grippers can tell your program even more. With the Robotiq URCap installed on a UR, <code>rq_is_object_detected()</code> returns True if an object was picked and False otherwise.<sup><a href="#ref-37">[37]</a></sup> Similarly, the Zimmer GEP2000 can report jaw position as a 0-10 V signal or over IO-Link, and its -B variant reports a lost workpiece.<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <p>
-                                For a finger gripper, "fully closed" often means the part was missed: the fingers traveled their whole stroke because nothing was between them. Treat a jaw position at full close as a failure, not a success. Also know what your tool does on power loss: the RG2, for example, keeps holding the workpiece.<sup><a href="#ref-8">[8]</a></sup>
+                                Watch out for a common trap with finger grippers. Reaching &ldquo;fully closed&rdquo; often means the part was missed, because the fingers traveled their whole stroke with nothing between them. Treat a jaw position at full close as a failure, not a success. Also know what your tool does on power loss: the RG2, for example, keeps holding the workpiece.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                The error-handling pattern to use in every pick is:
+                                Use this four-step error-handling pattern in every pick:
                             </p>
                             <ol class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Command:</span> Set the output that closes the gripper or turns on the vacuum.</li>
@@ -428,11 +518,23 @@ end</code></pre>
                                 <li class="article-spec-item"><span class="spec-label">On failure:</span> Open the gripper, retreat to the approach pose, then raise a fault or retry once.</li>
                                 <li class="article-spec-item"><span class="spec-label">Keep watching:</span> Re-check the grip or vacuum signal before the place move, since a part can slip during transport.</li>
                             </ol>
+                            <details class="deeper">
+                                <summary>For the curious: Robotiq&rsquo;s gOBJ status register</summary>
+                                <p>Underneath <code>rq_is_object_detected()</code>, Robotiq grippers report object detection through a status register called <code>gOBJ</code>. Sources disagree about what some of its values mean, so read the manual for your exact gripper and firmware before relying on a particular code.<sup><a href="#ref-38">[38]</a></sup><sup><a href="#ref-39">[39]</a></sup></p>
+                            </details>
 
                             <h2 class="article-section-title">10. Worked example: one pick, two languages</h2>
                             <p>
-                                The two programs below put the pieces together. They are this lesson's own illustrative examples and have not been run on a controller, so test them in a simulator (URSim or RobotStudio) before using them on hardware. They assume the following wiring, which you would change to match your gripper: tool output 0 closes the gripper and tool output 1 opens it; standard input 0 is a part-present sensor; tool input 0 is a gripper-closed-on-part (or vacuum-OK) signal.
+                                Seeing all of these pieces inside one complete pick routine makes the pattern much clearer. Below is the exact same pick job written twice, once in URScript and once in RAPID. Comparing them side by side shows how each language handles signal wiring, wait timeouts, and failed grips.
                             </p>
+                            <p>
+                                Both programs are this lesson&rsquo;s own illustrative examples and have not been run on a controller. Always test them in a simulator (URSim or RobotStudio) before using them on hardware. They assume the wiring below, which you would change to match your gripper:
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Gripper command:</span> Tool output 0 closes the gripper, and tool output 1 opens it.</li>
+                                <li class="article-spec-item"><span class="spec-label">Part sensor:</span> Standard input 0 is a part-present sensor.</li>
+                                <li class="article-spec-item"><span class="spec-label">Grip confirmation:</span> Tool input 0 is a gripper-closed-on-part (or vacuum-OK) signal.</li>
+                            </ul>
 
                             <figure class="lesson-diagram">
                                 <svg viewBox="0 0 680 282" role="img" aria-label="Wiring assumed by the section 10 example. A part-present sensor is wired to standard input 0 on the e-Series control box, which has 16 digital inputs, 16 digital outputs, 2 analog inputs, 2 analog outputs and a 24 V, 2 A I/O supply. Signals reach the tool flange through the arm. At the flange, tool output 0 closes the gripper, tool output 1 opens it, and tool input 0 comes back from the gripper to confirm the grip or vacuum. Tool power is 12 or 24 V. The program reads the sensor with get_standard_digital_in(0) and drives the tool with set_tool_digital_out and get_tool_digital_in." xmlns="http://www.w3.org/2000/svg">
@@ -480,7 +582,7 @@ end</code></pre>
   # ... move to the place pose, release, then restore the empty-tool payload
 end</code></pre>
                             <p>
-                                The same pick in RAPID, with the signals <code>doGripClose</code>, <code>diPartPresent</code> and <code>diGripClosed</code> defined in the controller's I/O configuration and the <code>tGripper</code> and <code>loPart</code> data from section 06:
+                                Here is the same pick written in RAPID. It uses the signals <code>doGripClose</code>, <code>diPartPresent</code>, and <code>diGripClosed</code> from the controller&rsquo;s I/O configuration, along with <code>tGripper</code> and <code>loPart</code> from section 06:
                             </p>
                             <pre class="article-code"><code>PROC Pick()
     Reset doGripClose;                          ! gripper open
@@ -500,15 +602,24 @@ ERROR
     ENDIF
 ENDPROC</code></pre>
                             <p>
-                                Compare the two. In URScript the timeout is a loop you write yourself, the signals are pin numbers, and the failure branch sits inline after the check. In RAPID the timeout is one optional argument to <code>WaitDI</code>, the signals have names, and both timeouts land in the same <code>ERROR</code> handler through <code>ERR_WAIT_MAXTIME</code>.<sup><a href="#ref-34">[34]</a></sup> That handler cannot tell which wait failed, and it stops without retreating; the exercise below fixes both. After the place move, <code>GripLoad load0;</code> returns to the empty-tool load.
+                                Compare the two programs. In URScript, you write the timeout loop yourself, refer to signals by pin number, and place the failure branch right after the check. In RAPID, the timeout is one optional argument to <code>WaitDI</code>, and the signals use configured names. Both timeouts jump to the same <code>ERROR</code> handler through <code>ERR_WAIT_MAXTIME</code>.<sup><a href="#ref-34">[34]</a></sup> That handler cannot tell which wait failed, and it stops without retreating. You will fix both issues in the exercise below. After the place move, <code>GripLoad load0;</code> returns to the empty-tool load.
                             </p>
 
                             <h2 class="article-section-title">11. Handshaking with a PLC</h2>
                             <p>
-                                In a production cell, the robot is rarely in charge. A programmable logic controller (PLC) usually owns the sequence, and the robot acts as a device that exchanges ready, busy and done bits with it. In the common pattern, permissives such as "E-stop OK" and "guard door closed" come from a safety PLC, safety relays or a safety protocol, not from ordinary I/O. The PLC holds cycle-start on until the robot acknowledges; the robot reports busy and then complete; the PLC acknowledges, and the bits reset.<sup><a href="#ref-40">[40]</a></sup> The PLC side is often written as a state machine: a start button and part-present together begin the cycle, and the next state is entered only after the robot reports, for example, position OK and gripper closed. Typical causes of failure are differing PLC and robot cycle times, hard-coded timing delays, and missing checks that both controllers agree on the current state.<sup><a href="#ref-41">[41]</a></sup>
+                                In a factory cell, a robot arm rarely works alone. A conveyor feeds parts, a guard door protects workers, and a central controller tells each machine when to move. Understanding how the robot and that central controller trade signals keeps machines from colliding or falling out of step.
                             </p>
                             <p>
-                                The table below is an illustrative sequence for the pick in section 10. Signal names and polarity vary between vendors and integrators; FANUC's PalletTool, for example, uses signals such as cycle-ready, pallet-ready and abort.<sup><a href="#ref-42">[42]</a></sup>
+                                In a production cell, a programmable logic controller (PLC) usually owns the sequence. The robot acts as a device that exchanges ready, busy, and done bits with it. In the common pattern, safety checks (called permissives) such as &ldquo;E-stop OK&rdquo; (emergency stop) and &ldquo;guard door closed&rdquo; come from a safety PLC, safety relays, or a safety protocol, not from ordinary I/O.
+                            </p>
+                            <p>
+                                The two controllers coordinate using a latched handshake. First, the PLC holds cycle-start on until the robot acknowledges. Next, the robot reports busy and then complete. Finally, the PLC acknowledges, and the bits reset.<sup><a href="#ref-40">[40]</a></sup>
+                            </p>
+                            <p>
+                                The PLC side is often written as a state machine. A start button and part-present together begin the cycle, and the PLC enters the next state only after the robot reports, for example, position OK and gripper closed. Typical causes of failure are differing PLC and robot cycle times, hard-coded timing delays, and missing checks that both controllers agree on the current state.<sup><a href="#ref-41">[41]</a></sup>
+                            </p>
+                            <p>
+                                The table below is an illustrative sequence for the pick in section 10. Signal names and polarity vary between vendors and integrators.
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -533,12 +644,16 @@ ENDPROC</code></pre>
                             <p>
                                 Every request stays on until it is acknowledged, so a slow scan cannot miss it. Discrete wiring like this works for a handful of bits. When a cell needs many signals, they travel over a fieldbus or industrial Ethernet on one cable instead. For example, the DSQC 652 already sits on DeviceNet,<sup><a href="#ref-29">[29]</a></sup> and UR controllers can add I/O over Modbus.<sup><a href="#ref-24">[24]</a></sup>
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: vendor-specific handshake signals (FANUC PalletTool)</summary>
+                                <p>Signal names and polarity differ between vendors and integrators. FANUC&rsquo;s PalletTool software, for example, uses signals such as cycle-ready, pallet-ready, and abort.<sup><a href="#ref-42">[42]</a></sup></p>
+                            </details>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
                                     <li>In URSim, start from your pick-and-place script from lesson 2.3. Replace <code>get_digital_in</code> and <code>set_digital_out</code> with <code>get_standard_digital_in</code> and <code>set_standard_digital_out</code>, then add gripper open and close on tool outputs 0 and 1 with <code>set_tool_digital_out</code>, as in section 10.</li>
-                                    <li>Add a "wait for part-present" loop on standard input 0 with a 10 s timeout using <code>sync()</code> and <code>get_steptime()</code>. Run it once with the input off and confirm the popup appears after about 10 s; then toggle the input in the simulator's I/O tab and confirm the robot continues.</li>
+                                    <li>Add a "wait for part-present" loop on standard input 0 with a 10 s timeout using <code>sync()</code> and <code>get_steptime()</code>. Run it once with the input off and confirm the popup appears after about 10 s. Then toggle the input in the simulator's I/O tab and confirm the robot continues.</li>
                                     <li>Add the grip check on <code>get_tool_digital_in(0)</code> so that a failed grip opens the gripper, retreats to the approach pose and stops.</li>
                                     <li>In RobotStudio, write the RAPID version with <code>SetDO</code> and <code>WaitDI ... \MaxTime</code>. Then change it to use <code>\TimeFlag</code> on both waits so the program reports which wait timed out, and add a retreat move before <code>Stop</code>. Write two or three sentences comparing how each language expresses the timeout and the failure path.</li>
                                     <li>Size the suction cups for a 1.5 kg smooth box picked from above at a = 4 m/s&sup2; with &mu; = 0.5, using Robotiq's horizontal formula and a safety factor of 1.5.</li>
@@ -626,10 +741,10 @@ ENDPROC</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+            <script src="assets/js/course-data.js?v=26037997" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
-            <script src="assets/js/widgets.js?v=1a8fb811" defer></script>
+            <script src="assets/js/widgets.js?v=254bdd0c" defer></script>
 
     </body>
 </html>

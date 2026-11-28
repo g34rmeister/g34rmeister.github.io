@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT14M",
+            "timeRequired": "PT16M",
             "teaches": [
                 "emergency stop",
                 "watchdog timer",
@@ -213,17 +213,20 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. Physical safety as an ethical obligation</h2>
+                            <h2 class="article-section-title">01. Keeping people safe comes first</h2>
                             <p>
-                                In ordinary software, an unhandled exception or a deadlock crashes a process or corrupts a record. In robotics, a software bug or a bypassed interlock can let a heavy steel arm move while a person is within reach. OSHA's accident cases show workers struck, or crushed against posts and fixtures, in exactly this way.<sup><a href="#ref-1">[1]</a></sup> Physical safety is therefore not just a compliance checkbox: it is the first ethical obligation an engineer owes to the people who share space with a machine.
+                                In ordinary software, an unhandled exception or a deadlock crashes a process or corrupts a record. In robotics, a software bug or a bypassed interlock can let a heavy steel arm move while a person is within reach. The accident cases of OSHA (the U.S. Occupational Safety and Health Administration) show workers struck, or crushed against posts and fixtures, in exactly this way.<sup><a href="#ref-1">[1]</a></sup> So physical safety is not just a box to tick for the rules. It is the first ethical duty an engineer owes to the people who share space with a machine.
                             </p>
                             <p>
-                                The core standard for industrial robots is <strong>ISO 10218</strong>, revised in 2025 in two parts: ISO 10218-1:2025 covers the industrial robot itself, and ISO 10218-2:2025 covers industrial robot applications and robot cells.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> In the United States, ANSI and A3 published ANSI/A3 R15.06-2025, adapted from both parts.<sup><a href="#ref-4">[4]</a></sup> The 2025 revision greatly increased the number of safety functions it describes and made functional safety requirements more explicit.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup> A useful way to think about this is defense in depth: physical safeguards, dedicated safety controllers, and supervisory software layers, each able to stop the robot if the others fail.
+                                The core safety standard for industrial robots is <strong>ISO 10218</strong>. It has two parts. ISO 10218-1:2025 covers the industrial robot itself. ISO 10218-2:2025 covers industrial robot applications and robot cells.<sup><a href="#ref-2">[2]</a></sup><sup><a href="#ref-3">[3]</a></sup> In the United States, ANSI and A3 published ANSI/A3 R15.06-2025, adapted from both parts.<sup><a href="#ref-4">[4]</a></sup> The 2025 revision greatly increased the number of safety functions it describes, and it spells out functional safety requirements more explicitly.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
+                            </p>
+                            <p>
+                                A useful way to think about all this is defense in depth: several layers of protection, stacked. There are physical safeguards, dedicated safety controllers, and supervisory software layers. Each one can stop the robot if the others fail. The sections below go through them from the bottom up.
                             </p>
 
                             <h2 class="article-section-title">02. Hardware safeguards and emergency stops</h2>
                             <p>
-                                The foundation of robot cell safety is a set of physical safeguards and safety devices that do not depend on the robot's main application software. OSHA's technical manual lists the main types:<sup><a href="#ref-1">[1]</a></sup>
+                                The bottom layer is physical. Fences, door switches and sensors keep working even if the robot&rsquo;s program has a bug, because they do not depend on the robot's main application software. OSHA's technical manual lists the main types:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Fixed barrier and perimeter guards:</span> Fences and barriers that prevent access to, and contact with, moving parts during automatic operation.<sup><a href="#ref-1">[1]</a></sup></li>
@@ -231,62 +234,62 @@
                                 <li class="article-spec-item"><span class="spec-label">Presence-sensing devices:</span> Light curtains, safety mats, safety laser scanners and safety vision systems that detect a person entering the safeguarded space and trigger a stop.<sup><a href="#ref-1">[1]</a></sup></li>
                             </ul>
                             <p>
-                                Machines also need an <strong>emergency stop</strong> (E-stop) function, whose design principles are set out in <strong>ISO 13850:2015</strong>.<sup><a href="#ref-6">[6]</a></sup> A typical E-stop device is a large red mushroom-head push button on a yellow background. Electrical E-stop devices need direct-opening contacts with mechanical latching, so the button stays pressed, and the machine must not restart until it has been deliberately reset.<sup><a href="#ref-7">[7]</a></sup>
+                                Machines also need an <strong>emergency stop</strong> (E-stop) function. Its design principles are set out in <strong>ISO 13850:2015</strong>, the emergency stop standard.<sup><a href="#ref-6">[6]</a></sup> A typical E-stop device is a large red mushroom-head push button on a yellow background. Electrical E-stop devices need direct-opening contacts with mechanical latching. Latching means the button stays pressed in after you hit it. And the machine must not restart until someone has deliberately reset it.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <p>
-                                IEC 60204-1 defines three stop categories, and ISO 13850 limits which of them an emergency stop may use:<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup>
+                                There are three ways a machine can stop, called stop categories. IEC 60204-1, the standard for the electrical equipment of machines, defines them. ISO 13850 limits which of them an emergency stop may use:<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Stop Category 0:</span> Stopping by immediate removal of power to the machine actuators (an uncontrolled stop).<sup><a href="#ref-9">[9]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Stop Category 1:</span> A controlled stop with power available to the actuators to achieve the stop, then removal of power when the stop is achieved. For a heavy arm, this lets the drives brake the motion under control before the brakes hold it.<sup><a href="#ref-9">[9]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Stop Category 2:</span> A controlled stop with power left available to the actuators. ISO 13850 limits emergency stops to Category 0 or 1, so Category 2 may be used only for normal stopping functions.<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Stop Category 0 (cut the power now):</span> Stopping by immediate removal of power to the machine actuators, the motors and other parts that move it (an uncontrolled stop).<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Stop Category 1 (brake, then cut the power):</span> A controlled stop. The actuators keep power long enough to bring the machine to a stop, and then the power is removed. For a heavy arm, this lets the drives brake the motion under control before the brakes hold it.<sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Stop Category 2 (brake, keep the power on):</span> A controlled stop with power left available to the actuators. ISO 13850 limits emergency stops to Category 0 or 1. So Category 2 may be used only for normal stopping functions, never for an emergency stop.<sup><a href="#ref-9">[9]</a></sup></li>
                             </ul>
 
-                            <h2 class="article-section-title">03. Safeguards while teaching: the enabling device</h2>
+                            <h2 class="article-section-title">03. Staying safe while you teach: the enabling device</h2>
                             <p>
-                                During production, people stay outside the safeguarded space. During programming (teaching) and some maintenance, however, a technician may need to be close to the robot while holding a teach pendant, so extra safeguards apply.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
+                                During production, people stay outside the guarded space. But during programming (teaching) and some maintenance, a technician may need to stand close to the robot with a teach pendant, the handheld control unit. So extra safeguards apply.<sup><a href="#ref-1">[1]</a></sup><sup><a href="#ref-2">[2]</a></sup>
                             </p>
                             <p>
-                                The main safeguard is the <strong>enabling device</strong> on the pendant (sometimes called a "deadman switch"). OSHA notes that it is typically a three-position device, and that the worker must hold it in the center-ON position, otherwise the robot's motion is inhibited:<sup><a href="#ref-1">[1]</a></sup>
+                                The main safeguard is the <strong>enabling device</strong> on the pendant (sometimes called a "deadman switch"). OSHA notes that it is typically a three-position device. The worker must hold it in the center-ON position. Otherwise the robot cannot move:<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Position 1 (released):</span> The operator is not gripping the switch, and the robot cannot move.<sup><a href="#ref-1">[1]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Position 2 (center):</span> The operator holds the switch in its middle position, which permits jogging the robot.<sup><a href="#ref-1">[1]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Position 3 (fully squeezed):</span> In a fright, people tend either to let go or to clench. The third position covers the clench: squeezing past the middle position also stops the motion. (This is the usual design rationale; check the manufacturer's manual for the exact behavior of a given pendant.)</li>
+                                <li class="article-spec-item"><span class="spec-label">Position 3 (fully squeezed):</span> When people get a fright, they tend either to let go or to clench. The released position covers letting go. The third position covers the clench: squeezing past the middle position also stops the motion. (This is the usual design rationale; check the manufacturer's manual for the exact behavior of a given pendant.)</li>
                             </ul>
                             <p>
-                                While teaching, OSHA recommends that robot speeds be reduced to <strong>250 mm/s</strong> (10 in/s) or less on any part of the application.<sup><a href="#ref-1">[1]</a></sup> The low speed gives the person time to see an unexpected movement and get out of the way, or release the enabling device.
+                                While teaching, OSHA recommends that robot speeds be reduced to <strong>250 mm/s</strong> (10 in/s) or less on any part of the application.<sup><a href="#ref-1">[1]</a></sup> The low speed buys time. The person can see an unexpected movement and get out of the way, or let go of the enabling device.
                             </p>
 
-                            <h2 class="article-section-title">04. Functional safety architectures and safety PLCs</h2>
+                            <h2 class="article-section-title">04. Safety controllers that check themselves</h2>
                             <p>
-                                Safety functions should not depend on ordinary microcontrollers or desktop operating systems. If a normal PC crashes, its outputs can freeze in whatever state they were in, leaving a gripper pressurized or a conveyor running. Safety functions are therefore built from safety-rated parts designed to a functional safety standard.
+                                Safety functions should not depend on ordinary microcontrollers or desktop operating systems. If a normal PC crashes, its outputs can freeze in whatever state they were in. A gripper could stay pressurized, or a conveyor could keep running. So safety functions are built from safety-rated parts, designed to a functional safety standard. Functional safety is the part of safety that depends on these electronic safety systems working correctly, even when something has failed.
                             </p>
                             <p>
-                                For machinery, the main functional safety standard is <strong>ISO 13849-1:2023</strong>, which gives a method for designing the safety-related parts of control systems, including their software.<sup><a href="#ref-10">[10]</a></sup> It rates each safety function with a Performance Level from <strong>PL a</strong> (lowest) to <strong>PL e</strong> (highest), defined by its probability of a dangerous failure per hour. For PL e this is between 10<sup>&minus;8</sup> and 10<sup>&minus;7</sup> per hour.<sup><a href="#ref-11">[11]</a></sup> The PL achieved depends on the architecture category (B, 1, 2, 3 or 4), the reliability of the parts, the diagnostic coverage and protection against common-cause failures.<sup><a href="#ref-12">[12]</a></sup> Robot safety controllers are commonly certified to <strong>PL d, Category 3</strong>, as the ABB and Universal Robots examples below show.<sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-14">[14]</a></sup>
+                                For machinery, the main functional safety standard is <strong>ISO 13849-1:2023</strong>. It gives a method for designing the safety-related parts of control systems, including their software.<sup><a href="#ref-10">[10]</a></sup> It grades each safety function with a Performance Level (PL), from <strong>PL a</strong> (lowest) to <strong>PL e</strong> (highest). The grade is set by how likely the function is to fail dangerously in an hour. For PL e this probability is between 10<sup>&minus;8</sup> and 10<sup>&minus;7</sup> per hour.<sup><a href="#ref-11">[11]</a></sup> In everyday numbers, that is at most one dangerous failure in ten million hours. Four things decide the PL a design reaches: the architecture category (B, 1, 2, 3 or 4), the reliability of the parts, the diagnostic coverage (how well it catches its own faults) and protection against common-cause failures (one fault that knocks out both channels at once).<sup><a href="#ref-12">[12]</a></sup> Robot safety controllers are commonly certified to <strong>PL d, Category 3</strong>, as the ABB and Universal Robots examples below show.<sup><a href="#ref-13">[13]</a></sup><sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Dual-channel redundancy:</span> Categories 3 and 4 use two redundant channels for each safety signal (such as an E-stop or a door interlock).<sup><a href="#ref-15">[15]</a></sup> If one channel fails, for example through a broken wire or a welded relay contact, the other can still stop the machine. As Universal Robots puts it, two independent safety channels monitor each other, so a single fault cannot lead to loss of the safety function.<sup><a href="#ref-14">[14]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Diagnostics:</span> Safety controllers test their channels and compare them. Category 4 needs high diagnostic coverage, at least 99%.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-12">[12]</a></sup> If the channels disagree, the controller treats it as a fault and holds the machine in a safe state.</li>
-                                <li class="article-spec-item"><span class="spec-label">Mean time to dangerous failure:</span> ISO 13849-1 grades the reliability of each channel by its mean time to dangerous failure (MTTF<sub>D</sub>). "High" means between 30 and 100 years; diagnostic coverage is "high" at 99% or more.<sup><a href="#ref-12">[12]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Diagnostics:</span> Safety controllers test their channels and compare them. Category 4 needs high diagnostic coverage, at least 99%.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-12">[12]</a></sup> If the two channels disagree, the controller treats it as a fault and holds the machine in a safe state.</li>
+                                <li class="article-spec-item"><span class="spec-label">Mean time to dangerous failure:</span> ISO 13849-1 grades the reliability of each channel by its mean time to dangerous failure (MTTF<sub>D</sub>): on average, how long it runs before a failure that could hurt someone. "High" means between 30 and 100 years. Diagnostic coverage is "high" at 99% or more.<sup><a href="#ref-12">[12]</a></sup></li>
                             </ul>
 
-                            <h2 class="article-section-title">05. Software safety layers: watchdogs and geofencing</h2>
+                            <h2 class="article-section-title">05. Software safety layers: watchdogs and virtual fences</h2>
                             <p>
-                                Above the hardware safety circuits sits a software layer. Robot software stacks are large: middleware such as ROS 2, neural networks for pose estimation, inverse kinematics solvers. None of this application code is proven free of bugs, so a sound architecture keeps it separate from the safety-rated functions that can stop the robot.
+                                Above the hardware safety circuits sits a software layer. Robot software stacks are large: middleware such as ROS 2, neural networks for pose estimation, inverse kinematics solvers. None of this application code is proven free of bugs. So a sound design keeps it separate from the safety-rated functions that can stop the robot.
                             </p>
                             <p>
                                 A <strong>watchdog timer</strong> <strong>triggers a safe stop if the main program stops responding</strong>.
                             </p>
                             <p>
-                                A watchdog is a hardware counter that counts down from a starting value to zero. The software must restart it regularly ("kick the dog") before it reaches zero. If the software hangs, it stops kicking, the counter reaches zero and the watchdog acts: in a simple embedded system it resets the processor.<sup><a href="#ref-16">[16]</a></sup> In a robot, the watchdog output can be wired into the safety circuit, so that a hung control program also removes the robot's permission to move and brings it to a Category 0 or Category 1 stop.
+                                A watchdog is a hardware counter that counts down from a starting value to zero. The software must restart it regularly ("kick the dog") before it reaches zero. If the software hangs, it stops kicking. The counter reaches zero and the watchdog acts. In a simple embedded system, it resets the processor.<sup><a href="#ref-16">[16]</a></sup> In a robot, the watchdog output can be wired into the safety circuit. Then a hung control program also takes away the robot's permission to move, and the robot comes to a Category 0 or Category 1 stop.
                             </p>
                             <p>
-                                Safety software also enforces <strong>geofencing</strong>: virtual safety zones that limit where the robot and its tool may go and how fast. Rather than trusting a path planner not to send the arm through a fence or into an operator's workstation, a safety-rated controller checks position and speed independently. Leading manufacturers offer this as safety-rated software:
+                                Safety software also enforces <strong>geofencing</strong>: virtual fences, or safety zones, that limit where the robot and its tool may go and how fast. A path planner could send the arm through a fence or into an operator's workstation by mistake. So instead of trusting it, a safety-rated controller checks position and speed on its own. Leading manufacturers offer this as safety-rated software:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">FANUC Dual Check Safety (DCS):</span> Monitors robot motion with redundant safety processors. It enforces safe zones and speed-limited areas, and removes motor power immediately if position limits or speed thresholds are exceeded.<sup><a href="#ref-17">[17]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">ABB SafeMove:</span> Supervises tool position against defined zones, tool orientation, tool speed and standstill, using a two-channel safety controller in the robot controller that checks the main computer's motion data. ABB states that it complies with PL d under ISO 13849-1.<sup><a href="#ref-13">[13]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">ABB SafeMove:</span> Watches the tool's position against defined zones, and its orientation, speed and standstill. It uses a two-channel safety controller inside the robot controller that checks the main computer's motion data. ABB states that it complies with PL d under ISO 13849-1.<sup><a href="#ref-13">[13]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Universal Robots safety system:</span> Provides joint position and speed limits, a tool (TCP) speed limit, force and momentum limits, and up to eight safety planes, certified to PL d, Category 3 by TÜV Rheinland.<sup><a href="#ref-14">[14]</a></sup></li>
                             </ul>
 
@@ -297,35 +300,38 @@
                                 <figcaption>Safety in layers. The application code at the top can have bugs, so the watchdog, the safety-rated controller and the hardware safeguards below it can each stop the robot on their own.</figcaption>
                             </figure>
 
-                            <h2 class="article-section-title">06. Sensor privacy and data harvesting</h2>
+                            <h2 class="article-section-title">06. Protecting privacy around robot sensors</h2>
                             <p>
-                                Physical safety protects people's bodies. As robots move into homes, hospitals and shops, their sensors also raise questions of privacy and surveillance.<sup><a href="#ref-18">[18]</a></sup>
+                                Physical safety protects people's bodies. Yet a robot rolling through your home or workplace also sees and hears the people around it. That turns everyday robot sensors into a privacy problem.<sup><a href="#ref-18">[18]</a></sup>
                             </p>
                             <p>
-                                To map a space and avoid obstacles, mobile robots often carry cameras, depth sensors, lidar and microphones. Unlike a fixed security camera, a robot moves through private rooms, and the images and maps it collects can travel far from where they were taken.<sup><a href="#ref-18">[18]</a></sup>
+                                To map a room and avoid obstacles, mobile robots often carry cameras, depth sensors, lidar, and microphones. Unlike a fixed security camera, a robot travels through private rooms. The images and maps it collects can end up far from where the robot recorded them.<sup><a href="#ref-18">[18]</a></sup>
                             </p>
                             <p>
-                                In December 2022, an MIT Technology Review investigation reported on development Roomba robots.<sup><a href="#ref-18">[18]</a></sup> The investigation found that some of the contract workers labeling images taken inside homes had shared them in private online groups.<sup><a href="#ref-18">[18]</a></sup> Lesson <a href="robotics-5-3.html">5.3</a> covers the case.
+                                In December 2022, an <em>MIT Technology Review</em> investigation looked into development Roomba robot vacuums.<sup><a href="#ref-18">[18]</a></sup> Contract workers who labeled photos taken inside homes had shared some of those images in private online groups.<sup><a href="#ref-18">[18]</a></sup> Lesson <a href="robotics-5-3.html">5.3</a> covers that case in full.
                             </p>
                             <p>
-                                The IEEE Code of Ethics includes a duty to protect the privacy of others.<sup><a href="#ref-19">[19]</a></sup> For robots, a practical way to honor it is <strong>data minimization</strong>: collect only what the task needs. Common design patterns include:
+                                The Institute of Electrical and Electronics Engineers (IEEE) Code of Ethics includes a duty to protect the privacy of others.<sup><a href="#ref-19">[19]</a></sup> For robots, a practical way to honor that duty is <strong>data minimization</strong>: collect only what the task needs. Common design patterns include:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Edge computing:</span> Process camera images on the robot's own computer, keep the obstacle positions or features needed for navigation, and discard the raw frames.</li>
-                                <li class="article-spec-item"><span class="spec-label">Physical privacy controls:</span> Provide lens covers or hardware switches that disconnect cameras and microphones when they are not needed.</li>
-                                <li class="article-spec-item"><span class="spec-label">Anonymization:</span> Blur faces, number plates and documents before any image is logged or uploaded for diagnostics.</li>
+                                <li class="article-spec-item"><span class="spec-label">Edge computing:</span> Process camera images on the robot's own computer. Keep only the obstacle positions or features needed for navigation, and discard the raw frames.</li>
+                                <li class="article-spec-item"><span class="spec-label">Physical privacy controls:</span> Add lens covers or hardware switches that disconnect cameras and microphones when you do not need them.</li>
+                                <li class="article-spec-item"><span class="spec-label">Anonymization:</span> Blur faces, number plates, and documents before any image is logged or uploaded for diagnostics.</li>
                             </ul>
 
-                            <h2 class="article-section-title">07. Algorithmic bias in robotics perception</h2>
+                            <h2 class="article-section-title">07. Fair vision: why robot cameras miss some people</h2>
+                            <p>
+                                Delivery robots and self-driving cars rely on cameras to spot people and steer clear of them. If the training photos leave out certain groups of people, the software can fail to see them. A gap in training data then becomes a real safety risk.
+                            </p>
                             <p>
                                 When robots rely on machine learning for perception and person detection, they can inherit biases from their training data.<sup><a href="#ref-20">[20]</a></sup><sup><a href="#ref-21">[21]</a></sup>
                             </p>
                             <p>
-                                In a landmark 2018 study, Joy Buolamwini and Timnit Gebru tested commercial gender-classification systems. Their study found that darker-skinned women were the most misclassified group, with error rates of up to 34.7%. The maximum error rate for lighter-skinned men was 0.8%.<sup><a href="#ref-20">[20]</a></sup> Similar problems matter for robots and vehicles that must detect people in order to avoid them:
+                                In a landmark 2018 study, Joy Buolamwini and Timnit Gebru tested commercial gender-classification systems. Darker-skinned women were the most misclassified group, with error rates of up to 34.7%. The maximum error rate for lighter-skinned men was 0.8%.<sup><a href="#ref-20">[20]</a></sup> Similar problems matter for robots and vehicles that must detect people in order to avoid them:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Pedestrian detection disparities:</span> A 2023 test of eight deep-learning pedestrian detectors found that the proportion of undetected children was 20.14% higher than for adults.<sup><a href="#ref-21">[21]</a></sup> That same test also found significant gender bias at night.<sup><a href="#ref-21">[21]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Interaction across diverse users:</span> Service robots that read faces or gestures may work less well for groups that were under-represented in their training data. This is the pattern that the Gender Shades study revealed for face analysis.<sup><a href="#ref-20">[20]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Pedestrian detection disparities:</span> A 2023 test of eight deep-learning pedestrian detectors found a sharp gap for children. The proportion of undetected children was 20.14% higher than for adults.<sup><a href="#ref-21">[21]</a></sup> That same test also found significant gender bias at night.<sup><a href="#ref-21">[21]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Interaction across diverse users:</span> Service robots that read faces or gestures may work less well for groups under-represented in their training data. This follows the pattern the Gender Shades study revealed for face analysis.<sup><a href="#ref-20">[20]</a></sup></li>
                             </ul>
                             <p>
                                 Engineers therefore have a responsibility to audit training data, measure detection errors separately for different groups of people, and avoid relying on a single camera-based model for safety-critical person detection.
@@ -333,34 +339,41 @@
 
                             <h2 class="article-section-title">08. Autonomous weapons and meaningful human control</h2>
                             <p>
-                                One ethical boundary in robotics concerns the use of autonomy for lethal force. States have discussed <strong>lethal autonomous weapons systems (LAWS)</strong> within the UN Convention on Certain Conventional Weapons (CCW), although there is no single, universally accepted definition of LAWS.<sup><a href="#ref-22">[22]</a></sup> In 2023 the UN Secretary-General recommended that states conclude, by 2026, a legally binding instrument to prohibit lethal autonomous weapon systems that function without human control or oversight.<sup><a href="#ref-23">[23]</a></sup>
+                                Robots can do many jobs on their own, from welding car frames to vacuuming a floor. Still, one boundary raises deep ethical alarms: letting a machine decide when to use lethal force. Should software ever select a human target and strike without a person making that decision?
+                            </p>
+                            <p>
+                                States have discussed <strong>lethal autonomous weapons systems (LAWS)</strong> within the United Nations (UN) Convention on Certain Conventional Weapons (CCW). Even so, there is no single, universally accepted definition of LAWS.<sup><a href="#ref-22">[22]</a></sup> In 2023, the UN Secretary-General recommended that states conclude, by 2026, a legally binding instrument to prohibit lethal autonomous weapon systems that function without human control or oversight.<sup><a href="#ref-23">[23]</a></sup>
                             </p>
                             <p>
                                 The International Committee of the Red Cross (ICRC) describes autonomous weapon systems as systems that select and apply force to targets without human intervention.<sup><a href="#ref-24">[24]</a></sup> After activation, they strike in response to sensor data matching a general "target profile."<sup><a href="#ref-24">[24]</a></sup> The main concerns raised against them are:
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Human dignity:</span> The ICRC argues that these systems raise fundamental ethical concerns for humanity, because life-and-death decisions would be handed from people to sensors, software and machine processes.<sup><a href="#ref-24">[24]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Accountability gap:</span> Human Rights Watch and Harvard Law School's International Human Rights Clinic warn of this gap.<sup><a href="#ref-25">[25]</a></sup> They argue that programmers, manufacturers and military personnel could all escape liability for unlawful deaths caused by a fully autonomous weapon.<sup><a href="#ref-25">[25]</a></sup> In addition, commanders often could not foresee or prevent such an attack.<sup><a href="#ref-25">[25]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Unpredictability and escalation:</span> The ICRC warns of dangers of conflict escalation, and calls for ruling out weapons whose effects cannot be sufficiently understood, predicted and explained.<sup><a href="#ref-24">[24]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Human dignity:</span> The ICRC argues that these systems raise fundamental ethical concerns for humanity. Life-and-death decisions would be handed from people to sensors, software, and machine processes.<sup><a href="#ref-24">[24]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Accountability gap:</span> Human Rights Watch and Harvard Law School's International Human Rights Clinic warn of this gap.<sup><a href="#ref-25">[25]</a></sup> Programmers, manufacturers, and military personnel could all escape liability for unlawful deaths caused by a fully autonomous weapon.<sup><a href="#ref-25">[25]</a></sup> In addition, commanders often could not foresee or prevent such an attack.<sup><a href="#ref-25">[25]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Unpredictability and escalation:</span> The ICRC warns of dangers of conflict escalation. It calls for ruling out weapons whose effects cannot be sufficiently understood, predicted, and explained.<sup><a href="#ref-24">[24]</a></sup></li>
                             </ul>
                             <p>
-                                Campaigners use the phrase <strong>meaningful human control</strong> for the level of human judgment they believe must be kept over the use of force.<sup><a href="#ref-25">[25]</a></sup> The ICRC has recommended new legally binding rules: prohibiting unpredictable autonomous weapons and those designed or used to apply force against persons, and limiting all others, including requirements for human supervision with timely intervention and deactivation.<sup><a href="#ref-24">[24]</a></sup> Existing law already requires states party to Additional Protocol I to the Geneva Conventions to review any new weapon, means or method of warfare during its study, development, acquisition or adoption (Article 36).<sup><a href="#ref-26">[26]</a></sup>
+                                Campaigners use the phrase <strong>meaningful human control</strong> for the level of human judgment they believe must be kept over the use of force.<sup><a href="#ref-25">[25]</a></sup> The ICRC has recommended new legally binding rules. Those rules would prohibit unpredictable autonomous weapons and those designed or used to apply force against persons. They would also limit all other autonomous weapons, including requirements for human supervision with timely intervention and deactivation.<sup><a href="#ref-24">[24]</a></sup>
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: weapons reviews under existing international law</summary>
+                                <p>Existing law already requires states party to Additional Protocol I to the Geneva Conventions to review any new weapon, means, or method of warfare during its study, development, acquisition, or adoption (Article 36).<sup><a href="#ref-26">[26]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">09. Governance frameworks: IEEE 7000 and the EU AI Act</h2>
+                            <h2 class="article-section-title">09. Rules for ethical design: IEEE 7000 and the EU AI Act</h2>
                             <p>
-                                To build ethical reflection into design work itself, standards bodies and legislators have created formal frameworks.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-28">[28]</a></sup>
+                                Good intentions alone do not make a robot safe or fair. Engineers also need repeatable ways to catch ethical problems early, while a system is still being designed. Standards bodies and lawmakers have created formal frameworks to help teams do that work.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-28">[28]</a></sup>
                             </p>
                             <p>
-                                On 15 September 2021 the IEEE published <strong>IEEE 7000-2021</strong>, <em>IEEE Standard Model Process for Addressing Ethical Concerns during System Design</em>.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup> It builds on Value-based Engineering and gives engineers a way to turn stakeholder values into system requirements:<sup><a href="#ref-29">[29]</a></sup>
+                                <strong>IEEE 7000</strong> is an international standard that guides engineers in addressing ethical concerns during system design.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup> It builds on Value-based Engineering and gives you a process to turn stakeholder values into system requirements:<sup><a href="#ref-29">[29]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Concept and context exploration:</span> Management, engineers and selected stakeholders communicate openly about the system and its intended use.<sup><a href="#ref-27">[27]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Ethical values elicitation and prioritization:</span> Identifying and ranking the values at stake, such as privacy, safety, transparency and fairness.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Ethical requirements and risk-based design:</span> Turning those values into requirements and tracing them through the concept of operations into the system design, with attention to harms to values as well as physical harm.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup> The concept of operations is a document that describes how the system is intended to operate in its working environment.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Concept and context exploration:</span> Management, engineers, and selected stakeholders talk openly about the system and its intended use.<sup><a href="#ref-27">[27]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Ethical values elicitation and prioritization:</span> The team identifies and ranks the values at stake, such as privacy, safety, transparency, and fairness.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Ethical requirements and risk-based design:</span> The team turns those values into requirements and traces them into the system design. They watch for harms to values as well as physical harm.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup> They trace these requirements through the concept of operations, a document that describes how the system is meant to work in its environment.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup></li>
                             </ul>
                             <p>
-                                In 2024 the European Union adopted the <strong>EU AI Act (Regulation (EU) 2024/1689)</strong>, a horizontal legal framework for artificial intelligence.<sup><a href="#ref-28">[28]</a></sup> The European Commission describes four levels of risk:<sup><a href="#ref-30">[30]</a></sup>
+                                In 2024, the European Union (EU) adopted the <strong>EU AI Act</strong>, a broad legal framework for artificial intelligence (AI).<sup><a href="#ref-28">[28]</a></sup> The European Commission groups AI uses into four levels of risk:<sup><a href="#ref-30">[30]</a></sup>
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -394,8 +407,17 @@
                                 </tbody>
                             </table>
                             <p>
-                                This applies to industrial machinery and collaborative robots: under the EU AI Act, an AI system that is a safety component of a product covered by EU product-safety law listed in Annex I, such as machinery, is classified as <strong>high risk</strong> when that product must undergo a third-party conformity assessment under that law. High-risk systems come with requirements for risk management, data governance, logging and human oversight.<sup><a href="#ref-28">[28]</a></sup><sup><a href="#ref-30">[30]</a></sup> In 2026, Regulation (EU) 2026/1744 (the "Digital Omnibus on AI") changed how this works for machinery: the Machinery Regulation moved to Section B of Annex I, so only a few AI Act articles (including the Article 6(1) classification) apply directly, and the detailed high-risk requirements will be added to the Machinery Regulation through delegated acts due by 2 August 2028. High-risk rules for AI in other regulated products apply from 2 August 2028.<sup><a href="#ref-31">[31]</a></sup><sup><a href="#ref-30">[30]</a></sup> By combining hardware safety with this kind of governance, engineers can make autonomous machines that serve people without sacrificing their safety or dignity.
+                                This directly affects industrial machinery and collaborative robots. Under the EU AI Act, an AI system that serves as a safety component of regulated machinery is classified as <strong>high risk</strong> when that product must undergo a third-party conformity assessment (an independent safety check) under EU product-safety law. High-risk systems must meet rules for risk management, data governance, logging, and human oversight.<sup><a href="#ref-28">[28]</a></sup><sup><a href="#ref-30">[30]</a></sup>
                             </p>
+                            <p>
+                                In 2026, the EU updated how these rules apply to machinery. Detailed high-risk rules will now be added directly to the EU's Machinery Regulation, with high-risk rules for machinery and other regulated products taking effect in August 2028.<sup><a href="#ref-31">[31]</a></sup><sup><a href="#ref-30">[30]</a></sup> By pairing hardware safety with this kind of governance, engineers can build autonomous machines that serve people without sacrificing their safety or dignity.
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: exact IEEE 7000 and EU AI Act legal details</summary>
+                                <p>On 15 September 2021, the IEEE published <strong>IEEE 7000-2021</strong>, <em>IEEE Standard Model Process for Addressing Ethical Concerns during System Design</em>.<sup><a href="#ref-27">[27]</a></sup><sup><a href="#ref-29">[29]</a></sup></p>
+                                <p>The EU AI Act is <strong>Regulation (EU) 2024/1689</strong>.<sup><a href="#ref-28">[28]</a></sup> Its high-risk rule covers AI safety components of products governed by EU product-safety laws listed in Annex I when those laws require third-party conformity assessment.<sup><a href="#ref-28">[28]</a></sup><sup><a href="#ref-30">[30]</a></sup></p>
+                                <p>In 2026, <strong>Regulation (EU) 2026/1744</strong> (the "Digital Omnibus on AI") moved the Machinery Regulation to Section B of Annex I. Because of that move, only a few AI Act articles (including the Article 6(1) classification) apply directly, and the detailed high-risk requirements will be added to the Machinery Regulation through delegated acts due by 2 August 2028. High-risk rules for AI in other regulated products apply from 2 August 2028.<sup><a href="#ref-31">[31]</a></sup><sup><a href="#ref-30">[30]</a></sup></p>
+                            </details>
 
                             <div class="article-callout try-it">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
@@ -476,7 +498,7 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+            <script src="assets/js/course-data.js?v=26037997" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 

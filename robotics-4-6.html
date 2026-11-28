@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT22M",
+            "timeRequired": "PT27M",
             "teaches": [
                 "overlay",
                 "underlay",
@@ -214,82 +214,108 @@
 
                         <article class="robotics-article-body">
 
-                            <h2 class="article-section-title">01. From running examples to owning a package</h2>
+                            <h2 class="article-section-title">01. From running examples to building your own package</h2>
                             <p>
-                                In <a href="robotics-4-4.html">lesson 4.4</a> you drove Turtlesim from the keyboard and wrote two small nodes. In <a href="robotics-4-5.html">lesson 4.5</a> you met the tools used to inspect a running system. This lesson slows down and looks closely at the thing every ROS 2 project is built from: the <strong>package</strong>. You will set up a workspace on purpose rather than by copying commands, and learn what each file that <code>ros2 pkg create</code> writes is for. You will also declare dependencies so that other people can build your code, and finish with a node that drives the turtle around a square.
+                                In earlier lessons, you ran robots that someone else built. When you write your own robot program, Robot Operating System 2 (ROS 2) expects it to live inside a <strong>package</strong>. A package is a folder with a standard layout so ROS 2 can find, build, and share your code. In this lesson, you will build a package called <code>turtle_square</code> that drives the Turtlesim turtle around a square.
                             </p>
                             <p>
-                                Everything here targets <strong>ROS 2 Lyrical Luth</strong>, the twelfth release of ROS 2. It is a long-term support (LTS) release that came out in May 2026 and is supported until May 2031.<sup><a href="#ref-1">[1]</a></sup> Its Tier 1 platforms are Ubuntu 26.04 (Resolute) on amd64 and arm64, and Windows 11 with Visual Studio 2022 on amd64. It supports Python 3.12 to 3.14 (Ubuntu 26.04 ships Python 3.14.3).<sup><a href="#ref-2">[2]</a></sup> A few details of package building changed in the last two releases. Many tutorials you find online were written for older distributions, so this lesson points out where Lyrical differs.
+                                In <a href="robotics-4-4.html">lesson 4.4</a>, you drove Turtlesim from the keyboard and wrote two small nodes. In <a href="robotics-4-5.html">lesson 4.5</a>, you met the tools used to inspect a running system. Here you will slow down and set up a workspace on purpose instead of copying commands blindly. You will learn what each file created by <code>ros2 pkg create</code> does, list the packages your code depends on so others can build it, and run your own node.
                             </p>
                             <p>
-                                The official tutorials also moved. On Lyrical they live in a "Working with Client Libraries" section under <code>ROS-Framework/client-libraries/</code> instead of the old <code>Tutorials/Beginner-Client-Libraries/</code> path, and the pages carry redirects from the old addresses.<sup><a href="#ref-3">[3]</a></sup> If a bookmark from an older course stops working, look in the new section.
+                                Everything in this lesson targets <strong>ROS 2 Lyrical Luth</strong>, the twelfth release of ROS 2. It is a long-term support (LTS) release that came out in May 2026 and is supported until May 2031.<sup><a href="#ref-1">[1]</a></sup> A few details of package building changed in the last two releases. Many online tutorials target older releases, so this lesson points out where Lyrical differs.
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: supported platforms, Python versions, and moved tutorials</summary>
+                                <p>Lyrical&rsquo;s Tier 1 platforms are Ubuntu 26.04 (Resolute) on amd64 and arm64, and Windows 11 with Visual Studio 2022 on amd64. It supports Python 3.12 to 3.14, and Ubuntu 26.04 ships Python 3.14.3.<sup><a href="#ref-2">[2]</a></sup></p>
+                                <p>The official tutorials also moved on Lyrical. They now live in a &ldquo;Working with Client Libraries&rdquo; section under <code>ROS-Framework/client-libraries/</code> instead of the old <code>Tutorials/Beginner-Client-Libraries/</code> path. The pages carry redirects from the old addresses, so if a bookmark from an older course stops working, look in the new section.<sup><a href="#ref-3">[3]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">02. Workspaces, underlays and overlays</h2>
+                            <h2 class="article-section-title">02. How workspaces layer your code on ROS 2</h2>
                             <p>
-                                The documentation defines a workspace simply: "A workspace is a directory containing ROS 2 packages."<sup><a href="#ref-3">[3]</a></sup> Workspaces are built in <em>layers</em>. Your ROS 2 installation in <code>/opt/ros/lyrical</code> is the <strong>underlay</strong>. Your own workspace is an <strong>overlay</strong>, "a secondary workspace where you can add new packages without interfering with the existing ROS 2 workspace that you're extending." The underlay must contain the dependencies of every package in the overlay, and packages in the overlay override packages with the same name in the underlay. Layers can be stacked more than two deep.<sup><a href="#ref-3">[3]</a></sup>
+                                Before you create a package like <code>turtle_square</code>, you need a home folder for your own code. That home folder is called a <strong>workspace</strong>, and it lets you add new packages without touching your main ROS 2 install. Think of it like laying a clear plastic sheet over a printed map: you can draw your own routes on top without ruining the map underneath.
                             </p>
                             <p>
-                                On Ubuntu, first install the build tools with <code>sudo apt update &amp;&amp; sudo apt install ros-dev-tools</code>.<sup><a href="#ref-4">[4]</a></sup> Then create the workspace. The documented best practice is a new directory for every workspace, with all packages inside its <code>src</code> folder:<sup><a href="#ref-3">[3]</a></sup>
+                                In everyday words, a workspace is simply a folder that holds your ROS 2 packages. The official documentation puts it this way: &ldquo;A workspace is a directory containing ROS 2 packages.&rdquo;<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                Workspaces are built in <em>layers</em>. Your main ROS 2 installation in <code>/opt/ros/lyrical</code> is the bottom layer, called the <strong>underlay</strong>. Your own workspace, such as <code>~/ros2_ws</code>, sits on top as an <strong>overlay</strong>. In everyday words, an overlay lets you add or change packages safely without breaking your base ROS 2 setup. The documentation defines it as &ldquo;a secondary workspace where you can add new packages without interfering with the existing ROS 2 workspace that you're extending.&rdquo; The underlay must already hold the dependencies of every package in your overlay. If a package in your overlay shares the same name as one in the underlay, your overlay version wins.<sup><a href="#ref-3">[3]</a></sup>
+                            </p>
+                            <p>
+                                On Ubuntu, first install the build tools with <code>sudo apt update &amp;&amp; sudo apt install ros-dev-tools</code>.<sup><a href="#ref-4">[4]</a></sup> Then create your workspace. The documented best practice is a new directory for every workspace, with all packages placed inside its <code>src</code> folder:<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <pre class="article-code"><code>source /opt/ros/lyrical/setup.bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src</code></pre>
                             <p>
-                                When you later run <code>colcon build</code> from <code>~/ros2_ws</code>, colcon creates three folders next to <code>src</code>. <code>build</code> holds intermediate files with one subfolder per package. <code>install</code> holds each installed package (by default in its own subfolder). <code>log</code> "contains various logging information about each colcon invocation." Unlike the older catkin tool, there is no <code>devel</code> folder, and colcon builds out of the source tree.<sup><a href="#ref-5">[5]</a></sup>
+                                When you later run <code>colcon build</code> from <code>~/ros2_ws</code>, the <code>colcon</code> build tool creates three folders next to <code>src</code>. The <code>build</code> folder holds intermediate files, with one subfolder per package. The <code>install</code> folder holds each installed package, by default in its own subfolder. The <code>log</code> folder &ldquo;contains various logging information about each colcon invocation.&rdquo;<sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <p>
-                                To use the overlay you <em>source</em> it. The tutorial is firm about where: "it is very important that you open a new terminal, separate from the one where you built the workspace. Sourcing an overlay in the same terminal where you built, or likewise building where an overlay is sourced, may create complex issues."<sup><a href="#ref-3">[3]</a></sup> In the new terminal, source the underlay and then the overlay:
+                                To use your overlay, you have to <em>source</em> it so your terminal knows where to find your packages. Always open a brand-new terminal for this, never the same one where you ran the build. The tutorial is firm about this rule: &ldquo;it is very important that you open a new terminal, separate from the one where you built the workspace. Sourcing an overlay in the same terminal where you built, or likewise building where an overlay is sourced, may create complex issues.&rdquo;<sup><a href="#ref-3">[3]</a></sup> In the new terminal, source the underlay first and then the overlay:
                             </p>
                             <pre class="article-code"><code>source /opt/ros/lyrical/setup.bash
 cd ~/ros2_ws
 source install/local_setup.bash</code></pre>
                             <p>
-                                There are two overlay scripts. Sourcing <code>local_setup</code> "will only add the packages available in the overlay to your environment," while <code>setup</code> sources the overlay as well as the underlay it was built against.<sup><a href="#ref-3">[3]</a></sup> So "underlay <code>setup</code>, then overlay <code>local_setup</code>" gives the same result as "overlay <code>setup</code>" on its own. Underlay scripts come as <code>setup.bash</code>, <code>setup.sh</code> or <code>setup.zsh</code>,<sup><a href="#ref-4">[4]</a></sup> and Lyrical adds a <code>setup.fish</code> script for fish shell users.<sup><a href="#ref-1">[1]</a></sup>
+                                Your <code>install</code> folder includes two setup scripts. Sourcing <code>local_setup</code> &ldquo;will only add the packages available in the overlay to your environment,&rdquo; while <code>setup</code> loads the overlay along with the underlay it was built against.<sup><a href="#ref-3">[3]</a></sup> That means sourcing underlay <code>setup</code> and then overlay <code>local_setup</code> gives the same result as sourcing overlay <code>setup</code> on its own.
                             </p>
                             <p>
-                                The workspace tutorial proves the layering with a small experiment. In a cloned copy, change the window title in Turtlesim's <code>turtle_frame.cpp</code> from <code>"TurtleSim"</code> to <code>"MyTurtleSim"</code>, rebuild, and run Turtlesim in a terminal that has the overlay sourced. The window shows the new title, while a terminal that sourced only the underlay still shows the original. That shows "the overlay takes precedence over the underlay."<sup><a href="#ref-3">[3]</a></sup> A good mental model is a stack: whatever you sourced last sits on top.
+                                The workspace tutorial proves how this layering works with a small experiment. If you clone Turtlesim into your overlay and change its window title in <code>turtle_frame.cpp</code> from <code>&quot;TurtleSim&quot;</code> to <code>&quot;MyTurtleSim&quot;</code>, rebuilding lets your copy replace the system one. A terminal with the overlay sourced shows the new title, while a terminal with only the underlay sourced still shows the original. That shows &ldquo;the overlay takes precedence over the underlay.&rdquo;<sup><a href="#ref-3">[3]</a></sup> A good mental model is a stack: whatever you source last sits on top.
                             </p>
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fab fa-windows"></i> Windows 11 note</div>
-                                <p>The Lyrical Windows install uses pixi and conda-forge. In every Command Prompt you run <code>pixi shell</code> and then <code>call C:\dev\lyrical\local_setup.bat</code>; C++ builds need Visual Studio Build Tools 2022, run from the "x64 Native Tools Command Prompt for VS 2022".<sup><a href="#ref-6">[6]</a></sup> On Windows you build with <code>colcon build --merge-install</code> and source with <code>call install\setup.bat</code> (or <code>install\setup.ps1</code> in PowerShell).<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-5">[5]</a></sup> The Lyrical workspace and colcon tutorials still mention the VS 2019 prompt and <code>C:\dev\ros2</code>; follow the install page where they disagree.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-6">[6]</a></sup></p>
+                                <p>The Lyrical Windows install uses pixi and conda-forge. In every Command Prompt you run <code>pixi shell</code> and then <code>call C:\dev\lyrical\local_setup.bat</code>. C++ builds need Visual Studio Build Tools 2022, run from the &ldquo;x64 Native Tools Command Prompt for VS 2022&rdquo;.<sup><a href="#ref-6">[6]</a></sup> On Windows you build with <code>colcon build --merge-install</code> and source with <code>call install\setup.bat</code> (or <code>install\setup.ps1</code> in PowerShell).<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-5">[5]</a></sup> The Lyrical workspace and colcon tutorials still mention the VS 2019 prompt and <code>C:\dev\ros2</code>, so follow the install page where they disagree.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-6">[6]</a></sup></p>
                             </div>
+                            <details class="deeper">
+                                <summary>For the curious: stacking more layers, older catkin workspaces, and other shells</summary>
+                                <p>Workspace layers can be stacked more than two deep.<sup><a href="#ref-3">[3]</a></sup></p>
+                                <p>Unlike the older catkin tool from ROS 1, <code>colcon</code> creates no <code>devel</code> folder and builds out of the source tree.<sup><a href="#ref-5">[5]</a></sup></p>
+                                <p>Underlay scripts come as <code>setup.bash</code>, <code>setup.sh</code>, or <code>setup.zsh</code>,<sup><a href="#ref-4">[4]</a></sup> and Lyrical adds a <code>setup.fish</code> script for fish shell users.<sup><a href="#ref-1">[1]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">03. Creating the package with ros2 pkg create</h2>
+                            <h2 class="article-section-title">03. Creating a Python package</h2>
                             <p>
-                                Packages are created from inside <code>src</code> with <code>ros2 pkg create</code>. The documented Python form is:<sup><a href="#ref-7">[7]</a></sup>
+                                Now that your workspace is ready, you need to create a package folder inside <code>src</code>. You could create each configuration file by hand, but it is easy to miss a required setting. Instead, ROS 2 provides the <code>ros2 pkg create</code> command to generate a working Python package for you in seconds. You will use it now to create <code>turtle_square</code>.
+                            </p>
+                            <p>
+                                Always create packages from inside your <code>src</code> directory. Here is the documented Python form of <code>ros2 pkg create</code>:<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <pre class="article-code"><code>cd ~/ros2_ws/src
 ros2 pkg create --build-type ament_python --license Apache-2.0 --node-name my_node my_package</code></pre>
                             <p>
-                                <code>--node-name</code> "creates a simple Hello World type executable," and <code>--license</code> sets the package's license.<sup><a href="#ref-7">[7]</a></sup> The one flag you must not forget is <code>--build-type</code>. In the Lyrical source of the command, its choices are <code>cmake</code>, <code>ament_cmake</code>, <code>ament_cargo</code> (used for compiling packages written in Rust) and <code>ament_python</code>, and the <strong>default is still <code>ament_cmake</code></strong>.<sup><a href="#ref-8">[8]</a></sup> Leave it out and you get a C++ package with a <code>CMakeLists.txt</code> instead of a Python one.
+                                Each flag sets up part of your new package. Passing <code>--node-name</code> &ldquo;creates a simple Hello World type executable,&rdquo; and <code>--license</code> records the package&rsquo;s license.<sup><a href="#ref-7">[7]</a></sup> The one flag you must never forget is <code>--build-type</code>. In Lyrical, the default build type is still <code>ament_cmake</code>, so leaving <code>--build-type</code> out gives you a C++ package with a <code>CMakeLists.txt</code> instead of a Python one.<sup><a href="#ref-8">[8]</a></sup>
                             </p>
                             <p>
-                                Other useful options include <code>--dependencies</code> (one or more packages to depend on), <code>--description</code>, <code>--maintainer-name</code> and <code>--maintainer-email</code> (filled in from your <code>git config</code> when available). You can also use <code>--package-format</code> (2 or 3, default 3), <code>--destination-directory</code> and <code>--library-name</code>. Passing <code>--license ?</code> lists the licenses that also produce a LICENSE file.<sup><a href="#ref-8">[8]</a></sup>
-                            </p>
-                            <p>
-                                For this lesson's project, create a package called <code>turtle_square</code> with one node called <code>square_driver</code>. Because our node imports <code>rclpy</code>, <code>geometry_msgs</code> and, in the stretch version (section 10), <code>turtlesim_msgs</code>, we can list all three at creation time:
+                                For this lesson&rsquo;s project, create a package called <code>turtle_square</code> with one node called <code>square_driver</code>. Your node will import <code>rclpy</code> and <code>geometry_msgs</code>, and the stretch version in section 10 also imports <code>turtlesim_msgs</code>. You can list all three dependencies at creation time:
                             </p>
                             <pre class="article-code"><code>ros2 pkg create --build-type ament_python --license Apache-2.0 \
     --node-name square_driver turtle_square \
     --dependencies rclpy geometry_msgs turtlesim_msgs</code></pre>
                             <p>
-                                A workspace can hold packages of different build types side by side, but packages cannot be nested inside each other.<sup><a href="#ref-7">[7]</a></sup> The two recommended build types are <code>ament_cmake</code> and <code>ament_python</code>, and colcon reads <code>package.xml</code> files in format 3 (REP 149), with format 2 also supported.<sup><a href="#ref-5">[5]</a></sup>
+                                A workspace can hold packages of different build types side by side. However, you cannot nest one package inside another package&rsquo;s folder.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: all build types, extra flags, and package.xml formats</summary>
+                                <p>In the Lyrical source code of <code>ros2 pkg create</code>, the choices for <code>--build-type</code> are <code>cmake</code>, <code>ament_cmake</code>, <code>ament_cargo</code> (used for compiling packages written in Rust), and <code>ament_python</code>, with <code>ament_cmake</code> as the default.<sup><a href="#ref-8">[8]</a></sup> The two recommended build types are <code>ament_cmake</code> and <code>ament_python</code>.<sup><a href="#ref-5">[5]</a></sup></p>
+                                <p>Other useful options include <code>--dependencies</code> (one or more packages to depend on), <code>--description</code>, <code>--maintainer-name</code>, and <code>--maintainer-email</code> (filled in from your <code>git config</code> when available). You can also pass <code>--package-format</code> (2 or 3, default 3), <code>--destination-directory</code>, and <code>--library-name</code>. Passing <code>--license ?</code> lists the licenses that also produce a <code>LICENSE</code> file.<sup><a href="#ref-8">[8]</a></sup></p>
+                                <p><code>colcon</code> reads <code>package.xml</code> files in format 3, defined by ROS Enhancement Proposal (REP) 149, with format 2 also supported.<sup><a href="#ref-5">[5]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">04. What the generator wrote</h2>
+                            <h2 class="article-section-title">04. Inside the generated package files</h2>
                             <p>
-                                The documented output for an <code>ament_python</code> package includes root configuration files: <code>package.xml</code>, <code>setup.py</code>, <code>setup.cfg</code>, and <code>resource/my_package</code>. It also creates the module folder containing <code>my_package/__init__.py</code> and the node file <code>my_package/my_node.py</code>, along with three tests: <code>test/test_copyright.py</code>, <code>test/test_flake8.py</code> and <code>test/test_pep257.py</code>.<sup><a href="#ref-7">[7]</a></sup> The Lyrical template also writes a <code>py.typed</code> marker file and two more tests, <code>test/test_mypy.py</code> and <code>test/test_xmllint.py</code>, which the documentation's sample output does not show.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup> Of these, the following are required for a Python package:<sup><a href="#ref-7">[7]</a></sup>
+                                When <code>ros2 pkg create</code> finishes, it writes several files and folders inside <code>turtle_square</code>. Seeing a handful of extra files for one short Python script can look overwhelming at first. Each file has one specific job, such as listing dependencies or telling ROS 2 how to run <code>square_driver</code>. Knowing what each piece does makes it much easier to fix missing-file errors later.
+                            </p>
+                            <p>
+                                Five parts are required for a Python (<code>ament_python</code>) package to build and run cleanly:<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">package.xml:</span> The manifest: name, version, description, maintainer, license, dependencies and the build type.<sup><a href="#ref-7">[7]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">resource/&lt;package_name&gt;:</span> An empty marker file that is installed into the ament resource index so ROS tools can find the package.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-9">[9]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">setup.cfg:</span> "Required when a package has executables, so <code>ros2 run</code> can find them."<sup><a href="#ref-7">[7]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">setup.py:</span> Tells setuptools how to install the package.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">package.xml:</span> The manifest. It records the name, version, description, maintainer, license, dependencies, and build type.<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">resource/&lt;package_name&gt;:</span> An empty marker file installed into the ament resource index so ROS tools can find the package.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-9">[9]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">setup.cfg:</span> Tells ROS where executables live. It is &ldquo;Required when a package has executables, so <code>ros2 run</code> can find them.&rdquo;<sup><a href="#ref-7">[7]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">setup.py:</span> Tells Python&rsquo;s <code>setuptools</code> how to install the package.<sup><a href="#ref-7">[7]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">&lt;package_name&gt;/:</span> A Python module folder with the same name as the package, containing <code>__init__.py</code>. Your node files go here.<sup><a href="#ref-7">[7]</a></sup></li>
                             </ul>
                             <p>
-                                Here is the shape of the <code>setup.py</code> that the Lyrical template generates, shown for <code>turtle_square</code> (maintainer fields shortened):<sup><a href="#ref-9">[9]</a></sup>
+                                Here is the shape of the <code>setup.py</code> that the Lyrical template generates for <code>turtle_square</code>, with the maintainer fields shortened:<sup><a href="#ref-9">[9]</a></sup>
                             </p>
                             <pre class="article-code"><code>from setuptools import find_packages, setup
 
@@ -319,34 +345,45 @@ setup(
     },
 )</code></pre>
                             <p>
-                                The <code>data_files</code> entries install the resource marker and <code>package.xml</code> where ROS expects them. The <code>package_data</code> line for <code>py.typed</code> appears in the Kilted and Lyrical templates but not in Humble or Jazzy, so do not be surprised if an older project lacks it.<sup><a href="#ref-9">[9]</a></sup> The most important part is <code>entry_points</code>. Each string in <code>console_scripts</code> reads <code>&lt;executable name&gt; = &lt;python package&gt;.&lt;module&gt;:&lt;function&gt;</code>, as in the tutorial's <code>'talker = py_pubsub.publisher_member_function:main'</code>.<sup><a href="#ref-10">[10]</a></sup> The name on the left is what you type after <code>ros2 run turtle_square</code>.
+                                Two sections in <code>setup.py</code> do most of the ROS wiring. First, <code>data_files</code> copies your resource marker and <code>package.xml</code> to the folders where ROS expects them. Second, <code>entry_points</code> maps command names to Python functions. Each entry in <code>console_scripts</code> reads <code>&lt;executable name&gt; = &lt;python package&gt;.&lt;module&gt;:&lt;function&gt;</code>, as in the tutorial&rsquo;s <code>'talker = py_pubsub.publisher_member_function:main'</code>.<sup><a href="#ref-10">[10]</a></sup> The name on the left is what you type after <code>ros2 run turtle_square</code>.
                             </p>
                             <p>
-                                The generated <code>setup.cfg</code> is two short sections, <code>[develop] script_dir=$base/lib/turtle_square</code> and <code>[install] install_scripts=$base/lib/turtle_square</code>. They put the executables in <code>lib</code> "because <code>ros2 run</code> will look for them there."<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> Name, version, description, maintainer and license must match between <code>package.xml</code> and <code>setup.py</code>, so edit both when you fill in the <code>TODO</code> fields.<sup><a href="#ref-7">[7]</a></sup>
+                                Meanwhile, the generated <code>setup.cfg</code> holds two short sections: <code>[develop] script_dir=$base/lib/turtle_square</code> and <code>[install] install_scripts=$base/lib/turtle_square</code>. They place your executables inside <code>lib</code> &ldquo;because <code>ros2 run</code> will look for them there.&rdquo;<sup><a href="#ref-9">[9]</a></sup><sup><a href="#ref-10">[10]</a></sup> Also make sure the name, version, description, maintainer, and license match between <code>package.xml</code> and <code>setup.py</code>, so edit both files when you replace the <code>TODO</code> placeholders.<sup><a href="#ref-7">[7]</a></sup>
                             </p>
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fas fa-exclamation-triangle"></i> Watch out: a typo in the official page</div>
-                                <p>The <code>setup.py</code> listing in the Lyrical "Creating a package" tutorial uses <code>package_name = 'my_py_pkg'</code> and the entry point <code>'my_node = my_py_pkg.my_node:main'</code>, while the rest of that page uses <code>my_package</code>.<sup><a href="#ref-7">[7]</a></sup> If you copy it word for word, the names will not match your package. Always check that the names in <code>setup.py</code> match your folder names.</p>
+                                <p>The <code>setup.py</code> listing in the Lyrical &ldquo;Creating a package&rdquo; tutorial uses <code>package_name = 'my_py_pkg'</code> and the entry point <code>'my_node = my_py_pkg.my_node:main'</code>, while the rest of that page uses <code>my_package</code>.<sup><a href="#ref-7">[7]</a></sup> If you copy it word for word, the names will not match your package. Always check that the names in <code>setup.py</code> match your folder names.</p>
                             </div>
+                            <details class="deeper">
+                                <summary>For the curious: every generated file and Lyrical template differences</summary>
+                                <p>The documented output for an <code>ament_python</code> package includes the root configuration files <code>package.xml</code>, <code>setup.py</code>, <code>setup.cfg</code>, and <code>resource/my_package</code>. It also creates the module folder with <code>my_package/__init__.py</code> and the node file <code>my_package/my_node.py</code>, plus three tests: <code>test/test_copyright.py</code>, <code>test/test_flake8.py</code>, and <code>test/test_pep257.py</code>.<sup><a href="#ref-7">[7]</a></sup></p>
+                                <p>The Lyrical template also writes a <code>py.typed</code> marker file and two extra tests, <code>test/test_mypy.py</code> and <code>test/test_xmllint.py</code>, which the documentation&rsquo;s sample output does not show.<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-9">[9]</a></sup> The <code>package_data</code> line for <code>py.typed</code> appears in the Kilted and Lyrical templates, but not in Humble or Jazzy, so older projects may lack it.<sup><a href="#ref-9">[9]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">05. Declaring dependencies: package.xml and rosdep</h2>
+                            <h2 class="article-section-title">05. Listing the packages your code needs</h2>
                             <p>
-                                The generated Python <code>package.xml</code> uses format 3, has <code>TODO</code> placeholders for the description and license, lists the test tools <code>ament_copyright</code>, <code>ament_flake8</code>, <code>ament_pep257</code> and <code>python3-pytest</code> as test dependencies, and ends with <code>&lt;export&gt;&lt;build_type&gt;ament_python&lt;/build_type&gt;&lt;/export&gt;</code>.<sup><a href="#ref-7">[7]</a></sup> The Lyrical template also adds <code>ament_mypy</code> and <code>ament_xmllint</code> to the test dependencies.<sup><a href="#ref-8">[8]</a></sup> Every package your code imports should also be declared here. The tags say <em>when</em> each dependency is needed:<sup><a href="#ref-11">[11]</a></sup>
+                                Your <code>square_driver</code> script will import code from other ROS 2 packages such as <code>rclpy</code> and <code>geometry_msgs</code>. Python imports let the code run on your machine, but they do not tell another computer what packages to install before building yours. Listing those dependencies in <code>package.xml</code> lets ROS 2 install everything your package needs before a build starts.
+                            </p>
+                            <p>
+                                Every package your code imports should be declared inside <code>package.xml</code>. Different tags tell ROS 2 <em>when</em> each dependency is needed:<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">&lt;depend&gt;:</span> Needed at both build time and run time.<sup><a href="#ref-11">[11]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">&lt;build_depend&gt; and &lt;build_export_depend&gt;:</span> Needed only for building, or for headers exported to packages that build against yours.<sup><a href="#ref-11">[11]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">&lt;exec_depend&gt;:</span> "Shared libraries, executables, Python modules, launch scripts and other files required when running."<sup><a href="#ref-11">[11]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">&lt;exec_depend&gt;:</span> &ldquo;Shared libraries, executables, Python modules, launch scripts and other files required when running.&rdquo;<sup><a href="#ref-11">[11]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">&lt;test_depend&gt;:</span> Needed only to run tests.<sup><a href="#ref-11">[11]</a></sup></li>
                             </ul>
                             <p>
-                                The publisher tutorial adds its dependencies by hand as <code>&lt;exec_depend&gt;rclpy&lt;/exec_depend&gt;</code> and <code>&lt;exec_depend&gt;std_msgs&lt;/exec_depend&gt;</code>, one for each import in the node.<sup><a href="#ref-10">[10]</a></sup> Using <code>--dependencies</code> at creation time "will automatically add the necessary dependency lines" for you, but the template writes them as <code>&lt;depend&gt;</code> tags.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-9">[9]</a></sup> The docs are not fully consistent here: the rosdep page says pure Python packages "should never use" <code>&lt;depend&gt;</code> and should use <code>&lt;exec_depend&gt;</code>, while the parameters tutorial shows <code>&lt;depend&gt;rclpy&lt;/depend&gt;</code>.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-13">[13]</a></sup> Both build; following the rosdep page, our package declares:
+                                Because <code>turtle_square</code> is a pure Python package, its imports are only needed when running. Following the <code>rosdep</code> guide, declare them as <code>&lt;exec_depend&gt;</code> lines in <code>package.xml</code>:<sup><a href="#ref-11">[11]</a></sup>
                             </p>
                             <pre class="article-code"><code>&lt;exec_depend&gt;rclpy&lt;/exec_depend&gt;
 &lt;exec_depend&gt;geometry_msgs&lt;/exec_depend&gt;
 &lt;exec_depend&gt;turtlesim_msgs&lt;/exec_depend&gt;</code></pre>
                             <p>
-                                Why bother, if the code already imports these modules? Because <strong>rosdep</strong> reads these lines. rosdep is "a meta-package manager": it looks up each key from <code>package.xml</code> in the <code>rosdistro</code> index and installs the matching system package through apt or dnf. Released ROS packages use their package name as the key.<sup><a href="#ref-11">[11]</a></sup> Initialize it once per machine, then run it from the workspace root before every build of new code:<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                                Why bother writing these lines if Python already imports the modules? Because <strong>rosdep</strong> reads them. In plain words, <code>rosdep</code> checks your <code>package.xml</code> files and installs missing system packages for you. The documentation calls it &ldquo;a meta-package manager&rdquo;. It looks up each key from <code>package.xml</code> in the <code>rosdistro</code> index and installs the matching system package through <code>apt</code> or <code>dnf</code>. Released ROS packages use their package name as the key.<sup><a href="#ref-11">[11]</a></sup>
+                            </p>
+                            <p>
+                                Initialize <code>rosdep</code> once per machine, then run it from your workspace root before every build of new code:<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <pre class="article-code"><code>sudo rosdep init
 rosdep update
@@ -354,10 +391,18 @@ rosdep update
 cd ~/ros2_ws
 rosdep install -i --from-path src --rosdistro lyrical -y</code></pre>
                             <p>
-                                On success it prints <code>#All required rosdeps installed successfully</code>. The workspace tutorial explains the order: "You wouldn't want a build to fail after a long wait only to realize that you have missing dependencies."<sup><a href="#ref-3">[3]</a></sup> Note that "rosdep only works on Linux and macOS; Windows is not supported."<sup><a href="#ref-11">[11]</a></sup>
+                                On success, it prints <code>#All required rosdeps installed successfully</code>. Checking dependencies first saves you wasted time. As the workspace tutorial explains, &ldquo;You wouldn't want a build to fail after a long wait only to realize that you have missing dependencies.&rdquo;<sup><a href="#ref-3">[3]</a></sup> Note that &ldquo;rosdep only works on Linux and macOS; Windows is not supported.&rdquo;<sup><a href="#ref-11">[11]</a></sup>
                             </p>
+                            <details class="deeper">
+                                <summary>For the curious: test dependencies and &lt;exec_depend&gt; vs &lt;depend&gt; in the docs</summary>
+                                <p>The generated Python <code>package.xml</code> uses format 3, includes <code>TODO</code> placeholders for the description and license, and ends with <code>&lt;export&gt;&lt;build_type&gt;ament_python&lt;/build_type&gt;&lt;/export&gt;</code>. It lists <code>ament_copyright</code>, <code>ament_flake8</code>, <code>ament_pep257</code>, and <code>python3-pytest</code> as test dependencies.<sup><a href="#ref-7">[7]</a></sup> The Lyrical template also adds <code>ament_mypy</code> and <code>ament_xmllint</code> to those test dependencies.<sup><a href="#ref-8">[8]</a></sup></p>
+                                <p>The official docs are not fully consistent on runtime tags. The publisher tutorial adds <code>&lt;exec_depend&gt;rclpy&lt;/exec_depend&gt;</code> and <code>&lt;exec_depend&gt;std_msgs&lt;/exec_depend&gt;</code> by hand, one per import.<sup><a href="#ref-10">[10]</a></sup> Passing <code>--dependencies</code> at creation time &ldquo;will automatically add the necessary dependency lines&rdquo; for you, yet the template writes them as <code>&lt;depend&gt;</code> tags.<sup><a href="#ref-12">[12]</a></sup><sup><a href="#ref-9">[9]</a></sup> Meanwhile, the <code>rosdep</code> page says pure Python packages &ldquo;should never use&rdquo; <code>&lt;depend&gt;</code> and should use <code>&lt;exec_depend&gt;</code>, while the parameters tutorial shows <code>&lt;depend&gt;rclpy&lt;/depend&gt;</code>.<sup><a href="#ref-11">[11]</a></sup><sup><a href="#ref-13">[13]</a></sup> Both forms build.</p>
+                            </details>
 
-                            <h2 class="article-section-title">06. Writing the node: the Lyrical rclpy pattern</h2>
+                            <h2 class="article-section-title">06. How a Python node starts and shuts down</h2>
+                            <p>
+                                Before writing <code>square_driver</code>, look at the standard skeleton every ROS 2 Python node shares. Whether a node drives a turtle, reads a camera, or logs sensor readings, it starts ROS 2, loops while waiting for events, and cleans up when you quit. On ROS 2 Lyrical, a single Python <code>with</code> block handles both startup and cleanup for you.
+                            </p>
                             <p>
                                 The Lyrical publisher tutorial gives the pattern every Python node in this course follows. Its <code>main</code> function looks like this:<sup><a href="#ref-10">[10]</a></sup>
                             </p>
@@ -381,41 +426,65 @@ def main(args=None):
 if __name__ == '__main__':
     main()</code></pre>
                             <p>
-                                Read it as a lifecycle. <code>rclpy.init</code> starts the ROS client library, and because it is used as a context manager in a <code>with</code> block, the library is shut down automatically when the block ends. The Lyrical tutorial therefore has no explicit <code>destroy_node()</code> or <code>rclpy.shutdown()</code> call, which you may still see in code written for older distributions.<sup><a href="#ref-10">[10]</a></sup> Inside the block you construct the node. Its <code>__init__</code> calls <code>super().__init__('minimal_publisher')</code> to name the node and creates its publishers, subscriptions and timers. <code>rclpy.spin()</code> then "spins" the node "so its callbacks are called." Pressing Ctrl+C raises <code>KeyboardInterrupt</code>, which the <code>except</code> catches so the program exits quietly.<sup><a href="#ref-10">[10]</a></sup>
+                                Read this code as a lifecycle. First, <code>rclpy.init</code> starts the ROS client library. Because it sits inside a <code>with</code> block, ROS shuts down automatically when the block ends. As a result, the Lyrical tutorial leaves out explicit <code>destroy_node()</code> and <code>rclpy.shutdown()</code> calls that you still see in code written for older distributions.<sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <p>
-                                Three calls do most of the work. <code>self.create_publisher(String, 'topic', 10)</code> declares the message type, the topic name and a queue size of 10; "Queue size is a required Quality of Service (QoS) setting that limits the amount of queued messages if a subscriber is not receiving them fast enough." <code>self.create_timer(0.5, self.timer_callback)</code> runs a callback every 0.5 seconds. <code>self.create_subscription(String, 'topic', self.listener_callback, 10)</code> registers a callback that is called "as soon as it receives a message", so a subscriber needs no timer. The topic name and type must match on both sides.<sup><a href="#ref-10">[10]</a></sup>
+                                Inside the block, you create your node. Its <code>__init__</code> method calls <code>super().__init__('minimal_publisher')</code> to name the node and creates its publishers, subscriptions, and timers. Next, <code>rclpy.spin()</code> &ldquo;spins&rdquo; the node &ldquo;so its callbacks are called.&rdquo; Pressing Ctrl+C raises <code>KeyboardInterrupt</code>, which the <code>except</code> block catches so the program exits quietly.<sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <p>
-                                Topics are not the only tools in a node. A service server is created with <code>create_service(Type, 'name', callback)</code>, where the callback fills in and returns a response; a client uses <code>create_client</code>, <code>wait_for_service</code> and <code>call_async</code>, and the docs warn: "Do not use <code>rclpy.spin_until_future_complete</code> in a ROS 2 callback."<sup><a href="#ref-12">[12]</a></sup> A node can also declare a parameter with <code>self.declare_parameter('my_parameter', 'world')</code> (the type comes from the default value), read it with <code>self.get_parameter('my_parameter').get_parameter_value().string_value</code>, and have it changed at run time with <code>ros2 param set</code>.<sup><a href="#ref-13">[13]</a></sup> Lesson 4.7 covers parameters in depth; for now we use topics only.
-                            </p>
-
-                            <h2 class="article-section-title">07. Turtlesim's interface on Lyrical</h2>
-                            <p>
-                                Before writing a controller, check exactly what the robot listens to and reports. The Lyrical Turtlesim source shows that each turtle subscribes to <code>&lt;name&gt;/cmd_vel</code> (<code>geometry_msgs/msg/Twist</code>) and publishes <code>&lt;name&gt;/pose</code> (<code>turtlesim_msgs/msg/Pose</code>) and <code>&lt;name&gt;/color_sensor</code>. Each turtle also offers the services <code>set_pen</code>, <code>teleport_relative</code> and <code>teleport_absolute</code> and the action <code>rotate_absolute</code>, while the Turtlesim node itself provides <code>clear</code>, <code>reset</code>, <code>spawn</code> and <code>kill</code>.<sup><a href="#ref-14">[14]</a></sup> For the first turtle, the names become <code>/turtle1/cmd_vel</code> and <code>/turtle1/pose</code>.
-                            </p>
-                            <p>
-                                Three details from the source shape our design:<sup><a href="#ref-14">[14]</a></sup>
+                                Three node methods do most of the everyday work:<sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Only two velocity fields are used:</span> Turtlesim reads <code>linear.x</code> and <code>angular.z</code> from the Twist. It uses <code>linear.y</code> only if its <code>holonomic</code> parameter is true.<sup><a href="#ref-14">[14]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">A one-second command timeout:</span> If more than 1.0 s passes since the last <code>cmd_vel</code> message, Turtlesim sets all velocities to zero. A node that publishes once and stops will see the turtle move briefly and halt.<sup><a href="#ref-14">[14]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Walls are hard limits:</span> Positions are clamped to the canvas, and Turtlesim logs "Oh no! I hit the wall!" when the turtle reaches the edge.<sup><a href="#ref-14">[14]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label"><code>self.create_publisher(String, 'topic', 10)</code>:</span> Sets the message type, the topic name, and a queue size of 10. In plain words, queue size sets how many messages wait in line if a receiver falls behind. The tutorial calls it &ldquo;a required Quality of Service (QoS) setting that limits the amount of queued messages if a subscriber is not receiving them fast enough.&rdquo;</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>self.create_timer(0.5, self.timer_callback)</code>:</span> Runs a callback function every 0.5 seconds.</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>self.create_subscription(String, 'topic', self.listener_callback, 10)</code>:</span> Registers a callback that runs &ldquo;as soon as it receives a message&rdquo;, so a subscriber needs no timer. The topic name and type must match on both sides.</li>
                             </ul>
                             <p>
-                                The <code>Pose</code> message has five <code>float32</code> fields: <code>x</code>, <code>y</code>, <code>theta</code>, <code>linear_velocity</code> and <code>angular_velocity</code>.<sup><a href="#ref-15">[15]</a></sup> In the published pose, <code>y</code> points up the screen and <code>theta</code> is the heading in radians.<sup><a href="#ref-14">[14]</a></sup> The first turtle spawns at <code>x=5.544445, y=5.544445, theta=0.0</code>, near the center and facing to the right.<sup><a href="#ref-16">[16]</a></sup> Turtlesim's topics use a reliable QoS profile that keeps the last 7 messages.<sup><a href="#ref-14">[14]</a></sup>
+                                Nodes can also provide services and hold parameters. Lesson 4.7 covers parameters in depth, so for now <code>square_driver</code> uses topics only.
+                            </p>
+                            <details class="deeper">
+                                <summary>For the curious: services and parameters inside a node</summary>
+                                <p>A service server is created with <code>create_service(Type, 'name', callback)</code>, where the callback fills in and returns a response. A client uses <code>create_client</code>, <code>wait_for_service</code>, and <code>call_async</code>, and the docs warn: &ldquo;Do not use <code>rclpy.spin_until_future_complete</code> in a ROS 2 callback.&rdquo;<sup><a href="#ref-12">[12]</a></sup></p>
+                                <p>A node can also declare a parameter with <code>self.declare_parameter('my_parameter', 'world')</code>, where the type comes from the default value. You read it with <code>self.get_parameter('my_parameter').get_parameter_value().string_value</code>, and you can change it at run time with <code>ros2 param set</code>.<sup><a href="#ref-13">[13]</a></sup></p>
+                            </details>
+
+                            <h2 class="article-section-title">07. How to talk to Turtlesim</h2>
+                            <p>
+                                Before writing a controller, check what messages Turtlesim listens to and sends back. Just like checking a motor&rsquo;s datasheet before wiring it up, reading the simulator&rsquo;s topic names keeps you from guessing. Turtlesim reads speed commands on one topic and broadcasts the turtle&rsquo;s position and heading on another.
+                            </p>
+                            <p>
+                                The Lyrical Turtlesim source shows that each turtle subscribes to <code>&lt;name&gt;/cmd_vel</code> using <code>geometry_msgs/msg/Twist</code>. It publishes <code>&lt;name&gt;/pose</code> using <code>turtlesim_msgs/msg/Pose</code>, as well as <code>&lt;name&gt;/color_sensor</code>.<sup><a href="#ref-14">[14]</a></sup> For the first turtle, those topic names become <code>/turtle1/cmd_vel</code> and <code>/turtle1/pose</code>.
+                            </p>
+                            <p>
+                                Three details from Turtlesim&rsquo;s source code shape how you design <code>square_driver</code>:<sup><a href="#ref-14">[14]</a></sup>
+                            </p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label">Only two velocity fields are used:</span> Turtlesim reads <code>linear.x</code> and <code>angular.z</code> from the Twist message. It uses <code>linear.y</code> only if its <code>holonomic</code> parameter is true.<sup><a href="#ref-14">[14]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">A one-second command timeout:</span> If more than 1.0 s passes since the last <code>cmd_vel</code> message, Turtlesim sets all velocities to zero. A node that publishes once and stops will make the turtle move briefly and halt.<sup><a href="#ref-14">[14]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Walls are hard limits:</span> Positions are clamped to the canvas. When the turtle reaches the edge, Turtlesim logs &ldquo;Oh no! I hit the wall!&rdquo;<sup><a href="#ref-14">[14]</a></sup></li>
+                            </ul>
+                            <p>
+                                When you add feedback later, your node will read the <code>Pose</code> message. It has five <code>float32</code> fields: <code>x</code>, <code>y</code>, <code>theta</code>, <code>linear_velocity</code>, and <code>angular_velocity</code>.<sup><a href="#ref-15">[15]</a></sup> In this pose, <code>y</code> points up the screen and <code>theta</code> is the heading in radians.<sup><a href="#ref-14">[14]</a></sup> The first turtle spawns at <code>x=5.544445, y=5.544445, theta=0.0</code>, near the center and facing to the right.<sup><a href="#ref-16">[16]</a></sup>
                             </p>
                             <div class="article-callout">
                                 <div class="article-callout-header"><i class="fas fa-exclamation-triangle"></i> Old tutorials will break: turtlesim_msgs</div>
-                                <p>Starting with Kilted, Turtlesim's message and service definitions moved out of the <code>turtlesim</code> package into a new <code>turtlesim_msgs</code> package. On the Kilted and Lyrical branches <code>turtlesim_msgs/msg/Pose.msg</code> exists and <code>turtlesim/msg/Pose.msg</code> does not; on Humble and Jazzy it is the other way round.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-14">[14]</a></sup> Many tutorials online still write <code>from turtlesim.msg import Pose</code> and <code>&lt;depend&gt;turtlesim&lt;/depend&gt;</code>. On Lyrical, use <code>from turtlesim_msgs.msg import Pose</code>, <code>from turtlesim_msgs.srv import TeleportAbsolute</code>, and depend on <code>turtlesim_msgs</code>. You can confirm with <code>ros2 interface show turtlesim_msgs/msg/Pose</code>.</p>
+                                <p>Starting with Kilted, Turtlesim&rsquo;s message and service definitions moved out of the <code>turtlesim</code> package into a new <code>turtlesim_msgs</code> package. On the Kilted and Lyrical branches, <code>turtlesim_msgs/msg/Pose.msg</code> exists and <code>turtlesim/msg/Pose.msg</code> does not. On Humble and Jazzy, it is the other way round.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-14">[14]</a></sup> Many tutorials online still write <code>from turtlesim.msg import Pose</code> and <code>&lt;depend&gt;turtlesim&lt;/depend&gt;</code>. On Lyrical, use <code>from turtlesim_msgs.msg import Pose</code>, <code>from turtlesim_msgs.srv import TeleportAbsolute</code>, and depend on <code>turtlesim_msgs</code>. You can confirm with <code>ros2 interface show turtlesim_msgs/msg/Pose</code>.</p>
                             </div>
+                            <details class="deeper">
+                                <summary>For the curious: Turtlesim services, actions, and QoS profile</summary>
+                                <p>Each turtle also offers the services <code>set_pen</code>, <code>teleport_relative</code>, and <code>teleport_absolute</code>, along with the action <code>rotate_absolute</code>. The Turtlesim node itself provides the services <code>clear</code>, <code>reset</code>, <code>spawn</code>, and <code>kill</code>.<sup><a href="#ref-14">[14]</a></sup></p>
+                                <p>Turtlesim&rsquo;s topics use a reliable QoS profile that keeps the last 7 messages.<sup><a href="#ref-14">[14]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">08. Designing the square driver: a timer-driven state machine</h2>
+                            <h2 class="article-section-title">08. Driving the turtle in a square</h2>
                             <p>
-                                The simplest way to draw a square is <em>open-loop</em>: drive forward for a fixed time, turn for a fixed time, and repeat four times, without ever checking where the turtle actually is. The timeout from Section 07 decides the structure. We cannot send one "go forward" message and sleep; we must keep publishing. So the node uses a timer that fires 10 times a second (every 0.1 s, well under the 1.0 s timeout) and a small <strong>state machine</strong> with three states: <code>FORWARD</code>, <code>TURN</code> and <code>DONE</code>.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                                Now you are ready to write <code>square_driver</code>. The simplest way to draw a square is to drive forward for a set time, turn for a set time, and repeat four times. Engineers call this <em>open-loop</em> control because the node never checks where the turtle actually is while moving. Instead, it trusts a timer and simple speed-times-time math.
                             </p>
                             <p>
-                                The timing is simple kinematics. At 1.0 m/s, a 2.0 m side takes 2.0 s. At 1.0 rad/s, a 90&deg; turn (&pi;/2 rad) takes about 1.57 s. Starting near (5.54, 5.54), a 2 m square stays well clear of the walls. Replace the generated <code>~/ros2_ws/src/turtle_square/turtle_square/square_driver.py</code> with the code below. It is an example written for this lesson, so test it on your own Lyrical install before relying on it.
+                                The one-second timeout from section 07 decides the node&rsquo;s structure. You cannot send one &ldquo;go forward&rdquo; message and sleep, because the turtle would stop after 1.0 s. Instead, the node uses a timer that fires 10 times a second (every 0.1 s, well under the 1.0 s timeout). On each tick, it updates a small <strong>state machine</strong> with three states: <code>FORWARD</code>, <code>TURN</code>, and <code>DONE</code>.<sup><a href="#ref-14">[14]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                            </p>
+                            <p>
+                                The timing is simple motion math. At 1.0 m/s, a 2.0 m side takes 2.0 s. At 1.0 rad/s, a 90&deg; turn (&pi;/2 rad) takes about 1.57 s. Starting near (5.54, 5.54), a 2 m square stays well clear of the walls. Replace the generated <code>~/ros2_ws/src/turtle_square/turtle_square/square_driver.py</code> with the code below. Because it is an example written for this lesson, test it on your own Lyrical install before relying on it.
                             </p>
                             <pre class="article-code"><code>import math
 
@@ -475,27 +544,30 @@ def main(args=None):
 if __name__ == '__main__':
     main()</code></pre>
                             <p>
-                                Each piece follows the tutorial pattern: the publisher and timer are created in <code>__init__</code>, all the behavior lives in the timer callback, and <code>main</code> uses the <code>with rclpy.init(...)</code> block.<sup><a href="#ref-10">[10]</a></sup> The callback first checks for a state change and then builds the message, so the command sent on each tick always matches the current state.
+                                Each piece follows the tutorial pattern from section 06. The publisher and timer are created in <code>__init__</code>, all the behavior lives in the timer callback, and <code>main</code> uses the <code>with rclpy.init(...)</code> block.<sup><a href="#ref-10">[10]</a></sup> The callback checks for a state change before building the message, so the command sent on each tick always matches the current state.
                             </p>
                             <p>
-                                Do not expect a perfect square. The timer only checks the clock every 0.1 s, so a turn that should last 1.57 s actually lasts until the next tick after that, and Turtlesim integrates the motion in its own small time steps.<sup><a href="#ref-14">[14]</a></sup> These small errors add up from corner to corner, and the last side will not land exactly on the start point. That drift shows the limit of open-loop control, and it is why Section 10 adds feedback.
+                                Do not expect a perfect square. The timer only checks the clock every 0.1 s, so a turn that should last 1.57 s actually lasts until the next tick after that. Turtlesim also integrates the motion in its own small time steps.<sup><a href="#ref-14">[14]</a></sup> These small errors add up from corner to corner, so the last side will not land back on the exact start point. That drift shows the limit of open-loop control, and it is why section 10 adds feedback.
                             </p>
 
                             <div data-widget="square-fsm">
                                 <p class="widget-note">The square driver state machine needs JavaScript. With it on, you can step through timer ticks or run the trajectory to observe state transitions and open-loop drift.</p>
                             </div>
-                            <h2 class="article-section-title">09. Building, running and troubleshooting</h2>
+                            <h2 class="article-section-title">09. Building, running, and fixing common errors</h2>
                             <p>
-                                Because we used <code>--node-name square_driver</code>, the entry point <code>'square_driver = turtle_square.square_driver:main'</code> is already in <code>setup.py</code>.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-9">[9]</a></sup> From the workspace root, check dependencies and build just this package:<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-3">[3]</a></sup>
+                                With <code>square_driver.py</code> saved, you are ready to build your package and drive the turtle. Building installs your Python code and entry point into your workspace&rsquo;s <code>install</code> folder so <code>ros2 run</code> can find it. You will check dependencies with <code>rosdep</code>, build <code>turtle_square</code> with <code>colcon</code>, and run it alongside Turtlesim in separate terminals.
+                            </p>
+                            <p>
+                                Because you used <code>--node-name square_driver</code> earlier, the entry point <code>'square_driver = turtle_square.square_driver:main'</code> is already in <code>setup.py</code>.<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-9">[9]</a></sup> From your workspace root, check dependencies and build just this package:<sup><a href="#ref-7">[7]</a></sup><sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <pre class="article-code"><code>cd ~/ros2_ws
 rosdep install -i --from-path src --rosdistro lyrical -y
 colcon build --packages-select turtle_square</code></pre>
                             <p>
-                                A few colcon options are worth knowing. <code>--packages-up-to</code> builds a package plus everything it depends on. <code>--symlink-install</code> "saves you from having to rebuild every time you tweak python scripts" (on Windows it needs administrator rights or Developer Mode). <code>--event-handlers console_direct+</code> shows build output live instead of only in <code>log/</code>, and <code>--executor sequential</code> builds one package at a time on low-resource machines such as a Raspberry Pi.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-5">[5]</a></sup> Even with a symlink install, rebuild after you change <code>setup.py</code>, <code>setup.cfg</code> or <code>package.xml</code>, because those files control what gets installed.
+                                If you plan to tweak your Python code often, add <code>--symlink-install</code> to the build command. It &ldquo;saves you from having to rebuild every time you tweak python scripts&rdquo; (on Windows it needs administrator rights or Developer Mode).<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-5">[5]</a></sup> Even with a symlink install, rebuild after you change <code>setup.py</code>, <code>setup.cfg</code>, or <code>package.xml</code>, because those files control what gets installed.
                             </p>
                             <p>
-                                Now open a <strong>new</strong> terminal for each program and source the overlay in each one that runs your package:<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                                Now open a <strong>new</strong> terminal for each program, and source your overlay in each terminal that runs your package:<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <pre class="article-code"><code># Terminal 1
 source /opt/ros/lyrical/setup.bash
@@ -540,22 +612,29 @@ ros2 run turtle_square square_driver</code></pre>
                                 <figcaption>The workspace from this lesson after a build, and the order of the steps that build and run it. Build and run in separate terminals: the run terminal sources the underlay and then the overlay.</figcaption>
                             </figure>
                             <p>
-                                The turtle should trace four sides and stop, and Terminal 2 should log "Finished side 1" through "Finished side 4". In a third terminal you can watch it work with <code>ros2 topic echo /turtle1/pose</code>, check who is connected with <code>ros2 topic info /turtle1/cmd_vel</code>, or open <code>rqt_graph</code> from lesson 4.5. To clear the drawing and put the turtle back in the center, call <code>ros2 service call /reset std_srvs/srv/Empty</code>; if that type is rejected, check it with <code>ros2 service type /reset</code>.<sup><a href="#ref-14">[14]</a></sup>
+                                The turtle should trace four sides and stop. Terminal 2 should log &ldquo;Finished side 1&rdquo; through &ldquo;Finished side 4&rdquo;. In a third terminal, you can watch it move with <code>ros2 topic echo /turtle1/pose</code>, check connections with <code>ros2 topic info /turtle1/cmd_vel</code>, or open <code>rqt_graph</code> from lesson 4.5. To clear the drawing and put the turtle back in the center, call <code>ros2 service call /reset std_srvs/srv/Empty</code>. If that type is rejected, check it with <code>ros2 service type /reset</code>.<sup><a href="#ref-14">[14]</a></sup>
                             </p>
                             <p>
-                                When something goes wrong, the message usually points to one of a small number of causes:
+                                When something goes wrong, the error message usually points to one of five common causes:
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Package 'turtle_square' not found:</span> This terminal has not sourced <code>install/setup.bash</code>, or the build failed. Source the overlay in a fresh terminal and check the build output.<sup><a href="#ref-3">[3]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">No executable found:</span> <code>ros2 run</code> looks for the program under <code>lib/&lt;package&gt;</code>. Check that <code>setup.cfg</code> exists, that the <code>console_scripts</code> entry is spelled correctly, and that you rebuilt after editing <code>setup.py</code>. A community report traces this error to a missing <code>setup.cfg</code>, which left the program installed in <code>bin</code> instead of <code>lib/&lt;package&gt;</code>.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-17">[17]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">No executable found:</span> <code>ros2 run</code> looks for the program under <code>lib/&lt;package&gt;</code>. Check that <code>setup.cfg</code> exists, that the <code>console_scripts</code> entry is spelled right, and that you rebuilt after editing <code>setup.py</code>. A community report traces this error to a missing <code>setup.cfg</code>, which installed the program in <code>bin</code> instead of <code>lib/&lt;package&gt;</code>.<sup><a href="#ref-10">[10]</a></sup><sup><a href="#ref-17">[17]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">ModuleNotFoundError for turtlesim.msg:</span> The code was written for Jazzy or earlier. Import from <code>turtlesim_msgs.msg</code> instead.<sup><a href="#ref-15">[15]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">The node runs but the turtle does not move:</span> Check the topic name with <code>ros2 topic info /turtle1/cmd_vel</code>. Make sure you publish repeatedly from a timer, not once, because of the one-second timeout.<sup><a href="#ref-14">[14]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Strange build problems after sourcing:</span> You built in a terminal where the overlay was sourced. Open a new terminal, source only the underlay, and build again.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Strange build problems after sourcing:</span> You built in a terminal where the overlay was already sourced. Open a new terminal, source only the underlay, and build again.<sup><a href="#ref-3">[3]</a></sup></li>
                             </ul>
+                            <details class="deeper">
+                                <summary>For the curious: more colcon build options</summary>
+                                <p>Three extra <code>colcon</code> flags help as your workspaces grow. <code>--packages-up-to</code> builds a package plus everything it depends on. <code>--event-handlers console_direct+</code> shows build output live instead of writing it only to <code>log/</code>. Finally, <code>--executor sequential</code> builds one package at a time on low-resource machines such as a Raspberry Pi.<sup><a href="#ref-3">[3]</a></sup><sup><a href="#ref-5">[5]</a></sup></p>
+                            </details>
 
-                            <h2 class="article-section-title">10. Stretch: closing the loop with pose feedback</h2>
+                            <h2 class="article-section-title">10. Stretch: steering with live pose feedback</h2>
                             <p>
-                                A <em>closed-loop</em> version stops guessing from time and uses the pose Turtlesim reports. Subscribe to <code>/turtle1/pose</code> and store the latest message. In <code>FORWARD</code>, record the start point at the beginning of each side and keep driving until the straight-line distance from it reaches the side length. In <code>TURN</code>, aim for a target heading 90&deg; past the previous one and turn with a speed proportional to the remaining heading error. The fields come straight from the <code>Pose</code> message.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-10">[10]</a></sup> The fragment below shows the new pieces; like the main example, treat it as a starting point to test, not finished code.
+                                Your open-loop square in section 08 drifted because it only counted seconds. A smarter approach is to watch where the turtle actually is and adjust your commands as it moves. Engineers call this <em>closed-loop</em> control because sensor feedback closes the loop between your commands and the robot&rsquo;s motion. In this stretch step, you subscribe to <code>/turtle1/pose</code> so the turtle drives the true distance and turns to the true angle.
+                            </p>
+                            <p>
+                                Here is how the feedback loop works. Subscribe to <code>/turtle1/pose</code> and store the latest message. In <code>FORWARD</code>, save the start point at the beginning of each side and drive until the straight-line distance from it reaches the side length. In <code>TURN</code>, aim for a target heading 90&deg; past the previous one and turn at a speed proportional to the remaining heading error. All of these fields come straight from the <code>Pose</code> message.<sup><a href="#ref-15">[15]</a></sup><sup><a href="#ref-10">[10]</a></sup> Like the main example, treat the fragment below as a starting point to test, not finished code.
                             </p>
                             <pre class="article-code"><code>from turtlesim_msgs.msg import Pose   # Lyrical: turtlesim_msgs, not turtlesim
 
@@ -577,7 +656,7 @@ ros2 run turtle_square square_driver</code></pre>
         msg.angular.z = max(-1.0, min(1.0, 2.0 * error))   # proportional, clamped
         # switch back to FORWARD when abs(error) &lt; 0.01</code></pre>
                             <p>
-                                The <code>atan2(sin, cos)</code> trick keeps the error between &minus;&pi; and &pi;, so the turtle always turns the short way even when the target heading wraps past &pi;. The proportional term slows the turn as the error shrinks, which is the same idea you will meet again in the control chapter. Remember to add <code>turtlesim_msgs</code> to <code>package.xml</code> (we already did) and rebuild.
+                                The <code>atan2(sin, cos)</code> formula keeps the heading error between &minus;&pi; and &pi;, so the turtle always turns the short way even when the target wraps past &pi;. The proportional term slows the turn down as the error shrinks, which is the same idea you will meet again in the control chapter. Remember to add <code>turtlesim_msgs</code> to <code>package.xml</code> (we already did) and rebuild.
                             </p>
 
                             <div class="article-callout try-it">
@@ -654,10 +733,10 @@ ros2 run turtle_square square_driver</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+            <script src="assets/js/course-data.js?v=26037997" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
-            <script src="assets/js/widgets.js?v=1a8fb811" defer></script>
+            <script src="assets/js/widgets.js?v=254bdd0c" defer></script>
 
     </body>
 </html>

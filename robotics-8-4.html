@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT7M",
+            "timeRequired": "PT8M",
             "teaches": [
                 "black channel principle",
                 "PROFIsafe",
@@ -224,15 +224,15 @@
                             Messages on any network can be lost, repeated, corrupted or delayed.
                         </p>
                         <p>
-                            For a safety signal, a lost or late message must never leave a machine running. The safety network design ensures that communication failures cause safety devices to go to a known safe state.<sup><a href="#ref-1">[1]</a></sup>
+                            For a safety signal, a lost or late message must never leave a machine running. So a safety network is designed so that when communication fails, the safety devices go to a known safe state.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
-                            The black channel principle assumes the network is completely unreliable, meaning diagnostics must exist outside the network infrastructure.<sup><a href="#ref-1">[1]</a></sup>
+                            The trick is called the black channel principle. It treats the network as completely unreliable, like a pipe you cannot see into. So the checks that catch bad messages must sit outside the network&rsquo;s cables and switches.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">02. The black-channel principle</h2>
                         <p>
-                            The black channel principle integrates safety and standard communication on one cable from the sensor over the controller to the actuator.<sup><a href="#ref-2">[2]</a></sup> Safety messages and ordinary messages travel on the same cable and through the same switches.
+                            With a black channel, safety messages and standard messages share one cable, all the way from the sensor, through the controller, to the actuator (the part that moves).<sup><a href="#ref-2">[2]</a></sup> Safety messages and ordinary messages travel on the same cable and through the same switches.
                         </p>
                         <p>
                             The checks happen in the sending and receiving safety devices, so the switches and cables in between are not part of the safety function. If the network damages, repeats or delays a message, the receiving device notices and goes to its safe state.
@@ -246,41 +246,41 @@
                             </figure>
 
                         <p>
-                            This independence gives automation designers flexibility when laying out manufacturing systems. PROFIsafe operates independently of base transmission channels whether copper wires, fiber optics, wireless, or backplanes.<sup><a href="#ref-2">[2]</a></sup>
+                            Because the network does not matter to the safety checks, designers have more freedom when they lay out a factory. PROFIsafe, for example, works the same whatever carries it: copper wires, fiber optics, wireless, or backplanes.<sup><a href="#ref-2">[2]</a></sup>
                         </p>
                         <p>
-                            While the black channel concept allows safety data to ride on standard cables, it places strict requirements on physical device design. Implementing the PROFIsafe protocol cannot turn a standard device into a safety device without safety hardware architecture.<sup><a href="#ref-2">[2]</a></sup> The final safety level of a device is set by the architecture of its safety hardware.<sup><a href="#ref-2">[2]</a></sup> The device also does not have to reach the protocol's maximum level: PROFIsafe is suitable up to SIL 3, but an F-device only needs the level its safety function requires.<sup><a href="#ref-2">[2]</a></sup> For drives, IEC 61800-5-2 defines safety stopping and monitoring functions for drives with integrated safety, called F-drives.<sup><a href="#ref-2">[2]</a></sup>
+                            The cables may be ordinary, but the devices at each end may not. A black channel places strict requirements on how those devices are built. Adding the PROFIsafe protocol to a standard device does not make it a safety device: it also needs safety hardware inside.<sup><a href="#ref-2">[2]</a></sup> How safe the device finally is depends on how that safety hardware is built (its architecture).<sup><a href="#ref-2">[2]</a></sup> The device does not have to reach the protocol&rsquo;s top level either. PROFIsafe is suitable up to SIL 3 (Safety Integrity Level 3), but a safety device on PROFIsafe (an F-device) only needs the level its own safety function requires.<sup><a href="#ref-2">[2]</a></sup> For drives, IEC 61800-5-2 defines safety stopping and monitoring functions for drives with integrated safety, called F-drives.<sup><a href="#ref-2">[2]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">03. PROFIsafe protocol and functional safety standards</h2>
                         <p>
-                            To establish an open, vendor-neutral standard for industrial safety communication, the PROFIBUS and PROFINET International (PI) organization introduced PROFIsafe. PROFIsafe is standardized as an international standard under IEC 61784-3-3 for functional safety communication.<sup><a href="#ref-2">[2]</a></sup>
+                            PROFIsafe is a safety protocol that any maker can use, not just one company. The PROFIBUS and PROFINET International (PI) organization introduced it as an open, vendor-neutral standard for industrial safety communication. It is now an international standard, IEC 61784-3-3, for functional safety communication.<sup><a href="#ref-2">[2]</a></sup>
                         </p>
                         <p>
-                            PROFIsafe complies with safety requirements up to SIL 3 under IEC 61508 and PL e category 4 under ISO 13849.<sup><a href="#ref-2">[2]</a></sup> <a href="robotics-5-4.html">Lesson 5.4</a> explains Performance Levels.
+                            PROFIsafe meets safety requirements up to SIL 3 under IEC 61508 and PL e (Performance Level e) category 4 under ISO 13849.<sup><a href="#ref-2">[2]</a></sup> <a href="robotics-5-4.html">Lesson 5.4</a> explains Performance Levels.
                         </p>
                         <p>
-                            Universal Robots' PROFIsafe guide shows what the integrator configures for each connection: each telegram carries a 3- or 4-byte CRC depending on the PLC, the robot has a safety address (F-Address), and an F-Watchdog time in milliseconds sets how long a device may wait for the next message.<sup><a href="#ref-3">[3]</a></sup>
+                            Universal Robots' PROFIsafe guide shows what the integrator configures for each connection: each telegram (message) carries a 3- or 4-byte CRC, a checksum that shows whether the data was damaged, depending on the PLC. The robot has a safety address (F-Address). An F-Watchdog time in milliseconds sets how long a device may wait for the next message.<sup><a href="#ref-3">[3]</a></sup>
                         </p>
 
                         <h2 class="article-section-title">04. CIP Safety and message integrity validation</h2>
                         <p>
-                            In systems built on the Common Industrial Protocol (CIP) family—including EtherNet/IP and DeviceNet—safety networking is handled by CIP Safety. CIP Safety is a functional safety protocol enabling standard and safety devices to operate together on the same industrial network.<sup><a href="#ref-4">[4]</a></sup> It meets functional safety requirements for applications up to SIL 3 under IEC 61508.<sup><a href="#ref-4">[4]</a></sup>
+                            In systems built on the Common Industrial Protocol (CIP) family—including EtherNet/IP and DeviceNet—safety networking is handled by CIP Safety. CIP Safety is a functional safety protocol. It lets standard devices and safety devices work together on the same industrial network.<sup><a href="#ref-4">[4]</a></sup> It meets functional safety requirements for applications up to SIL 3 under IEC 61508.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            All CIP Safety transfers use safety CRCs to check that the data arrived intact.<sup><a href="#ref-4">[4]</a></sup>
+                            CIP Safety uses several checks, each catching a different way a message can go wrong. First, all CIP Safety transfers use safety CRCs (checksums) to check that the data arrived intact.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            To ensure temporal validity, CIP Safety data is time-stamped to determine the age of the produced data.<sup><a href="#ref-4">[4]</a></sup> ODVA contrasts this with ordinary reception timers: a reception timer tells how much time has passed since a message last arrived, but not how old the data inside it is. A time stamp also reveals delays from queuing, retries and routing.<sup><a href="#ref-1">[1]</a></sup>
+                            Second, a safety message must not be too old. To make sure of this, CIP Safety data is time-stamped, so the receiver can tell how old the data is.<sup><a href="#ref-4">[4]</a></sup> ODVA contrasts this with ordinary reception timers: a reception timer tells how much time has passed since a message last arrived, but not how old the data inside it is. A time stamp also reveals delays from queuing, retries and routing.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
-                            To prevent packets from being routed to the wrong machine in large manufacturing plants, address validation is required. A production identifier is encoded in each safety transmission to ensure messages arrive at the correct consumer.<sup><a href="#ref-4">[4]</a></sup>
+                            Third, a safety message must reach the right machine. In a large plant, a packet could be routed to the wrong one, so address validation is required. Each safety transmission carries a production identifier, which makes sure the message arrives at the correct receiver (consumer).<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            A Safety Network Number identifies each network path individually to allow each device to be uniquely identified.<sup><a href="#ref-4">[4]</a></sup>
+                            A Safety Network Number labels each network path, so that every device can be told apart from every other.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
                         <p>
-                            The Safety Validator object in the CIP Safety application layer confirms the integrity of safety data transfers.<sup><a href="#ref-1">[1]</a></sup>
+                            Inside each device, a piece of the CIP Safety software called the Safety Validator object confirms that safety data transfers are intact.<sup><a href="#ref-1">[1]</a></sup>
                         </p>
                         <p>
                             Time stamps only work if both sides agree on the time. Time is coordinated between safety producers and consumers using ping requests and ping responses.<sup><a href="#ref-1">[1]</a></sup>
@@ -303,7 +303,7 @@
                             Safety over EtherCAT technology was developed according to IEC 61508 and is standardized in IEC 61784-3.<sup><a href="#ref-5">[5]</a></sup> It is suitable for safety applications up to SIL 3.<sup><a href="#ref-5">[5]</a></sup>
                         </p>
                         <p>
-                            Safety over EtherCAT frames are called safety containers and contain safety-critical process data along with securing information.<sup><a href="#ref-5">[5]</a></sup> The EtherCAT frame around the container is just the black channel.
+                            In Safety over EtherCAT, each safety message is called a safety container. It holds the safety-critical process data plus extra information that protects it.<sup><a href="#ref-5">[5]</a></sup> The EtherCAT frame around the container is just the black channel.
                         </p>
                         <p>
                             The safety container in FSoE is embedded directly within cyclical communication process data.<sup><a href="#ref-5">[5]</a></sup> So safety data moves in the same cycle as the ordinary process data (see <a href="robotics-8-2.html">8.2</a> for how EtherCAT frames are processed).
@@ -390,7 +390,7 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-        <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+        <script src="assets/js/course-data.js?v=26037997" defer></script>
         <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
         <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 

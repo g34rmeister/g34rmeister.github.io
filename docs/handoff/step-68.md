@@ -1,0 +1,29 @@
+# Step 68: five new widgets (Wave 2 of step 67)
+
+Branch: `iterate-67`. Read CLAUDE.md first. Gemini drafts one widget per task as a standalone file; Claude merges into `assets/js/widgets.js`, adds the placeholder to the lesson, runs the tests and screenshots at 320 px and 1280 px in light and dark.
+
+## Shared rules (every task)
+- **Write only** `docs/handoff/step-68/<widget-name>.js`. Do not edit `widgets.js`, CSS, or any page. You cannot run shell commands; use file read/write only.
+- **Pattern to copy:** read `assets/js/widgets.js` lines 1-60 (helpers `h`, `s`, `slider`, `frame`, `plotFrame`), 246-260 (`button`) and `initRosgraph` (lines 719-852). Your file contains exactly one function `function init<Name>(root) { ... }` that runs inside that IIFE and uses only those helpers. It ends with `root.replaceChildren(frame('<title>', [...]))` like the others.
+- **Facts only from the lesson.** Every label, number, name and explanation shown must be stated in the lesson page. Above the function, add a comment block `// Facts used:` listing each fact with its HTML line number in the lesson. Anything the lesson does not say: leave it out (do not use general knowledge; earlier tickets were rejected for this).
+- **No new CSS classes.** Use existing ones only: `widget-readout`, `widget-buttons`, `widget-note`, `plot-label`, `plot-line`, `d-box`, `d-box-gold`, `d-title`, `d-muted`, `d-strong`, `d-line`. Colours via existing vars only (`var(--wp-text)`, `--wp-text-muted`, `--wp-border`, `--wp-link`, `--wp-gold-text`, `--wp-gold-soft`, `--wp-bg`) so dark mode works.
+- **Layout:** SVG via `plotFrame(W, H, '<aria-label describing the picture>')` with a viewBox around 560x320 (it scales; must read at 320 px wide, so text ≥ 11 px in viewBox units and no more than ~45 characters per SVG text line). Controls are native buttons/sliders (keyboard works). One `aria-live="polite"` readout (`widget-readout`) states the current result in words.
+- **Animation:** only if it explains the idea; start paused, and skip it when `window.matchMedia('(prefers-reduced-motion: reduce)').matches`.
+- At the top of the file, a comment `// Placeholder text:` with one sentence for the no-JS fallback, written like the existing ones ("The ... needs JavaScript. With it on, you can ...").
+- Known failure log (do not repeat): facts paraphrased from general knowledge instead of the lesson; contradicting the lesson's cited wording; invented CSS alias classes; text that overflows at 320 px; leftover conflict markers.
+- End: "Finish with a summary of at most 10 lines: files changed, anything unresolved, any deviation. Do not paste file contents."
+
+## T-68a `costmap-inflation` (robotics-10-2.html, sections 02-04)
+`initCostmapInflation`. A small top-down grid (about 20x12 cells) with a wall and one obstacle and a round robot. Sliders: inflation radius and robot radius (ranges and any parameter names only as the lesson gives them). Cells are coloured by the cost bands the lesson describes (lethal, inscribed, decaying cost, free); a legend names them in the lesson's words. A toggle between the global and local costmap, showing only what the lesson says differs (for example the local one as a rolling window around the robot). The readout says whether the robot's centre cell is free, in inflated cost, or in collision.
+
+## T-68b `launch-tree` (robotics-4-7.html, sections 03, 04, 06, 07 and the parameters section)
+`initLaunchTree`. A tree diagram of the lesson's turtlesim mimic launch file: the launch file, its nodes, their namespaces and the resulting node/topic names, exactly as the lesson's file defines them. Buttons for any launch argument the lesson uses, which redraw the names that change. A second small panel: "Set with ros2 param set" vs "Loaded from YAML at launch", then a "Restart node" button that shows which value survives (per the lesson). The readout lists the resulting full node names.
+
+## T-68c `moveit-pipeline` (robotics-4-8.html, sections 02-08)
+`initMoveitPipeline`. A left-to-right (wrapping to two rows when narrow) chain of boxes in the lesson's order: URDF/xacro, SRDF, move_group, planning scene, planner, trajectory, ros2_control, then mock hardware or a real arm. Clicking (or Enter) on a box fills an info panel below with what the lesson says that stage does (1-2 sentences, lesson wording). A switch OMPL / Pilz changes the planner box and states the difference the lesson describes. A switch mock hardware / real arm states what the lesson says mock hardware does and does not test.
+
+## T-68d `lighting-angles` (robotics-7-2.html, sections 02-05)
+`initLightingAngles`. A side-view sketch of a camera above a part with a raised edge and a surface scratch. Buttons for each lighting type the lesson covers (backlight, directional/glancing/darkfield, diffuse dome, coaxial). Each draws the light position and a few rays, and a small "camera view" inset shows which features appear bright or dark, only as the lesson describes for that technique. The readout states what that technique is good for, in the lesson's words.
+
+## T-68e `troubleshoot-steps` (robotics-9-2.html, sections 01-06) — safety content
+`initTroubleshootSteps`. A step-through of the lesson's method for one fault scenario taken from the lesson (use its example if it has one; otherwise a generic "robot stopped with an error" with no invented error codes). Steps in the lesson's order with Next / Back buttons and a progress line. At the "gather symptoms" step, offer two choices: the lesson's correct action and "Reset the alarm and restart"; the second shows the lesson's warning about unverified resets. **Safety text (lockout/tagout, hazardous energy) must be copied word-for-word from the lesson**; mark each copied sentence's line number in `// Facts used:`. Do not add any safety step the lesson does not have.

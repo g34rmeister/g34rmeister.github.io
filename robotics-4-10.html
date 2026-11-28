@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=a8ab76ed" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT16M",
+            "timeRequired": "PT18M",
             "teaches": [
                 "assertion",
                 "linter",
@@ -212,33 +212,44 @@
 
                         <h2 class="article-section-title">01. Why this lab</h2>
                         <p>
-                            In <a href="robotics-3-4.html">lesson 3.4</a> you made your first pull request to fix a documentation typo. In <a href="robotics-4-6.html">lesson 4.6</a> you created a ROS 2 package from scratch, declared dependencies, and ran a node. This lab bridges the gap between those two milestones. In open-source robotics projects, you often download another developer's package and run automated checks. What should you do when a test fails?
+                            Imagine you download a robot arm package and run its automatic checks, and one check fails. You do not need to panic or give up. When a test fails, experienced contributors read the error, find the mistake, test a fix, and report what happened. This lab walks you through that whole loop on a small robot arm package.
                         </p>
                         <p>
-                            A newcomer might decide that the code is broken beyond repair, or give up. Experienced contributors do something else: they run the checks, read what the checks report, fix the mistake and share what they found. In this lab you run the tests of a small robot arm package, read a test failure, trace it to a wrong trigonometric formula, confirm a one-line fix, and write a bug report that a maintainer can act on.
+                            In <a href="robotics-3-4.html">lesson 3.4</a>, you made your first pull request to fix a documentation typo. In <a href="robotics-4-6.html">lesson 4.6</a>, you built a Robot Operating System 2 (ROS 2) package from scratch. You also declared its dependencies and ran a node. This lab bridges the gap between those two milestones.
+                        </p>
+                        <p>
+                            In open-source robotics, you often download another developer&rsquo;s package and run automated checks. Here, you will run tests on a small robot arm package and read a failing check. Then you will trace the failure to a wrong trigonometric formula, confirm a one-line fix, and write a bug report that a maintainer can act on.
                         </p>
 
                         <h2 class="article-section-title">02. What you need</h2>
                         <p>
-                            To run this lab you need Python 3, a virtual environment, and colcon installed with pip. A virtual environment is a folder that keeps one project&rsquo;s Python packages separate from the rest of the system. The colcon documentation gives the pip command used below and says it assumes a virtual environment with Python 3.5 or higher.<sup><a href="#ref-1">[1]</a></sup>
+                            You can practice finding and fixing package bugs on an ordinary computer. You do not need a ROS 2 installation for this lab. The sample package is written in standard Python, so you only need Python 3 and a few small tools. If you later work on a computer with a full ROS 2 installation (from <a href="robotics-4-3.html">lesson 4.3</a>), the exact same workflow applies.
                         </p>
                         <p>
-                            This lab requires no ROS 2 installation on your computer. The package is written in standard Python, and colcon is a general build tool that builds and tests pure Python packages without any robotics libraries present. If you later work on a computer with a full ROS 2 installation, as introduced in <a href="robotics-4-3.html">lesson 4.3</a>, the exact same colcon workflow and commands apply. The lab transcript below was produced on an Ubuntu 26.04 machine running Python 3.14 with colcon-core 0.21.3 installed from pip.
+                            To keep your system tidy, you will use a <strong>virtual environment</strong>. A virtual environment is a folder that keeps one project&rsquo;s Python packages separate from the rest of the system. Inside it, you will install two tools with <code>pip</code>, Python&rsquo;s package installer. One is <code>colcon</code>, a general build tool that builds and tests pure Python packages without robotics libraries. The other is <code>pytest</code>, a tool that runs Python tests.
                         </p>
                         <p>
-                            Set up the environment and an empty workspace with these commands. They are the ones used to produce the transcript in this lesson:
+                            Set up your virtual environment and an empty workspace folder called <code>ws</code> with these commands:
                         </p>
                         <pre class="article-code"><code>$ python3 -m venv venv
 $ . venv/bin/activate
 $ pip install -U colcon-common-extensions pytest
 $ mkdir -p ws/src</code></pre>
                         <p>
-                            After you have created the package files from Section 03, change into <code>ws</code> and run every colcon command from there.
+                            The first line creates the virtual environment, and the second line activates it. The third line installs <code>colcon</code> and <code>pytest</code>. The fourth line creates the <code>ws/src</code> folder where your package will live. After you create the package files in Section 03, change into <code>ws</code> and run every <code>colcon</code> command from there.
                         </p>
+                        <details class="deeper">
+                            <summary>For the curious: Python version requirements and lab environment</summary>
+                            <p>The colcon documentation gives the <code>pip</code> command used above and says it assumes a virtual environment with Python 3.5 or higher.<sup><a href="#ref-1">[1]</a></sup></p>
+                            <p>The lab transcript in this lesson was produced on an Ubuntu 26.04 machine running Python 3.14 with <code>colcon-core</code> 0.21.3 installed from <code>pip</code>.</p>
+                        </details>
 
-                        <h2 class="article-section-title">03. The package</h2>
+                        <h2 class="article-section-title">03. Creating the robot arm package</h2>
                         <p>
-                            The practice package for this lab is called <code>two_link</code>. It computes the forward kinematics of the planar two-link arm from lesson <a href="robotics-1-4.html">1.4</a>: given the two link lengths and the two joint angles, it returns where the tip of the arm is. Create these four files inside <code>ws/src/two_link</code>. The file <code>two_link/__init__.py</code> is empty. It only tells Python that the folder is a package.
+                            Next, you will create a practice package called <code>two_link</code>. It models a flat two-joint robot arm, like a shoulder and an elbow from <a href="robotics-1-4.html">lesson 1.4</a>. You give the code two link lengths and two joint angles. It calculates where the tip of the arm lands, which is called forward kinematics.
+                        </p>
+                        <p>
+                            You will also add two automatic checks for that math. A <strong>test</strong> runs a function with specific inputs and checks if the result matches expectations. Create these four files inside <code>ws/src/two_link</code>. The file <code>two_link/__init__.py</code> is empty and only tells Python that the folder is a package.
                         </p>
                         <pre class="article-code"><code>ws/src/two_link/
 ├── setup.py
@@ -248,10 +259,10 @@ $ mkdir -p ws/src</code></pre>
     ├── __init__.py
     └── kinematics.py</code></pre>
                         <p>
-                            The ROS 2 testing tutorial says that test code goes in a folder named <code>tests</code> in the root of the package.<sup><a href="#ref-2">[2]</a></sup> Any file with tests that should run must be named <code>test_FOO.py</code>, where FOO can be anything.<sup><a href="#ref-2">[2]</a></sup> The file <code>setup.py</code> must also declare a test dependency on <code>pytest</code> inside <code>extras_require</code>.<sup><a href="#ref-2">[2]</a></sup>
+                            The official ROS 2 Python testing tutorial sets three rules for test files. First, test code goes in a folder named <code>tests</code> in the root of the package.<sup><a href="#ref-2">[2]</a></sup> Second, any file with tests that should run must be named <code>test_FOO.py</code>, where <code>FOO</code> can be anything.<sup><a href="#ref-2">[2]</a></sup> Third, <code>setup.py</code> must declare a test dependency on <code>pytest</code> inside <code>extras_require</code>.<sup><a href="#ref-2">[2]</a></sup>
                         </p>
                         <p>
-                            Here is the complete content of <code>setup.py</code>. It configures package metadata and specifies that pytest is required to run tests:
+                            Here is the complete content of <code>setup.py</code>. It sets package metadata (like its name and version) and specifies that <code>pytest</code> is required to run tests:
                         </p>
                         <pre class="article-code"><code>from setuptools import find_packages, setup
 
@@ -265,7 +276,7 @@ setup(
     },
 )</code></pre>
                         <p>
-                            Here is <code>two_link/kinematics.py</code>. It defines the <code>forward()</code> function, which takes link lengths and joint angles in degrees, converts the angles to radians, and computes the coordinates of the tool tip:
+                            Here is <code>two_link/kinematics.py</code>. It defines a <code>forward()</code> function that takes link lengths and joint angles in degrees. It converts the angles to radians and computes the <code>(x, y)</code> coordinates of the tool tip:
                         </p>
                         <pre class="article-code"><code>import math
 
@@ -278,7 +289,7 @@ def forward(l1, l2, theta1_deg, theta2_deg):
     y = l1 * math.sin(t1) + l2 * math.sin(t2)
     return x, y</code></pre>
                         <p>
-                            Here is <code>tests/test_kinematics.py</code>. It defines two tests that check the output of <code>forward()</code> against expected coordinates. A test is an automated check that runs a function with specific inputs and checks whether the result matches expectations. An assertion is a statement in a test that checks if a condition is true, raising an error if the condition is false:
+                            Here is <code>tests/test_kinematics.py</code>. It runs two checks on <code>forward()</code>: one for a straight arm and one for a bent elbow. Each <code>assert</code> line is an <strong>assertion</strong>, which checks if a condition is true and raises an error if it is false. Notice <code>pytest.approx</code>, which checks that the returned coordinates match within a small tolerance:
                         </p>
                         <pre class="article-code"><code>import pytest
 
@@ -298,10 +309,13 @@ def test_elbow_bent():
 
                         <h2 class="article-section-title">04. Build and run the tests</h2>
                         <p>
-                            You run colcon from the root of the workspace, which here is the <code>ws</code> folder. The ROS 2 documentation says that sourcing the workspace before testing should not be necessary, because <code>colcon test</code> makes sure the tests run with the right environment and can reach their dependencies.<sup><a href="#ref-3">[3]</a></sup>
+                            Now that your package files are in place, you can build the package and run its checks. Building sets up the package in your workspace, and testing runs the checks in <code>test_kinematics.py</code>. When a test fails, <code>colcon</code> hides the details by default so the output stays short. You need one extra command to see what actually broke.
                         </p>
                         <p>
-                            First, build the package with <code>colcon build</code>, then run the test suite with <code>colcon test</code>:
+                            Run <code>colcon</code> from the root of your workspace, the <code>ws</code> folder. You do not need to source (load) the workspace before testing. The ROS 2 command-line testing guide explains that <code>colcon test</code> already ensures tests run with the right environment and dependencies.<sup><a href="#ref-3">[3]</a></sup>
+                        </p>
+                        <p>
+                            First, build the package with <code>colcon build</code>. Then run the test suite with <code>colcon test</code>:
                         </p>
                         <pre class="article-code"><code>$ colcon build
 Starting &gt;&gt;&gt; two_link
@@ -314,7 +328,7 @@ Finished &lt;&lt;&lt; two_link [0.26s]	[ with test failures ]
 Summary: 1 package finished [0.42s]
   1 package had test failures: two_link</code></pre>
                         <p>
-                            The build succeeded, but <code>colcon test</code> reported that <code>two_link</code> had test failures. Notice that <code>colcon test</code> does not print the failure details. The command line testing guide explains that to see the exact test cases which fail, you use the verbose flag.<sup><a href="#ref-3">[3]</a></sup> Run <code>colcon test-result --all --verbose</code> to see the full failure report:
+                            The build succeeded, but <code>colcon test</code> reported test failures in <code>two_link</code>. Notice that <code>colcon test</code> does not print the failure details. The command-line testing guide explains that you use the verbose flag (<code>--verbose</code>) to see the exact failing test cases.<sup><a href="#ref-3">[3]</a></sup> Run <code>colcon test-result --all --verbose</code> to print the full failure report:
                         </p>
                         <pre class="article-code"><code>$ colcon test-result --all --verbose
 build/two_link/pytest.xml: 2 tests, 0 errors, 1 failure, 0 skipped
@@ -331,19 +345,22 @@ Summary: 2 tests, 0 errors, 1 failure, 0 skipped</code></pre>
 
                         <h2 class="article-section-title">05. Read the failure</h2>
                         <p>
-                            Let us walk through the failure output line by line. The first line indicates that colcon parsed <code>build/two_link/pytest.xml</code>, recording two tests, zero unhandled execution errors, one failure, and zero skipped tests. The next line names the exact failing test function: <code>test_elbow_bent</code> in the <code>two_link.tests.test_kinematics</code> module.
+                            A failure report may look cryptic at first, but it gives you the exact clue to the bug. Instead of guessing what went wrong, you compare the number your code returned against what you calculate by hand. Here, the test expected the arm tip at <code>0.5</code>, but the code returned <code>0.2</code>. Working out the arm position by hand will point straight to the broken line.
                         </p>
                         <p>
-                            Inside the failure block, pytest shows the failed assertion: <code>assert 0.2 == 0.5 &plusmn; 5.0e-07</code>. The comparison failed because the function returned an obtained value of <code>0.2</code>, whereas the expected value was <code>0.5</code> within a tolerance of <code>5.0e-07</code>. A stack trace is a diagnostic report showing the sequence of function calls that ran up to the moment of a failure. Here, the failure points directly to the assertion on the y-coordinate inside <code>test_elbow_bent</code>.
+                            Walk through the failure output line by line. The first line comes from <code>build/two_link/pytest.xml</code>. It records two tests, zero unhandled execution errors, one failure, and zero skipped tests. The next line names the exact failing test function: <code>test_elbow_bent</code> in the <code>two_link.tests.test_kinematics</code> module.
                         </p>
                         <p>
-                            Now let us calculate the correct kinematics by hand. In <code>test_elbow_bent</code>, the arm parameters are length L1 = 0.5, length L2 = 0.3, shoulder angle θ1 = 90 degrees, and elbow angle θ2 = -90 degrees.
+                            Inside the failure block, <code>pytest</code> shows the failed assertion: <code>assert 0.2 == 0.5 &plusmn; 5.0e-07</code>. Your function returned an obtained value of <code>0.2</code>. The test expected <code>0.5</code> within a tolerance of <code>5.0e-07</code>. A <strong>stack trace</strong> is a report showing the sequence of function calls that ran up to a failure. Here, the failure points directly to the y-coordinate assertion inside <code>test_elbow_bent</code>.
                         </p>
                         <p>
-                            Link 1 starts at the base origin (0, 0) and points straight up along the positive y-axis at 90 degrees. The elbow position is x1 = 0.5 &middot; cos(90&deg;) = 0.0, and y1 = 0.5 &middot; sin(90&deg;) = 0.5.
+                            Now calculate the correct kinematics by hand for <code>test_elbow_bent</code>. The arm has lengths L1 = 0.5 and L2 = 0.3. Its shoulder angle is θ1 = 90 degrees, and its elbow angle is θ2 = -90 degrees.
                         </p>
                         <p>
-                            Link 2 is attached to the elbow. Its orientation relative to the global world frame is the sum of both joint angles: θ1 + θ2 = 90&deg; + (-90&deg;) = 0&deg;. Because this total angle is 0 degrees, link 2 points horizontally to the right, parallel to the positive x-axis. The tip coordinates are:
+                            Link 1 starts at the base origin (0, 0) and points straight up along the positive y-axis at 90 degrees. The elbow sits at x1 = 0.5 &middot; cos(90&deg;) = 0.0 and y1 = 0.5 &middot; sin(90&deg;) = 0.5.
+                        </p>
+                        <p>
+                            Link 2 is attached to the elbow. Its angle in the global world frame is the sum of both joint angles: θ1 + θ2 = 90&deg; + (-90&deg;) = 0&deg;. Because that total angle is 0 degrees, link 2 points horizontally to the right, parallel to the positive x-axis. The tip coordinates are:
                         </p>
                         <ul class="article-spec-list">
                             <li class="article-spec-item"><span class="spec-label">Correct x:</span> 0.5 &middot; cos(90&deg;) + 0.3 &middot; cos(90&deg; - 90&deg;) = 0.0 + 0.3 &middot; cos(0&deg;) = 0.3.</li>
@@ -357,7 +374,7 @@ Summary: 2 tests, 0 errors, 1 failure, 0 skipped</code></pre>
                             The buggy line computes 0.5 &middot; sin(90&deg;) + 0.3 &middot; sin(-90&deg;) = 0.5 &middot; 1.0 + 0.3 &middot; (-1.0) = 0.5 - 0.3 = 0.2. It took the sine of <code>t2</code> alone instead of the sine of <code>t1 + t2</code>.
                         </p>
                         <p>
-                            Why did the first test, <code>test_straight_arm</code>, pass? In that test, θ1 = 0 degrees and θ2 = 0 degrees. When θ1 is 0, the sum t1 + t2 equals 0 + t2 = t2. Therefore, whenever θ1 is 0, the buggy formula produces the exact same numerical result as the correct formula. The bug was completely hidden when testing only a fully extended horizontal arm.
+                            Why did the first test, <code>test_straight_arm</code>, pass? In that test, θ1 = 0 degrees and θ2 = 0 degrees. When θ1 is 0, the sum <code>t1 + t2</code> equals <code>0 + t2 = t2</code>. Whenever θ1 is 0, the buggy formula produces the exact same number as the right formula. Testing only a fully extended horizontal arm hid the bug completely.
                         </p>
 
                         <figure class="lesson-diagram">
@@ -403,7 +420,10 @@ Summary: 2 tests, 0 errors, 1 failure, 0 skipped</code></pre>
 
                         <h2 class="article-section-title">06. Fix it and test again</h2>
                         <p>
-                            To fix the bug, edit line 9 of <code>two_link/kinematics.py</code> so that it adds the two angles together, matching the x-coordinate line above it:
+                            Once you find a bug, you fix the line and run all the tests again. Running the full suite proves two things. First, the bent-arm check now passes. Second, your change did not break the straight-arm check that already worked.
+                        </p>
+                        <p>
+                            Edit line 9 of <code>two_link/kinematics.py</code> so it adds both angles together. That matches the x-coordinate line right above it:
                         </p>
                         <pre class="article-code"><code>y = l1 * math.sin(t1) + l2 * math.sin(t1 + t2)</code></pre>
                         <p>
@@ -422,10 +442,10 @@ build/two_link/pytest.xml: 2 tests, 0 errors, 0 failures, 0 skipped
 
 Summary: 2 tests, 0 errors, 0 failures, 0 skipped</code></pre>
                         <p>
-                            Both tests pass with zero failures. A regression is an unintended software bug introduced into code that previously worked correctly. Re-running the test suite ensures that fixing the bent-arm calculation did not break the straight-arm case.
+                            Both tests pass with zero failures. A <strong>regression</strong> is an unintended bug introduced into code that previously worked correctly. Re-running every test ensures that fixing the bent arm did not break the straight-arm case.
                         </p>
                         <p>
-                            When developing in large repositories, you often want to run a single test rather than the entire test suite. The Python testing tutorial explains that you can specify arguments to the pytest framework from the command line with the --pytest-args flag.<sup><a href="#ref-2">[2]</a></sup> The transcript demonstrates filtering for a specific test function by name with the <code>-k</code> option:
+                            In large repositories, you often want to run just one test instead of the whole suite. The Python testing tutorial explains that you can pass options to <code>pytest</code> with the <code>--pytest-args</code> flag.<sup><a href="#ref-2">[2]</a></sup> Below, the <code>-k</code> option filters for a single test by name:
                         </p>
                         <pre class="article-code"><code>$ colcon test --packages-select two_link --pytest-args -k test_straight_arm
 Finished &lt;&lt;&lt; two_link [0.25s]
@@ -435,27 +455,46 @@ $ colcon test-result --all
 build/two_link/pytest.xml: 1 test, 0 errors, 0 failures, 0 skipped
 
 Summary: 1 test, 0 errors, 0 failures, 0 skipped</code></pre>
-                        <p>
-                            To see the pytest output while the tests run, the tutorial gives one more flag: <code>colcon test --event-handlers console_cohesion+</code>.<sup><a href="#ref-2">[2]</a></sup> With the bug still in place, this run printed pytest&rsquo;s own summary with one failed and one passed test. It is not shown in the transcript above.
-                        </p>
+                        <details class="deeper">
+                            <summary>For the curious: printing pytest output while tests run</summary>
+                            <p>To see the <code>pytest</code> output while the tests run, the Python testing tutorial gives one more flag: <code>colcon test --event-handlers console_cohesion+</code>.<sup><a href="#ref-2">[2]</a></sup> With the bug still in place, this run printed <code>pytest</code>&rsquo;s own summary with one failed and one passed test. It is not shown in the transcript above.</p>
+                        </details>
 
-                        <h2 class="article-section-title">07. In a real ROS 2 package</h2>
+                        <h2 class="article-section-title">07. Checking code style in a real ROS 2 package</h2>
                         <p>
-                            In a real ROS 2 package, tests are not the only automated check. A linter is a tool that reads source code without running it and reports style errors, formatting problems and likely bugs. ROS 2 has a family of them called <code>ament_lint</code>. All <code>ament_lint</code> tools accept files or directories, analyze them, and generate reports.<sup><a href="#ref-4">[4]</a></sup> The documentation lists <code>ament_copyright</code> to check or add copyright and license notices, <code>ament_flake8</code> for Python linting, <code>ament_cppcheck</code> for C++ static analysis, <code>ament_cpplint</code> for C++ style checks, and <code>ament_uncrustify</code> to check and reformat C++ code with <code>--reformat</code>.<sup><a href="#ref-4">[4]</a></sup> It names <code>ament_pep257</code> among other useful tools.<sup><a href="#ref-4">[4]</a></sup>
+                            In your own practice folder, passing tests may feel like enough. In a shared ROS 2 package, maintainers also check that your code follows the project&rsquo;s style rules. Automated style checks catch formatting mistakes and missing license notices before a human reviewer has to mention them.
                         </p>
                         <p>
-                            The same page says these command-line programs help people write code that meets the ROS 2 coding standards, and it recommends that ROS developers get to know the tools and use them before submitting pull requests.<sup><a href="#ref-4">[4]</a></sup> For a contributor this means one more step before a pull request: run the linters the project uses, and fix what they report.
+                            A <strong>linter</strong> is a tool that reads source code without running it. It reports style errors, formatting problems, and likely bugs. ROS 2 includes a family of linters called <code>ament_lint</code>. All <code>ament_lint</code> tools accept files or directories, analyze them, and generate reports.<sup><a href="#ref-4">[4]</a></sup>
                         </p>
+                        <p>
+                            The official <code>ament_lint</code> guide says these command-line programs help people meet ROS 2 coding standards. It recommends getting to know them and using them before submitting pull requests.<sup><a href="#ref-4">[4]</a></sup> For a contributor, that means one more step before a pull request: run the project&rsquo;s linters and fix what they report.
+                        </p>
+                        <details class="deeper">
+                            <summary>For the curious: the ament_lint tools in ROS 2</summary>
+                            <p>The <code>ament_lint</code> documentation lists these tools for Python, C++, and licensing checks:<sup><a href="#ref-4">[4]</a></sup></p>
+                            <ul class="article-spec-list">
+                                <li class="article-spec-item"><span class="spec-label"><code>ament_copyright</code>:</span> checks or adds copyright and license notices.</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>ament_flake8</code>:</span> checks Python code style (Python linting).</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>ament_cppcheck</code>:</span> runs C++ static analysis.</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>ament_cpplint</code>:</span> runs C++ style checks.</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>ament_uncrustify</code>:</span> checks and reformats C++ code when used with <code>--reformat</code>.</li>
+                                <li class="article-spec-item"><span class="spec-label"><code>ament_pep257</code>:</span> named among other useful tools in the guide.</li>
+                            </ul>
+                        </details>
 
                         <h2 class="article-section-title">08. Write the bug report</h2>
                         <p>
-                            The official issue reporting guide explains that you can report code issues in the ROS repository for the package where the error occurred.<sup><a href="#ref-5">[5]</a></sup> This is generally the last file listed in the stack trace. Core ROS 2 packages live in repositories under the <code>ros2</code> organization on GitHub, while binary packages listed on the ROS Index link to their corresponding source repositories. Documentation issues belong in the <code>ros2_documentation</code> tracker, and issues with an unclear destination can be opened in the top-level <code>ros2/ros2</code> repository.
+                            Suppose you hit a bug in someone else&rsquo;s package, like our broken <code>two_link</code> formula, and want to report it. A vague message like &ldquo;kinematics broken&rdquo; gives maintainers nothing to work with. A clear bug report shares the exact commands and output so a maintainer can repeat the failure right away.
                         </p>
                         <p>
-                            Before opening an issue, the guide asks you to check whether someone has already reported it: search across the <code>ros2</code> and <code>ament</code> GitHub organizations, and check the Robotics Stack Exchange.<sup><a href="#ref-5">[5]</a></sup> If nothing matches, open a new issue and give it a descriptive title.<sup><a href="#ref-5">[5]</a></sup> A title such as &ldquo;kinematics broken&rdquo; does not help. Say what fails and under what condition.
+                            The official ROS 2 issue reporting guide explains where to file code bugs. Report a code issue in the ROS repository for the package where the error occurred.<sup><a href="#ref-5">[5]</a></sup> That is generally the last file listed in the stack trace.
                         </p>
                         <p>
-                            Then fill in the fields of the issue template. The guide asks for your environment, the steps and commands that lead to the problem, the exact output, and any troubleshooting you have already tried.<sup><a href="#ref-5">[5]</a></sup> A maintainer who can repeat your steps and see the same failure can start on a fix at once.
+                            Before opening an issue, check whether someone has already reported it.<sup><a href="#ref-5">[5]</a></sup> If nothing matches, open a new issue and give it a descriptive title.<sup><a href="#ref-5">[5]</a></sup> Say what fails and under what condition.
+                        </p>
+                        <p>
+                            Then fill in the issue template. The guide asks for your environment, the steps and commands that lead to the problem, and the exact output. Also include any troubleshooting you have already tried.<sup><a href="#ref-5">[5]</a></sup> A maintainer who can repeat your steps and see the same failure can start on a fix at once.
                         </p>
                         <p>
                             Below is an example bug report for the bug fixed in this lab. This report is an educational example about our practice package, not an issue for any real upstream project:
@@ -492,46 +531,54 @@ Summary: 1 test, 0 errors, 0 failures, 0 skipped</code></pre>
   &gt;&gt;&gt;</code></pre>
                             <p><strong>Environment:</strong></p>
                             <p>
-                                OS: Ubuntu 26.04 LTS, Python: 3.14, colcon-core: 0.21.3, pytest: 9.2.0.
+                                Operating system (OS): Ubuntu 26.04 LTS, Python: 3.14, colcon-core: 0.21.3, pytest: 9.2.0.
                             </p>
                             <p><strong>Proposed fix:</strong></p>
                             <p>
                                 Change line 9 of <code>two_link/kinematics.py</code> from <code>y = l1 * math.sin(t1) + l2 * math.sin(t2)</code> to <code>y = l1 * math.sin(t1) + l2 * math.sin(t1 + t2)</code>.
                             </p>
                         </div>
+                        <details class="deeper">
+                            <summary>For the curious: where to search and file ROS 2 issues</summary>
+                            <p>Core ROS 2 packages live in repositories under the <code>ros2</code> organization on GitHub, while binary packages listed on the ROS Index link to their corresponding source repositories. Documentation issues belong in the <code>ros2_documentation</code> tracker, and issues with an unclear destination can be opened in the top-level <code>ros2/ros2</code> repository.</p>
+                            <p>When checking for an existing issue before opening a new one, the guide asks you to search across the <code>ros2</code> and <code>ament</code> GitHub organizations and check the Robotics Stack Exchange.<sup><a href="#ref-5">[5]</a></sup></p>
+                        </details>
 
                         <h2 class="article-section-title">09. From report to pull request</h2>
                         <p>
-                            Once you have identified a bug and confirmed a working fix with tests, you can propose the fix to the project. The contribution guidelines in ROS projects recommend several practices for newcomers making their first code pull request:
+                            Finding a bug and fixing it on your own laptop is only half the job. You can also send your fix back to the project so everyone else benefits too. You do that by opening a pull request. A few simple habits keep your pull request small, clean, and easy for a maintainer to accept.
+                        </p>
+                        <p>
+                            The contribution guidelines in ROS projects recommend these practices for your first code pull request:
                         </p>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item"><span class="spec-label">Scope and focus:</span> The pull request guidelines advise contributors to limit each pull request to a single, well-defined change.<sup><a href="#ref-6">[6]</a></sup> Keep your patch small and avoid incidental changes like reformatting unrelated lines.</li>
-                            <li class="article-spec-item"><span class="spec-label">Fork and branch:</span> Make your changes on a development branch taken from the <code>rolling</code> branch, in your fork of the target repository.<sup><a href="#ref-6">[6]</a></sup></li>
-                            <li class="article-spec-item"><span class="spec-label">Keep generated files out:</span> ROS 2 workspaces generate build artifacts that should generally not be committed to source control.<sup><a href="#ref-7">[7]</a></sup> That covers the <code>build/</code>, <code>install/</code> and <code>log/</code> folders that colcon created in this lab, and Python&rsquo;s temporary files such as <code>__pycache__/</code> and <code>*.pyc</code>.<sup><a href="#ref-7">[7]</a></sup> A <code>.gitignore</code> file in the repository tells git to leave them out.<sup><a href="#ref-7">[7]</a></sup></li>
-                            <li class="article-spec-item"><span class="spec-label">Link the issue:</span> In the pull request description, include the ID of the issue your change fixes, in the format <code>Fixes #(issue)</code>.<sup><a href="#ref-6">[6]</a></sup></li>
-                            <li class="article-spec-item"><span class="spec-label">Say what you are doing:</span> Comment on the issue to let others know that you are working on it.<sup><a href="#ref-8">[8]</a></sup> When you create the pull request, select the &ldquo;Allow edits by maintainers&rdquo; checkbox, which helps maintainers make small changes directly when needed.<sup><a href="#ref-6">[6]</a></sup></li>
-                            <li class="article-spec-item"><span class="spec-label">Responding to review:</span> Reviewers comment on the pull request on GitHub. Answer in the same thread and add commits to your branch for the changes they ask for. The guide says to aim to reply to review comments within one week, so that you and the reviewers do not lose the context of the change.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Scope and focus:</span> The pull request guidelines advise you to limit each pull request to a single, well-defined change.<sup><a href="#ref-6">[6]</a></sup> Keep your patch small and avoid unrelated edits like reformatting other lines.</li>
+                            <li class="article-spec-item"><span class="spec-label">Fork and branch:</span> Make your changes on a development branch in your fork of the target repository. Start that branch from the <code>rolling</code> branch.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Keep generated files out:</span> ROS 2 workspaces create build artifacts that should generally not be committed to source control.<sup><a href="#ref-7">[7]</a></sup> That includes the <code>build/</code>, <code>install/</code>, and <code>log/</code> folders that <code>colcon</code> created in this lab. It also includes Python&rsquo;s temporary files such as <code>__pycache__/</code> and <code>*.pyc</code>.<sup><a href="#ref-7">[7]</a></sup> A <code>.gitignore</code> file in the repository tells git to leave them out.<sup><a href="#ref-7">[7]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Link the issue:</span> In the pull request description, include the ID of the issue your change fixes using <code>Fixes #(issue)</code>.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Say what you are doing:</span> Comment on the issue to let others know that you are working on it.<sup><a href="#ref-8">[8]</a></sup> When you open the pull request, check the &ldquo;Allow edits by maintainers&rdquo; box. That helps maintainers make small changes directly when needed.<sup><a href="#ref-6">[6]</a></sup></li>
+                            <li class="article-spec-item"><span class="spec-label">Responding to review:</span> Reviewers comment on your pull request on GitHub. Answer in the same thread and add commits to your branch for the changes they ask for. The guide says to aim to reply within one week so you and the reviewers do not lose context.<sup><a href="#ref-6">[6]</a></sup></li>
                         </ul>
                         <p>
-                            To review the open-source etiquette covered earlier in the course, revisit <a href="robotics-3-2.html">lesson 3.2</a> on how community collaboration works and <a href="robotics-3-5.html">lesson 3.5</a> on contributing to Nav2. To explore active robotics projects and their issue trackers, visit the <a href="robotics-oss-map.html">Robotics Open-Source Map</a>.
+                            To review open-source etiquette, revisit <a href="robotics-3-2.html">lesson 3.2</a> on community collaboration and <a href="robotics-3-5.html">lesson 3.5</a> on contributing to Nav2. To explore active robotics projects and their issue trackers, visit the <a href="robotics-oss-map.html">Robotics Open-Source Map</a>.
                         </p>
 
                         <div class="article-callout try-it">
                             <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                             <ol>
-                                <li>Add a third test function called <code>test_straight_up()</code> to <code>tests/test_kinematics.py</code> for θ1 = 0 degrees and θ2 = 90 degrees with link lengths 0.5 and 0.3. Calculate the expected x and y tip coordinates by hand first, write the assertions with <code>pytest.approx</code>, and run <code>colcon test</code> to verify your calculation.</li>
-                                <li>In <code>two_link/kinematics.py</code>, break the x-coordinate formula on purpose by changing <code>math.cos(t1 + t2)</code> to <code>math.cos(t2)</code>. Predict which of your three tests will pass and which will fail before running the test command, then verify your prediction using <code>colcon test-result --all --verbose</code>.</li>
+                                <li>Add a third test function called <code>test_straight_up()</code> to <code>tests/test_kinematics.py</code>. Use θ1 = 0 degrees, θ2 = 90 degrees, and link lengths 0.5 and 0.3. Calculate the expected x and y tip coordinates by hand first. Then write the assertions with <code>pytest.approx</code> and run <code>colcon test</code> to verify your calculation.</li>
+                                <li>In <code>two_link/kinematics.py</code>, break the x-coordinate formula on purpose by changing <code>math.cos(t1 + t2)</code> to <code>math.cos(t2)</code>. Predict which of your three tests will pass and which will fail before running the test command. Then verify your prediction using <code>colcon test-result --all --verbose</code>.</li>
                                 <li>Draft a complete bug report for that second bug using the bug report format from Section 08. Include clear steps to reproduce, the failing pytest assertion, and the proposed code change.</li>
-                                <li>Open the <a href="robotics-oss-map.html">Robotics Open-Source Map</a>, select one project (such as ROS 2 or Nav2), and navigate to its GitHub repository. Locate the issues tab, search for the <code>good first issue</code> label, and inspect how community members report bugs and claim tasks.</li>
+                                <li>Open the <a href="robotics-oss-map.html">Robotics Open-Source Map</a>, select one project (such as ROS 2 or Nav2), and open its GitHub repository. Go to the Issues tab, search for the <code>good first issue</code> label, and inspect how community members report bugs and claim tasks.</li>
                             </ol>
                         </div>
 
                         <h2 class="article-section-title">10. Check your understanding</h2>
                         <ul class="article-spec-list">
-                            <li class="article-spec-item">Why can colcon build and test the <code>two_link</code> package without a ROS 2 installation on your computer?<details class="check-answer"><summary>Show answer</summary><p>The <code>two_link</code> package is a pure Python package using standard setuptools and pytest. Colcon is a general build tool that builds and tests standard Python packages without requiring ROS 2 client libraries or middleware. <span class="check-answer-src">(Section 02)</span></p></details></li>
-                            <li class="article-spec-item">What folder name and file naming pattern does colcon require for pytest test discovery in an <code>ament_python</code> package?<details class="check-answer"><summary>Show answer</summary><p>Test files must be placed in a directory named <code>tests</code> at the package root, and test files must match the pattern <code>test_FOO.py</code> where <code>FOO</code> can be any name. <span class="check-answer-src">(Section 03)</span></p></details></li>
-                            <li class="article-spec-item">Why did the original bug in <code>kinematics.py</code> fail to trigger in <code>test_straight_arm</code>?<details class="check-answer"><summary>Show answer</summary><p>In <code>test_straight_arm</code>, θ1 is 0 degrees. When θ1 is 0, the sum t1 + t2 equals t2, so <code>math.sin(t2)</code> produces the exact same numerical result as <code>math.sin(t1 + t2)</code>. The bug only produces an error when θ1 is non-zero. <span class="check-answer-src">(Section 05)</span></p></details></li>
-                            <li class="article-spec-item">Which generated files and folders should generally not be committed to a git repository?<details class="check-answer"><summary>Show answer</summary><p>Workspace build artifacts including the <code>build/</code>, <code>install/</code>, and <code>log/</code> directories, as well as Python bytecode files such as <code>__pycache__/</code> and <code>*.pyc</code> files, should generally not be committed to source control. <span class="check-answer-src">(Section 09)</span></p></details></li>
+                            <li class="article-spec-item">Why can colcon build and test the <code>two_link</code> package without a ROS 2 installation on your computer?<details class="check-answer"><summary>Show answer</summary><p>The <code>two_link</code> package is a pure Python package using standard <code>setuptools</code> and <code>pytest</code>. <code>colcon</code> is a general build tool that builds and tests standard Python packages without requiring ROS 2 client libraries or middleware. <span class="check-answer-src">(Section 02)</span></p></details></li>
+                            <li class="article-spec-item">What folder name and file naming pattern does colcon require for pytest test discovery in an <code>ament_python</code> package?<details class="check-answer"><summary>Show answer</summary><p>Test files must sit in a directory named <code>tests</code> at the package root. Each test file must match the pattern <code>test_FOO.py</code>, where <code>FOO</code> can be any name. <span class="check-answer-src">(Section 03)</span></p></details></li>
+                            <li class="article-spec-item">Why did the original bug in <code>kinematics.py</code> fail to trigger in <code>test_straight_arm</code>?<details class="check-answer"><summary>Show answer</summary><p>In <code>test_straight_arm</code>, θ1 is 0 degrees. When θ1 is 0, the sum <code>t1 + t2</code> equals <code>t2</code>, so <code>math.sin(t2)</code> gives the exact same number as <code>math.sin(t1 + t2)</code>. The bug only causes an error when θ1 is non-zero. <span class="check-answer-src">(Section 05)</span></p></details></li>
+                            <li class="article-spec-item">Which generated files and folders should generally not be committed to a git repository?<details class="check-answer"><summary>Show answer</summary><p>Do not commit workspace build artifacts like the <code>build/</code>, <code>install/</code>, and <code>log/</code> directories. Also leave out Python bytecode files such as <code>__pycache__/</code> and <code>*.pyc</code> files. <span class="check-answer-src">(Section 09)</span></p></details></li>
                         </ul>
 
                             <!-- oss-note -->
@@ -588,7 +635,7 @@ Summary: 1 test, 0 errors, 0 failures, 0 skipped</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+            <script src="assets/js/course-data.js?v=26037997" defer></script>
             <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
             <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 

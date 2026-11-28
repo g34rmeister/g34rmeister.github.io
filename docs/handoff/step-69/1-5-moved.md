@@ -1,0 +1,19 @@
+# Step 69: moved and reworded passages in robotics-1-5.html
+
+01. Robots at work: the big picture | Added plain-first opener with factory, warehouse, and hospital examples; introduced IFR and World Robotics in plain words and split long sentences | [1], [2]
+01. Robots at work: the big picture | Moved the September 24, 2026 release date, 2024 ten-year comparison, and 2026/2028/2029 forecasts into `<details class="deeper">` | [1], [2], [3]
+02. Where the robots are: countries and robot density | Added plain-first opener after the optional-reading note; split long sentences around China, robot density, and the two-rankings explanation while keeping both tables untouched | [2], [4], [5], [6], [7]
+03. What factory robots do: tasks and industries | Added plain-first opener with welding, palletizing, and cleanroom examples; expanded AI on first use; split long sentences across tasks, top three industries, and factory AI uses | [2], [8]
+03. What factory robots do: tasks and industries | Moved Germany and United States customer-industry share details into `<details class="deeper">` | [4], [6]
+04. Case studies: warehouses and car plants | Added plain-first opener linking warehouse mobile robots and factory humanoids; split long sentences across Amazon, Blue Jay, and BMW/Figure | [9], [10], [11]
+05. Robots in medicine | Added plain-first opener; expanded ISO on first use; split long sentences across da Vinci procedures, systems, operations, and exoskeletons | [12], [13], [14], [15]
+06. Service robots around people | Reworded heading from "Service robots and human interaction"; added plain-first opener with delivery, cleaning, hotel, and farm examples; split long sentences around Starship, Lely, and state machines while keeping the table untouched | [15], [16], [17]
+07. Exploring space and the deep sea | Reworded heading from "In scientific exploration"; added plain-first opener; split Canadarm2 and Sentry sentences into short single-idea sentences | [18], [19]
+08. A closer look: robots on Mars | Added plain-first opener explaining signal delay before naming NASA; expanded NASA and 3D on first use; split long sentences across delay, AutoNav, distance records, and Ingenuity while keeping the rover list and semicolon-free prose | [20], [21], [22], [23], [24], [25], [26], [27], [28]
+09. Robots that protect human lives | Reworded heading from "In protecting human lives"; added plain-first opener; split long sentences in the rescue and industrial work items | [29], [30], [31], [32], [33]
+10. Case study: rescue robots at the World Trade Center | Added plain-first opener describing disaster conditions; kept the plain deployment story and four failure types in the main text | [30]
+10. Case study: rescue robots at the World Trade Center | Moved Robin Murphy's attribution, exact model names (Inuktun micro-Tracs, micro-VGTV, Foster-Miller Solem), dimensions/weight (4.5 kg, 17 x 32 x 6 cm), and failure percentages/counts (7.75 pulls, 8.9%, about 18%) into `<details class="deeper">` | [30]
+11. Case study: robots at Fukushima Daiichi | Reworded heading from "Case study: Fukushima Daiichi"; added plain-first opener; expanded IRID and TEPCO on first use; split long sentences across PackBot, Quince, and the 2017-2024 fuel debris timeline | [31], [32], [33], [34], [35], [36], [37]
+11. Case study: robots at Fukushima Daiichi | Moved Quince's three research-institute builders, ~50 kg weight, and exact July 8, 2011 climb date into `<details class="deeper">` | [33]
+12. What is new: humanoids and AI foundation models | Added plain-first opener contrasting headline humanoids with conventional arms and mobile robots; split long sentences across humanoid sales, GXO/Digit, foundation models, and VLA models | [2], [9], [15], [38], [39], [40], [41]
+Try it | Split the semicolon sentence in item 3 into two short sentences | (none)
