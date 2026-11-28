@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=d9f1aa24" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -373,6 +373,44 @@ publishing #1: geometry_msgs.msg.PoseWithCovarianceStamped(header=std_msgs.msg.H
                         <p>
                             The loopback simulator has received the coordinates, the transform tree is online, and the lifecycle manager has brought all navigation servers to the active state.
                         </p>
+
+                        <figure class="lesson-diagram">
+                            <svg viewBox="0 0 660 220" role="img" aria-label="Two-terminal Nav2 loopback workflow: Terminal 1 launches loopback simulator and lifecycle servers, Terminal 2 publishes initialpose to unlock map to odom TF and sends NavigateToPose goals" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <marker id="arrow-10-5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                        <path d="M0,0 L10,5 L0,10 z" class="d-fill"/>
+                                    </marker>
+                                </defs>
+                                <!-- Terminal 1 -->
+                                <rect class="d-box" x="15" y="14" width="290" height="190" rx="4"/>
+                                <text class="d-title" x="160" y="34" text-anchor="middle">Terminal 1: Nav2 Bringup</text>
+                                <rect class="d-box-gold" x="26" y="48" width="268" height="42" rx="3"/>
+                                <text class="d-title" x="160" y="65" text-anchor="middle" style="font-size:11.5px;">tb3_loopback_simulation_launch.py</text>
+                                <text class="d-muted" x="160" y="81" text-anchor="middle">use_rviz:=False · tb3_sandbox.yaml</text>
+                                <line class="d-strong" x1="160" y1="90" x2="160" y2="112" marker-end="url(#arrow-10-5)"/>
+                                <rect class="d-box" x="32" y="114" width="256" height="74" rx="3"/>
+                                <text class="d-title" x="160" y="133" text-anchor="middle">lifecycle_manager_nav2</text>
+                                <text class="d-muted" x="160" y="149" text-anchor="middle">Configures &amp; activates map, controller,</text>
+                                <text class="d-muted" x="160" y="164" text-anchor="middle">planner, behavior &amp; bt_navigator</text>
+                                <text class="d-muted" x="160" y="179" text-anchor="middle">(pauses until /initialpose arrives)</text>
+                                <!-- Links between terminals -->
+                                <line class="d-strong" x1="355" y1="68" x2="306" y2="68" marker-end="url(#arrow-10-5)"/>
+                                <line class="d-strong" x1="355" y1="145" x2="306" y2="145" marker-end="url(#arrow-10-5)"/>
+                                <!-- Terminal 2 -->
+                                <rect class="d-box" x="355" y="14" width="290" height="190" rx="4"/>
+                                <text class="d-title" x="500" y="34" text-anchor="middle">Terminal 2: Commands &amp; Goals</text>
+                                <rect class="d-box-gold" x="372" y="48" width="256" height="46" rx="3"/>
+                                <text class="d-title" x="500" y="65" text-anchor="middle">1. Publish /initialpose</text>
+                                <text class="d-muted" x="500" y="81" text-anchor="middle">x = −2.0 m, y = −0.5 m (within ~60 s)</text>
+                                <line class="d-strong" x1="500" y1="94" x2="500" y2="114" marker-end="url(#arrow-10-5)"/>
+                                <rect class="d-box" x="372" y="116" width="256" height="72" rx="3"/>
+                                <text class="d-title" x="500" y="134" text-anchor="middle">2. Send /navigate_to_pose Goal</text>
+                                <text class="d-muted" x="500" y="150" text-anchor="middle">CLI action send_goal → (1.5, −0.5)</text>
+                                <text class="d-muted" x="500" y="165" text-anchor="middle">or BasicNavigator Python → (−2.0, −0.5)</text>
+                                <text class="d-muted" x="500" y="180" text-anchor="middle">TF: map → odom → base_link</text>
+                            </svg>
+                            <figcaption>Two-terminal workflow in the Nav2 loopback lab: Terminal 1 manages Nav2 lifecycle servers while Terminal 2 sets the initial pose and dispatches navigation goals.</figcaption>
+                        </figure>
 
                         <h2 class="article-section-title">06. Look before you drive</h2>
                         <p>
@@ -760,9 +798,9 @@ The daemon has been stopped</code></pre>
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-        <script src="assets/js/course-data.js?v=6002944a" defer></script>
-        <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
-        <script src="assets/js/learning.js?v=42e08602" defer></script>
+        <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+        <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
+        <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 
     </body>
 </html>

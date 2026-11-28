@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=d9f1aa24" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT6M",
+            "timeRequired": "PT7M",
             "teaches": [
                 "Nav2",
                 "costmap",
@@ -311,6 +311,20 @@
                             <li class="article-spec-item">What are the three steps in the Nav2 contribution process, and what level of community approval is required before merging substantial pull requests?<details class="check-answer"><summary>Show answer</summary><p>First, open an issue ticket for a defect or enhancement. Second, claim an issue by commenting on the ticket. Third, submit a pull request with the PR template completed. Substantial changes require approval from at least one maintainer and one other community member. <span class="check-answer-src">(Section 05)</span></p></details></li>
                         </ul>
 
+                        <div class="article-callout try-it lesson-try">
+                            <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
+                            <ol>
+                                <li><strong>Launch simulation:</strong> In a terminal, launch the standard Nav2 simulation bringup with the visualizer enabled:
+                                    <pre class="article-code"><code>$ ros2 launch nav2_bringup tb3_simulation_launch.py</code></pre>
+                                    Confirm in RViz that the simulated map environment, robot footprint, and 2D costmaps load and display without error.</li>
+                                <li><strong>Send a navigation goal:</strong> Click the <strong>Nav2 Goal</strong> button in the RViz toolbar. Click and drag an arrow on a clear section of the map to define the target position and orientation. Observe the planner server calculate a global path and watch the controller server drive the robot along the trajectory.</li>
+                                <li><strong>Tune costmap inflation:</strong> In the Nav2 parameter configuration (<code>nav2_params.yaml</code>), locate <code>inflation_layer</code> in the global and local costmap sections. Test changing <code>cost_scaling_factor</code> (e.g. from 3.0 to 10.0) or adjusting <code>inflation_radius</code>: observe how a higher scaling factor produces a steeper cost dropoff that allows the robot to plan through narrower gaps.</li>
+                                <li><strong>Observe TF2 coordinate frames:</strong> While the simulated robot is moving, open a second terminal and query the transform relationship from Section 02:
+                                    <pre class="article-code"><code>$ ros2 run tf2_ros tf2_echo map odom</code></pre>
+                                    Verify how the localization system publishes updates to <code>map &rarr; odom</code> while odometry smoothly tracks <code>odom &rarr; base_link</code>.</li>
+                            </ol>
+                        </div>
+
                         <h2 class="article-section-title">08. References</h2>
                         <p class="references-note">Source check (October 2026): 11 of 11 references match their source text. How these sources were chosen and checked: <a href="robotics-method.html">How this course was made</a>. Spot a mistake or know a better source? <a href="https://github.com/g34rmeister/g34rmeister.github.io/edit/main/robotics-3-5.html" target="_blank" rel="noopener noreferrer">Suggest an edit on GitHub</a>.</p>
                         <ol class="article-spec-list">
@@ -361,9 +375,9 @@
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-        <script src="assets/js/course-data.js?v=6002944a" defer></script>
-        <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
-        <script src="assets/js/learning.js?v=42e08602" defer></script>
+        <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+        <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
+        <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 
     </body>
 </html>

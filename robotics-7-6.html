@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=d9f1aa24" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -269,7 +269,7 @@
                         </p>
 
                         <div data-widget="pinhole-projection">
-                            <p class="widget-note">The pinhole camera projection calculator needs JavaScript. With it on, you can adjust 3D coordinates and focal length to project physical points to 2D pixel coordinates.</p>
+                            <p class="widget-note">The 3D pinhole camera projection simulator needs JavaScript. With it on, you can drag to orbit the 3D camera frustum, switch between view presets (Iso, Front, Side, Top, and Camera-view looking through the lens), adjust 3D coordinates and focal length, and inspect the projection ray tracing from the 3D target point through the optical center to the image sensor plane.</p>
                         </div>
 
                         <h2 class="article-section-title">04. Streaming transport and message synchronization</h2>
@@ -492,9 +492,10 @@ ros2 param set /vision_pipeline_node binary_threshold 100.0</code></pre>
                             <li class="article-spec-item">How does the <code>message_filters TimeSynchronizer</code> prevent race conditions when pairing image frames with camera calibration metadata?<details class="check-answer"><summary>Show answer</summary><p>It synchronizes incoming message streams based on matching timestamps in their message headers. It pairs the messages on <code>/camera/image_raw</code> and <code>/camera/camera_info</code> that carry identical header timestamps before invoking the callback, so image frames are never processed with stale or misaligned calibration metadata. <span class="check-answer-src">(Section 04)</span></p></details></li>
                         </ul>
 
-                            <div class="article-callout try-it">
+                            <div class="article-callout try-it lesson-try">
                                 <div class="article-callout-header"><i class="fas fa-hand-pointer"></i> Try it</div>
                                 <ol>
+                                    <li>In the interactive 3D pinhole projection widget in Section 03, drag to orbit the camera frustum or switch between view presets (Iso, Front, Side, Top, and Camera-view looking through the lens). Adjust the 3D coordinate sliders (X, Y, Z) and focal length: inspect the projection line connecting the 3D target point through the sensor plane to the camera origin, and observe how increasing distance Z scales pixel coordinates toward the principal point <code>(cx, cy)</code>.</li>
                                     <li>With the lab node running, change <code>binary_threshold</code> with <code>ros2 param set</code> and watch <code>/vision/thresh_image</code>. Find a value where the part separates cleanly from the background.</li>
                                     <li>Raise <code>canny_max_val</code>, then lower <code>canny_min_val</code>. Which change removes weak edges, and which brings them back? Explain it with the hysteresis rule from section 06.</li>
                                     <li>Run <code>ros2 topic hz</code> on <code>/camera/image_raw</code> and then on <code>/vision/edge_image</code>. If the second rate is lower than the first, what is the node doing, according to section 07?</li>
@@ -557,10 +558,10 @@ ros2 param set /vision_pipeline_node binary_threshold 100.0</code></pre>
 
         <!-- Scripts -->
         <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-        <script src="assets/js/course-data.js?v=6002944a" defer></script>
-        <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
-        <script src="assets/js/learning.js?v=42e08602" defer></script>
-        <script src="assets/js/widgets.js?v=cb29f716" defer></script>
+        <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+        <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
+        <script src="assets/js/learning.js?v=8363e7ea" defer></script>
+        <script src="assets/js/widgets.js?v=1a8fb811" defer></script>
 
     </body>
 </html>

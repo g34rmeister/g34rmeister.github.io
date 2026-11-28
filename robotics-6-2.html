@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=d9f1aa24" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -52,7 +52,7 @@
             "inLanguage": "en",
             "learningResourceType": "Lesson",
             "educationalLevel": "Beginner",
-            "timeRequired": "PT11M",
+            "timeRequired": "PT12M",
             "teaches": [
                 "pulse width modulation",
                 "duty cycle",
@@ -215,7 +215,7 @@
 
                             <h2 class="article-section-title">01. Simulating analog control in a digital world</h2>
                             <p>
-                                Digital microcontroller pins are binary: an output is either fully on (the board's supply voltage, such as 5 V on an Uno or 3.3 V on boards like the MKR family) or fully off (0 V).<sup><a href="#ref-1">[1]</a></sup> The physical world robots work in, however, is analog and continuous. A mobile robot rarely drives its motors at only 0% or 100% speed. To turn smoothly, track a line or hold a steady speed down a slope, the controller must command intermediate power levels.
+                                Digital microcontroller pins are binary. An output pin is either fully on or fully off (0 V).<sup><a href="#ref-1">[1]</a></sup> When fully on, it sits at the board's supply voltage, such as 5 V on an Uno or 3.3 V on boards like the MKR family.<sup><a href="#ref-1">[1]</a></sup> The physical world robots work in, however, is analog and continuous. A mobile robot rarely drives its motors at only 0% or 100% speed. To turn smoothly, track a line or hold a steady speed down a slope, the controller must command intermediate power levels.
                             </p>
                             <p>
                                 Producing a true intermediate voltage at motor currents would need extra analog circuitry, such as a Digital-to-Analog Converter (DAC) followed by a power amplifier. A linear amplifier turns the voltage it drops into heat. In battery-powered robots, that wasted heat means shorter run time, so designers avoid it.
@@ -226,7 +226,7 @@
 
                             <h2 class="article-section-title">02. Mathematics of duty cycle and average voltage</h2>
                             <p>
-                                A periodic square wave has two basic variables: its <strong>period</strong> \(T\) (the duration of one complete cycle in seconds, or frequency \(f = 1/T\) in hertz) and the on-time \(t_{on}\) within each period.<sup><a href="#ref-1">[1]</a></sup>
+                                A periodic square wave has two basic variables: its <strong>period</strong> \(T\) and the on-time \(t_{on}\) within each period.<sup><a href="#ref-1">[1]</a></sup> The period is the duration of one complete cycle in seconds, or frequency \(f = 1/T\) in hertz.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
                                 The <strong>duty cycle</strong> \(D\) is the fraction of each period during which the signal is HIGH:<sup><a href="#ref-1">[1]</a></sup>
@@ -250,7 +250,7 @@
                                 <p>\[V_{avg} = 0.25 \times 12\text{ V} = 3.0\text{ V}\]</p>
                             </div>
                             <p>
-                                In the Arduino environment, <code>analogWrite(pin, value)</code> controls hardware PWM.<sup><a href="#ref-3">[3]</a></sup> Despite its name, <code>analogWrite()</code> does not output an analog voltage on most pins: it makes the pin generate a steady rectangular wave of the chosen duty cycle until the next call.<sup><a href="#ref-3">[3]</a></sup> The <code>value</code> runs on a 0 to 255 scale: 255 means always on and 127 means on about half the time.<sup><a href="#ref-1">[1]</a></sup> Worked example: commanding an average of 3.0 V from a 5.0 V Arduino pin corresponds to:
+                                In the Arduino environment, <code>analogWrite(pin, value)</code> controls hardware PWM.<sup><a href="#ref-3">[3]</a></sup> Despite its name, <code>analogWrite()</code> does not output an analog voltage on most pins.<sup><a href="#ref-3">[3]</a></sup> Instead, it makes the pin generate a steady rectangular wave of the chosen duty cycle until the next call.<sup><a href="#ref-3">[3]</a></sup> The <code>value</code> runs on a 0 to 255 scale: 255 means always on and 127 means on about half the time.<sup><a href="#ref-1">[1]</a></sup> Worked example: commanding an average of 3.0 V from a 5.0 V Arduino pin corresponds to:
                             </p>
                             <div class="article-callout">
                                 <p>\[\text{value} = \text{round}\left(\frac{3.0\text{ V}}{5.0\text{ V}} \times 255\right) = \text{round}(0.60 \times 255) = 153\]</p>
@@ -280,8 +280,8 @@
                                 On the <strong>Arduino Uno R3 (ATmega328P)</strong>, PWM comes from three hardware timers across six pins. The Arduino core sets the prescaler of all three timers to 64, so each timer counts at \(16\text{ MHz} / 64 = 250\text{ kHz}\).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup>
                             </p>
                             <ul class="article-spec-list">
-                                <li class="article-spec-item"><span class="spec-label">Timer0 (8-bit):</span> Drives PWM on <strong>pins 5 and 6</strong> in Fast PWM mode, which counts from 0 to 255 and restarts, giving \(16\text{ MHz} / (64 \times 256) \approx 976.56\text{ Hz}\) (listed by Arduino as 980 Hz).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup> Timer0 also drives <code>millis()</code> and <code>delay()</code>, so changing its settings breaks sketch timekeeping.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-4">[4]</a></sup> Arduino also notes that pins 5 and 6 give slightly higher-than-expected duty cycles at low settings because of this shared timer.<sup><a href="#ref-3">[3]</a></sup></li>
-                                <li class="article-spec-item"><span class="spec-label">Timer1 (16-bit):</span> Drives PWM on <strong>pins 9 and 10</strong>. The Arduino core puts it in 8-bit Phase-Correct PWM mode, which counts up to 255 and back down to 0 (510 clock steps per cycle), giving \(16\text{ MHz} / (64 \times 510) \approx 490.20\text{ Hz}\) (listed as 490 Hz). Counting up and then down makes the pulses more symmetrical than Fast PWM.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Timer0 (8-bit):</span> Drives PWM on <strong>pins 5 and 6</strong> in Fast PWM mode. In this mode, the timer counts from 0 to 255 and restarts. That produces \(16\text{ MHz} / (64 \times 256) \approx 976.56\text{ Hz}\) (listed by Arduino as 980 Hz).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup> Timer0 also drives <code>millis()</code> and <code>delay()</code>, so changing its settings breaks sketch timekeeping.<sup><a href="#ref-6">[6]</a></sup><sup><a href="#ref-4">[4]</a></sup> Arduino also notes that pins 5 and 6 give slightly higher-than-expected duty cycles at low settings because of this shared timer.<sup><a href="#ref-3">[3]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Timer1 (16-bit):</span> Drives PWM on <strong>pins 9 and 10</strong>. The Arduino core puts it in 8-bit Phase-Correct PWM mode. In this mode, the timer counts up to 255 and back down to 0 (510 clock steps per cycle). That gives \(16\text{ MHz} / (64 \times 510) \approx 490.20\text{ Hz}\) (listed as 490 Hz). Counting up and then down makes the pulses more symmetrical than Fast PWM.<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
                                 <li class="article-spec-item"><span class="spec-label">Timer2 (8-bit):</span> Drives PWM on <strong>pins 3 and 11</strong>, also in Phase-Correct PWM mode with a prescaler of 64, so it too runs at about <strong>490.20 Hz</strong> (490 Hz).<sup><a href="#ref-4">[4]</a></sup><sup><a href="#ref-5">[5]</a></sup><sup><a href="#ref-3">[3]</a></sup></li>
                             </ul>
                             <p>
@@ -329,7 +329,7 @@
                                 </tbody>
                             </table>
                             <p>
-                                A standard hobby servo contains a small DC motor, a gear train, a potentiometer attached to the output shaft to sense its position, and a small circuit board whose transistors likely form an H-bridge so the motor can turn either way.<sup><a href="#ref-8">[8]</a></sup> The servo reads the width of a pulse that repeats every 20 milliseconds (50 Hz):<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup>
+                                A standard hobby servo contains a small DC motor, a gear train, and a potentiometer attached to the output shaft to sense its position.<sup><a href="#ref-8">[8]</a></sup> It also includes a small circuit board whose transistors likely form an H-bridge so the motor can turn either way.<sup><a href="#ref-8">[8]</a></sup> The servo reads the width of a pulse that repeats every 20 milliseconds (50 Hz):<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup>
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">1.0 millisecond pulse:</span> Moves the servo to one end of its standard range.<sup><a href="#ref-8">[8]</a></sup></li>
@@ -337,7 +337,7 @@
                                 <li class="article-spec-item"><span class="spec-label">2.0 millisecond pulse:</span> Moves the servo to the other end of its standard range.<sup><a href="#ref-8">[8]</a></sup></li>
                             </ul>
                             <p>
-                                What pulse width sent at 50 Hz commands a standard hobby servo to its neutral center position? The answer is <strong>1.5 milliseconds</strong> (1500 microseconds).<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup> Real servos differ: some accept wider pulses, while others hit mechanical limits and can be damaged if driven past them.<sup><a href="#ref-8">[8]</a></sup> The Arduino <code>Servo</code> library's <code>write(angle)</code> maps 0&deg; to 180&deg; onto a default pulse range of 544 to 2400 microseconds, starts servos at 1500 microseconds, and refreshes them every 20 milliseconds; <code>writeMicroseconds()</code> sets the pulse width directly.<sup><a href="#ref-12">[12]</a></sup>
+                                What pulse width sent at 50 Hz commands a standard hobby servo to its neutral center position? The answer is <strong>1.5 milliseconds</strong> (1500 microseconds).<sup><a href="#ref-8">[8]</a></sup><sup><a href="#ref-10">[10]</a></sup> Real servos differ: some accept wider pulses, while others hit mechanical limits and can be damaged if driven past them.<sup><a href="#ref-8">[8]</a></sup> The Arduino <code>Servo</code> library's <code>write(angle)</code> function maps 0&deg; to 180&deg; onto a default pulse range of 544 to 2400 microseconds.<sup><a href="#ref-12">[12]</a></sup> It starts servos at 1500 microseconds and refreshes them every 20 milliseconds.<sup><a href="#ref-12">[12]</a></sup> In addition, <code>writeMicroseconds()</code> sets the pulse width directly.<sup><a href="#ref-12">[12]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">06. The Timer1 conflict: Servo library and pin trade-offs</h2>
@@ -368,7 +368,7 @@
                                 <p>\[P_{switching} = \frac{1}{2} V_{supply} I_{load} (t_{rise} + t_{fall}) f_{PWM}\]</p>
                             </div>
                             <p>
-                                Because the loss is proportional to \(f_{PWM}\), switching at 25 kHz produces about \(25{,}000 / 500 = 50\) times more switching loss than switching at 500 Hz with the same transistors and load.<sup><a href="#ref-2">[2]</a></sup> For a small driver such as the DRV8833, TI notes that conduction (on-resistance) loss usually dominates and switching losses are typically 10% to 30% of it, so check the driver's thermal limits when you raise the frequency.<sup><a href="#ref-16">[16]</a></sup>
+                                This switching loss is proportional to \(f_{PWM}\).<sup><a href="#ref-2">[2]</a></sup> As a result, switching at 25 kHz produces about \(25{,}000 / 500 = 50\) times more switching loss than switching at 500 Hz with the same transistors and load.<sup><a href="#ref-2">[2]</a></sup> For a small driver such as the DRV8833, TI notes that conduction (on-resistance) loss usually dominates.<sup><a href="#ref-16">[16]</a></sup> Switching losses are typically only 10% to 30% of that conduction loss.<sup><a href="#ref-16">[16]</a></sup> Even so, always check the driver's thermal limits when you raise the frequency.<sup><a href="#ref-16">[16]</a></sup>
                             </p>
 
                             <h2 class="article-section-title">08. Mechanical dead zones, stiction, and flyback protection</h2>
@@ -377,12 +377,12 @@
                             </p>
                             <ul class="article-spec-list">
                                 <li class="article-spec-item"><span class="spec-label">Mechanical Dead Zone (Stiction):</span> Real gearboxes have static friction, or "stiction." At low duty cycles the motor's torque is too small to overcome the friction of the gears and bearings. Current flows and heats the windings, but the shaft does not turn. The threshold differs from motor to motor, so measure it for your own motor (see the Try it box). Robot controllers add a <strong>dead zone compensation offset</strong>, mapping commands so that the smallest non-zero command jumps straight to the measured breakaway value.</li>
-                                <li class="article-spec-item"><span class="spec-label">Inductive Flyback Voltage Spikes:</span> Motor windings are inductors, so abruptly switching off their current produces a voltage spike. H-bridge circuits must give this current a safe path. The L298 datasheet requires an external bridge of fast-recovery diodes (trr of 200 ns or less) when driving inductive loads.<sup><a href="#ref-11">[11]</a></sup> MOSFET drivers such as the DRV8833 instead let the recirculating current flow back to the power supply through the output transistors' body diodes (fast decay) or recirculate it through the shorted motor winding (slow decay).<sup><a href="#ref-16">[16]</a></sup></li>
+                                <li class="article-spec-item"><span class="spec-label">Inductive Flyback Voltage Spikes:</span> Motor windings are inductors, so abruptly switching off their current produces a voltage spike. H-bridge circuits must give this current a safe path. The L298 datasheet requires an external bridge of fast-recovery diodes (trr of 200 ns or less) when driving inductive loads.<sup><a href="#ref-11">[11]</a></sup> MOSFET drivers such as the DRV8833 instead let the recirculating current flow back to the power supply through the output transistors' body diodes (fast decay).<sup><a href="#ref-16">[16]</a></sup> Alternatively, they can recirculate that current through the shorted motor winding (slow decay).<sup><a href="#ref-16">[16]</a></sup></li>
                             </ul>
 
                             <h2 class="article-section-title">09. Application case study: precision robotic gripper</h2>
                             <p>
-                                This section is an illustrative design, not a description of a particular product. A robotic parallel gripper shows the value of combining PWM with sensor feedback. If a gripper is driven only by an on/off switch, the fingers close at full speed and force, which can crush delicate objects (such as eggs or fruit) or stall and overheat the motor.
+                                This section is an illustrative design, not a description of a particular product. A robotic parallel gripper shows the value of combining PWM with sensor feedback. If a gripper is driven only by an on/off switch, the fingers close at full speed and force. That sudden impact can crush delicate objects (such as eggs or fruit) or stall and overheat the motor.
                             </p>
                             <p>
                                 With PWM, the robot can run a staged grasping routine:
@@ -457,10 +457,10 @@
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=6002944a" defer></script>
-            <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
-            <script src="assets/js/learning.js?v=42e08602" defer></script>
-            <script src="assets/js/widgets.js?v=cb29f716" defer></script>
+            <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+            <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
+            <script src="assets/js/learning.js?v=8363e7ea" defer></script>
+            <script src="assets/js/widgets.js?v=1a8fb811" defer></script>
 
     </body>
 </html>

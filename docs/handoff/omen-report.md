@@ -28,7 +28,7 @@ Who this is for: the next agent session (or Gerald) picking up robOSStics on the
 - Books (Siegwart, Gat, R.U.R.) are optional. If used, keep them outside the repo and only use them to check claims.
 
 ## Known loose ends (safe to do without asking)
-- 2.8 ref 18 cites an unreadable Scribd copy of the UR script manual; UR's own script manual confirms the same signatures, so swap the citation to it (record the check). 2.8 ref 12 is partial but ref 11 covers the rest of the sentence; no change needed.
+- Resolved 2026-11-23: UR script manual citation (in 2.5 ref 18, previously misattributed as 2.8 ref 18) swapped from Scribd copy to official UR PolyScope 5 Script Directory PDF; verified all three function signatures. Also swapped 6.9 ref 7 from Scribd to PMD's official S-curve technical article, eliminating all Scribd URLs. 2.8 ref 12 is partial but ref 11 covers the rest of the sentence; no change needed.
 - 11.3 ref 10 (capstone wheel project, 10.3 before the 2026-11-10 swap; NUS copy of the L298 datasheet) answered nothing from GitHub's runners once while loading fine locally. If the Monday link check flags it again, the runners are probably blocked there; st.com does not answer scripts either, so there is no better host yet.
 - axe left 105 "incomplete" nodes on 6.4 (formulas) uninspected. Not tested at all: Safari, Firefox, touch use of the search.
 - Update 2026-11-09: of the partial refs in the next item, all are resolved, including 1.7 and 5.2 (fixed 2026-11-10 with Gerald's approval; see the changelog).

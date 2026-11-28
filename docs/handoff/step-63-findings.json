@@ -1,0 +1,1290 @@
+{
+ "lessons": {
+  "1-1": {
+   "start_here": "This lesson asks one question: what counts as a robot? You will meet a few definitions, and the main one says a robot has a program, has motors, and can do part of its job on its own. It matters because every later lesson uses the words robot, sensor, controller and actuator. On a first read you can skip the dates and standards detail in sections 02 to 03 and 06 to 07, and the control-architecture and statistics sections at the end.",
+   "optional_sections": [
+    {
+     "heading": "Does a robot always think before it acts?",
+     "lines": "383-397",
+     "covered_again_in": "6-7"
+    },
+    {
+     "heading": "Robots by the numbers",
+     "lines": "400-407",
+     "covered_again_in": "1-5"
+    }
+   ],
+   "findings": [
+    {
+     "kind": "jargon",
+     "line": 234,
+     "quote": "programmed actuated mechanism with a degree of autonomy",
+     "proposal": "Add a plain restatement right after the boxed definition: 'In plain words: a machine that runs a program, has motors, can do some of its work without a person steering it, and either moves around, handles objects, or places a tool or part.' Glossary: ISO 8373 is defined ('programmed, powered machine with some autonomy to move, handle objects, or position tools'), reuse it.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 234,
+     "quote": "to perform locomotion, manipulation or positioning",
+     "proposal": "Gloss inline: locomotion = moving itself from place to place; manipulation = handling objects; positioning = placing a tool or part at a chosen spot. Section 02 line 244 already gives this, so point to it ('explained in the list below').",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 247,
+     "quote": "reprogrammable multipurpose manipulator, programmable in three or more axes",
+     "proposal": "Add a one-line gloss: 'manipulator = the arm; axes = the separate directions or joints it can move in (explained in lesson 1.6)'. 'Manipulator' is not in glossary-data.js; 'axis' is not either; the definition of manipulator appears only at line 352.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 219,
+     "quote": "A good place to start is the dictionary.",
+     "proposal": "Fine as is, but add a lead sentence at the top of section 01: 'You do not need to memorize any definition here. The goal is to see why people disagree.'",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 247,
+     "quote": "The same standard names the main families of robots.",
+     "proposal": "This paragraph is about 190 words with five definitions and clause numbers. Split into: (1) one lead sentence 'ISO also names three families', (2) a three-item list for industrial, service and medical, (3) the IFR note as a separate 'Good to know' sentence. Keep all quoted wording unchanged.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 247,
+     "quote": "clause cross-references left out",
+     "proposal": "Clause numbers (3.6, 3.7, 3.8, 3.10) are standards detail. Wrap in an 'Optional: going deeper' marker or keep the plain list and mark the clause numbers as 'for reference'.",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 228,
+     "quote": "Dictionaries describe how a word is used.",
+     "proposal": "The section explains why engineers need a stricter definition but not why a beginner should care. Add: 'Why you should care: every robot spec, safety rule and statistic in this course uses this one definition.' (restates lines 228-229 and 250-251).",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 276,
+     "quote": "autonomy is not yes or no. A machine can have a little or a lot.",
+     "proposal": "Add an everyday analogy: 'Think of washing dishes. A sponge needs you for every move, a dishwasher needs you to load and press start, and a fully automatic one would need you for nothing. Autonomy is the same kind of scale.' Analogy only, no new robot facts.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 281,
+     "quote": "Teleoperated remote manipulator, haptic device, end-effector, unpowered exoskeleton",
+     "proposal": "Four unexplained nouns in a row. Haptic device and end-effector are glossed inline after the quote; add the same for teleoperated (operated from a distance by a person) and exoskeleton (a wearable frame). Glossary has no entry for end-effector or exoskeleton ('end effector' is defined in 1.6/1.7 key terms: 'The tool mounted on the robot's wrist flange that does the actual work').",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 284,
+     "quote": "Level 0: No Driving Automation",
+     "proposal": "The SAE J3016 six-level list and the Beer, Fisk and Rogers 10-point taxonomy are detail. Mark the SAE list 'Optional: going deeper'; keep the closing habit sentence ('ask how autonomous a machine is while doing a particular task') outside the optional part.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 328,
+     "quote": "The dates are often mixed up, so here they are in order.",
+     "proposal": "About 120 words with seven dates and four places. Split into a short timeline list (Nov 1920 published; Jan 1921 first staging; 25 Jan 1921 premiere; 1922 English; 1923 London), or mark the whole paragraph optional. Do not change any date.",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 322,
+     "quote": "The word “robot” is borrowed from the Czech word robota",
+     "proposal": "Sections 06 and 07 are history and trivia with no 'why this matters'. Add a one-line signpost: 'This is background. You can skip it and still follow the course.' and point to lesson 1.2 which retells it.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 352,
+     "quote": "Mechanical structure: the body. For an arm this is the manipulator",
+     "proposal": "Manipulator, mobile platform, AGV and wearable robot appear in one bullet. Split into sub-bullets with one plain phrase each. Mention that AGV is explained in lesson 1.3.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 368,
+     "quote": "Sense: sensors such as encoders, ultrasonic range finders and cameras measure the robot",
+     "proposal": "Encoders and ultrasonic range finders are not explained here. Add short glosses restating later lessons: encoder = a sensor that measures how far a motor or wheel has turned; ultrasonic range finder = measures distance with sound. Cross-link encoders to 6-3.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 369,
+     "quote": "a microcontroller like an Arduino, or an industrial robot controller",
+     "proposal": "Add 'microcontroller = a tiny computer on one chip'. Glossary defines controller ('The computer that runs the robot's program and decides what to do next').",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 373,
+     "quote": "PWM (robotics-6-2.html) is how a program acts on a motor",
+     "proposal": "PWM, encoders and PID are named before they are defined (Ch.6). Rephrase as signpost only: 'You do not need these words yet. Chapter 6 explains each.' Same issue at lines 397 (PID, state machines).",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 388,
+     "quote": "Sense, plan, act (hierarchical). The robot senses, updates an internal model",
+     "proposal": "Add analogy: 'Like using a map app: you look at the screen, work out the route, take a step, then look again.'",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 391,
+     "quote": "Reactive (behavior-based). In 1986 Rodney Brooks argued for a different design",
+     "proposal": "Add analogy: 'Like a reflex: you pull your hand off a hot pan without first planning it.' Also gloss 'subsumption architecture' as 'layers of simple behaviors, where a higher layer can override a lower one'.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 391,
+     "quote": "Instead of one long chain from sensing to planning to motor control",
+     "proposal": "About 150 words with four levels, a quote and trade-offs. Add a lead sentence ('Brooks stacked simple behaviors in layers') and put the four levels into a list. Keep quoted text unchanged.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 388,
+     "quote": "the A* pathfinding search algorithm and the STRIPS automated planner",
+     "proposal": "Gloss: 'both are programs that search for a route or a plan'. Not in glossary; mark as optional detail.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 394,
+     "quote": "a controller that runs fast feedback loops between sensors and actuators",
+     "proposal": "Feedback loop is not defined here. Add: 'a feedback loop means measuring the result and adjusting, over and over'. Link to 6-4.",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 225,
+     "quote": "A six-axis arm that welds car frames on an assembly line",
+     "proposal": "'Six-axis' is not explained until lesson 1.6. Add a parenthetical: 'an arm with six joints, so six separate ways to move'.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 402,
+     "quote": "According to World Robotics 2026, released on 24 September 2026",
+     "proposal": "Statistics paragraphs (installations, density table of countries) repeat in lesson 1.5. Mark section 11 optional and point to 1.5 for the fuller version.",
+     "safety": false
+    }
+   ]
+  },
+  "1-2": {
+   "start_here": "This lesson tells the story of how people went from clockwork figures to today's factory robots. It matters because many robot ideas, such as a stored program and a shared software platform, were born long before computers. You do not need to remember any date or company name. On a first read, follow the thread from the loom to the Unimate to cobots, and skip the long table of 1970s firsts and the Mars and DARPA details.",
+   "optional_sections": [
+    {
+     "heading": "Robots spread to Europe and Japan",
+     "lines": "276-305",
+     "covered_again_in": null
+    }
+   ],
+   "findings": [
+    {
+     "kind": "no-why",
+     "line": 217,
+     "quote": "People were trying to build machines that move on their own long before electricity.",
+     "proposal": "The lesson never says why a beginner should read history. Add a lead: 'History helps because most robot ideas (a program you can swap, a machine that senses, shared software) appear here first.'",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 225,
+     "quote": "The engineer Ismail al-Jazari wrote his Book of Knowledge of Ingenious Mechanical Devices",
+     "proposal": "About 150 words: names, a ruler, a city, a date, a historian quote and a museum caveat. Split into 'who and what' and 'a caveat about pictures' or mark optional. Dates unchanged.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 228,
+     "quote": "An escapement, a device that lets a power source move forward in small, regular steps",
+     "proposal": "Escapement is explained but armillary sphere, chain drive and siphon-era terms pile up. Add 'like the ticking part of a clock' as an analogy for escapement. Glossary has escapement.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 228,
+     "quote": "At about the same time, the Song dynasty official Su Song built an astronomical clock tower",
+     "proposal": "About 140 words. Add a lead sentence 'Su Song built a water-powered clock tower that ran a timed show by itself' and keep the rest as detail.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 236,
+     "quote": "In the 1700s, clockwork automata became popular in Europe.",
+     "proposal": "Dense: three builders, three dolls, a museum, 6,000 parts, 40 letters, cams and a wheel. Lead with the key idea ('the Writer could be set to write different text without being rebuilt') and mark the numbers as detail.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 236,
+     "quote": "The text is coded on a wheel where characters are selected one by one, and cams guide the hand",
+     "proposal": "Add analogy: 'like a music box where the pins on a drum decide the tune'. Cams not explained; gloss as 'shaped wheels that guide a motion'.",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 241,
+     "quote": "That idea, a machine whose behavior is set by a stored program",
+     "proposal": "Add an analogy: 'like swapping the disc in a music box or the sheet in a printer: the machine stays the same, the instructions change'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 247,
+     "quote": "computer-aided design and manufacturing (CAD/CAM) system",
+     "proposal": "CAD/CAM, servomechanism, continuous-path control and APT language are four unexplained terms in one short paragraph. Gloss CAD/CAM ('software for designing and making parts') and mark the MIT lab sentences optional. Glossary has numerical control ('A method that controls a machine tool's motion with numbers stored on a medium').",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 263,
+     "quote": "a fairly simple arm whose three links slide in and out (engineers call these prismatic joints)",
+     "proposal": "Prismatic joint and degree of freedom are used here before lesson 1.3 and 1.6 explain joints. The page glosses degree of freedom right after; add 'revolute = turns, prismatic = slides (see lesson 1.6)'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 267,
+     "quote": "It weighed two tons, was driven by hydraulics and stored its program on a magnetic drum.",
+     "proposal": "Add glosses: hydraulics = machinery powered by pressurized oil; magnetic drum = an early kind of computer memory. Neither is in the glossary.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 271,
+     "quote": "In 1961 the first Unimate went to work at General Motors",
+     "proposal": "About 150 words with five facts and a plant-name digression. Lead with 'The first Unimate did a hot, dangerous job' and move the Ternstedt naming sentence to optional detail.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 289,
+     "quote": "YearRobot (maker, country)What was new",
+     "proposal": "Seven-row table of 1970s firsts with technical terms (microprocessor, minicomputer, electromechanically driven axes, 10 µm clearance). Mark the table and the ABB/KUKA claim paragraph (line 302) as 'Optional: going deeper' and keep the closing thread sentence (hydraulic to electric). No later lesson covers it, so covered_again_in is null.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 292,
+     "quote": "First robot with six electromechanically driven axes",
+     "proposal": "Add a gloss under the table: axis = one joint or direction of motion; electromechanical = driven by electric motors. 'Axes' is explained in 1.6; note that.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 302,
+     "quote": "The SCARA (Selective Compliance Assembly Robot Arm) has three parallel rotating joints",
+     "proposal": "Compliance is not explained here. Add 'a little give in one direction' (as 1.3 line 250 does). Glossary SCARA: 'a fast, compact, usually four-axis arm that swings horizontally and is stiff vertically'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 313,
+     "quote": "Carnegie Mellon built the first direct-drive arm prototype",
+     "proposal": "Direct-drive is glossed in parentheses, but gantry, AML and Delta robot are not. Gloss gantry ('a frame that moves a tool along straight lines') and refer to lesson 1.3 for Delta and SCARA.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 315,
+     "quote": "presented the first “cobots”, passive devices that guided a person’s motion",
+     "proposal": "Cobot is used here before the lesson says what it means. Add 'cobot = a robot built to work next to people; lesson 1.3 explains'. Glossary cobot: 'A collaborative robot designed to work alongside people in a shared space, with speed and force limits configured as part of its setup.'",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 315,
+     "quote": "Colgate and Michael Peshkin at Northwestern University",
+     "proposal": "1996 'cobots' (passive guiding devices) and 2008 UR5 'collaborative robot' mean different things; the UR5 bullet at line 318 uses 'collaborative robot' and 'safety cage' without introduction. Add a one-line bridge.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 337,
+     "quote": "in the first Grand Challenge (13 March 2004), no self-driving vehicle finished",
+     "proposal": "About 90 words of numbers in a single bullet; the key point is 'in 19 months, from nobody finishing to a win'. Lead with that, keep numbers.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 333,
+     "quote": "a practical version of the Hough transform (an image-processing method)",
+     "proposal": "Hough transform, A*, STRIPS: gloss as 'a way to find lines in pictures; a route-search method; a planning method'. Mark optional. Shakey is also covered in 1.1 line 388.",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 322,
+     "quote": "For decades, every lab and company wrote its own robot software from scratch.",
+     "proposal": "Good why-sentence; but ROS is not explained as 'what it is for a beginner'. Add 'ROS is what you will use in Chapter 4' (stated in the section) and link to 4-1 / 2-4. Glossary ROS: 'Robot Operating System, an open-source middleware framework...' ('middleware' is itself jargon: add 'software that sits between your program and the hardware').",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 348,
+     "quote": "The number of industrial robots in operation worldwide grew 9% to 5,079,078",
+     "proposal": "Statistics repeat from 1.1 section 11 and 1.5 section 01. Replace one of the three with a pointer, or mark the section optional; the 'Japan to China' paragraph at line 351 gives the useful message.",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 358,
+     "quote": "What is the equivalent of “swapping the cards” on a modern industrial robot or cobot?",
+     "proposal": "Try-it question is hard for a newcomer. Add a hint: 'Think of loading a new program or file on a phone or printer.'",
+     "safety": false
+    }
+   ]
+  },
+  "1-3": {
+   "start_here": "This lesson shows the main kinds of robots and two ways to sort them: by shape, and by where and how they are used. It matters because later lessons talk about arms, cobots and mobile robots, and you need a rough mental picture of each. On a first read you can skip the spec-sheet numbers and the vendor model names, and look only at the three drawings, the cobot section and the AGV versus AMR table.",
+   "optional_sections": [
+    {
+     "heading": "Reading a spec sheet",
+     "lines": "305-321",
+     "covered_again_in": "1-6"
+    }
+   ],
+   "findings": [
+    {
+     "kind": "no-why",
+     "line": 228,
+     "quote": "The International Federation of Robotics (IFR) counted 603,307 new industrial robots",
+     "proposal": "The lesson opens with four statistics instead of a reason to care. Add a lead: 'Robots come in a few basic shapes, and knowing them tells you what a robot is good for.' Move the numbers lower or mark them optional (they repeat in 1.1 and 1.5).",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 246,
+     "quote": "A rotary (revolute) joint turns, like your elbow. A prismatic (linear) joint slides in a straight line, like a drawer.",
+     "proposal": "Already has two analogies, good. Add one for the whole classification: 'Like cars: you can sort them by body shape (hatchback, truck) or by use (taxi, ambulance). Robots have the same two ways.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 250,
+     "quote": "SCARA: two parallel rotary joints that give the arm compliance (a little give) in one selected plane.",
+     "proposal": "Compliance and 'plane' are explained in passing; add 'plane = a flat surface, here the horizontal one'. Glossary SCARA exists.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 252,
+     "quote": "Parallel or delta: arms whose links form a closed loop, so several arms hold the tool at once.",
+     "proposal": "Closed loop is abstract. Add: 'picture three arms all holding one small plate'. Lesson 1.6 gives the formal count (Grübler).",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 253,
+     "quote": "Cylindrical: at least one rotary and one linear joint, with axes forming a cylindrical coordinate system.",
+     "proposal": "Coordinate system words (cylindrical, polar) are not defined. Add 'a way of giving a position using angles and distances instead of x, y, z'. Section 06 says these are not shown with examples; label this bullet block 'for reference'.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 262,
+     "quote": "Articulated arms come in a huge range of sizes, from a 250 kg arm that carries 25 kg",
+     "proposal": "Three vendor spec bullets (FANUC, ABB) with payload, reach, repeatability and weights. Mark 'Optional: going deeper' (sections 03 to 05 and 07); 1.6 section 05 reads a datasheet again, so covered_again_in is 1-6.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 265,
+     "quote": "6 axes, 25 kg maximum payload, 1831 mm reach, ±0.02 mm repeatability",
+     "proposal": "Payload, reach and repeatability are used here but explained in section 07 (line 305). Move or repeat the plain definitions before the first spec bullet: payload = how much it can carry; reach = how far it stretches; repeatability = how closely it returns to the same spot. Glossary has payload and repeatability.",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 265,
+     "quote": "6 axes, 25 kg maximum payload, 1831 mm reach, ±0.02 mm repeatability",
+     "proposal": "Term order: 'payload', 'reach', 'repeatability' appear at line 265, definitions at line 305. Add a forward pointer 'explained in section 07' at first use.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 273,
+     "quote": "Industrial arms are usually programmed with a teach pendant (a handheld control panel)",
+     "proposal": "Good gloss, but 'offline programming' is not defined. Add 'offline programming = writing and testing the program on a computer instead of at the robot'. Lesson 2.1 covers it.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 284,
+     "quote": "It has a rated payload of 2 kg (6 kg maximum), 600 mm reach, a 200 mm vertical stroke",
+     "proposal": "Spec-sheet detail with cycle time example; vertical stroke and 'rated' are unexplained. Mark the paragraph optional.",
+     "safety": false
+    },
+    {
+     "kind": "formula",
+     "line": 321,
+     "quote": "Two patterns stand out in this table. First, the biggest arms are the least repeatable",
+     "proposal": "Table of six rows with units mm and kg; add a one-sentence walk-through: 'Read each row left to right: how many axes, how much it carries, how far it reaches, how precisely it repeats.' Also explain the ± sign (plus or minus: the possible error either way).",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 326,
+     "quote": "Many can be taught by lead-through, a form of hand guiding",
+     "proposal": "Add 'lead-through = you move the arm by hand and it records the path', which is what the same sentence says.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 329,
+     "quote": "The safety standard for industrial robots changed in March 2025, when ISO 10218-1:2025",
+     "proposal": "Standards history; flag as hard to read, do not reword. Add a plain note next to it: 'Why this matters: safety rules for robots come from standards, and they are updated. You will use them in 5.4.' Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 338,
+     "quote": "Hand guiding: the operator moves the robot directly, using a guiding device and an enabling device.",
+     "proposal": "Enabling device is used before it is explained (explained in 1.4 line 241 and 1.7 line 263). Add a plain note beside it (do not reword): 'enabling device = a switch you must hold for the robot to move; see lesson 1.7'. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "too-advanced",
+     "line": 335,
+     "quote": "The earlier edition of ISO 10218-1 described four types of collaborative operation",
+     "proposal": "The four collaborative modes are safety content; keep exact. Add an introductory sentence 'These four ways of sharing space with a person are explained fully in lesson 5.4; on a first read, just notice there are four.' Covered in 5-4.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 340,
+     "quote": "Speed and separation monitoring: the robot keeps moving as long as it and the person stay a set distance apart",
+     "proposal": "Add plain gloss next to it only: 'like keeping a safe following distance in traffic'. Do not alter the exact wording. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 341,
+     "quote": "Power and force limiting: the robot has force feedback built in and limits how hard it can push.",
+     "proposal": "Add 'force feedback = it feels how hard it pushes'; and an analogy: 'like a gentle handshake'. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 332,
+     "quote": "A cobot holding a knife is not a safe collaborative application, however gentle the arm is.",
+     "proposal": "Good plain sentence. Make 'risk assessment' plain at first use (section 08 line 329 area): 'risk assessment = a written check of what could hurt someone and how to prevent it'. Lesson 5.4 covers it.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 369,
+     "quote": "AprilTags (visual fiducial markers used by robot cameras for precise localization)",
+     "proposal": "The parenthetical is itself jargon (fiducial, localization). Replace/add: 'a printed square pattern a camera can recognise, like a QR code'. Lidar at 377 also unexplained: 'a sensor that measures distance with laser light' (glossary LiDAR).",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 375,
+     "quote": "An AMR first makes a mapping run with lidar or depth cameras",
+     "proposal": "Lidar and depth camera need a gloss; Nav2 and ROS 2 are mentioned as forward links to 3.5 and Ch.10. Add 'Do not worry about these yet'. Covered again in 10-1.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 385,
+     "quote": "Safety standards: mobile robots have their own standards, separate from ISO 10218.",
+     "proposal": "Standard numbers (ANSI/RIA R15.08, ISO 3691-4) are detail. Keep wording exact; add plain note 'You only need to know mobile robots have their own safety standards'. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 381,
+     "quote": "Amazon Proteus (2022): Amazon’s first fully autonomous mobile robot.",
+     "proposal": "Amazon Proteus and MiR1200 detail (4 depth cameras, 1.2 million images, ISO 3691-4) is vendor specifics; mark optional.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 417,
+     "quote": "Humanoids are robots with a roughly human body shape. The first commercial deployments have begun.",
+     "proposal": "About 110 words of company deals and specs (56 degrees of freedom, 50 kg). Split into 'what a humanoid is' and 'two example deployments'; mark numbers optional.",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 423,
+     "quote": "Drones also work in warehouses.",
+     "proposal": "Closing paragraph gives an award but no 'so what'. Add 'The point: robots now exist in many shapes beyond arms.'",
+     "safety": false
+    }
+   ]
+  },
+  "1-4": {
+   "start_here": "This lesson lists what is useful to know before the rest of the course, and safety comes first. You do not need to master any of it: the course teaches what it needs as it goes. The safety rules matter most because real robot arms are strong and fast. On a first read, skim the math, networking and assembly-language sections and come back to them when a later lesson asks.",
+   "optional_sections": [
+    {
+     "heading": "Math",
+     "lines": "281-316",
+     "covered_again_in": "6-10"
+    },
+    {
+     "heading": "Networking basics",
+     "lines": "359-378",
+     "covered_again_in": "8-2"
+    }
+   ],
+   "findings": [
+    {
+     "kind": "jargon",
+     "line": 220,
+     "quote": "expects only first-year physics, some linear algebra, basic differential equations and",
+     "proposal": "The opening reassures but names four heavy subjects at once, which scares a newcomer. Add before it: 'Those are for the textbook's later chapters; for this course school algebra is enough to start.' Only restate what the lesson says ('You do not need to be an expert in anything').",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 220,
+     "quote": "You do not need to be an expert in anything before starting this course.",
+     "proposal": "Add a plain why-for-everything: 'Each section below says why a skill helps and where the course teaches it.'",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 228,
+     "quote": "or used a pendant with no enabling device.",
+     "proposal": "'pendant' and 'enabling device' appear before they are explained (pendant in 1.3 line 273, enabling device at line 241 here and in 1.7). Add a gloss: 'pendant = the handheld control panel; an enabling device is a switch you must hold for the robot to move'. Plain note beside it only. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 242,
+     "quote": "Lockout/tagout: before servicing, hazardous energy must be controlled under OSHA rule 29 CFR 1910.147",
+     "proposal": "Safety wording stays exact. Add a plain explanation next to it: 'like locking a bike so nobody else can ride it while you fix it: you lock the power off and put your own tag on the lock'. Glossary has lockout/tagout.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 240,
+     "quote": "Slow teach speed: while programming, the robot should move at “10 inches per second (250 mm/second) or less.”",
+     "proposal": "Keep exact. Add 'teach speed = slow speed used while a person is teaching the robot a move' next to it. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "wall",
+     "line": 245,
+     "quote": "OSHA also says that anyone who programs, operates or maintains a robot should receive adequate safety training",
+     "proposal": "Four ideas in one paragraph (training, hazard removal, ISO 10218, collaborative modes). Add a lead sentence ('Training and design come before rules') and split the ISO 10218 sentence. Safety wording unchanged.",
+     "safety": true
+    },
+    {
+     "kind": "no-why",
+     "line": 250,
+     "quote": "Python is widely used in robotics for scripting, testing and higher-level logic",
+     "proposal": "Contains the why. But 'rclpy', 'nodes, publishers and subscriptions' are jargon from Ch.4. Add 'You will meet these in Chapter 4; for now just know Python is used.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 250,
+     "quote": "ROS 2 provides rclpy, its Python client library, which lets you create nodes, publishers",
+     "proposal": "Add: 'ROS 2 is free robot software (Chapter 4). Client library = the Python tools for talking to it.' Skippable on first read.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 253,
+     "quote": "The Universal Robots language URScript has Python-like syntax",
+     "proposal": "URScript, interpreter: add 'a vendor language is the robot maker's own programming language' (stated in the next section). Skippable.",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 264,
+     "quote": "The Arduino language is also based on C/C++,",
+     "proposal": "Arduino is first named here without explanation; Chapter 6 teaches it. Add 'Arduino = a small, cheap programmable board hobbyists use (Chapter 6, lesson 6.1)'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 275,
+     "quote": "It also covers frames, motion types, material handling programs, input/output (I/O) signals",
+     "proposal": "Frames, motion types and I/O signals are unexplained at this point; add 'you will meet each in lessons 1.6 and 2.x; just know they are normal first topics'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 283,
+     "quote": "Modern Robotics lists its math prerequisites as linear algebra, including matrix operations",
+     "proposal": "The math list is scary. Lead with 'You will not use all of this at once. This section says what each topic is for.' Matrices and calculus are not needed for week one.",
+     "safety": false
+    },
+    {
+     "kind": "formula",
+     "line": 294,
+     "quote": "x = L1·cos(θ1) + L2·cos(θ1 + θ2)",
+     "proposal": "Formula with symbols: add a walk-through. L1 and L2 = lengths of the two links; θ1 = how far the first joint is turned; θ2 = how much the second bends; x and y = where the tip ends up; φ = which way the tip points. 'cos' and 'sin' are buttons on a calculator. Say 'Skim the formula and read only the worked numbers'.",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 292,
+     "quote": "Picture a flat arm with two links of length L1 and L2.",
+     "proposal": "Add an analogy: 'Think of your own arm lying flat on a table: the upper arm and forearm are the two links, shoulder and elbow are the joints.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 308,
+     "quote": "leads to a matrix called the Jacobian (a matrix mapping joint velocities to tool velocities)",
+     "proposal": "Jacobian is far beyond week one; mark the last four sentences of the worked example optional. Glossary has forward kinematics; no entry for Jacobian or matrix. Forward kinematics also covered in 6-10.",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 308,
+     "quote": "Lesson 1.6 Robot Anatomy and Coordinate Frames (robotics-1-6.html) builds on this",
+     "proposal": "Math sample (forward kinematics) appears here before joints and frames are introduced in 1.6, and appears again in 1.6 and 6-10. Signpost: 'This is a preview; lesson 1.6 explains the idea gently.' Consider marking the whole worked example optional.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 321,
+     "quote": "A related idea is torque, the turning effect of a force, which grows with the distance from the joint.",
+     "proposal": "Add analogy: 'like using a long wrench: the longer the handle, the easier it turns the bolt'. Gloss f = ma in words: 'the heavier a thing and the faster you want it to speed up, the harder you must push'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 324,
+     "quote": "voltage equals current times resistance (E = IR, often written V = IR)",
+     "proposal": "Add words: voltage = electrical push, current = flow, resistance = how much the part resists the flow; analogy 'water in a pipe'. Skippable; Chapter 6 uses it.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 333,
+     "quote": "has Ubuntu 26.04 and Windows 11 as its Tier 1 (best supported) platforms.",
+     "proposal": "Version numbers and release dates scare newcomers. Add 'You do not need to choose a version now; lesson 4.3 gives step-by-step install'. Mark the paragraph optional. ROS 2 install is in 4-3.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 334,
+     "quote": "Linux: ROS 2 runs mainly on Ubuntu Linux.",
+     "proposal": "Linux, command line and Ubuntu are not explained. Add 'Linux is a free operating system like Windows or macOS; the command line is typing instructions instead of clicking'. Link Software Carpentry resource at 355.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 338,
+     "quote": "each ROS 2 release has a matching Gazebo version.",
+     "proposal": "Release names, Humble, Jazzy, Kilted, Lyrical and Gazebo versions make a dense table. Mark the Gazebo/Linux/URSim block optional ('vendor and version detail') and say 'Lesson 4.5 and 4.3 return to this'. Gazebo covered in 4-5.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 352,
+     "quote": "When URSim runs on the same computer as ROS, the robot’s IP address is 127.0.0.1.",
+     "proposal": "URSim, IP address: unexplained until section 08. Mark optional; add 'URSim = a free robot simulator from Universal Robots'.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 361,
+     "quote": "Robots rarely work alone. Industrial robots talk to PLCs",
+     "proposal": "Section 08 (IP, subnets, TCP vs UDP, ports, Modbus, EtherNet/IP, PROFINET, OPC UA) is far beyond week one. Mark 'Optional: going deeper' and point to lesson 8.2 (Industrial Ethernet Protocols) which covers Modbus, and 8.5 for OPC UA. PLC is glossed inline. Glossary has TCP defined as 'Transmission Control Protocol, a network protocol that guarantees data arrives complete and in order, at the cost of extra overhead.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 365,
+     "quote": "TCP provides “a reliable, in-order, byte-stream service”;",
+     "proposal": "TCP, UDP, DDS, middleware stack up in one bullet (about 70 words). Split and add analogy: 'TCP is like registered mail, UDP is like a postcard.' Glossary defines TCP.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 391,
+     "quote": "Assembly language is a low-level language in which each instruction corresponds closely",
+     "proposal": "Already labelled 'Optional' in the heading; add a one-line 'Safe to skip' at the top and shorten nothing. Also lines 394 cite paper and article details; mark them optional.",
+     "safety": false
+    }
+   ]
+  },
+  "1-5": {
+   "start_here": "This lesson shows where robots actually work today: factories, warehouses, hospitals, farms, space and disaster sites. It matters because it gives you a feel for what robots do before you learn how they are built. Do not try to remember any of the numbers. On a first read, pick one or two application sections that interest you, and skip the country tables and the Fukushima and World Trade Center detail.",
+   "optional_sections": [
+    {
+     "heading": "Where the robots are: countries and robot density",
+     "lines": "239-274",
+     "covered_again_in": "5-3"
+    }
+   ],
+   "findings": [
+    {
+     "kind": "no-why",
+     "line": 219,
+     "quote": "Robots are no longer rare machines found in a few car plants.",
+     "proposal": "Opens with five statistics. Add a lead sentence saying why: 'Seeing where robots work helps you choose what to learn.' Mark the bullet list of figures as 'for reference'.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 222,
+     "quote": "New robots in 2025: 603,307 industrial robots were installed, 11% more than in 2024",
+     "proposal": "Three numeric bullets and a forecast paragraph (line 227) with about ten figures. Add a plain restatement: 'In short: more than half a million new industrial robots a year, and the number keeps growing.' Numbers unchanged.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 223,
+     "quote": "the operational stock, all industrial robots still working, grew 9% to 5,079,078",
+     "proposal": "'Operational stock' is glossed; make 'installed' vs 'in operation' clearer with an analogy: 'like cars sold this year versus cars on the road'.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 239,
+     "quote": "China is by far the largest market. In 2025 it installed 354,226 robots",
+     "proposal": "Country rankings and density tables are detail. Mark section 02 'Optional'; density is covered again in 5-3 (Robots and Society) per index. Glossary: robot density = 'The number of operating industrial robots per 10,000 factory workers.'",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 274,
+     "quote": "China has about two million robots in operation, roughly 4.5 times as many as Japan",
+     "proposal": "Add analogy: 'A big city can have more cars in total than a small town, yet fewer cars per person.' This is the density idea.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 282,
+     "quote": "Handling: picking, placing, packing and palletizing parts and loading other machines.",
+     "proposal": "Palletizing is not explained; add 'stacking boxes on a pallet'. Cleanroom at 285 is glossed; 'dispensing' at 284 needs 'applying glue or sealant'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 294,
+     "quote": "IFR calls machine vision for finding and guiding parts, predictive maintenance",
+     "proposal": "Machine vision and predictive maintenance are glossed briefly; add 'machine vision = a camera plus software; Chapter 7' and 'AI-based inspection' plain note. Covered in 7-1 and Ch.9.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 299,
+     "quote": "Amazon. Amazon started its robotics program in 2012 with one type of robot.",
+     "proposal": "About 100 words and 8 facts. Add a lead sentence: 'Amazon is an example of robots moving things in a warehouse.' Keep numbers.",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 302,
+     "quote": "Not every robot makes it.",
+     "proposal": "Good plain point; add the moral explicitly at the end: 'Lesson: a demo is not a product.' This restates 'Pilots are experiments, and some of them end.'",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 305,
+     "quote": "BMW and Figure. At BMW’s plant in Spartanburg, South Carolina",
+     "proposal": "Nine statistics in a paragraph. Add lead 'A humanoid robot did real factory work for ten months' and mark the numbers as detail.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 310,
+     "quote": "It is teleoperated: a surgeon at a console controls the instruments and the robot follows.",
+     "proposal": "Good gloss. Link back to 1.1 (teleoperated vs robot) and add: 'This is a robotic device in ISO terms, not a fully autonomous robot (1.1 section 04)'. Only restate lesson 1.1.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 310,
+     "quote": "most payers, including Medicare, treat it as a tool and do not pay more",
+     "proposal": "'Payers' is jargon (insurers). Replace with a gloss only: 'payers = the organizations that pay for treatment'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 318,
+     "quote": "exoskeletons, wearable robots that support a person’s movement",
+     "proposal": "Fine. Add pointer to 1.1 definition of 'wearable robot'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 342,
+     "quote": "A hospitality robot in a hotel is often organized as a state machine",
+     "proposal": "'State machine' is explained in parentheses but is abstract. Add analogy: 'like a traffic light with fixed steps'. Chapter 6.7 teaches it (covered in 6-7).",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 327,
+     "quote": "Approximate sales, read from IFR’s chart:",
+     "proposal": "Table of 2024 vs 2025 approximate sales is detail; mark optional.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 350,
+     "quote": "building its maps with multibeam sonar.",
+     "proposal": "Sonar is not explained. Add 'sonar = measuring distance with sound underwater'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 364,
+     "quote": "Perseverance uses a self-driving system called AutoNav, which builds a 3D map of the terrain",
+     "proposal": "Add 'AutoNav = the rover drives itself' (already said). Mark rover sentences with delay figures as detail; the lesson's own why is 'rovers cannot be driven with a joystick', which is good; keep it as the lead.",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 364,
+     "quote": "A radio signal can take more than 20 minutes to travel one way between Earth and Mars",
+     "proposal": "Add analogy: 'Like a video call with a delay of many minutes: you cannot steer in real time'. Try-it item 2 asks for calculation; add hint 'distance = speed x time'.",
+     "safety": false
+    },
+    {
+     "kind": "no-why",
+     "line": 386,
+     "quote": "After the 2001 attacks, the Center for Robot-Assisted Search and Rescue (CRASAR)",
+     "proposal": "Emotional and detailed; add a content note and a 'why it matters' lead: 'This case shows how hard real conditions are for robots.' Keep all numbers; mark section optional.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 396,
+     "quote": "Getting stuck: the robots were stuck or high-centered 8.9% of the time.",
+     "proposal": "'High-centered' (a vehicle stuck on its belly) needs a gloss. Murphy's numbers; mark optional.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 411,
+     "quote": "The hardest job is reaching the melted fuel, mixed with metal and concrete, called fuel debris.",
+     "proposal": "Four-entry timeline with robot names and dates. Add a lead: 'It took more than ten years to get a first small sample.' The lesson already says it; promote it.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 429,
+     "quote": "A foundation model is a large AI model trained on huge amounts of data that can be adapted to many tasks.",
+     "proposal": "VLA, foundation model, Gemini Robotics, GR00T: plain note 'This is a very new area; you do not need it for this course (see lesson 5.5)'. Covered in 5-5.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 423,
+     "quote": "IFR estimates that about 6,900 humanoids were sold in 2025, from 171 known manufacturers",
+     "proposal": "Add plain restatement: 'Humanoids are still few.' Numbers unchanged.",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 438,
+     "quote": "Choose one application from this lesson and list what the robot has to sense, decide and do",
+     "proposal": "Good; add an example answer using a robot vacuum (analogy only: senses a wall, decides to turn, wheels act).",
+     "safety": false
+    }
+   ]
+  },
+  "1-6": {
+   "start_here": "This lesson opens up a robot arm: its joints, links, tool and the frames of reference a robot uses to know where things are. It matters because every robot program you will write or read talks about joints, tools and positions. Read sections 01, 03, 07 and 08 first, and skim the formulas, the gearbox maths and the vendor details, which later lessons repeat gently. Sections that are only for the curious are marked optional.",
+   "optional_sections": [
+    {
+     "heading": "Counting degrees of freedom: Grübler’s formula",
+     "lines": "235-264",
+     "covered_again_in": "6-10"
+    },
+    {
+     "heading": "Teaching a TCP: the 4-point method",
+     "lines": "377-394",
+     "covered_again_in": "9-5"
+    },
+    {
+     "heading": "Joint space, Cartesian space and kinematics",
+     "lines": "397-434",
+     "covered_again_in": "6-10"
+    }
+   ],
+   "findings": [
+    {
+     "kind": "no-why",
+     "line": 220,
+     "quote": "A robot arm is a chain of rigid links connected by motorized joints.",
+     "proposal": "Lesson never says why a beginner needs joints and frames. Add a lead: 'Every robot program says which joint turns or where the tool goes, so you need these words.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 225,
+     "quote": "Revolute (rotary): the link rotates about the joint axis, like an elbow.",
+     "proposal": "Already has analogies; revolute and prismatic are not in glossary-data.js, so add both. The same terms were taught in 1.3 line 246; add 'you met these in lesson 1.3'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 229,
+     "quote": "A helical (screw) joint has 1 DOF, because turning it also moves it along its axis.",
+     "proposal": "Cylindrical, universal, spherical, helical joints: mark the rest of this paragraph 'for reference'; a typical arm has only revolute and prismatic. Glossary degree of freedom: 'One independent way a robot can move. Each revolute or prismatic joint adds one...'",
+     "safety": false
+    },
+    {
+     "kind": "formula",
+     "line": 240,
+     "quote": "DOF = m(N − 1 − J) + ∑ fi",
+     "proposal": "Symbols are listed below but there is no walk-through of what a number means. Add a plain-words summary: 'Count every part that can move (links), subtract the joints that hold parts together, then add back the motion each joint allows.' Mark the whole Grübler section optional (covered by 6-10 only indirectly, so use null).",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 237,
+     "quote": "Closed loops, where links connect back to each other, need a formula.",
+     "proposal": "Grübler's formula, the five-row table and the Stewart platform row are beyond week one. Mark section 02 'Optional: going deeper'. The page gives the six-axis arm result (6) in the table; add that as the takeaway: 'For an ordinary arm, DOF equals the number of joints.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 237,
+     "quote": "Lynch and Park’s Modern Robotics gives Grübler’s formula:",
+     "proposal": "Name-dropping a textbook; add 'a free textbook, see lesson 1.4'. Glossary has Grübler's formula.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 269,
+     "quote": "the arm generally needs at least six joints",
+     "proposal": "Good key idea. Add analogy for six DOF: 'hold a mug in the air: you can move it left-right, forward-back, up-down (three) and also tilt it three ways'.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 272,
+     "quote": "the first three axes decide where the wrist is, and the last three form the wrist",
+     "proposal": "Wrist, flange, orientation: gloss 'orientation = which way the tool points'. Add analogy: 'your shoulder and elbow place your hand, your wrist turns it'.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 285,
+     "quote": "Each joint is driven by an electric servo motor.",
+     "proposal": "Servo motor, reducer, RV (cycloidal), strain-wave, backlash and arc-minute are vendor-level detail. Mark section 04 optional and keep the first two sentences as the takeaway. Glossary reducer: 'A gearbox in a robot joint that lowers the motor's speed and raises its torque...'; backlash: 'The small play in a gear train that lets the output move slightly without the input moving.'",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 285,
+     "quote": "A small motor spins fast but has little torque, so it drives the joint through a reducer",
+     "proposal": "Add analogy: 'like a bicycle in low gear: easy to turn, but the wheel turns slowly and pushes hard'. Torque is first explained in 1.4 line 321; point to it.",
+     "safety": false
+    },
+    {
+     "kind": "formula",
+     "line": 294,
+     "quote": "1 arc-min = (1/60)° = π / 10,800 rad ≈ 0.000291 rad",
+     "proposal": "Calculation without a plain walkthrough. Add: 'A tiny angle at the base is multiplied by arm length at the tip, so a tiny gear wobble becomes a visible error.' Explain rad (radian: another unit for angles) and arc-minute (a sixtieth of a degree, already said).",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 303,
+     "quote": "Here are three small six-axis robots, as their makers describe them:",
+     "proposal": "Datasheet table with 7 rows x 3 vendors including axis speed and range. Mark as optional and add 'Read one column to get the idea'. Datasheets covered again lightly in 2-5 / 2-6.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 312,
+     "quote": "Pose repeatability (ISO 9283)0.02 mm±0.01 mm±0.03 mm",
+     "proposal": "'Pose' and '±' unexplained. Add 'pose = position plus orientation' and 'a ± value is the possible error in either direction'.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 323,
+     "quote": "The standard ISO 9283 defines how robot performance is measured.",
+     "proposal": "Mean distance plus three standard deviations, inclined plane, 30 cycles: statistics detail. Keep dart analogy (already present) and mark the rest optional.",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 332,
+     "quote": "Think of darts: a tight group far from the bullseye is repeatable but not accurate.",
+     "proposal": "Excellent; also add the other case: 'darts scattered around the bullseye are accurate on average but not repeatable.' This restates the AP/RP definitions.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 346,
+     "quote": "Controllers use several coordinate frames, arranged as parents and children",
+     "proposal": "'Frame' is abstract. Add analogy: 'like giving directions: from the front door, from the street corner, or from the city centre. The same spot has different numbers in each.' The page's own sentence 'x = 500 mm only means something once you say where it is measured from' is good; make it the opening line.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 353,
+     "quote": "Tool frame and TCP: the tool center point (TCP) is the working point of the tool",
+     "proposal": "Good gloss. Note: 'TCP' here is not the networking TCP of lesson 1.4. Glossary defines TCP as Transmission Control Protocol, and the tool center point as a separate entry. Add a one-line warning.",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 348,
+     "quote": "Controllers use several coordinate frames, arranged as parents and children with the world frame at the top",
+     "proposal": "The lesson uses ABB vendor names (tool0, wobj0, work object) as the main teaching vocabulary; the generic idea is better introduced first with one plain sentence per frame. The diagram already exists; reference it before the bullets.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 369,
+     "quote": "What a target stores. In ABB’s RAPID language a Cartesian target is a robtarget.",
+     "proposal": "Quaternion, confdata, cf1/cf4/cf6 quadrants: vendor specifics. Mark optional. 'Quaternion' is not in the glossary; gloss 'a compact way to store a 3D rotation' (already in text). Covered again in 2-6 (quaternions), 2-3 (RAPID).",
+     "safety": false
+    },
+    {
+     "kind": "formula",
+     "line": 390,
+     "quote": "R1·t + p1 = P",
+     "proposal": "Symbols R, t, p, P are introduced just above, but no worked numbers or intuition. Add: 'In words: the tip of the tool always lands on the same point, so subtracting two touches cancels the unknown point.' Mark whole 4-point derivation optional. Linear equations, least squares: no gloss. Calibration returns in 9-5.",
+     "safety": false
+    },
+    {
+     "kind": "too-advanced",
+     "line": 388,
+     "quote": "Why it works: for each touch i, forward kinematics gives the flange orientation Ri",
+     "proposal": "Move the 'Why it works' derivation under an 'Optional: going deeper' label; keep the four touching steps (lines 382-385) as the main explanation.",
+     "safety": false
+    },
+    {
+     "kind": "formula",
+     "line": 420,
+     "quote": "cos θ2 = (x² + y² − L1² − L2²) / (2·L1·L2)",
+     "proposal": "Inverse kinematics formula with atan2: add a plain walkthrough: 'This formula finds the elbow angle from how far the tip is from the base.' Mark section optional. Same 2-link math in 6-10.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 402,
+     "quote": "Forward kinematics: from known joint angles, calculate where the tool is and how it is oriented.",
+     "proposal": "Kinematics not in glossary as a bare term; forward and inverse kinematics are. Add analogy: 'forward: you know how your elbow is bent, where is your hand? Inverse: you want your hand on the cup, how do you bend?'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 431,
+     "quote": "At θ2 = 0, with the arm fully stretched, the two solutions merge into one. That is a singularity.",
+     "proposal": "Singularity first introduced inside the example, with section 11 repeating it. Add a gentler lead: 'a singularity is an awkward pose where the arm cannot move smoothly'. Glossary singularity exists.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 434,
+     "quote": "four Denavit–Hartenberg (DH) parameters (geometric values that define the relative position",
+     "proposal": "No later lesson covers DH (find returns none). Mark the sentence as an aside: 'you will not need this in the course'.",
+     "safety": false
+    }
+   ]
+  },
+  "1-7": {
+   "start_here": "This lesson shows a whole robot work cell: the arm plus the conveyors, sensors, controllers and safety equipment that make it do a real job safely. It matters because in a factory a robot almost never works alone, and the safety parts are what make a cell safe to stand near. On a first read, look at the list of cell parts, the safeguarding section and the three example cells, and skip the formula, the handshake details and the cost estimates.",
+   "optional_sections": [
+    {
+     "heading": "How a cell gets built: from idea to production",
+     "lines": "371-386",
+     "covered_again_in": "11-1"
+    },
+    {
+     "heading": "What a cell costs",
+     "lines": "424-435",
+     "covered_again_in": null
+    }
+   ],
+   "findings": [
+    {
+     "kind": "no-why",
+     "line": 219,
+     "quote": "In the last lesson we looked at the arm itself.",
+     "proposal": "Good why-sentence ('An arm bolted to the floor with nothing around it cannot do useful work'). Add a bridge before it: 'Why this matters: real jobs, and real safety, come from the cell, not the arm.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 222,
+     "quote": "The International Federation of Robotics (IFR) uses the ISO 8373:2021 definition",
+     "proposal": "Section 01 repeats the 1.1 and 1.3 definition and adds OSHA component lists (four major components). Signpost 'This repeats the definition from 1.1; skim.' Mark paragraph optional.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 225,
+     "quote": "everything an integrator adds so that it can do one job safely and repeatably",
+     "proposal": "'Integrator' used before its definition (section 06). Add 'integrator = a company that builds the whole cell around the robot (section 06)'. Not in glossary.",
+     "safety": false
+    },
+    {
+     "kind": "order",
+     "line": 225,
+     "quote": "everything an integrator adds so that it can do one job safely and repeatably",
+     "proposal": "Integrator, PLC, HMI, fieldbus, safety controller appear in the list at line 250-260 before section 05 explains PLC. Add a one-line preface: 'Do not worry about the terms yet; each is explained below.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 230,
+     "quote": "Part 1 covers the robot itself, which is supplied as partly completed machinery.",
+     "proposal": "'Partly completed machinery' safety standards: flag as hard to read. Add a plain note beside it: 'The robot alone is not yet a safe machine; the cell makes it safe.' Do not reword the standard references. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "too-advanced",
+     "line": 233,
+     "quote": "The standards define these terms precisely, but their exact wording is behind a paywall",
+     "proposal": "The robot / system / cell / line nested list is useful; mark the standards paragraph at 230 and 242 as optional detail.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 247,
+     "quote": "Most cells contain the same families of parts. Use this list as a checklist:",
+     "proposal": "Eleven-item list with jargon (EOAT, PLC, HMI, fieldbus, positioner, nests, bowl feeders). Group into three headings: Robot parts (1-4), Parts feeding and sensing (5-6), Control and safety (7-11) and add a one-line plain gloss for each term. Reference the existing diagram at line 281.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 256,
+     "quote": "a programmable logic controller that coordinates the sequence, and a human-machine interface",
+     "proposal": "PLC is glossed inline, but not in glossary-data.js as plain 'PLC' (only 'PLC handshake'). Add analogy: 'the PLC is the cell's traffic controller'. Covered in 8-3.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 263,
+     "quote": "The teach pendant deserves a closer look because it is how people work near the robot.",
+     "proposal": "Safety content: keep the enabling device definition exact (“a manually operated control device which, when continuously activated...”). Add a plain note next to it: 'In plain words: hold the switch halfway and the robot may move; let go or squeeze hard and it stops.' (Glossary: three-position, stops if released or gripped tightly.) Safety.",
+     "safety": true
+    },
+    {
+     "kind": "wall",
+     "line": 266,
+     "quote": "Robot makers build these requirements into their products.",
+     "proposal": "About 130 words: UR model list, 3PE pendants, ISO 10218-2, a fatal accident in Michigan. Add lead 'A key rule: a key or mode switch does not replace lockout' and split off the accident as its own short paragraph. Safety wording unchanged. Content note for the fatal case.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 271,
+     "quote": "mechanical limiting devices, nonmechanical limiting devices, presence-sensing safeguarding devices, fixed barriers",
+     "proposal": "Safety: do not reword. Add a plain gloss beside each: presence-sensing = a sensor that notices a person; interlocked = connected so opening it stops the machine. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "needs-example",
+     "line": 274,
+     "quote": "Fence and interlocked gate: a fixed fence keeps people out. The gate has a safety switch",
+     "proposal": "Add analogy beside it (do not reword): 'like a microwave: opening the door stops it'. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "needs-example",
+     "line": 275,
+     "quote": "Light curtain: a row of infrared beams across an opening",
+     "proposal": "Add analogy: 'like the beam on a lift or garage door that stops it closing when you break it'. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "formula",
+     "line": 289,
+     "quote": "S = K × T + C",
+     "proposal": "Formula shown with a symbol list but no plain walkthrough or analogy. Add: 'In words: the distance the hand covers while the robot is still stopping, plus a small safety margin. Faster stopping means the curtain can sit closer.' Keep all values and the ISO 13855 attribution exactly. The index shows ISO 13855 is only in this lesson, but light-curtain safety returns in 5-4. Mark section 'Optional: going deeper' only for the worked arithmetic (line 296), not the rule. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "formula",
+     "line": 296,
+     "quote": "For a curtain fine enough to detect a finger or hand, K = 2000 mm/s",
+     "proposal": "Walk through the numbers in words only as an addition: 'K is how fast a hand moves; T is how long the robot takes to stop; C depends on how fine the curtain is'. No new values. The Try-it at line 443 asks for the calculation; add 'Do the sum with a calculator; the units are all mm and seconds'. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 304,
+     "quote": "a Siemens PLC acts as the IO-Controller and an ABB IRC5 robot controller acts as an IO-Device",
+     "proposal": "Vendor protocol vocabulary (IO-Controller, IO-Device, master/slave): mark paragraph optional; chapter 8 covers PROFINET (8-2, 8-3).",
+     "safety": false
+    },
+    {
+     "kind": "needs-example",
+     "line": 307,
+     "quote": "Because the robot and the PLC run separate programs, they coordinate through handshake signals.",
+     "proposal": "Add analogy: 'like passing a baton: the giver says ready, the taker says got it, then the giver lets go.' Glossary PLC handshake: 'An exchange of latched request and acknowledge signals...'. The 5-step table is a good walkthrough.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 352,
+     "quote": "safety-rated industrial network extensions designed to guarantee fail-safe communication over fieldbuses",
+     "proposal": "CIP Safety, PROFIsafe, fieldbus: dense. Keep exact; add plain note: 'In short: a special, extra-checked way to send stop signals.' The key rule 'Never make a person's safety depend on a normal handshake bit.' should be bold/highlighted as the takeaway. Safety.",
+     "safety": true
+    },
+    {
+     "kind": "jargon",
+     "line": 355,
+     "quote": "EtherCAT is a master/slave protocol on a logical ring that processes frames “on the fly”",
+     "proposal": "Protocol detail (EtherNet/IP, EtherCAT, PROFINET): mark paragraph optional, pointer to lesson 8.2.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 363,
+     "quote": "Under ISO 10218 the robot is partly completed machinery, not a finished, safe machine on its own.",
+     "proposal": "OEM not glossed: add 'OEM = the company that makes the robot'. 'Risk assessment' needs a plain gloss ('a written check of what could hurt someone'). Covered in 5-4. Safety wording unchanged.",
+     "safety": true
+    },
+    {
+     "kind": "wall",
+     "line": 368,
+     "quote": "How does a factory know an integrator is competent?",
+     "proposal": "About 120 words on A3 certification, audits and O*NET. Mark optional; lead sentence: 'Some integrators are certified.'",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 373,
+     "quote": "application study with real part samples and a cycle-time estimate",
+     "proposal": "Process steps and FAT/SAT (factory and site acceptance tests) are glossed in section 07; add 'FAT = a test at the builder's workshop; SAT = the same at the customer's plant' at first mention. FAT is not in glossary-data.js. Covered in 11-1.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 403,
+     "quote": "twin-station positioner (IRBP R) lets the robot weld on one side",
+     "proposal": "Positioner (a rotating table that holds the part) and brand part numbers; vendor specifics. Mark 'Three typical cells' optional; keep one example per cell type.",
+     "safety": false
+    },
+    {
+     "kind": "wall",
+     "line": 399,
+     "quote": "A palletizing cell stacks cases onto pallets at the end of a packaging line.",
+     "proposal": "About 140 words with product specs (cases per minute, three-strand drag chain). Lead with 'A palletizing cell stacks boxes onto pallets' (it already does); mark the Pearson/Arpac details optional.",
+     "safety": false
+    },
+    {
+     "kind": "jargon",
+     "line": 408,
+     "quote": "Takt time is the pace the customer demands: available production time divided by the number of parts required.",
+     "proposal": "Add analogy: 'like a restaurant: takt time is how often a customer arrives, cycle time is how long the kitchen takes per meal'. Glossary has takt time but no cycle time. Add cycle time to the glossary check.",
+     "safety": false
+    }
+   ]
+  }
+ },
+ "note_from_claude": "optional_sections were curated by Claude: mark ONLY these sections optional (rule 2 says at most 3; do not add others). Core content of a lesson (for example the robot types in 1-3) is never optional."
+}

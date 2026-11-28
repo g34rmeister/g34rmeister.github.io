@@ -29,7 +29,7 @@
         <link rel="manifest" href="site.webmanifest" />
         <link rel="stylesheet" href="assets/css/fontawesome-all.min.css?v=aff81bda" />
         <link rel="stylesheet" href="assets/css/main.css?v=8d97c4ff" />
-        <link rel="stylesheet" href="assets/css/robotics.css?v=d9f1aa24" />
+        <link rel="stylesheet" href="assets/css/robotics.css?v=f3cbe85b" />
         <script>
             (function() {
                 var saved = localStorage.getItem('theme');
@@ -215,7 +215,7 @@
 
                             <h2 class="article-section-title">01. Why this lesson exists</h2>
                             <p>
-                                Artificial intelligence (AI) now appears in robot cameras, maintenance dashboards and programming tools, and in research models that try to control a robot directly from images and words. The marketing around these products often blurs one important line: helping people build and run a robot cell is different from deciding, in real time, whether the robot is safe to move. This lesson draws that line clearly.
+                                Artificial intelligence (AI) now appears in robot cameras, maintenance dashboards and programming tools, and in research models that try to control a robot directly from images and words. The marketing around these products often blurs one important line. Helping people build and run a robot cell is different from deciding, in real time, whether the robot is safe to move. This lesson draws that line clearly.
                             </p>
                             <p>
                                 In industry today, AI mostly sits <em>around</em> the robot. It helps the robot see parts, helps engineers predict when a gearbox will fail, and helps programmers write code faster. The safety-rated controller and its safety configuration (the speed limits, safety planes, stop functions and safeguard inputs you met in 5.4) stay conventional and deterministic. They do the same thing every time for the same input, and they have been validated against a standard.
@@ -232,7 +232,7 @@
                                 On 21 October 2024, Universal Robots (UR) launched the <strong>AI Accelerator</strong>, a hardware and software kit for its PolyScope X software. It is built on NVIDIA Isaac libraries running on an NVIDIA Jetson AGX Orin computer, paired with an Orbbec Gemini 335Lg 3D camera. UR listed its functions as pose estimation, tracking, object detection, path planning, image classification, quality inspection and state detection.<sup><a href="#ref-1">[1]</a></sup>
                             </p>
                             <p>
-                                At NVIDIA's GTC conference in March 2025, UR's parent company Teradyne and its partners showed version 1.1 of the AI Accelerator, which integrates NVIDIA Isaac Manipulator components. In one partner demo (from Groundlight), the system "trains a model to detect a workpiece and generate a robot program for picking."<sup><a href="#ref-2">[2]</a></sup> At GTC Paris in June 2025, a UR15 arm running PolyScope X picked objects whose positions it was not given in advance, to show how applications built with the AI Accelerator cope with variation. UR reportedly named machine tending and bin picking as target uses.<sup><a href="#ref-3">[3]</a></sup>
+                                At NVIDIA's GTC conference in March 2025, UR's parent company Teradyne and its partners showed version 1.1 of the AI Accelerator, which integrates NVIDIA Isaac Manipulator components. In one partner demo (from Groundlight), the system "trains a model to detect a workpiece and generate a robot program for picking."<sup><a href="#ref-2">[2]</a></sup> At GTC Paris in June 2025, a UR15 arm running PolyScope X picked objects whose positions it was not given in advance. The demonstration showed how applications built with the AI Accelerator cope with variation. UR reportedly named machine tending and bin picking as target uses.<sup><a href="#ref-3">[3]</a></sup>
                             </p>
                             <p>
                                 Notice what the AI does in these systems. It answers the question "where is the part, and is it a good part?" and hands the answer to the robot program as a target pose. The robot still moves under its normal controller, with its normal safety limits. If the vision model makes a mistake, the result is a missed pick or a wrong target. That is why the target poses a vision system produces still need sensible limits in the program, a topic you will meet again in the checklist.
@@ -243,7 +243,7 @@
                                 The second established use is <strong>predictive maintenance</strong>: watching data from the robot, such as motor currents and error logs, to spot wear before it causes a breakdown.
                             </p>
                             <p>
-                                FANUC's <strong>Zero Down Time (ZDT)</strong> service "continuously monitors robot condition and performance data to identify potential issues before they impact production," according to FANUC America's product page (launch date not found for this lesson).<sup><a href="#ref-4">[4]</a></sup> In March 2025, Siemens extended its Industrial Copilot to maintenance through Senseye Predictive Maintenance, and claimed that pilot users saved "on average 25% reactive maintenance time."<sup><a href="#ref-5">[5]</a></sup> That 25% figure is a vendor claim, not an independent study.
+                                FANUC offers the <strong>Zero Down Time (ZDT)</strong> service, described on FANUC America's product page (launch date not found for this lesson).<sup><a href="#ref-4">[4]</a></sup> The page notes that the service "continuously monitors robot condition and performance data to identify potential issues before they impact production."<sup><a href="#ref-4">[4]</a></sup> In March 2025, Siemens extended its Industrial Copilot to maintenance through Senseye Predictive Maintenance, and claimed that pilot users saved "on average 25% reactive maintenance time."<sup><a href="#ref-5">[5]</a></sup> That 25% figure is a vendor claim, not an independent study.
                             </p>
                             <p>
                                 Predictive maintenance has a low safety risk compared with the other uses in this lesson, because it advises people rather than moving the robot. Even so, a technician still follows lockout/tagout (5.4) before working on the arm.
@@ -259,12 +259,12 @@
                                 <li class="article-spec-item"><span class="spec-label">Rockwell FactoryTalk Design Studio Copilot (date not captured):</span> Also generates PLC code from natural language, according to an industry overview by A3, the US automation trade association.<sup><a href="#ref-8">[8]</a></sup></li>
                             </ul>
                             <p>
-                                As of October 2026, the research for this lesson did not find a Universal Robots or FANUC LLM assistant specifically for writing robot programs, and KUKA and Yaskawa announcements were not searched. The examples in this lesson's exercise therefore use a general-purpose chatbot as the "AI author," not a vendor product.
+                                As of October 2026, the research for this lesson did not find a Universal Robots or FANUC LLM assistant specifically for writing robot programs. In addition, KUKA and Yaskawa announcements were not searched. The examples in this lesson's exercise therefore use a general-purpose chatbot as the "AI author," not a vendor product.
                             </p>
 
                             <h2 class="article-section-title">05. Foundation models that output robot actions</h2>
                             <p>
-                                A <strong>foundation model</strong> is a large model trained on broad data that can be adapted to many tasks. In robotics, the most discussed kind is the <strong>vision-language-action (VLA) model</strong>: it takes camera images and a written instruction ("put the red block in the bowl") and outputs robot actions directly. These models were all released between 2023 and 2026 as research or early-access platforms, not as certified industrial controllers.
+                                A <strong>foundation model</strong> is a large model trained on broad data that can be adapted to many tasks. In robotics, the most discussed kind is the <strong>vision-language-action (VLA) model</strong>. It takes camera images and a written instruction ("put the red block in the bowl") and outputs robot actions directly. These models were all released between 2023 and 2026 as research or early-access platforms, not as certified industrial controllers.
                             </p>
                             <table class="article-table">
                                 <thead>
@@ -303,7 +303,7 @@
                                 </tbody>
                             </table>
                             <p>
-                                The developers of these models are open about their limits, and those limits matter for a factory. OpenVLA's documentation says that "out-of-the-box, it only works well on domains from the training dataset," that adapting it to a new setup typically needs fine-tuning on about 100 demonstrations, and that it "struggles with high-frequency data."<sup><a href="#ref-12">[12]</a></sup> NVIDIA warns that GR00T users "may observe 5-6% variance between runs" because of random data augmentation during training.<sup><a href="#ref-13">[13]</a></sup> In other words, two training runs on the same data can give noticeably different robots. That is the opposite of the repeatable, validated behavior a safety function needs.
+                                The developers of these models are open about their limits, and those limits matter for a factory. OpenVLA's documentation says that "out-of-the-box, it only works well on domains from the training dataset."<sup><a href="#ref-12">[12]</a></sup> Adapting it to a new setup typically needs fine-tuning on about 100 demonstrations, and the documentation adds that it "struggles with high-frequency data."<sup><a href="#ref-12">[12]</a></sup> NVIDIA warns that GR00T users "may observe 5-6% variance between runs" because of random data augmentation during training.<sup><a href="#ref-13">[13]</a></sup> In other words, two training runs on the same data can give noticeably different robots. That is the opposite of the repeatable, validated behavior a safety function needs.
                             </p>
                             <p>
                                 Even the most advanced of these systems does not use the learned model as its safety layer. Google DeepMind describes Gemini Robotics 1.5 as "thinking about safety before acting," but also triggering "low-level safety sub-systems (e.g. for collision avoidance) on-board the robot," and it built a benchmark called ASIMOV to test semantic safety (whether the model understands that an action is unsafe).<sup><a href="#ref-16">[16]</a></sup> The learned model reasons about the task; separate conventional systems keep the robot from hitting things.
@@ -341,7 +341,7 @@
                                 <strong>Invented functions.</strong> The robotics version of a hallucinated package is a function that sounds right but does not exist, such as <code>set_gripper()</code> or <code>move_linear()</code>. In URScript, a gripper is normally driven through digital outputs or through a function added by the gripper maker's URCap, so the correct call depends on your hardware. The only reliable check is the official script manual for your exact software version.
                             </p>
                             <p>
-                                <strong>Frames.</strong> A pose only means something relative to a frame: the robot base, the tool, or a feature frame on the fixture. URScript's <code>pose_add</code> adds an offset in the base frame, while <code>pose_trans</code> applies an offset expressed in the frame of the first pose. So <code>pose_trans(pick, p[0, 0, -0.05, 0, 0, 0])</code> means "50 mm back along the tool's own Z axis." Mixing them up is a classic error. When the tool points straight down, its Z axis points the opposite way to the base's Z axis, so an offset meant to back the tool away from a part can instead drive it 50 mm into the part. A wrong tool center point (TCP) setting causes the same kind of silent offset.
+                                <strong>Frames.</strong> A pose only means something relative to a frame: the robot base, the tool, or a feature frame on the fixture. URScript's <code>pose_add</code> adds an offset in the base frame, while <code>pose_trans</code> applies an offset expressed in the frame of the first pose. So <code>pose_trans(pick, p[0, 0, -0.05, 0, 0, 0])</code> means "50 mm back along the tool's own Z axis." Mixing them up is a classic error. When the tool points straight down, its Z axis points the opposite way to the base's Z axis. An offset meant to back the tool away from a part can therefore drive it 50 mm into the part instead. A wrong tool center point (TCP) setting causes the same kind of silent offset.
                             </p>
                             <p>
                                 The exact function signatures in this lesson (<code>movej</code>, <code>pose_trans</code>, <code>pose_add</code>, <code>d2r</code>, <code>set_standard_digital_out</code>) should be checked against the script manual for the PolyScope version you use. The code examples are illustrations to test in URSim first, not programs to run on a real arm.
@@ -380,10 +380,10 @@
 
                             <h2 class="article-section-title">10. Accountability, and this course</h2>
                             <p>
-                                No source found for this lesson makes an AI vendor responsible for a user's robot program. The structure of conformity assessment points the other way: the manufacturer and the integrator who signs the risk assessment answer for the cell, and the programmer who deploys code answers for that code. This is a reading of how the system is set up, not a legal ruling, but it is the safe way to work. It also connects to the "moral crumple zone" from 5.3: if AI writes the code and a human only presses Play, the human can end up absorbing the blame for a system they did not really control. To avoid that, the human has to actually review the code, not just approve it.
+                                No source found for this lesson makes an AI vendor responsible for a user's robot program. The structure of conformity assessment points the other way: the manufacturer and the integrator who signs the risk assessment answer for the cell, and the programmer who deploys code answers for that code. This is a reading of how the system is set up, not a legal ruling, but it is the safe way to work. It also connects to the "moral crumple zone" from 5.3. If AI writes the code and a human only presses Play, the human can end up absorbing the blame for a system they did not really control. To avoid that, the human has to actually review the code, not just approve it.
                             </p>
                             <p>
-                                The same rule applies to what you are reading. This course was itself made with AI help: lessons, including this one, were researched and drafted with an AI assistant, then checked against their sources by a person. The page <a href="robotics-method.html">How this course was made</a> explains which tools were used and how references were verified. You should read these lessons the way you will read AI-written robot code: follow the citations, notice where a source is marked as unverified, and check anything that would matter if it were wrong. If this course later offers an AI tutor, check its answers in the same way.
+                                The same rule applies to what you are reading. This course was itself made with AI help: lessons, including this one, were researched and drafted with an AI assistant, then checked against their sources by a person. The page <a href="robotics-method.html">How this course was made</a> explains which tools were used and how references were verified. You should read these lessons the way you will read AI-written robot code. Follow the citations, notice where a source is marked as unverified, and check anything that would matter if it were wrong. If this course later offers an AI tutor, check its answers in the same way.
                             </p>
                             <p>
                                 A practical habit follows from this: record <strong>provenance</strong>. In a comment or a change log, note which parts of a program were AI-written, which prompt or tool produced them, and who reviewed and tested them.
@@ -504,9 +504,9 @@ end</code></pre>
 
         <!-- Scripts -->
             <script src="assets/js/robotics.js?v=9e9569bf" defer></script>
-            <script src="assets/js/course-data.js?v=6002944a" defer></script>
-            <script src="assets/js/glossary-data.js?v=3f8c1328" defer></script>
-            <script src="assets/js/learning.js?v=42e08602" defer></script>
+            <script src="assets/js/course-data.js?v=26d003fe" defer></script>
+            <script src="assets/js/glossary-data.js?v=ec5f636d" defer></script>
+            <script src="assets/js/learning.js?v=8363e7ea" defer></script>
 
     </body>
 </html>
